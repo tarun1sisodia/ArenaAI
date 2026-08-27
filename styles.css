@@ -4241,6 +4241,27 @@ h2 {
   font-style: normal;
 }
 
+/* The 1-year SEO list carries more line items, so it runs in two tighter columns. */
+.seo-list--dense {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 20px;
+}
+
+.seo-list--dense div {
+  grid-template-columns: 22px 1fr 16px;
+  gap: 7px;
+  min-height: 34px;
+}
+
+.seo-list--dense b {
+  font-size: 9.5px;
+}
+
+.seo-list--dense i {
+  font-size: 12px;
+}
+
 .seo-explain {
   max-width: 330px;
 }
@@ -4410,6 +4431,25 @@ h2 {
   margin: 0;
   color: var(--muted);
   font-size: 10px;
+}
+
+.layer-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 8px;
+}
+
+.layer-tags span {
+  padding: 3px 7px;
+  border: 1px solid rgba(16, 33, 45, 0.16);
+  border-radius: 100px;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.45);
+  font-family: var(--mono);
+  font-size: 7px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .system-layer > span {
@@ -4649,6 +4689,10 @@ h2 {
   line-height: 1.4;
 }
 
+.price-exclusions p + p {
+  margin-top: 9px;
+}
+
 /* Process */
 .slide--process {
   background: var(--paper-light);
@@ -4784,9 +4828,77 @@ h2 {
   gap: 35px;
   align-items: start;
   max-width: 900px;
-  margin: clamp(64px, 11vh, 108px) auto 0;
+  margin: clamp(40px, 7vh, 68px) auto 0;
   padding-top: 17px;
   border-top: 1px solid var(--line);
+}
+
+.support-included {
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  gap: 20px 35px;
+  align-items: start;
+  max-width: 900px;
+  margin: 20px auto 0;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: #efe7d9;
+}
+
+.support-head {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.support-head span {
+  color: var(--coral);
+  font-family: var(--mono);
+  font-size: 8px;
+  letter-spacing: 0.12em;
+}
+
+.support-head strong {
+  color: var(--ink);
+  font-family: var(--display);
+  font-size: 19px;
+  font-weight: 500;
+  line-height: 1.05;
+}
+
+.support-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.support-list li {
+  position: relative;
+  padding-left: 13px;
+  color: var(--ink);
+  font-size: 9.5px;
+}
+
+.support-list li::before {
+  position: absolute;
+  top: 5px;
+  left: 0;
+  width: 6px;
+  height: 1px;
+  content: '';
+  background: var(--coral);
+}
+
+.support-included p {
+  grid-column: 1 / -1;
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.45;
 }
 
 .launch-note {
@@ -4891,11 +5003,33 @@ h2 {
   line-height: 1.2;
 }
 
+.closing-scope {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 490px;
+  margin-top: 16px;
+  padding-left: 20px;
+  border-left: 1px solid rgba(245, 240, 232, 0.22);
+}
+
+.closing-scope p {
+  margin: 0;
+  color: #c4cecc;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.closing-scope p b {
+  color: var(--saffron-light);
+  font-weight: 600;
+}
+
 .closing-next {
   display: flex;
   align-items: center;
   gap: 28px;
-  margin-top: 40px;
+  margin-top: 32px;
 }
 
 .closing-next div {
@@ -5440,7 +5574,8 @@ body.is-soft .slide--decisions {
   .form-demo-layout,
   .booking-flow-layout,
   .system-side,
-  .process-bottom {
+  .process-bottom,
+  .support-included {
     display: block;
     margin-top: 42px;
   }
@@ -5839,6 +5974,14 @@ body.is-soft .slide--decisions {
     margin-top: 34px;
   }
 
+  .seo-list--dense {
+    display: block;
+  }
+
+  .seo-list--dense div {
+    min-height: 38px;
+  }
+
   .rank-orbit {
     width: 165px;
     height: 165px;
@@ -5877,6 +6020,16 @@ body.is-soft .slide--decisions {
     margin-top: 22px;
   }
 
+  .layer-tags {
+    gap: 4px;
+    margin-top: 7px;
+  }
+
+  .layer-tags span {
+    padding: 2px 6px;
+    font-size: 6.5px;
+  }
+
   .side-cap {
     margin-bottom: 13px;
   }
@@ -5911,6 +6064,24 @@ body.is-soft .slide--decisions {
 
   .process-bottom {
     margin-top: 40px;
+  }
+
+  .support-included {
+    margin-top: 26px;
+    padding: 15px;
+  }
+
+  .support-list {
+    display: block;
+    margin-top: 14px;
+  }
+
+  .support-list li {
+    margin-bottom: 6px;
+  }
+
+  .support-included p {
+    margin-top: 12px;
   }
 
   .process-steps-copy {
