@@ -26,6 +26,47 @@ const railLinks = slides.map((slide, index) => {
   return link;
 });
 
+// Keep every slide inside the fixed deck viewport.
+// Dense slides (the design, decisions, pricing and process pages) are scaled down
+// just enough to fit instead of being cut off by the stage.
+const supportsZoom = typeof document.body.style.zoom === 'string';
+const MIN_SLIDE_SCALE = 0.62;
+
+function fitSlide(slide) {
+  if (!slide) return;
+  slide.style.zoom = '';
+
+  // On phones the deck reads better with natural scrolling than with shrunken type.
+  if (!supportsZoom || window.matchMedia('(max-width: 700px)').matches) return;
+
+  const available = slide.clientHeight;
+  const needed = slide.scrollHeight;
+  if (!available || needed <= available + 2) return;
+
+  let scale = Math.max(MIN_SLIDE_SCALE, available / needed);
+  slide.style.zoom = String(scale);
+
+  // Reflowed text can change the height, so refine once with the new measurements.
+  if (slide.scrollHeight > slide.clientHeight + 2) {
+    scale = Math.max(MIN_SLIDE_SCALE, (scale * slide.clientHeight) / slide.scrollHeight);
+    slide.style.zoom = String(scale);
+  }
+}
+
+let fitTimer;
+function refitCurrentSlide() {
+  window.clearTimeout(fitTimer);
+  fitTimer = window.setTimeout(() => fitSlide(slides[currentIndex]), 120);
+}
+
+window.addEventListener('resize', refitCurrentSlide);
+window.addEventListener('orientationchange', refitCurrentSlide);
+if (document.fonts && document.fonts.ready) {
+  document.fonts.ready.then(() => fitSlide(slides[currentIndex]));
+}
+window.addEventListener('beforeprint', () => slides.forEach((slide) => { slide.style.zoom = ''; }));
+window.addEventListener('afterprint', () => fitSlide(slides[currentIndex]));
+
 function updateSlide(index, shouldUpdateHash = true) {
   currentIndex = Math.max(0, Math.min(index, slides.length - 1));
 
@@ -52,6 +93,7 @@ function updateSlide(index, shouldUpdateHash = true) {
 
   // Hidden slides can retain a scroll position after the user swipes or uses the rail.
   activeSlide.scrollTop = 0;
+  fitSlide(activeSlide);
   railLinks[currentIndex].scrollIntoView({ block: 'nearest' });
 
   if (shouldUpdateHash) {
