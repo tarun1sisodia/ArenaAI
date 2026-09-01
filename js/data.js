@@ -1,6 +1,9 @@
 /* Mock catalogue for the SK Baghel frontend. Nothing here hits a server. */
 window.SKB = window.SKB || {};
 
+// Hosting subpath (set by the build for GitHub Pages project sites, e.g. /ArenaAI).
+const BASE = (document.body && document.body.dataset.base) || "";
+
 SKB.contact = {
   phone: "+919876543210",
   phoneDisplay: "+91 98765 43210",
@@ -282,3 +285,16 @@ SKB.faqs = [
   { q: "What about night driving?", a: "Outstation pickups between 10:00 PM and 5:00 AM may include a night allowance, shown in the fare breakdown before you pay." },
   { q: "How do I know the driver?", a: "After payment you receive a booking ID, driver name, vehicle number and a phone number. In this demo those details are mocked." },
 ];
+
+// Prefix root-relative asset/link paths with the hosting subpath when present.
+if (BASE) {
+  SKB.vehicles.forEach((v) => {
+    if (v.image.startsWith("/")) v.image = BASE + v.image;
+  });
+  SKB.packages.forEach((p) => {
+    if (p.image.startsWith("/")) p.image = BASE + p.image;
+  });
+  SKB.services.forEach((s) => {
+    if (s.href && s.href.startsWith("/")) s.href = BASE + s.href;
+  });
+}

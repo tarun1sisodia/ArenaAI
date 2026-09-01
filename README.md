@@ -12,6 +12,25 @@ python3 -m http.server 4173 --bind 0.0.0.0
 
 Open `http://localhost:4173`.
 
+## Hosting
+
+The site is pure static HTML/CSS/JS — ready for any static host. All internal
+URLs are root-relative, so when it is hosted under a subpath (e.g. GitHub
+Pages project site `https://<user>.github.io/ArenaAI/`) they must be prefixed
+with that subpath. The build script handles this automatically:
+
+```bash
+# GitHub Pages project site (default — uses /ArenaAI)
+python3 scripts/render_pages.py
+
+# Custom domain / repo root (e.g. skbagheltravels.in)
+SITE_BASE= python3 scripts/render_pages.py
+```
+
+The generated HTML gets the base prefix baked into every link, image and
+script tag, and `js/` reads the same prefix from `<body data-base="...">` for
+anything it builds at runtime.
+
 ## URLs
 
 | Path | What it is |

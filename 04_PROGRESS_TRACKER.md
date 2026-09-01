@@ -9,7 +9,7 @@ only check boxes, append log rows, and update the Current State block.
 ## Current State
 
 - **Current Phase:** 11 — Responsive QA & fixes
-- **Current Step:** done — responsive pass applied; user retest pending
+- **Current Step:** 4 — GitHub Pages subpath fix (CSS/images/links) applied; user retest pending
 - **Last updated:** 2026-09-01
 - **Open blockers:** none
 
@@ -54,6 +54,7 @@ can't be resolved without user input)_
 | 2026-09-01 | 10 / 3 | Pushed `arena/01a05b23-arenaai` to origin | git push |
 | 2026-09-01 | 10 / 4 | Opened PR into `main` | https://github.com/tarun1sisodia/ArenaAI/pull/8 |
 | 2026-09-01 | 11 / 1–3 | Responsive pass: grid 3→2→1, mobile header de-clutter, flex-wrap + overflow guards, scrollable mobile tables, 404 + redirect viewport, regenerated tree | `css/site.css`, `scripts/render_pages.py`, `404.html`, root redirect stubs, `03_PHASE_PLAN.md`, `04_PROGRESS_TRACKER.md` |
+| 2026-09-01 | 11 / 4 | GitHub Pages live but no CSS/images: root-relative URLs hit `github.io/` root instead of `/ArenaAI/`. Added `SITE_BASE` to the renderer, rebase of `href/src/srcset/action/data-href` + redirects + robots, `<body data-base>` + JS prefixing; regenerated tree and verified 0 broken refs | `scripts/render_pages.py`, `js/data.js`, `js/app.js`, `js/booking.js`, `README.md`, `04_PROGRESS_TRACKER.md`, generated pages |
 
 ---
 
@@ -117,6 +118,7 @@ can't be resolved without user input)_
 - [x] 1. Audit generated pages at mobile/laptop widths (EN + HI)
 - [x] 2. Grid breakpoints + header/chrome + overflow fixes
 - [x] 3. Mobile tables, touch targets, regenerate cleanly
+- [x] 4. Fix GitHub Pages subpath hosting: rebase root-relative URLs to `/ArenaAI` (CSS, images, JS, redirects, robots), regenerate tree
 
 ### Phase 12 — Out of scope until added
 - [ ] Admin / live Razorpay / WhatsApp API / CMS / Next.js / auth
