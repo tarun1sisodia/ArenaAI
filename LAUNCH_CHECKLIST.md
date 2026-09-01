@@ -18,10 +18,11 @@ items are search-visibility or revenue risks if shipped as-is.
       data exists; if kept at launch, add matching `aggregateRating` to
       `org_schema()` in `render_pages.py` (with honest values)
 
-## 2. Structured data gaps (audit #17)
-- [ ] `contactPoint` (customer care) in `org_schema()`
-- [ ] `offers.availability` + `priceValidUntil` on Service offers
-- [ ] `lastmod` in `sitemap.xml` (emit from git mtimes in `write_sitemap()`)
+## 2. Structured data gaps (audit #17) — ✅ done (Phase 15)
+- [x] `contactPoint` (customer care) in `org_schema()`
+- [x] `offers.availability` + `priceValidUntil` on Service offers (routes and
+      packages; date auto-rolls +365d at each build)
+- [x] `lastmod` in `sitemap.xml` (build date per deploy, in `write_sitemap()`)
 
 ## 3. Fonts (audit #4 — pending, sandbox-network blocked)
 - [ ] Self-host the 4–6 critical woff2 (Fraunces 500/600+italic, DM Sans
@@ -32,9 +33,14 @@ items are search-visibility or revenue risks if shipped as-is.
 - [ ] Preload the primary display woff2 when self-hosting
 
 ## 4. Assets
-- [ ] Re-shoot or license real vehicle/location photography; keep the same
-      filenames (build derivatives regenerate via the documented ImageMagick
-      command in `06_AUDIT_REPORT.md` #3)
+- [ ] Re-shoot or license real vehicle/location photography. **Drop-in flow:**
+      overwrite the file at the SAME path (e.g. `assets/fleet/sedan.webp`,
+      `assets/hero/hero-highway.webp`) — any dimensions are safe — then run
+      `python3 scripts/render_pages.py`. The build measures the new files and
+      injects truthful `width`/`height`, regenerates the `-480`/`-768`/`-sm`
+      derivatives itself when ImageMagick is installed
+      (or run `./scripts/make_image_derivatives.sh --force` beforehand).
+      Keep files as WebP, ideally ≤ 220KB for the hero.
 - [ ] Replace mock review quotes/names in `catalog.py` with verifiable reviews
 
 ## 5. QA gates (must be green on the launch commit)

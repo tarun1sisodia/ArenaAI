@@ -8,10 +8,10 @@ only check boxes, append log rows, and update the Current State block.
 
 ## Current State
 
-- **Current Phase:** 14 — Audit remediation quick-wins batch ✅ done
-- **Current Step:** 12 of 18 audit findings fixed; 100/100 link check at both bases
+- **Current Phase:** 15 — Frontend performance/SEO hardening + drop-in image pipeline ✅ done
+- **Current Step:** images now measure themselves (truthful dims always), derivatives auto-regenerate on asset change; structured-data gaps closed; 100/100 link check at both bases
 - **Last updated:** 2026-09-01
-- **Open items:** `visual_audit.mjs` still needs a networked machine; fonts self-hosting (sandbox blocked Google Fonts); launch gates live in `LAUNCH_CHECKLIST.md`
+- **Open items:** `visual_audit.mjs` still needs a networked machine; fonts self-hosting (sandbox blocks Google Fonts download); real photos + real NAP before launch (see `LAUNCH_CHECKLIST.md`)
 
 ---
 
@@ -141,6 +141,15 @@ can't be resolved without user input)_
 - [ ] 12. Fonts self-hosting (#4): needs networked machine (Google Fonts blocked in sandbox) — tracked in checklist
 - [ ] 13. Full catalogue single-sourcing (vehicles/routes/packages still duplicated catalog.py ↔ data.js) — recommend generating `js/catalog-data.js` next batch; systemic follow-up, not risk-free inline
 - [ ] 14. Inline-style → utility-class sweep (#15) and minor perf items (#18) — next batch
+
+### Phase 15 — Frontend performance/SEO hardening + drop-in image pipeline
+- [x] 1. `scripts/images.py`: pure-Python WebP dimension reader (`webp_size`) — every `<img>` and the hero now emit dims **measured from the actual file at build time**, with the old constants kept only as fallbacks; verified against ImageMagick on all assets
+- [x] 2. Auto-derivatives: `render_pages.py` rebuilds missing/stale `-480`/`-768`/hero `-sm` WebP renditions when a base asset changes (ImageMagick when present; graceful full-size fallback + warning when not). `scripts/make_image_derivatives.sh` is now a thin wrapper (`--force` redo)
+- [x] 3. Hero LCP: preload now carries `imagesrcset`/`imagesizes` so mobile fetches the 960w crop instead of the 1920w file; fixed a `rebase()` leak that left `imagesrcset` root-relative (would 404 under the `/ArenaAI` subpath)
+- [x] 4. Structured data #17 closed: `contactPoint` (customer care, en-IN/hi-IN) in `org_schema()`; `offers.availability` + build-rolled `priceValidUntil` (+365d) on route offers; package pages gain a `Service`+`Offer` block with live price
+- [x] 5. `sitemap.xml` gains `<lastmod>` (build date — honest freshness signal at every deploy)
+- [x] 6. First-paint latency: `content-visibility: auto` + `contain-intrinsic-size` on `.section` (browser skips layout/paint of off-screen sections; scrollbar-stable)
+- [x] 7. QA: 100/100 URLs at both `/` and `/ArenaAI` bases; all JSON-LD parses; sitemap XML valid; 0 root-relative URL leaks in generated HTML
 
 ### Phase 13 — Base-agnostic hosting + responsive/forms repair (user-reported)
 - [x] 1. Root cause found: `/ArenaAI` build 404'd every asset outside the Pages subpath (unstyled pages ⇒ "not responsive", missing hero, dead forms)

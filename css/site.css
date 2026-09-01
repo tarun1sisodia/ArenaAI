@@ -613,6 +613,11 @@ body[data-page="book"] .lead-bar {
 /* Sections */
 .section {
   padding: 96px 0 72px;
+  /* Render-skipping for below-the-fold sections: the browser skips layout and
+     paint until near the viewport. `auto` in contain-intrinsic-size keeps the
+     last rendered size as the placeholder, so no scrollbar jumps (CLS-safe). */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 640px;
 }
 
 .section--tight {
