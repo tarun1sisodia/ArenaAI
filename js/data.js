@@ -1,8 +1,8 @@
 /* Mock catalogue for the SK Baghel frontend. Nothing here hits a server. */
 window.SKB = window.SKB || {};
 
-// Hosting subpath (set by the build for GitHub Pages project sites, e.g. /ArenaAI).
-const BASE = (document.body && document.body.dataset.base) || "";
+// Relative base to site root, set by the build per page (".", "../..", …).
+const BASE = (document.body && document.body.dataset.base) || ".";
 
 SKB.contact = {
   phone: "+919876543210",
@@ -286,15 +286,17 @@ SKB.faqs = [
   { q: "How do I know the driver?", a: "After payment you receive a booking ID, driver name, vehicle number and a phone number. In this demo those details are mocked." },
 ];
 
-// Prefix root-relative asset/link paths with the hosting subpath when present.
-if (BASE) {
+// Rewrite root-relative asset/link paths to page-relative using data-base
+// (".", "../..", …) so one build works under any hosting base path.
+{
+  const joinBase = (p) => BASE.replace(/\/?$/, "/") + p.replace(/^\/+/, "");
   SKB.vehicles.forEach((v) => {
-    if (v.image.startsWith("/")) v.image = BASE + v.image;
+    if (v.image.startsWith("/")) v.image = joinBase(v.image);
   });
   SKB.packages.forEach((p) => {
-    if (p.image.startsWith("/")) p.image = BASE + p.image;
+    if (p.image.startsWith("/")) p.image = joinBase(p.image);
   });
   SKB.services.forEach((s) => {
-    if (s.href && s.href.startsWith("/")) s.href = BASE + s.href;
+    if (s.href && s.href.startsWith("/")) s.href = joinBase(s.href);
   });
 }

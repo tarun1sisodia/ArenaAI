@@ -1586,10 +1586,6 @@ table.data tbody tr.is-active {
   height: 0;
 }
 
-body[data-page="book"] .book-pill {
-  display: none !important;
-}
-
 .vehicle-pick img {
   width: 96px;
   height: 60px;
@@ -1751,15 +1747,6 @@ body[data-page="book"] .book-pill {
   transform: none;
 }
 
-.book-pill {
-  display: none;
-  position: fixed;
-  z-index: 35;
-  right: 16px;
-  left: 16px;
-  bottom: 16px;
-}
-
 .filter-row {
   display: flex;
   flex-wrap: wrap;
@@ -1892,6 +1879,19 @@ body[data-page="book"] .book-pill {
     grid-template-columns: repeat(2, 1fr);
   }
 
+  /* Keep brand + 5 links + actions on one row in the 700–1120px band. */
+  .header-inner {
+    gap: 12px;
+  }
+
+  .nav-desktop {
+    gap: 14px;
+  }
+
+  .nav-desktop a {
+    font-size: 13px;
+  }
+
   .hero-widget {
     grid-template-columns: 1fr 1fr;
   }
@@ -1973,8 +1973,14 @@ body[data-page="book"] .book-pill {
     padding: 48px 0 28px;
   }
 
+  /* Let the photo breathe on mobile — copy sits at the bottom where the
+     overlay is darkest, so text still passes contrast. */
+  .hero-media {
+    object-position: center center;
+  }
+
   .hero-overlay {
-    background: linear-gradient(180deg, rgba(11, 23, 30, 0.75) 0%, rgba(11, 23, 30, 0.93) 72%, rgba(11, 23, 30, 0.98) 100%);
+    background: linear-gradient(180deg, rgba(11, 23, 30, 0.42) 0%, rgba(11, 23, 30, 0.68) 55%, rgba(11, 23, 30, 0.92) 100%);
   }
 
   .hero-widget {
@@ -1982,8 +1988,9 @@ body[data-page="book"] .book-pill {
     margin-bottom: 24px;
   }
 
-  .book-pill {
-    display: none;
+  .lead-bar a {
+    font-size: 13px;
+    letter-spacing: -0.01em;
   }
 
   body:not([data-page="book"]) .lead-bar {
@@ -1996,6 +2003,12 @@ body[data-page="book"] .book-pill {
 
   .vehicle-pick label {
     grid-template-columns: 72px 1fr;
+  }
+
+  /* Base rule pins the thumb to 96px — it must shrink into the 72px track. */
+  .vehicle-pick img {
+    width: 100%;
+    height: 56px;
   }
 
   .vehicle-pick .fare {

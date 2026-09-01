@@ -3,8 +3,8 @@
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
-  // Hosting subpath (set by the build for GitHub Pages project sites, e.g. /ArenaAI).
-  const BASE = (document.body && document.body.dataset.base) || "";
+  // Relative base to site root, set by the build per page (".", "../..", …).
+  const BASE = (document.body && document.body.dataset.base) || ".";
 
   const KEY = "skb-booking";
   const params = new URLSearchParams(location.search);

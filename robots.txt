@@ -1,6 +1,6 @@
 User-agent: *
-Allow: /ArenaAI
-Disallow: /ArenaAI/book.html
-Disallow: /ArenaAI/proposal/
-Disallow: /ArenaAI/design-guide/
+Allow: /
+Disallow: /book.html
+Disallow: /proposal/
+Disallow: /design-guide/
 Sitemap: https://skbagheltravels.in/sitemap.xml

@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import os
 import re
 from pathlib import Path
 
@@ -31,19 +30,26 @@ ROOT = Path(__file__).resolve().parents[1]
 FONTS_EN = "https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&display=swap"
 FONTS_HI = FONTS_EN + "&family=Noto+Sans+Devanagari:wght@400;500;700&family=Noto+Serif+Devanagari:wght@500;600"
 
-# Hosting subpath. GitHub Pages project sites are served under /<repo>/ (e.g.
-# https://user.github.io/ArenaAI/), so root-relative URLs must be prefixed.
-# Build the production/custom-domain site with `SITE_BASE= python3 scripts/render_pages.py`.
-BASE_PATH = os.environ.get("SITE_BASE", "/ArenaAI").strip().rstrip("/")
+# Base-agnostic URLs. Templates emit root-relative URLs ("/css/…", "/book.html"),
+# which the build rewrites to *page-relative* ones ("css/…", "../../css/…") based
+# on each output file's depth. A single build then works at ANY base path: the
+# custom-domain root (skbagheltravels.in), the GitHub Pages project subpath
+# (/ArenaAI/), and every local preview server — no per-host rebuilds.
 
 # Matches root-relative URLs in HTML attributes.
 _ATTR_RE = re.compile(r'\b(href|src|srcset|action|data-href|data-src)="(/[^"]*)"')
 
 
-def rebase(markup: str) -> str:
-    """Prefix root-relative URLs with BASE_PATH so assets resolve under a subpath."""
-    if not BASE_PATH:
-        return markup
+def page_base(rel_path: str) -> str:
+    """Relative base (".", "../..", …) from a generated file back to the site root."""
+    depth = len(Path(rel_path).parent.parts)
+    return "." if depth == 0 else "/".join([".."] * depth)
+
+
+def rebase(markup: str, rel_path: str) -> str:
+    """Rewrite root-relative URLs to page-relative for the file at `rel_path`
+    (path relative to the repo root, e.g. "hi/packages/x/index.html")."""
+    prefix = page_base(rel_path) + "/"
 
     def repl(m: re.Match) -> str:
         attr, value = m.group(1), m.group(2)
@@ -54,16 +60,16 @@ def rebase(markup: str) -> str:
                 if not item:
                     continue
                 urlpart, _, descriptor = item.partition(" ")
-                parts.append(f"{BASE_PATH}{urlpart}" + (f" {descriptor}" if descriptor else ""))
+                parts.append(prefix + urlpart.lstrip("/") + (f" {descriptor}" if descriptor else ""))
             return f'{attr}="{", ".join(parts)}"'
-        return f'{attr}="{BASE_PATH}{value}"'
+        return f'{attr}="{prefix}{value.lstrip("/")}"'
 
     out = _ATTR_RE.sub(repl, markup)
     # meta refresh redirects and inline location.replace() redirects
-    out = out.replace("url=/", f"url={BASE_PATH}/")
+    out = out.replace("url=/", f"url={prefix}")
     out = re.sub(
         r"location\.replace\('(/[^']*)'\)",
-        lambda m: f"location.replace('{BASE_PATH}{m.group(1)}')",
+        lambda m: f"location.replace('{prefix}{m.group(1).lstrip('/')}')",
         out,
     )
     return out
@@ -275,6 +281,9 @@ def write_page(*, lang, path, alt_path, title, description, active, body, extra_
     ]
     if extra_js:
         scripts.append(extra_js)
+    rel = "index.html" if path == "/" else path.strip("/") + "/index.html"
+    if path.endswith(".html"):
+        rel = path.lstrip("/")
     html = f"""<!doctype html>
 <html lang="{t["html_lang"]}" dir="{t["dir"]}">
   <head>
@@ -289,7 +298,7 @@ def write_page(*, lang, path, alt_path, title, description, active, body, extra_
     <link rel="stylesheet" href="/css/site.css" />
     {head}
   </head>
-  <body data-page="{active}" data-lang="{lang}" data-base="{BASE_PATH}"{kind_attr}>
+  <body data-page="{active}" data-lang="{lang}" data-base="{page_base(rel)}"{kind_attr}>
     {header(lang, active, alt_path)}
     <main id="main">
       {body}
@@ -299,12 +308,9 @@ def write_page(*, lang, path, alt_path, title, description, active, body, extra_
   </body>
 </html>
 """
-    rel = "index.html" if path == "/" else path.strip("/") + "/index.html"
-    if path.endswith(".html"):
-        rel = path.lstrip("/")
     out = ROOT / rel
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(rebase(html), encoding="utf-8")
+    out.write_text(rebase(html, rel), encoding="utf-8")
     if not noindex:
         SITEMAP_URLS.append(path if path != "/" else "/")
     print("wrote", rel)
@@ -349,7 +355,7 @@ def home_body(lang):
     pack = PACKAGES[0]
     return f"""
 <section class="hero">
-  <img class="hero-media" src="/assets/hero/hero-highway.webp" srcset="/assets/hero/hero-highway-sm.webp 960w, /assets/hero/hero-highway.webp 1920w" sizes="100vw" width="1920" height="823" alt="Luxury sedan taxi on an open highway at dusk near Agra" fetchpriority="high" />
+  <img class="hero-media" src="/assets/hero/hero-highway.webp" srcset="/assets/hero/hero-highway-sm.webp 960w, /assets/hero/hero-highway.webp 1920w" sizes="100vw" width="1920" height="823" alt="Luxury sedan taxi on an open highway at dusk near Agra" fetchpriority="high" onerror="this.style.display='none'" />
   <div class="hero-overlay"></div>
   <div class="hero-grain"></div>
   <div class="container hero-copy">
@@ -384,7 +390,10 @@ def home_body(lang):
       </select>
     </label>
     <label class="field"><span>{t["date"]}</span>
-      <input type="date" name="date" required />
+      <!-- no `required`: with JS disabled the field stays empty but the GET
+           still submits and the booking app defaults to tomorrow. app.js
+           pre-fills + enforces when JS runs. -->
+      <input type="date" name="date" />
     </label>
     <button class="btn-primary" type="submit">{t["check_fare"]} <span>↗</span></button>
   </form>
@@ -727,9 +736,11 @@ def contact_body(lang):
       <a class="contact-action" href="mailto:{EMAIL}"><span class="ico">✉</span><span><small>Email</small><strong>{EMAIL}</strong></span><b>↗</b></a>
       <a class="contact-action" href="https://maps.google.com/?q=Taj+Ganj+Agra" target="_blank" rel="noreferrer"><span class="ico">⌖</span><span><small>Maps</small><strong>Taj Ganj, Agra</strong></span><b>↗</b></a>
     </div>
-    <form id="contact-form" class="calc-box" style="margin-top:28px;background:var(--paper-lt)">
-      <div class="field" style="margin:12px 0"><span>Name</span><input name="name" required /></div>
-      <div class="field" style="margin-bottom:12px"><span>Mobile</span><input name="phone" type="tel" required /></div>
+    <!-- action/method give a zero-JS fallback (opens the guest's mail client);
+         app.js intercepts and validates when JavaScript runs. -->
+    <form id="contact-form" class="calc-box" style="margin-top:28px;background:var(--paper-lt)" action="mailto:{EMAIL}" method="post" enctype="text/plain">
+      <div class="field" style="margin:12px 0"><span>Name</span><input name="name" autocomplete="name" required /></div>
+      <div class="field" style="margin-bottom:12px"><span>Mobile</span><input name="phone" type="tel" inputmode="tel" autocomplete="tel" required /></div>
       <div class="field" style="margin-bottom:16px"><span>Message</span><textarea name="message" required></textarea></div>
       <button class="btn-primary" type="submit">{t["enquire"]} <span>↗</span></button>
     </form>
@@ -872,7 +883,7 @@ def book_body():
     <div class="panel" data-step="3">
       <div class="grid-2">
         <label class="field"><span>Full name</span><input id="fullName" autocomplete="name" /></label>
-        <label class="field"><span>Mobile number</span><input id="phone" type="tel" autocomplete="tel" /></label>
+        <label class="field"><span>Mobile number</span><input id="phone" type="tel" inputmode="tel" autocomplete="tel" /></label>
         <label class="field" style="grid-column:1/-1"><span>Pickup point</span><input id="pickupPoint" /></label>
         <label class="field" style="grid-column:1/-1"><span>Note to driver</span><textarea id="note"></textarea></label>
       </div>
@@ -915,7 +926,7 @@ def redirect_html(target: str) -> str:
 
 def write_redirect(old_name: str, target: str):
     path = ROOT / old_name
-    path.write_text(rebase(redirect_html(target)), encoding="utf-8")
+    path.write_text(rebase(redirect_html(target), old_name), encoding="utf-8")
     print("redirect", old_name, "→", target)
 
 
@@ -932,13 +943,18 @@ def write_sitemap():
 
 
 def write_404():
+    # NOTE: relative URLs here assume the 404 is served from the site root.
+    # GitHub Pages can serve 404.html under deep missing paths, where its
+    # relative CSS/link refs won't resolve — cosmetic edge case, acceptable
+    # for the demo; the canonical domain serves 404s at the root.
     (ROOT / "404.html").write_text(
         rebase(
             f"""<!doctype html><html lang="en-IN"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Page not found | SK Baghel</title>
 <link rel="stylesheet" href="/css/tokens.css"/><link rel="stylesheet" href="/css/site.css"/></head>
 <body><main class="page-hero"><div class="container"><h1>This page<br /><i>isn’t on the map.</i></h1>
 <p class="lead">Try the home page, or call {PHONE_DISPLAY}.</p>
-<p><a class="btn-primary" href="/">Home</a></p></div></main></body></html>"""
+<p><a class="btn-primary" href="/">Home</a></p></div></main></body></html>""",
+            "404.html",
         ),
         encoding="utf-8",
     )
@@ -1089,7 +1105,7 @@ def main():
     write_sitemap()
     write_404()
     (ROOT / "robots.txt").write_text(
-        f"User-agent: *\nAllow: {BASE_PATH or '/'}\nDisallow: {BASE_PATH}/book.html\nDisallow: {BASE_PATH}/proposal/\nDisallow: {BASE_PATH}/design-guide/\nSitemap: {SITE}/sitemap.xml\n",
+        f"User-agent: *\nAllow: /\nDisallow: /book.html\nDisallow: /proposal/\nDisallow: /design-guide/\nSitemap: {SITE}/sitemap.xml\n",
         encoding="utf-8",
     )
 

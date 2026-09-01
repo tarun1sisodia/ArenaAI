@@ -8,10 +8,10 @@ only check boxes, append log rows, and update the Current State block.
 
 ## Current State
 
-- **Current Phase:** 11 — Responsive QA & fixes
-- **Current Step:** 4 — GitHub Pages subpath fix (CSS/images/links) applied; user retest pending
+- **Current Phase:** 13 — Base-agnostic hosting + responsive/forms repair ✅ done
+- **Current Step:** all 10 steps complete; `check_links.py` green at both bases (79/79)
 - **Last updated:** 2026-09-01
-- **Open blockers:** none
+- **Open items:** run `scripts/visual_audit.mjs` on a machine with network (chromium download blocked in sandbox); user visual spot-check via live preview
 
 ---
 
@@ -31,6 +31,7 @@ can't be resolved without user input)_
 | 2026-09-01 | Call + WhatsApp primary; `/book.html` noindex | Call/WhatsApp are primary conversions; payment is secondary |
 | 2026-09-01 | Fares identical in both languages | Translate copy only |
 | 2026-09-01 | Sticky lead-bar on route pages (all marketing on mobile) | Call/WhatsApp conversion is the main route to booking |
+| 2026-09-01 | Page-relative URLs from the build (no `SITE_BASE`, no `/ArenaAI` hardcode) | One build must serve the custom domain root AND the GitHub Pages subpath AND local previews; the `/ArenaAI` prefix had broken everything outside Pages (all assets 404) |
 | 2026-09-01 | `DESIGN.md` is Dark Navy + Golden | This project’s approved Option A |
 | 2026-09-01 | Add Phase 11 — Responsive QA & fixes to the build plan | User tested mobile + laptop and reported pages are not responsive |
 
@@ -122,3 +123,15 @@ can't be resolved without user input)_
 
 ### Phase 12 — Out of scope until added
 - [ ] Admin / live Razorpay / WhatsApp API / CMS / Next.js / auth
+
+### Phase 13 — Base-agnostic hosting + responsive/forms repair (user-reported)
+- [x] 1. Root cause found: `/ArenaAI` build 404'd every asset outside the Pages subpath (unstyled pages ⇒ "not responsive", missing hero, dead forms)
+- [x] 2. Build now emits **page-relative URLs** — one build works at custom-domain root, `/ArenaAI` Pages subpath, and any local preview (`rebase()` rewrite in `render_pages.py`; JS joins normalized in `data.js`/`app.js`/`booking.js`)
+- [x] 3. `scripts/serve.py` — preview server (root + `/ArenaAI` emulation, dev no-store, custom 404)
+- [x] 4. `scripts/check_links.py` — crawl gate: **79/79 URLs 200 at both bases**
+- [x] 5. Mobile hero: photo visible again (lighter overlay stops, `object-position: center` ≤700px) with copy-legible bottom gradient; `onerror` fallback on hero img
+- [x] 6. Booking vehicle-picker overflow fixed (96px img in 72px track → fluid thumb); dead `.book-pill` CSS removed
+- [x] 7. Header 700–1120px band tightened (nav gap/font); mobile lead-bar 13px
+- [x] 8. Forms: hero-widget `date` no longer `required` (zero-JS GET still lands in booking, which defaults to tomorrow); contact form gets `mailto:` action fallback + `autocomplete`/`inputmode`; booking phone gets `inputmode="tel"`
+- [x] 9. `scripts/visual_audit.mjs` — Playwright overflow/console/screenshot sweep at 360/390/768/1024/1440 (needs a networked machine; sandbox blocked the browser download, so visually spot-check via the live preview until run)
+- [x] 10. Docs updated: `02_PROJECT_CONTEXT.md` serve/URL/QA rows + conventions; Decision Log entry below
