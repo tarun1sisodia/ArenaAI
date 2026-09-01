@@ -54,6 +54,19 @@ python3 scripts/render_pages.py
 ## Speed notes
 
 - No framework. Booking JS loads only on `book.html`.
-- Hero WebP is ~50KB (budget ≤ 220KB), preloaded.
-- Below-fold images are lazy-loaded WebP.
+- Hero WebP is ~50KB (budget ≤ 220KB), preloaded with responsive
+  `imagesrcset` so phones fetch the 960px crop, not the 1920px file.
+- Below-fold images are lazy-loaded responsive WebP (`-480`/`-768`
+  derivatives + `srcset`/`sizes`, `decoding="async"`); every `<img>` emits
+  `width`/`height` **measured from the real file at build time** (CLS = 0).
+- Off-screen sections skip layout/paint (`content-visibility: auto`).
 - Fonts: one Google Fonts request, `display=swap`. Hindi pages add Noto Devanagari.
+
+## Replacing the photography
+
+Overwrite the file at the same path (e.g. `assets/fleet/sedan.webp`,
+`assets/hero/hero-highway.webp`) with your real WebP photo — any size is
+fine — then run `python3 scripts/render_pages.py`. The build measures the
+new image, fixes every `width`/`height`, and regenerates the responsive
+derivatives automatically (needs ImageMagick;
+`./scripts/make_image_derivatives.sh --force` forces a redo).

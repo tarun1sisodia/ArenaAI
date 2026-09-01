@@ -5,6 +5,10 @@ PHONE = "+919876543210"
 PHONE_DISPLAY = "+91 98765 43210"
 WHATSAPP = "919876543210"
 EMAIL = "bookings@skbagheltravels.in"
+ADDRESS = "Near Taj East Gate Road, Taj Ganj, Agra, Uttar Pradesh 282001"
+HOURS = "Bookings open 24×7"
+MAPS_URL = "https://maps.google.com/?q=Taj+Ganj+Agra"
+GST = "09ABCDE1234F1Z5"  # placeholder — replace before launch
 GEO = {"lat": 27.1632, "lng": 78.0322}
 
 CITIES = {

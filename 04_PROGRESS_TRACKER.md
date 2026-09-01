@@ -8,10 +8,10 @@ only check boxes, append log rows, and update the Current State block.
 
 ## Current State
 
-- **Current Phase:** 13 — Base-agnostic hosting + responsive/forms repair ✅ done
-- **Current Step:** all 10 steps complete; `check_links.py` green at both bases (79/79)
+- **Current Phase:** 15 — Frontend performance/SEO hardening + drop-in image pipeline ✅ done
+- **Current Step:** images now measure themselves (truthful dims always), derivatives auto-regenerate on asset change; structured-data gaps closed; 100/100 link check at both bases
 - **Last updated:** 2026-09-01
-- **Open items:** run `scripts/visual_audit.mjs` on a machine with network (chromium download blocked in sandbox); user visual spot-check via live preview
+- **Open items:** `visual_audit.mjs` still needs a networked machine; fonts self-hosting (sandbox blocks Google Fonts download); real photos + real NAP before launch (see `LAUNCH_CHECKLIST.md`)
 
 ---
 
@@ -32,6 +32,8 @@ can't be resolved without user input)_
 | 2026-09-01 | Fares identical in both languages | Translate copy only |
 | 2026-09-01 | Sticky lead-bar on route pages (all marketing on mobile) | Call/WhatsApp conversion is the main route to booking |
 | 2026-09-01 | Page-relative URLs from the build (no `SITE_BASE`, no `/ArenaAI` hardcode) | One build must serve the custom domain root AND the GitHub Pages subpath AND local previews; the `/ArenaAI` prefix had broken everything outside Pages (all assets 404) |
+| 2026-09-01 | NAP contact data single-sourced in `catalog.py`; `js/contact.js` is generated | Two hand-maintained copies (SSG + client) had a drift guarantee; launch data swap must be a one-line change |
+| 2026-09-01 | Night allowance implemented (₹400, outstation 22:00–05:00) instead of deleting the FAQ promise | FAQ advertised it as shown-before-pay; fare transparency is the site's differentiator, so the engine was fixed to match the copy |
 | 2026-09-01 | `DESIGN.md` is Dark Navy + Golden | This project’s approved Option A |
 | 2026-09-01 | Add Phase 11 — Responsive QA & fixes to the build plan | User tested mobile + laptop and reported pages are not responsive |
 
@@ -123,6 +125,31 @@ can't be resolved without user input)_
 
 ### Phase 12 — Out of scope until added
 - [ ] Admin / live Razorpay / WhatsApp API / CMS / Next.js / auth
+
+### Phase 14 — Audit remediation batch (from `06_AUDIT_REPORT.md`)
+- [x] 1. Timezone bug (#2): shared `SKB.localTomorrow()` in fares.js; UTC `toISOString` dupes deleted from app.js/booking.js
+- [x] 2. Desktop lead-bar (#6): constrained to a right-side corner pill ≥701px (was full-viewport bar); mobile rule unchanged
+- [x] 3. Touch targets (#11): filter pills, `.btn-sm`, lang-switch now 44px (DESIGN.md rule)
+- [x] 4. Image pipeline (#3, #13): 480w/768w WebP derivatives generated for fleet/packages/driver; `resp_img()` build helper emits truthful intrinsic dims + srcset/sizes + `decoding="async"`; detail pages lazy-load; hero dim typo fixed (823→815); booking thumbs now use 480w files
+- [x] 5. Nav sheet a11y (#5): `role="dialog"`/`aria-modal`, focus moves into sheet, Tab trapped, focus restored to toggle; no-JS `<noscript>` fallback nav
+- [x] 6. Mobile blur jank (#7): backdrop-filter replaced by solid translucent navy ≤700px (header + lead-bar)
+- [x] 7. Booking state (#8): 24h TTL on `skb-booking`; post-payment edits locked (toast on stepper); "New booking" reset on ticket
+- [x] 8. Night allowance (#9): implemented in fares.js (`SKB.NIGHT_ALLOWANCE` ₹400, outstation 22:00–05:00); shown in booking summary + ticket + calculator notice; packages/local exempt
+- [x] 9. Stepper semantics (#12): removed fake `role="tablist"`
+- [x] 10. NAP single-sourcing (#1/#16): `js/contact.js` now generated from catalog.py (imported by all pages); dead `SKB.faqs` copy deleted (Python FAQS is the single source)
+- [x] 11. `LAUNCH_CHECKLIST.md` — go-live gates (real NAP/GST/mailbox, schema gaps, fonts, QA)
+- [ ] 12. Fonts self-hosting (#4): needs networked machine (Google Fonts blocked in sandbox) — tracked in checklist
+- [ ] 13. Full catalogue single-sourcing (vehicles/routes/packages still duplicated catalog.py ↔ data.js) — recommend generating `js/catalog-data.js` next batch; systemic follow-up, not risk-free inline
+- [ ] 14. Inline-style → utility-class sweep (#15) and minor perf items (#18) — next batch
+
+### Phase 15 — Frontend performance/SEO hardening + drop-in image pipeline
+- [x] 1. `scripts/images.py`: pure-Python WebP dimension reader (`webp_size`) — every `<img>` and the hero now emit dims **measured from the actual file at build time**, with the old constants kept only as fallbacks; verified against ImageMagick on all assets
+- [x] 2. Auto-derivatives: `render_pages.py` rebuilds missing/stale `-480`/`-768`/hero `-sm` WebP renditions when a base asset changes (ImageMagick when present; graceful full-size fallback + warning when not). `scripts/make_image_derivatives.sh` is now a thin wrapper (`--force` redo)
+- [x] 3. Hero LCP: preload now carries `imagesrcset`/`imagesizes` so mobile fetches the 960w crop instead of the 1920w file; fixed a `rebase()` leak that left `imagesrcset` root-relative (would 404 under the `/ArenaAI` subpath)
+- [x] 4. Structured data #17 closed: `contactPoint` (customer care, en-IN/hi-IN) in `org_schema()`; `offers.availability` + build-rolled `priceValidUntil` (+365d) on route offers; package pages gain a `Service`+`Offer` block with live price
+- [x] 5. `sitemap.xml` gains `<lastmod>` (build date — honest freshness signal at every deploy)
+- [x] 6. First-paint latency: `content-visibility: auto` + `contain-intrinsic-size` on `.section` (browser skips layout/paint of off-screen sections; scrollbar-stable)
+- [x] 7. QA: 100/100 URLs at both `/` and `/ArenaAI` bases; all JSON-LD parses; sitemap XML valid; 0 root-relative URL leaks in generated HTML
 
 ### Phase 13 — Base-agnostic hosting + responsive/forms repair (user-reported)
 - [x] 1. Root cause found: `/ArenaAI` build 404'd every asset outside the Pages subpath (unstyled pages ⇒ "not responsive", missing hero, dead forms)

@@ -1,19 +1,10 @@
-/* Mock catalogue for the SK Baghel frontend. Nothing here hits a server. */
+/* Mock catalogue for the SK Baghel frontend. Nothing here hits a server.
+   NAP/contact data is single-sourced in scripts/catalog.py and delivered as
+   js/contact.js (generated) — do not re-add a SKB.contact block here. */
 window.SKB = window.SKB || {};
 
 // Relative base to site root, set by the build per page (".", "../..", …).
 const BASE = (document.body && document.body.dataset.base) || ".";
-
-SKB.contact = {
-  phone: "+919876543210",
-  phoneDisplay: "+91 98765 43210",
-  whatsapp: "919876543210",
-  email: "bookings@skbagheltravels.in",
-  address: "Near Taj East Gate Road, Taj Ganj, Agra, Uttar Pradesh 282001",
-  hours: "Bookings open 24×7",
-  mapsUrl: "https://maps.google.com/?q=Taj+Ganj+Agra",
-  gst: "09ABCDE1234F1Z5",
-};
 
 SKB.cities = [
   { id: "agra", name: "Agra", code: "AGR" },
@@ -35,7 +26,7 @@ SKB.vehicles = [
     tags: ["4+1 SEATS", "AC", "2 BAGS"],
     blurb: "Everyday comfort for city rides and one-way drops.",
     perKm: 12,
-    image: "/assets/fleet/sedan.webp",
+    image: "/assets/fleet/sedan-480.webp",
     suitable: "Couples, airport transfers, 1–4 passengers",
   },
   {
@@ -48,7 +39,7 @@ SKB.vehicles = [
     tags: ["6+1 SEATS", "AC", "3 BAGS"],
     blurb: "A little more room for families without stepping up to an SUV.",
     perKm: 14,
-    image: "/assets/fleet/ertiga.webp",
+    image: "/assets/fleet/ertiga-480.webp",
     suitable: "Families, 5–6 passengers",
   },
   {
@@ -61,7 +52,7 @@ SKB.vehicles = [
     tags: ["6+1 SEATS", "AC", "4 BAGS"],
     blurb: "The outstation favourite — pushback seats and a quiet cabin.",
     perKm: 18,
-    image: "/assets/fleet/innova.webp",
+    image: "/assets/fleet/innova-480.webp",
     suitable: "Longer routes, elders, 4–6 passengers",
   },
   {
@@ -74,7 +65,7 @@ SKB.vehicles = [
     tags: ["12+1 SEATS", "AC", "LUGGAGE BAY"],
     blurb: "Spacious pushback seats, luggage bay and ice-box for group travel.",
     perKm: 22,
-    image: "/assets/fleet/tempo.webp",
+    image: "/assets/fleet/tempo-480.webp",
     suitable: "Family tours, 7–12 passengers",
   },
   {
@@ -87,7 +78,7 @@ SKB.vehicles = [
     tags: ["16 SEATS", "PREMIUM", "AC"],
     blurb: "Chauffeur-grade group travel when the occasion asks for more.",
     perKm: 28,
-    image: "/assets/fleet/urbania.webp",
+    image: "/assets/fleet/urbania-480.webp",
     suitable: "Wedding parties, corporate, 13–16 passengers",
   },
 ];
@@ -277,14 +268,9 @@ SKB.trust = [
   "24×7 ON-ROUTE SUPPORT",
 ];
 
-SKB.faqs = [
-  { q: "How does the advance payment work?", a: "You pay a part of the fare now (shown before the payment step). The rest is paid to the driver at the start of the trip. In this demo the payment is simulated — nothing is charged." },
-  { q: "Can I cancel?", a: "Free cancellation up to 12 hours before pickup. Inside 12 hours the advance is retained. No-shows are non-refundable. Final rules will match the live policy." },
-  { q: "Is GST included?", a: "Sample fares are all-inclusive as currently quoted for Agra → Delhi. A GST invoice is issued on confirmed paid bookings." },
-  { q: "Do I need to show ID?", a: "Yes — a government photo ID for the lead passenger at pickup. For monument packages, keep the same ID handy at ticket counters." },
-  { q: "What about night driving?", a: "Outstation pickups between 10:00 PM and 5:00 AM may include a night allowance, shown in the fare breakdown before you pay." },
-  { q: "How do I know the driver?", a: "After payment you receive a booking ID, driver name, vehicle number and a phone number. In this demo those details are mocked." },
-];
+// FAQs are single-sourced in scripts/render_pages.py (FAQ page + JSON-LD).
+// The unused SKB.faqs copy was removed to stop the two lists drifting.
+
 
 // Rewrite root-relative asset/link paths to page-relative using data-base
 // (".", "../..", …) so one build works under any hosting base path.

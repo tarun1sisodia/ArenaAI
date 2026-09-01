@@ -43,6 +43,11 @@
     sheet.hidden = !open;
     toggle.setAttribute("aria-expanded", String(open));
     document.body.style.overflow = open ? "hidden" : "";
+    if (open) {
+      closeSheet?.focus();
+    } else if (document.activeElement && sheet.contains(document.activeElement)) {
+      toggle.focus(); // return focus where the user started
+    }
   };
   toggle?.addEventListener("click", () => setSheet(true));
   closeSheet?.addEventListener("click", () => setSheet(false));
@@ -50,7 +55,22 @@
     if (e.target.closest("a")) setSheet(false);
   });
   document.addEventListener("keydown", (e) => {
+    if (!sheet?.classList.contains("is-open")) return;
     if (e.key === "Escape") setSheet(false);
+    // Trap Tab inside the dialog: wrap first <-> last focusable element.
+    if (e.key === "Tab" && sheet) {
+      const focusables = $$("a[href], button", sheet).filter((el) => !el.hidden && !el.disabled);
+      if (!focusables.length) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
   });
 
   $$("[data-event]").forEach((el) => {
@@ -60,11 +80,7 @@
   const year = $("#year");
   if (year) year.textContent = String(new Date().getFullYear());
 
-  const isoTomorrow = () => {
-    const d = new Date();
-    d.setDate(d.getDate() + 1);
-    return d.toISOString().slice(0, 10);
-  };
+  const isoTomorrow = () => SKB.localTomorrow();
   $$('input[type="date"]').forEach((input) => {
     if (!input.min) input.min = isoTomorrow();
     if (!input.value) input.value = isoTomorrow();
@@ -124,6 +140,7 @@
         <p class="fare">${SKB.inr(fare.total)}</p>
         <p class="muted">${fare.label} · ${fare.vehicle.name} · ${fare.duration}${fare.km ? " · " + fare.km + " km" : ""}</p>
         <p class="muted">Advance ${SKB.inr(fare.advance)} now, ${SKB.inr(fare.remaining)} to the driver.</p>
+        ${fare.tripType !== "local" && fare.tripType !== "package" ? `<p class="muted">Outstation pickups 10:00 PM–5:00 AM add a ${SKB.inr(SKB.NIGHT_ALLOWANCE)} night allowance at booking.</p>` : ""}
         <a class="btn-primary" href="${BASE}/book.html?from=${from}&to=${to}&vehicle=${vehicleId}&trip=${tripType}" data-event="cta_click">Book this route <span>↗</span></a>
       `;
     };
