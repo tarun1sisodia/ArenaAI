@@ -11,7 +11,7 @@ build the site phase by phase, without losing context between sessions.
 | `02_PROJECT_CONTEXT.md` | Fixed architecture / stack / convention decisions. Prevents re-deciding mid-project. | Every session, first |
 | `03_PHASE_PLAN.md` | The full build plan with acceptance criteria per phase. | Every session, plus when starting a new phase |
 | `04_PROGRESS_TRACKER.md` | Checklist + running state. The AI **updates this file** as it completes steps. | Every session, first — and after every step |
-| `DESIGN.md` | Visual identity — colors, type, spacing, shape, components — Google Stitch `DESIGN.md` spec. Source of truth for anything visual. | Any step that touches UI |
+| `DESIGN.md` | Visual identity — colors, type, spacing, shape, components. Source of truth for anything visual. | Any step that touches UI |
 
 Also always-on: `AGENTS.md` (repo root) and `.agents/rules/AGENTS.md`.
 

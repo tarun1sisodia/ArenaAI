@@ -38,7 +38,7 @@ without them, context and correctness both degrade.
 - **Frontend only** unless the user later adds a backend phase. Mock data. No live
   Razorpay, no APIs, no CMS.
 - **Leave `design-guide/` and `proposal/` untouched.** They are source archives.
-- **This Arena session is fixed to branch `arena/01a05b23-arenaai`.** Do not switch
+- **This Arena session is fixed to branch `arena/01a05b8c-arenaai`.** Do not switch
   or push any other branch.
 
 ## 3. After every step
