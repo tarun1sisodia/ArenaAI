@@ -58,7 +58,12 @@
     </div>
   </div>
 </header>
-<div class="nav-sheet" id="nav-sheet" hidden>
+<noscript><nav class="noscript-nav" aria-label="Primary (no JavaScript)"><a href="../../../hi/services/" data-nav="services">सेवाएँ</a>
+          <a href="../../../hi/routes/" data-nav="routes">रूट</a>
+          <a href="../../../hi/packages/" data-nav="packages">पैकेज</a>
+          <a href="../../../hi/fleet/" data-nav="fleet">वाहन</a>
+          <a href="../../../hi/contact/" data-nav="contact">संपर्क</a></nav></noscript>
+<div class="nav-sheet" id="nav-sheet" role="dialog" aria-modal="true" aria-label="मेनू खोलें" hidden>
   <div class="sheet-head">
     <a class="brand" href="../../../hi/">
       <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
@@ -95,7 +100,7 @@
 </section>
 <section class="section section--paper">
   <div class="container split">
-    <img src="../../../assets/packages/golden-triangle.webp" alt="Golden Triangle tour from Agra" width="900" height="560" />
+    <img src="../../../assets/packages/golden-triangle.webp" srcset="../../../assets/packages/golden-triangle-480.webp 480w, ../../../assets/packages/golden-triangle-768.webp 768w, ../../../assets/packages/golden-triangle.webp 1312w" sizes="(max-width: 1120px) calc(100vw - 32px), 637px" alt="Golden Triangle tour from Agra" width="1312" height="816" loading="lazy" decoding="async" />
     <div>
       <p class="eyebrow">3 दिन · 3 दिन / 2 रात</p>
       <div class="place-row"><span>दिल्ली</span><i>→</i><span>आगरा</span><i>→</i><span>जयपुर</span></div>
@@ -152,6 +157,6 @@
   <a class="lead-book" href="../../../book.html">बुक</a>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-    <script src="../../../js/data.js" defer></script><script src="../../../js/fares.js" defer></script><script src="../../../js/app.js" defer></script>
+    <script src="../../../js/data.js" defer></script><script src="../../../js/contact.js" defer></script><script src="../../../js/fares.js" defer></script><script src="../../../js/app.js" defer></script>
   </body>
 </html>

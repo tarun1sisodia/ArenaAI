@@ -290,8 +290,9 @@ h3 i,
   gap: 20px;
 }
 
+/* Touch targets honor the design system's 44px rule (DESIGN.md). */
 .btn-sm {
-  min-height: 40px;
+  min-height: 44px;
   padding: 0 14px;
   font-size: 13px;
 }
@@ -503,7 +504,7 @@ h3 i,
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 40px;
+  min-height: 44px;
   padding: 0 12px;
   border: 1px solid var(--line-lt);
   border-radius: var(--radius);
@@ -590,9 +591,14 @@ h3 i,
   border: 1px solid var(--line-lt);
 }
 
-body[data-kind="route"] .lead-bar,
-body[data-page="routes"] .lead-bar {
-  display: grid;
+/* Desktop route pages: constrained corner pill, not a full-width bar. */
+@media (min-width: 701px) {
+  body[data-kind="route"] .lead-bar,
+  body[data-page="routes"] .lead-bar {
+    display: grid;
+    left: auto;
+    width: min(480px, calc(100vw - 32px));
+  }
 }
 
 body[data-kind="route"],
@@ -1755,7 +1761,7 @@ table.data tbody tr.is-active {
 }
 
 .filter-row button {
-  min-height: 40px;
+  min-height: 44px;
   padding: 0 14px;
   border: 1px solid var(--line);
   border-radius: var(--radius-pill);
@@ -2021,6 +2027,41 @@ table.data tbody tr.is-active {
     left: 16px;
     bottom: 84px;
     max-width: none;
+  }
+
+  /* Backdrop blur recomposites on every scroll frame — jank on low-end
+     devices. Solid translucent navy reads the same without the GPU cost. */
+  .site-header.is-scrolled {
+    background: rgba(11, 23, 30, 0.96);
+    backdrop-filter: none;
+  }
+
+  .lead-bar {
+    background: rgba(11, 23, 30, 0.97);
+    backdrop-filter: none;
+  }
+
+  /* No-JS mobile nav fallback: plain horizontal link row under the header.
+     Only ever rendered inside <noscript>, so no hiding rules are needed. */
+  .noscript-nav {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    padding: 8px 16px;
+    background: var(--navy-deep);
+    border-top: 1px solid var(--line-lt);
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .noscript-nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 12px;
+    color: var(--white);
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
   }
 
   h1 {

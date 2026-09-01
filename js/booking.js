@@ -9,15 +9,18 @@
   const KEY = "skb-booking";
   const params = new URLSearchParams(location.search);
 
-  const tomorrow = () => {
-    const d = new Date();
-    d.setDate(d.getDate() + 1);
-    return d.toISOString().slice(0, 10);
-  };
+  const tomorrow = () => SKB.localTomorrow();
+
+  const MAX_STATE_AGE_MS = 24 * 60 * 60 * 1000; // 24h — stale drafts die here.
 
   const load = () => {
     try {
-      return JSON.parse(sessionStorage.getItem(KEY) || "null") || {};
+      const state = JSON.parse(sessionStorage.getItem(KEY) || "null") || {};
+      if (state.createdAt && Date.now() - state.createdAt > MAX_STATE_AGE_MS) {
+        sessionStorage.removeItem(KEY);
+        return {};
+      }
+      return state;
     } catch {
       return {};
     }
@@ -52,7 +55,10 @@
     }
   }
 
-  const persist = () => sessionStorage.setItem(KEY, JSON.stringify(state));
+  const persist = () => {
+    state.createdAt = state.createdAt || Date.now();
+    sessionStorage.setItem(KEY, JSON.stringify(state));
+  };
 
   const fareNow = () =>
     SKB.calcFare({
@@ -61,6 +67,7 @@
       vehicleId: state.vehicleId,
       tripType: state.tripType,
       packageId: state.packageId || undefined,
+      time: state.time,
     });
 
   const fillSelect = (el, items, value, labelFn) => {
@@ -109,7 +116,8 @@
         <div><span>When</span><strong>${state.date || "—"} · ${state.time}</strong></div>
         <div><span>Vehicle</span><strong>${fare.vehicle.name}</strong></div>
         <div><span>Passengers</span><strong>${state.passengers}</strong></div>
-        <div><span>Trip</span><strong>${fare.tripType}</strong></div>
+        <div><span>Trip</span><strong>${fare.tripType}${fare.roundMultiplier ? " (×1.85)" : ""}</strong></div>
+        ${fare.nightFee ? `<div><span>Night allowance</span><strong>+ ${SKB.inr(fare.nightFee)}</strong></div>` : ""}
         <div><span>Advance now</span><strong>${SKB.inr(fare.advance)}</strong></div>
         <div><span>To driver</span><strong>${SKB.inr(fare.remaining)}</strong></div>
       </div>
@@ -128,6 +136,7 @@
           vehicleId: v.id,
           tripType: state.tripType,
           packageId: state.packageId || undefined,
+          time: state.time,
         });
         const ok = SKB.fitsPassengers(v, pax) && fare;
         const selected = v.id === state.vehicleId;
@@ -257,15 +266,21 @@
           <div><span>Route</span><strong>${fare.label}</strong></div>
           <div><span>Date / time</span><strong>${state.date} · ${state.time}</strong></div>
           <div><span>Vehicle</span><strong>${fare.vehicle.name}</strong></div>
+          ${fare.nightFee ? `<div><span>Night allowance</span><strong>incl. ${SKB.inr(fare.nightFee)}</strong></div>` : ""}
           <div><span>Driver</span><strong>Rakesh · 4.9/5 · arrives 15 min early</strong></div>
           <div><span>Remaining</span><strong>${SKB.inr(fare.remaining)} to driver</strong></div>
         </div>
         <p class="muted">This is a frontend preview. No payment was taken and no driver was assigned.</p>
         <div class="form-actions">
           <a class="btn-outline" href="${BASE}/">Back home</a>
+          <button class="btn-outline" type="button" id="new-booking">New booking</button>
           <a class="btn-primary" href="https://wa.me/${SKB.contact.whatsapp}?text=${encodeURIComponent("Booking " + state.bookingId + " — " + fare.label)}" target="_blank" rel="noreferrer">WhatsApp the team <span>↗</span></a>
         </div>
       </div>`;
+    $("#new-booking")?.addEventListener("click", () => {
+      sessionStorage.removeItem(KEY);
+      location.href = location.pathname; // fresh booking, no query params carried
+    });
   };
 
   $("#step-1")?.addEventListener("change", () => {
@@ -290,6 +305,12 @@
   $$(".stepper button").forEach((btn) => {
     btn.addEventListener("click", () => {
       const step = Number(btn.dataset.step);
+      // A confirmed booking is immutable: don't let the user jump back and
+      // edit route/vehicle/details under an issued bookingId.
+      if (state.bookingId && step < 5) {
+        SKB.toast("Booking confirmed — start a new booking to change details.");
+        return;
+      }
       if (step <= state.step || state.bookingId) go(step);
     });
   });

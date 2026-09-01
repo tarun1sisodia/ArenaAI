@@ -58,7 +58,12 @@
     </div>
   </div>
 </header>
-<div class="nav-sheet" id="nav-sheet" hidden>
+<noscript><nav class="noscript-nav" aria-label="Primary (no JavaScript)"><a href="../../en/services/" data-nav="services">Services</a>
+          <a href="../../en/routes/" data-nav="routes">Routes</a>
+          <a href="../../en/packages/" data-nav="packages">Packages</a>
+          <a href="../../en/fleet/" data-nav="fleet">Fleet</a>
+          <a href="../../en/contact/" data-nav="contact">Contact</a></nav></noscript>
+<div class="nav-sheet" id="nav-sheet" role="dialog" aria-modal="true" aria-label="Open menu" hidden>
   <div class="sheet-head">
     <a class="brand" href="../../">
       <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
@@ -95,7 +100,7 @@
   <div class="grid-3" id="fleet-grid">
       <article class="vehicle-card" data-seats="4">
         <a href="../../en/vehicles/sedan/">
-        <div class="vehicle-photo"><img src="../../assets/fleet/sedan.webp" alt="Sedan hire in Agra" width="700" height="438" loading="lazy" /><span>01 / 05 <b>SEDAN</b></span></div>
+        <div class="vehicle-photo"><img src="../../assets/fleet/sedan.webp" srcset="../../assets/fleet/sedan-480.webp 480w, ../../assets/fleet/sedan-768.webp 768w, ../../assets/fleet/sedan.webp 1312w" sizes="(max-width: 700px) calc(100vw - 32px), (max-width: 1120px) 50vw, 348px" alt="Sedan hire in Agra" width="1312" height="816" loading="lazy" decoding="async" /><span>01 / 05 <b>SEDAN</b></span></div>
         <div class="vehicle-body">
           <h3>Sedan</h3>
           <p>Everyday comfort for city rides and one-way drops.</p>
@@ -104,7 +109,7 @@
       </article>
       <article class="vehicle-card" data-seats="6">
         <a href="../../en/vehicles/ertiga/">
-        <div class="vehicle-photo"><img src="../../assets/fleet/ertiga.webp" alt="Ertiga hire in Agra" width="700" height="438" loading="lazy" /><span>02 / 05 <b>ERTIGA</b></span></div>
+        <div class="vehicle-photo"><img src="../../assets/fleet/ertiga.webp" srcset="../../assets/fleet/ertiga-480.webp 480w, ../../assets/fleet/ertiga-768.webp 768w, ../../assets/fleet/ertiga.webp 1312w" sizes="(max-width: 700px) calc(100vw - 32px), (max-width: 1120px) 50vw, 348px" alt="Ertiga hire in Agra" width="1312" height="816" loading="lazy" decoding="async" /><span>02 / 05 <b>ERTIGA</b></span></div>
         <div class="vehicle-body">
           <h3>Ertiga</h3>
           <p>A little more room for families without stepping up to an SUV.</p>
@@ -113,7 +118,7 @@
       </article>
       <article class="vehicle-card" data-seats="6">
         <a href="../../en/vehicles/innova-crysta/">
-        <div class="vehicle-photo"><img src="../../assets/fleet/innova.webp" alt="Innova Crysta hire in Agra" width="700" height="438" loading="lazy" /><span>03 / 05 <b>INNOVA CRYSTA</b></span></div>
+        <div class="vehicle-photo"><img src="../../assets/fleet/innova.webp" srcset="../../assets/fleet/innova-480.webp 480w, ../../assets/fleet/innova-768.webp 768w, ../../assets/fleet/innova.webp 1312w" sizes="(max-width: 700px) calc(100vw - 32px), (max-width: 1120px) 50vw, 348px" alt="Innova Crysta hire in Agra" width="1312" height="816" loading="lazy" decoding="async" /><span>03 / 05 <b>INNOVA CRYSTA</b></span></div>
         <div class="vehicle-body">
           <h3>Innova Crysta</h3>
           <p>The outstation favourite — pushback seats and a quiet cabin.</p>
@@ -122,7 +127,7 @@
       </article>
       <article class="vehicle-card" data-seats="12">
         <a href="../../en/vehicles/tempo-traveller/">
-        <div class="vehicle-photo"><img src="../../assets/fleet/tempo.webp" alt="Tempo Traveller hire in Agra" width="700" height="438" loading="lazy" /><span>04 / 05 <b>TEMPO TRAVELLER</b></span></div>
+        <div class="vehicle-photo"><img src="../../assets/fleet/tempo.webp" srcset="../../assets/fleet/tempo-480.webp 480w, ../../assets/fleet/tempo-768.webp 768w, ../../assets/fleet/tempo.webp 1312w" sizes="(max-width: 700px) calc(100vw - 32px), (max-width: 1120px) 50vw, 348px" alt="Tempo Traveller hire in Agra" width="1312" height="816" loading="lazy" decoding="async" /><span>04 / 05 <b>TEMPO TRAVELLER</b></span></div>
         <div class="vehicle-body">
           <h3>Tempo Traveller</h3>
           <p>Spacious pushback seats, luggage bay and ice-box for group travel.</p>
@@ -131,7 +136,7 @@
       </article>
       <article class="vehicle-card" data-seats="16">
         <a href="../../en/vehicles/urbania/">
-        <div class="vehicle-photo"><img src="../../assets/fleet/urbania.webp" alt="Urbania hire in Agra" width="700" height="438" loading="lazy" /><span>05 / 05 <b>URBANIA</b></span></div>
+        <div class="vehicle-photo"><img src="../../assets/fleet/urbania.webp" srcset="../../assets/fleet/urbania-480.webp 480w, ../../assets/fleet/urbania-768.webp 768w, ../../assets/fleet/urbania.webp 1312w" sizes="(max-width: 700px) calc(100vw - 32px), (max-width: 1120px) 50vw, 348px" alt="Urbania hire in Agra" width="1312" height="816" loading="lazy" decoding="async" /><span>05 / 05 <b>URBANIA</b></span></div>
         <div class="vehicle-body">
           <h3>Urbania</h3>
           <p>Chauffeur-grade group travel when the occasion asks for more.</p>
@@ -187,6 +192,6 @@
   <a class="lead-book" href="../../book.html">Book</a>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-    <script src="../../js/data.js" defer></script><script src="../../js/fares.js" defer></script><script src="../../js/app.js" defer></script>
+    <script src="../../js/data.js" defer></script><script src="../../js/contact.js" defer></script><script src="../../js/fares.js" defer></script><script src="../../js/app.js" defer></script>
   </body>
 </html>

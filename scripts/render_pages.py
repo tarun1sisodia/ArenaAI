@@ -7,9 +7,13 @@ import re
 from pathlib import Path
 
 from catalog import (
+    ADDRESS,
     CITIES,
     EMAIL,
     GEO,
+    GST,
+    HOURS,
+    MAPS_URL,
     PACKAGES,
     PHONE,
     PHONE_DISPLAY,
@@ -194,7 +198,8 @@ def header(lang: str, active: str, alt_path: str):
     </div>
   </div>
 </header>
-<div class="nav-sheet" id="nav-sheet" hidden>
+<noscript><nav class="noscript-nav" aria-label="Primary (no JavaScript)">{links}</nav></noscript>
+<div class="nav-sheet" id="nav-sheet" role="dialog" aria-modal="true" aria-label="{t["menu"]}" hidden>
   <div class="sheet-head">
     <a class="brand" href="{home}">
       <span class="brand-mark">{BRAND_SVG}</span>
@@ -276,6 +281,9 @@ def write_page(*, lang, path, alt_path, title, description, active, body, extra_
     )
     scripts = [
         '<script src="/js/data.js" defer></script>',
+        # contact.js is GENERATED from scripts/catalog.py (single source of
+        # truth for NAP) — do not hand-edit it.
+        '<script src="/js/contact.js" defer></script>',
         '<script src="/js/fares.js" defer></script>',
         '<script src="/js/app.js" defer></script>',
     ]
@@ -316,6 +324,26 @@ def write_page(*, lang, path, alt_path, title, description, active, body, extra_
     print("wrote", rel)
 
 
+# Intrinsic dimensions of the photography assets (measured from the files —
+# keep exact so the browser reserves the right space and CLS stays at 0).
+FLEET_DIMS = (1312, 816)
+PACK_DIMS = (1312, 816)
+DRIVER_DIMS = (928, 1152)
+
+
+def resp_img(path: str, alt: str, css_sizes: str, *, dims: tuple[int, int] = FLEET_DIMS, lazy: bool = True, cls: str = "") -> str:
+    """Responsive WebP <img> using the build-generated -480/-768 derivatives
+    (see assets/). Falls back to the full asset when no derivatives exist."""
+    w, h = dims
+    base = path.removesuffix(".webp")
+    has_d = (ROOT / (base.lstrip("/") + "-480.webp")).exists()
+    srcset = f'{base}-480.webp 480w, {base}-768.webp 768w, {path} {w}w' if has_d else None
+    loading = ' loading="lazy" decoding="async"' if lazy else ' fetchpriority="high"'
+    srcset_attr = f' srcset="{srcset}" sizes="{css_sizes}"' if srcset else ""
+    cls_attr = f' class="{cls}"' if cls else ""
+    return f'<img{cls_attr} src="{path}"{srcset_attr} alt="{alt}" width="{w}" height="{h}"{loading} />'
+
+
 def breadcrumb(lang, items):
     t = T[lang]
     inner = ' <span aria-hidden="true">/</span> '.join(
@@ -342,7 +370,7 @@ def home_body(lang):
         vcards.append(f"""
       <article class="vehicle-card">
         <div class="vehicle-photo">
-          <img src="{v["image"]}" alt="{v["name"]["en"]} taxi in Agra" width="700" height="438" loading="lazy" />
+          {resp_img(v["image"], v["name"]["en"] + " taxi in Agra", "(max-width: 700px) calc(100vw - 32px), (max-width: 1120px) 50vw, 348px")}
           <span>{idx} / 05 <b>{v["name"]["en"].upper()}</b></span>
         </div>
         <div class="vehicle-body">
@@ -355,7 +383,7 @@ def home_body(lang):
     pack = PACKAGES[0]
     return f"""
 <section class="hero">
-  <img class="hero-media" src="/assets/hero/hero-highway.webp" srcset="/assets/hero/hero-highway-sm.webp 960w, /assets/hero/hero-highway.webp 1920w" sizes="100vw" width="1920" height="823" alt="Luxury sedan taxi on an open highway at dusk near Agra" fetchpriority="high" onerror="this.style.display='none'" />
+  <img class="hero-media" src="/assets/hero/hero-highway.webp" srcset="/assets/hero/hero-highway-sm.webp 960w, /assets/hero/hero-highway.webp 1920w" sizes="100vw" width="1920" height="815" alt="Luxury sedan taxi on an open highway at dusk near Agra" fetchpriority="high" onerror="this.style.display='none'" />
   <div class="hero-overlay"></div>
   <div class="hero-grain"></div>
   <div class="container hero-copy">
@@ -443,7 +471,7 @@ def home_body(lang):
       </div>
     </div>
     <figure class="package-photo" style="min-height:340px">
-      <img src="{pack["image"]}" alt="Taj Mahal at dawn, Agra sightseeing taxi" width="900" height="560" loading="lazy" />
+      {resp_img(pack["image"], "Taj Mahal at dawn, Agra sightseeing taxi", "(max-width: 1120px) calc(100vw - 32px), 468px", dims=PACK_DIMS)}
     </figure>
   </div>
 </section>
@@ -552,7 +580,7 @@ def vehicle_body(lang, veh):
 </section>
 <section class="section section--paper">
   <div class="container split">
-    <img src="{veh["image"]}" alt="{veh["name"]["en"]} hire in Agra" width="900" height="560" />
+    {resp_img(veh["image"], veh["name"]["en"] + " hire in Agra", "(max-width: 1120px) calc(100vw - 32px), 637px")}
     <div>
       <p class="eyebrow">{veh["klass"][lang]}</p>
       <p class="spec-row">{veh["tags"]}</p>
@@ -592,7 +620,7 @@ def package_body(lang, pack):
 </section>
 <section class="section section--paper">
   <div class="container split">
-    <img src="{pack["image"]}" alt="{pack["name"]["en"]} tour from Agra" width="900" height="560" />
+    {resp_img(pack["image"], pack["name"]["en"] + " tour from Agra", "(max-width: 1120px) calc(100vw - 32px), 637px", dims=PACK_DIMS)}
     <div>
       <p class="eyebrow">{pack["kicker"][lang]} · {pack["duration"][lang]}</p>
       <div class="place-row">{places.removesuffix("<i>→</i>")}</div>
@@ -670,7 +698,7 @@ def fleet_hub_body(lang):
         cards.append(f"""
       <article class="vehicle-card" data-seats="{v["seats"]}">
         <a href="{vehicle_path(v, lang)}">
-        <div class="vehicle-photo"><img src="{v["image"]}" alt="{v["name"]["en"]} hire in Agra" width="700" height="438" loading="lazy" /><span>{i:02d} / 05 <b>{v["name"]["en"].upper()}</b></span></div>
+        <div class="vehicle-photo">{resp_img(v["image"], v["name"]["en"] + " hire in Agra", "(max-width: 700px) calc(100vw - 32px), (max-width: 1120px) 50vw, 348px")}<span>{i:02d} / 05 <b>{v["name"]["en"].upper()}</b></span></div>
         <div class="vehicle-body">
           <h3>{v["name"][lang]}</h3>
           <p>{v["blurb"][lang]}</p>
@@ -702,7 +730,7 @@ def packages_hub_body(lang):
         cards.append(f"""
     <article class="package-card">
       <a href="{package_path(p, lang)}">
-      <div class="package-photo"><img src="{p["image"]}" alt="{p["name"]["en"]}" width="900" height="560" loading="lazy" /><span class="kicker">{p["kicker"][lang]}</span></div>
+      <div class="package-photo">{resp_img(p["image"], p["name"]["en"], "(max-width: 700px) calc(100vw - 32px), (max-width: 1120px) 50vw, 545px", dims=PACK_DIMS)}<span class="kicker">{p["kicker"][lang]}</span></div>
       <div class="package-body">
         <h3>{p["name"][lang]}</h3>
         <p class="muted">{p["blurb"][lang]}</p>
@@ -761,7 +789,7 @@ def about_body(lang):
   <p class="lead">{t["desc_about"]}</p>
 </div></section>
 <section class="section section--paper"><div class="container split">
-  <img class="portrait" src="/assets/trust/driver.webp" alt="SK Baghel chauffeur in Agra" width="640" height="800" />
+  {resp_img("/assets/trust/driver.webp", "SK Baghel chauffeur in Agra", "(max-width: 1120px) calc(100vw - 32px), 637px", dims=DRIVER_DIMS, cls="portrait")}
   <div>
     <h2>{t["north_star"]}</h2>
     <p class="lead">{t["primary_lead"]}</p>
@@ -833,7 +861,7 @@ def book_body():
 <section class="container book-layout">
   <div>
     <noscript class="note">Booking needs JavaScript. Call {PHONE_DISPLAY}.</noscript>
-    <div class="stepper" role="tablist" aria-label="Booking steps">
+    <div class="stepper" aria-label="Booking progress">
       <button type="button" data-step="1" class="is-current"><i>1</i> Route</button>
       <button type="button" data-step="2"><i>2</i> Vehicle</button>
       <button type="button" data-step="3"><i>3</i> Details</button>
@@ -960,6 +988,30 @@ def write_404():
     )
 
 
+def write_client_contact():
+    """Emit js/contact.js from catalog.py so the client-side NAP can never
+    drift from the SSG copy. Replaces the hand-maintained SKB.contact block
+    that used to live in js/data.js."""
+    contact = {
+        "phone": PHONE,
+        "phoneDisplay": PHONE_DISPLAY,
+        "whatsapp": WHATSAPP,
+        "email": EMAIL,
+        "address": ADDRESS,
+        "hours": HOURS,
+        "mapsUrl": MAPS_URL,
+        "gst": GST,
+    }
+    payload = (
+        "/* GENERATED by scripts/render_pages.py from scripts/catalog.py — "
+        "do not hand-edit. */\n"
+        "window.SKB = window.SKB || {};\n"
+        f"SKB.contact = {json.dumps(contact, ensure_ascii=False, indent=2)};\n"
+    )
+    (ROOT / "js" / "contact.js").write_text(payload, encoding="utf-8")
+    print("wrote js/contact.js")
+
+
 def generate_lang(lang: str):
     t = T[lang]
     other = "hi" if lang == "en" else "en"
@@ -1071,6 +1123,7 @@ def generate_lang(lang: str):
 
 def main():
     SITEMAP_URLS.clear()
+    write_client_contact()
     generate_lang("en")
     generate_lang("hi")
 

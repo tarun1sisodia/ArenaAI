@@ -59,7 +59,12 @@
     </div>
   </div>
 </header>
-<div class="nav-sheet" id="nav-sheet" hidden>
+<noscript><nav class="noscript-nav" aria-label="Primary (no JavaScript)"><a href="../../../en/services/" data-nav="services">Services</a>
+          <a href="../../../en/routes/" data-nav="routes">Routes</a>
+          <a href="../../../en/packages/" data-nav="packages">Packages</a>
+          <a href="../../../en/fleet/" data-nav="fleet">Fleet</a>
+          <a href="../../../en/contact/" data-nav="contact">Contact</a></nav></noscript>
+<div class="nav-sheet" id="nav-sheet" role="dialog" aria-modal="true" aria-label="Open menu" hidden>
   <div class="sheet-head">
     <a class="brand" href="../../../">
       <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
@@ -96,7 +101,7 @@
 </section>
 <section class="section section--paper">
   <div class="container split">
-    <img src="../../../assets/fleet/urbania.webp" alt="Urbania hire in Agra" width="900" height="560" />
+    <img src="../../../assets/fleet/urbania.webp" srcset="../../../assets/fleet/urbania-480.webp 480w, ../../../assets/fleet/urbania-768.webp 768w, ../../../assets/fleet/urbania.webp 1312w" sizes="(max-width: 1120px) calc(100vw - 32px), 637px" alt="Urbania hire in Agra" width="1312" height="816" loading="lazy" decoding="async" />
     <div>
       <p class="eyebrow">Premium van</p>
       <p class="spec-row">16 SEATS · PREMIUM · AC</p>
@@ -162,6 +167,6 @@
   <a class="lead-book" href="../../../book.html">Book</a>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-    <script src="../../../js/data.js" defer></script><script src="../../../js/fares.js" defer></script><script src="../../../js/app.js" defer></script>
+    <script src="../../../js/data.js" defer></script><script src="../../../js/contact.js" defer></script><script src="../../../js/fares.js" defer></script><script src="../../../js/app.js" defer></script>
   </body>
 </html>

@@ -58,7 +58,12 @@
     </div>
   </div>
 </header>
-<div class="nav-sheet" id="nav-sheet" hidden>
+<noscript><nav class="noscript-nav" aria-label="Primary (no JavaScript)"><a href="../../hi/services/" data-nav="services">सेवाएँ</a>
+          <a href="../../hi/routes/" data-nav="routes">रूट</a>
+          <a href="../../hi/packages/" data-nav="packages">पैकेज</a>
+          <a href="../../hi/fleet/" data-nav="fleet">वाहन</a>
+          <a href="../../hi/contact/" data-nav="contact">संपर्क</a></nav></noscript>
+<div class="nav-sheet" id="nav-sheet" role="dialog" aria-modal="true" aria-label="मेनू खोलें" hidden>
   <div class="sheet-head">
     <a class="brand" href="../../hi/">
       <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
@@ -87,7 +92,7 @@
   <p class="lead">ताज के पास पारिवारिक यात्रा डेस्क। वेरिफाइड ड्राइवर, प्रकाशित किराया, जीएसटी इनवॉइस।</p>
 </div></section>
 <section class="section section--paper"><div class="container split">
-  <img class="portrait" src="../../assets/trust/driver.webp" alt="SK Baghel chauffeur in Agra" width="640" height="800" />
+  <img class="portrait" src="../../assets/trust/driver.webp" srcset="../../assets/trust/driver-480.webp 480w, ../../assets/trust/driver-768.webp 768w, ../../assets/trust/driver.webp 928w" sizes="(max-width: 1120px) calc(100vw - 32px), 637px" alt="SK Baghel chauffeur in Agra" width="928" height="1152" loading="lazy" decoding="async" />
   <div>
     <h2>यात्रा शुरू होने से पहले ही सफर आसान लगे।</h2>
     <p class="lead">अधिकतर मेहमान भुगतान से पहले कॉल या व्हाट्सऐप करते हैं। गाड़ी कन्फर्म होने के बाद भुगतान दूसरा कदम है।</p>
@@ -142,6 +147,6 @@
   <a class="lead-book" href="../../book.html">बुक</a>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-    <script src="../../js/data.js" defer></script><script src="../../js/fares.js" defer></script><script src="../../js/app.js" defer></script>
+    <script src="../../js/data.js" defer></script><script src="../../js/contact.js" defer></script><script src="../../js/fares.js" defer></script><script src="../../js/app.js" defer></script>
   </body>
 </html>

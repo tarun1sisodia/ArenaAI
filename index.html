@@ -61,7 +61,12 @@
     </div>
   </div>
 </header>
-<div class="nav-sheet" id="nav-sheet" hidden>
+<noscript><nav class="noscript-nav" aria-label="Primary (no JavaScript)"><a href="./en/services/" data-nav="services">Services</a>
+          <a href="./en/routes/" data-nav="routes">Routes</a>
+          <a href="./en/packages/" data-nav="packages">Packages</a>
+          <a href="./en/fleet/" data-nav="fleet">Fleet</a>
+          <a href="./en/contact/" data-nav="contact">Contact</a></nav></noscript>
+<div class="nav-sheet" id="nav-sheet" role="dialog" aria-modal="true" aria-label="Open menu" hidden>
   <div class="sheet-head">
     <a class="brand" href="./">
       <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
@@ -85,7 +90,7 @@
     <main id="main">
       
 <section class="hero">
-  <img class="hero-media" src="./assets/hero/hero-highway.webp" srcset="./assets/hero/hero-highway-sm.webp 960w, ./assets/hero/hero-highway.webp 1920w" sizes="100vw" width="1920" height="823" alt="Luxury sedan taxi on an open highway at dusk near Agra" fetchpriority="high" onerror="this.style.display='none'" />
+  <img class="hero-media" src="./assets/hero/hero-highway.webp" srcset="./assets/hero/hero-highway-sm.webp 960w, ./assets/hero/hero-highway.webp 1920w" sizes="100vw" width="1920" height="815" alt="Luxury sedan taxi on an open highway at dusk near Agra" fetchpriority="high" onerror="this.style.display='none'" />
   <div class="hero-overlay"></div>
   <div class="hero-grain"></div>
   <div class="container hero-copy">
@@ -175,7 +180,7 @@
     <div class="grid-3">
       <article class="vehicle-card">
         <div class="vehicle-photo">
-          <img src="./assets/fleet/sedan.webp" alt="Sedan taxi in Agra" width="700" height="438" loading="lazy" />
+          <img src="./assets/fleet/sedan.webp" srcset="./assets/fleet/sedan-480.webp 480w, ./assets/fleet/sedan-768.webp 768w, ./assets/fleet/sedan.webp 1312w" sizes="(max-width: 700px) calc(100vw - 32px), (max-width: 1120px) 50vw, 348px" alt="Sedan taxi in Agra" width="1312" height="816" loading="lazy" decoding="async" />
           <span>01 / 05 <b>SEDAN</b></span>
         </div>
         <div class="vehicle-body">
@@ -187,7 +192,7 @@
       </article>
       <article class="vehicle-card">
         <div class="vehicle-photo">
-          <img src="./assets/fleet/innova.webp" alt="Innova Crysta taxi in Agra" width="700" height="438" loading="lazy" />
+          <img src="./assets/fleet/innova.webp" srcset="./assets/fleet/innova-480.webp 480w, ./assets/fleet/innova-768.webp 768w, ./assets/fleet/innova.webp 1312w" sizes="(max-width: 700px) calc(100vw - 32px), (max-width: 1120px) 50vw, 348px" alt="Innova Crysta taxi in Agra" width="1312" height="816" loading="lazy" decoding="async" />
           <span>03 / 05 <b>INNOVA CRYSTA</b></span>
         </div>
         <div class="vehicle-body">
@@ -199,7 +204,7 @@
       </article>
       <article class="vehicle-card">
         <div class="vehicle-photo">
-          <img src="./assets/fleet/tempo.webp" alt="Tempo Traveller taxi in Agra" width="700" height="438" loading="lazy" />
+          <img src="./assets/fleet/tempo.webp" srcset="./assets/fleet/tempo-480.webp 480w, ./assets/fleet/tempo-768.webp 768w, ./assets/fleet/tempo.webp 1312w" sizes="(max-width: 700px) calc(100vw - 32px), (max-width: 1120px) 50vw, 348px" alt="Tempo Traveller taxi in Agra" width="1312" height="816" loading="lazy" decoding="async" />
           <span>04 / 05 <b>TEMPO TRAVELLER</b></span>
         </div>
         <div class="vehicle-body">
@@ -224,7 +229,7 @@
       </div>
     </div>
     <figure class="package-photo" style="min-height:340px">
-      <img src="./assets/packages/taj-dawn.webp" alt="Taj Mahal at dawn, Agra sightseeing taxi" width="900" height="560" loading="lazy" />
+      <img src="./assets/packages/taj-dawn.webp" srcset="./assets/packages/taj-dawn-480.webp 480w, ./assets/packages/taj-dawn-768.webp 768w, ./assets/packages/taj-dawn.webp 1312w" sizes="(max-width: 1120px) calc(100vw - 32px), 468px" alt="Taj Mahal at dawn, Agra sightseeing taxi" width="1312" height="816" loading="lazy" decoding="async" />
     </figure>
   </div>
 </section>
@@ -293,6 +298,6 @@
   <a class="lead-book" href="./book.html">Book</a>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-    <script src="./js/data.js" defer></script><script src="./js/fares.js" defer></script><script src="./js/app.js" defer></script>
+    <script src="./js/data.js" defer></script><script src="./js/contact.js" defer></script><script src="./js/fares.js" defer></script><script src="./js/app.js" defer></script>
   </body>
 </html>

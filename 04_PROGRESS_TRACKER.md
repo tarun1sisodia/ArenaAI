@@ -8,10 +8,10 @@ only check boxes, append log rows, and update the Current State block.
 
 ## Current State
 
-- **Current Phase:** 13 — Base-agnostic hosting + responsive/forms repair ✅ done
-- **Current Step:** all 10 steps complete; `check_links.py` green at both bases (79/79)
+- **Current Phase:** 14 — Audit remediation quick-wins batch ✅ done
+- **Current Step:** 12 of 18 audit findings fixed; 100/100 link check at both bases
 - **Last updated:** 2026-09-01
-- **Open items:** run `scripts/visual_audit.mjs` on a machine with network (chromium download blocked in sandbox); user visual spot-check via live preview
+- **Open items:** `visual_audit.mjs` still needs a networked machine; fonts self-hosting (sandbox blocked Google Fonts); launch gates live in `LAUNCH_CHECKLIST.md`
 
 ---
 
@@ -32,6 +32,8 @@ can't be resolved without user input)_
 | 2026-09-01 | Fares identical in both languages | Translate copy only |
 | 2026-09-01 | Sticky lead-bar on route pages (all marketing on mobile) | Call/WhatsApp conversion is the main route to booking |
 | 2026-09-01 | Page-relative URLs from the build (no `SITE_BASE`, no `/ArenaAI` hardcode) | One build must serve the custom domain root AND the GitHub Pages subpath AND local previews; the `/ArenaAI` prefix had broken everything outside Pages (all assets 404) |
+| 2026-09-01 | NAP contact data single-sourced in `catalog.py`; `js/contact.js` is generated | Two hand-maintained copies (SSG + client) had a drift guarantee; launch data swap must be a one-line change |
+| 2026-09-01 | Night allowance implemented (₹400, outstation 22:00–05:00) instead of deleting the FAQ promise | FAQ advertised it as shown-before-pay; fare transparency is the site's differentiator, so the engine was fixed to match the copy |
 | 2026-09-01 | `DESIGN.md` is Dark Navy + Golden | This project’s approved Option A |
 | 2026-09-01 | Add Phase 11 — Responsive QA & fixes to the build plan | User tested mobile + laptop and reported pages are not responsive |
 
@@ -123,6 +125,22 @@ can't be resolved without user input)_
 
 ### Phase 12 — Out of scope until added
 - [ ] Admin / live Razorpay / WhatsApp API / CMS / Next.js / auth
+
+### Phase 14 — Audit remediation batch (from `06_AUDIT_REPORT.md`)
+- [x] 1. Timezone bug (#2): shared `SKB.localTomorrow()` in fares.js; UTC `toISOString` dupes deleted from app.js/booking.js
+- [x] 2. Desktop lead-bar (#6): constrained to a right-side corner pill ≥701px (was full-viewport bar); mobile rule unchanged
+- [x] 3. Touch targets (#11): filter pills, `.btn-sm`, lang-switch now 44px (DESIGN.md rule)
+- [x] 4. Image pipeline (#3, #13): 480w/768w WebP derivatives generated for fleet/packages/driver; `resp_img()` build helper emits truthful intrinsic dims + srcset/sizes + `decoding="async"`; detail pages lazy-load; hero dim typo fixed (823→815); booking thumbs now use 480w files
+- [x] 5. Nav sheet a11y (#5): `role="dialog"`/`aria-modal`, focus moves into sheet, Tab trapped, focus restored to toggle; no-JS `<noscript>` fallback nav
+- [x] 6. Mobile blur jank (#7): backdrop-filter replaced by solid translucent navy ≤700px (header + lead-bar)
+- [x] 7. Booking state (#8): 24h TTL on `skb-booking`; post-payment edits locked (toast on stepper); "New booking" reset on ticket
+- [x] 8. Night allowance (#9): implemented in fares.js (`SKB.NIGHT_ALLOWANCE` ₹400, outstation 22:00–05:00); shown in booking summary + ticket + calculator notice; packages/local exempt
+- [x] 9. Stepper semantics (#12): removed fake `role="tablist"`
+- [x] 10. NAP single-sourcing (#1/#16): `js/contact.js` now generated from catalog.py (imported by all pages); dead `SKB.faqs` copy deleted (Python FAQS is the single source)
+- [x] 11. `LAUNCH_CHECKLIST.md` — go-live gates (real NAP/GST/mailbox, schema gaps, fonts, QA)
+- [ ] 12. Fonts self-hosting (#4): needs networked machine (Google Fonts blocked in sandbox) — tracked in checklist
+- [ ] 13. Full catalogue single-sourcing (vehicles/routes/packages still duplicated catalog.py ↔ data.js) — recommend generating `js/catalog-data.js` next batch; systemic follow-up, not risk-free inline
+- [ ] 14. Inline-style → utility-class sweep (#15) and minor perf items (#18) — next batch
 
 ### Phase 13 — Base-agnostic hosting + responsive/forms repair (user-reported)
 - [x] 1. Root cause found: `/ArenaAI` build 404'd every asset outside the Pages subpath (unstyled pages ⇒ "not responsive", missing hero, dead forms)

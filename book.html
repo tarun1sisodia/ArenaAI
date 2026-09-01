@@ -58,7 +58,12 @@
     </div>
   </div>
 </header>
-<div class="nav-sheet" id="nav-sheet" hidden>
+<noscript><nav class="noscript-nav" aria-label="Primary (no JavaScript)"><a href="./en/services/" data-nav="services">Services</a>
+          <a href="./en/routes/" data-nav="routes">Routes</a>
+          <a href="./en/packages/" data-nav="packages">Packages</a>
+          <a href="./en/fleet/" data-nav="fleet">Fleet</a>
+          <a href="./en/contact/" data-nav="contact">Contact</a></nav></noscript>
+<div class="nav-sheet" id="nav-sheet" role="dialog" aria-modal="true" aria-label="Open menu" hidden>
   <div class="sheet-head">
     <a class="brand" href="./">
       <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
@@ -93,7 +98,7 @@
 <section class="container book-layout">
   <div>
     <noscript class="note">Booking needs JavaScript. Call +91 98765 43210.</noscript>
-    <div class="stepper" role="tablist" aria-label="Booking steps">
+    <div class="stepper" aria-label="Booking progress">
       <button type="button" data-step="1" class="is-current"><i>1</i> Route</button>
       <button type="button" data-step="2"><i>2</i> Vehicle</button>
       <button type="button" data-step="3"><i>3</i> Details</button>
@@ -213,6 +218,6 @@
   <a class="lead-book" href="./book.html">Book</a>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-    <script src="./js/data.js" defer></script><script src="./js/fares.js" defer></script><script src="./js/app.js" defer></script><script src="./js/booking.js" defer></script>
+    <script src="./js/data.js" defer></script><script src="./js/contact.js" defer></script><script src="./js/fares.js" defer></script><script src="./js/app.js" defer></script><script src="./js/booking.js" defer></script>
   </body>
 </html>
