@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import json
+import os
+import re
 from pathlib import Path
 
 from catalog import (
@@ -28,6 +30,44 @@ from i18n import BRAND_SVG, T
 ROOT = Path(__file__).resolve().parents[1]
 FONTS_EN = "https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&display=swap"
 FONTS_HI = FONTS_EN + "&family=Noto+Sans+Devanagari:wght@400;500;700&family=Noto+Serif+Devanagari:wght@500;600"
+
+# Hosting subpath. GitHub Pages project sites are served under /<repo>/ (e.g.
+# https://user.github.io/ArenaAI/), so root-relative URLs must be prefixed.
+# Build the production/custom-domain site with `SITE_BASE= python3 scripts/render_pages.py`.
+BASE_PATH = os.environ.get("SITE_BASE", "/ArenaAI").strip().rstrip("/")
+
+# Matches root-relative URLs in HTML attributes.
+_ATTR_RE = re.compile(r'\b(href|src|srcset|action|data-href|data-src)="(/[^"]*)"')
+
+
+def rebase(markup: str) -> str:
+    """Prefix root-relative URLs with BASE_PATH so assets resolve under a subpath."""
+    if not BASE_PATH:
+        return markup
+
+    def repl(m: re.Match) -> str:
+        attr, value = m.group(1), m.group(2)
+        if attr == "srcset":
+            parts = []
+            for item in value.split(","):
+                item = item.strip()
+                if not item:
+                    continue
+                urlpart, _, descriptor = item.partition(" ")
+                parts.append(f"{BASE_PATH}{urlpart}" + (f" {descriptor}" if descriptor else ""))
+            return f'{attr}="{", ".join(parts)}"'
+        return f'{attr}="{BASE_PATH}{value}"'
+
+    out = _ATTR_RE.sub(repl, markup)
+    # meta refresh redirects and inline location.replace() redirects
+    out = out.replace("url=/", f"url={BASE_PATH}/")
+    out = re.sub(
+        r"location\.replace\('(/[^']*)'\)",
+        lambda m: f"location.replace('{BASE_PATH}{m.group(1)}')",
+        out,
+    )
+    return out
+
 
 SITEMAP_URLS: list[str] = []
 
@@ -249,7 +289,7 @@ def write_page(*, lang, path, alt_path, title, description, active, body, extra_
     <link rel="stylesheet" href="/css/site.css" />
     {head}
   </head>
-  <body data-page="{active}" data-lang="{lang}"{kind_attr}>
+  <body data-page="{active}" data-lang="{lang}" data-base="{BASE_PATH}"{kind_attr}>
     {header(lang, active, alt_path)}
     <main id="main">
       {body}
@@ -264,7 +304,7 @@ def write_page(*, lang, path, alt_path, title, description, active, body, extra_
         rel = path.lstrip("/")
     out = ROOT / rel
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(html, encoding="utf-8")
+    out.write_text(rebase(html), encoding="utf-8")
     if not noindex:
         SITEMAP_URLS.append(path if path != "/" else "/")
     print("wrote", rel)
@@ -875,7 +915,7 @@ def redirect_html(target: str) -> str:
 
 def write_redirect(old_name: str, target: str):
     path = ROOT / old_name
-    path.write_text(redirect_html(target), encoding="utf-8")
+    path.write_text(rebase(redirect_html(target)), encoding="utf-8")
     print("redirect", old_name, "→", target)
 
 
@@ -893,11 +933,13 @@ def write_sitemap():
 
 def write_404():
     (ROOT / "404.html").write_text(
-        f"""<!doctype html><html lang="en-IN"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Page not found | SK Baghel</title>
+        rebase(
+            f"""<!doctype html><html lang="en-IN"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Page not found | SK Baghel</title>
 <link rel="stylesheet" href="/css/tokens.css"/><link rel="stylesheet" href="/css/site.css"/></head>
 <body><main class="page-hero"><div class="container"><h1>This page<br /><i>isn’t on the map.</i></h1>
 <p class="lead">Try the home page, or call {PHONE_DISPLAY}.</p>
-<p><a class="btn-primary" href="/">Home</a></p></div></main></body></html>""",
+<p><a class="btn-primary" href="/">Home</a></p></div></main></body></html>"""
+        ),
         encoding="utf-8",
     )
 
@@ -1047,7 +1089,7 @@ def main():
     write_sitemap()
     write_404()
     (ROOT / "robots.txt").write_text(
-        f"User-agent: *\nAllow: /\nDisallow: /book.html\nDisallow: /proposal/\nDisallow: /design-guide/\nSitemap: {SITE}/sitemap.xml\n",
+        f"User-agent: *\nAllow: {BASE_PATH or '/'}\nDisallow: {BASE_PATH}/book.html\nDisallow: {BASE_PATH}/proposal/\nDisallow: {BASE_PATH}/design-guide/\nSitemap: {SITE}/sitemap.xml\n",
         encoding="utf-8",
     )
 

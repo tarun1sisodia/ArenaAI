@@ -3,6 +3,9 @@
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
+  // Hosting subpath (set by the build for GitHub Pages project sites, e.g. /ArenaAI).
+  const BASE = (document.body && document.body.dataset.base) || "";
+
   const toastEl = $("#toast");
   let toastTimer;
 
@@ -121,7 +124,7 @@
         <p class="fare">${SKB.inr(fare.total)}</p>
         <p class="muted">${fare.label} · ${fare.vehicle.name} · ${fare.duration}${fare.km ? " · " + fare.km + " km" : ""}</p>
         <p class="muted">Advance ${SKB.inr(fare.advance)} now, ${SKB.inr(fare.remaining)} to the driver.</p>
-        <a class="btn-primary" href="/book.html?from=${from}&to=${to}&vehicle=${vehicleId}&trip=${tripType}" data-event="cta_click">Book this route <span>↗</span></a>
+        <a class="btn-primary" href="${BASE}/book.html?from=${from}&to=${to}&vehicle=${vehicleId}&trip=${tripType}" data-event="cta_click">Book this route <span>↗</span></a>
       `;
     };
     calc.addEventListener("change", render);

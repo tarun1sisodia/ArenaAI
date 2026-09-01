@@ -3,6 +3,9 @@
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
+  // Hosting subpath (set by the build for GitHub Pages project sites, e.g. /ArenaAI).
+  const BASE = (document.body && document.body.dataset.base) || "";
+
   const KEY = "skb-booking";
   const params = new URLSearchParams(location.search);
 
@@ -259,7 +262,7 @@
         </div>
         <p class="muted">This is a frontend preview. No payment was taken and no driver was assigned.</p>
         <div class="form-actions">
-          <a class="btn-outline" href="/">Back home</a>
+          <a class="btn-outline" href="${BASE}/">Back home</a>
           <a class="btn-primary" href="https://wa.me/${SKB.contact.whatsapp}?text=${encodeURIComponent("Booking " + state.bookingId + " — " + fare.label)}" target="_blank" rel="noreferrer">WhatsApp the team <span>↗</span></a>
         </div>
       </div>`;
