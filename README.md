@@ -1,6 +1,8 @@
-# SK Baghel Town & Travels — Website Proposal
+# SK Baghel Town & Travels — Website
 
-A responsive, browser-based proposal deck for **Agra SK Baghel Town & Travels**. It turns the client brief into a polished 24-slide presentation with an agency-style visual system, booking-flow diagrams, pricing, scope, SEO boundaries and approval steps.
+Frontend for **Agra SK Baghel Town & Travels**, built from the approved **Dark Navy + Golden** design system (`design-guide/`). Static HTML/CSS/JS. Buttons, filters, fare calculator and the 5-step booking flow all run on **mock data** — nothing is sent to a server.
+
+Marketing pages are **bilingual SSG** (English + Hindi) with hreflang. Booking is a client-side app at `/book.html` (noindex). The original 24-slide proposal deck lives in `proposal/`.
 
 ## Run locally
 
@@ -8,13 +10,31 @@ A responsive, browser-based proposal deck for **Agra SK Baghel Town & Travels**.
 python3 -m http.server 4173 --bind 0.0.0.0
 ```
 
-Then open `http://localhost:4173`.
+Open `http://localhost:4173`.
 
-## Controls
+## URLs
 
-- Use the **Prev / Next** buttons, the slide rail, or the keyboard arrow keys.
-- Press `Home` / `End` to jump to the first / last slide.
-- Use **Print / save PDF** on the final slide to export the full deck.
-- The booking form and payment card are interactive previews; no data is sent anywhere.
+| Path | What it is |
+|------|------------|
+| `/` | English home |
+| `/hi/` | Hindi home |
+| `/en/agra-to-delhi-taxi/` ↔ `/hi/agra-se-delhi-taxi/` | Dedicated route pages |
+| `/en/vehicles/ertiga/` | Vehicle landing |
+| `/en/packages/agra-sightseeing/` | Package landing |
+| `/en/services/` `/en/routes/` `/en/fleet/` … | Hub pages |
+| `/book.html` | 5-step booking app (not indexed) |
 
-The presentation intentionally marks client-dependent information such as rates, contact details, policies, vehicle specs, images and the final design direction as proposed or to be confirmed.
+Call and WhatsApp are the primary CTAs. A sticky lead bar sits on route pages (and on every marketing page on mobile). Fares are identical in both languages.
+
+Rebuild after editing `scripts/catalog.py`, `scripts/i18n.py` or `scripts/render_pages.py`:
+
+```bash
+python3 scripts/render_pages.py
+```
+
+## Speed notes
+
+- No framework. Booking JS loads only on `book.html`.
+- Hero WebP is ~50KB (budget ≤ 220KB), preloaded.
+- Below-fold images are lazy-loaded WebP.
+- Fonts: one Google Fonts request, `display=swap`. Hindi pages add Noto Devanagari.

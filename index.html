@@ -1,340 +1,295 @@
 <!doctype html>
-<html lang="en">
+<html lang="en-IN" dir="ltr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0d1b24" />
-    <meta
-      name="description"
-      content="Website and online booking proposal for Agra SK Baghel Town & Travels."
-    />
-    <title>SK Baghel — Website & Booking Proposal</title>
+    <meta name="theme-color" content="#0B171E" />
+    <link rel="icon" href="/assets/brand/favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="styles.css" />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/tokens.css" />
+    <link rel="stylesheet" href="/css/site.css" />
+    <title>Agra Taxi & Cab Booking | SK Baghel Town & Travels</title>
+    <meta name="description" content="Book an Agra taxi, Tempo Traveller or Innova. Agra to Delhi from ₹3,500. Call or WhatsApp to confirm. Transparent fares, GST invoice." />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://skbagheltravels.in/" />
+    <link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/" />
+    <link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/" />
+    <link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_IN" />
+    <meta property="og:site_name" content="SK Baghel Town &amp; Travels" />
+    <meta property="og:title" content="Agra Taxi & Cab Booking | SK Baghel Town & Travels" />
+    <meta property="og:description" content="Book an Agra taxi, Tempo Traveller or Innova. Agra to Delhi from ₹3,500. Call or WhatsApp to confirm. Transparent fares, GST invoice." />
+    <meta property="og:url" content="https://skbagheltravels.in/" />
+    <meta property="og:image" content="https://skbagheltravels.in/assets/brand/og-banner.webp" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Agra Taxi & Cab Booking | SK Baghel Town & Travels" />
+    <meta name="twitter:description" content="Book an Agra taxi, Tempo Traveller or Innova. Agra to Delhi from ₹3,500. Call or WhatsApp to confirm. Transparent fares, GST invoice." />
+    <meta name="twitter:image" content="https://skbagheltravels.in/assets/brand/og-banner.webp" />
+    <link rel="preload" as="image" href="/assets/hero/hero-highway.webp" fetchpriority="high" />
+    
+    <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
+    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "inLanguage": "en-IN"}</script>
   </head>
-  <body>
-    <div class="app-shell">
-      <header class="topbar">
-        <a class="brand" href="#slide-01" aria-label="SK Baghel proposal home">
-          <span class="brand-mark" aria-hidden="true">
-            <svg viewBox="0 0 36 36" fill="none">
-              <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor" />
-              <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C" />
-            </svg>
-          </span>
-          <span class="brand-copy">
-            <strong>SK BAGHEL</strong>
-            <small>TOWN &amp; TRAVELS</small>
-          </span>
-        </a>
-
-        <div class="deck-context">
-          <span class="context-dot"></span>
-          <span>WEBSITE PROPOSAL</span>
-          <span class="context-divider"></span>
-          <span id="current-kicker">PROJECT OVERVIEW</span>
-        </div>
-
-        <div class="top-actions">
-          <span class="review-badge"><i></i> Discussion draft</span>
-          <button class="icon-button" id="theme-toggle" type="button" aria-label="Toggle contrast mode" title="Toggle contrast mode">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M20.7 15.1A8.5 8.5 0 0 1 8.9 3.3 8.5 8.5 0 1 0 20.7 15.1Z" />
-            </svg>
-          </button>
-          <button class="share-button" id="share-button" type="button">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 13v5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h5" /></svg>
-            Share brief
-          </button>
-        </div>
-      </header>
-
-      <div class="workbench">
-        <aside class="rail" aria-label="Presentation navigation">
-          <div class="rail-heading">
-            <span>THE STORY</span>
-            <strong>24 <em>slides</em></strong>
-          </div>
-          <nav class="slide-rail" id="slide-rail"></nav>
-          <div class="rail-note">
-            <span class="rail-note-icon">✦</span>
-            <p>Use this proposal to align on the experience before development begins.</p>
-          </div>
-        </aside>
-
-        <main class="stage" id="stage">
-          <!-- 01 -->
-          <section class="slide slide--cover active" id="slide-01" data-kicker="OPENING NOTE" data-title="The opportunity">
-            <div class="cover-image" aria-hidden="true"></div>
-            <div class="cover-grain" aria-hidden="true"></div>
-            <div class="cover-content">
-              <div class="eyebrow eyebrow--light"><span class="eyebrow-line"></span> Website &amp; online booking proposal <span>·</span> 2026</div>
-              <h1>A smoother way<br /><i>to move through India.</i></h1>
-              <p class="cover-lede">A modern digital home for <strong>Agra SK Baghel Town &amp; Travels</strong> — built to turn travel intent into confident bookings.</p>
-              <div class="cover-actions">
-                <button class="primary-button" data-goto="1">Explore the proposal <span>↗</span></button>
-                <span class="cover-caption">Prepared for client discussion<br /><b>Not a final specification</b></span>
-              </div>
-            </div>
-            <div class="cover-side-note">
-              <span>BASED IN</span>
-              <strong>Agra, India</strong>
-              <span class="side-note-rule"></span>
-              <span>THE EXPERIENCE</span>
-              <strong>Discover → Book → Go</strong>
-            </div>
-            <div class="cover-booking-card">
-              <div class="mini-card-top"><span class="live-dot"></span> Booking preview <span class="mini-card-dots">•••</span></div>
-              <div class="mini-route"><span>AGR</span><b>→</b><span>DEL</span></div>
-              <div class="mini-route-label">Agra <span>to</span> Delhi <small>One-way drop</small></div>
-              <div class="mini-card-bottom"><span>From <strong>₹3,500</strong></span><span class="mini-arrow">↗</span></div>
-            </div>
-            <div class="cover-foot"><span>AGRA SK BAGHEL TOWN &amp; TRAVELS</span><span>01 <b>/</b> 24</span></div>
-          </section>
-
-          <!-- 02 -->
-          <section class="slide slide--overview" id="slide-02" data-kicker="PROJECT OVERVIEW" data-title="The opportunity">
-            <div class="slide-header split-header">
-              <div>
-                <div class="eyebrow"><span class="eyebrow-line"></span> 01 / The opportunity</div>
-                <h2>A digital front door<br /><i>built for journeys.</i></h2>
-              </div>
-              <p class="header-note">The website should feel as dependable as the service behind it: clear at a glance, helpful at every step, and ready when a customer is ready to go.</p>
-            </div>
-            <div class="overview-grid">
-              <div class="overview-copy">
-                <p class="large-copy">Agra SK Baghel Town &amp; Travels needs one simple place to showcase its vehicles, routes and tours — then make the next action obvious.</p>
-                <div class="goal-callout"><span class="callout-mark">✦</span><div><small>THE NORTH STAR</small><strong>Make travel feel easy before the journey even begins.</strong></div></div>
-              </div>
-              <div class="goal-list">
-                <div class="goal-item"><span>01</span><div><strong>Show the breadth</strong><p>Services, destinations, packages and vehicles in one polished experience.</p></div></div>
-                <div class="goal-item"><span>02</span><div><strong>Build confidence</strong><p>Transparent details, direct contact and a clear payment trail.</p></div></div>
-                <div class="goal-item"><span>03</span><div><strong>Convert intent</strong><p>Guide a visitor from discovery to enquiry, booking and advance payment.</p></div></div>
-              </div>
-            </div>
-            <div class="slide-footer-note"><span class="proposed-pill">PROPOSED DIRECTION</span> Final features, design and business rules are confirmed with the client before development.</div>
-          </section>
-
-          <!-- 03 -->
-          <section class="slide slide--journey" id="slide-03" data-kicker="THE CUSTOMER JOURNEY" data-title="The experience">
-            <div class="eyebrow"><span class="eyebrow-line"></span> 02 / The experience</div>
-            <div class="journey-heading"><h2>One clear path from <i>“just looking”</i><br />to <i>“see you soon.”</i></h2><span class="side-index">02</span></div>
-            <div class="journey-track" aria-label="Customer journey">
-              <div class="journey-step"><span class="journey-number">01</span><div class="journey-icon">◌</div><strong>Discover</strong><small>Arrive through search, social or referral</small></div>
-              <div class="journey-connector"></div>
-              <div class="journey-step"><span class="journey-number">02</span><div class="journey-icon">⌕</div><strong>Select</strong><small>Choose a service, route or package</small></div>
-              <div class="journey-connector"></div>
-              <div class="journey-step"><span class="journey-number">03</span><div class="journey-icon">▤</div><strong>Check details</strong><small>See vehicle, fare and inclusions</small></div>
-              <div class="journey-connector"></div>
-              <div class="journey-step"><span class="journey-number">04</span><div class="journey-icon">↗</div><strong>Book</strong><small>Share trip and passenger details</small></div>
-              <div class="journey-connector"></div>
-              <div class="journey-step"><span class="journey-number">05</span><div class="journey-icon">₹</div><strong>Pay advance</strong><small>Secure payment online</small></div>
-              <div class="journey-connector"></div>
-              <div class="journey-step"><span class="journey-number">06</span><div class="journey-icon">✓</div><strong>Confirm</strong><small>Receive a booking reference</small></div>
-            </div>
-            <div class="experience-bottom">
-              <div><small>THE EXPERIENCE SHOULD BE</small><strong>Simple · Professional · Fast · Mobile-first</strong></div>
-              <p>No dead ends. Every page answers a question and offers a next action.</p>
-            </div>
-          </section>
-
-          <!-- 04 -->
-          <section class="slide slide--sitemap" id="slide-04" data-kicker="PROPOSED STRUCTURE" data-title="The site map">
-            <div class="slide-header split-header">
-              <div><div class="eyebrow"><span class="eyebrow-line"></span> 03 / Proposed structure</div><h2>Everything a traveller<br /><i>needs to find.</i></h2></div>
-              <div class="header-stamp"><span>STRUCTURE</span><strong>01</strong><small>clear entry point<br />for every intent</small></div>
-            </div>
-            <div class="sitemap-tree">
-              <div class="tree-root"><span class="home-glyph">⌂</span><strong>HOME</strong><small>the welcome mat</small></div>
-              <div class="tree-trunk"></div>
-              <div class="tree-branches">
-                <div class="tree-branch tree-branch--top"><span class="branch-line"></span><div class="tree-node"><b>ABOUT US</b><small>the people behind the ride</small></div><div class="tree-node"><b>SERVICES</b><small>ways we can move you</small></div><div class="tree-node"><b>TOURS / PACKAGES</b><small>ready-made journeys</small></div></div>
-                <div class="tree-branch"><span class="branch-line"></span><div class="tree-node tree-node--accent"><b>ADVANCE BOOKING</b><small>the conversion moment</small></div><div class="tree-node"><b>DESTINATIONS / ROUTES</b><small>where we take you</small></div><div class="tree-node"><b>VEHICLES</b><small>choose your comfort</small></div></div>
-                <div class="tree-branch tree-branch--bottom"><span class="branch-line"></span><div class="tree-node"><b>GALLERY</b><small>see the journey</small></div><div class="tree-node"><b>CONTACT US</b><small>talk to a real person</small></div><div class="tree-node tree-node--policy"><b>POLICIES</b><small>privacy · terms · cancellation</small></div></div>
-              </div>
-            </div>
-            <div class="slide-footer-note"><span class="proposed-pill">PROPOSED / TO CONFIRM</span> The exact page list can change after the client discussion.</div>
-          </section>
-
-          <!-- 05 -->
-          <section class="slide slide--homepage" id="slide-05" data-kicker="HOME PAGE CONCEPT" data-title="The home page">
-            <div class="eyebrow"><span class="eyebrow-line"></span> 04 / Home page concept</div>
-            <div class="homepage-layout">
-              <div class="homepage-copy"><h2>Say hello.<br /><i>Then make it easy.</i></h2><p>The homepage introduces the business, establishes trust and keeps the booking action within reach — from the first scroll to the last.</p><button class="text-button" data-goto="9">See the booking flow <span>↗</span></button></div>
-              <div class="browser-frame">
-                <div class="browser-chrome"><span class="browser-dots"><i></i><i></i><i></i></span><span class="browser-address">skbagheltravels.in</span><span class="browser-menu">•••</span></div>
-                <div class="mock-home-hero"><div class="mock-nav"><b>SK<span> BAGHEL</span></b><span>Services</span><span>Tours</span><span>Vehicles</span><span>Contact</span><button>Book now</button></div><div class="mock-hero-content"><small>YOUR NEXT JOURNEY STARTS HERE</small><strong>Go further.<br /><i>Feel looked after.</i></strong><div><button>Book a ride ↗</button><button class="ghost">Explore tours</button></div></div><div class="mock-route-badge">⌁ &nbsp; Agra · Delhi · Jaipur</div></div>
-                <div class="mock-section-label">Popular ways to travel</div><div class="mock-card-row"><span>Taxi / Cab <b>→</b></span><span>Tempo Traveller <b>→</b></span><span>Tour packages <b>→</b></span></div>
-              </div>
-            </div>
-            <div class="homepage-sections"><span><b>01</b> Hero + CTA</span><span><b>02</b> Services</span><span><b>03</b> Packages</span><span><b>04</b> Vehicles</span><span><b>05</b> Reviews</span><span><b>06</b> Location + CTA</span></div>
-          </section>
-
-          <!-- 06 -->
-          <section class="slide slide--services" id="slide-06" data-kicker="SERVICE CATALOGUE" data-title="What we offer">
-            <div class="slide-header split-header"><div><div class="eyebrow"><span class="eyebrow-line"></span> 05 / Service catalogue</div><h2>Every kind of trip.<br /><i>One trusted team.</i></h2></div><p class="header-note">Organised into useful, scannable choices — so a customer never has to wonder where their journey belongs.</p></div>
-            <div class="service-cards">
-              <article class="service-card service-card--dark"><span class="service-index">01</span><div class="service-symbol">⌁</div><h3>Taxi <i>/ Cab</i></h3><p>Sedan, Ertiga and Innova Crysta for city rides and intercity drops.</p><div class="service-tags"><span>Sedan</span><span>Ertiga</span><span>Innova</span></div><a href="#slide-11" data-goto="10">Choose a vehicle ↗</a></article>
-              <article class="service-card"><span class="service-index">02</span><div class="service-symbol">◫</div><h3>Tempo<br /><i>Traveller</i></h3><p>Comfortable group travel, from 9 seats to 26.</p><div class="service-tags"><span>9–12 seater</span><span>12–26 seater</span></div><a href="#slide-09" data-goto="8">View vehicles ↗</a></article>
-              <article class="service-card service-card--orange"><span class="service-index">03</span><div class="service-symbol">✦</div><h3>Tour<br /><i>services</i></h3><p>Local sightseeing, one-way drops and ready-made packages.</p><div class="service-tags"><span>Sightseeing</span><span>Packages</span></div><a href="#slide-08" data-goto="7">Explore tours ↗</a></article>
-            </div>
-            <div class="service-foot"><span class="proposed-pill">TO BE CONFIRMED</span> Force Urbania / Armania — exact model and naming to be finalised with the client.</div>
-          </section>
-
-          <!-- 07 -->
-          <section class="slide slide--routes" id="slide-07" data-kicker="ROUTES & DESTINATIONS" data-title="Where we go">
-            <div class="routes-top"><div><div class="eyebrow eyebrow--light"><span class="eyebrow-line"></span> 06 / Routes &amp; destinations</div><h2>From the Taj,<br /><i>to wherever next.</i></h2></div><p>Service-led route pages give every destination a place to be discovered — and a natural path back to booking.</p></div>
-            <div class="route-map">
-              <div class="map-grid"></div><span class="map-contour contour-a"></span><span class="map-contour contour-b"></span><span class="map-contour contour-c"></span>
-              <div class="route-line route-line-a"></div><div class="route-line route-line-b"></div><div class="route-line route-line-c"></div>
-              <div class="map-pin pin-agra"><i></i><b>AGRA</b><small>home base</small></div><div class="map-pin pin-delhi"><i></i><b>DELHI</b><small>3h 30m</small></div><div class="map-pin pin-jaipur"><i></i><b>JAIPUR</b><small>4h 30m</small></div><div class="map-pin pin-mathura"><i></i><b>MATHURA</b><small>1h 15m</small></div>
-              <div class="map-caption"><span>ROUTE PAGES</span><strong>Local knowledge,<br />made searchable.</strong></div>
-            </div>
-            <div class="route-list"><div><small>AGRA</small><span>Local sightseeing · Delhi · Jaipur · Mathura</span></div><div><small>DELHI</small><span>Agra · Mathura · Jaipur · sightseeing</span></div><div><small>BEYOND</small><span>Lucknow · Uttarakhand · Himachal</span></div><em>Final list &amp; spelling to confirm</em></div>
-          </section>
-
-          <!-- 08 -->
-          <section class="slide slide--package" id="slide-08" data-kicker="TOUR & PACKAGE PAGES" data-title="Ready-made journeys">
-            <div class="eyebrow"><span class="eyebrow-line"></span> 07 / Tour &amp; package pages</div>
-            <div class="package-layout">
-              <div class="package-photo"><div class="photo-label"><span>POPULAR</span><strong>01</strong></div><div class="photo-credit">AGRA · A DAY WELL SPENT</div></div>
-              <div class="package-copy"><span class="section-tag">EXAMPLE PACKAGE</span><h2>Agra<br /><i>sightseeing.</i></h2><p class="package-intro">One day. The icons of Agra. A comfortable way to take in the city with a local team.</p><div class="package-route"><span>TAJ MAHAL</span><i>→</i><span>AGRA FORT</span><i>→</i><span>MEHTAB BAGH</span></div><div class="package-details"><div><small>DURATION</small><strong>1 day</strong></div><div><small>STARTING FROM</small><strong>₹3,500</strong></div><div><small>VEHICLE</small><strong>Choose at booking</strong></div></div><div class="package-actions"><button class="primary-button" data-goto="10">Enquire now <span>↗</span></button><button class="outline-button">WhatsApp <span>↗</span></button></div></div>
-            </div>
-            <div class="package-footer"><span>Each package page can include</span><strong>description</strong><i>·</i><strong>places covered</strong><i>·</i><strong>vehicle options</strong><i>·</i><strong>inclusions / exclusions</strong><i>·</i><strong>photos</strong></div>
-          </section>
-
-          <!-- 09 -->
-          <section class="slide slide--vehicles" id="slide-09" data-kicker="VEHICLE LIBRARY" data-title="Choose your comfort">
-            <div class="slide-header split-header"><div><div class="eyebrow"><span class="eyebrow-line"></span> 08 / Vehicle library</div><h2>Choose your comfort.<br /><i>Bring your people.</i></h2></div><p class="header-note">Every vehicle gets a clear, useful profile — helping customers pick what feels right for their route and group.</p></div>
-            <div class="vehicle-grid">
-              <article class="vehicle-card vehicle-card--sedan"><div class="vehicle-image"></div><div class="vehicle-overlay"><span>01 / 06</span><b>SEDAN</b></div><div class="vehicle-info"><h3>Sedan</h3><p>Everyday comfort for city rides and one-way drops.</p><div class="vehicle-meta"><span>4+1 seats</span><span>AC</span><span>Book ↗</span></div></div></article>
-              <article class="vehicle-card vehicle-card--tempo"><div class="vehicle-image"></div><div class="vehicle-overlay"><span>02 / 06</span><b>GROUP TRAVEL</b></div><div class="vehicle-info"><h3>Tempo Traveller</h3><p>Room for the whole group, from 9 to 26 seats.</p><div class="vehicle-meta"><span>9–26 seats</span><span>AC / non-AC</span><span>Book ↗</span></div></div></article>
-              <article class="vehicle-card vehicle-card--urbania"><div class="vehicle-image"></div><div class="vehicle-overlay"><span>03 / 06</span><b>PREMIUM</b></div><div class="vehicle-info"><h3>Urbania / Armania</h3><p>A premium group option — model to be confirmed.</p><div class="vehicle-meta"><span>Capacity TBD</span><span>Specs TBD</span><span>Book ↗</span></div></div></article>
-            </div>
-            <div class="vehicle-foot"><span class="proposed-pill">CLIENT INPUT NEEDED</span> Seating · AC / non-AC · fuel type · rates · suitable-for copy · final vehicle images.</div>
-          </section>
-
-          <!-- 10 -->
-          <section class="slide slide--booking-flow" id="slide-10" data-kicker="ADVANCE BOOKING" data-title="The booking flow">
-            <div class="eyebrow"><span class="eyebrow-line"></span> 09 / Advance booking</div>
-            <div class="flow-heading"><h2>Short enough to finish.<br /><i>Clear enough to trust.</i></h2><div class="flow-callout"><span>THE PROMISE</span><strong>“I know what happens next.”</strong></div></div>
-            <div class="booking-flow-layout"><div class="flow-steps">
-              <div class="flow-step is-active"><span>01</span><div><strong>Select service</strong><small>Taxi · sightseeing · package</small></div><i>↗</i></div>
-              <div class="flow-step"><span>02</span><div><strong>Choose route</strong><small>From, to, date and time</small></div><i>↗</i></div>
-              <div class="flow-step"><span>03</span><div><strong>Pick your vehicle</strong><small>Capacity and comfort, side by side</small></div><i>↗</i></div>
-              <div class="flow-step"><span>04</span><div><strong>Share passenger details</strong><small>Only what the team needs</small></div><i>↗</i></div>
-              <div class="flow-step"><span>05</span><div><strong>Review &amp; pay advance</strong><small>Fare summary before gateway</small></div><i>₹</i></div>
-              <div class="flow-step"><span>06</span><div><strong>Get confirmation</strong><small>Booking ID and next steps</small></div><i>✓</i></div>
-            </div><div class="flow-preview"><div class="preview-top"><span>BOOKING SUMMARY</span><i>02 / 06</i></div><div class="preview-route"><span>AGR</span><b>→</b><span>DEL</span></div><div class="preview-details"><span>Agra → Delhi</span><span>28 Aug · 08:30 AM</span></div><div class="preview-vehicle"><span class="tiny-car">▰</span><div><strong>Sedan</strong><small>4+1 · AC</small></div><b>₹3,500</b></div><div class="preview-total"><span>Advance to confirm</span><strong>₹1,000</strong></div><button class="preview-button">Continue to payment <span>↗</span></button></div></div>
-          </section>
-
-          <!-- 11 -->
-          <section class="slide slide--form" id="slide-11" data-kicker="BOOKING FORM" data-title="The details we need">
-            <div class="slide-header split-header"><div><div class="eyebrow"><span class="eyebrow-line"></span> 10 / Booking form</div><h2>Just the details<br /><i>that move things forward.</i></h2></div><p class="header-note">A friendly, focused form captures the information the business needs to confirm a trip — without making the customer work for it.</p></div>
-            <div class="form-demo-layout"><form class="booking-form" id="booking-demo"><div class="form-row"><label>Full name<input type="text" placeholder="e.g. Rohan Sharma" required /></label><label>Mobile number<input type="tel" placeholder="+91 00000 00000" required /></label></div><div class="form-row"><label>Pickup location<input type="text" value="Agra" /></label><label>Drop location<input type="text" value="Delhi" /></label></div><div class="form-row"><label>Travel date<input type="date" value="2026-08-28" /></label><label>Travel time<input type="time" value="08:30" /></label></div><div class="form-row"><label>Passengers<select><option>1–4 passengers</option><option>5–6 passengers</option><option>7–12 passengers</option><option>13+ passengers</option></select></label><label>Vehicle<select id="vehicle-select"><option value="3500">Sedan · ₹3,500</option><option value="4500">Ertiga 6+1 · ₹4,500</option><option value="7000">Innova Crysta · ₹7,000</option></select></label></div><label>Special requirement / message<textarea placeholder="Anything the travel team should know?"></textarea></label><button class="primary-button form-submit" type="submit">Review booking <span>↗</span></button></form><aside class="form-side"><div class="form-note"><span class="note-icon">✦</span><div><small>THE FORM SHOULD FEEL</small><strong>Personal, not bureaucratic.</strong><p>Clear labels, helpful defaults and a visible summary keep the customer in control.</p></div></div><div class="field-list"><span><i>✓</i> Full name &amp; mobile</span><span><i>✓</i> Pickup &amp; drop</span><span><i>✓</i> Date &amp; time</span><span><i>✓</i> Vehicle &amp; service</span><span><i>✓</i> Special requirement</span></div><div class="form-confirm" id="form-confirm" hidden>Thanks — the demo booking is ready for review.</div></aside></div>
-            <div class="slide-footer-note"><span class="proposed-pill">PROPOSED / TO CONFIRM</span> Exact fields, validation and availability rules will be finalised with the client.</div>
-          </section>
-
-          <!-- 12 -->
-          <section class="slide slide--fare" id="slide-12" data-kicker="FARE CALCULATION" data-title="Pricing, made clear">
-            <div class="slide-header split-header"><div><div class="eyebrow"><span class="eyebrow-line"></span> 11 / Fare calculation</div><h2>Price clarity is<br /><i>part of the service.</i></h2></div><div class="fare-highlight"><small>EXAMPLE ROUTE</small><strong>Agra → Delhi</strong><span>One-way drop · all-inclusive as currently provided</span></div></div>
-            <div class="fare-layout"><div class="fare-table-wrap"><div class="table-caption"><span>VEHICLE OPTIONS</span><small>EXAMPLE PRICING</small></div><table class="fare-table"><thead><tr><th>Vehicle</th><th>Capacity</th><th>Example fare</th><th></th></tr></thead><tbody><tr><td><span class="table-vehicle-dot dot-sedan"></span>Sedan</td><td>4+1</td><td><strong>₹3,500</strong></td><td><span class="table-status">Available</span></td></tr><tr><td><span class="table-vehicle-dot dot-ertiga"></span>Ertiga 6+1</td><td>6+1</td><td><strong>₹4,500</strong></td><td><span class="table-status">Available</span></td></tr><tr><td><span class="table-vehicle-dot dot-innova"></span>Innova Crysta</td><td>6+1</td><td><strong>₹7,000</strong></td><td><span class="table-status">Available</span></td></tr></tbody></table><div class="fare-total"><span>Total fare <small>Agra → Delhi</small></span><strong>₹3,500 <em>from</em></strong></div></div><div class="fare-rules"><div class="rules-head"><span class="section-tag">BEFORE AUTOMATION</span><h3>Agree on the<br /><i>rules of the road.</i></h3></div><p>Other route and vehicle prices are not fully defined yet. These inputs need approval before a fare engine is built.</p><ul><li>Route &amp; vehicle</li><li>One-way or round trip</li><li>Per-km rate &amp; minimum km</li><li>Driver allowance · toll · parking</li><li>State tax · GST, if applicable</li><li>Advance payment amount</li></ul></div></div>
-            <div class="slide-footer-note"><span class="proposed-pill">EXAMPLE ONLY</span> Rates shown are based on the current Agra → Delhi information and should be confirmed before launch.</div>
-          </section>
-
-          <!-- 13 -->
-          <section class="slide slide--payment" id="slide-13" data-kicker="PAYMENT & CONFIRMATION" data-title="A confident finish">
-            <div class="eyebrow"><span class="eyebrow-line"></span> 12 / Payment &amp; confirmation</div>
-            <div class="payment-heading"><h2>A confident finish<br /><i>to every booking.</i></h2><p>Payment is not complete until the server verifies it. The customer should leave with a clear receipt and a human contact.</p></div>
-            <div class="payment-layout"><div class="payment-rail"><div class="payment-track"><span class="track-fill"></span></div><div class="payment-step is-done"><b>01</b><span>Booking summary</span><i>✓</i></div><div class="payment-step is-done"><b>02</b><span>Advance amount</span><i>✓</i></div><div class="payment-step is-current"><b>03</b><span>Razorpay / gateway</span><i>→</i></div><div class="payment-step"><b>04</b><span>Server verification</span><i>•</i></div><div class="payment-step"><b>05</b><span>Booking confirmed</span><i>•</i></div></div><div class="payment-checkout"><div class="checkout-label"><span>SECURE CHECKOUT</span><i>⌁ Razorpay / selected gateway</i></div><div class="checkout-route"><div><small>ROUTE</small><strong>Agra <i>→</i> Delhi</strong></div><div><small>VEHICLE</small><strong>Sedan · 4+1</strong></div></div><div class="checkout-lines"><span>Total fare <b>₹3,500</b></span><span>Advance today <b>₹1,000</b></span><span>Remaining on trip <b>₹2,500</b></span></div><button class="pay-demo">Pay ₹1,000 securely <span>↗</span></button><small class="checkout-disclaimer">Payment status changes to “Paid” only after server-side verification.</small></div><div class="confirmation-ticket"><div class="ticket-top"><span>BOOKING CONFIRMED</span><b>✓</b></div><h3>See you on the road,<br /><i>Rohan.</i></h3><div class="ticket-id">AGR-001 <span>•</span> PAID</div><div class="ticket-info"><span><small>ROUTE</small>Agra → Delhi</span><span><small>DATE / TIME</small>28 Aug · 08:30 AM</span><span><small>REMAINING</small>₹2,500</span></div><div class="ticket-bottom">Business contact number <strong>+91 · to confirm</strong></div></div></div>
-            <div class="slide-footer-note"><span class="proposed-pill">NOTIFICATIONS</span> WhatsApp and email notifications can be connected with n8n automation. SMS can also be added if required. Any actual WhatsApp/SMS provider charges will be paid by the business.</div>
-          </section>
-
-          <!-- 14 -->
-          <section class="slide slide--admin" id="slide-14" data-kicker="BUSINESS SIDE" data-title="The admin view">
-            <div class="eyebrow"><span class="eyebrow-line"></span> 13 / Admin &amp; operations</div>
-            <div class="admin-heading"><h2>The business gets<br /><i>the calm behind the scenes.</i></h2><p>A basic admin area turns enquiries into an organised, searchable day plan — with payment and status visible at a glance.</p></div>
-            <div class="admin-window"><div class="admin-sidebar"><div class="admin-logo"><span>SK</span><b>baghel<span>.</span></b></div><small>WORKSPACE</small><a class="active">▦ <span>Bookings</span><b>12</b></a><a>◫ <span>Vehicles</span></a><a>⌁ <span>Routes</span></a><a>◌ <span>Services</span></a><a>₹ <span>Pricing</span></a><div class="admin-side-bottom"><a>⚙ <span>Settings</span></a><a>↪ <span>Log out</span></a></div></div><div class="admin-main"><div class="admin-toolbar"><div><small>WEDNESDAY, 27 AUGUST 2026</small><h3>Good morning, SK team <span>✦</span></h3></div><button>+ New booking</button></div><div class="admin-stats"><div><small>UPCOMING</small><strong>12</strong><span>+3 this week</span></div><div><small>PAID</small><strong>₹42.5k</strong><span>advance collected</span></div><div><small>PENDING</small><strong>04</strong><span>need follow-up</span></div></div><div class="admin-table"><div class="admin-table-head"><span>BOOKING</span><span>ROUTE</span><span>VEHICLE</span><span>DATE</span><span>PAYMENT</span><span>STATUS</span></div><div class="admin-row"><b>AGR-001</b><span>Agra → Delhi</span><span>Sedan</span><span>28 Aug</span><em class="paid">Paid</em><em class="confirmed">Confirmed</em></div><div class="admin-row"><b>AGR-002</b><span>Agra → Jaipur</span><span>Ertiga</span><span>30 Aug</span><em class="pending">Pending</em><em class="pending-status">Pending</em></div><div class="admin-row"><b>AGR-003</b><span>Agra sightseeing</span><span>Innova</span><span>01 Sep</span><em class="paid">Paid</em><em class="confirmed">Confirmed</em></div></div></div></div>
-            <div class="admin-footer"><span>VIEW BOOKINGS</span><strong>customer · route · vehicle · date · payment · status</strong><span>MANAGE CONTENT</span><strong>services · vehicles · pricing</strong></div>
-          </section>
-
-          <!-- 15 -->
-          <section class="slide slide--contact" id="slide-15" data-kicker="CONTACT & LOCATION" data-title="Always within reach">
-            <div class="contact-layout"><div class="contact-copy"><div class="eyebrow"><span class="eyebrow-line"></span> 14 / Contact &amp; location</div><h2>Always within<br /><i>reach.</i></h2><p>Make the quickest path to a real person impossible to miss — on the site, on the road and on the map.</p><div class="contact-actions"><a href="tel:+910000000000" class="contact-action"><span>☎</span><div><small>CALL NOW</small><strong>+91 · number to confirm</strong></div><b>↗</b></a><a href="https://wa.me/910000000000" class="contact-action" target="_blank" rel="noreferrer"><span>◌</span><div><small>WHATSAPP</small><strong>Chat with the team</strong></div><b>↗</b></a><a href="#slide-15" class="contact-action"><span>⌖</span><div><small>GET DIRECTIONS</small><strong>Open in Google Maps</strong></div><b>↗</b></a></div></div><div class="contact-map"><div class="map-toolbar"><span><i></i> OFFICE LOCATION</span><span>Google Maps ↗</span></div><div class="city-label city-agra">AGRA</div><div class="map-road road-1"></div><div class="map-road road-2"></div><div class="map-road road-3"></div><div class="map-road road-4"></div><div class="map-river"></div><div class="map-location-pin"><span>SK</span><i></i></div><div class="map-address"><small>YOUR OFFICE</small><strong>Address to be confirmed</strong><span>Agra, Uttar Pradesh · India</span></div></div></div>
-            <div class="contact-footer"><div><small>THE CONTACT SECTION CAN INCLUDE</small><strong>Office address · opening hours · phone · WhatsApp · email</strong></div><span class="proposed-pill">CLIENT INPUT NEEDED</span></div>
-          </section>
-
-          <!-- 16 -->
-          <section class="slide slide--design" id="slide-16" data-kicker="DESIGN DIRECTION" data-title="Three possible moods">
-            <div class="slide-header split-header"><div><div class="eyebrow"><span class="eyebrow-line"></span> 15 / Design direction</div><h2>Three moods.<br /><i>One strong impression.</i></h2></div><p class="header-note">These are conversation starters — a visual direction is chosen together, then refined into the final design.</p></div>
-            <div class="design-options"><article class="design-option design-option--premium"><div class="option-art"><div class="art-sun"></div><div class="art-horizon"></div><div class="art-type">travel<br /><i>well.</i></div><span class="art-card">AGRA · INDIA</span></div><div class="option-meta"><span>OPTION A</span><h3>Premium travel</h3><p>Deep blue · gold · white · destination-led photography.</p><div class="swatch-row"><i></i><i></i><i></i></div></div></article><article class="design-option design-option--modern"><div class="option-art"><div class="art-sun"></div><div class="art-road"></div><div class="art-type">go<br /><i>together.</i></div><span class="art-card">BOOK NOW ↗</span></div><div class="option-meta"><span>OPTION B</span><h3>Modern travel</h3><p>Blue · orange · white · bold buttons and lively cards.</p><div class="swatch-row"><i></i><i></i><i></i></div></div></article><article class="design-option design-option--clean"><div class="option-art"><div class="art-sun"></div><div class="art-grid"></div><div class="art-type">your<br /><i>route.</i></div><span class="art-card">SK BAGHEL</span></div><div class="option-meta"><span>OPTION C</span><h3>Clean professional</h3><p>Dark blue · white · minimal accent · quiet confidence.</p><div class="swatch-row"><i></i><i></i><i></i></div></div></article></div>
-            <div class="design-choice"><span class="proposed-pill">DISCUSSION PROMPT</span> Which colour, visual, button and card style feels most like the business?</div>
-          </section>
-
-          <!-- 17 -->
-          <section class="slide slide--visual-system" id="slide-17" data-kicker="VISUAL ELEMENTS" data-title="A system that feels like travel">
-            <div class="eyebrow"><span class="eyebrow-line"></span> 16 / Visual elements to decide</div>
-            <div class="visual-heading"><h2>A system that feels<br /><i>like the journey.</i></h2><p>Trustworthy, professional, modern and travel-focused — with enough warmth to feel human.</p></div>
-            <div class="visual-system-grid"><div class="palette-panel"><div class="panel-label">COLOUR PALETTE <span>PROPOSED</span></div><div class="palette-swatches"><div class="palette-swatch swatch-ink"><span>#10212D</span><b>Deep blue</b></div><div class="palette-swatch swatch-saffron"><span>#E5A044</span><b>Saffron</b></div><div class="palette-swatch swatch-coral"><span>#E16F4B</span><b>Coral</b></div><div class="palette-swatch swatch-paper"><span>#F5F0E8</span><b>Warm white</b></div></div></div><div class="type-panel"><div class="panel-label">TYPE &amp; TONE <span>PROPOSED</span></div><div class="type-display"><span>Agra to Delhi</span><i>with ease.</i></div><div class="type-meta"><span>Fraunces <b>Display</b></span><span>DM Sans <b>Interface</b></span></div></div><div class="component-panel"><div class="panel-label">COMPONENTS <span>PROPOSED</span></div><div class="component-buttons"><button class="primary-button">Book now <span>↗</span></button><button class="outline-button">WhatsApp <span>↗</span></button></div><div class="component-card"><span>POPULAR ROUTE</span><strong>Agra <i>→</i> Delhi</strong><small>from <b>₹3,500</b></small></div></div></div>
-            <div class="decision-strip"><span>CLIENT TO DECIDE</span><b>Logo</b><i>·</i><b>Font style</b><i>·</i><b>Image style</b><i>·</i><b>Hero image</b><i>·</i><b>Icon style</b><i>·</i><b>Background feel</b></div>
-          </section>
-
-          <!-- 18 -->
-          <section class="slide slide--materials" id="slide-18" data-kicker="CLIENT MATERIALS" data-title="What we need from you">
-            <div class="slide-header split-header"><div><div class="eyebrow"><span class="eyebrow-line"></span> 17 / Client materials</div><h2>Bring the real story.<br /><i>We’ll shape the system.</i></h2></div><span class="material-stamp">BEFORE<br /><b>BUILD</b></span></div>
-            <div class="materials-grid"><div class="material-column"><div class="material-number">01</div><h3>Business information</h3><p>The facts customers need before they get in the car.</p><ul><li>Final company name</li><li>Logo</li><li>Phone, WhatsApp &amp; email</li><li>Address &amp; Google Maps location</li></ul></div><div class="material-column material-column--accent"><div class="material-number">02</div><h3>Content &amp; proof</h3><p>The detail that makes a choice feel easy.</p><ul><li>About-us information</li><li>Services &amp; packages</li><li>Destination list</li><li>Vehicle details &amp; prices</li><li>Photos and reviews</li></ul></div><div class="material-column"><div class="material-number">03</div><h3>Policies &amp; payment</h3><p>The guardrails that make online booking safe.</p><ul><li>Terms &amp; conditions</li><li>Privacy policy</li><li>Final booking, cancellation &amp; refund rules</li><li>Razorpay account &amp; KYC details</li><li>WhatsApp Business details, if automation is required</li><li>SMS provider / details, if SMS is required</li></ul></div></div>
-            <div class="materials-foot"><span class="proposed-pill">CHECKLIST</span> Content can be supplied in stages — the final requirements come first.</div>
-          </section>
-
-          <!-- 19 -->
-          <section class="slide slide--decisions" id="slide-19" data-kicker="CLIENT DECISIONS" data-title="Lock the brief">
-            <div class="decisions-layout"><div class="decisions-intro"><div class="eyebrow"><span class="eyebrow-line"></span> 18 / Decisions required</div><h2>Lock the brief.<br /><i>Open the road.</i></h2><p>These choices turn a good direction into a buildable, bookable website.</p><div class="decision-progress"><strong>12</strong><span>decisions to align on</span><div><i></i></div><small>before development begins</small></div></div><div class="decision-list"><div class="decision-item"><b>01</b><span>Colour theme</span><i>To choose</i></div><div class="decision-item"><b>02</b><span>Design style &amp; logo</span><i>To choose</i></div><div class="decision-item"><b>03</b><span>Images &amp; final services</span><i>To confirm</i></div><div class="decision-item"><b>04</b><span>Routes &amp; destinations</span><i>To confirm</i></div><div class="decision-item"><b>05</b><span>Vehicle list &amp; specifications</span><i>To confirm</i></div><div class="decision-item"><b>06</b><span>Final fare calculation rules</span><i>To confirm</i></div><div class="decision-item"><b>07</b><span>Advance payment amount</span><i>To decide</i></div><div class="decision-item"><b>08</b><span>Booking confirmation method</span><i>To decide</i></div><div class="decision-item"><b>09</b><span>Cancellation / refund rules</span><i>To decide</i></div><div class="decision-item"><b>10</b><span>WhatsApp automation — needed or not</span><i>To decide</i></div><div class="decision-item"><b>11</b><span>SMS — needed or not</span><i>To decide</i></div><div class="decision-item"><b>12</b><span>Contact details &amp; domain</span><i>To provide</i></div></div></div>
-          </section>
-
-          <!-- 20 -->
-          <section class="slide slide--seo" id="slide-20" data-kicker="SEO & VISIBILITY" data-title="A strong foundation">
-            <div class="seo-heading"><div><div class="eyebrow"><span class="eyebrow-line"></span> 19 / SEO &amp; Google visibility</div><h2>A strong foundation.<br /><i>No empty promises.</i></h2></div><div class="seo-badge"><span>RANKING</span><strong>earned,</strong><em>not guaranteed.</em></div></div>
-            <div class="seo-layout"><div class="seo-foundation"><div class="foundation-top"><span>WHAT’S INCLUDED</span><strong>Basic SEO + Local SEO — included for 1 year</strong></div><div class="seo-list seo-list--dense"><div><span>01</span><b>Technical SEO</b><i>✓</i></div><div><span>02</span><b>On-page SEO</b><i>✓</i></div><div><span>03</span><b>Meta titles &amp; descriptions</b><i>✓</i></div><div><span>04</span><b>Heading structure</b><i>✓</i></div><div><span>05</span><b>Clean URLs</b><i>✓</i></div><div><span>06</span><b>Sitemap &amp; robots.txt</b><i>✓</i></div><div><span>07</span><b>Image optimisation</b><i>✓</i></div><div><span>08</span><b>Internal linking</b><i>✓</i></div><div><span>09</span><b>Google Search Console setup</b><i>✓</i></div><div><span>10</span><b>Google Business Profile optimisation</b><i>✓</i></div><div><span>11</span><b>Basic keyword targeting &amp; monitoring</b><i>✓</i></div></div></div><div class="seo-explain"><div class="rank-orbit"><span>CONTENT</span><span>LOCAL SEO</span><span>AUTHORITY</span><div>GOOGLE<br /><b>VISIBILITY</b></div></div><p>Google Top 5 ranking cannot be guaranteed. Results depend on competition, keywords, content, local SEO, backlinks, authority and Google’s algorithms.</p><div class="seo-separate"><span>INCLUDED FOR 1 YEAR</span><strong>Basic SEO + Local SEO upkeep. A bigger SEO campaign or paid SEO tools would be a separate discussion.</strong></div></div></div>
-          </section>
-
-          <!-- 21 -->
-          <section class="slide slide--system" id="slide-21" data-kicker="WEBSITE SYSTEM" data-title="Simple on the surface">
-            <div class="slide-header split-header"><div><div class="eyebrow"><span class="eyebrow-line"></span> 20 / Website system</div><h2>Simple on the surface.<br /><i>Solid underneath.</i></h2></div><p class="header-note">The technical foundation stays out of the way — but keeps bookings, data and payments reliable.</p></div>
-            <div class="system-stack"><div class="system-layer system-layer--front"><div class="layer-icon">◒</div><div><small>FRONTEND</small><h3>Next.js / React</h3><p>Fast, mobile-friendly pages that make the next action obvious.</p><div class="layer-tags"><span>Responsive UI</span><span>Mobile-first design</span><span>SEO-friendly architecture</span></div></div><span>VISIBLE TO CUSTOMERS</span></div><div class="stack-connector"></div><div class="system-layer system-layer--back"><div class="layer-icon">⌁</div><div><small>BACKEND / API</small><h3>Node.js · REST API</h3><p>Business rules, customer data and verification in one place.</p><div class="layer-tags"><span>Booking management</span><span>Fare calculation</span><span>Authentication</span><span>Payment verification</span></div></div><span>RUNS THE EXPERIENCE</span></div><div class="stack-connector"></div><div class="system-layer system-layer--data"><div class="layer-icon">▦</div><div><small>DATABASE</small><h3>PostgreSQL</h3><p>A structured source of truth the business can manage.</p><div class="layer-tags"><span>Customers</span><span>Bookings</span><span>Vehicles</span><span>Routes</span><span>Services</span><span>Payments</span></div></div><span>KEEPS IT ORGANISED</span></div></div><div class="system-side"><div class="side-cap"><span>INTEGRATIONS</span><strong>Razorpay · Google Maps · WhatsApp Business</strong><i>Email notifications · n8n automation</i></div><div class="side-cap"><span>INFRASTRUCTURE</span><strong>Cloudflare · HTTPS / SSL · DNS &amp; CDN</strong><i>Backups · monitoring · production deployment</i></div></div>
-          </section>
-
-          <!-- 22 -->
-          <section class="slide slide--pricing" id="slide-22" data-kicker="PROJECT SCOPE" data-title="The investment">
-            <div class="pricing-heading"><div><div class="eyebrow"><span class="eyebrow-line"></span> 21 / Project scope &amp; charges</div><h2>Everything needed<br /><i>to get moving.</i></h2></div><div class="price-total"><small>TOTAL PROJECT</small><strong>₹11,000</strong><span>one-time build</span></div></div>
-            <div class="pricing-layout"><div class="price-breakdown"><div class="price-row"><span><b>01</b> Website development</span><strong>₹5,000</strong><small>Basic website structure &amp; pages</small></div><div class="price-row"><span><b>02</b> Advance booking system</span><strong>₹3,000</strong><small>Flow, details, vehicle/service selection</small></div><div class="price-row"><span><b>03</b> Online payment integration</span><strong>₹1,500</strong><small>Gateway integration &amp; verification</small></div><div class="price-row"><span><b>04</b> Basic booking management</span><strong>₹1,500</strong><small>Booking, payment &amp; status management</small></div><div class="included-note"><span>INCLUDED IN BUILD</span><div><b>Responsive website</b><i>·</i><b>Tour / service pages</b><i>·</i><b>Call / WhatsApp</b><i>·</i><b>Google Maps</b><i>·</i><b>Basic + local SEO (1 year)</b><i>·</i><b>1 year maintenance</b></div></div></div><div class="price-exclusions"><span class="section-tag">CLIENT / BUSINESS EXPENSES</span><h3>Paid directly<br /><i>by the business.</i></h3><ul><li>Domain renewal</li><li>Hosting renewal after the agreed initial period</li><li>Razorpay transaction charges</li><li>WhatsApp Business / API charges, if applicable</li><li>SMS charges, if enabled</li><li>Any paid third-party service or upgrade, if required</li></ul><p>Hosting is managed during the initial project period; renewals after that sit with the business. WhatsApp/SMS automation can be integrated using n8n where required — actual provider or messaging charges, if any, are paid by the business.</p><p>Basic SEO + Local SEO support is included for 1 year. Major new SEO campaigns or paid third-party tools are not included unless discussed separately.</p></div></div>
-          </section>
-
-          <!-- 23 -->
-          <section class="slide slide--process" id="slide-23" data-kicker="DEVELOPMENT PLAN" data-title="From brief to road">
-            <div class="slide-header split-header"><div><div class="eyebrow"><span class="eyebrow-line"></span> 22 / Development process</div><h2>From brief<br /><i>to road-ready.</i></h2></div><div class="terms-card"><span>PAYMENT TERMS</span><strong>50% <i>advance</i></strong><b>₹5,500</b><hr /><strong>50% <i>remaining</i></strong><b>₹5,500</b></div></div>
-            <div class="process-track"><div class="process-line"></div><div class="process-step"><span>01</span><b>Discuss</b><small>Requirements</small></div><div class="process-step"><span>02</span><b>Align</b><small>Design direction</small></div><div class="process-step"><span>03</span><b>Collect</b><small>Content &amp; data</small></div><div class="process-step"><span>04</span><b>Build</b><small>Website + booking</small></div><div class="process-step"><span>05</span><b>Verify</b><small>Payment + testing</small></div><div class="process-step"><span>06</span><b>Review</b><small>Client changes</small></div><div class="process-step"><span>07</span><b>Launch</b><small>Deployment</small></div></div>
-            <div class="process-bottom"><div class="launch-note"><span>THE PROJECT STARTS WHEN</span><strong>Requirements + design direction are finalised<br />and the 50% advance is received.</strong></div><div class="process-steps-copy"><span>01</span> Requirement discussion <span>02</span> Design finalisation <span>03</span> Development <span>04</span> Testing <span>05</span> Deployment</div></div>
-            <div class="support-included"><div class="support-head"><span>INCLUDED AFTER LAUNCH</span><strong>1 year website maintenance and support</strong></div><ul class="support-list"><li>Bug fixes</li><li>Minor content updates</li><li>Minor UI changes</li><li>Booking &amp; payment support</li><li>Basic SEO maintenance</li><li>Deployment / support</li><li>Up to 10 minor future changes</li></ul><p>Major new features, complete redesigns or changes outside the agreed scope will be discussed separately.</p></div>
-          </section>
-
-          <!-- 24 -->
-          <section class="slide slide--closing" id="slide-24" data-kicker="CLIENT APPROVAL" data-title="Your next journey">
-            <div class="closing-backdrop" aria-hidden="true"></div><div class="closing-content"><div class="eyebrow eyebrow--light"><span class="eyebrow-line"></span> 23 / Client approval</div><h2>Your next journey<br /><i>starts here.</i></h2><p>Review the structure, service story, booking flow and design direction. Tell us what you like, what to change and what to add.</p><div class="approval-quote"><span>“</span><strong>I have reviewed the proposed website structure, services, booking flow and design direction.</strong><span>”</span></div><div class="closing-scope"><p><b>₹11,000</b> includes the agreed website, booking system, payment integration, basic SEO and 1 year maintenance/support with up to 10 minor future changes.</p><p>Major new functionality or changes outside the agreed scope will be quoted separately.</p></div><div class="closing-next"><div><small>NEXT STEP</small><strong>Finalise the brief →</strong><span>Then development can begin.</span></div><button class="primary-button" id="print-button">Print / save PDF <span>↗</span></button></div></div><div class="closing-footer"><span>AGRA SK BAGHEL TOWN &amp; TRAVELS</span><span>WEBSITE &amp; ONLINE BOOKING PROPOSAL</span><span>24 <b>/</b> 24</span></div></section>
-        </main>
-      </div>
-
-      <footer class="controlbar">
-        <div class="progress-wrap"><span id="slide-counter">01 / 24</span><div class="progress-track"><i id="progress-bar"></i></div><span class="progress-label" id="progress-label">The opportunity</span></div>
-        <div class="slide-controls"><button id="prev-button" type="button" aria-label="Previous slide"><span>←</span> Prev</button><button id="next-button" type="button">Next <span>→</span></button></div>
-        <div class="keyboard-hint"><kbd>←</kbd><kbd>→</kbd><span>to navigate</span></div>
-      </footer>
-      <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <body data-page="home" data-lang="en">
+    <a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header" id="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/" aria-label="SK Baghel Town &amp; Travels">
+      <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
+  <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
+  <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
+</svg></span>
+      <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+    </a>
+    <nav class="nav-desktop" aria-label="Primary"><a href="/en/services/" data-nav="services">Services</a>
+          <a href="/en/routes/" data-nav="routes">Routes</a>
+          <a href="/en/packages/" data-nav="packages">Packages</a>
+          <a href="/en/fleet/" data-nav="fleet">Fleet</a>
+          <a href="/en/contact/" data-nav="contact">Contact</a></nav>
+    <div class="header-actions">
+      <span class="demo-chip"><i class="live-dot"></i> Demo · mock data</span>
+      <a class="lang-switch" href="/hi/" hreflang="hi-IN">हिन्दी</a>
+      <a class="btn-outline btn-sm btn-outline--light" href="tel:+919876543210" data-event="cta_click">Call</a>
+      <a class="btn-outline btn-sm btn-outline--light" href="https://wa.me/919876543210" target="_blank" rel="noreferrer" data-event="cta_click">WhatsApp</a>
+      <a class="btn-primary btn-sm" href="/book.html" data-event="cta_click">Book now <span>↗</span></a>
+      <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-sheet" aria-label="Open menu"><span></span></button>
     </div>
-    <script src="app.js"></script>
+  </div>
+</header>
+<div class="nav-sheet" id="nav-sheet" hidden>
+  <div class="sheet-head">
+    <a class="brand" href="/">
+      <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
+  <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
+  <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
+</svg></span>
+      <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+    </a>
+    <button type="button" id="nav-close" class="btn-outline btn-outline--light btn-sm">Close</button>
+  </div>
+  <a href="/" data-nav="home">Home</a>
+        <a href="/en/services/" data-nav="services">Services</a>
+        <a href="/en/routes/" data-nav="routes">Routes</a>
+        <a href="/en/packages/" data-nav="packages">Packages</a>
+        <a href="/en/fleet/" data-nav="fleet">Fleet</a>
+        <a href="/en/contact/" data-nav="contact">Contact</a>
+  <a href="/hi/">हिन्दी</a>
+  <a href="tel:+919876543210">Call +91 98765 43210</a>
+  <a class="btn-primary" href="/book.html">Book now <span>↗</span></a>
+</div>
+    <main id="main">
+      
+<section class="hero">
+  <img class="hero-media" src="/assets/hero/hero-highway.webp" srcset="/assets/hero/hero-highway-sm.webp 960w, /assets/hero/hero-highway.webp 1920w" sizes="100vw" width="1920" height="823" alt="Luxury sedan taxi on an open highway at dusk near Agra" fetchpriority="high" />
+  <div class="hero-overlay"></div>
+  <div class="hero-grain"></div>
+  <div class="container hero-copy">
+    <p class="eyebrow eyebrow--light">Home · Agra, India</p>
+    <h1>Agra to anywhere,<br /><i>in first-class comfort.</i></h1>
+    <p class="lead">Sedans, SUVs and Tempo Travellers with verified drivers. Transparent fares, UPI advance payment, and a confirmed booking in under two minutes.</p>
+    <div class="hero-actions">
+      <a class="btn-primary" href="tel:+919876543210" data-event="cta_click">Call +91 98765 43210</a>
+      <a class="btn-outline btn-outline--light" href="https://wa.me/919876543210" target="_blank" rel="noreferrer">WhatsApp</a>
+      <a class="btn-outline btn-outline--light" href="/en/packages/">Explore tours</a>
+    </div>
+  </div>
+  <div class="hero-side">
+    <span>Based in</span><strong>Agra, India</strong>
+    <span>The experience</span><strong>Discover → Book → Go</strong>
+  </div>
+  <form class="hero-widget" action="/book.html" method="get">
+    <label class="field"><span>Pickup city</span>
+      <select name="from">
+        <option value="agra" selected>Agra (AGR)</option>
+        <option value="delhi">Delhi (DEL)</option>
+        <option value="jaipur">Jaipur (JAI)</option>
+      </select>
+    </label>
+    <label class="field"><span>Drop city</span>
+      <select name="to">
+        <option value="delhi" selected>Delhi (DEL)</option>
+        <option value="jaipur">Jaipur (JAI)</option>
+        <option value="mathura">Mathura (MAT)</option>
+        <option value="gwalior">Gwalior (GWL)</option>
+        <option value="agra">Agra sightseeing</option>
+      </select>
+    </label>
+    <label class="field"><span>Travel date</span>
+      <input type="date" name="date" required />
+    </label>
+    <button class="btn-primary" type="submit">Check fare <span>↗</span></button>
+  </form>
+</section>
+<div class="section--paper-lt"><div class="container trust-bar">
+  <span class="chip">Govt-registered fleet</span>
+  <span class="chip">Verified drivers</span>
+  <span class="chip">GST invoice</span>
+  <span class="chip">4.9/5 · 380+ trips</span>
+  <span class="chip">24×7 on-route support</span>
+</div></div>
+<section class="section section--paper">
+  <div class="container">
+    <div class="section-head"><div><p class="eyebrow">Popular routes</p><h2>Know the fare<br /><i>before you pack.</i></h2></div>
+    <a class="btn-text" href="/en/routes/">All routes <span>↗</span></a></div>
+    <div class="grid-3">
+      <a class="route-card" href="/en/agra-to-delhi-taxi/">
+        <div class="route-codes"><span>AGR</span><b>→</b><span>DEL</span></div>
+        <div class="route-meta"><span>Agra → Delhi</span><span>3h 30m · 230 km</span></div>
+        <p class="fare">₹3,500 <small>from · Sedan</small></p>
+      </a>
+      <a class="route-card" href="/en/delhi-to-agra-taxi/">
+        <div class="route-codes"><span>DEL</span><b>→</b><span>AGR</span></div>
+        <div class="route-meta"><span>Delhi → Agra</span><span>3h 30m · 230 km</span></div>
+        <p class="fare">₹3,500 <small>from · Sedan</small></p>
+      </a>
+      <a class="route-card" href="/en/agra-to-jaipur-taxi/">
+        <div class="route-codes"><span>AGR</span><b>→</b><span>JAI</span></div>
+        <div class="route-meta"><span>Agra → Jaipur</span><span>4h 30m · 240 km</span></div>
+        <p class="fare">₹4,500 <small>from · Sedan</small></p>
+      </a></div>
+  </div>
+</section>
+<section class="section section--paper-lt">
+  <div class="container">
+    <div class="section-head"><div><p class="eyebrow">Services</p><h2>Every kind of trip.<br /><i>One trusted team.</i></h2></div>
+    <a class="btn-text" href="/en/services/">How it works <span>↗</span></a></div>
+    <div class="grid-3">
+      <article class="service-card service-card--navy"><span class="service-index">01</span><div class="service-mark">✦</div><h3>Taxi <i>/ Cab</i></h3><p>Sedan, Ertiga and Innova Crysta for city rides and intercity drops.</p><a class="card-link" href="/en/fleet/">Choose this car ↗</a></article>
+      <article class="service-card service-card--light"><span class="service-index">02</span><div class="service-mark">✦</div><h3>Tempo<br /><i>Traveller</i></h3><p>Comfortable group travel, from 12 seats to a premium Urbania.</p><a class="card-link" href="/en/vehicles/tempo-traveller/">Fleet ↗</a></article>
+      <article class="service-card service-card--gold"><span class="service-index">03</span><div class="service-mark">✦</div><h3>Tour<br /><i>packages</i></h3><p>Local sightseeing, one-way drops and ready-made multi-day itineraries.</p><a class="card-link" href="/en/packages/">Explore tours ↗</a></article>
+    </div>
+  </div>
+</section>
+<section class="section section--paper">
+  <div class="container">
+    <div class="section-head"><div><p class="eyebrow">Fleet</p><h2>Choose your comfort.<br /><i>Bring your people.</i></h2></div>
+    <a class="btn-text" href="/en/fleet/">Full fleet <span>↗</span></a></div>
+    <div class="grid-3">
+      <article class="vehicle-card">
+        <div class="vehicle-photo">
+          <img src="/assets/fleet/sedan.webp" alt="Sedan taxi in Agra" width="700" height="438" loading="lazy" />
+          <span>01 / 05 <b>SEDAN</b></span>
+        </div>
+        <div class="vehicle-body">
+          <h3>Sedan</h3>
+          <p>Everyday comfort for city rides and one-way drops.</p>
+          <div class="spec-row"><span>4+1 SEATS · AC · 2 BAGS</span></div>
+          <div class="vehicle-cta"><span class="muted">from ₹3,500</span><a class="btn-text" href="/en/vehicles/sedan/">Choose this car <span>↗</span></a></div>
+        </div>
+      </article>
+      <article class="vehicle-card">
+        <div class="vehicle-photo">
+          <img src="/assets/fleet/innova.webp" alt="Innova Crysta taxi in Agra" width="700" height="438" loading="lazy" />
+          <span>03 / 05 <b>INNOVA CRYSTA</b></span>
+        </div>
+        <div class="vehicle-body">
+          <h3>Innova Crysta</h3>
+          <p>The outstation favourite — pushback seats and a quiet cabin.</p>
+          <div class="spec-row"><span>6+1 SEATS · AC · 4 BAGS</span></div>
+          <div class="vehicle-cta"><span class="muted">from ₹7,000</span><a class="btn-text" href="/en/vehicles/innova-crysta/">Choose this car <span>↗</span></a></div>
+        </div>
+      </article>
+      <article class="vehicle-card">
+        <div class="vehicle-photo">
+          <img src="/assets/fleet/tempo.webp" alt="Tempo Traveller taxi in Agra" width="700" height="438" loading="lazy" />
+          <span>04 / 05 <b>TEMPO TRAVELLER</b></span>
+        </div>
+        <div class="vehicle-body">
+          <h3>Tempo Traveller</h3>
+          <p>Spacious pushback seats, luggage bay and ice-box for group travel.</p>
+          <div class="spec-row"><span>12+1 SEATS · AC · LUGGAGE BAY</span></div>
+          <div class="vehicle-cta"><span class="muted">from ₹9,500</span><a class="btn-text" href="/en/vehicles/tempo-traveller/">Choose this car <span>↗</span></a></div>
+        </div>
+      </article></div>
+  </div>
+</section>
+<section class="section section--navy">
+  <div class="container split">
+    <div>
+      <p class="eyebrow eyebrow--light">Same day</p>
+      <h2>Agra sightseeing</h2>
+      <p class="lead">One day. The icons of Agra. A comfortable way to take in the city with a local team.</p>
+      <p class="fare" style="color:var(--gold-light);margin:20px 0 24px">₹3,500</p>
+      <div class="hero-actions">
+        <a class="btn-primary" href="https://wa.me/919876543210" target="_blank" rel="noreferrer">WhatsApp</a>
+        <a class="btn-outline btn-outline--light" href="/en/packages/agra-sightseeing/">All packages</a>
+      </div>
+    </div>
+    <figure class="package-photo" style="min-height:340px">
+      <img src="/assets/packages/taj-dawn.webp" alt="Taj Mahal at dawn, Agra sightseeing taxi" width="900" height="560" loading="lazy" />
+    </figure>
+  </div>
+</section>
+<section class="section section--deep">
+  <div class="container split">
+    <div>
+      <p class="eyebrow eyebrow--light">Contact</p>
+      <h2>Your driver is<br /><i>a call away.</i></h2>
+      <p class="lead">Office in Taj Ganj. Bookings open 24×7. Sample contact details for this frontend preview.</p>
+      <div class="hero-actions" style="margin-top:28px">
+        <a class="btn-primary" href="tel:+919876543210">Call +91 98765 43210</a>
+        <a class="btn-outline btn-outline--light" href="/en/contact/">Contact</a>
+      </div>
+    </div>
+    <div class="note" style="background:var(--navy-soft);color:var(--muted-lt)">
+      <p class="eyebrow eyebrow--light">North star</p>
+      <p style="color:var(--white);font-family:var(--display);font-size:24px;line-height:1.2;margin-top:8px">Make travel feel easy before the journey even begins.</p>
+    </div>
+  </div>
+</section>
+
+    </main>
+    <footer class="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <span class="brand-mark" style="width:28px;color:#fffdf8"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
+  <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
+  <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
+</svg></span>
+      <strong>Agra → India</strong>
+      <p>Discover → Book → Go</p>
+      <p>Near Taj East Gate Road, Taj Ganj, Agra</p>
+      <p><a href="tel:+919876543210">+91 98765 43210</a></p>
+    </div>
+    <div>
+      <h4>Explore</h4>
+      <a href="/en/services/">Services</a>
+      <a href="/en/packages/">Packages</a>
+      <a href="/en/fleet/">Fleet</a>
+      <a href="/en/about/">About</a>
+    </div>
+    <div>
+      <h4>Book now</h4>
+      <a href="/en/routes/">Routes</a>
+      <a href="/en/agra-sightseeing-taxi/">Agra sightseeing</a>
+      <a href="/en/delhi-to-agra-taxi/">Airport transfers</a>
+      <a href="/book.html">Book now</a>
+    </div>
+    <div>
+      <h4>Trust</h4>
+      <a href="/en/faq/">FAQ</a>
+      <a href="/en/contact/">Contact</a>
+      <a href="tel:+919876543210">+91 98765 43210</a>
+      <a href="/en/privacy/">Privacy</a>
+      <a href="/en/terms/">Terms</a>
+    </div>
+  </div>
+  <div class="container footer-bottom">
+    <span>© <span id="year">2026</span> SK Baghel Town &amp; Travels · frontend preview</span>
+    <span>Fares are sample mock data · no payments processed</span>
+  </div>
+</footer>
+<div class="lead-bar" role="navigation" aria-label="Contact">
+  <a class="lead-call" href="tel:+919876543210">Call</a>
+  <a class="lead-wa" href="https://wa.me/919876543210" target="_blank" rel="noreferrer">WhatsApp</a>
+  <a class="lead-book" href="/book.html">Book</a>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="/js/data.js" defer></script><script src="/js/fares.js" defer></script><script src="/js/app.js" defer></script>
   </body>
 </html>

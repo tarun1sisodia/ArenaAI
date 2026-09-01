@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /book.html
+Disallow: /proposal/
+Disallow: /design-guide/
+Sitemap: https://skbagheltravels.in/sitemap.xml
