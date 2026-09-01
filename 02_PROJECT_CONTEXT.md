@@ -19,7 +19,7 @@ Canonical domain: `https://skbagheltravels.in`
 |---|---|---|
 | Architecture | Vanilla static MPA (HTML + CSS + JS) | Design-guide handoff is a static tree; first paint stays tiny; SEO slugs without a JS framework |
 | Rendering | Python SSG (`scripts/render_pages.py`) | Data-driven bilingual marketing pages; booking stays a client app |
-| Languages | English + Hindi, localized URLs | Notion SEO: `/en/…` and `/hi/…`, hreflang `en-IN` / `hi-IN` / `x-default` |
+| Languages | English + Hindi, localized URLs | Bilingual SEO: `/en/…` and `/hi/…`, hreflang `en-IN` / `hi-IN` / `x-default` |
 | Booking | `book.html` + `js/booking.js` only | App page, not SEO; `noindex`; mock UPI/card (~900ms) |
 | Data | `js/data.js` (client) + `scripts/catalog.py` (SSG) | Same fares in both languages; nothing hits a server |
 | Fares | `js/fares.js` | Round-trip `total * 1.85` (non-local); advance `min(total, max(500, round(total*0.28 to 100s)))` |

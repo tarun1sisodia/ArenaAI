@@ -112,11 +112,11 @@ starting any phase.
 **Depends on:** Phase 9
 
 1. Review git status; do not commit `design-guide/` edits or secrets
-2. Commit on `arena/01a05b23-arenaai` with a clear message
+2. Commit on `arena/01a05b8c-arenaai` with a clear message
 3. Push only that branch
 4. Open a PR into `main` describing frontend + bilingual SEO
 
-**Acceptance criteria:** PR exists from `arena/01a05b23-arenaai`; preview still serves.
+**Acceptance criteria:** PR exists from `arena/01a05b8c-arenaai`; preview still serves.
 
 ---
 

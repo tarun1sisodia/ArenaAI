@@ -27,11 +27,11 @@ can't be resolved without user input)_
 | Date | Decision | Why |
 |---|---|---|
 | 2026-09-01 | Vanilla static MPA, not Next.js | Design-guide handoff is static; JS budget; booking is the only app page |
-| 2026-09-01 | Bilingual SSG `/en/` + `/hi/` with EN home at `/` | Notion “Project SEO Approach (Fast + Bilingual)” |
-| 2026-09-01 | Call + WhatsApp primary; `/book.html` noindex | Same Notion doc — payment is secondary |
+| 2026-09-01 | Bilingual SSG `/en/` + `/hi/` with EN home at `/` | Fast + bilingual SEO approach approved for this project |
+| 2026-09-01 | Call + WhatsApp primary; `/book.html` noindex | Call/WhatsApp are primary conversions; payment is secondary |
 | 2026-09-01 | Fares identical in both languages | Translate copy only |
-| 2026-09-01 | Sticky lead-bar on route pages (all marketing on mobile) | Notion conversion rule |
-| 2026-09-01 | `DESIGN.md` is Dark Navy + Golden, not the alarm-clock Quiet Signal template | This project’s approved Option A |
+| 2026-09-01 | Sticky lead-bar on route pages (all marketing on mobile) | Call/WhatsApp conversion is the main route to booking |
+| 2026-09-01 | `DESIGN.md` is Dark Navy + Golden | This project’s approved Option A |
 | 2026-09-01 | Add Phase 11 — Responsive QA & fixes to the build plan | User tested mobile + laptop and reported pages are not responsive |
 
 ---
@@ -109,7 +109,7 @@ can't be resolved without user input)_
 
 ### Phase 10 — Pull request
 - [x] 1. Review git status; do not commit `design-guide/` edits or secrets
-- [x] 2. Commit on `arena/01a05b23-arenaai`
+- [x] 2. Commit on `arena/01a05b8c-arenaai`
 - [x] 3. Push only that branch
 - [x] 4. Open PR into `main`
 
