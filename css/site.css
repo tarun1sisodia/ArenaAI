@@ -12,6 +12,7 @@ html {
 body {
   margin: 0;
   min-width: 320px;
+  overflow-wrap: break-word;
   color: var(--navy);
   background: var(--paper);
   font-family: var(--sans);
@@ -29,6 +30,18 @@ svg {
 
 img {
   height: auto;
+}
+
+/* Keep content from forcing horizontal overflow on small screens. */
+.grid-2 > *,
+.grid-3 > *,
+.grid-4 > *,
+.split > *,
+.steps > *,
+.service-card,
+.vehicle-card,
+.package-card {
+  min-width: 0;
 }
 
 button,
@@ -921,6 +934,7 @@ body[data-page="book"] .lead-bar {
 
 .route-meta {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   gap: 8px;
   color: var(--muted-2);
@@ -1030,8 +1044,10 @@ body[data-page="book"] .lead-bar {
 
 .vehicle-cta {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
+  gap: 8px;
   padding-top: 12px;
   border-top: 1px solid var(--line);
 }
@@ -1666,6 +1682,10 @@ body[data-page="book"] .book-pill {
   letter-spacing: 0.1em;
 }
 
+.contact-action strong {
+  overflow-wrap: anywhere;
+}
+
 .map-panel {
   position: relative;
   min-height: 420px;
@@ -1867,6 +1887,7 @@ body[data-page="book"] .book-pill {
 
 @media (max-width: 1120px) {
   .grid-4,
+  .grid-3,
   .steps {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -1896,7 +1917,8 @@ body[data-page="book"] .book-pill {
 @media (max-width: 700px) {
   .nav-desktop,
   .demo-chip,
-  .header-actions .btn-outline {
+  .header-actions .btn-outline,
+  .header-actions .lang-switch {
     display: none;
   }
 
@@ -1919,10 +1941,28 @@ body[data-page="book"] .book-pill {
     padding: 56px 0;
   }
 
+  .page-hero {
+    padding: 48px 0 34px;
+  }
+
   .section-head {
     flex-direction: column;
     align-items: flex-start;
     margin-bottom: 28px;
+  }
+
+  .table-wrap {
+    margin-inline: -16px;
+    padding-inline: 16px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table.data {
+    min-width: 560px;
+  }
+
+  .form-actions {
+    flex-wrap: wrap;
   }
 
   .hero {

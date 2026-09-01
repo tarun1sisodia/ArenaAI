@@ -120,6 +120,15 @@ starting any phase.
 
 ---
 
-## Phase 11 — Out of scope until the user adds it
+## Phase 11 — Responsive QA & fixes
+**Depends on:** Phase 10 (any new page work should also pass this QA)
+
+1. Audit all generated pages at 320 / 375 / 768 / 1280 / 1440px (EN + HI, home, hubs, routes, vehicles, packages, booking)
+2. Fix grid collapsing (3 → 2 → 1), header overflow, mobile lead-bar overlap, horizontal page scroll
+3. Keep tables scrollable within their cards and keep 44px touch targets on mobile
+
+**Acceptance criteria:** no horizontal page scroll at 320–375px; grids collapse at the design breakpoints; header/mobile sheet stay usable; tables scroll inside their wrapper; booking remains usable on mobile; `python3 scripts/render_pages.py` still rebuilds cleanly.
+
+## Phase 12 — Out of scope until the user adds it
 
 Admin, live Razorpay, WhatsApp Cloud API, CMS, Next.js rewrite, auth.

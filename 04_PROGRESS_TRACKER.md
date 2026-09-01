@@ -8,8 +8,8 @@ only check boxes, append log rows, and update the Current State block.
 
 ## Current State
 
-- **Current Phase:** 10 — Pull request
-- **Current Step:** done (PR #8)
+- **Current Phase:** 11 — Responsive QA & fixes
+- **Current Step:** done — responsive pass applied; user retest pending
 - **Last updated:** 2026-09-01
 - **Open blockers:** none
 
@@ -32,6 +32,7 @@ can't be resolved without user input)_
 | 2026-09-01 | Fares identical in both languages | Translate copy only |
 | 2026-09-01 | Sticky lead-bar on route pages (all marketing on mobile) | Notion conversion rule |
 | 2026-09-01 | `DESIGN.md` is Dark Navy + Golden, not the alarm-clock Quiet Signal template | This project’s approved Option A |
+| 2026-09-01 | Add Phase 11 — Responsive QA & fixes to the build plan | User tested mobile + laptop and reported pages are not responsive |
 
 ---
 
@@ -52,6 +53,7 @@ can't be resolved without user input)_
 | 2026-09-01 | 10 / 2 | Commit frontend, bilingual SSG, and agent pack on `arena/01a05b23-arenaai` | git commit |
 | 2026-09-01 | 10 / 3 | Pushed `arena/01a05b23-arenaai` to origin | git push |
 | 2026-09-01 | 10 / 4 | Opened PR into `main` | https://github.com/tarun1sisodia/ArenaAI/pull/8 |
+| 2026-09-01 | 11 / 1–3 | Responsive pass: grid 3→2→1, mobile header de-clutter, flex-wrap + overflow guards, scrollable mobile tables, 404 + redirect viewport, regenerated tree | `css/site.css`, `scripts/render_pages.py`, `404.html`, root redirect stubs, `03_PHASE_PLAN.md`, `04_PROGRESS_TRACKER.md` |
 
 ---
 
@@ -111,5 +113,10 @@ can't be resolved without user input)_
 - [x] 3. Push only that branch
 - [x] 4. Open PR into `main`
 
-### Phase 11 — Out of scope until added
+### Phase 11 — Responsive QA & fixes
+- [x] 1. Audit generated pages at mobile/laptop widths (EN + HI)
+- [x] 2. Grid breakpoints + header/chrome + overflow fixes
+- [x] 3. Mobile tables, touch targets, regenerate cleanly
+
+### Phase 12 — Out of scope until added
 - [ ] Admin / live Razorpay / WhatsApp API / CMS / Next.js / auth

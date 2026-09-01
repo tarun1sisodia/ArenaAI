@@ -862,6 +862,7 @@ def redirect_html(target: str) -> str:
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="refresh" content="0; url={target}" />
     <link rel="canonical" href="{url(target)}" />
     <title>Redirecting…</title>
@@ -892,7 +893,7 @@ def write_sitemap():
 
 def write_404():
     (ROOT / "404.html").write_text(
-        f"""<!doctype html><html lang="en-IN"><head><meta charset="UTF-8"/><title>Page not found | SK Baghel</title>
+        f"""<!doctype html><html lang="en-IN"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Page not found | SK Baghel</title>
 <link rel="stylesheet" href="/css/tokens.css"/><link rel="stylesheet" href="/css/site.css"/></head>
 <body><main class="page-hero"><div class="container"><h1>This page<br /><i>isn’t on the map.</i></h1>
 <p class="lead">Try the home page, or call {PHONE_DISPLAY}.</p>
