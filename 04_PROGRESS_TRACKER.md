@@ -9,7 +9,7 @@ only check boxes, append log rows, and update the Current State block.
 ## Current State
 
 - **Current Phase:** 10 — Pull request
-- **Current Step:** 3 — Push only `arena/01a05b23-arenaai`
+- **Current Step:** done (PR #8)
 - **Last updated:** 2026-09-01
 - **Open blockers:** none
 
@@ -50,6 +50,8 @@ can't be resolved without user input)_
 | 2026-09-01 | 9 / 1–3 | Adapted operating-pack templates; always-on agent rules; seeded tracker | `00_START_HERE.md` … `04_PROGRESS_TRACKER.md`, `DESIGN.md`, `AGENTS.md`, `.agents/rules/` |
 | 2026-09-01 | 10 / 1 | Reviewed git status: frontend + bilingual SSG + pack are untracked/modified; `app.js`/`styles.css` deleted (replaced by `js/` + `css/`); `design-guide/` clean; no secrets | git status |
 | 2026-09-01 | 10 / 2 | Commit frontend, bilingual SSG, and agent pack on `arena/01a05b23-arenaai` | git commit |
+| 2026-09-01 | 10 / 3 | Pushed `arena/01a05b23-arenaai` to origin | git push |
+| 2026-09-01 | 10 / 4 | Opened PR into `main` | https://github.com/tarun1sisodia/ArenaAI/pull/8 |
 
 ---
 
@@ -104,10 +106,10 @@ can't be resolved without user input)_
 - [x] 3. Seed tracker to match completed work
 
 ### Phase 10 — Pull request
-- [ ] 1. Review git status; do not commit `design-guide/` edits or secrets
-- [ ] 2. Commit on `arena/01a05b23-arenaai`
-- [ ] 3. Push only that branch
-- [ ] 4. Open PR into `main`
+- [x] 1. Review git status; do not commit `design-guide/` edits or secrets
+- [x] 2. Commit on `arena/01a05b23-arenaai`
+- [x] 3. Push only that branch
+- [x] 4. Open PR into `main`
 
 ### Phase 11 — Out of scope until added
 - [ ] Admin / live Razorpay / WhatsApp API / CMS / Next.js / auth
