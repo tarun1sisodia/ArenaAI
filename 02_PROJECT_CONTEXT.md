@@ -24,7 +24,9 @@ Canonical domain: `https://skbagheltravels.in`
 | Data | `js/data.js` (client) + `scripts/catalog.py` (SSG) | Same fares in both languages; nothing hits a server |
 | Fares | `js/fares.js` | Round-trip `total * 1.85` (non-local); advance `min(total, max(500, round(total*0.28 to 100s)))` |
 | CSS | `css/tokens.css` + `css/site.css` | Tokens match `DESIGN.md` / design-guide Option A |
-| Serve | `python3 -m http.server 4173 --bind 0.0.0.0` | Preview; bind `0.0.0.0` |
+| URLs | Root-relative in templates → build rewrites to **page-relative** | One build works at the custom-domain root AND the `/ArenaAI` Pages subpath AND any local preview |
+| Serve | `python3 scripts/serve.py` (port 4173, binds 0.0.0.0) | Serves repo root; also emulates the `/ArenaAI` Pages subpath locally |
+| QA | `scripts/check_links.py` + `scripts/visual_audit.mjs` | 0-failed-requests rule; overflow/console-error sweep at 360–1440px |
 
 Do not switch to Next.js, React, a CMS, or live Razorpay without logging why in
 the Decision Log and getting the user to add a phase.
@@ -86,14 +88,22 @@ translate copy, not fares.
 
 ## 6. Coding conventions
 
-- Root-relative URLs (`/book.html`, `/css/site.css`, `/assets/…`) so nested
-  `/en/` and `/hi/` pages resolve.
+- Templates emit root-relative URLs (`/book.html`, `/css/site.css`, `/assets/…`);
+  `render_pages.py` rewrites them to page-relative per output file at build
+  time. Never hard-code `/ArenaAI/` or any other base prefix anywhere.
+  JS-built URLs join onto `body[data-base]` ("." / "../.." per page).
+- Never hand-edit generated files (`index.html`, `book.html`, `en/`, `hi/`,
+  stubs, `sitemap.xml`, `robots.txt`, `404.html`): edit `scripts/render_pages.py`
+  (or `catalog.py` / `i18n.py`) and regenerate with
+  `python3 scripts/render_pages.py`.
 - Marketing pages: minimal JS (`data.js` + `fares.js` + `app.js`, all `defer`).
   `booking.js` only on `book.html`.
 - Images: WebP, width/height or aspect-ratio, `loading="lazy"` below the fold,
-  hero preloaded.
+  hero preloaded + `onerror` fallback to the navy background.
 - Motion: 180ms ease; `prefers-reduced-motion` kills transforms.
 - Hindi pages: `lang="hi-IN"`, Noto Sans/Serif Devanagari.
+- After regenerating, run `python3 scripts/check_links.py` against a running
+  `scripts/serve.py` — the 0-failed-requests rule is the merge gate.
 - Do not commit generated junk that `.gitignore` already excludes.
 
 ## 7. Explicit non-goals (unless the user later adds a phase)
