@@ -9,9 +9,9 @@ only check boxes, append log rows, and update the Current State block.
 ## Current State
 
 - **Current Phase:** 15 — Frontend performance/SEO hardening + drop-in image pipeline ✅ done
-- **Current Step:** images now measure themselves (truthful dims always), derivatives auto-regenerate on asset change; structured-data gaps closed; 100/100 link check at both bases
-- **Last updated:** 2026-09-01
-- **Open items:** `visual_audit.mjs` still needs a networked machine; fonts self-hosting (sandbox blocks Google Fonts download); real photos + real NAP before launch (see `LAUNCH_CHECKLIST.md`)
+- **Current Step:** images now measure themselves (truthful dims always), derivatives auto-regenerate on asset change; structured-data gaps closed; 100/100 link check at both bases; **`PRD.md` created as the final, consolidated product requirements doc**
+- **Last updated:** 2026-09-03
+- **Open items:** `visual_audit.mjs` still needs a networked machine; fonts self-hosting (sandbox blocks Google Fonts download); real photos + real NAP before launch (see `LAUNCH_CHECKLIST.md`); PRD v3.0 master rewrite now includes the full SEO Final BOSS content (ROCKET, on-page/off-page, keyword-intent, E-E-A-T, AI/LLM/AISO, topical authority, Surfer workflow, GA4 AI channel, client deliverables/decision points). Client decision points from the deck are open (§25 of PRD.md).
 
 ---
 
@@ -36,6 +36,9 @@ can't be resolved without user input)_
 | 2026-09-01 | Night allowance implemented (₹400, outstation 22:00–05:00) instead of deleting the FAQ promise | FAQ advertised it as shown-before-pay; fare transparency is the site's differentiator, so the engine was fixed to match the copy |
 | 2026-09-01 | `DESIGN.md` is Dark Navy + Golden | This project’s approved Option A |
 | 2026-09-01 | Add Phase 11 — Responsive QA & fixes to the build plan | User tested mobile + laptop and reported pages are not responsive |
+| 2026-09-03 | Consolidated a single final `PRD.md` as the target-scope source of truth (full goals, features, success metrics, launch gates) | The build had a docs pack but no product-requirements document; user asked for a final PRD with the full goals |
+| 2026-09-03 | Rewrote `PRD.md` to v2.0 Master (SEO-first, engineering-first, scalable) | User asked for a perfect, complete PRD that misses nothing on SEO, engineering, design, and scalability so the product is launch-ready; added the Surfer-style intent → keyword → page → content → technical → local → multilingual → measurement strategy, design/engineering/scalability/security/QA/CI sections, and full SEO checklist |
+| 2026-09-03 | Rewrote `PRD.md` to v3.0 Master after receiving the full `SEO Final BOSS.md` content | User provided the full SEO source (ROCKET, Surfer/AI-SEO course, Matt Kenyon playbook, off-page set, client deck notes). Folded into PRD v3.0: full keyword-intent framework, off-page/Digital PR/UGC, AI Search Optimization (AISO), entity signals, topical authority, content-for-AI structure, E-E-A-T, GA4 AI-Assistants channel, client deliverables/decision points, design-tool references, sprints/workflow, and full SEO/off-page/AI checklists. |
 
 ---
 
@@ -58,6 +61,8 @@ can't be resolved without user input)_
 | 2026-09-01 | 10 / 4 | Opened PR into `main` | https://github.com/tarun1sisodia/ArenaAI/pull/8 |
 | 2026-09-01 | 11 / 1–3 | Responsive pass: grid 3→2→1, mobile header de-clutter, flex-wrap + overflow guards, scrollable mobile tables, 404 + redirect viewport, regenerated tree | `css/site.css`, `scripts/render_pages.py`, `404.html`, root redirect stubs, `03_PHASE_PLAN.md`, `04_PROGRESS_TRACKER.md` |
 | 2026-09-01 | 11 / 4 | GitHub Pages live but no CSS/images: root-relative URLs hit `github.io/` root instead of `/ArenaAI/`. Added `SITE_BASE` to the renderer, rebase of `href/src/srcset/action/data-href` + redirects + robots, `<body data-base>` + JS prefixing; regenerated tree and verified 0 broken refs | `scripts/render_pages.py`, `js/data.js`, `js/app.js`, `js/booking.js`, `README.md`, `04_PROGRESS_TRACKER.md`, generated pages |
+| 2026-09-03 | Docs / PRD | Created the final consolidated `PRD.md` (goals, scope, requirements, success metrics, release plan, non-goals, risks); linked it from `README.md` and `00_START_HERE.md` | `PRD.md`, `README.md`, `00_START_HERE.md`, `04_PROGRESS_TRACKER.md` |
+| 2026-09-03 | Docs / PRD | Rewrote `PRD.md` to v2.0 Master: full-SEO strategy (intent → keyword → page → content → schema → technical → local → multilingual → measurement), engineering/architecture/scalability/security/QA/CI, design/UX, accessibility, analytics, definition-of-done and SEO checklist; wired it into `00_START_HERE.md` and `01_AI_OPERATING_INSTRUCTIONS.md`. **Note:** the user's attached `SEO Final BOSS.md` was not present as `/home/user/uploads/SEO Final BOSS.md` in the sandbox and was not read. | `PRD.md`, `00_START_HERE.md`, `01_AI_OPERATING_INSTRUCTIONS.md`, `README.md`, `04_PROGRESS_TRACKER.md` |
 
 ---
 
