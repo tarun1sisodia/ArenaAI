@@ -4,6 +4,15 @@ Frontend for **Agra SK Baghel Town & Travels**, built from the approved **Dark N
 
 Marketing pages are **bilingual SSG** (English + Hindi) with hreflang. Booking is a client-side app at `/book.html` (noindex). The original 24-slide proposal deck lives in `proposal/`.
 
+## Product requirements
+
+The final product requirements master document lives in
+[`PRD.md`](./PRD.md) — it contains the full business goals, SEO strategy
+(intent → keyword → page → content → schema → technical), design/UX system,
+engineering and scalability plan, QA/launch gates, and the SEO checklist. Read it
+first for "what we want." Implementation detail and architecture remain in
+`02_PROJECT_CONTEXT.md`, `03_PHASE_PLAN.md`, and `04_PROGRESS_TRACKER.md`.
+
 ## Run locally
 
 ```bash

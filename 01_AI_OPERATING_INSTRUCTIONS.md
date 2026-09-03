@@ -7,16 +7,18 @@ without them, context and correctness both degrade.
 
 ## 1. Before writing any code, every session
 
-1. Read `02_PROJECT_CONTEXT.md` in full. Do not deviate from its stack/architecture
+1. Read `PRD.md` (master/final product requirements) — it defines the full product,
+   SEO and engineering goals. Do not silently deviate from it.
+2. Read `02_PROJECT_CONTEXT.md` in full. Do not deviate from its stack/architecture
    decisions without flagging the deviation explicitly to the user first.
-2. If the step touches any UI, also read `DESIGN.md` in full. Never invent a
+3. If the step touches any UI, also read `DESIGN.md` in full. Never invent a
    color, font size, spacing value, or radius that isn't in `DESIGN.md` — if one
    is missing, add it to `DESIGN.md` first and note the addition in the
    Decision Log, rather than hardcoding a one-off value.
-3. Read `04_PROGRESS_TRACKER.md`. Find the **Current State** block at the top — it
+4. Read `04_PROGRESS_TRACKER.md`. Find the **Current State** block at the top — it
    tells you the current phase, current step, and any open blockers.
-4. Read the section of `03_PHASE_PLAN.md` for the current phase only.
-5. If the tracker's "Current State" and the checkbox list disagree about what's done,
+5. Read the section of `03_PHASE_PLAN.md` for the current phase only.
+6. If the tracker's "Current State" and the checkbox list disagree about what's done,
    stop and ask the user which is correct. Do not guess.
 
 ## 2. Execution rules

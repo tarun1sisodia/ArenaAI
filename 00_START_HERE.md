@@ -7,6 +7,7 @@ build the site phase by phase, without losing context between sessions.
 
 | File | Purpose | When it's read |
 |---|---|---|
+| `PRD.md` | **Master/final product requirements doc** — full product/business goals, SEO strategy (intent → keyword → page → content → schema → technical), design, engineering, scalability, QA and launch gates. | First, before any build/scope discussion |
 | `01_AI_OPERATING_INSTRUCTIONS.md` | The rules the AI must follow while building. Closest thing to a system prompt. | Every session, first |
 | `02_PROJECT_CONTEXT.md` | Fixed architecture / stack / convention decisions. Prevents re-deciding mid-project. | Every session, first |
 | `03_PHASE_PLAN.md` | The full build plan with acceptance criteria per phase. | Every session, plus when starting a new phase |
