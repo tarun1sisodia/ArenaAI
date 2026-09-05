@@ -328,7 +328,8 @@ def build_preview() -> None:
   </div></div>
   <div class="wrap">
     <p class="note">Pick one and I'll wire it through the header, footer, favicon and OG banner
-    in both language trees, then regenerate the site.</p>
+    in both language trees, then regenerate the site. The bolder
+    <a href="../logos-bold/">transport direction (set B)</a> is the other option set.</p>
     {"".join(cards)}
   </div>
 </body>

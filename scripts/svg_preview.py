@@ -176,21 +176,37 @@ def circle_path(cx, cy, r):
 
 
 def apply_tf(path, tf):
+    """Apply an SVG transform list (outermost first) to a path."""
     if not tf:
         return path
     v = path.vertices.copy()
-    for op, args in reversed(tf):
+    for op, a in reversed(tf):
+        x, y = v[:, 0].copy(), v[:, 1].copy()
         if op == "translate":
-            v[:, 0] += args[0]; v[:, 1] += args[1 if len(args) > 1 else 0]
+            v[:, 0] = x + a[0]; v[:, 1] = y + (a[1] if len(a) > 1 else 0)
         elif op == "scale":
-            sx = args[0]; sy = args[1] if len(args) > 1 else sx
-            v[:, 0] *= sx; v[:, 1] *= sy
+            sx = a[0]; sy = a[1] if len(a) > 1 else sx
+            v[:, 0] = x * sx; v[:, 1] = y * sy
+        elif op == "skewX":
+            v[:, 0] = x + math.tan(math.radians(a[0])) * y
+        elif op == "skewY":
+            v[:, 1] = y + math.tan(math.radians(a[0])) * x
+        elif op == "rotate":
+            t = math.radians(a[0])
+            cx, cy = (a[1], a[2]) if len(a) > 2 else (0.0, 0.0)
+            dx, dy = x - cx, y - cy
+            v[:, 0] = cx + dx * math.cos(t) - dy * math.sin(t)
+            v[:, 1] = cy + dx * math.sin(t) + dy * math.cos(t)
+        elif op == "matrix":
+            m = a
+            v[:, 0] = m[0] * x + m[2] * y + m[4]
+            v[:, 1] = m[1] * x + m[3] * y + m[5]
     return Path(v, path.codes)
 
 
 def parse_tf(s):
     out = []
-    for name, body in re.findall(r"(translate|scale)\(([^)]*)\)", s or ""):
+    for name, body in re.findall(r"(translate|scale|skewX|skewY|rotate|matrix)\(([^)]*)\)", s or ""):
         out.append((name, [float(x) for x in NUM.findall(body)]))
     return out
 
@@ -243,6 +259,7 @@ def render(svg_file, out_png, scale=4, bg=None):
 
 PAPER_RGB = (245, 240, 232, 255)
 SLUGS = ["01-roadline", "02-signet", "03-arch", "04-compass", "05-milestone"]
+BOLD_SLUGS = ["01-dash", "02-tempo", "03-crysta", "04-italic", "05-road"]
 
 
 def contact_sheet(out_png="assets/brand/logos/contact-sheet.png"):
@@ -284,8 +301,39 @@ def contact_sheet(out_png="assets/brand/logos/contact-sheet.png"):
     print(f"wrote {out_png} {sheet.size[0]}x{sheet.size[1]}")
 
 
+def bold_contact_sheet(out_png="assets/brand/logos-bold/contact-sheet.png"):
+    """Rasterise Set B (bold transport) into one review PNG."""
+    import os
+    from PIL import Image
+    tmp = "/tmp/_logo_png"
+    os.makedirs(tmp, exist_ok=True)
+    tiles = []
+    for slug in BOLD_SLUGS:
+        for suf, bg in (("navy", "#F5F0E8"), ("blue", "#FFFFFF"), ("dark", None)):
+            src = f"assets/brand/logos-bold/{slug}-{suf}.svg"
+            png = f"{tmp}/b-{slug}-{suf}.png"
+            render(src, png, scale=1.5, bg=bg)
+            im = Image.open(png).convert("RGBA")
+            plate = Image.new("RGBA", im.size, PAPER_RGB)
+            plate.alpha_composite(im)
+            tiles.append(plate.convert("RGB"))
+    cols = 3
+    w = max(t.width for t in tiles)
+    h = max(t.height for t in tiles)
+    rows = (len(tiles) + cols - 1) // cols
+    sheet = Image.new("RGB", (cols * (w + 18) + 18, rows * (h + 18) + 18), "#CFC9C0")
+    for i, t in enumerate(tiles):
+        sheet.paste(t, (18 + (i % cols) * (w + 18), 18 + (i // cols) * (h + 18)))
+    sheet.thumbnail((1600, 6000))
+    sheet.save(out_png)
+    print(f"wrote {out_png} {sheet.size[0]}x{sheet.size[1]}")
+
+
 if __name__ == "__main__":
     if len(sys.argv) > 2:
         render(sys.argv[1], sys.argv[2], float(sys.argv[3]) if len(sys.argv) > 3 else 4)
+    elif len(sys.argv) > 1 and sys.argv[1] == "bold":
+        bold_contact_sheet()
     else:
         contact_sheet()
+        bold_contact_sheet()
