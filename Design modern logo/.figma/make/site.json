@@ -1,0 +1,10 @@
+{
+  "description": "Create stunning, professional logos tailored to your brand's identity, ensuring alignment with your specific design requirements for maximum impact.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
