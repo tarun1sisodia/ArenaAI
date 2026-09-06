@@ -2,7 +2,7 @@
 
 The direction from the client reference: **heavy initials, a fleet vehicle fused
 into the letters, tapered speed lines, and the full company name locked
-underneath.** Drawn for **SKB — SK Baghel Town & Travels**.
+underneath.** Drawn for **SKB — SK Baghel Tour & Travels**.
 
 Set A (the quieter, symbol-led marks) lives in `../logos/`.
 Open `index.html` for the review page, or `contact-sheet.png` for everything at once.

@@ -1,4 +1,4 @@
-# Agent rules — SK Baghel Town & Travels
+# Agent rules — SK Baghel Tour & Travels
 
 Read these files **before writing any code**, every session:
 

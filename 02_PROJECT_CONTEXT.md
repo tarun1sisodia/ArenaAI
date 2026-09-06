@@ -1,4 +1,4 @@
-# Project Context — SK Baghel Town & Travels
+# Project Context — SK Baghel Tour & Travels
 
 This file is the single source of truth for architecture decisions. It should stay
 almost static; if the AI deviates from it, that deviation must be logged in
@@ -6,7 +6,7 @@ almost static; if the AI deviates from it, that deviation must be logged in
 
 ## 1. What this site is
 
-A premium customer-facing website for **Agra SK Baghel Town & Travels**. North
+A premium customer-facing website for **Agra SK Baghel Tour & Travels**. North
 star: *make travel feel easy before the journey even begins.* Taxi / cab, Tempo
 Traveller, Innova, and tour packages out of Agra. Frontend only on this pass:
 every button, form and flow works against **mock data**.

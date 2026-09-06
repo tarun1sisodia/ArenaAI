@@ -27,7 +27,7 @@ def main():
     register_fonts()
     c = canvas.Canvas(OUT, pagesize=(PAGE_W, PAGE_H))
     c.setTitle("SK Baghel — Website Design System & UX Playbook v1.0")
-    c.setAuthor("Product & UI/UX — SK Baghel Town & Travels Website Project")
+    c.setAuthor("Product & UI/UX — SK Baghel Tour & Travels Website Project")
     c.setSubject("Dark Navy + Golden design system: colors, typography, components, imagery, motion, accessibility, UX blueprint")
     for i, fn in enumerate(PAGES, start=1):
         fn(c, i)

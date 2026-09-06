@@ -1,4 +1,4 @@
-# Progress Tracker — SK Baghel Town & Travels
+# Progress Tracker — SK Baghel Tour & Travels
 
 This file is a **living document**. The AI implementing the build updates it after
 every single step, per `01_AI_OPERATING_INSTRUCTIONS.md` §3. Never rewrite history —
@@ -8,10 +8,10 @@ only check boxes, append log rows, and update the Current State block.
 
 ## Current State
 
-- **Current Phase:** 15 — Frontend performance/SEO hardening + drop-in image pipeline ✅ done
-- **Current Step:** images now measure themselves (truthful dims always), derivatives auto-regenerate on asset change; structured-data gaps closed; 100/100 link check at both bases; **`PRD.md` created as the final, consolidated product requirements doc**
-- **Last updated:** 2026-09-03
-- **Open items:** `visual_audit.mjs` still needs a networked machine; fonts self-hosting (sandbox blocks Google Fonts download); real photos + real NAP before launch (see `LAUNCH_CHECKLIST.md`); PRD v3.0 master rewrite now includes the full SEO Final BOSS content (ROCKET, on-page/off-page, keyword-intent, E-E-A-T, AI/LLM/AISO, topical authority, Surfer workflow, GA4 AI channel, client deliverables/decision points). Client decision points from the deck are open (§25 of PRD.md).
+- **Current Phase:** 18 — Interactive Motion Polish, Brand/Nav/Button/Form Animations, Icon Suite & Mock Banner Deletion ✅ completed
+- **Current Step:** Ready for next phase / client launch review
+- **Last updated:** 2026-09-06
+- **Open items:** `visual_audit.mjs` still needs a networked machine; fonts self-hosting (sandbox blocks Google Fonts download); real photos + real NAP before launch (see `LAUNCH_CHECKLIST.md`); PRD v3.0 master rewrite includes full SEO Final BOSS content. Client decision points from the deck are open (§25 of PRD.md).
 
 ---
 
@@ -39,6 +39,9 @@ can't be resolved without user input)_
 | 2026-09-03 | Consolidated a single final `PRD.md` as the target-scope source of truth (full goals, features, success metrics, launch gates) | The build had a docs pack but no product-requirements document; user asked for a final PRD with the full goals |
 | 2026-09-03 | Rewrote `PRD.md` to v2.0 Master (SEO-first, engineering-first, scalable) | User asked for a perfect, complete PRD that misses nothing on SEO, engineering, design, and scalability so the product is launch-ready; added the Surfer-style intent → keyword → page → content → technical → local → multilingual → measurement strategy, design/engineering/scalability/security/QA/CI sections, and full SEO checklist |
 | 2026-09-03 | Rewrote `PRD.md` to v3.0 Master after receiving the full `SEO Final BOSS.md` content | User provided the full SEO source (ROCKET, Surfer/AI-SEO course, Matt Kenyon playbook, off-page set, client deck notes). Folded into PRD v3.0: full keyword-intent framework, off-page/Digital PR/UGC, AI Search Optimization (AISO), entity signals, topical authority, content-for-AI structure, E-E-A-T, GA4 AI-Assistants channel, client deliverables/decision points, design-tool references, sprints/workflow, and full SEO/off-page/AI checklists. |
+| 2026-09-05 | Adopt Light Premium tokens & production animation split (Phase 16 / Session 2) | User approved Session 1b Light Premium theme (`#FAF7F0` Ivory, `#0A1128` Navy, `#B8941F` Gold) and 16 animation patterns; modularized into `css/tokens.css`, `css/components.css`, `js/motion.js`, and `templates/base.html` |
+| 2026-09-06 | Integrate 21st.dev Cinematic Theme Switcher & Architectural Contact Card (Phase 17) | Faithful zero-dependency vanilla MPA implementation maintaining strict SEO rules: single H1 per page, strict heading hierarchy (H1 -> H2 -> H3), crawlable mailto fallback, 44px touch targets, zero link check errors. |
+| 2026-09-06 | Brand/Nav/Button/Form animations, Icon Suite & Mock badge deletion (Phase 18) | Applied animations from `client` project: Brand wordmark scramble on hover, rolling nav link dual-layer text, button shimmer wave & active press feedback, form floating labels & gold focus ring glow, removed Demo Mock Data pill across all pages, and added SVG icons for Call, WhatsApp, Email, Map. 102/102 URLs OK. |
 
 ---
 
@@ -63,6 +66,37 @@ can't be resolved without user input)_
 | 2026-09-01 | 11 / 4 | GitHub Pages live but no CSS/images: root-relative URLs hit `github.io/` root instead of `/ArenaAI/`. Added `SITE_BASE` to the renderer, rebase of `href/src/srcset/action/data-href` + redirects + robots, `<body data-base>` + JS prefixing; regenerated tree and verified 0 broken refs | `scripts/render_pages.py`, `js/data.js`, `js/app.js`, `js/booking.js`, `README.md`, `04_PROGRESS_TRACKER.md`, generated pages |
 | 2026-09-03 | Docs / PRD | Created the final consolidated `PRD.md` (goals, scope, requirements, success metrics, release plan, non-goals, risks); linked it from `README.md` and `00_START_HERE.md` | `PRD.md`, `README.md`, `00_START_HERE.md`, `04_PROGRESS_TRACKER.md` |
 | 2026-09-03 | Docs / PRD | Rewrote `PRD.md` to v2.0 Master: full-SEO strategy (intent → keyword → page → content → schema → technical → local → multilingual → measurement), engineering/architecture/scalability/security/QA/CI, design/UX, accessibility, analytics, definition-of-done and SEO checklist; wired it into `00_START_HERE.md` and `01_AI_OPERATING_INSTRUCTIONS.md`. **Note:** the user's attached `SEO Final BOSS.md` was not present as `/home/user/uploads/SEO Final BOSS.md` in the sandbox and was not read. | `PRD.md`, `00_START_HERE.md`, `01_AI_OPERATING_INSTRUCTIONS.md`, `README.md`, `04_PROGRESS_TRACKER.md` |
+| 2026-09-05 | 16 / 1–4 | Session 2: Production file split — Light Premium tokens in `tokens.css` + `DESIGN.md`; 16 animation patterns in `css/components.css`; motion engine in `js/motion.js`; shell in `templates/base.html`; wired into `render_pages.py` (102/102 URLs OK). | `DESIGN.md`, `css/tokens.css`, `css/components.css`, `js/motion.js`, `templates/base.html`, `scripts/render_pages.py`, `03_PHASE_PLAN.md`, `04_PROGRESS_TRACKER.md` |
+| 2026-09-06 | 17 / 1–4 | Phase 17: Integrated 21st.dev Cinematic Theme Switcher & Architectural Contact Card. Dark theme tokens in `tokens.css`; styling in `components.css`; interactive logic & persistence in `motion.js`; wired into `render_pages.py` and `templates/base.html` with anti-FOUC script, SVG defs, and single-H1 SEO compliance; verified 102/102 links OK at both bases. | `css/tokens.css`, `css/components.css`, `js/motion.js`, `scripts/render_pages.py`, `templates/base.html`, `03_PHASE_PLAN.md`, `04_PROGRESS_TRACKER.md` |
+| 2026-09-06 | 18 / 1–6 | Phase 18: Applied Brand Name scramble, rolling nav links, button shimmer wave & active scale, form floating labels & gold focus rings, removed Demo Mock Data badge across 102 pages, added SVG icons (Call, WhatsApp, Email, Map). Verified 102/102 URLs OK. | `css/components.css`, `css/site.css`, `js/motion.js`, `templates/base.html`, `scripts/render_pages.py`, `book.html`, `03_PHASE_PLAN.md`, `04_PROGRESS_TRACKER.md` |
+
+
+---
+
+## Session Log
+
+| Date | Phase/Step | What was done | Files touched |
+|---|---|---|---|
+| 2026-09-01 | 1 / 1–3 | Frontend plan; proposal archived; design-guide left untouched | `FRONTEND-PLAN.md`, `proposal/` |
+| 2026-09-01 | 2 / 1–3 | Tokens, site CSS, favicon, robots stub | `css/tokens.css`, `css/site.css`, `assets/brand/favicon.svg` |
+| 2026-09-01 | 3 / 1–3 | Mock catalogue + fare engine | `js/data.js`, `js/fares.js` |
+| 2026-09-01 | 4 / 1–3 | Shared chrome, toast, contact mock submit | `js/app.js` |
+| 2026-09-01 | 5 / 1–4 | Marketing hubs + first HTML generator | `scripts/render_pages.py`, hub HTML |
+| 2026-09-01 | 6 / 1–3 | 5-step mock booking, noindex app page | `js/booking.js`, `book.html` |
+| 2026-09-01 | 7 / 1–3 | Hero/fleet/packages/OG WebP, preload | `assets/` |
+| 2026-09-01 | 8 / 1–5 | Bilingual SSG, hreflang, lead-bar, sitemap, redirects | `scripts/catalog.py`, `scripts/i18n.py`, `scripts/render_pages.py`, `en/`, `hi/`, `sitemap.xml` |
+| 2026-09-01 | 9 / 1–3 | Adapted operating-pack templates; always-on agent rules; seeded tracker | `00_START_HERE.md` … `04_PROGRESS_TRACKER.md`, `DESIGN.md`, `AGENTS.md`, `.agents/rules/` |
+| 2026-09-01 | 10 / 1 | Reviewed git status: frontend + bilingual SSG + pack are untracked/modified; `app.js`/`styles.css` deleted (replaced by `js/` + `css/`); `design-guide/` clean; no secrets | git status |
+| 2026-09-01 | 10 / 2 | Commit frontend, bilingual SSG, and agent pack on `arena/01a05b23-arenaai` | git commit |
+| 2026-09-01 | 10 / 3 | Pushed `arena/01a05b23-arenaai` to origin | git push |
+| 2026-09-01 | 10 / 4 | Opened PR into `main` | https://github.com/tarun1sisodia/ArenaAI/pull/8 |
+| 2026-09-01 | 11 / 1–3 | Responsive pass: grid 3→2→1, mobile header de-clutter, flex-wrap + overflow guards, scrollable mobile tables, 404 + redirect viewport, regenerated tree | `css/site.css`, `scripts/render_pages.py`, `404.html`, root redirect stubs, `03_PHASE_PLAN.md`, `04_PROGRESS_TRACKER.md` |
+| 2026-09-01 | 11 / 4 | GitHub Pages live but no CSS/images: root-relative URLs hit `github.io/` root instead of `/ArenaAI/`. Added `SITE_BASE` to the renderer, rebase of `href/src/srcset/action/data-href` + redirects + robots, `<body data-base>` + JS prefixing; regenerated tree and verified 0 broken refs | `scripts/render_pages.py`, `js/data.js`, `js/app.js`, `js/booking.js`, `README.md`, `04_PROGRESS_TRACKER.md`, generated pages |
+| 2026-09-03 | Docs / PRD | Created the final consolidated `PRD.md` (goals, scope, requirements, success metrics, release plan, non-goals, risks); linked it from `README.md` and `00_START_HERE.md` | `PRD.md`, `README.md`, `00_START_HERE.md`, `04_PROGRESS_TRACKER.md` |
+| 2026-09-03 | Docs / PRD | Rewrote `PRD.md` to v2.0 Master: full-SEO strategy (intent → keyword → page → content → schema → technical → local → multilingual → measurement), engineering/architecture/scalability/security/QA/CI, design/UX, accessibility, analytics, definition-of-done and SEO checklist; wired it into `00_START_HERE.md` and `01_AI_OPERATING_INSTRUCTIONS.md`. **Note:** the user's attached `SEO Final BOSS.md` was not present as `/home/user/uploads/SEO Final BOSS.md` in the sandbox and was not read. | `PRD.md`, `00_START_HERE.md`, `01_AI_OPERATING_INSTRUCTIONS.md`, `README.md`, `04_PROGRESS_TRACKER.md` |
+| 2026-09-05 | 16 / 1–4 | Session 2: Production file split — Light Premium tokens in `tokens.css` + `DESIGN.md`; 16 animation patterns in `css/components.css`; motion engine in `js/motion.js`; shell in `templates/base.html`; wired into `render_pages.py` (102/102 URLs OK). | `DESIGN.md`, `css/tokens.css`, `css/components.css`, `js/motion.js`, `templates/base.html`, `scripts/render_pages.py`, `03_PHASE_PLAN.md`, `04_PROGRESS_TRACKER.md` |
+| 2026-09-06 | 17 / 1–4 | Phase 17: Integrated 21st.dev Cinematic Theme Switcher & Architectural Contact Card. Dark theme tokens in `tokens.css`; styling in `components.css`; interactive logic & persistence in `motion.js`; wired into `render_pages.py` and `templates/base.html` with anti-FOUC script, SVG defs, and single-H1 SEO compliance; verified 102/102 links OK at both bases. | `css/tokens.css`, `css/components.css`, `js/motion.js`, `scripts/render_pages.py`, `templates/base.html`, `03_PHASE_PLAN.md`, `04_PROGRESS_TRACKER.md` |
+
 
 ---
 
@@ -167,3 +201,26 @@ can't be resolved without user input)_
 - [x] 8. Forms: hero-widget `date` no longer `required` (zero-JS GET still lands in booking, which defaults to tomorrow); contact form gets `mailto:` action fallback + `autocomplete`/`inputmode`; booking phone gets `inputmode="tel"`
 - [x] 9. `scripts/visual_audit.mjs` — Playwright overflow/console/screenshot sweep at 360/390/768/1024/1440 (needs a networked machine; sandbox blocked the browser download, so visually spot-check via the live preview until run)
 - [x] 10. Docs updated: `02_PROJECT_CONTEXT.md` serve/URL/QA rows + conventions; Decision Log entry below
+
+### Phase 16 — Session 2: Production File Split (Light Premium & Animation Engine)
+- [x] 1. Update `DESIGN.md` and `css/tokens.css` with Light Premium tokens (Warm Ivory `#FAF7F0`, Deep Navy `#0A1128`, Gold `#B8941F`) and motion timing/easing variables
+- [x] 2. Create `css/components.css` with all 16 production animation patterns from the approved showcase (Cascade, Blur, Roll, Shimmer, Spotlight, Marquee, Counters, FAQ, Scramble, Rotating, Curtain, Accordion, Parallax, Timeline, Gradient Border, Portal Field)
+- [x] 3. Create `js/motion.js` lightweight (<3KB) vanilla JS motion engine with IntersectionObserver, cursor spotlight, scrambler, accordion, parallax, timeline, counters, and `prefers-reduced-motion` safety
+- [x] 4. Create `templates/base.html` and wire `components.css` and `motion.js` into `scripts/render_pages.py`, regenerate all pages (102/102 URLs OK at both `/` and `/ArenaAI` bases)
+
+### Phase 17 — Cinematic Theme Switcher & Architectural Contact Card (21st.dev Integration)
+- [x] 1. Add Dark Navy theme token overrides to `css/tokens.css` with smooth transitions while preserving SEO contrast standards (AA 4.5:1) and existing Light Premium defaults
+- [x] 2. Add styles for 21st.dev Cinematic Theme Switcher and 21st.dev Architectural Contact Card to `css/components.css`
+- [x] 3. Add interactive logic for Cinematic Theme Switcher and Contact Card animations in `js/motion.js` with `prefers-reduced-motion` safety
+- [x] 4. Wire anti-FOUC theme detector, SVG texture filters, theme switchers, and Contact Card into `scripts/render_pages.py` and `templates/base.html`, ensuring 100% SEO compliance (single H1, schema integrity, crawlable HTML); regenerate and verify with `check_links.py` (102/102 URLs OK at both bases)
+
+### Phase 18 — Interactive Motion Polish, Brand/Nav/Button/Form Animations, Icon Suite & Mock Banner Deletion
+- [x] 1. Brand animations: Wordmark scramble on desktop hover (`initBrandScramble` in `motion.js`), SVG logo spring scale & rotate (`scale(1.08) rotate(-3deg)`), and luminous gold glow pulse
+- [x] 2. Navigation animations: Rolling nav links with dual `span` layers (`.roll`, `.roll-link`), smooth mobile sheet drawer transitions
+- [x] 3. Button animations: Shimmer light sweep (`@keyframes btn-shimmer`), tactile active press (`scale(0.97)`), hover elevation with gold glow, arrow nudge (`translate(2px, -2px)`)
+- [x] 4. Form animations: Floating labels with smooth scaling, 3px gold focus rings, input validation error shake animation, and contact form submission feedback
+- [x] 5. Demo mock data badge: Completely removed from `templates/base.html`, `scripts/render_pages.py`, `book.html`, and hidden in `css/site.css`
+- [x] 6. Icon suite: Added high-performance inline SVG icons for Call, WhatsApp, Email, Map across Header actions, Mobile Sheet drawer, floating Lead-bar, Contact Card, and Footer
+- [x] 7. Build & crawl gate: 102/102 URLs verified 200 OK with `scripts/check_links.py` at both bases
+
+

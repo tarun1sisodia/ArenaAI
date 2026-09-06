@@ -4,7 +4,7 @@ Build the **customer-facing website** from the approved design system (Dark Navy
 
 ## What we are building
 
-A premium travel site for **Agra SK Baghel Town & Travels**. North star from the deck: *make travel feel easy before the journey begins.*
+A premium travel site for **Agra SK Baghel Tour & Travels**. North star from the deck: *make travel feel easy before the journey begins.*
 
 Sitemap (design-guide §08):
 

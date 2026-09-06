@@ -1,4 +1,4 @@
-# 06 — Pre-Sprint Audit Report: SK Baghel Town & Travels
+# 06 — Pre-Sprint Audit Report: SK Baghel Tour & Travels
 
 **Date:** 2026-09-01 · **Auditor role:** Frontend Architecture / Performance QA / Technical SEO
 **Stack detected:** Vanilla static MPA — Python SSG (`scripts/render_pages.py`) emitting EN+HI trees. **Not React/Next.** Framework-specific checks (SSR payload, hydration, `useMemo`, React Query/SWR) are mapped to their static-site equivalents: content-in-initial-HTML ✅ (full SSG — crawlable), per-page JS payload, DOM churn, and asset strategy.

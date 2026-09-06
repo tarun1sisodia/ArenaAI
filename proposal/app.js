@@ -180,7 +180,7 @@ const shareButton = document.getElementById('share-button');
 shareButton.addEventListener('click', async () => {
   const shareData = {
     title: 'Agra SK Baghel — Website & Online Booking Proposal',
-    text: 'Website and online booking proposal for Agra SK Baghel Town & Travels.',
+    text: 'Website and online booking proposal for Agra SK Baghel Tour & Travels.',
     url: window.location.href,
   };
 

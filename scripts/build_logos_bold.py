@@ -28,7 +28,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "assets", "brand", "logos-bold")
 
 INITIALS = "SKB"
-COMPANY = "SK BAGHEL TOWN & TRAVELS"
+COMPANY = "SK BAGHEL TOUR & TRAVELS"
 
 # --- colourways -------------------------------------------------------------
 NAVY_DEEP = "#0B171E"
@@ -227,8 +227,8 @@ def svg(w: float, h: float, body: str, bg: str | None) -> str:
     plate = f'  <rect width="{w:g}" height="{h:g}" fill="{bg}"/>\n' if bg else ""
     return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w:g} {h:g}" '
             f'width="{w:g}" height="{h:g}" role="img" '
-            f'aria-label="SK Baghel Town &amp; Travels">\n'
-            f'  <title>SK Baghel Town &amp; Travels</title>\n{plate}  {body}\n</svg>\n')
+            f'aria-label="SK Baghel Tour &amp; Travels">\n'
+            f'  <title>SK Baghel Tour &amp; Travels</title>\n{plate}  {body}\n</svg>\n')
 
 
 def write(name: str, content: str) -> None:
@@ -326,7 +326,7 @@ def build_index() -> None:
   <div class="top"><div class="wrap">
     <span class="eyebrow">Brand identity · Set B</span>
     <h1>Bold transport <em>direction</em></h1>
-    <p>SK Baghel Town &amp; Travels. Heavy initials, a vehicle fused into the letters,
+    <p>SK Baghel Tour &amp; Travels. Heavy initials, a vehicle fused into the letters,
     tapered speed lines and the full name locked underneath — the language from the
     reference, drawn for SKB. Each concept comes in the brand navy + gold, a blue +
     orange transport colourway, a reversed cut for navy, and a compact cut without the

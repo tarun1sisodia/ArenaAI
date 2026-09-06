@@ -1,33 +1,39 @@
 ---
-version: alpha
-name: Dark Navy + Golden
-description: Premium travel identity for SK Baghel Town & Travels — Agra taxi, Tempo Traveller, and tours. Navy surfaces, warm paper, gold as seasoning.
+version: beta
+name: Light Premium (Ivory + Navy + Gold)
+description: Premium bilingual travel identity for SK Baghel Tour & Travels — Agra taxi, Tempo Traveller, and tours. Warm ivory canvas, white cards, deep navy text/chrome, and refined gold accents.
 colors:
-  navy-deep: "#0B171E"
-  navy: "#10212D"
-  navy-soft: "#173444"
-  navy-tint: "#EEF0EA"
-  gold: "#E5A044"
-  gold-light: "#F3C36C"
-  gold-deep: "#B27123"
-  gold-wash: "#FBF1DE"
-  gold-text: "#8A5A17"
-  paper: "#F5F0E8"
-  paper-lt: "#FCFAF6"
-  paper-dk: "#EAE4DA"
-  white: "#FFFDF8"
-  muted-2: "#5B656D"
-  muted-lt: "#AEB8B9"
-  coral: "#E16F4B"
-  teal: "#4D8580"
-  success: "#3E7C62"
-  error: "#C24A33"
+  bg: "#FAF7F0"
+  bg-alt: "#F0EBE0"
+  surface: "#FFFFFF"
+  text: "#0A1128"
+  text-soft: "#4A5578"
+  gold: "#B8941F"
+  gold-deep: "#9A7B14"
+  gold-soft: "rgba(184, 148, 31, 0.1)"
+  gold-border: "rgba(184, 148, 31, 0.25)"
+  border: "rgba(10, 17, 40, 0.08)"
+  navy-deep: "#0A1128"
+  navy: "#0A1128"
+  navy-soft: "#142146"
+  navy-tint: "#F0EBE0"
+  paper: "#FAF7F0"
+  paper-lt: "#FFFFFF"
+  paper-dk: "#F0EBE0"
+  white: "#FFFFFF"
+  muted-2: "#4A5578"
+  muted-lt: "#8A96B4"
+  coral: "#D96A43"
+  teal: "#3B7A75"
+  success: "#2A7E56"
+  error: "#C0392B"
 typography:
   display:
     fontFamily: Fraunces
     fontWeight: 500
     letterSpacing: -0.045em
     lineHeight: 0.98
+
   display-hi:
     fontFamily: Noto Serif Devanagari
   sans:
@@ -81,8 +87,11 @@ spacing:
   header-mobile: 64px
   touch: 44px
 motion:
-  duration: 180ms
+  fast: 180ms
+  medium: 400ms
+  slow: 1200ms
   easing: ease
+  ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1)
 components:
   button-primary:
     backgroundColor: "{colors.gold}"
@@ -92,7 +101,7 @@ components:
   button-outline:
     backgroundColor: transparent
     textColor: "{colors.navy}"
-    borderColor: "rgba(16,33,45,0.14)"
+    borderColor: "rgba(10,17,40,0.08)"
     rounded: "{rounded.default}"
     minHeight: 44px
   button-text:
@@ -106,9 +115,9 @@ components:
     backgroundColor: "{colors.navy-soft}"
     textColor: "{colors.white}"
   card:
-    backgroundColor: "{colors.paper-lt}"
+    backgroundColor: "{colors.surface}"
     rounded: "{rounded.default}"
-    borderColor: "rgba(16,33,45,0.14)"
+    borderColor: "rgba(10,17,40,0.08)"
   input:
     backgroundColor: "{colors.white}"
     textColor: "{colors.navy}"
@@ -118,25 +127,25 @@ components:
 
 ## Overview
 
-Dark Navy + Golden is the approved Option A from the proposal (Premium travel).
-The mix is **60 / 25 / 15**: navy surfaces, warm paper, gold as seasoning — never
-as a fill. Headlines are Fraunces; one italic accent per heading in gold (on navy)
-or coral (on paper). The site should feel like a well-run Agra travel desk, not a
-marketplace grid.
+Light Premium (Warm Ivory + Navy + Gold) is the approved identity for SK Baghel Travels.
+The mix is ivory backgrounds (`#FAF7F0`), cream section alternation (`#F0EBE0`), crisp white card surfaces (`#FFFFFF`), deep navy typography and chrome (`#0A1128`), and refined gold accents (`#B8941F`). The site feels like an exclusive, well-run private travel desk, with smooth micro-animations that enhance trust.
 
-`design-guide/` is the original 14-page PDF kit. This file is the agent-facing
-spec. `css/tokens.css` must stay in lockstep with the YAML above.
+This file is the agent-facing design spec. `css/tokens.css` must stay in lockstep with the YAML above.
 
 ## Colors
 
-- **Navy deep / navy / navy-soft:** header, footer, hero overlay, dark sections.
-- **Gold (`#E5A044`):** primary button, live clock of conversion (Call), brand mark accent. One primary gold action per cluster.
-- **Gold-light:** italic accents on navy, chips.
-- **Gold-text (`#8A5A17`):** small labels on paper (AA).
-- **Paper / paper-lt:** page canvas.
-- **Muted-2 (`#5B656D`):** secondary text on light (AA).
-- **Coral:** italic accents on paper, text-button underline — not a second CTA color.
-- **Error / success:** validation only, never decorative.
+- **Background Ivory (`#FAF7F0`):** Main page canvas and light atmosphere.
+- **Background Alt Cream (`#F0EBE0`):** Subtle section alternation.
+- **Surface White (`#FFFFFF`):** Cards, booking panels, elevated elements.
+- **Navy Deep / Navy (`#0A1128`):** Primary text, header background, dark CTAs, footer.
+- **Navy Soft (`#142146`):** Secondary dark surfaces, WhatsApp lead button.
+- **Text Soft (`#4A5578`):** Subtitles, meta descriptions, secondary copy.
+- **Gold (`#B8941F`):** Primary CTA, key accents, focus rings, active indicators.
+- **Gold Deep (`#9A7B14`):** Hover/active states, accessible gold on light backgrounds.
+- **Gold Soft (`rgba(184, 148, 31, 0.1)`): Spotlight cards, badge backgrounds, pill highlights.
+- **Border (`rgba(10, 17, 40, 0.08)`):** Dividers, subtle borders.
+- **Error / Success:** Functional feedback states only.
+
 
 Do not introduce a second accent. Do not use WhatsApp brand green on the lead bar.
 

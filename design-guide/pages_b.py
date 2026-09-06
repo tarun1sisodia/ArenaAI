@@ -159,7 +159,7 @@ def p09_cards_nav(c, pg):
     rect(c, MARGIN, ny - nh - 10, CONTENT_W, nh, NAVY_DEEP, r=3)
     logo_mark(c, MARGIN + 14, ny - nh + 6, 16, True)
     text(c, MARGIN + 36, ny - nh + 15, "SK BAGHEL", "DMSans-Bold", 7.6, WHITE, tracking=1.0)
-    text(c, MARGIN + 36, ny - nh + 6, "TOWN & TRAVELS", "DMMono", 4.4, MUTED_LT, tracking=0.9)
+    text(c, MARGIN + 36, ny - nh + 6, "TOUR & TRAVELS", "DMMono", 4.4, MUTED_LT, tracking=0.9)
     links = ["Services", "Routes", "Packages", "Fleet", "Contact"]
     lx = MARGIN + 150
     for l in links:

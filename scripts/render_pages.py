@@ -36,6 +36,12 @@ ROOT = Path(__file__).resolve().parents[1]
 FONTS_EN = "https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&display=swap"
 FONTS_HI = FONTS_EN + "&family=Noto+Sans+Devanagari:wght@400;500;700&family=Noto+Serif+Devanagari:wght@500;600"
 
+# Inline SVG icons for high-performance zero-dependency rendering
+ICON_CALL = '<span class="icon icon-call" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>'
+ICON_WA = '<span class="icon icon-wa" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span>'
+ICON_EMAIL = '<span class="icon icon-email" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></span>'
+ICON_MAP = '<span class="icon icon-map" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></span>'
+
 # Offer validity for JSON-LD: rebuilds roll this forward automatically, so the
 # schema never advertises a stale date (Google flags expired priceValidUntil).
 PRICE_VALID_UNTIL = (date.today() + timedelta(days=365)).isoformat()
@@ -104,7 +110,7 @@ def org_schema():
         "@context": "https://schema.org",
         "@type": ["TravelAgency", "TaxiService", "LocalBusiness"],
         "@id": f"{SITE}/#business",
-        "name": "SK Baghel Town & Travels",
+        "name": "SK Baghel Tour & Travels",
         "url": SITE,
         "telephone": PHONE,
         "email": EMAIL,
@@ -156,7 +162,7 @@ def seo_head(*, title, description, path, alt_path, lang, extra="", noindex=Fals
         f'<link rel="alternate" hreflang="x-default" href="{url(path if lang == "en" else alt_path)}" />',
         f'<meta property="og:type" content="website" />',
         f'<meta property="og:locale" content="{t["locale"]}" />',
-        f'<meta property="og:site_name" content="SK Baghel Town &amp; Travels" />',
+        f'<meta property="og:site_name" content="SK Baghel Tour &amp; Travels" />',
         f'<meta property="og:title" content="{title}" />',
         f'<meta property="og:description" content="{description}" />',
         f'<meta property="og:url" content="{url(path)}" />',
@@ -175,6 +181,132 @@ def seo_head(*, title, description, path, alt_path, lang, extra="", noindex=Fals
     return "\n    ".join(parts)
 
 
+def cinematic_theme_toggle_html(cls: str = ""):
+    return f"""\
+<button class="cinematic-theme-toggle {cls}" type="button" role="switch" aria-checked="false" aria-label="Switch to dark mode" title="Toggle theme">
+  <span class="cinematic-icons" aria-hidden="true">
+    <svg class="cinematic-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+    <svg class="cinematic-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+  </span>
+  <span class="cinematic-puck" aria-hidden="true">
+    <svg class="cinematic-puck-icon sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+    <svg class="cinematic-puck-icon moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+  </span>
+  <span class="cinematic-particles" aria-hidden="true"></span>
+</button>"""
+
+
+def contact_card_html(lang: str, is_standalone_page: bool = False) -> str:
+    t = T[lang]
+    heading_tag = (
+        f'<h2 class="contact-card-title">{"पूछताछ और 24×7 सहायता" if lang == "hi" else "Direct Inquiries &amp; 24×7 Dispatch"}</h2>'
+        if is_standalone_page
+        else f'<h3 class="contact-card-title">{"सीधे संपर्क करें" if lang == "hi" else "Direct Inquiries &amp; 24×7 Dispatch"}</h3>'
+    )
+    desc_text = (
+        "ताज गंज कार्यालय • 24 घंटे बुकिंग डेस्क। किसी भी रूट या टूर पूछताछ के लिए सीधे कॉल, व्हाट्सऐप या संदेश भेजें।"
+        if lang == "hi"
+        else "Office in Taj Ganj beside the Taj Mahal. 24×7 dispatch desk for airport drops, outstation cabs, and custom sightseeing."
+    )
+    name_label = "आपका नाम" if lang == "hi" else "Your Name"
+    name_ph = "उदा. राहुल शर्मा" if lang == "hi" else "e.g. Rahul Sharma"
+    phone_label = "फ़ोन नंबर" if lang == "hi" else "Phone Number"
+    phone_ph = f"उदा. {PHONE_DISPLAY}" if lang == "hi" else f"e.g. {PHONE_DISPLAY}"
+    msg_label = "यात्रा संदेश या रूट विवरण" if lang == "hi" else "Trip Details or Message"
+    msg_ph = "तारीख, रूट या यात्रियों की संख्या लिखें..." if lang == "hi" else "Travel dates, route, or number of passengers..."
+    submit_text = t["enquire"]
+
+    return f"""\
+<div class="contact-card-wrap">
+  <div class="contact-card">
+    <svg class="corner-plus corner-plus--tl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    <svg class="corner-plus corner-plus--tr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    <svg class="corner-plus corner-plus--bl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    <svg class="corner-plus corner-plus--br" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+
+    <div class="contact-card-info">
+      <div class="contact-card-header">
+        {heading_tag}
+        <p class="contact-card-desc">{desc_text}</p>
+      </div>
+
+      <div class="contact-tiles-grid">
+        <a class="contact-tile" href="tel:{PHONE}" aria-label="{t['call']}: {PHONE_DISPLAY}">
+          <div class="contact-tile-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          </div>
+          <div>
+            <span class="contact-tile-label">{t['call']}</span>
+            <span class="contact-tile-value">{PHONE_DISPLAY}</span>
+          </div>
+        </a>
+
+        <a class="contact-tile" href="https://wa.me/{WHATSAPP}" target="_blank" rel="noreferrer" aria-label="{t['whatsapp']}: SK Baghel">
+          <div class="contact-tile-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+          </div>
+          <div>
+            <span class="contact-tile-label">{t['whatsapp']}</span>
+            <span class="contact-tile-value">SK Baghel</span>
+          </div>
+        </a>
+
+        <a class="contact-tile" href="mailto:{EMAIL}" aria-label="Email: {EMAIL}">
+          <div class="contact-tile-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          </div>
+          <div>
+            <span class="contact-tile-label">Email</span>
+            <span class="contact-tile-value">{EMAIL}</span>
+          </div>
+        </a>
+
+        <a class="contact-tile" href="{MAPS_URL}" target="_blank" rel="noreferrer" aria-label="Office Location: Taj Ganj, Agra">
+          <div class="contact-tile-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <div>
+            <span class="contact-tile-label">{"कार्यालय / Maps" if lang == "hi" else "Office Location"}</span>
+            <span class="contact-tile-value">{"ताज गंज, आगरा" if lang == "hi" else "Taj Ganj, Agra"}</span>
+          </div>
+        </a>
+
+        <div class="contact-tile col-span-full">
+          <div class="contact-tile-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div>
+            <span class="contact-tile-label">{"उपलब्धता / Hours" if lang == "hi" else "Availability / Dispatch"}</span>
+            <span class="contact-tile-value">{"24 घंटे सेवा • Near Taj East Gate Rd" if lang == "hi" else "24×7 Active Dispatch • Near Taj East Gate Rd"}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="contact-card-form">
+      <form id="contact-form" action="mailto:{EMAIL}" method="post" enctype="text/plain">
+        <div class="contact-form-group field">
+          <label class="contact-form-label" for="contact-name">{name_label}</label>
+          <input class="contact-form-input" id="contact-name" name="name" type="text" autocomplete="name" placeholder="{name_ph}" required />
+        </div>
+        <div class="contact-form-group field">
+          <label class="contact-form-label" for="contact-phone">{phone_label}</label>
+          <input class="contact-form-input" id="contact-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="{phone_ph}" required />
+        </div>
+        <div class="contact-form-group field">
+          <label class="contact-form-label" for="contact-message">{msg_label}</label>
+          <textarea class="contact-form-textarea" id="contact-message" name="message" rows="3" placeholder="{msg_ph}" required></textarea>
+        </div>
+        <button class="btn-primary contact-form-submit" type="submit">
+          <span>{submit_text}</span>
+          <span aria-hidden="true">↗</span>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>"""
+
+
 def header(lang: str, active: str, alt_path: str):
     t = T[lang]
     nav = [
@@ -185,7 +317,8 @@ def header(lang: str, active: str, alt_path: str):
         ("contact", t["nav_contact"]),
     ]
     links = "\n          ".join(
-        f'<a href="{hub_path(key, lang)}" data-nav="{key}">{label}</a>' for key, label in nav
+        f'<a href="{hub_path(key, lang)}" data-nav="{key}" class="roll-link"><span class="roll-inner">{label}</span><span class="roll-duplicate">{label}</span></a>'
+        for key, label in nav
     )
     sheet = "\n        ".join(
         [f'<a href="{hub_path("home", lang)}" data-nav="home">{t["home"]}</a>']
@@ -197,16 +330,16 @@ def header(lang: str, active: str, alt_path: str):
 <a class="skip-link" href="#main">{t["skip"]}</a>
 <header class="site-header" id="site-header">
   <div class="container header-inner">
-    <a class="brand" href="{home}" aria-label="SK Baghel Town &amp; Travels">
+    <a class="brand" href="{home}" aria-label="SK Baghel Tour &amp; Travels">
       <span class="brand-mark">{BRAND_SVG}</span>
-      <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+      <span class="brand-copy"><strong id="brand" data-scramble>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
     </a>
     <nav class="nav-desktop" aria-label="Primary">{links}</nav>
     <div class="header-actions">
-      <span class="demo-chip"><i class="live-dot"></i> {t["demo"]}</span>
+      {cinematic_theme_toggle_html("header-theme-toggle")}
       <a class="lang-switch" href="{alt_path}" hreflang="{T["hi" if lang == "en" else "en"]["hreflang"]}">{t["switch"]}</a>
-      <a class="btn-outline btn-sm btn-outline--light" href="tel:{PHONE}" data-event="cta_click">{t["call"]}</a>
-      <a class="btn-outline btn-sm btn-outline--light" href="{wa}" target="_blank" rel="noreferrer" data-event="cta_click">{t["whatsapp"]}</a>
+      <a class="btn-outline btn-sm btn-outline--light" href="tel:{PHONE}" data-event="cta_click">{ICON_CALL}<span>{t["call"]}</span></a>
+      <a class="btn-outline btn-sm btn-outline--light" href="{wa}" target="_blank" rel="noreferrer" data-event="cta_click">{ICON_WA}<span>{t["whatsapp"]}</span></a>
       <a class="btn-primary btn-sm" href="/book.html" data-event="cta_click">{t["book"]} <span>↗</span></a>
       <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-sheet" aria-label="{t["menu"]}"><span></span></button>
     </div>
@@ -217,13 +350,18 @@ def header(lang: str, active: str, alt_path: str):
   <div class="sheet-head">
     <a class="brand" href="{home}">
       <span class="brand-mark">{BRAND_SVG}</span>
-      <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+      <span class="brand-copy"><strong data-scramble>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
     </a>
     <button type="button" id="nav-close" class="btn-outline btn-outline--light btn-sm">{t["close"]}</button>
   </div>
+  <div class="sheet-theme-row" style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);">
+    <span style="font-size:0.85rem;color:var(--text-soft);font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">Theme</span>
+    {cinematic_theme_toggle_html("sheet-theme-toggle")}
+  </div>
   {sheet}
   <a href="{alt_path}">{t["switch"]}</a>
-  <a href="tel:{PHONE}">{t["call"]} {PHONE_DISPLAY}</a>
+  <a class="btn-outline btn-sm" href="tel:{PHONE}">{ICON_CALL}<span>{t["call"]} {PHONE_DISPLAY}</span></a>
+  <a class="btn-gold btn-sm" href="{wa}" target="_blank" rel="noreferrer">{ICON_WA}<span>{t["whatsapp"]} Us</span></a>
   <a class="btn-primary" href="/book.html">{t["book"]} <span>↗</span></a>
 </div>"""
 
@@ -237,8 +375,8 @@ def footer(lang: str):
       <span class="brand-mark" style="width:28px;color:#fffdf8">{BRAND_SVG}</span>
       <strong>Agra → India</strong>
       <p>Discover → Book → Go</p>
-      <p>Near Taj East Gate Road, Taj Ganj, Agra</p>
-      <p><a href="tel:{PHONE}">{PHONE_DISPLAY}</a></p>
+      <p>{ICON_MAP} Near Taj East Gate Road, Taj Ganj, Agra</p>
+      <p><a href="tel:{PHONE}">{ICON_CALL} {PHONE_DISPLAY}</a></p>
     </div>
     <div>
       <h4>{t["explore"]}</h4>
@@ -258,19 +396,19 @@ def footer(lang: str):
       <h4>{t["trust"]}</h4>
       <a href="{hub_path("faq", lang)}">{t["nav_faq"]}</a>
       <a href="{hub_path("contact", lang)}">{t["nav_contact"]}</a>
-      <a href="tel:{PHONE}">{PHONE_DISPLAY}</a>
+      <a href="tel:{PHONE}">{ICON_CALL} {PHONE_DISPLAY}</a>
       <a href="{hub_path("privacy", lang)}">{t["privacy"]}</a>
       <a href="{hub_path("terms", lang)}">{t["terms"]}</a>
     </div>
   </div>
   <div class="container footer-bottom">
-    <span>© <span id="year">2026</span> SK Baghel Town &amp; Travels · {t["preview"]}</span>
+    <span>© <span id="year">2026</span> SK Baghel Tour &amp; Travels · {t["preview"]}</span>
     <span>{t["footer_note"]}</span>
   </div>
 </footer>
 <div class="lead-bar" role="navigation" aria-label="Contact">
-  <a class="lead-call" href="tel:{PHONE}">{t["call"]}</a>
-  <a class="lead-wa" href="https://wa.me/{WHATSAPP}" target="_blank" rel="noreferrer">{t["whatsapp"]}</a>
+  <a class="lead-call" href="tel:{PHONE}">{ICON_CALL}<span>{t["call"]}</span></a>
+  <a class="lead-wa" href="https://wa.me/{WHATSAPP}" target="_blank" rel="noreferrer">{ICON_WA}<span>{t["whatsapp"]}</span></a>
   <a class="lead-book" href="/book.html">{t["book_cta"]}</a>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>"""
@@ -303,6 +441,7 @@ def write_page(*, lang, path, alt_path, title, description, active, body, extra_
         # truth for NAP) — do not hand-edit it.
         '<script src="/js/contact.js" defer></script>',
         '<script src="/js/fares.js" defer></script>',
+        '<script src="/js/motion.js" defer></script>',
         '<script src="/js/app.js" defer></script>',
     ]
     if extra_js:
@@ -315,16 +454,41 @@ def write_page(*, lang, path, alt_path, title, description, active, body, extra_
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0B171E" />
+    <meta name="theme-color" content="#FAF7F0" />
+    <script>(function(){{try{{var t=localStorage.getItem('skb-theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){{document.documentElement.setAttribute('data-theme','dark');document.documentElement.classList.add('dark');}}}}catch(e){{}}}})();</script>
     <link rel="icon" href="/assets/brand/favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="{fonts}" rel="stylesheet" />
     <link rel="stylesheet" href="/css/tokens.css" />
     <link rel="stylesheet" href="/css/site.css" />
+    <link rel="stylesheet" href="/css/components.css" />
     {head}
   </head>
   <body data-page="{active}" data-lang="{lang}" data-base="{page_base(rel)}"{kind_attr}>
+    <svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden;pointer-events:none">
+      <defs>
+        <filter id="grain-light">
+          <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" result="noise" />
+          <feColorMatrix in="noise" type="saturate" values="0" result="desaturatedNoise" />
+          <feComponentTransfer in="desaturatedNoise" result="lightGrain">
+            <feFuncA type="linear" slope="0.3" />
+          </feComponentTransfer>
+          <feBlend in="SourceGraphic" in2="lightGrain" mode="overlay" />
+        </filter>
+        <filter id="grain-dark">
+          <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" result="noise" />
+          <feColorMatrix in="noise" type="saturate" values="0" result="desaturatedNoise" />
+          <feComponentTransfer in="desaturatedNoise" result="darkGrain">
+            <feFuncA type="linear" slope="0.5" />
+          </feComponentTransfer>
+          <feBlend in="SourceGraphic" in2="darkGrain" mode="overlay" />
+        </filter>
+        <filter id="noiseFilter">
+          <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" stitchTiles="stitch" />
+        </filter>
+      </defs>
+    </svg>
     {header(lang, active, alt_path)}
     <main id="main">
       {body}
@@ -518,21 +682,15 @@ def home_body(lang):
     </figure>
   </div>
 </section>
-<section class="section section--deep">
-  <div class="container split">
-    <div>
-      <p class="eyebrow eyebrow--light">{t["nav_contact"]}</p>
-      <h2>{t["h2_reach"]}</h2>
-      <p class="lead">{t["lead_reach"]}</p>
-      <div class="hero-actions" style="margin-top:28px">
-        <a class="btn-primary" href="tel:{PHONE}">{t["call"]} {PHONE_DISPLAY}</a>
-        <a class="btn-outline btn-outline--light" href="{hub_path("contact", lang)}">{t["nav_contact"]}</a>
+<section class="section section--paper" id="contact-section">
+  <div class="container">
+    <div class="section-head" style="margin-bottom:2.25rem">
+      <div>
+        <p class="eyebrow">{t["nav_contact"]}</p>
+        <h2>{t["h2_reach"]}</h2>
       </div>
     </div>
-    <div class="note" style="background:var(--navy-soft);color:var(--muted-lt)">
-      <p class="eyebrow eyebrow--light">North star</p>
-      <p style="color:var(--white);font-family:var(--display);font-size:24px;line-height:1.2;margin-top:8px">{t["north_star"]}</p>
-    </div>
+    {contact_card_html(lang, is_standalone_page=False)}
   </div>
 </section>
 """
@@ -796,29 +954,11 @@ def contact_body(lang):
     return f"""
 <section class="page-hero"><div class="container">
   {breadcrumb(lang, [(t["home"], hub_path("home", lang)), (t["nav_contact"], "")])}
-  <h1>{t["h2_reach"]}</h1>
-  <p class="lead">{t["primary_lead"]}</p>
+  <h1>{t["title_contact"].split("|")[0].strip()}</h1>
+  <p class="lead">{t["desc_contact"]}</p>
 </div></section>
-<section class="section section--paper"><div class="container split">
-  <div>
-    <div class="contact-actions">
-      <a class="contact-action" href="tel:{PHONE}"><span class="ico">☎</span><span><small>{t["call"]}</small><strong>{PHONE_DISPLAY}</strong></span><b>↗</b></a>
-      <a class="contact-action" href="https://wa.me/{WHATSAPP}" target="_blank" rel="noreferrer"><span class="ico">◌</span><span><small>{t["whatsapp"]}</small><strong>SK Baghel</strong></span><b>↗</b></a>
-      <a class="contact-action" href="mailto:{EMAIL}"><span class="ico">✉</span><span><small>Email</small><strong>{EMAIL}</strong></span><b>↗</b></a>
-      <a class="contact-action" href="https://maps.google.com/?q=Taj+Ganj+Agra" target="_blank" rel="noreferrer"><span class="ico">⌖</span><span><small>Maps</small><strong>Taj Ganj, Agra</strong></span><b>↗</b></a>
-    </div>
-    <!-- action/method give a zero-JS fallback (opens the guest's mail client);
-         app.js intercepts and validates when JavaScript runs. -->
-    <form id="contact-form" class="calc-box" style="margin-top:28px;background:var(--paper-lt)" action="mailto:{EMAIL}" method="post" enctype="text/plain">
-      <div class="field" style="margin:12px 0"><span>Name</span><input name="name" autocomplete="name" required /></div>
-      <div class="field" style="margin-bottom:12px"><span>Mobile</span><input name="phone" type="tel" inputmode="tel" autocomplete="tel" required /></div>
-      <div class="field" style="margin-bottom:16px"><span>Message</span><textarea name="message" required></textarea></div>
-      <button class="btn-primary" type="submit">{t["enquire"]} <span>↗</span></button>
-    </form>
-  </div>
-  <div class="map-panel"><div class="map-pin">SK</div>
-    <div class="map-address"><strong>Near Taj East Gate Road</strong><p class="muted">Taj Ganj, Agra, Uttar Pradesh</p></div>
-  </div>
+<section class="section section--paper"><div class="container">
+  {contact_card_html(lang, is_standalone_page=True)}
 </div></section>
 """
 
@@ -1024,7 +1164,7 @@ def write_404():
     (ROOT / "404.html").write_text(
         rebase(
             f"""<!doctype html><html lang="en-IN"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Page not found | SK Baghel</title>
-<link rel="stylesheet" href="/css/tokens.css"/><link rel="stylesheet" href="/css/site.css"/></head>
+<link rel="stylesheet" href="/css/tokens.css"/><link rel="stylesheet" href="/css/site.css"/><link rel="stylesheet" href="/css/components.css"/></head>
 <body><main class="page-hero"><div class="container"><h1>This page<br /><i>isn’t on the map.</i></h1>
 <p class="lead">Try the home page, or call {PHONE_DISPLAY}.</p>
 <p><a class="btn-primary" href="/">Home</a></p></div></main></body></html>""",
@@ -1071,7 +1211,7 @@ def generate_lang(lang: str):
         active="home",
         body=home_body(lang),
         preload_hero=True,
-        jsonld=[org_schema(), {"@context": "https://schema.org", "@type": "WebSite", "name": "SK Baghel Town & Travels", "url": SITE, "inLanguage": t["html_lang"]}],
+        jsonld=[org_schema(), {"@context": "https://schema.org", "@type": "WebSite", "name": "SK Baghel Tour & Travels", "url": SITE, "inLanguage": t["html_lang"]}],
     )
     hubs = {
         "services": (services_body, t["title_services"], t["desc_services"]),

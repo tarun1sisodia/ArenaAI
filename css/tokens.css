@@ -1,40 +1,60 @@
-/* SK Baghel website tokens · v1.0 · Dark Navy + Golden */
+/* SK Baghel website tokens · v2.0 · Light Premium (Warm Ivory + Navy + Gold) */
 :root {
-  --navy-deep: #0b171e;
-  --navy: #10212d;
-  --navy-soft: #173444;
-  --navy-tint: #eef0ea;
+  /* Core Light Premium Palette (Approved Session 1b / PRD §10) */
+  --bg: #FAF7F0;
+  --bg-alt: #F0EBE0;
+  --surface: #FFFFFF;
+  --text: #0A1128;
+  --text-soft: #4A5578;
+  --gold: #B8941F;
+  --gold-deep: #9A7B14;
+  --gold-soft: rgba(184, 148, 31, 0.1);
+  --gold-border: rgba(184, 148, 31, 0.25);
+  --border: rgba(10, 17, 40, 0.08);
 
-  --gold: #e5a044;
-  --gold-light: #f3c36c;
-  --gold-deep: #b27123;
-  --gold-wash: #fbf1de;
-  --gold-text: #8a5a17;
-
-  --paper: #f5f0e8;
-  --paper-lt: #fcfaf6;
-  --paper-dk: #eae4da;
-  --white: #fffdf8;
-
-  --muted-2: #5b656d;
-  --muted-lt: #aeb8b9;
-  --coral: #e16f4b;
-  --teal: #4d8580;
-  --success: #3e7c62;
-  --error: #c24a33;
-
-  --line: rgba(16, 33, 45, 0.14);
+  /* Semantic backward-compatible mappings for site.css */
+  --navy-deep: #0A1128;
+  --navy: #0A1128;
+  --navy-soft: #142146;
+  --navy-tint: #F0EBE0;
+  --paper: #FAF7F0;
+  --paper-lt: #FFFFFF;
+  --paper-dk: #F0EBE0;
+  --white: #FFFFFF;
+  --muted-2: #4A5578;
+  --muted-lt: #8A96B4;
+  --gold-light: #D8B23E;
+  --gold-wash: #FAF2DA;
+  --gold-text: #9A7B14;
+  --coral: #D96A43;
+  --teal: #3B7A75;
+  --success: #2A7E56;
+  --error: #C0392B;
+  --line: rgba(10, 17, 40, 0.08);
   --line-lt: rgba(255, 255, 255, 0.16);
 
-  --sans: "DM Sans", "Noto Sans Devanagari", "Helvetica Neue", Arial, sans-serif;
-  --display: "Fraunces", "Noto Serif Devanagari", Georgia, serif;
-  --mono: "DM Mono", "Courier New", monospace;
-  --ease: 180ms ease;
+  /* Typography */
+  --font-display: 'Fraunces', 'Noto Serif Devanagari', Georgia, serif;
+  --font-ui: 'DM Sans', 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'DM Mono', monospace;
+  --display: var(--font-display);
+  --sans: var(--font-ui);
+  --mono: var(--font-mono);
 
+  /* Motion Timing & Curves */
+  --motion-fast: 180ms;
+  --motion-medium: 400ms;
+  --motion-slow: 1200ms;
+  --ease: 180ms ease;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Geometry & Layout */
   --header: 78px;
   --container: 1140px;
-  --radius: 3px;
+  --radius: 4px;
+  --radius-lg: 8px;
   --radius-pill: 999px;
+  --touch: 44px;
   --gutter: 24px;
   --space-1: 8px;
   --space-2: 16px;
@@ -43,13 +63,62 @@
   --space-5: 48px;
   --space-6: 64px;
   --space-7: 96px;
-  --shadow-gold: 0 8px 20px rgba(178, 113, 35, 0.16);
-  --shadow-lift: 0 12px 23px rgba(22, 39, 48, 0.14);
-  --hero-overlay: linear-gradient(90deg, rgba(11, 23, 30, 0.96) 0%, rgba(11, 23, 30, 0.74) 47%, rgba(11, 23, 30, 0.17) 100%);
-  --card-overlay: linear-gradient(180deg, rgba(13, 31, 38, 0.1) 0%, rgba(13, 31, 38, 0.62) 100%);
-  --gold-highlight: linear-gradient(90deg, #e5a044 0%, #f3c36c 100%);
+
+  /* Shadows & Overlays */
+  --shadow-gold: 0 8px 24px rgba(184, 148, 31, 0.25);
+  --shadow-lift: 0 12px 28px rgba(10, 17, 40, 0.08);
+  --hero-overlay: linear-gradient(90deg, rgba(10, 17, 40, 0.95) 0%, rgba(10, 17, 40, 0.72) 48%, rgba(10, 17, 40, 0.2) 100%);
+  --card-overlay: linear-gradient(180deg, rgba(10, 17, 40, 0.05) 0%, rgba(10, 17, 40, 0.65) 100%);
+  --gold-highlight: linear-gradient(90deg, #B8941F 0%, #D8B23E 100%);
   --grain: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.16'/%3E%3C/svg%3E");
 }
+
+/* ==========================================================================
+   DARK NAVY THEME OVERRIDES (WCAG 2.2 AA Contrast Preserved)
+   ========================================================================== */
+[data-theme="dark"],
+html.dark {
+  --bg: #0A1128;
+  --bg-alt: #0F1A3A;
+  --surface: #142146;
+  --text: #FAF7F0;
+  --text-soft: #A2B1D6;
+  --gold: #E5A044;
+  --gold-deep: #F3C36C;
+  --gold-soft: rgba(229, 160, 68, 0.15);
+  --gold-border: rgba(229, 160, 68, 0.35);
+  --border: rgba(255, 255, 255, 0.12);
+
+  --navy-deep: #050914;
+  --navy: #0A1128;
+  --navy-soft: #142146;
+  --navy-tint: #1C2E60;
+  --paper: #0A1128;
+  --paper-lt: #142146;
+  --paper-dk: #0F1A3A;
+  --white: #142146;
+  --muted-2: #A2B1D6;
+  --muted-lt: #6B7B9E;
+  --gold-light: #F3C36C;
+  --gold-wash: rgba(229, 160, 68, 0.18);
+  --gold-text: #E5A044;
+  --line: rgba(255, 255, 255, 0.12);
+  --line-lt: rgba(255, 255, 255, 0.2);
+
+  --shadow-gold: 0 8px 24px rgba(229, 160, 68, 0.3);
+  --shadow-lift: 0 12px 28px rgba(0, 0, 0, 0.5);
+  --card-overlay: linear-gradient(180deg, rgba(5, 9, 20, 0.1) 0%, rgba(5, 9, 20, 0.75) 100%);
+  --hero-overlay: linear-gradient(90deg, rgba(5, 9, 20, 0.96) 0%, rgba(5, 9, 20, 0.78) 48%, rgba(5, 9, 20, 0.25) 100%);
+}
+
+/* Smooth Theme Switching Transitions */
+html.theme-transitioning,
+html.theme-transitioning *,
+html.theme-transitioning *::before,
+html.theme-transitioning *::after {
+  transition: background-color 300ms ease, color 300ms ease, border-color 300ms ease, box-shadow 300ms ease !important;
+}
+
 
 html[lang="hi-IN"] {
   --sans: "Noto Sans Devanagari", "DM Sans", "Helvetica Neue", Arial, sans-serif;
@@ -65,5 +134,15 @@ html[lang="hi-IN"] h3 {
 @media (max-width: 700px) {
   :root {
     --header: 64px;
+  }
+}
+
+/* Reduced Motion Safety */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

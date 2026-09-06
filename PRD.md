@@ -1,6 +1,6 @@
 # Product Requirements Document (PRD) — Master / Final v3.0
 
-**Product:** Premium bilingual customer website + AI-ready SEO growth engine for **Agra SK Baghel Town & Travels**
+**Product:** Premium bilingual customer website + AI-ready SEO growth engine for **Agra SK Baghel Tour & Travels**
 **Version:** 3.0 — Master (engineering-led, SEO/AI-SEO-first, design-locked, scalable, client-ready)
 **Status:** Final target specification · Approved scope · Build tracked in `04_PROGRESS_TRACKER.md`
 **Date:** 2026-09-03
@@ -44,7 +44,7 @@
 
 ## 1. Executive summary
 
-**Agra SK Baghel Town & Travels** is an Agra taxi, cab, Tempo Traveller, Innova and
+**Agra SK Baghel Tour & Travels** is an Agra taxi, cab, Tempo Traveller, Innova and
 tour-package operator. We are building a **premium, bilingual (English + Hindi),
 static, SEO-first customer website + a repeatable SEO/AI-SEO growth system** that:
 

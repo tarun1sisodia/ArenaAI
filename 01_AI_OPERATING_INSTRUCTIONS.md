@@ -1,4 +1,4 @@
-# AI Operating Instructions — SK Baghel Town & Travels
+# AI Operating Instructions — SK Baghel Tour & Travels
 
 You are implementing the SK Baghel customer website defined in
 `02_PROJECT_CONTEXT.md` and `03_PHASE_PLAN.md`, tracked in `04_PROGRESS_TRACKER.md`.

@@ -24,7 +24,7 @@ def p01_cover(c, pg):
     w, h = p.wrapOn(c, CONTENT_W, 200); p.drawOn(c, MARGIN, PAGE_H - 136 - h)
 
     intro_top = PAGE_H - 136 - h - 14
-    para(c, "The complete reference for designing and building the <b>SK Baghel Town &amp; Travels</b> "
+    para(c, "The complete reference for designing and building the <b>SK Baghel Tour &amp; Travels</b> "
             "website — the approved <b>Dark Navy + Golden</b> premium direction: colour tokens, typography scale, "
             "spacing, components, imagery, motion, accessibility and page-by-page UX blueprints.",
          MARGIN, intro_top, 392, "DMSans", 9.3, 14.2, MUTED_LT)

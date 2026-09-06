@@ -3,13 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0B171E" />
+    <meta name="theme-color" content="#FAF7F0" />
+    <script>(function(){try{var t=localStorage.getItem('skb-theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.setAttribute('data-theme','dark');document.documentElement.classList.add('dark');}}catch(e){}})();</script>
     <link rel="icon" href="../../../assets/brand/favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="../../../css/tokens.css" />
     <link rel="stylesheet" href="../../../css/site.css" />
+    <link rel="stylesheet" href="../../../css/components.css" />
     <title>Sedan hire in Agra | SK Baghel</title>
     <meta name="description" content="Everyday comfort for city rides and one-way drops." />
     <meta name="robots" content="index,follow" />
@@ -19,7 +21,7 @@
     <link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/vehicles/sedan/" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="en_IN" />
-    <meta property="og:site_name" content="SK Baghel Town &amp; Travels" />
+    <meta property="og:site_name" content="SK Baghel Tour &amp; Travels" />
     <meta property="og:title" content="Sedan hire in Agra | SK Baghel" />
     <meta property="og:description" content="Everyday comfort for city rides and one-way drops." />
     <meta property="og:url" content="https://skbagheltravels.in/en/vehicles/sedan/" />
@@ -30,40 +32,73 @@
     <meta name="twitter:title" content="Sedan hire in Agra | SK Baghel" />
     <meta name="twitter:description" content="Everyday comfort for city rides and one-way drops." />
     <meta name="twitter:image" content="https://skbagheltravels.in/assets/brand/og-banner.webp" />
-    <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "contactPoint": [{"@type": "ContactPoint", "telephone": "+919876543210", "contactType": "customer service", "areaServed": "IN", "availableLanguage": ["en-IN", "hi-IN"]}], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
+    <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "contactPoint": [{"@type": "ContactPoint", "telephone": "+919876543210", "contactType": "customer service", "areaServed": "IN", "availableLanguage": ["en-IN", "hi-IN"]}], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
     <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://skbagheltravels.in/"}, {"@type": "ListItem", "position": 2, "name": "Fleet", "item": "https://skbagheltravels.in/en/fleet/"}, {"@type": "ListItem", "position": 3, "name": "Sedan", "item": "https://skbagheltravels.in/en/vehicles/sedan/"}]}</script>
   </head>
   <body data-page="fleet" data-lang="en" data-base="../../..">
+    <svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden;pointer-events:none">
+      <defs>
+        <filter id="grain-light">
+          <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" result="noise" />
+          <feColorMatrix in="noise" type="saturate" values="0" result="desaturatedNoise" />
+          <feComponentTransfer in="desaturatedNoise" result="lightGrain">
+            <feFuncA type="linear" slope="0.3" />
+          </feComponentTransfer>
+          <feBlend in="SourceGraphic" in2="lightGrain" mode="overlay" />
+        </filter>
+        <filter id="grain-dark">
+          <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" result="noise" />
+          <feColorMatrix in="noise" type="saturate" values="0" result="desaturatedNoise" />
+          <feComponentTransfer in="desaturatedNoise" result="darkGrain">
+            <feFuncA type="linear" slope="0.5" />
+          </feComponentTransfer>
+          <feBlend in="SourceGraphic" in2="darkGrain" mode="overlay" />
+        </filter>
+        <filter id="noiseFilter">
+          <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" stitchTiles="stitch" />
+        </filter>
+      </defs>
+    </svg>
     <a class="skip-link" href="#main">Skip to content</a>
 <header class="site-header" id="site-header">
   <div class="container header-inner">
-    <a class="brand" href="../../../" aria-label="SK Baghel Town &amp; Travels">
+    <a class="brand" href="../../../" aria-label="SK Baghel Tour &amp; Travels">
       <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
   <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
   <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
 </svg></span>
-      <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+      <span class="brand-copy"><strong id="brand" data-scramble>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
     </a>
-    <nav class="nav-desktop" aria-label="Primary"><a href="../../../en/services/" data-nav="services">Services</a>
-          <a href="../../../en/routes/" data-nav="routes">Routes</a>
-          <a href="../../../en/packages/" data-nav="packages">Packages</a>
-          <a href="../../../en/fleet/" data-nav="fleet">Fleet</a>
-          <a href="../../../en/contact/" data-nav="contact">Contact</a></nav>
+    <nav class="nav-desktop" aria-label="Primary"><a href="../../../en/services/" data-nav="services" class="roll-link"><span class="roll-inner">Services</span><span class="roll-duplicate">Services</span></a>
+          <a href="../../../en/routes/" data-nav="routes" class="roll-link"><span class="roll-inner">Routes</span><span class="roll-duplicate">Routes</span></a>
+          <a href="../../../en/packages/" data-nav="packages" class="roll-link"><span class="roll-inner">Packages</span><span class="roll-duplicate">Packages</span></a>
+          <a href="../../../en/fleet/" data-nav="fleet" class="roll-link"><span class="roll-inner">Fleet</span><span class="roll-duplicate">Fleet</span></a>
+          <a href="../../../en/contact/" data-nav="contact" class="roll-link"><span class="roll-inner">Contact</span><span class="roll-duplicate">Contact</span></a></nav>
     <div class="header-actions">
-      <span class="demo-chip"><i class="live-dot"></i> Demo · mock data</span>
+      <button class="cinematic-theme-toggle header-theme-toggle" type="button" role="switch" aria-checked="false" aria-label="Switch to dark mode" title="Toggle theme">
+  <span class="cinematic-icons" aria-hidden="true">
+    <svg class="cinematic-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+    <svg class="cinematic-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+  </span>
+  <span class="cinematic-puck" aria-hidden="true">
+    <svg class="cinematic-puck-icon sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+    <svg class="cinematic-puck-icon moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+  </span>
+  <span class="cinematic-particles" aria-hidden="true"></span>
+</button>
       <a class="lang-switch" href="../../../hi/vehicles/sedan/" hreflang="hi-IN">हिन्दी</a>
-      <a class="btn-outline btn-sm btn-outline--light" href="tel:+919876543210" data-event="cta_click">Call</a>
-      <a class="btn-outline btn-sm btn-outline--light" href="https://wa.me/919876543210" target="_blank" rel="noreferrer" data-event="cta_click">WhatsApp</a>
+      <a class="btn-outline btn-sm btn-outline--light" href="tel:+919876543210" data-event="cta_click"><span class="icon icon-call" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span><span>Call</span></a>
+      <a class="btn-outline btn-sm btn-outline--light" href="https://wa.me/919876543210" target="_blank" rel="noreferrer" data-event="cta_click"><span class="icon icon-wa" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span><span>WhatsApp</span></a>
       <a class="btn-primary btn-sm" href="../../../book.html" data-event="cta_click">Book now <span>↗</span></a>
       <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-sheet" aria-label="Open menu"><span></span></button>
     </div>
   </div>
 </header>
-<noscript><nav class="noscript-nav" aria-label="Primary (no JavaScript)"><a href="../../../en/services/" data-nav="services">Services</a>
-          <a href="../../../en/routes/" data-nav="routes">Routes</a>
-          <a href="../../../en/packages/" data-nav="packages">Packages</a>
-          <a href="../../../en/fleet/" data-nav="fleet">Fleet</a>
-          <a href="../../../en/contact/" data-nav="contact">Contact</a></nav></noscript>
+<noscript><nav class="noscript-nav" aria-label="Primary (no JavaScript)"><a href="../../../en/services/" data-nav="services" class="roll-link"><span class="roll-inner">Services</span><span class="roll-duplicate">Services</span></a>
+          <a href="../../../en/routes/" data-nav="routes" class="roll-link"><span class="roll-inner">Routes</span><span class="roll-duplicate">Routes</span></a>
+          <a href="../../../en/packages/" data-nav="packages" class="roll-link"><span class="roll-inner">Packages</span><span class="roll-duplicate">Packages</span></a>
+          <a href="../../../en/fleet/" data-nav="fleet" class="roll-link"><span class="roll-inner">Fleet</span><span class="roll-duplicate">Fleet</span></a>
+          <a href="../../../en/contact/" data-nav="contact" class="roll-link"><span class="roll-inner">Contact</span><span class="roll-duplicate">Contact</span></a></nav></noscript>
 <div class="nav-sheet" id="nav-sheet" role="dialog" aria-modal="true" aria-label="Open menu" hidden>
   <div class="sheet-head">
     <a class="brand" href="../../../">
@@ -71,9 +106,23 @@
   <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
   <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
 </svg></span>
-      <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+      <span class="brand-copy"><strong data-scramble>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
     </a>
     <button type="button" id="nav-close" class="btn-outline btn-outline--light btn-sm">Close</button>
+  </div>
+  <div class="sheet-theme-row" style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);">
+    <span style="font-size:0.85rem;color:var(--text-soft);font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">Theme</span>
+    <button class="cinematic-theme-toggle sheet-theme-toggle" type="button" role="switch" aria-checked="false" aria-label="Switch to dark mode" title="Toggle theme">
+  <span class="cinematic-icons" aria-hidden="true">
+    <svg class="cinematic-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+    <svg class="cinematic-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+  </span>
+  <span class="cinematic-puck" aria-hidden="true">
+    <svg class="cinematic-puck-icon sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+    <svg class="cinematic-puck-icon moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+  </span>
+  <span class="cinematic-particles" aria-hidden="true"></span>
+</button>
   </div>
   <a href="../../../" data-nav="home">Home</a>
         <a href="../../../en/services/" data-nav="services">Services</a>
@@ -82,7 +131,8 @@
         <a href="../../../en/fleet/" data-nav="fleet">Fleet</a>
         <a href="../../../en/contact/" data-nav="contact">Contact</a>
   <a href="../../../hi/vehicles/sedan/">हिन्दी</a>
-  <a href="tel:+919876543210">Call +91 98765 43210</a>
+  <a class="btn-outline btn-sm" href="tel:+919876543210"><span class="icon icon-call" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span><span>Call +91 98765 43210</span></a>
+  <a class="btn-gold btn-sm" href="https://wa.me/919876543210" target="_blank" rel="noreferrer"><span class="icon icon-wa" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span><span>WhatsApp Us</span></a>
   <a class="btn-primary" href="../../../book.html">Book now <span>↗</span></a>
 </div>
     <main id="main">
@@ -130,8 +180,8 @@
 </svg></span>
       <strong>Agra → India</strong>
       <p>Discover → Book → Go</p>
-      <p>Near Taj East Gate Road, Taj Ganj, Agra</p>
-      <p><a href="tel:+919876543210">+91 98765 43210</a></p>
+      <p><span class="icon icon-map" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></span> Near Taj East Gate Road, Taj Ganj, Agra</p>
+      <p><a href="tel:+919876543210"><span class="icon icon-call" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span> +91 98765 43210</a></p>
     </div>
     <div>
       <h4>Explore</h4>
@@ -151,22 +201,22 @@
       <h4>Trust</h4>
       <a href="../../../en/faq/">FAQ</a>
       <a href="../../../en/contact/">Contact</a>
-      <a href="tel:+919876543210">+91 98765 43210</a>
+      <a href="tel:+919876543210"><span class="icon icon-call" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span> +91 98765 43210</a>
       <a href="../../../en/privacy/">Privacy</a>
       <a href="../../../en/terms/">Terms</a>
     </div>
   </div>
   <div class="container footer-bottom">
-    <span>© <span id="year">2026</span> SK Baghel Town &amp; Travels · frontend preview</span>
+    <span>© <span id="year">2026</span> SK Baghel Tour &amp; Travels · frontend preview</span>
     <span>Fares are sample mock data · no payments processed</span>
   </div>
 </footer>
 <div class="lead-bar" role="navigation" aria-label="Contact">
-  <a class="lead-call" href="tel:+919876543210">Call</a>
-  <a class="lead-wa" href="https://wa.me/919876543210" target="_blank" rel="noreferrer">WhatsApp</a>
+  <a class="lead-call" href="tel:+919876543210"><span class="icon icon-call" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span><span>Call</span></a>
+  <a class="lead-wa" href="https://wa.me/919876543210" target="_blank" rel="noreferrer"><span class="icon icon-wa" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span><span>WhatsApp</span></a>
   <a class="lead-book" href="../../../book.html">Book</a>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-    <script src="../../../js/data.js" defer></script><script src="../../../js/contact.js" defer></script><script src="../../../js/fares.js" defer></script><script src="../../../js/app.js" defer></script>
+    <script src="../../../js/data.js" defer></script><script src="../../../js/contact.js" defer></script><script src="../../../js/fares.js" defer></script><script src="../../../js/motion.js" defer></script><script src="../../../js/app.js" defer></script>
   </body>
 </html>

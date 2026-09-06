@@ -1,4 +1,4 @@
-# AI Operating Rules — SK Baghel Town & Travels
+# AI Operating Rules — SK Baghel Tour & Travels
 
 This workspace follows the multi-phase static-frontend protocol in the repo-root
 documentation pack.

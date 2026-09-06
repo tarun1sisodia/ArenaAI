@@ -1,4 +1,4 @@
-# Phase Plan — SK Baghel Town & Travels
+# Phase Plan — SK Baghel Tour & Travels
 
 Sequential — each phase depends on the previous ones being genuinely complete
 (acceptance criteria met), not just started. Read `02_PROJECT_CONTEXT.md` before
@@ -132,3 +132,44 @@ starting any phase.
 ## Phase 12 — Out of scope until the user adds it
 
 Admin, live Razorpay, WhatsApp Cloud API, CMS, Next.js rewrite, auth.
+
+---
+
+## Phase 16 — Session 2: Production File Split (Light Premium & Animation Engine)
+**Depends on:** Phase 15
+
+1. Update `DESIGN.md` and `css/tokens.css` with Light Premium tokens (Warm Ivory, Deep Navy, Gold) and motion variables
+2. Create `css/components.css` with all 16 production animation patterns from the approved showcase
+3. Create `js/motion.js` lightweight motion engine (<3KB vanilla JS, IntersectionObserver, cursor spotlight, scrambler, accordion, parallax, timeline, counters)
+4. Create `templates/base.html` and wire `components.css` and `motion.js` into `scripts/render_pages.py`, regenerate all pages and verify with `check_links.py`
+
+**Acceptance criteria:** `tokens.css` and `DESIGN.md` align on Light Premium; `components.css` and `motion.js` are in place; all generated pages include them with 0 link/console errors; `prefers-reduced-motion` honored.
+
+---
+
+## Phase 17 — Cinematic Theme Switcher & Architectural Contact Card (21st.dev Integration)
+**Depends on:** Phase 16
+
+1. Add Dark Navy theme token overrides to `css/tokens.css` with smooth transitions while preserving SEO contrast standards (AA 4.5:1) and existing Light Premium defaults
+2. Add styles for 21st.dev Cinematic Theme Switcher and 21st.dev Architectural Contact Card to `css/components.css`
+3. Add interactive logic for Cinematic Theme Switcher and Contact Card animations in `js/motion.js` with `prefers-reduced-motion` safety
+4. Wire anti-FOUC theme detector, SVG texture filters, theme switchers, and Contact Card into `scripts/render_pages.py` and `templates/base.html`, ensuring 100% SEO compliance (single H1, schema integrity, crawlable HTML); regenerate and verify with `check_links.py`
+
+**Acceptance criteria:** Cinematic Theme Switcher toggles themes with tactile 3D puck and particle ripple; Contact Card renders with corner plus markers, info tiles, and form; zero SEO degradation; 0 link check errors at both bases.
+
+---
+
+## Phase 18 — Interactive Motion Polish, Brand/Nav/Button/Form Animations, Icon Suite & Mock Banner Deletion
+**Depends on:** Phase 17
+
+1. Add Brand Name scramble animation on hover (`initBrandScramble` in `motion.js`), SVG logo hover spring and gold glow pulse
+2. Add Rolling Nav link dual-layer text effect (`.roll`), smooth mobile sheet drawer transitions
+3. Add Button shimmer wave (`@keyframes btn-shimmer`), tactile active press (`scale(0.97)`), hover elevation, and arrow nudge
+4. Add Form floating labels, 3px gold focus ring glow, input error shake animation, and contact form submission feedback
+5. Completely remove Demo Mock Data pill badge from `templates/base.html`, `scripts/render_pages.py`, `book.html`, and hide in `css/site.css`
+6. Add high-fidelity SVG icon suite (Call, WhatsApp, Email, Map) across Header actions, Mobile Sheet, Lead-bar, Contact Card, and Footer; verify with `check_links.py` (102/102 URLs OK)
+
+**Acceptance criteria:** Brand name scrambles on desktop hover with SVG pulse; navigation rolls on hover; buttons have shimmer sweep and tactile press; forms have floating labels and focus rings; zero occurrences of Demo Mock Data pill; SVG icons rendered for Call, WhatsApp, Email, Map; 0 link check errors at both bases.
+
+
+

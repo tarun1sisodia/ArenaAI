@@ -1,4 +1,4 @@
-"""Design-system PDF toolkit — SK Baghel Town & Travels website design guide.
+"""Design-system PDF toolkit — SK Baghel Tour & Travels website design guide.
 Drawing helpers, tokens, fonts. Used by build_guide.py."""
 import os
 from reportlab.lib.pagesizes import A4
@@ -180,7 +180,7 @@ def brand_lockup(c, x, y, light=True):
     logo_mark(c, x, y - 2, 17, light)
     text(c, x + 24, y + 3.5, "SK BAGHEL", "DMSans-Bold", 9.2,
          WHITE if light else NAVY, tracking=1.3)
-    text(c, x + 24, y - 5.5, "TOWN & TRAVELS", "DMMono", 5.4,
+    text(c, x + 24, y - 5.5, "TOUR & TRAVELS", "DMMono", 5.4,
          MUTED_LT, tracking=1.15)
 
 # ---------- Page chrome ----------
@@ -203,7 +203,7 @@ def content_header(c, sec_no, sec_title):
 
 def content_footer(c, page_no):
     rule(c, MARGIN, 39, CONTENT_W, LINE_INK, 0.8)
-    text(c, MARGIN, 27, "SK BAGHEL TOWN & TRAVELS — WEBSITE PROJECT", "DMMono", 5.6, MUTED, tracking=0.7)
+    text(c, MARGIN, 27, "SK BAGHEL TOUR & TRAVELS — WEBSITE PROJECT", "DMMono", 5.6, MUTED, tracking=0.7)
     rtext(c, PAGE_W - MARGIN, 27, "DESIGN SYSTEM · V1.0", "DMMono", 5.6, MUTED, tracking=0.7)
     text(c, PAGE_W / 2 - 12, 27, "%02d / %d" % (page_no, TOTAL_PAGES), "DMMono-Medium", 6.2, GOLD_DEEP)
 

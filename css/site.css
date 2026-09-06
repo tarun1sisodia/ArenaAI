@@ -404,26 +404,11 @@ h3 i,
 }
 
 .demo-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 8px 11px;
-  border: 1px solid rgba(243, 195, 108, 0.3);
-  border-radius: var(--radius-pill);
-  color: var(--gold-light);
-  font-family: var(--mono);
-  font-size: 9px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  display: none !important;
 }
 
 .live-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--gold);
-  box-shadow: 0 0 0 4px rgba(229, 160, 68, 0.28);
-  animation: pulse 1.6s ease-out infinite;
+  display: none !important;
 }
 
 @keyframes pulse {

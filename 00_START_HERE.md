@@ -1,4 +1,4 @@
-# SK Baghel Town & Travels — Documentation Pack
+# SK Baghel Tour & Travels — Documentation Pack
 
 This pack is written so you can hand it to a coding AI (agent or chat) and have it
 build the site phase by phase, without losing context between sessions.
@@ -35,7 +35,7 @@ mode this pack exists to prevent.
 
 ## What this project actually is
 
-A **frontend-only** customer website for **Agra SK Baghel Town & Travels**:
+A **frontend-only** customer website for **Agra SK Baghel Tour & Travels**:
 vanilla static HTML/CSS/JS, mock-data booking, bilingual EN/HI marketing pages
 with hreflang. Not a React/Next app. Not a live payments backend. The approved
 visual system is Dark Navy + Golden (`design-guide/` is the original PDF source;

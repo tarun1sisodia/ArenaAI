@@ -307,7 +307,7 @@ index 0000000..d632ef3
 --- /dev/null
 +++ b/06_AUDIT_REPORT.md
 @@ -0,0 +1,160 @@
-+# 06 — Pre-Sprint Audit Report: SK Baghel Town & Travels
++# 06 — Pre-Sprint Audit Report: SK Baghel Tour & Travels
 +
 +**Date:** 2026-09-01 · **Auditor role:** Frontend Architecture / Performance QA / Technical SEO
 +**Stack detected:** Vanilla static MPA — Python SSG (`scripts/render_pages.py`) emitting EN+HI trees. **Not React/Next.** Framework-specific checks (SSR payload, hydration, `useMemo`, React Query/SWR) are mapped to their static-site equivalents: content-in-initial-HTML ✅ (full SSG — crawlable), per-page JS payload, DOM churn, and asset strategy.
@@ -659,25 +659,25 @@ index f6ea3be..fd85419 100644
 -    <link rel="stylesheet" href="/ArenaAI/css/site.css" />
 +    <link rel="stylesheet" href="./css/tokens.css" />
 +    <link rel="stylesheet" href="./css/site.css" />
-     <title>Book a Cab in Agra | SK Baghel Town & Travels</title>
+     <title>Book a Cab in Agra | SK Baghel Tour & Travels</title>
      <meta name="description" content="Five-step Agra cab booking with live sample fares. Call or WhatsApp if you want the car confirmed first." />
      <meta name="robots" content="noindex,nofollow" />
 @@ -32,35 +32,40 @@
      <meta name="twitter:image" content="https://skbagheltravels.in/assets/brand/og-banner.webp" />
-     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
+     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
    </head>
 -  <body data-page="book" data-lang="en" data-base="/ArenaAI">
 +  <body data-page="book" data-lang="en" data-base=".">
      <a class="skip-link" href="#main">Skip to content</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="./" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="./" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/en/services/" data-nav="services">Services</a>
 -          <a href="/ArenaAI/en/routes/" data-nav="routes">Routes</a>
@@ -1022,25 +1022,25 @@ index 63832da..edcadb8 100644
 -    <link rel="stylesheet" href="/ArenaAI/css/site.css" />
 +    <link rel="stylesheet" href="../../css/tokens.css" />
 +    <link rel="stylesheet" href="../../css/site.css" />
-     <title>About SK Baghel Town & Travels | Agra Taxi</title>
+     <title>About SK Baghel Tour & Travels | Agra Taxi</title>
      <meta name="description" content="Family-run Agra travel desk beside the Taj. Verified drivers, published fares, GST invoices." />
      <meta name="robots" content="index,follow" />
 @@ -32,35 +32,40 @@
      <meta name="twitter:image" content="https://skbagheltravels.in/assets/brand/og-banner.webp" />
-     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
+     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
    </head>
 -  <body data-page="about" data-lang="en" data-base="/ArenaAI">
 +  <body data-page="about" data-lang="en" data-base="../..">
      <a class="skip-link" href="#main">Skip to content</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/en/services/" data-nav="services">Services</a>
 -          <a href="/ArenaAI/en/routes/" data-nav="routes">Routes</a>
@@ -1104,7 +1104,7 @@ index 63832da..edcadb8 100644
  <section class="page-hero"><div class="container">
 -  <nav class="crumbs" aria-label="Breadcrumb"><a href="/ArenaAI/">Home</a> <span aria-hidden="true">/</span> <span>About</span></nav>
 +  <nav class="crumbs" aria-label="Breadcrumb"><a href="../../">Home</a> <span aria-hidden="true">/</span> <span>About</span></nav>
-   <h1>About SK Baghel Town & Travels</h1>
+   <h1>About SK Baghel Tour & Travels</h1>
    <p class="lead">Family-run Agra travel desk beside the Taj. Verified drivers, published fares, GST invoices.</p>
  </div></section>
  <section class="section section--paper"><div class="container split">
@@ -1192,13 +1192,13 @@ index aa935aa..b772ee1 100644
      <a class="skip-link" href="#main">Skip to content</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/en/services/" data-nav="services">Services</a>
 -          <a href="/ArenaAI/en/routes/" data-nav="routes">Routes</a>
@@ -1371,13 +1371,13 @@ index 262690f..61b08b9 100644
      <a class="skip-link" href="#main">Skip to content</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/en/services/" data-nav="services">Services</a>
 -          <a href="/ArenaAI/en/routes/" data-nav="routes">Routes</a>
@@ -1550,13 +1550,13 @@ index a9dcf75..a4e6b9d 100644
      <a class="skip-link" href="#main">Skip to content</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/en/services/" data-nav="services">Services</a>
 -          <a href="/ArenaAI/en/routes/" data-nav="routes">Routes</a>
@@ -1729,13 +1729,13 @@ index 5e104e1..a0669bf 100644
      <a class="skip-link" href="#main">Skip to content</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/en/services/" data-nav="services">Services</a>
 -          <a href="/ArenaAI/en/routes/" data-nav="routes">Routes</a>
@@ -1908,13 +1908,13 @@ index c57ddba..239d03b 100644
      <a class="skip-link" href="#main">Skip to content</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/en/services/" data-nav="services">Services</a>
 -          <a href="/ArenaAI/en/routes/" data-nav="routes">Routes</a>
@@ -2087,13 +2087,13 @@ index 1430022..21feb16 100644
      <a class="skip-link" href="#main">Skip to content</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/en/services/" data-nav="services">Services</a>
 -          <a href="/ArenaAI/en/routes/" data-nav="routes">Routes</a>
@@ -2254,25 +2254,25 @@ index 89c8ad7..3ad46fd 100644
 -    <link rel="stylesheet" href="/ArenaAI/css/site.css" />
 +    <link rel="stylesheet" href="../../css/tokens.css" />
 +    <link rel="stylesheet" href="../../css/site.css" />
-     <title>Contact SK Baghel Town & Travels, Agra</title>
+     <title>Contact SK Baghel Tour & Travels, Agra</title>
      <meta name="description" content="Call +91 98765 43210 or WhatsApp the Agra team. Taj Ganj office. Bookings 24×7." />
      <meta name="robots" content="index,follow" />
 @@ -32,35 +32,40 @@
      <meta name="twitter:image" content="https://skbagheltravels.in/assets/brand/og-banner.webp" />
-     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
+     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
    </head>
 -  <body data-page="contact" data-lang="en" data-base="/ArenaAI">
 +  <body data-page="contact" data-lang="en" data-base="../..">
      <a class="skip-link" href="#main">Skip to content</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/en/services/" data-nav="services">Services</a>
 -          <a href="/ArenaAI/en/routes/" data-nav="routes">Routes</a>
@@ -2433,13 +2433,13 @@ index 18d0bb6..544a4ed 100644
      <a class="skip-link" href="#main">Skip to content</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/en/services/" data-nav="services">Services</a>
 -          <a href="/ArenaAI/en/routes/" data-nav="routes">Routes</a>
@@ -2612,13 +2612,13 @@ index 43cac1c..ec9ba7a 100644
      <a class="skip-link" href="#main">Skip to content</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/en/services/" data-nav="services">Services</a>
 -          <a href="/ArenaAI/en/routes/" data-nav="routes">Routes</a>
@@ -2783,7 +2783,7 @@ index 80c8a5f..3f2f2a3 100644
      <meta name="description" content="Advance payment, cancellation, GST invoice and ID rules for SK Baghel taxi bookings." />
      <meta name="robots" content="index,follow" />
 @@ -33,35 +33,40 @@
-     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
+     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
      <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How does the advance payment work?", "acceptedAnswer": {"@type": "Answer", "text": "You pay a part of the fare after the car is confirmed — often by call or WhatsApp first. The rest is paid to the driver. This demo does not charge anyone."}}, {"@type": "Question", "name": "Can I cancel?", "acceptedAnswer": {"@type": "Answer", "text": "Free cancellation up to 12 hours before pickup. Inside 12 hours the advance is retained."}}, {"@type": "Question", "name": "Is GST included?", "acceptedAnswer": {"@type": "Answer", "text": "Sample fares are all-inclusive as currently quoted for Agra → Delhi. A GST invoice is issued on confirmed paid bookings."}}, {"@type": "Question", "name": "Do I need to show ID?", "acceptedAnswer": {"@type": "Answer", "text": "Yes — a government photo ID for the lead passenger at pickup."}}, {"@type": "Question", "name": "What about night driving?", "acceptedAnswer": {"@type": "Answer", "text": "Pickups between 10:00 PM and 5:00 AM may include a night allowance, shown before you pay."}}, {"@type": "Question", "name": "How do I know the driver?", "acceptedAnswer": {"@type": "Answer", "text": "After confirmation you receive driver name, vehicle number and a phone number."}}]}</script>
    </head>
 -  <body data-page="faq" data-lang="en" data-base="/ArenaAI">
@@ -2791,13 +2791,13 @@ index 80c8a5f..3f2f2a3 100644
      <a class="skip-link" href="#main">Skip to content</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/en/services/" data-nav="services">Services</a>
 -          <a href="/ArenaAI/en/routes/" data-nav="routes">Routes</a>
@@ -2936,20 +2936,20 @@ index f54b295..cfd4660 100644
      <meta name="robots" content="index,follow" />
 @@ -32,35 +32,40 @@
      <meta name="twitter:image" content="https://skbagheltravels.in/assets/brand/og-banner.webp" />
-     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
+     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
    </head>
 -  <body data-page="fleet" data-lang="en" data-base="/ArenaAI">
 +  <body data-page="fleet" data-lang="en" data-base="../..">
      <a class="skip-link" href="#main">Skip to content</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/en/services/" data-nav="services">Services</a>
 -          <a href="/ArenaAI/en/routes/" data-nav="routes">Routes</a>
@@ -3161,20 +3161,20 @@ index faf37e8..1c5d8ea 100644
      <meta name="robots" content="index,follow" />
 @@ -32,35 +32,40 @@
      <meta name="twitter:image" content="https://skbagheltravels.in/assets/brand/og-banner.webp" />
-     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
+     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
    </head>
 -  <body data-page="packages" data-lang="en" data-base="/ArenaAI">
 +  <body data-page="packages" data-lang="en" data-base="../../..">
      <a class="skip-link" href="#main">Skip to content</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../../" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../../" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/en/services/" data-nav="services">Services</a>
 -          <a href="/ArenaAI/en/routes/" data-nav="routes">Routes</a>
@@ -3328,20 +3328,20 @@ index ca11337..463f131 100644
      <meta name="robots" content="index,follow" />
 @@ -32,35 +32,40 @@
      <meta name="twitter:image" content="https://skbagheltravels.in/assets/brand/og-banner.webp" />
-     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
+     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
    </head>
 -  <body data-page="packages" data-lang="en" data-base="/ArenaAI">
 +  <body data-page="packages" data-lang="en" data-base="../../..">
      <a class="skip-link" href="#main">Skip to content</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../../" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../../" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/en/services/" data-nav="services">Services</a>
 -          <a href="/ArenaAI/en/routes/" data-nav="routes">Routes</a>
@@ -3495,20 +3495,20 @@ index a290a23..21c307d 100644
      <meta name="robots" content="index,follow" />
 @@ -32,35 +32,40 @@
      <meta name="twitter:image" content="https://skbagheltravels.in/assets/brand/og-banner.webp" />
-     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
+     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
    </head>
 -  <body data-page="packages" data-lang="en" data-base="/ArenaAI">
 +  <body data-page="packages" data-lang="en" data-base="../../..">
      <a class="skip-link" href="#main">Skip to content</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../../" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../../" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/en/services/" data-nav="services">Services</a>
 -          <a href="/ArenaAI/en/routes/" data-nav="routes">Routes</a>
@@ -3662,20 +3662,20 @@ index ec60bcc..0d6f315 100644
      <meta name="robots" content="index,follow" />
 @@ -32,35 +32,40 @@
      <meta name="twitter:image" content="https://skbagheltravels.in/assets/brand/og-banner.webp" />
-     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
+     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
    </head>
 -  <body data-page="packages" data-lang="en" data-base="/ArenaAI">
 +  <body data-page="packages" data-lang="en" data-base="../..">
      <a class="skip-link" href="#main">Skip to content</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/en/services/" data-nav="services">Services</a>
 -          <a href="/ArenaAI/en/routes/" data-nav="routes">Routes</a>
@@ -3856,20 +3856,20 @@ index ff5f295..112c43a 100644
      <meta name="robots" content="index,follow" />
 @@ -32,35 +32,40 @@
      <meta name="twitter:image" content="https://skbagheltravels.in/assets/brand/og-banner.webp" />
-     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
+     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
    </head>
 -  <body data-page="packages" data-lang="en" data-base="/ArenaAI">
 +  <body data-page="packages" data-lang="en" data-base="../../..">
      <a class="skip-link" href="#main">Skip to content</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../../" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../../" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/en/services/" data-nav="services">Services</a>
 -          <a href="/ArenaAI/en/routes/" data-nav="routes">Routes</a>
@@ -4018,25 +4018,25 @@ index 50fdac3..96891d0 100644
 -    <link rel="stylesheet" href="/ArenaAI/css/site.css" />
 +    <link rel="stylesheet" href="../../css/tokens.css" />
 +    <link rel="stylesheet" href="../../css/site.css" />
-     <title>Privacy policy | SK Baghel Town & Travels</title>
+     <title>Privacy policy | SK Baghel Tour & Travels</title>
      <meta name="description" content="How the SK Baghel website handles booking details. Demo data stays in your browser." />
      <meta name="robots" content="index,follow" />
 @@ -32,35 +32,40 @@
      <meta name="twitter:image" content="https://skbagheltravels.in/assets/brand/og-banner.webp" />
-     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
+     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
    </head>
 -  <body data-page="privacy" data-lang="en" data-base="/ArenaAI">
 +  <body data-page="privacy" data-lang="en" data-base="../..">
      <a class="skip-link" href="#main">Skip to content</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/en/services/" data-nav="services">Services</a>
 -          <a href="/ArenaAI/en/routes/" data-nav="routes">Routes</a>
@@ -4175,20 +4175,20 @@ index 7660740..49d2eaa 100644
      <meta name="robots" content="index,follow" />
 @@ -32,35 +32,40 @@
      <meta name="twitter:image" content="https://skbagheltravels.in/assets/brand/og-banner.webp" />
-     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
+     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
    </head>
 -  <body data-page="routes" data-lang="en" data-base="/ArenaAI">
 +  <body data-page="routes" data-lang="en" data-base="../..">
      <a class="skip-link" href="#main">Skip to content</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/en/services/" data-nav="services">Services</a>
 -          <a href="/ArenaAI/en/routes/" data-nav="routes">Routes</a>
@@ -4336,20 +4336,20 @@ index 15f2ea2..03cf5dc 100644
      <meta name="robots" content="index,follow" />
 @@ -32,35 +32,40 @@
      <meta name="twitter:image" content="https://skbagheltravels.in/assets/brand/og-banner.webp" />
-     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
+     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
    </head>
 -  <body data-page="services" data-lang="en" data-base="/ArenaAI">
 +  <body data-page="services" data-lang="en" data-base="../..">
      <a class="skip-link" href="#main">Skip to content</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/en/services/" data-nav="services">Services</a>
 -          <a href="/ArenaAI/en/routes/" data-nav="routes">Routes</a>
@@ -4495,25 +4495,25 @@ index 2be1d78..4009465 100644
 -    <link rel="stylesheet" href="/ArenaAI/css/site.css" />
 +    <link rel="stylesheet" href="../../css/tokens.css" />
 +    <link rel="stylesheet" href="../../css/site.css" />
-     <title>Booking terms | SK Baghel Town & Travels</title>
-     <meta name="description" content="Cancellation, ID and fare rules for SK Baghel Town & Travels." />
+     <title>Booking terms | SK Baghel Tour & Travels</title>
+     <meta name="description" content="Cancellation, ID and fare rules for SK Baghel Tour & Travels." />
      <meta name="robots" content="index,follow" />
 @@ -32,35 +32,40 @@
      <meta name="twitter:image" content="https://skbagheltravels.in/assets/brand/og-banner.webp" />
-     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
+     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
    </head>
 -  <body data-page="terms" data-lang="en" data-base="/ArenaAI">
 +  <body data-page="terms" data-lang="en" data-base="../..">
      <a class="skip-link" href="#main">Skip to content</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/en/services/" data-nav="services">Services</a>
 -          <a href="/ArenaAI/en/routes/" data-nav="routes">Routes</a>
@@ -4578,7 +4578,7 @@ index 2be1d78..4009465 100644
 -  <nav class="crumbs" aria-label="Breadcrumb"><a href="/ArenaAI/">Home</a> <span aria-hidden="true">/</span> <span>Booking terms</span></nav>
 +  <nav class="crumbs" aria-label="Breadcrumb"><a href="../../">Home</a> <span aria-hidden="true">/</span> <span>Booking terms</span></nav>
    <h1>Booking terms</h1>
-   <p>Cancellation, ID and fare rules for SK Baghel Town & Travels.</p>
+   <p>Cancellation, ID and fare rules for SK Baghel Tour & Travels.</p>
    <p>+91 98765 43210 · bookings@skbagheltravels.in · Taj Ganj, Agra.</p>
 @@ -103,25 +108,25 @@
      </div>
@@ -4651,7 +4651,7 @@ index 6ef8285..3a8742c 100644
      <meta name="description" content="A little more room for families without stepping up to an SUV." />
      <meta name="robots" content="index,follow" />
 @@ -33,35 +33,40 @@
-     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
+     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
      <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://skbagheltravels.in/"}, {"@type": "ListItem", "position": 2, "name": "Fleet", "item": "https://skbagheltravels.in/en/fleet/"}, {"@type": "ListItem", "position": 3, "name": "Ertiga", "item": "https://skbagheltravels.in/en/vehicles/ertiga/"}]}</script>
    </head>
 -  <body data-page="fleet" data-lang="en" data-base="/ArenaAI">
@@ -4659,13 +4659,13 @@ index 6ef8285..3a8742c 100644
      <a class="skip-link" href="#main">Skip to content</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../../" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../../" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/en/services/" data-nav="services">Services</a>
 -          <a href="/ArenaAI/en/routes/" data-nav="routes">Routes</a>
@@ -4827,7 +4827,7 @@ index 120efac..dee9a64 100644
      <meta name="description" content="The outstation favourite — pushback seats and a quiet cabin." />
      <meta name="robots" content="index,follow" />
 @@ -33,35 +33,40 @@
-     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
+     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
      <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://skbagheltravels.in/"}, {"@type": "ListItem", "position": 2, "name": "Fleet", "item": "https://skbagheltravels.in/en/fleet/"}, {"@type": "ListItem", "position": 3, "name": "Innova Crysta", "item": "https://skbagheltravels.in/en/vehicles/innova-crysta/"}]}</script>
    </head>
 -  <body data-page="fleet" data-lang="en" data-base="/ArenaAI">
@@ -4835,13 +4835,13 @@ index 120efac..dee9a64 100644
      <a class="skip-link" href="#main">Skip to content</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../../" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../../" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/en/services/" data-nav="services">Services</a>
 -          <a href="/ArenaAI/en/routes/" data-nav="routes">Routes</a>
@@ -5003,7 +5003,7 @@ index cb0c3eb..4713a5c 100644
      <meta name="description" content="Everyday comfort for city rides and one-way drops." />
      <meta name="robots" content="index,follow" />
 @@ -33,35 +33,40 @@
-     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
+     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
      <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://skbagheltravels.in/"}, {"@type": "ListItem", "position": 2, "name": "Fleet", "item": "https://skbagheltravels.in/en/fleet/"}, {"@type": "ListItem", "position": 3, "name": "Sedan", "item": "https://skbagheltravels.in/en/vehicles/sedan/"}]}</script>
    </head>
 -  <body data-page="fleet" data-lang="en" data-base="/ArenaAI">
@@ -5011,13 +5011,13 @@ index cb0c3eb..4713a5c 100644
      <a class="skip-link" href="#main">Skip to content</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../../" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../../" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/en/services/" data-nav="services">Services</a>
 -          <a href="/ArenaAI/en/routes/" data-nav="routes">Routes</a>
@@ -5179,7 +5179,7 @@ index a868b64..b0a5c03 100644
      <meta name="description" content="Spacious pushback seats, luggage bay and ice-box for group travel." />
      <meta name="robots" content="index,follow" />
 @@ -33,35 +33,40 @@
-     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
+     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
      <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://skbagheltravels.in/"}, {"@type": "ListItem", "position": 2, "name": "Fleet", "item": "https://skbagheltravels.in/en/fleet/"}, {"@type": "ListItem", "position": 3, "name": "Tempo Traveller", "item": "https://skbagheltravels.in/en/vehicles/tempo-traveller/"}]}</script>
    </head>
 -  <body data-page="fleet" data-lang="en" data-base="/ArenaAI">
@@ -5187,13 +5187,13 @@ index a868b64..b0a5c03 100644
      <a class="skip-link" href="#main">Skip to content</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../../" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../../" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/en/services/" data-nav="services">Services</a>
 -          <a href="/ArenaAI/en/routes/" data-nav="routes">Routes</a>
@@ -5355,7 +5355,7 @@ index 1d8b89f..7f99856 100644
      <meta name="description" content="Chauffeur-grade group travel when the occasion asks for more." />
      <meta name="robots" content="index,follow" />
 @@ -33,35 +33,40 @@
-     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
+     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
      <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://skbagheltravels.in/"}, {"@type": "ListItem", "position": 2, "name": "Fleet", "item": "https://skbagheltravels.in/en/fleet/"}, {"@type": "ListItem", "position": 3, "name": "Urbania", "item": "https://skbagheltravels.in/en/vehicles/urbania/"}]}</script>
    </head>
 -  <body data-page="fleet" data-lang="en" data-base="/ArenaAI">
@@ -5363,13 +5363,13 @@ index 1d8b89f..7f99856 100644
      <a class="skip-link" href="#main">Skip to content</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../../" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../../" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/en/services/" data-nav="services">Services</a>
 -          <a href="/ArenaAI/en/routes/" data-nav="routes">Routes</a>
@@ -5568,20 +5568,20 @@ index 390aeac..515d44d 100644
      <meta name="robots" content="index,follow" />
 @@ -32,35 +32,40 @@
      <meta name="twitter:image" content="https://skbagheltravels.in/assets/brand/og-banner.webp" />
-     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
+     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
    </head>
 -  <body data-page="about" data-lang="hi" data-base="/ArenaAI">
 +  <body data-page="about" data-lang="hi" data-base="../..">
      <a class="skip-link" href="#main">मुख्य सामग्री पर जाएँ</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../hi/" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../hi/" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/hi/services/" data-nav="services">सेवाएँ</a>
 -          <a href="/ArenaAI/hi/routes/" data-nav="routes">रूट</a>
@@ -5733,13 +5733,13 @@ index d853bf6..87f2ae9 100644
      <a class="skip-link" href="#main">मुख्य सामग्री पर जाएँ</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../hi/" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../hi/" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/hi/services/" data-nav="services">सेवाएँ</a>
 -          <a href="/ArenaAI/hi/routes/" data-nav="routes">रूट</a>
@@ -5912,13 +5912,13 @@ index 0d51799..bcfe9e4 100644
      <a class="skip-link" href="#main">मुख्य सामग्री पर जाएँ</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../hi/" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../hi/" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/hi/services/" data-nav="services">सेवाएँ</a>
 -          <a href="/ArenaAI/hi/routes/" data-nav="routes">रूट</a>
@@ -6091,13 +6091,13 @@ index 01cd31d..a5a8746 100644
      <a class="skip-link" href="#main">मुख्य सामग्री पर जाएँ</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../hi/" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../hi/" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/hi/services/" data-nav="services">सेवाएँ</a>
 -          <a href="/ArenaAI/hi/routes/" data-nav="routes">रूट</a>
@@ -6270,13 +6270,13 @@ index 16a214d..fd921c4 100644
      <a class="skip-link" href="#main">मुख्य सामग्री पर जाएँ</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../hi/" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../hi/" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/hi/services/" data-nav="services">सेवाएँ</a>
 -          <a href="/ArenaAI/hi/routes/" data-nav="routes">रूट</a>
@@ -6449,13 +6449,13 @@ index defdc4f..f814816 100644
      <a class="skip-link" href="#main">मुख्य सामग्री पर जाएँ</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../hi/" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../hi/" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/hi/services/" data-nav="services">सेवाएँ</a>
 -          <a href="/ArenaAI/hi/routes/" data-nav="routes">रूट</a>
@@ -6628,13 +6628,13 @@ index 31150c9..7233d2a 100644
      <a class="skip-link" href="#main">मुख्य सामग्री पर जाएँ</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../hi/" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../hi/" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/hi/services/" data-nav="services">सेवाएँ</a>
 -          <a href="/ArenaAI/hi/routes/" data-nav="routes">रूट</a>
@@ -6800,20 +6800,20 @@ index a58acd3..b46e779 100644
      <meta name="robots" content="index,follow" />
 @@ -32,35 +32,40 @@
      <meta name="twitter:image" content="https://skbagheltravels.in/assets/brand/og-banner.webp" />
-     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
+     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
    </head>
 -  <body data-page="contact" data-lang="hi" data-base="/ArenaAI">
 +  <body data-page="contact" data-lang="hi" data-base="../..">
      <a class="skip-link" href="#main">मुख्य सामग्री पर जाएँ</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../hi/" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../hi/" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/hi/services/" data-nav="services">सेवाएँ</a>
 -          <a href="/ArenaAI/hi/routes/" data-nav="routes">रूट</a>
@@ -6974,13 +6974,13 @@ index 529dd21..175c542 100644
      <a class="skip-link" href="#main">मुख्य सामग्री पर जाएँ</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../hi/" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../hi/" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/hi/services/" data-nav="services">सेवाएँ</a>
 -          <a href="/ArenaAI/hi/routes/" data-nav="routes">रूट</a>
@@ -7153,13 +7153,13 @@ index 32db604..af189e6 100644
      <a class="skip-link" href="#main">मुख्य सामग्री पर जाएँ</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../hi/" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../hi/" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/hi/services/" data-nav="services">सेवाएँ</a>
 -          <a href="/ArenaAI/hi/routes/" data-nav="routes">रूट</a>
@@ -7324,7 +7324,7 @@ index a044218..944e052 100644
      <meta name="description" content="एडवांस भुगतान, रद्दीकरण, जीएसटी इनवॉइस और आईडी नियम।" />
      <meta name="robots" content="index,follow" />
 @@ -33,35 +33,40 @@
-     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
+     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
      <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "एडवांस भुगतान कैसे होता है?", "acceptedAnswer": {"@type": "Answer", "text": "गाड़ी कन्फर्म होने के बाद किराये का एक हिस्सा — अक्सर पहले कॉल या व्हाट्सऐप पर। बाकी ड्राइवर को। यह डेमो चार्ज नहीं करता।"}}, {"@type": "Question", "name": "क्या रद्द कर सकते हैं?", "acceptedAnswer": {"@type": "Answer", "text": "पिकअप से 12 घंटे पहले तक मुफ्त रद्दीकरण। उसके बाद एडवांस रहता है।"}}, {"@type": "Question", "name": "क्या जीएसटी शामिल है?", "acceptedAnswer": {"@type": "Answer", "text": "आगरा → दिल्ली के नमूना किराये ऑल-इनक्लूसिव हैं। कन्फर्म भुगतान पर जीएसटी इनवॉइस।"}}, {"@type": "Question", "name": "क्या आईडी चाहिए?", "acceptedAnswer": {"@type": "Answer", "text": "हाँ — पिकअप पर मुख्य यात्री की सरकारी फोटो आईडी।"}}, {"@type": "Question", "name": "रात की ड्राइविंग?", "acceptedAnswer": {"@type": "Answer", "text": "रात 10 से सुबह 5 के बीच पिकअप पर नाइट अलाउंस, भुगतान से पहले दिखता है।"}}, {"@type": "Question", "name": "ड्राइवर कैसे पता चलेगा?", "acceptedAnswer": {"@type": "Answer", "text": "कन्फर्मेशन के बाद ड्राइवर का नाम, गाड़ी नंबर और फोन मिलता है।"}}]}</script>
    </head>
 -  <body data-page="faq" data-lang="hi" data-base="/ArenaAI">
@@ -7332,13 +7332,13 @@ index a044218..944e052 100644
      <a class="skip-link" href="#main">मुख्य सामग्री पर जाएँ</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../hi/" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../hi/" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/hi/services/" data-nav="services">सेवाएँ</a>
 -          <a href="/ArenaAI/hi/routes/" data-nav="routes">रूट</a>
@@ -7477,20 +7477,20 @@ index 4f1ec01..cbedb65 100644
      <meta name="robots" content="index,follow" />
 @@ -32,35 +32,40 @@
      <meta name="twitter:image" content="https://skbagheltravels.in/assets/brand/og-banner.webp" />
-     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
+     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
    </head>
 -  <body data-page="fleet" data-lang="hi" data-base="/ArenaAI">
 +  <body data-page="fleet" data-lang="hi" data-base="../..">
      <a class="skip-link" href="#main">मुख्य सामग्री पर जाएँ</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../hi/" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../hi/" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/hi/services/" data-nav="services">सेवाएँ</a>
 -          <a href="/ArenaAI/hi/routes/" data-nav="routes">रूट</a>
@@ -7689,21 +7689,21 @@ index b503147..1b920d0 100644
 -    <link rel="preload" as="image" href="/ArenaAI/assets/hero/hero-highway.webp" fetchpriority="high" />
 +    <link rel="preload" as="image" href="../assets/hero/hero-highway.webp" fetchpriority="high" />
      
-     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
-     <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "inLanguage": "hi-IN"}</script>
+     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
+     <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "inLanguage": "hi-IN"}</script>
    </head>
 -  <body data-page="home" data-lang="hi" data-base="/ArenaAI">
 +  <body data-page="home" data-lang="hi" data-base="..">
      <a class="skip-link" href="#main">मुख्य सामग्री पर जाएँ</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../hi/" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../hi/" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/hi/services/" data-nav="services">सेवाएँ</a>
 -          <a href="/ArenaAI/hi/routes/" data-nav="routes">रूट</a>
@@ -7983,20 +7983,20 @@ index 849affc..6ecdf6b 100644
      <meta name="robots" content="index,follow" />
 @@ -32,35 +32,40 @@
      <meta name="twitter:image" content="https://skbagheltravels.in/assets/brand/og-banner.webp" />
-     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
+     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
    </head>
 -  <body data-page="packages" data-lang="hi" data-base="/ArenaAI">
 +  <body data-page="packages" data-lang="hi" data-base="../../..">
      <a class="skip-link" href="#main">मुख्य सामग्री पर जाएँ</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../../hi/" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../../hi/" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/hi/services/" data-nav="services">सेवाएँ</a>
 -          <a href="/ArenaAI/hi/routes/" data-nav="routes">रूट</a>
@@ -8150,20 +8150,20 @@ index 806968e..c124492 100644
      <meta name="robots" content="index,follow" />
 @@ -32,35 +32,40 @@
      <meta name="twitter:image" content="https://skbagheltravels.in/assets/brand/og-banner.webp" />
-     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
+     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
    </head>
 -  <body data-page="packages" data-lang="hi" data-base="/ArenaAI">
 +  <body data-page="packages" data-lang="hi" data-base="../../..">
      <a class="skip-link" href="#main">मुख्य सामग्री पर जाएँ</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../../hi/" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../../hi/" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/hi/services/" data-nav="services">सेवाएँ</a>
 -          <a href="/ArenaAI/hi/routes/" data-nav="routes">रूट</a>
@@ -8317,20 +8317,20 @@ index 5c50411..98b9bf7 100644
      <meta name="robots" content="index,follow" />
 @@ -32,35 +32,40 @@
      <meta name="twitter:image" content="https://skbagheltravels.in/assets/brand/og-banner.webp" />
-     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
+     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
    </head>
 -  <body data-page="packages" data-lang="hi" data-base="/ArenaAI">
 +  <body data-page="packages" data-lang="hi" data-base="../../..">
      <a class="skip-link" href="#main">मुख्य सामग्री पर जाएँ</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../../hi/" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../../hi/" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/hi/services/" data-nav="services">सेवाएँ</a>
 -          <a href="/ArenaAI/hi/routes/" data-nav="routes">रूट</a>
@@ -8484,20 +8484,20 @@ index ac62059..a21ab63 100644
      <meta name="robots" content="index,follow" />
 @@ -32,35 +32,40 @@
      <meta name="twitter:image" content="https://skbagheltravels.in/assets/brand/og-banner.webp" />
-     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
+     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
    </head>
 -  <body data-page="packages" data-lang="hi" data-base="/ArenaAI">
 +  <body data-page="packages" data-lang="hi" data-base="../..">
      <a class="skip-link" href="#main">मुख्य सामग्री पर जाएँ</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../hi/" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../hi/" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/hi/services/" data-nav="services">सेवाएँ</a>
 -          <a href="/ArenaAI/hi/routes/" data-nav="routes">रूट</a>
@@ -8678,20 +8678,20 @@ index 5ff1658..5975c7d 100644
      <meta name="robots" content="index,follow" />
 @@ -32,35 +32,40 @@
      <meta name="twitter:image" content="https://skbagheltravels.in/assets/brand/og-banner.webp" />
-     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
+     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
    </head>
 -  <body data-page="packages" data-lang="hi" data-base="/ArenaAI">
 +  <body data-page="packages" data-lang="hi" data-base="../../..">
      <a class="skip-link" href="#main">मुख्य सामग्री पर जाएँ</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../../hi/" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../../hi/" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/hi/services/" data-nav="services">सेवाएँ</a>
 -          <a href="/ArenaAI/hi/routes/" data-nav="routes">रूट</a>
@@ -8845,20 +8845,20 @@ index f0ef23d..30d2382 100644
      <meta name="robots" content="index,follow" />
 @@ -32,35 +32,40 @@
      <meta name="twitter:image" content="https://skbagheltravels.in/assets/brand/og-banner.webp" />
-     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
+     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
    </head>
 -  <body data-page="privacy" data-lang="hi" data-base="/ArenaAI">
 +  <body data-page="privacy" data-lang="hi" data-base="../..">
      <a class="skip-link" href="#main">मुख्य सामग्री पर जाएँ</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../hi/" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../hi/" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/hi/services/" data-nav="services">सेवाएँ</a>
 -          <a href="/ArenaAI/hi/routes/" data-nav="routes">रूट</a>
@@ -8997,20 +8997,20 @@ index f5f516f..3734f56 100644
      <meta name="robots" content="index,follow" />
 @@ -32,35 +32,40 @@
      <meta name="twitter:image" content="https://skbagheltravels.in/assets/brand/og-banner.webp" />
-     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
+     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
    </head>
 -  <body data-page="routes" data-lang="hi" data-base="/ArenaAI">
 +  <body data-page="routes" data-lang="hi" data-base="../..">
      <a class="skip-link" href="#main">मुख्य सामग्री पर जाएँ</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../hi/" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../hi/" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/hi/services/" data-nav="services">सेवाएँ</a>
 -          <a href="/ArenaAI/hi/routes/" data-nav="routes">रूट</a>
@@ -9158,20 +9158,20 @@ index 2da5697..416be58 100644
      <meta name="robots" content="index,follow" />
 @@ -32,35 +32,40 @@
      <meta name="twitter:image" content="https://skbagheltravels.in/assets/brand/og-banner.webp" />
-     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
+     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
    </head>
 -  <body data-page="services" data-lang="hi" data-base="/ArenaAI">
 +  <body data-page="services" data-lang="hi" data-base="../..">
      <a class="skip-link" href="#main">मुख्य सामग्री पर जाएँ</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../hi/" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../hi/" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/hi/services/" data-nav="services">सेवाएँ</a>
 -          <a href="/ArenaAI/hi/routes/" data-nav="routes">रूट</a>
@@ -9322,20 +9322,20 @@ index 89c188c..8f15255 100644
      <meta name="robots" content="index,follow" />
 @@ -32,35 +32,40 @@
      <meta name="twitter:image" content="https://skbagheltravels.in/assets/brand/og-banner.webp" />
-     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
+     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
    </head>
 -  <body data-page="terms" data-lang="hi" data-base="/ArenaAI">
 +  <body data-page="terms" data-lang="hi" data-base="../..">
      <a class="skip-link" href="#main">मुख्य सामग्री पर जाएँ</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../hi/" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../hi/" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/hi/services/" data-nav="services">सेवाएँ</a>
 -          <a href="/ArenaAI/hi/routes/" data-nav="routes">रूट</a>
@@ -9473,7 +9473,7 @@ index 01e0988..46f2423 100644
      <meta name="description" content="एसयूवी के बिना परिवार के लिए थोड़ी ज्यादा जगह।" />
      <meta name="robots" content="index,follow" />
 @@ -33,35 +33,40 @@
-     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
+     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
      <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "होम", "item": "https://skbagheltravels.in/hi/"}, {"@type": "ListItem", "position": 2, "name": "वाहन", "item": "https://skbagheltravels.in/hi/fleet/"}, {"@type": "ListItem", "position": 3, "name": "अर्टिगा", "item": "https://skbagheltravels.in/hi/vehicles/ertiga/"}]}</script>
    </head>
 -  <body data-page="fleet" data-lang="hi" data-base="/ArenaAI">
@@ -9481,13 +9481,13 @@ index 01e0988..46f2423 100644
      <a class="skip-link" href="#main">मुख्य सामग्री पर जाएँ</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../../hi/" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../../hi/" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/hi/services/" data-nav="services">सेवाएँ</a>
 -          <a href="/ArenaAI/hi/routes/" data-nav="routes">रूट</a>
@@ -9649,7 +9649,7 @@ index b8cb98e..3fc5fe6 100644
      <meta name="description" content="आउटस्टेशन की पसंदीदा — पुशबैक सीटें और शांत केबिन।" />
      <meta name="robots" content="index,follow" />
 @@ -33,35 +33,40 @@
-     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
+     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
      <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "होम", "item": "https://skbagheltravels.in/hi/"}, {"@type": "ListItem", "position": 2, "name": "वाहन", "item": "https://skbagheltravels.in/hi/fleet/"}, {"@type": "ListItem", "position": 3, "name": "इनोवा क्रिस्टा", "item": "https://skbagheltravels.in/hi/vehicles/innova-crysta/"}]}</script>
    </head>
 -  <body data-page="fleet" data-lang="hi" data-base="/ArenaAI">
@@ -9657,13 +9657,13 @@ index b8cb98e..3fc5fe6 100644
      <a class="skip-link" href="#main">मुख्य सामग्री पर जाएँ</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../../hi/" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../../hi/" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/hi/services/" data-nav="services">सेवाएँ</a>
 -          <a href="/ArenaAI/hi/routes/" data-nav="routes">रूट</a>
@@ -9825,7 +9825,7 @@ index 33f1c75..31d81dc 100644
      <meta name="description" content="शहर की सवारी और वन-वे ड्रॉप के लिए रोजमर्रा का आराम।" />
      <meta name="robots" content="index,follow" />
 @@ -33,35 +33,40 @@
-     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
+     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
      <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "होम", "item": "https://skbagheltravels.in/hi/"}, {"@type": "ListItem", "position": 2, "name": "वाहन", "item": "https://skbagheltravels.in/hi/fleet/"}, {"@type": "ListItem", "position": 3, "name": "सेडान", "item": "https://skbagheltravels.in/hi/vehicles/sedan/"}]}</script>
    </head>
 -  <body data-page="fleet" data-lang="hi" data-base="/ArenaAI">
@@ -9833,13 +9833,13 @@ index 33f1c75..31d81dc 100644
      <a class="skip-link" href="#main">मुख्य सामग्री पर जाएँ</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../../hi/" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../../hi/" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/hi/services/" data-nav="services">सेवाएँ</a>
 -          <a href="/ArenaAI/hi/routes/" data-nav="routes">रूट</a>
@@ -10001,7 +10001,7 @@ index a8004d4..d3b1094 100644
      <meta name="description" content="ग्रुप ट्रैवल के लिए पुशबैक सीटें, लगेज बे और आइस-बॉक्स।" />
      <meta name="robots" content="index,follow" />
 @@ -33,35 +33,40 @@
-     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
+     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
      <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "होम", "item": "https://skbagheltravels.in/hi/"}, {"@type": "ListItem", "position": 2, "name": "वाहन", "item": "https://skbagheltravels.in/hi/fleet/"}, {"@type": "ListItem", "position": 3, "name": "टेम्पो ट्रैवलर", "item": "https://skbagheltravels.in/hi/vehicles/tempo-traveller/"}]}</script>
    </head>
 -  <body data-page="fleet" data-lang="hi" data-base="/ArenaAI">
@@ -10009,13 +10009,13 @@ index a8004d4..d3b1094 100644
      <a class="skip-link" href="#main">मुख्य सामग्री पर जाएँ</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../../hi/" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../../hi/" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/hi/services/" data-nav="services">सेवाएँ</a>
 -          <a href="/ArenaAI/hi/routes/" data-nav="routes">रूट</a>
@@ -10177,7 +10177,7 @@ index c9d1fdc..f2e332a 100644
      <meta name="description" content="जब मौका विशेष हो — शोफर-ग्रेड ग्रुप ट्रैवल।" />
      <meta name="robots" content="index,follow" />
 @@ -33,35 +33,40 @@
-     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
+     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
      <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "होम", "item": "https://skbagheltravels.in/hi/"}, {"@type": "ListItem", "position": 2, "name": "वाहन", "item": "https://skbagheltravels.in/hi/fleet/"}, {"@type": "ListItem", "position": 3, "name": "अर्बनिया", "item": "https://skbagheltravels.in/hi/vehicles/urbania/"}]}</script>
    </head>
 -  <body data-page="fleet" data-lang="hi" data-base="/ArenaAI">
@@ -10185,13 +10185,13 @@ index c9d1fdc..f2e332a 100644
      <a class="skip-link" href="#main">मुख्य सामग्री पर जाएँ</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="../../../hi/" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/hi/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="../../../hi/" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/hi/services/" data-nav="services">सेवाएँ</a>
 -          <a href="/ArenaAI/hi/routes/" data-nav="routes">रूट</a>
@@ -10349,31 +10349,31 @@ index a99e825..7a02625 100644
 -    <link rel="stylesheet" href="/ArenaAI/css/site.css" />
 +    <link rel="stylesheet" href="./css/tokens.css" />
 +    <link rel="stylesheet" href="./css/site.css" />
-     <title>Agra Taxi & Cab Booking | SK Baghel Town & Travels</title>
+     <title>Agra Taxi & Cab Booking | SK Baghel Tour & Travels</title>
      <meta name="description" content="Book an Agra taxi, Tempo Traveller or Innova. Agra to Delhi from ₹3,500. Call or WhatsApp to confirm. Transparent fares, GST invoice." />
      <meta name="robots" content="index,follow" />
 @@ -30,40 +30,45 @@
-     <meta name="twitter:title" content="Agra Taxi & Cab Booking | SK Baghel Town & Travels" />
+     <meta name="twitter:title" content="Agra Taxi & Cab Booking | SK Baghel Tour & Travels" />
      <meta name="twitter:description" content="Book an Agra taxi, Tempo Traveller or Innova. Agra to Delhi from ₹3,500. Call or WhatsApp to confirm. Transparent fares, GST invoice." />
      <meta name="twitter:image" content="https://skbagheltravels.in/assets/brand/og-banner.webp" />
 -    <link rel="preload" as="image" href="/ArenaAI/assets/hero/hero-highway.webp" fetchpriority="high" />
 +    <link rel="preload" as="image" href="./assets/hero/hero-highway.webp" fetchpriority="high" />
      
-     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
-     <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "name": "SK Baghel Town & Travels", "url": "https://skbagheltravels.in", "inLanguage": "en-IN"}</script>
+     <script type="application/ld+json">{"@context": "https://schema.org", "@type": ["TravelAgency", "TaxiService", "LocalBusiness"], "@id": "https://skbagheltravels.in/#business", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "telephone": "+919876543210", "email": "bookings@skbagheltravels.in", "image": "https://skbagheltravels.in/assets/brand/og-banner.webp", "priceRange": "₹₹", "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"], "address": {"@type": "PostalAddress", "streetAddress": "Near Taj East Gate Road, Taj Ganj", "addressLocality": "Agra", "addressRegion": "Uttar Pradesh", "postalCode": "282001", "addressCountry": "IN"}, "geo": {"@type": "GeoCoordinates", "latitude": 27.1632, "longitude": 78.0322}, "openingHours": "Mo-Su 00:00-23:59"}</script>
+     <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "inLanguage": "en-IN"}</script>
    </head>
 -  <body data-page="home" data-lang="en" data-base="/ArenaAI">
 +  <body data-page="home" data-lang="en" data-base=".">
      <a class="skip-link" href="#main">Skip to content</a>
  <header class="site-header" id="site-header">
    <div class="container header-inner">
--    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Town &amp; Travels">
-+    <a class="brand" href="./" aria-label="SK Baghel Town &amp; Travels">
+-    <a class="brand" href="/ArenaAI/" aria-label="SK Baghel Tour &amp; Travels">
++    <a class="brand" href="./" aria-label="SK Baghel Tour &amp; Travels">
        <span class="brand-mark"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
    <path d="M6 25.5 17.9 7l3.4 5.3L15.8 21h14.3L24 29H6Z" fill="currentColor"/>
    <path d="m18.1 7 4.1 6.3-3.7 5.7-3.1-4.7L18.1 7Z" fill="#F3B34C"/>
  </svg></span>
-       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOWN &amp; TRAVELS</small></span>
+       <span class="brand-copy"><strong>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
      </a>
 -    <nav class="nav-desktop" aria-label="Primary"><a href="/ArenaAI/en/services/" data-nav="services">Services</a>
 -          <a href="/ArenaAI/en/routes/" data-nav="routes">Routes</a>

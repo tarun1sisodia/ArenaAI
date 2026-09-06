@@ -1,7 +1,7 @@
 # SK Baghel — Website Design System & UX Playbook
 
 **Deliverable:** `SK-Baghel-Website-Design-System.pdf` — 14 pages, A4.
-The build reference for the SK Baghel Town & Travels website in the approved
+The build reference for the SK Baghel Tour & Travels website in the approved
 **Dark Navy + Golden** direction (Premium travel — Option A from proposal slide 16),
 with the luxury-car + highway hero art direction.
 

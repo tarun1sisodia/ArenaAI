@@ -163,7 +163,7 @@ CONCEPTS = [
 # --- file writers -----------------------------------------------------------
 
 def svg(width: float, height: float, body: str, vb: str | None = None,
-        title: str = "SK Baghel Town &amp; Travels") -> str:
+        title: str = "SK Baghel Tour &amp; Travels") -> str:
     vb = vb or f"0 0 {width:g} {height:g}"
     return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{vb}" '
             f'width="{width:g}" height="{height:g}" role="img" aria-label="{title}">\n'
@@ -177,10 +177,10 @@ def write(name: str, content: str) -> None:
 
 
 def wordmark(ink: str, gold: str, x: float, baseline: float) -> tuple[str, float]:
-    """SK BAGHEL / TOWN & TRAVELS set in outlines. Returns (svg, width)."""
+    """SK BAGHEL / TOUR & TRAVELS set in outlines. Returns (svg, width)."""
     top, w1 = text_outline("Fraunces-SemiBold", "SK BAGHEL", 27, 0.015, x=x, y=baseline)
     sub_size = 9.2
-    sub, w2 = text_outline("DMMono-Medium", "TOWN & TRAVELS", sub_size, 0.16,
+    sub, w2 = text_outline("DMMono-Medium", "TOUR & TRAVELS", sub_size, 0.16,
                            x=x + 0.6, y=baseline + 17)
     rule_y = baseline + 6.4
     body = (f'  <path d="{top}" fill="{ink}"/>\n'
@@ -267,7 +267,7 @@ def build_preview() -> None:
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Logo options — SK Baghel Town &amp; Travels</title>
+<title>Logo options — SK Baghel Tour &amp; Travels</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@500&family=DM+Sans:wght@400;500&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
@@ -321,7 +321,7 @@ def build_preview() -> None:
   <div class="top"><div class="wrap">
     <span class="eyebrow">Brand identity · Option set</span>
     <h1>Five logo <em>directions</em></h1>
-    <p>SK Baghel Town &amp; Travels. All five are built from the approved Dark Navy + Golden
+    <p>SK Baghel Tour &amp; Travels. All five are built from the approved Dark Navy + Golden
     system — navy {NAVY_DEEP}, gold {GOLD}, Fraunces wordmark, DM Mono descender. Each ships as a
     paper lockup, a navy lockup, a tile mark, a single-colour cut and a favicon. Pure SVG,
     text outlined, no webfont needed.</p>

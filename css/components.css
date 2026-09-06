@@ -1,0 +1,1394 @@
+/* ==========================================================================
+   SK Baghel Tour & Travels — components.css
+   Production Animation Patterns (16 Patterns from Approved Showcase)
+   Architecture: CSS First · GPU Composite-only · Reduced-Motion Safe
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. CASCADE / SPLIT TEXT REVEAL (Hero H1, Section Headings)
+   -------------------------------------------------------------------------- */
+.split-text {
+  display: inline;
+}
+
+.reveal-text-container {
+  overflow: hidden;
+  display: inline-block;
+  vertical-align: bottom;
+}
+
+.reveal-text-span {
+  display: inline-block;
+  transform: translateY(110%);
+  opacity: 0;
+  transition: transform var(--motion-medium, 400ms) var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1)),
+    opacity var(--motion-medium, 400ms) ease-out;
+  will-change: transform, opacity;
+}
+
+.is-visible .reveal-text-span,
+.split-text.is-visible .reveal-text-span {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* --------------------------------------------------------------------------
+   2. BLUR-IN TEXT (Subtitles, Descriptions)
+   -------------------------------------------------------------------------- */
+.blur-in {
+  opacity: 0;
+  filter: blur(8px);
+  transform: translateY(16px);
+  transition: opacity var(--motion-slow, 800ms) var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1)),
+    filter var(--motion-slow, 800ms) var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1)),
+    transform var(--motion-slow, 800ms) var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1));
+  will-change: transform, opacity, filter;
+}
+
+.blur-in.is-visible {
+  opacity: 1;
+  filter: blur(0px);
+  transform: translateY(0);
+}
+
+/* --------------------------------------------------------------------------
+   0. BRAND & LOGO ANIMATIONS (Wordmark Scramble & SVG Pulse)
+   -------------------------------------------------------------------------- */
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  text-decoration: none;
+  transition: transform var(--motion-fast, 180ms) ease;
+}
+
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--motion-medium, 300ms) var(--ease-spring, cubic-bezier(0.34, 1.56, 0.64, 1)),
+              filter var(--motion-fast, 180ms) ease;
+}
+
+.brand:hover .brand-mark {
+  transform: scale(1.08) rotate(-3deg);
+  filter: drop-shadow(0 0 8px var(--gold-glow, rgba(184, 148, 31, 0.45)));
+}
+
+.brand-copy strong {
+  transition: color var(--motion-fast, 180ms) ease;
+}
+
+.brand:hover .brand-copy strong {
+  color: var(--gold-deep, #B8941F);
+}
+
+/* --------------------------------------------------------------------------
+   3. ROLLING TEXT NAVIGATION LINKS (Header Nav)
+   -------------------------------------------------------------------------- */
+.roll,
+.roll-link {
+  position: relative;
+  display: inline-flex;
+  height: var(--touch, 44px);
+  align-items: center;
+  font-weight: 500;
+  color: var(--text-soft, #4A5578);
+  overflow: hidden;
+  text-decoration: none;
+  padding: 0 0.25rem;
+}
+
+.roll:hover,
+.roll:focus-visible,
+.roll-link:hover,
+.roll-link:focus-visible {
+  color: var(--text, #0A1128);
+}
+
+.roll span:first-child,
+.roll-inner {
+  display: inline-block;
+  transition: transform var(--motion-medium, 400ms) var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1));
+}
+
+.roll span:last-child,
+.roll-duplicate {
+  position: absolute;
+  left: 0.25rem;
+  top: 100%;
+  display: inline-block;
+  color: var(--gold, #B8941F);
+  transition: transform var(--motion-medium, 400ms) var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1));
+}
+
+.roll:hover span:first-child,
+.roll:focus-visible span:first-child,
+.roll-link:hover .roll-inner,
+.roll-link:focus-visible .roll-inner {
+  transform: translateY(-100%);
+}
+
+.roll:hover span:last-child,
+.roll:focus-visible span:last-child,
+.roll-link:hover .roll-duplicate,
+.roll-link:focus-visible .roll-duplicate {
+  transform: translateY(-100%);
+}
+
+.roll::after,
+.roll-link::after {
+  content: '';
+  position: absolute;
+  bottom: 8px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--gold, #B8941F);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform var(--motion-medium, 400ms) var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1));
+}
+
+.roll:hover::after,
+.roll:focus-visible::after,
+.roll-link:hover::after,
+.roll-link:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* --------------------------------------------------------------------------
+   4. BUTTON SHIMMER & GLOW (Primary Actions & CTAs)
+   -------------------------------------------------------------------------- */
+.btn,
+.btn-primary,
+.btn-gold,
+.btn-glow,
+.btn-outline,
+.btn-outline--light {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  transition: transform 120ms var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1)),
+              box-shadow var(--motion-medium, 300ms) ease,
+              background-color var(--motion-fast, 180ms) ease,
+              color var(--motion-fast, 180ms) ease,
+              border-color var(--motion-fast, 180ms) ease;
+}
+
+.btn:active,
+.btn-primary:active,
+.btn-gold:active,
+.btn-glow:active,
+.btn-outline:active,
+.btn-outline--light:active,
+button:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.btn:hover,
+.btn-primary:hover,
+.btn-gold:hover,
+.btn-glow:hover {
+  transform: translateY(-2px);
+}
+
+.btn-primary:hover {
+  box-shadow: 0 6px 18px rgba(10, 17, 40, 0.25), 0 0 16px var(--gold-glow, rgba(184, 148, 31, 0.3));
+}
+
+.btn-gold:hover,
+.btn-glow:hover {
+  box-shadow: 0 6px 20px rgba(184, 148, 31, 0.38);
+}
+
+/* Button Shimmer Wave */
+.btn-primary::before,
+.btn-gold::before,
+.btn-glow::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, 0.32) 50%, transparent 60%);
+  background-size: 250% 100%;
+  background-position: 120% 0;
+  pointer-events: none;
+}
+
+.btn-primary:hover::before,
+.btn-primary:focus-visible::before,
+.btn-gold:hover::before,
+.btn-gold:focus-visible::before,
+.btn-glow:hover::before,
+.btn-glow:focus-visible::before {
+  animation: btn-shimmer 1.4s ease-in-out infinite;
+}
+
+.btn-gold.ambient::before {
+  animation: btn-shimmer 5s ease-in-out infinite;
+}
+
+@keyframes btn-shimmer {
+  to { background-position: -120% 0; }
+}
+
+/* Arrow nudge on hover */
+.btn:hover span:last-child,
+.btn-primary:hover span:last-child {
+  display: inline-block;
+  transform: translate(2px, -2px);
+  transition: transform var(--motion-fast, 180ms) ease;
+}
+
+.btn-glow {
+  padding: 0.85rem 1.75rem;
+  min-height: var(--touch, 44px);
+  background: var(--text, #0A1128);
+  color: var(--bg, #FAF7F0);
+  border-radius: var(--radius, 4px);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+}
+
+.btn-glow::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  background: var(--text, #0A1128);
+  border-radius: calc(var(--radius, 4px) - 1px);
+  z-index: 0;
+}
+
+.btn-glow > * {
+  position: relative;
+  z-index: 2;
+}
+
+.btn-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-shimmer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.28) 50%,
+      transparent 100%);
+  transform: skewX(-20deg);
+  transition: left 0.75s ease;
+}
+
+.btn-shimmer:hover::before,
+.btn-shimmer:focus-visible::before {
+  left: 150%;
+}
+
+/* --------------------------------------------------------------------------
+   5. SPOTLIGHT CARD (Fleet, Routes, Services)
+   -------------------------------------------------------------------------- */
+.spotlight-card {
+  position: relative;
+  background: var(--surface, #FFFFFF);
+  border: 1px solid var(--border, rgba(10, 17, 40, 0.08));
+  border-radius: var(--radius-lg, 8px);
+  padding: 1.75rem;
+  overflow: hidden;
+  transition: transform var(--motion-fast, 180ms) ease,
+    border-color var(--motion-fast, 180ms) ease,
+    box-shadow var(--motion-fast, 180ms) ease;
+}
+
+.spotlight-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+      rgba(184, 148, 31, 0.14),
+      transparent 45%);
+  opacity: 0;
+  transition: opacity var(--motion-fast, 180ms) ease;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@media (hover: hover) {
+  .spotlight-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--gold-border, rgba(184, 148, 31, 0.25));
+    box-shadow: 0 12px 30px rgba(10, 17, 40, 0.08);
+  }
+
+  .spotlight-card:hover::before {
+    opacity: 1;
+  }
+}
+
+.spotlight-card>* {
+  position: relative;
+  z-index: 1;
+}
+
+/* --------------------------------------------------------------------------
+   6. INFINITE TRUST MARQUEE (2 Rows: LTR + RTL)
+   -------------------------------------------------------------------------- */
+.marquee-wrapper {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  padding: 1rem 0;
+  mask-image: linear-gradient(90deg, transparent 0%, black 8%, black 92%, transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 8%, black 92%, transparent 100%);
+}
+
+.marquee-track {
+  display: flex;
+  gap: 1.5rem;
+  width: max-content;
+  will-change: transform;
+}
+
+.marquee-ltr {
+  animation: marquee-scroll-ltr 38s linear infinite;
+}
+
+.marquee-rtl {
+  animation: marquee-scroll-rtl 38s linear infinite;
+}
+
+.marquee-wrapper:hover .marquee-track,
+.marquee-wrapper:focus-within .marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes marquee-scroll-ltr {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes marquee-scroll-rtl {
+  from {
+    transform: translateX(-50%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   7. ANIMATED STAT COUNTERS
+   -------------------------------------------------------------------------- */
+.stat-counter {
+  text-align: center;
+}
+
+.stat-number {
+  font-family: var(--font-display, 'Fraunces', serif);
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  font-weight: 600;
+  color: var(--gold, #B8941F);
+  line-height: 1.1;
+  display: block;
+}
+
+.stat-label {
+  font-family: var(--font-mono, 'DM Mono', monospace);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-soft, #4A5578);
+  margin-top: 0.35rem;
+  display: block;
+}
+
+/* --------------------------------------------------------------------------
+   8. PURE CSS FAQ ACCORDION (CSS Grid 0fr → 1fr)
+   -------------------------------------------------------------------------- */
+.faq-accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.faq-item {
+  background: var(--surface, #FFFFFF);
+  border: 1px solid var(--border, rgba(10, 17, 40, 0.08));
+  border-radius: var(--radius-lg, 8px);
+  overflow: hidden;
+  transition: border-color var(--motion-fast, 180ms) ease;
+}
+
+.faq-item:hover,
+.faq-item:focus-within {
+  border-color: var(--gold-border, rgba(184, 148, 31, 0.25));
+}
+
+.faq-trigger {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  background: none;
+  border: none;
+  font-family: var(--font-display, 'Fraunces', serif);
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: var(--text, #0A1128);
+  text-align: left;
+  cursor: pointer;
+  min-height: var(--touch, 44px);
+}
+
+.faq-icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  transition: transform var(--motion-fast, 180ms) ease;
+  color: var(--gold, #B8941F);
+}
+
+.faq-item[open] .faq-icon,
+.faq-item.is-open .faq-icon {
+  transform: rotate(180deg);
+}
+
+.faq-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--motion-medium, 300ms) var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1));
+}
+
+.faq-item[open] .faq-panel,
+.faq-item.is-open .faq-panel {
+  grid-template-rows: 1fr;
+}
+
+.faq-panel-inner {
+  overflow: hidden;
+  padding: 0 1.5rem;
+}
+
+.faq-panel-content {
+  padding-bottom: 1.25rem;
+  color: var(--text-soft, #4A5578);
+  line-height: 1.6;
+}
+
+/* --------------------------------------------------------------------------
+   9. TEXT SCRAMBLE (Matrix-Style Brand Effect)
+   -------------------------------------------------------------------------- */
+.scramble-text {
+  font-family: var(--font-mono, 'DM Mono', monospace);
+  color: var(--gold-deep, #9A7B14);
+  display: inline-block;
+  min-width: 120px;
+  cursor: default;
+}
+
+/* --------------------------------------------------------------------------
+   10. ROTATING TAGLINE TEXT
+   -------------------------------------------------------------------------- */
+.rotating-text-wrapper {
+  display: inline-flex;
+  overflow: hidden;
+  vertical-align: bottom;
+  height: 1.25em;
+}
+
+.rotating-text-inner {
+  display: flex;
+  flex-direction: column;
+  animation: rotate-words 6s infinite var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1));
+}
+
+.rotating-text-inner span {
+  height: 1.25em;
+  display: flex;
+  align-items: center;
+  color: var(--gold, #B8941F);
+  font-family: var(--font-display, 'Fraunces', serif);
+  font-weight: 600;
+}
+
+@keyframes rotate-words {
+
+  0%,
+  20% {
+    transform: translateY(0);
+  }
+
+  33%,
+  53% {
+    transform: translateY(-1.25em);
+  }
+
+  66%,
+  86% {
+    transform: translateY(-2.5em);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   11. CURTAIN REVEAL CARD (Destinations, Sightseeing)
+   -------------------------------------------------------------------------- */
+.curtain-card {
+  position: relative;
+  border-radius: var(--radius-lg, 8px);
+  overflow: hidden;
+  aspect-ratio: 16/10;
+  cursor: pointer;
+  background: var(--navy-deep, #0A1128);
+}
+
+.curtain-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--motion-slow, 1200ms) var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1));
+}
+
+.curtain-overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--navy, #0A1128);
+  display: flex;
+  align-items: flex-end;
+  padding: 1.5rem;
+  transform: translateY(0);
+  transition: transform var(--motion-medium, 400ms) var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1));
+  z-index: 2;
+}
+
+.curtain-text {
+  color: var(--bg, #FAF7F0);
+  font-family: var(--font-display, 'Fraunces', serif);
+  font-size: 1.25rem;
+  font-weight: 500;
+  transform: translateY(16px);
+  opacity: 0;
+  transition: transform var(--motion-medium, 400ms) var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1)),
+    opacity var(--motion-medium, 400ms) ease-out;
+}
+
+@media (hover: hover) {
+  .curtain-card:hover .curtain-overlay {
+    transform: translateY(-100%);
+  }
+
+  .curtain-card:hover .curtain-image {
+    transform: scale(1.06);
+  }
+
+  .curtain-card:hover .curtain-text {
+    transform: translateY(0);
+    opacity: 1;
+    transition-delay: 80ms;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   12. INTERACTIVE IMAGE ACCORDION (Fleet, Destinations)
+   -------------------------------------------------------------------------- */
+.accordion-container {
+  display: flex;
+  gap: 0.5rem;
+  height: 320px;
+  width: 100%;
+}
+
+.accordion-item {
+  flex: 1;
+  border-radius: var(--radius-lg, 8px);
+  overflow: hidden;
+  position: relative;
+  transition: flex var(--motion-medium, 400ms) var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1));
+  cursor: pointer;
+}
+
+.accordion-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--motion-medium, 400ms) ease;
+}
+
+.accordion-item.active {
+  flex: 3.2;
+}
+
+.accordion-item.active img {
+  transform: scale(1.04);
+}
+
+.accordion-label {
+  position: absolute;
+  bottom: 1.25rem;
+  left: 1.25rem;
+  color: #FFFFFF;
+  font-family: var(--font-display, 'Fraunces', serif);
+  font-size: 1.15rem;
+  font-weight: 500;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity var(--motion-fast, 180ms) ease,
+    transform var(--motion-fast, 180ms) ease;
+}
+
+.accordion-item.active .accordion-label {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* --------------------------------------------------------------------------
+   13. ZOOM PARALLAX (Hero / Destination Images)
+   -------------------------------------------------------------------------- */
+.zoom-parallax-container {
+  position: relative;
+  height: 420px;
+  border-radius: var(--radius-lg, 8px);
+  overflow: hidden;
+}
+
+.zoom-parallax-img {
+  width: 100%;
+  height: 120%;
+  object-fit: cover;
+  transform: translateY(0) scale(1.1);
+  will-change: transform;
+}
+
+/* --------------------------------------------------------------------------
+   14. PROCESS TIMELINE ("How Booking Works")
+   -------------------------------------------------------------------------- */
+.timeline {
+  position: relative;
+  max-width: 640px;
+  margin: 0 auto;
+  padding-left: 2rem;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--border, rgba(10, 17, 40, 0.08));
+}
+
+.timeline-item {
+  position: relative;
+  padding-bottom: 2.75rem;
+  opacity: 0.35;
+  transition: opacity var(--motion-medium, 400ms) ease;
+}
+
+.timeline-item.is-active {
+  opacity: 1;
+}
+
+.timeline-dot {
+  position: absolute;
+  left: -2rem;
+  top: 4px;
+  width: 14px;
+  height: 14px;
+  background: var(--bg, #FAF7F0);
+  border: 2px solid var(--gold, #B8941F);
+  border-radius: 50%;
+  transform: translateX(-6px);
+  transition: background var(--motion-fast, 180ms) ease,
+    transform var(--motion-fast, 180ms) ease;
+}
+
+.timeline-item.is-active .timeline-dot {
+  background: var(--gold, #B8941F);
+  transform: translateX(-6px) scale(1.25);
+}
+
+.timeline-title {
+  font-family: var(--font-display, 'Fraunces', serif);
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: var(--text, #0A1128);
+}
+
+.timeline-text {
+  color: var(--text-soft, #4A5578);
+  line-height: 1.6;
+}
+
+/* --------------------------------------------------------------------------
+   15. GRADIENT BORDER BUTTON / CTA
+   -------------------------------------------------------------------------- */
+.btn-gradient-border {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.85rem 1.75rem;
+  min-height: var(--touch, 44px);
+  font-weight: 600;
+  background: var(--surface, #FFFFFF);
+  color: var(--text, #0A1128);
+  border-radius: var(--radius, 4px);
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  overflow: hidden;
+  z-index: 1;
+  transition: box-shadow var(--motion-fast, 180ms) ease;
+}
+
+.btn-gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, var(--gold, #B8941F), transparent 60%, var(--gold-deep, #9A7B14));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.btn-gradient-border:hover,
+.btn-gradient-border:focus-visible {
+  box-shadow: 0 6px 20px rgba(184, 148, 31, 0.2);
+}
+
+/* --------------------------------------------------------------------------
+   16. PORTAL FIELD BACKGROUND (Subtle Grid Atmosphere)
+   -------------------------------------------------------------------------- */
+.portal-bg {
+  position: relative;
+  background: var(--bg-alt, #F0EBE0);
+  overflow: hidden;
+}
+
+.portal-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--border, rgba(10, 17, 40, 0.08)) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border, rgba(10, 17, 40, 0.08)) 1px, transparent 1px);
+  background-size: 44px 44px;
+  opacity: 0.6;
+  animation: portal-grid-move 24s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes portal-grid-move {
+  0% {
+    transform: translateY(0);
+  }
+
+  100% {
+    transform: translateY(44px);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   17. CINEMATIC THEME SWITCHER (21st.dev by Om Rohilla)
+   Tactile 3D Pill Track · Inset Specular Shadows · Sliding Puck · Particle Aura
+   -------------------------------------------------------------------------- */
+.cinematic-theme-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 72px;
+  height: 40px;
+  padding: 4px;
+  border-radius: 9999px;
+  border: 2px solid rgba(203, 213, 225, 0.7);
+  background: radial-gradient(ellipse at top left, #ffffff 0%, #f1f5f9 40%, #cbd5e1 100%);
+  box-shadow:
+    inset 3px 3px 8px rgba(148, 163, 184, 0.45),
+    inset -3px -3px 8px rgba(255, 255, 255, 0.95),
+    inset 0 2px 4px rgba(148, 163, 184, 0.35),
+    inset 0 0 15px rgba(203, 213, 225, 0.25),
+    0 2px 6px rgba(10, 17, 40, 0.1);
+  cursor: pointer;
+  outline: none;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: border-color var(--motion-fast, 180ms) ease,
+    box-shadow var(--motion-fast, 180ms) ease,
+    background 300ms ease;
+}
+
+.cinematic-theme-toggle:focus-visible {
+  outline: 2px solid var(--gold, #B8941F);
+  outline-offset: 2px;
+}
+
+[data-theme="dark"] .cinematic-theme-toggle,
+html.dark .cinematic-theme-toggle {
+  border: 2px solid rgba(51, 65, 85, 0.7);
+  background: radial-gradient(ellipse at top left, #1e293b 0%, #0f172a 40%, #020617 100%);
+  box-shadow:
+    inset 3px 3px 8px rgba(0, 0, 0, 0.9),
+    inset -3px -3px 8px rgba(71, 85, 105, 0.35),
+    inset 0 2px 4px rgba(0, 0, 0, 0.8),
+    inset 0 0 15px rgba(0, 0, 0, 0.6),
+    0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* Stationary background icons */
+.cinematic-icons {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cinematic-icon-sun {
+  width: 16px;
+  height: 16px;
+  color: #D97706;
+  /* amber-600 */
+  transition: opacity var(--motion-fast, 180ms) ease, transform var(--motion-fast, 180ms) ease;
+}
+
+.cinematic-icon-moon {
+  width: 16px;
+  height: 16px;
+  color: #64748B;
+  /* slate-500 */
+  transition: opacity var(--motion-fast, 180ms) ease, color var(--motion-fast, 180ms) ease;
+}
+
+[data-theme="dark"] .cinematic-icon-sun,
+html.dark .cinematic-icon-sun {
+  opacity: 0.45;
+  color: #FEF08A;
+}
+
+[data-theme="dark"] .cinematic-icon-moon,
+html.dark .cinematic-icon-moon {
+  opacity: 1;
+  color: #FEF08A;
+}
+
+/* 3D Sliding Convex Puck */
+.cinematic-puck {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #ffffff 0%, #fefefe 50%, #f1f5f9 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.95);
+  box-shadow:
+    inset 1px 1px 2px rgba(255, 255, 255, 1),
+    inset -1px -1px 2px rgba(148, 163, 184, 0.25),
+    0 2px 8px rgba(10, 17, 40, 0.18),
+    0 1px 3px rgba(10, 17, 40, 0.12);
+  transform: translateX(0);
+  transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1),
+    background 300ms ease,
+    border-color 300ms ease,
+    box-shadow 300ms ease;
+  will-change: transform;
+}
+
+[data-theme="dark"] .cinematic-puck,
+html.dark .cinematic-puck {
+  transform: translateX(32px);
+  background: linear-gradient(145deg, #475569 0%, #334155 50%, #1e293b 100%);
+  border: 1.5px solid rgba(148, 163, 184, 0.4);
+  box-shadow:
+    inset 1px 1px 2px rgba(255, 255, 255, 0.15),
+    inset -1px -1px 2px rgba(0, 0, 0, 0.7),
+    0 4px 12px rgba(0, 0, 0, 0.6),
+    0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.cinematic-puck-icon {
+  width: 14px;
+  height: 14px;
+  pointer-events: none;
+  transition: transform var(--motion-medium, 300ms) cubic-bezier(0.16, 1, 0.3, 1),
+    opacity var(--motion-fast, 180ms) ease;
+}
+
+.cinematic-puck-icon.sun {
+  display: block;
+  color: #D97706;
+}
+
+.cinematic-puck-icon.moon {
+  display: none;
+  color: #FEF08A;
+}
+
+[data-theme="dark"] .cinematic-puck-icon.sun,
+html.dark .cinematic-puck-icon.sun {
+  display: none;
+}
+
+[data-theme="dark"] .cinematic-puck-icon.moon,
+html.dark .cinematic-puck-icon.moon {
+  display: block;
+}
+
+/* Concentric Dynamic Particle Burst */
+.cinematic-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: visible;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.cinematic-particle {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  animation: cinematic-burst 700ms ease-out forwards;
+}
+
+.cinematic-particle:nth-child(1) {
+  animation-delay: 0ms;
+}
+
+.cinematic-particle:nth-child(2) {
+  animation-delay: 90ms;
+}
+
+.cinematic-particle:nth-child(3) {
+  animation-delay: 180ms;
+}
+
+.cinematic-particle.light-glow {
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.6) 0%, rgba(245, 158, 11, 0) 70%);
+}
+
+.cinematic-particle.dark-glow {
+  background: radial-gradient(circle, rgba(147, 197, 253, 0.65) 0%, rgba(147, 197, 253, 0) 70%);
+}
+
+@keyframes cinematic-burst {
+  0% {
+    transform: scale(0.4);
+    opacity: 0.9;
+  }
+
+  60% {
+    opacity: 0.6;
+  }
+
+  100% {
+    transform: scale(5.5);
+    opacity: 0;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   18. ARCHITECTURAL CONTACT CARD (21st.dev by efferd)
+   4-Corner Plus Crosses · Info Tiles Grid · Separated Inquiry Form
+   -------------------------------------------------------------------------- */
+.contact-card-wrap {
+  position: relative;
+  padding: 1rem 0;
+}
+
+.contact-card {
+  position: relative;
+  background: var(--surface, #FFFFFF);
+  border: 1px solid var(--border, rgba(10, 17, 40, 0.08));
+  border-radius: var(--radius-lg, 8px);
+  box-shadow: var(--shadow-lift);
+  overflow: visible;
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  transition: border-color var(--motion-fast, 180ms) ease,
+    background-color 300ms ease,
+    box-shadow var(--motion-fast, 180ms) ease;
+}
+
+@media (max-width: 900px) {
+  .contact-card {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Distinctive 4-Corner Plus Markers */
+.corner-plus {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  color: var(--gold, #B8941F);
+  pointer-events: none;
+  z-index: 5;
+  transition: transform var(--motion-medium, 300ms) cubic-bezier(0.16, 1, 0.3, 1),
+    color var(--motion-fast, 180ms) ease;
+}
+
+.contact-card:hover .corner-plus {
+  transform: rotate(90deg);
+  color: var(--gold-deep, #9A7B14);
+}
+
+.corner-plus--tl {
+  top: -12px;
+  left: -12px;
+}
+
+.corner-plus--tr {
+  top: -12px;
+  right: -12px;
+}
+
+.corner-plus--bl {
+  bottom: -12px;
+  left: -12px;
+}
+
+.corner-plus--br {
+  bottom: -12px;
+  right: -12px;
+}
+
+/* Left Information Section */
+.contact-card-info {
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.contact-card-header h2,
+.contact-card-header .contact-card-title {
+  font-family: var(--font-display, 'Fraunces', serif);
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  color: var(--text, #0A1128);
+  margin-bottom: 0.75rem;
+  line-height: 1.2;
+}
+
+.contact-card-desc {
+  color: var(--text-soft, #4A5578);
+  font-size: 1rem;
+  line-height: 1.6;
+  max-width: 540px;
+}
+
+.contact-tiles-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+@media (max-width: 600px) {
+  .contact-tiles-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.contact-tile {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 1rem;
+  background: var(--bg-alt, #F0EBE0);
+  border: 1px solid var(--border, rgba(10, 17, 40, 0.08));
+  border-radius: var(--radius, 4px);
+  text-decoration: none;
+  color: inherit;
+  transition: transform var(--motion-fast, 180ms) ease,
+    border-color var(--motion-fast, 180ms) ease,
+    background-color 300ms ease;
+}
+
+.contact-tile:hover {
+  transform: translateY(-2px);
+  border-color: var(--gold-border, rgba(184, 148, 31, 0.25));
+}
+
+.contact-tile.col-span-full {
+  grid-column: 1 / -1;
+}
+
+.contact-tile-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border-radius: var(--radius, 4px);
+  background: var(--surface, #FFFFFF);
+  color: var(--gold, #B8941F);
+  border: 1px solid var(--border, rgba(10, 17, 40, 0.08));
+}
+
+.contact-tile-label {
+  display: block;
+  font-family: var(--font-mono, 'DM Mono', monospace);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-soft, #4A5578);
+}
+
+.contact-tile-value {
+  display: block;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text, #0A1128);
+  margin-top: 2px;
+}
+
+/* Right Form Section */
+.contact-card-form {
+  padding: 2.5rem;
+  background: var(--bg, #FAF7F0);
+  border-left: 1px solid var(--border, rgba(10, 17, 40, 0.08));
+  border-top-right-radius: var(--radius-lg, 8px);
+  border-bottom-right-radius: var(--radius-lg, 8px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: background-color 300ms ease;
+}
+
+@media (max-width: 900px) {
+  .contact-card-form {
+    border-left: none;
+    border-top: 1px solid var(--border, rgba(10, 17, 40, 0.08));
+    border-top-right-radius: 0;
+    border-bottom-left-radius: var(--radius-lg, 8px);
+  }
+}
+
+.contact-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 1.15rem;
+}
+
+.contact-form-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text, #0A1128);
+}
+
+.contact-form-input,
+.contact-form-textarea {
+  width: 100%;
+  padding: 0.75rem 0.95rem;
+  border-radius: var(--radius, 4px);
+  border: 1px solid var(--border, rgba(10, 17, 40, 0.12));
+  background: var(--surface, #FFFFFF);
+  color: var(--text, #0A1128);
+  font-family: var(--font-ui, 'DM Sans', sans-serif);
+  font-size: 0.95rem;
+  transition: border-color var(--motion-fast, 180ms) ease,
+    box-shadow var(--motion-fast, 180ms) ease;
+  min-height: var(--touch, 44px);
+}
+
+.contact-form-textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.contact-form-input:focus,
+.contact-form-textarea:focus {
+  outline: none;
+  border-color: var(--gold, #B8941F);
+  box-shadow: 0 0 0 3px var(--gold-soft, rgba(184, 148, 31, 0.15));
+}
+
+.contact-form-submit {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+/* --------------------------------------------------------------------------
+   FORM ANIMATIONS & FLOATING LABELS
+   -------------------------------------------------------------------------- */
+.field {
+  position: relative;
+}
+
+.field select,
+.field input,
+.contact-form-input,
+.contact-form-textarea {
+  transition: border-color var(--motion-fast, 180ms) ease,
+              box-shadow var(--motion-fast, 180ms) ease,
+              background-color 300ms ease;
+}
+
+.field select:focus,
+.field input:focus,
+.contact-form-input:focus,
+.contact-form-textarea:focus {
+  outline: none;
+  border-color: var(--gold, #B8941F);
+  box-shadow: 0 0 0 3px var(--gold-soft, rgba(184, 148, 31, 0.18));
+}
+
+.field label {
+  position: absolute;
+  left: 0.875rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-soft, #4A5578);
+  pointer-events: none;
+  transform-origin: left;
+  font-size: 0.875rem;
+  transition: transform var(--motion-fast, 180ms) var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1)),
+              color var(--motion-fast, 180ms) ease;
+}
+
+.field select:focus + label,
+.field input:focus + label,
+.field input:not(:placeholder-shown) + label,
+.field select:valid + label {
+  transform: translateY(-0.85rem) scale(0.8);
+  color: var(--gold-deep, #B8941F);
+}
+
+/* Input validation error shake */
+@keyframes form-shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-4px); }
+  40%, 80% { transform: translateX(4px); }
+}
+
+.input-error {
+  border-color: #e53e3e !important;
+  animation: form-shake 300ms ease;
+}
+
+/* --------------------------------------------------------------------------
+   ICON SUITE UTILITIES (Call, WhatsApp, Email, Map)
+   -------------------------------------------------------------------------- */
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.icon svg {
+  width: 1.1em;
+  height: 1.1em;
+  fill: currentColor;
+}
+
+.btn .icon,
+.btn-primary .icon,
+.btn-gold .icon,
+.btn-outline .icon,
+.btn-outline--light .icon {
+  margin-right: 0.2rem;
+  display: inline-flex;
+}
+
+.icon-call { color: inherit; }
+.icon-wa { color: #25D366; }
+.icon-email { color: inherit; }
+.icon-map { color: var(--gold, #B8941F); }
+
+/* --------------------------------------------------------------------------
+   REDUCED MOTION OVERRIDES (Strict WCAG 2.2 Compliance)
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+
+  .reveal-text-span,
+  .blur-in,
+  .roll span,
+  .roll-inner,
+  .roll-duplicate,
+  .roll::after,
+  .roll-link::after,
+  .curtain-overlay,
+  .curtain-image,
+  .curtain-text,
+  .accordion-item,
+  .accordion-item img,
+  .timeline-dot,
+  .corner-plus,
+  .cinematic-puck,
+  .contact-tile,
+  .brand-mark {
+    transform: none !important;
+    opacity: 1 !important;
+    filter: none !important;
+    transition: none !important;
+  }
+
+  .btn-primary::before,
+  .btn-gold::before,
+  .btn-glow::before,
+  .rotating-text-inner,
+  .marquee-ltr,
+  .marquee-rtl,
+  .portal-bg::before,
+  .cinematic-particle,
+  .input-error {
+    animation: none !important;
+  }
+
+  .zoom-parallax-img {
+    transform: none !important;
+  }
+
+  .timeline-item {
+    opacity: 1 !important;
+  }
+}
