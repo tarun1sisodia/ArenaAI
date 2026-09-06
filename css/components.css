@@ -1252,14 +1252,24 @@ html.dark .cinematic-puck-icon.moon {
 .contact-form-group {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.45rem;
   margin-bottom: 1.15rem;
+  position: relative;
 }
 
 .contact-form-label {
+  display: block;
   font-size: 0.85rem;
   font-weight: 600;
   color: var(--text, #1A1D20);
+  position: static !important;
+  transform: none !important;
+  pointer-events: auto;
+  transition: color var(--motion-fast, 180ms) ease;
+}
+
+.contact-form-group:focus-within .contact-form-label {
+  color: var(--gold-deep, #B27123);
 }
 
 .contact-form-input,
@@ -1277,67 +1287,29 @@ html.dark .cinematic-puck-icon.moon {
   min-height: var(--touch, 44px);
 }
 
+.contact-form-input::placeholder,
+.contact-form-textarea::placeholder {
+  color: var(--text-soft, #555B62);
+  opacity: 0.6;
+}
+
 .contact-form-textarea {
   min-height: 110px;
   resize: vertical;
 }
 
 .contact-form-input:focus,
-.contact-form-textarea:focus {
+.contact-form-textarea:focus,
+.field select:focus,
+.field input:focus {
   outline: none;
-  border-color: var(--gold, #B8941F);
-  box-shadow: 0 0 0 3px var(--gold-soft, rgba(184, 148, 31, 0.15));
+  border-color: var(--gold, #E5A044);
+  box-shadow: 0 0 0 3px var(--gold-soft, rgba(229, 160, 68, 0.18));
 }
 
 .contact-form-submit {
   width: 100%;
   margin-top: 0.5rem;
-}
-
-/* --------------------------------------------------------------------------
-   FORM ANIMATIONS & FLOATING LABELS
-   -------------------------------------------------------------------------- */
-.field {
-  position: relative;
-}
-
-.field select,
-.field input,
-.contact-form-input,
-.contact-form-textarea {
-  transition: border-color var(--motion-fast, 180ms) ease,
-              box-shadow var(--motion-fast, 180ms) ease,
-              background-color 300ms ease;
-}
-
-.field select:focus,
-.field input:focus,
-.contact-form-input:focus,
-.contact-form-textarea:focus {
-  outline: none;
-  border-color: var(--gold, #B8941F);
-  box-shadow: 0 0 0 3px var(--gold-soft, rgba(184, 148, 31, 0.18));
-}
-
-.field label {
-  position: absolute;
-  left: 0.875rem;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--text-soft, #4A5578);
-  pointer-events: none;
-  transform-origin: left;
-  font-size: 0.875rem;
-  transition: transform var(--motion-fast, 180ms) var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1)),
-              color var(--motion-fast, 180ms) ease;
-}
-
-.field select:focus + label,
-.field input:focus + label,
-.field input:not(:placeholder-shown) + label,
-.field select:valid + label {
-  transform: translateY(-0.85rem) scale(0.8);
-  color: var(--gold-deep, #B8941F);
 }
 
 /* Input validation error shake */
@@ -1385,6 +1357,192 @@ html.dark .cinematic-puck-icon.moon {
 .icon-map { color: var(--gold, #B8941F); }
 
 /* --------------------------------------------------------------------------
+   PREMIUM SEO-SAFE ANIMATION SUITE
+   - Hero subtle animated gradient & floating ambient shapes
+   - Hero headline CSS fade-up (zero JS dependency for crawlers)
+   - Scroll reading progress indicator
+   - Card scroll reveals & 3-6px hover lift
+   - Micro-interactions on icons and buttons
+   - Smooth animated counter styling
+   -------------------------------------------------------------------------- */
+
+/* 1. Scroll Progress Bar */
+#scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--gold, #E5A044), var(--gold-light, #F3C36C));
+  z-index: 9999;
+  width: 0%;
+  pointer-events: none;
+  transition: width 0.08s linear;
+  box-shadow: 0 0 8px rgba(229, 160, 68, 0.5);
+}
+
+/* 2. Hero Animated Gradient Overlay & Ambient Float Shapes */
+.hero {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-overlay {
+  background: linear-gradient(
+    135deg,
+    rgba(18, 20, 22, 0.94) 0%,
+    rgba(26, 29, 32, 0.72) 48%,
+    rgba(18, 20, 22, 0.88) 100%
+  );
+  background-size: 200% 200%;
+  animation: hero-gradient-pulse 16s ease infinite alternate;
+}
+
+@keyframes hero-gradient-pulse {
+  0% { background-position: 0% 40%; }
+  50% { background-position: 100% 60%; }
+  100% { background-position: 0% 40%; }
+}
+
+.hero-ambient-orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(60px);
+  z-index: 1;
+  opacity: 0.16;
+  will-change: transform;
+}
+
+.hero-ambient-orb-1 {
+  width: 320px;
+  height: 320px;
+  background: var(--gold, #E5A044);
+  top: 10%;
+  right: 12%;
+  animation: ambient-orb-float-1 14s ease-in-out infinite alternate;
+}
+
+.hero-ambient-orb-2 {
+  width: 260px;
+  height: 260px;
+  background: rgba(243, 195, 108, 0.4);
+  bottom: 12%;
+  left: 8%;
+  animation: ambient-orb-float-2 18s ease-in-out infinite alternate;
+}
+
+@keyframes ambient-orb-float-1 {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(-30px, 35px) scale(1.1); }
+}
+
+@keyframes ambient-orb-float-2 {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(35px, -25px) scale(1.08); }
+}
+
+/* 3. Hero Headline Fade-Up (Static HTML stays 100% readable to crawlers) */
+.hero-copy h1 {
+  animation: hero-fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.hero-copy .lead {
+  animation: hero-fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.12s both;
+}
+
+.hero-actions {
+  animation: hero-fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.24s both;
+}
+
+@keyframes hero-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 4. Scroll Reveal for Cards (Services, Fleet, Routes, Trust) */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-on-scroll.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 5. Card Hover Elevation (3-6px with soft shadow) */
+.service-card,
+.route-card,
+.vehicle-card,
+.package-card,
+.contact-card {
+  transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.24s ease;
+}
+
+.service-card:hover,
+.route-card:hover,
+.vehicle-card:hover,
+.package-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* 6. Icon & Mark Micro-Interactions */
+.service-card:hover .service-mark {
+  transform: scale(1.22) rotate(10deg);
+  color: var(--gold, #E5A044);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.3s ease;
+}
+
+.route-card:hover .route-codes b {
+  transform: translateX(4px);
+  color: var(--gold, #E5A044);
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.vehicle-card:hover .btn-text span,
+.service-card:hover .card-link,
+.btn-primary:hover span:last-child {
+  transform: translate(2px, -2px);
+  transition: transform 0.2s ease;
+}
+
+/* 7. Statistics Counters & Trust Chips */
+.trust-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+}
+
+.trust-bar .chip {
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.trust-bar .chip:hover {
+  transform: translateY(-2px);
+  border-color: var(--gold-border, rgba(229, 160, 68, 0.35));
+  box-shadow: 0 4px 12px rgba(229, 160, 68, 0.12);
+}
+
+.stat-number {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+/* --------------------------------------------------------------------------
    REDUCED MOTION OVERRIDES (Strict WCAG 2.2 Compliance)
    -------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
@@ -1405,11 +1563,16 @@ html.dark .cinematic-puck-icon.moon {
   .corner-plus,
   .cinematic-puck,
   .contact-tile,
-  .brand-mark {
+  .brand-mark,
+  .reveal-on-scroll,
+  .hero-copy h1,
+  .hero-copy .lead,
+  .hero-actions {
     transform: none !important;
     opacity: 1 !important;
     filter: none !important;
     transition: none !important;
+    animation: none !important;
   }
 
   .btn-primary::before,
@@ -1420,8 +1583,16 @@ html.dark .cinematic-puck-icon.moon {
   .marquee-rtl,
   .portal-bg::before,
   .cinematic-particle,
-  .input-error {
+  .input-error,
+  .hero-overlay,
+  .hero-ambient-orb,
+  .hero-ambient-orb-1,
+  .hero-ambient-orb-2 {
     animation: none !important;
+  }
+
+  #scroll-progress {
+    display: none !important;
   }
 
   .zoom-parallax-img,

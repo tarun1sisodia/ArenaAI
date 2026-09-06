@@ -12,6 +12,7 @@ documentation pack.
 2. **Consult single sources of truth**
    - Stack & architecture: `02_PROJECT_CONTEXT.md`
    - Visual system: `DESIGN.md` — never hardcode arbitrary colors/sizes
+   - Animation verification: `ANIMATION_RULES.md` — SEO safety & accessibility before adding animations
    - Sequence & acceptance: `03_PHASE_PLAN.md`
    - State & history: `04_PROGRESS_TRACKER.md`
 

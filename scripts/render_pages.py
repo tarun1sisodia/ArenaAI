@@ -285,15 +285,15 @@ def contact_card_html(lang: str, is_standalone_page: bool = False) -> str:
 
     <div class="contact-card-form">
       <form id="contact-form" action="mailto:{EMAIL}" method="post" enctype="text/plain">
-        <div class="contact-form-group field">
+        <div class="contact-form-group">
           <label class="contact-form-label" for="contact-name">{name_label}</label>
           <input class="contact-form-input" id="contact-name" name="name" type="text" autocomplete="name" placeholder="{name_ph}" required />
         </div>
-        <div class="contact-form-group field">
+        <div class="contact-form-group">
           <label class="contact-form-label" for="contact-phone">{phone_label}</label>
           <input class="contact-form-input" id="contact-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="{phone_ph}" required />
         </div>
-        <div class="contact-form-group field">
+        <div class="contact-form-group">
           <label class="contact-form-label" for="contact-message">{msg_label}</label>
           <textarea class="contact-form-textarea" id="contact-message" name="message" rows="3" placeholder="{msg_ph}" required></textarea>
         </div>
@@ -336,11 +336,11 @@ def header(lang: str, active: str, alt_path: str):
     </a>
     <nav class="nav-desktop" aria-label="Primary">{links}</nav>
     <div class="header-actions">
-      {cinematic_theme_toggle_html("header-theme-toggle")}
       <a class="lang-switch" href="{alt_path}" hreflang="{T["hi" if lang == "en" else "en"]["hreflang"]}">{t["switch"]}</a>
       <a class="btn-outline btn-sm btn-outline--light" href="tel:{PHONE}" data-event="cta_click">{ICON_CALL}<span>{t["call"]}</span></a>
       <a class="btn-outline btn-sm btn-outline--light" href="{wa}" target="_blank" rel="noreferrer" data-event="cta_click">{ICON_WA}<span>{t["whatsapp"]}</span></a>
       <a class="btn-primary btn-sm" href="/book.html" data-event="cta_click">{t["book"]} <span>↗</span></a>
+      {cinematic_theme_toggle_html("header-theme-toggle")}
       <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-sheet" aria-label="{t["menu"]}"><span></span></button>
     </div>
   </div>
