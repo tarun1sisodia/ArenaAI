@@ -673,15 +673,14 @@ def home_body(lang):
     dots_block = "\n    ".join(dots_html)
     first_caption = slides[0]["caption"]
 
+    icon_compass = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>'
+
     return f"""
 <section class="hero">
   <div class="hero-slideshow" id="hero-slideshow" aria-hidden="true">
 {slideshow_block}
   </div>
   <div class="hero-overlay"></div>
-  <div class="hero-grain"></div>
-  <div class="hero-ambient-orb hero-ambient-orb-1" aria-hidden="true"></div>
-  <div class="hero-ambient-orb hero-ambient-orb-2" aria-hidden="true"></div>
   <div class="hero-location-badge" id="hero-location-badge" aria-live="polite">
     <span class="hero-location-dot"></span>
     <span class="hero-location-text">{first_caption}</span>
@@ -694,9 +693,9 @@ def home_body(lang):
     <h1>{t["h1_home"]}</h1>
     <p class="lead">{t["lead_home"]}</p>
     <div class="hero-actions">
-      <a class="btn-primary" href="tel:{PHONE}" data-event="cta_click">{t["call"]} {PHONE_DISPLAY}</a>
-      <a class="btn-outline btn-outline--light" href="https://wa.me/{WHATSAPP}" target="_blank" rel="noreferrer">{t["whatsapp"]}</a>
-      <a class="btn-outline btn-outline--light" href="{hub_path("packages", lang)}">{t["explore_tours"]}</a>
+      <a class="btn-primary" href="tel:{PHONE}" data-event="cta_click">{ICON_CALL} <span>{t["call"]} {PHONE_DISPLAY}</span></a>
+      <a class="btn-outline btn-outline--light" href="https://wa.me/{WHATSAPP}" target="_blank" rel="noreferrer" data-event="cta_click">{ICON_WA} <span>{t["whatsapp"]}</span></a>
+      <a class="btn-outline btn-outline--light" href="{hub_path("packages", lang)}">{icon_compass} <span>{t["explore_tours"]}</span> <span>↗</span></a>
     </div>
   </div>
   <form class="hero-widget" action="/book.html" method="get">

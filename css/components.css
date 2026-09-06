@@ -723,8 +723,8 @@ figure.portrait img {
   height: 100%;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 1.6s cubic-bezier(0.4, 0, 0.2, 1), transform 8s cubic-bezier(0.16, 1, 0.3, 1);
-  transform: scale(1.05);
+  transition: opacity 2.2s cubic-bezier(0.4, 0, 0.2, 1), transform 12s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: scale(1.04);
   will-change: opacity, transform;
   pointer-events: none;
   z-index: 0;
@@ -744,6 +744,7 @@ figure.portrait img {
   height: 100%;
   object-fit: cover;
   object-position: center 36%;
+  filter: contrast(1.04) brightness(1.02) !important;
 }
 
 /* Location Badge (Prominent top-right luxury destination badge) */
@@ -1618,58 +1619,77 @@ html.dark .cinematic-puck-icon.moon {
 }
 
 .hero-overlay {
-  background: linear-gradient(
-    135deg,
-    rgba(18, 20, 22, 0.94) 0%,
-    rgba(26, 29, 32, 0.72) 48%,
-    rgba(18, 20, 22, 0.88) 100%
-  );
-  background-size: 200% 200%;
-  animation: hero-gradient-pulse 16s ease infinite alternate;
-}
-
-@keyframes hero-gradient-pulse {
-  0% { background-position: 0% 40%; }
-  50% { background-position: 100% 60%; }
-  100% { background-position: 0% 40%; }
-}
-
-.hero-ambient-orb {
   position: absolute;
-  border-radius: 50%;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(18, 20, 22, 0.24) 0%,
+    rgba(18, 20, 22, 0.44) 48%,
+    rgba(18, 20, 22, 0.78) 100%
+  ) !important;
   pointer-events: none;
-  filter: blur(60px);
   z-index: 1;
-  opacity: 0.16;
-  will-change: transform;
 }
 
-.hero-ambient-orb-1 {
-  width: 320px;
-  height: 320px;
-  background: var(--gold, #E5A044);
-  top: 10%;
-  right: 12%;
-  animation: ambient-orb-float-1 14s ease-in-out infinite alternate;
+/* Disable blur ambient orbs and heavy grain to let scenic destination photos shine crisp and clear */
+.hero-ambient-orb,
+.hero-ambient-orb-1,
+.hero-ambient-orb-2,
+.hero-grain {
+  display: none !important;
 }
 
-.hero-ambient-orb-2 {
-  width: 260px;
-  height: 260px;
-  background: rgba(243, 195, 108, 0.4);
-  bottom: 12%;
-  left: 8%;
-  animation: ambient-orb-float-2 18s ease-in-out infinite alternate;
+/* Text readability over crisp background images */
+.hero-copy h1 {
+  text-shadow: 0 3px 20px rgba(0, 0, 0, 0.85), 0 1px 4px rgba(0, 0, 0, 0.95);
 }
 
-@keyframes ambient-orb-float-1 {
-  0% { transform: translate(0, 0) scale(1); }
-  100% { transform: translate(-30px, 35px) scale(1.1); }
+.hero-copy .lead {
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.85);
+  color: #F8FAFC !important;
 }
 
-@keyframes ambient-orb-float-2 {
-  0% { transform: translate(0, 0) scale(1); }
-  100% { transform: translate(35px, -25px) scale(1.08); }
+/* Hero action buttons with icons & micro-interactions */
+.hero-actions a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              background 0.2s ease,
+              border-color 0.2s ease;
+}
+
+.hero-actions a svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hero-actions a:hover svg {
+  transform: scale(1.18);
+}
+
+.hero-actions .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(229, 160, 68, 0.5);
+}
+
+.hero-actions .btn-outline--light {
+  background: rgba(18, 20, 22, 0.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #FFFFFF;
+}
+
+.hero-actions .btn-outline--light:hover {
+  transform: translateY(-2px);
+  border-color: var(--gold, #E5A044);
+  background: rgba(229, 160, 68, 0.18);
+  color: #FFFFFF;
 }
 
 /* 3. Hero Headline Fade-Up (Static HTML stays 100% readable to crawlers) */

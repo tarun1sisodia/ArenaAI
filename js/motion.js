@@ -401,7 +401,7 @@
 
       var currentIndex = 0;
       var timer = null;
-      var intervalTime = 5500; // 5.5s per landmark
+      var intervalTime = 8000; // 8.0s per landmark (gentle, unhurried pace)
       var isPaused = false;
 
       // Honor prefers-reduced-motion
