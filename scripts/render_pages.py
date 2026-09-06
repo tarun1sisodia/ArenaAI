@@ -312,103 +312,20 @@ def contact_card_html(lang: str, is_standalone_page: bool = False) -> str:
 
 def header(lang: str, active: str, alt_path: str):
     t = T[lang]
-
-    # ---------- flyout data ----------
-    route_items = ROUTES[:3]
-    pack_items  = PACKAGES[:3]
-    fleet_items = [v for v in VEHICLES if v["id"] in ("sedan", "innova", "tempo")][:3]
-
-    def route_flyout_rows():
-        rows = []
-        for r in route_items:
-            o, d = CITIES[r["from"]], CITIES[r["to"]]
-            label = t["local_label"] if r["kind"] == "local" else f"{o[lang]} → {d[lang]}"
-            meta  = f"{r['duration']} · {r['km']} km"
-            price = inr(r["fares"]["sedan"])
-            rows.append(
-                f'<a class="nav-flyout-item" href="{route_path(r, lang)}">'
-                f'<div class="nav-flyout-info">'
-                f'<span class="nav-flyout-name">{label}</span>'
-                f'<span class="nav-flyout-meta">{meta}</span>'
-                f'</div>'
-                f'<span class="nav-flyout-price">{price}</span>'
-                f'</a>'
-            )
-        return "\n".join(rows)
-
-    def pack_flyout_rows():
-        rows = []
-        for p in pack_items:
-            rows.append(
-                f'<a class="nav-flyout-item" href="{package_path(p, lang)}">'
-                f'<img class="nav-flyout-thumb" src="{p["image"]}" alt="{p["name"][lang]}" loading="lazy" />'
-                f'<div class="nav-flyout-info">'
-                f'<span class="nav-flyout-name">{p["name"][lang]}</span>'
-                f'<span class="nav-flyout-meta">{p["kicker"][lang]}</span>'
-                f'</div>'
-                f'<span class="nav-flyout-price">{inr(p["price"])}</span>'
-                f'</a>'
-            )
-        return "\n".join(rows)
-
-    def fleet_flyout_rows():
-        rows = []
-        for v in fleet_items:
-            rows.append(
-                f'<a class="nav-flyout-item" href="{vehicle_path(v, lang)}">'
-                f'<img class="nav-flyout-thumb" src="{v["image"]}" alt="{v["name"][lang]}" loading="lazy" />'
-                f'<div class="nav-flyout-info">'
-                f'<span class="nav-flyout-name">{v["name"][lang]}</span>'
-                f'<span class="nav-flyout-meta">{v["tags"]}</span>'
-                f'</div>'
-                f'<span class="nav-flyout-price">₹{v["per_km"]}/km</span>'
-                f'</a>'
-            )
-        return "\n".join(rows)
-
-    def flyout(key, label_text, rows_html, all_href):
-        return (
-            f'<div class="nav-item">'
-            f'<a href="{hub_path(key, lang)}" data-nav="{key}" class="roll-link text">'
-            f'<span class="text-fill">{label_text}</span>'
-            f'</a>'
-            f'<div class="nav-flyout" role="region" aria-label="{label_text} suggestions">'
-            f'<div class="nav-flyout-head">'
-            f'<span class="nav-flyout-label">{label_text}</span>'
-            f'<a class="nav-flyout-all" href="{all_href}">View all ↗</a>'
-            f'</div>'
-            f'{rows_html}'
-            f'</div>'
-            f'</div>'
-        )
-
-    # Plain link (no flyout)
-    def plain(key, label_text):
-        return (
-            f'<a href="{hub_path(key, lang)}" data-nav="{key}" class="roll-link text">'
-            f'<span class="text-fill">{label_text}</span>'
-            f'</a>'
-        )
-
-    nav_items = [
-        plain("services",  t["nav_services"]),
-        flyout("routes",   t["nav_routes"],   route_flyout_rows(), hub_path("routes",   lang)),
-        flyout("packages", t["nav_packages"], pack_flyout_rows(),  hub_path("packages", lang)),
-        flyout("fleet",    t["nav_fleet"],    fleet_flyout_rows(), hub_path("fleet",    lang)),
-        plain("contact",   t["nav_contact"]),
+    nav = [
+        ("services", t["nav_services"]),
+        ("routes", t["nav_routes"]),
+        ("packages", t["nav_packages"]),
+        ("fleet", t["nav_fleet"]),
+        ("contact", t["nav_contact"]),
     ]
-    links = "\n          ".join(nav_items)
-
+    links = "\n          ".join(
+        f'<a href="{hub_path(key, lang)}" data-nav="{key}" class="roll-link text"><span class="text-fill">{label}</span></a>'
+        for key, label in nav
+    )
     sheet = "\n        ".join(
         [f'<a href="{hub_path("home", lang)}" data-nav="home">{t["home"]}</a>']
-        + [f'<a href="{hub_path(key, lang)}" data-nav="{key}">{label}</a>'
-           for key, label in [
-               ("services", t["nav_services"]),
-               ("routes",   t["nav_routes"]),
-               ("packages", t["nav_packages"]),
-               ("fleet",    t["nav_fleet"]),
-               ("contact",  t["nav_contact"]),
-           ]]
+        + [f'<a href="{hub_path(key, lang)}" data-nav="{key}">{label}</a>' for key, label in nav]
     )
     home = hub_path("home", lang)
     wa = f"https://wa.me/{WHATSAPP}"
@@ -485,7 +402,7 @@ def footer(lang: str):
     </div>
   </div>
   <div class="container footer-bottom">
-    <span>© <span id="year">2026</span> SK Baghel Tour &amp; Travels</span>
+    <span>© <span id="year">2026</span> SK Baghel Tour &amp; Travels · {t["preview"]}</span>
     <span>{t["footer_note"]}</span>
   </div>
 </footer>
@@ -764,17 +681,18 @@ def home_body(lang):
             "priority": False,
         },
     ]
-    fan_cards_html = []
+    slides_html = []
     dots_html = []
     for i, s in enumerate(slides):
-        active_cls = " fan-active" if i == 0 else ""
+        active_cls = " is-active" if i == 0 else ""
+        srcset_attr = f' srcset="{s["srcset"]}" sizes="100vw"' if "srcset" in s else ""
         fetch_attr = ' fetchpriority="high"' if s.get("priority") else ' loading="lazy"'
-        fan_cards_html.append(f"""    <div class="hero-fan-card{active_cls}" data-caption="{s['caption']}" data-index="{i}">
-      <img src="{s['src']}" alt="{s['alt']}"{fetch_attr} onerror="this.style.display='none'" />
+        slides_html.append(f"""    <div class="hero-slide{active_cls}" data-caption="{s["caption"]}" data-index="{i}">
+      <img class="hero-media" src="{s["src"]}"{srcset_attr} alt="{s["alt"]}"{fetch_attr} onerror="this.style.display=\'none\'" />
     </div>""")
         dots_html.append(f'<button type="button" class="hero-slide-dot{active_cls}" data-index="{i}" aria-label="Slide {i+1}: {s["caption"]}"></button>')
 
-    fan_block = "\n".join(fan_cards_html)
+    slideshow_block = "\n".join(slides_html)
     dots_block = "\n    ".join(dots_html)
     first_caption = slides[0]["caption"]
 
@@ -782,15 +700,15 @@ def home_body(lang):
 
     return f"""
 <section class="hero">
-  <div class="hero-overlay"></div>
-  <div class="hero-fan-track" aria-hidden="true">
-{fan_block}
+  <div class="hero-slideshow" id="hero-slideshow" aria-hidden="true">
+{slideshow_block}
   </div>
+  <div class="hero-overlay"></div>
   <div class="hero-location-badge" id="hero-location-badge" aria-live="polite">
     <span class="hero-location-dot"></span>
     <span class="hero-location-text">{first_caption}</span>
   </div>
-  <div class="hero-slide-nav" id="hero-slide-nav" aria-label="Destination slides">
+  <div class="hero-slide-nav" id="hero-slide-nav" aria-label="Hero background slides">
     {dots_block}
   </div>
   <div class="container hero-copy">
@@ -924,7 +842,7 @@ def home_body(lang):
     </figure>
   </div>
 </section>
-<section class="section contact-section--inverted" id="contact-section">
+<section class="section section--paper" id="contact-section">
   <div class="container">
     <div class="section-head" style="margin-bottom:2.25rem">
       <div>

@@ -390,87 +390,101 @@
       });
     }
 
-    // 11. HERO CARD FAN CAROUSEL (scroll-driven, RAF-throttled)
-    function initHeroFanCarousel() {
-      var fanTrack = document.querySelector('.hero-fan-track');
-      if (!fanTrack) return;
+    // 11. HERO BACKGROUND SLIDESHOW (Taj Mahal & Scenic Places Fade In / Fade Out)
+    function initHeroSlideshow() {
+      var slideshow = document.getElementById('hero-slideshow');
+      if (!slideshow) return;
 
-      var cards = fanTrack.querySelectorAll('.hero-fan-card');
-      if (cards.length <= 1) return;
+      var slides = slideshow.querySelectorAll('.hero-slide');
+      if (slides.length <= 1) return;
 
-      var hero = fanTrack.closest('.hero') || fanTrack.parentElement;
       var badge = document.getElementById('hero-location-badge');
       var badgeText = badge ? badge.querySelector('.hero-location-text') : null;
       var dots = document.querySelectorAll('.hero-slide-dot');
 
-      var currentActive = 0;
-      var rafPending = false;
-      var isInView = true;
+      var currentIndex = 0;
+      var timer = null;
+      var intervalTime = 8000; // 8.0s per landmark (gentle, unhurried pace)
+      var isPaused = false;
 
-      // Set initial active card
-      function setActive(idx) {
-        idx = Math.max(0, Math.min(idx, cards.length - 1));
-        if (idx === currentActive) return;
+      // Honor prefers-reduced-motion
+      if (prefersReduced) return;
 
-        cards[currentActive].classList.remove('fan-active');
-        if (dots[currentActive]) dots[currentActive].classList.remove('is-active');
+      function goToSlide(index) {
+        if (index === currentIndex) return;
+        slides[currentIndex].classList.remove('is-active');
+        if (dots[currentIndex]) dots[currentIndex].classList.remove('is-active');
 
-        currentActive = idx;
-        cards[currentActive].classList.add('fan-active');
-        if (dots[currentActive]) dots[currentActive].classList.add('is-active');
+        currentIndex = (index + slides.length) % slides.length;
 
-        // Update location badge
+        slides[currentIndex].classList.add('is-active');
+        if (dots[currentIndex]) dots[currentIndex].classList.add('is-active');
+
         if (badge && badgeText) {
-          var cap = cards[currentActive].getAttribute('data-caption');
-          if (cap) {
+          var caption = slides[currentIndex].getAttribute('data-caption');
+          if (caption) {
             badge.classList.add('is-updating');
             setTimeout(function () {
-              badgeText.textContent = cap;
+              badgeText.textContent = caption;
               badge.classList.remove('is-updating');
-            }, 240);
+            }, 260);
           }
         }
       }
 
-      // Mark first card active on load
-      cards[0].classList.add('fan-active');
-      if (dots[0]) dots[0].classList.add('is-active');
+      function nextSlide() {
+        goToSlide(currentIndex + 1);
+      }
 
-      // Dot clicks (manual navigation)
-      dots.forEach(function (dot, i) {
+      function startTimer() {
+        stopTimer();
+        if (!isPaused) {
+          timer = setInterval(nextSlide, intervalTime);
+        }
+      }
+
+      function stopTimer() {
+        if (timer) {
+          clearInterval(timer);
+          timer = null;
+        }
+      }
+
+      // Interactive dot clicks
+      dots.forEach(function (dot, idx) {
         dot.addEventListener('click', function () {
-          setActive(i);
+          goToSlide(idx);
+          startTimer();
         });
       });
 
-      // Skip scroll logic if user prefers reduced motion
-      if (prefersReduced) return;
+      // Pause when browser tab is inactive
+      document.addEventListener('visibilitychange', function () {
+        if (document.hidden) {
+          isPaused = true;
+          stopTimer();
+        } else {
+          isPaused = false;
+          startTimer();
+        }
+      });
 
-      // Scroll-driven card advancement
-      function onScroll() {
-        if (!isInView) return;
-        if (rafPending) return;
-        rafPending = true;
-        requestAnimationFrame(function () {
-          rafPending = false;
-          var rect = hero.getBoundingClientRect();
-          var heroH = hero.offsetHeight;
-          // progress 0 = top of hero at viewport top, 1 = bottom of hero at viewport top
-          var scrolled = -rect.top;
-          var progress = Math.max(0, Math.min(1, scrolled / Math.max(1, heroH)));
-          var idx = Math.round(progress * (cards.length - 1));
-          setActive(idx);
-        });
-      }
-
-      window.addEventListener('scroll', onScroll, { passive: true });
-
-      // Pause RAF when hero is off-screen
+      // Pause when scrolled out of viewport
       if ('IntersectionObserver' in window) {
-        var obs = new IntersectionObserver(function (entries) {
-          isInView = entries[0].isIntersecting;
-        }, { threshold: 0.01 });
-        obs.observe(hero);
+        var heroObserver = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              isPaused = false;
+              startTimer();
+            } else {
+              isPaused = true;
+              stopTimer();
+            }
+          });
+        }, { threshold: 0.05 });
+        heroObserver.observe(slideshow.parentElement || slideshow);
+      } else {
+        startTimer();
       }
     }
 
@@ -658,7 +672,7 @@
       });
     }
 
-    initHeroFanCarousel();
+    initHeroSlideshow();
     initAllInteractiveGrids();
   });
 })();
