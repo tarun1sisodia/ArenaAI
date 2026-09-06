@@ -8,7 +8,7 @@ only check boxes, append log rows, and update the Current State block.
 
 ## Current State
 
-- **Current Phase:** 23 — Interactive Background Grid across All White & Light Background Sections ✅ completed
+- **Current Phase:** 25 — React Coverflow Carousel Integration & Production 3D Coverflow Sightseeing & Package Showcase in `.section--navy` ✅ completed
 - **Current Step:** Ready for next phase / client review
 - **Last updated:** 2026-09-06
 - **Open items:** `visual_audit.mjs` still needs a networked machine; fonts self-hosting (sandbox blocks Google Fonts download); real photos + real NAP before launch (see `LAUNCH_CHECKLIST.md`); PRD v3.0 master rewrite includes full SEO Final BOSS content. Client decision points from the deck are open (§25 of PRD.md).
@@ -55,6 +55,7 @@ can't be resolved without user input)_
 | 2026-09-06 | Normal Navigation Font Weight & Google Maps Places Location Search | Normalized navigation link typography (font-weight 500, removed heavy 1px text stroke); integrated Google Maps Places Autocomplete API and 30+ destination catalog via `js/places.js`; replaced limited static selects with `.loc-picker` searchable comboboxes on Hero Widget and `book.html`; enhanced `fares.js` for dynamic distance & outstation fare quotes. 109/109 URLs OK. |
 | 2026-09-06 | 21st.dev Interactive Background Grid on Trust Bar & Popular Routes (Phase 22) | Implemented interactive background grid pattern behind Trust Bar chips and Popular Routes section per 21st.dev / Aceternity design. Features 44px hairline grid, dynamic cursor spotlight, and interactive glowing grid cell trail via hardware-accelerated canvas. Full dark mode support (amber in light, luminous gold in dark), zero idle CPU overhead, non-blocking click safety (`pointer-events: none`), and SEO-safe progressive scroll reveal. 109/109 URLs OK. |
 | 2026-09-06 | Universal Interactive Background Grid on All White Background Sections (Phase 23) | Extended the light and interactive background grid animation to every section with a white or light background (`.section--paper`, `.section--paper-lt`, `.page-hero`, `.book-layout`). Standardized subtle hairline grid lines (`rgba(18,20,22,0.048)` light / `rgba(255,255,255,0.065)` dark), cursor spotlight tracking, and hardware-accelerated glowing grid cell physics trail. Zero nesting conflicts, 0% idle CPU via per-section IntersectionObserver pausing, non-blocking click safety (`z-index: 2` on content). 109/109 URLs OK. |
+| 2026-09-06 | 3D Coverflow Sightseeing & Packages Showcase in .section--navy (Phase 25) | Replaced static single-package card in `.section--navy` with an interactive 3D Coverflow Carousel displaying all same-day and heritage tour packages (Agra Sightseeing ₹3,500, Mathura Vrindavan ₹4,200, Agra Unhurried ₹7,800, Golden Triangle ₹18,500). Integrated React component in `components/ui/` with shadcn, Tailwind, and TypeScript setup, and implemented zero-dependency GPU-composite vanilla MPA version in `render_pages.py`, `components.css`, and `motion.js` meeting `ANIMATION_RULES.md`. |
 
 ---
 
@@ -116,6 +117,7 @@ can't be resolved without user input)_
 | 2026-09-06 | 18 / 4 | Positioned theme toggle at the last position on the right of the header (after CTA button) | `scripts/render_pages.py`, `templates/base.html`, `04_PROGRESS_TRACKER.md` |
 | 2026-09-06 | 20 / 1 | Radial floating dock (.about) with Phone, WhatsApp, Tours, and Instant Booking actions; dual curtain wipe and text stroke-fill gradient transition on desktop navigation links; mobile touch toggle in motion.js; rebuilt 102 pages (108/108 URLs OK) | `scripts/render_pages.py`, `css/components.css`, `js/motion.js`, `04_PROGRESS_TRACKER.md` |
 | 2026-09-06 | 21 / 1 | Navigation typography normalized to font-weight 500 (removed -webkit-text-stroke); created js/places.js for live Google Places API Autocomplete and 30+ Indian destinations; implemented .loc-picker search combobox with Google Maps connection on Hero Widget and book.html; dynamic fare estimation in fares.js; rebuilt 102 pages (109/109 URLs OK) | `css/components.css`, `js/places.js`, `js/fares.js`, `js/booking.js`, `scripts/render_pages.py`, `04_PROGRESS_TRACKER.md` |
+| 2026-09-06 | 25 / 1 | React shadcn/ui Coverflow Carousel component integration (components/ui/coverflow-carousel.tsx, components/ui/demo.tsx, lib/utils.ts, components.json, tsconfig.json, lucide-react in package.json). Replaced static .section--navy with 3D Coverflow showcase with synchronized package kicker, heading, blurb, all-inclusive fare, places pills, and WhatsApp/details CTAs in scripts/render_pages.py, css/components.css, and js/motion.js. Rebuilt 109 pages; crawled 109/109 URLs OK. | `components/ui/coverflow-carousel.tsx`, `components/ui/demo.tsx`, `lib/utils.ts`, `components.json`, `tsconfig.json`, `package.json`, `scripts/render_pages.py`, `css/components.css`, `js/motion.js`, `04_PROGRESS_TRACKER.md` |
 
 
 ---
@@ -267,10 +269,13 @@ can't be resolved without user input)_
 ### Phase 23 — Interactive Background Grid across All White Background Sections
 - [x] 1. Universal Coverage: Expanded interactive grid to every section with a white or light background (`.section--paper`, `.section--paper-lt`, `.page-hero`, `.book-layout`).
 - [x] 2. Dynamic Injection Engine: Updated `initAllInteractiveGrids()` in `js/motion.js` to automatically mount the grid lines, spotlight, and canvas to every qualifying section with zero boilerplate overhead.
-- [x] 3. Nested Protection: Prevented duplicate canvas initialization on nested elements with `:scope` and parent grid checks.
-- [x] 4. Independent Viewport Tracking: Individual `IntersectionObserver` per section ensuring 0% idle CPU and only active rendering when scrolled into view.
-- [x] 5. Light & Interactive Aesthetics: Hairline grid lines (`0.048` opacity in light, `0.065` in dark), delicate spotlight tracking, and subtle decaying cell highlights across Services, Fleet, Contact, and Inner Page Heros.
-- [x] 6. Visual QA & Build: Rebuilt all 54 pages; passed `check_links.py` 109/109 OK; captured multi-section visual previews in light and dark modes.
+### Phase 24 — Asymmetric Living Bento Grid Hero, Solar Dusk Dark Theme, Navigation Dropdowns & Trust Roller Marquee
+- [x] 1. Solar Dusk Dark Theme: Implemented exact palette from shadcn/ui Solar Dusk theme (`--bg: #181615`, `--bg-alt: #201E1D`, `--surface: #242220`, `--border: #3D3936`, `--gold: #F76002`, `--radius: 0.3rem`, white headings `#FDFCFB`, muted `#B5AFA9`) preserving strict WCAG 2.2 AA contrast.
+- [x] 2. Asymmetric Living Bento Grid Hero: Transformed hero image presentation from single slide into 3-cell bento mosaic (Main Stage iconic landmarks, Top Perspective heritage marvels, Bottom Perspective sacred ghats & hills) with independent staggered cycles (8.0s per landmark, 2.6s offsets) and Ken Burns micro-motion.
+- [x] 3. Navigation Dropdowns with Preserved Motion: Added interactive luxury dropdowns for Services, Routes, Packages, Fleet, and Contact while preserving the signature `.roll-link text` golden liquid curtain animation, rotating micro-chevron, active parent hold state, and mobile sheet groups.
+- [x] 4. Trust Roller Marquee with Icons & E-E-A-T Schema: Converted static trust chips into infinite smooth horizontal marquee (`trust-roller-scroll 42s linear infinite`) with pause-on-hover, soft edge fade masks, custom SVG icons (Shield, Chauffeur ID, GST Invoice, Golden Star, Monument, 24/7 Headset, Rupee, Location Pin), and Schema.org `AggregateRating` microdata.
+- [x] 5. Build & Link Verification: Rebuilt all 54 pages with `render_pages.py` (0 errors); passed `check_links.py` 109/109 OK; verified curl outputs.
+
 
 
 

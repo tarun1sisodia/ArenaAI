@@ -6,6 +6,7 @@ import json
 import re
 from datetime import date, timedelta
 from pathlib import Path
+from urllib.parse import quote_plus
 
 from catalog import (
     ADDRESS,
@@ -310,23 +311,122 @@ def contact_card_html(lang: str, is_standalone_page: bool = False) -> str:
 </div>"""
 
 
+def get_nav_dropdown_data(lang: str):
+    t = T[lang]
+    is_hi = lang == "hi"
+
+    services_items = [
+        {"title": "आउटस्टेशन कैब" if is_hi else "Outstation Cabs", "url": f"/{lang}/services/#outstation", "meta": "दिल्ली, जयपुर" if is_hi else "Delhi, Jaipur"},
+        {"title": "लोकल आगरा दर्शन" if is_hi else "Local Agra Sightseeing", "url": f"/{lang}/services/#local", "meta": "ताजमहल, किला" if is_hi else "Taj Mahal, Fort"},
+        {"title": "एयरपोर्ट पिक व ड्रॉप" if is_hi else "Airport Transfers", "url": f"/{lang}/services/#airport", "meta": "IGI दिल्ली व आगरा" if is_hi else "IGI Delhi & Agra"},
+        {"title": "टेम्पो व ग्रुप यात्रा" if is_hi else "Tempo & Group Travel", "url": f"/{lang}/services/#corporate", "meta": "12–26 सीटर" if is_hi else "12–26 Seater"},
+    ]
+
+    routes_items = [
+        {
+            "title": f"{CITIES[r['from']][lang]} → {CITIES[r['to']][lang]}",
+            "url": route_path(r, lang),
+            "meta": f"₹{r['fares']['sedan']:,}",
+        }
+        for r in ROUTES[:5]
+    ]
+
+    packages_items = [
+        {"title": p["name"][lang], "url": package_path(p, lang), "meta": f"₹{p['price']:,}"}
+        for p in PACKAGES
+    ]
+
+    fleet_items = [
+        {"title": f"{v['name'][lang]} ({v['klass'][lang]})", "url": vehicle_path(v, lang), "meta": f"₹{v['per_km']}/km"}
+        for v in VEHICLES
+    ]
+
+    contact_items = [
+        {"title": "24×7 कॉल डिस्पैच" if is_hi else "24×7 Call Dispatch", "url": f"tel:{PHONE}", "meta": PHONE_DISPLAY},
+        {"title": "व्हाट्सऐप बुकिंग" if is_hi else "WhatsApp Dispatch", "url": f"https://wa.me/{WHATSAPP}", "meta": "Instant"},
+        {"title": "ताज गंज कार्यालय" if is_hi else "Taj Ganj Office", "url": hub_path("contact", lang), "meta": "Agra"},
+        {"title": "अक्सर पूछे जाने वाले सवाल" if is_hi else "Frequently Asked Questions", "url": hub_path("faq", lang), "meta": "FAQ"},
+        {"title": "हमारे बारे में" if is_hi else "About SK Baghel Travels", "url": hub_path("about", lang), "meta": "About"},
+    ]
+
+    return [
+        {
+            "key": "services",
+            "label": t["nav_services"],
+            "url": hub_path("services", lang),
+            "view_all": "सभी सेवाएँ देखें →" if is_hi else "View All Services →",
+            "items": services_items,
+        },
+        {
+            "key": "routes",
+            "label": t["nav_routes"],
+            "url": hub_path("routes", lang),
+            "view_all": "सभी 8 टैक्सी रूट्स देखें →" if is_hi else "View All 8 Routes →",
+            "items": routes_items,
+        },
+        {
+            "key": "packages",
+            "label": t["nav_packages"],
+            "url": hub_path("packages", lang),
+            "view_all": "सभी टूर पैकेज देखें →" if is_hi else "View All Packages →",
+            "items": packages_items,
+        },
+        {
+            "key": "fleet",
+            "label": t["nav_fleet"],
+            "url": hub_path("fleet", lang),
+            "view_all": "पूरी फ्लीट देखें →" if is_hi else "View Full Fleet →",
+            "items": fleet_items,
+        },
+        {
+            "key": "contact",
+            "label": t["nav_contact"],
+            "url": hub_path("contact", lang),
+            "view_all": "संपर्क व सहायता हब →" if is_hi else "Contact & Support Hub →",
+            "items": contact_items,
+        },
+    ]
+
+
 def header(lang: str, active: str, alt_path: str):
     t = T[lang]
-    nav = [
-        ("services", t["nav_services"]),
-        ("routes", t["nav_routes"]),
-        ("packages", t["nav_packages"]),
-        ("fleet", t["nav_fleet"]),
-        ("contact", t["nav_contact"]),
-    ]
-    links = "\n          ".join(
-        f'<a href="{hub_path(key, lang)}" data-nav="{key}" class="roll-link text"><span class="text-fill">{label}</span></a>'
-        for key, label in nav
-    )
-    sheet = "\n        ".join(
-        [f'<a href="{hub_path("home", lang)}" data-nav="home">{t["home"]}</a>']
-        + [f'<a href="{hub_path(key, lang)}" data-nav="{key}">{label}</a>' for key, label in nav]
-    )
+    nav_sections = get_nav_dropdown_data(lang)
+    chevron_svg = '<svg class="nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>'
+
+    desktop_links = []
+    noscript_links = []
+    sheet_items = [f'<a href="{hub_path("home", lang)}" data-nav="home">{t["home"]}</a>']
+
+    for sec in nav_sections:
+        sub_items_html = []
+        for it in sec["items"]:
+            meta_span = f'<span class="nav-dropdown-item-meta">{it["meta"]}</span>' if it.get("meta") else ""
+            sub_items_html.append(f'<a href="{it["url"]}" class="nav-dropdown-item"><span>{it["title"]}</span>{meta_span}</a>')
+        sub_html = "\n            ".join(sub_items_html)
+
+        desktop_links.append(f"""<div class="nav-item has-dropdown">
+        <a href="{sec["url"]}" data-nav="{sec["key"]}" class="roll-link text" aria-haspopup="true" aria-expanded="false">
+          <span class="text-fill">{sec["label"]} {chevron_svg}</span>
+        </a>
+        <div class="nav-dropdown" role="menu">
+          <div class="nav-dropdown-inner">
+            {sub_html}
+            <div class="nav-dropdown-divider"></div>
+            <a href="{sec["url"]}" class="nav-dropdown-view-all">{sec["view_all"]}</a>
+          </div>
+        </div>
+      </div>""")
+
+        noscript_links.append(f'<a href="{sec["url"]}" data-nav="{sec["key"]}" class="roll-link text"><span class="text-fill">{sec["label"]}</span></a>')
+
+        sheet_items.append(f'<div class="sheet-group"><a href="{sec["url"]}" data-nav="{sec["key"]}" class="sheet-group-title">{sec["label"]}</a>')
+        for it in sec["items"][:3]:
+            sheet_items.append(f'<a href="{it["url"]}" class="sheet-sub-link">{it["title"]}</a>')
+        sheet_items.append('</div>')
+
+    links = "\n      ".join(desktop_links)
+    ns_links = "\n      ".join(noscript_links)
+    sheet = "\n    ".join(sheet_items)
     home = hub_path("home", lang)
     wa = f"https://wa.me/{WHATSAPP}"
     return f"""\
@@ -347,7 +447,7 @@ def header(lang: str, active: str, alt_path: str):
     </div>
   </div>
 </header>
-<noscript><nav class="noscript-nav" aria-label="Primary (no JavaScript)">{links}</nav></noscript>
+<noscript><nav class="noscript-nav" aria-label="Primary (no JavaScript)">{ns_links}</nav></noscript>
 <div class="nav-sheet" id="nav-sheet" role="dialog" aria-modal="true" aria-label="{t["menu"]}" hidden>
   <div class="sheet-head">
     <a class="brand" href="{home}">
@@ -577,6 +677,177 @@ def breadcrumb(lang, items):
     return f'<nav class="crumbs" aria-label="{t["breadcrumb"]}">{inner}</nav>'
 
 
+def trust_roller_html(lang: str) -> str:
+    is_hi = lang == "hi"
+    chips = [
+        (
+            '<svg class="trust-chip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>',
+            "सरकारी पंजीकृत फ्लीट" if is_hi else "Govt-Registered Fleet",
+            False,
+            '<meta itemprop="hasCredential" content="Government Registered Commercial Taxi Fleet">'
+        ),
+        (
+            '<svg class="trust-chip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M6 20v-1a6 6 0 0 1 12 0v1"/><path d="m16 11 2 2 4-4"/></svg>',
+            "सत्यापित व प्रशिक्षित चालक" if is_hi else "Verified Commercial Drivers",
+            False,
+            ''
+        ),
+        (
+            '<svg class="trust-chip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>',
+            "जीएसटी बिल उपलब्ध" if is_hi else "Official GST Invoice",
+            False,
+            ''
+        ),
+        (
+            '<svg class="trust-chip-icon trust-chip-icon--gold" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+            f'★ 4.9/5 · <strong class="stat-number" data-count="380">380</strong>+ {"संतुष्ट यात्राएं" if is_hi else "Trips"}',
+            True,
+            '<meta itemprop="ratingValue" content="4.9" /><meta itemprop="bestRating" content="5" /><meta itemprop="reviewCount" content="380" />'
+        ),
+        (
+            '<svg class="trust-chip-icon trust-chip-icon--gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V12a6 6 0 0 1 12 0v10"/><path d="M2 22h20"/><path d="M12 2v4"/><circle cx="12" cy="8" r="2"/></svg>',
+            f'<strong class="stat-number" data-count="15">15</strong>+ {"वर्षों का आगरा अनुभव" if is_hi else "Years In Agra"}',
+            True,
+            ''
+        ),
+        (
+            '<svg class="trust-chip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>',
+            "24×7 ऑन-रूट सहायता" if is_hi else "24×7 On-Route Support",
+            False,
+            ''
+        ),
+        (
+            '<svg class="trust-chip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v12"/><path d="M16 10H9.5a2.5 2.5 0 0 0 0 5H14a2.5 2.5 0 0 1 0 5H8"/></svg>',
+            "पारदर्शी किराया · शून्य छुपा शुल्क" if is_hi else "Transparent Pricing · No Hidden Fees",
+            False,
+            ''
+        ),
+        (
+            '<svg class="trust-chip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>',
+            "ताज गंज, आगरा मुख्यालय" if is_hi else "Taj Ganj, Agra HQ",
+            False,
+            ''
+        ),
+    ]
+
+    items_html = []
+    for icon, label, is_hl, schema_meta in chips:
+        hl_class = " chip--highlight" if is_hl else ""
+        schema_attr = ' itemprop="aggregateRating" itemscope itemtype="https://schema.org/AggregateRating"' if "ratingValue" in schema_meta else ""
+        items_html.append(f'<span class="chip chip--trust{hl_class}"{schema_attr}>{schema_meta}{icon}<span>{label}</span></span>')
+
+    group_content = "\n        ".join(items_html)
+
+    return f"""\
+  <div class="trust-roller-wrap reveal-on-scroll" aria-label="Key Trust Credentials">
+    <div class="trust-roller-track">
+      <div class="trust-roller-group">
+        {group_content}
+      </div>
+      <div class="trust-roller-group" aria-hidden="true">
+        {group_content}
+      </div>
+    </div>
+  </div>"""
+
+
+def coverflow_packages_section_html(lang):
+    t = T[lang]
+    cards = []
+    detail_slides = []
+    dots = []
+
+    for idx, p in enumerate(PACKAGES):
+        p_name = p["name"][lang]
+        p_kicker = p["kicker"][lang]
+        p_price_str = inr(p["price"])
+        p_blurb = p["blurb"][lang]
+        p_places = p["places"][lang]
+        p_places_str = " · ".join(p_places)
+        p_url = package_path(p, lang)
+        is_first = (idx == 0)
+        active_cls = " is-active" if is_first else ""
+
+        if lang == "en":
+            wa_msg = f"Hello, I would like to inquire about the {p['name']['en']} tour package ({p_price_str})."
+        else:
+            wa_msg = f"नमस्ते, मुझे {p['name']['hi']} टूर पैकेज ({p_price_str}) के बारे में जानकारी चाहिए।"
+        wa_link = f"https://wa.me/{WHATSAPP}?text={quote_plus(wa_msg)}"
+
+        pills_html = "".join([f'<span class="coverflow-pill">{item}</span>' for item in p_places])
+
+        detail_slides.append(f"""\
+        <div class="coverflow-detail-slide{active_cls}" data-detail-index="{idx}">
+          <p class="eyebrow eyebrow--light">— {p_kicker.upper()}</p>
+          <h2 class="coverflow-detail-title">{p_name}</h2>
+          <p class="lead coverflow-detail-blurb">{p_blurb}</p>
+          <div class="coverflow-places-pills">
+            {pills_html}
+          </div>
+          <div class="coverflow-fare-wrap">
+            <span class="coverflow-fare-label">{"All-inclusive fare" if lang == "en" else "कुल पैकेज किराया"}</span>
+            <p class="fare coverflow-fare">{p_price_str}</p>
+          </div>
+          <div class="hero-actions">
+            <a class="btn-primary" href="{wa_link}" target="_blank" rel="noreferrer">{ICON_WA} <span>{t["whatsapp"]}</span></a>
+            <a class="btn-outline btn-outline--light" href="{p_url}"><span>{"Package details" if lang == "en" else "पैकेज विवरण"}</span> <span>↗</span></a>
+            <a class="btn-text btn-text--light" href="{hub_path("packages", lang)}"><span>{t["all_packages"]}</span> <span>↗</span></a>
+          </div>
+        </div>""")
+
+        cards.append(f"""\
+        <div class="coverflow-card" data-card-index="{idx}" role="group" aria-roledescription="slide" aria-label="{idx + 1} of {len(PACKAGES)}: {p_name}">
+          <div class="coverflow-card-badge">
+            <span class="coverflow-card-badge-kicker">{p_kicker.upper()}</span>
+            <span class="coverflow-card-badge-sep">•</span>
+            <span class="coverflow-card-badge-fare">{p_price_str}</span>
+          </div>
+          <img src="{p["image"]}" alt="{p_name} — {p_places_str}" draggable="false" loading="{"eager" if is_first else "lazy"}" class="coverflow-card-img" />
+          <div class="coverflow-card-glass">
+            <h3 class="coverflow-card-heading">{p_name}</h3>
+            <p class="coverflow-card-sub">{p_places_str}</p>
+          </div>
+        </div>""")
+
+        dots.append(f'<button type="button" class="coverflow-dot{active_cls}" aria-label="Go to package {idx + 1}: {p_name}" data-dot-index="{idx}"></button>')
+
+    details_html = "\n".join(detail_slides)
+    cards_html = "\n".join(cards)
+    dots_html = "\n".join(dots)
+
+    icon_left = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>'
+    icon_right = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>'
+
+    return f"""\
+<section class="section section--navy section--coverflow" id="packages-coverflow-section">
+  <div class="container">
+    <div class="coverflow-split">
+      <div class="coverflow-details-column">
+{details_html}
+      </div>
+      <div class="coverflow-stage-column">
+        <div class="coverflow-container" id="coverflow-carousel" role="region" aria-roledescription="carousel" aria-label="Sightseeing & tour packages coverflow">
+          <div class="coverflow-frame" tabIndex="0">
+            <div class="coverflow-track">
+{cards_html}
+            </div>
+          </div>
+          <button type="button" class="coverflow-nav coverflow-nav--prev" aria-label="Previous package">
+            {icon_left}
+          </button>
+          <button type="button" class="coverflow-nav coverflow-nav--next" aria-label="Next package">
+            {icon_right}
+          </button>
+          <div class="coverflow-pagination" role="tablist" aria-label="Package slide dots">
+            {dots_html}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>"""
+
+
 def home_body(lang):
     t = T[lang]
     cards = []
@@ -681,35 +952,45 @@ def home_body(lang):
             "priority": False,
         },
     ]
-    slides_html = []
-    dots_html = []
-    for i, s in enumerate(slides):
-        active_cls = " is-active" if i == 0 else ""
-        srcset_attr = f' srcset="{s["srcset"]}" sizes="100vw"' if "srcset" in s else ""
-        fetch_attr = ' fetchpriority="high"' if s.get("priority") else ' loading="lazy"'
-        slides_html.append(f"""    <div class="hero-slide{active_cls}" data-caption="{s["caption"]}" data-index="{i}">
-      <img class="hero-media" src="{s["src"]}"{srcset_attr} alt="{s["alt"]}"{fetch_attr} onerror="this.style.display=\'none\'" />
-    </div>""")
-        dots_html.append(f'<button type="button" class="hero-slide-dot{active_cls}" data-index="{i}" aria-label="Slide {i+1}: {s["caption"]}"></button>')
+    tile_1_indices = [0, 1, 8, 5]
+    tile_2_indices = [2, 7, 6, 9]
+    tile_3_indices = [3, 4, 10, 11]
 
-    slideshow_block = "\n".join(slides_html)
-    dots_block = "\n    ".join(dots_html)
+    def render_bento_tile(tile_class, tile_name, indices):
+        tile_slides = []
+        for local_idx, global_idx in enumerate(indices):
+            s = slides[global_idx]
+            active_cls = " is-active" if local_idx == 0 else ""
+            srcset_attr = f' srcset="{s["srcset"]}" sizes="50vw"' if "srcset" in s else ""
+            fetch_attr = ' fetchpriority="high"' if s.get("priority") else ' loading="lazy"'
+            parts = s["caption"].split("·")
+            city_tag = parts[-1].strip() if len(parts) > 1 else parts[0].strip()
+            tile_slides.append(f"""      <div class="bento-slide{active_cls}" data-caption="{s["caption"]}" data-index="{global_idx}">
+        <img class="hero-media" src="{s["src"]}"{srcset_attr} alt="{s["alt"]}"{fetch_attr} onerror="this.style.display=\'none\'" />
+        <span class="bento-tile-tag">{city_tag}</span>
+      </div>""")
+        slides_str = "\n".join(tile_slides)
+        return f"""    <div class="bento-tile {tile_class}" data-tile="{tile_name}">
+{slides_str}
+    </div>"""
+
+    bento_html = f"""  <div class="hero-bento-grid" id="hero-bento-grid" aria-hidden="true">
+{render_bento_tile("bento-tile--main", "main", tile_1_indices)}
+{render_bento_tile("bento-tile--sub-top", "sub-top", tile_2_indices)}
+{render_bento_tile("bento-tile--sub-bottom", "sub-bottom", tile_3_indices)}
+  </div>"""
+
     first_caption = slides[0]["caption"]
 
     icon_compass = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>'
 
     return f"""
 <section class="hero">
-  <div class="hero-slideshow" id="hero-slideshow" aria-hidden="true">
-{slideshow_block}
-  </div>
+{bento_html}
   <div class="hero-overlay"></div>
   <div class="hero-location-badge" id="hero-location-badge" aria-live="polite">
     <span class="hero-location-dot"></span>
     <span class="hero-location-text">{first_caption}</span>
-  </div>
-  <div class="hero-slide-nav" id="hero-slide-nav" aria-label="Hero background slides">
-    {dots_block}
   </div>
   <div class="container hero-copy">
     <p class="eyebrow eyebrow--light">{t["home"]} · Agra, India</p>
@@ -790,15 +1071,7 @@ def home_body(lang):
     <div class="interactive-grid-lines"></div>
     <div class="interactive-grid-spotlight"></div>
     <canvas class="interactive-grid-canvas"></canvas>
-  </div>
-  <div class="container trust-bar reveal-on-scroll" style="position:relative;z-index:2;">
-    <span class="chip">Govt-registered fleet</span>
-    <span class="chip">Verified drivers</span>
-    <span class="chip">GST invoice</span>
-    <span class="chip">★ 4.9/5 · <strong class="stat-number" data-count="380">380</strong>+ trips</span>
-    <span class="chip"><strong class="stat-number" data-count="15">15</strong>+ Years In Agra</span>
-    <span class="chip">24×7 on-route support</span>
-  </div>
+{trust_roller_html(lang)}
   <section class="section" style="position:relative;z-index:2;padding-top:16px;padding-bottom:12px;">
     <div class="container">
       <div class="section-head"><div><p class="eyebrow">{t["popular_routes"]}</p><h2>{t["h2_routes"]}</h2></div>
@@ -825,23 +1098,7 @@ def home_body(lang):
     <div class="grid-3">{"".join(vcards)}</div>
   </div>
 </section>
-<section class="section section--navy">
-  <div class="container split">
-    <div>
-      <p class="eyebrow eyebrow--light">{pack["kicker"][lang]}</p>
-      <h2>{pack["name"][lang]}</h2>
-      <p class="lead">{pack["blurb"][lang]}</p>
-      <p class="fare" style="color:var(--gold-light);margin:20px 0 24px">{inr(pack["price"])}</p>
-      <div class="hero-actions">
-        <a class="btn-primary" href="https://wa.me/{WHATSAPP}" target="_blank" rel="noreferrer">{t["whatsapp"]}</a>
-        <a class="btn-outline btn-outline--light" href="{package_path(pack, lang)}">{t["all_packages"]}</a>
-      </div>
-    </div>
-    <figure class="package-photo" style="min-height:340px">
-      {resp_img(pack["image"], "Taj Mahal at dawn, Agra sightseeing taxi", "(max-width: 1120px) calc(100vw - 32px), 468px", dims=PACK_DIMS)}
-    </figure>
-  </div>
-</section>
+{coverflow_packages_section_html(lang)}
 <section class="section section--paper" id="contact-section">
   <div class="container">
     <div class="section-head" style="margin-bottom:2.25rem">

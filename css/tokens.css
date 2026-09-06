@@ -78,41 +78,52 @@
 }
 
 /* ==========================================================================
-   DARK THEME OVERRIDES (Neutral Charcoal Night Edition, AA Contrast Preserved)
+   DARK THEME OVERRIDES (Solar Dusk Theme, shadcn/ui Edition)
    ========================================================================== */
 [data-theme="dark"],
 html.dark {
-  --bg: #121416;
-  --bg-alt: #191C1F;
-  --surface: #22262B;
-  --text: #F8F9FA;
-  --text-soft: #ADB5BD;
-  --gold: #E5A044;
-  --gold-deep: #F3C36C;
-  --gold-soft: rgba(229, 160, 68, 0.15);
-  --gold-border: rgba(229, 160, 68, 0.35);
-  --border: rgba(255, 255, 255, 0.12);
+  --bg: #181615;
+  --bg-alt: #201E1D;
+  --surface: #242220;
+  --card: #242220;
+  --text: #FDFCFB;
+  --text-soft: #B5AFA9;
+  --gold: #F76002;
+  --gold-deep: #D44E00;
+  --gold-light: #FF8533;
+  --gold-soft: rgba(247, 96, 2, 0.16);
+  --gold-border: rgba(247, 96, 2, 0.35);
+  --gold-wash: rgba(247, 96, 2, 0.2);
+  --gold-text: #FF8533;
+  --gold-glow: rgba(247, 96, 2, 0.35);
+  --border: #3D3936;
 
-  --navy-deep: #0D0E10;
-  --navy: #121416;
-  --navy-soft: #22262B;
-  --navy-tint: #2F353C;
-  --paper: #121416;
-  --paper-lt: #22262B;
-  --paper-dk: #191C1F;
-  --white: #22262B;
-  --muted-2: #ADB5BD;
-  --muted-lt: #6C757D;
-  --gold-light: #F3C36C;
-  --gold-wash: rgba(229, 160, 68, 0.18);
-  --gold-text: #E5A044;
-  --line: rgba(255, 255, 255, 0.12);
-  --line-lt: rgba(255, 255, 255, 0.2);
+  /* Solar Dusk Charcoal & Accent Palettes */
+  --navy-deep: #141211;
+  --navy: #181615;
+  --navy-soft: #242220;
+  --navy-tint: #2B2826;
+  --paper: #181615;
+  --paper-lt: #242220;
+  --paper-dk: #201E1D;
+  --white: #242220;
+  --muted-2: #B5AFA9;
+  --muted-lt: #8C857E;
+  --secondary: #5A5856;
+  --accent: #204B57;
+  --destructive: #E12D2D;
+  --error: #E12D2D;
+  --line: #3D3936;
+  --line-lt: rgba(255, 255, 255, 0.18);
 
-  --shadow-gold: 0 8px 24px rgba(229, 160, 68, 0.3);
-  --shadow-lift: 0 12px 28px rgba(0, 0, 0, 0.5);
-  --card-overlay: linear-gradient(180deg, rgba(13, 14, 16, 0.1) 0%, rgba(13, 14, 16, 0.75) 100%);
-  --hero-overlay: linear-gradient(90deg, rgba(13, 14, 16, 0.96) 0%, rgba(18, 20, 22, 0.78) 48%, rgba(18, 20, 22, 0.25) 100%);
+  /* Geometry from Solar Dusk */
+  --radius: 0.3rem;
+  --radius-lg: 0.5rem;
+
+  --shadow-gold: 0 8px 24px rgba(247, 96, 2, 0.28);
+  --shadow-lift: 0 12px 28px rgba(0, 0, 0, 0.55);
+  --card-overlay: linear-gradient(180deg, rgba(20, 18, 17, 0.08) 0%, rgba(20, 18, 17, 0.85) 100%);
+  --hero-overlay: linear-gradient(90deg, rgba(24, 22, 21, 0.95) 0%, rgba(24, 22, 21, 0.82) 48%, rgba(24, 22, 21, 0.32) 100%);
 }
 
 /* Smooth Theme Switching Transitions */

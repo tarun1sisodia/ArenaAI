@@ -1,0 +1,23 @@
+{
+  "name": "arena-ai-skbaghel",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SK Baghel Tour & Travels website with shadcn UI components",
+  "scripts": {
+    "build:pages": "python3 scripts/render_pages.py",
+    "serve": "python3 -m http.server 4173 --bind 0.0.0.0",
+    "check-links": "python3 scripts/check_links.py"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "lucide-react": "^1.16.0",
+    "tailwind-merge": "^3.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "tailwindcss": "^3.4.0",
+    "typescript": "^5.0.0"
+  }
+}

@@ -390,7 +390,75 @@
       });
     }
 
-    // 11. HERO BACKGROUND SLIDESHOW (Taj Mahal & Scenic Places Fade In / Fade Out)
+    // 11. HERO ASYMMETRIC LIVING BENTO GRID (Independent Staggered Transitions)
+    function initHeroBentoGrid() {
+      var grid = document.getElementById('hero-bento-grid');
+      if (!grid) return;
+
+      var tiles = grid.querySelectorAll('.bento-tile');
+      if (!tiles.length) return;
+
+      var badge = document.getElementById('hero-location-badge');
+      var badgeText = badge ? badge.querySelector('.hero-location-text') : null;
+
+      // Honor prefers-reduced-motion
+      if (prefersReduced) return;
+
+      var isPaused = false;
+      var tileIntervals = [];
+
+      tiles.forEach(function (tile, tileIdx) {
+        var slides = tile.querySelectorAll('.bento-slide');
+        if (slides.length <= 1) return;
+
+        var currentIndex = 0;
+        var intervalTime = 8000; // 8.0s per landmark per tile
+        var offset = tileIdx * 2600; // Staggered transition offsets (0s, 2.6s, 5.2s)
+
+        function advanceSlide() {
+          if (isPaused) return;
+          slides[currentIndex].classList.remove('is-active');
+          currentIndex = (currentIndex + 1) % slides.length;
+          slides[currentIndex].classList.add('is-active');
+
+          // If main stage tile changes, update the prominent location badge smoothly
+          if (tileIdx === 0 && badge && badgeText) {
+            var caption = slides[currentIndex].getAttribute('data-caption');
+            if (caption) {
+              badge.classList.add('is-updating');
+              setTimeout(function () {
+                badgeText.textContent = caption;
+                badge.classList.remove('is-updating');
+              }, 260);
+            }
+          }
+        }
+
+        var launchTimer = setTimeout(function () {
+          advanceSlide();
+          var loopTimer = setInterval(advanceSlide, intervalTime);
+          tileIntervals.push(loopTimer);
+        }, offset);
+        tileIntervals.push(launchTimer);
+      });
+
+      // Pause when browser tab is inactive
+      document.addEventListener('visibilitychange', function () {
+        isPaused = document.hidden;
+      });
+
+      // Pause when scrolled out of viewport
+      if ('IntersectionObserver' in window) {
+        var bentoObserver = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            isPaused = !entry.isIntersecting;
+          });
+        }, { threshold: 0.05 });
+        bentoObserver.observe(grid.parentElement || grid);
+      }
+    }
+
+    // 12. HERO BACKGROUND SLIDESHOW (Fallback for legacy single slideshow)
     function initHeroSlideshow() {
       var slideshow = document.getElementById('hero-slideshow');
       if (!slideshow) return;
@@ -672,7 +740,248 @@
       });
     }
 
+    // 3D COVERFLOW SIGHTSEEING & PACKAGES CAROUSEL
+    function initCoverflowCarousel() {
+      var container = document.getElementById('coverflow-carousel');
+      if (!container) return;
+
+      var frame = container.querySelector('.coverflow-frame');
+      var cards = Array.prototype.slice.call(container.querySelectorAll('.coverflow-card'));
+      var detailSlides = Array.prototype.slice.call(document.querySelectorAll('.coverflow-detail-slide'));
+      var dots = Array.prototype.slice.call(container.querySelectorAll('.coverflow-dot'));
+      var prevBtn = container.querySelector('.coverflow-nav--prev');
+      var nextBtn = container.querySelector('.coverflow-nav--next');
+
+      if (!cards.length) return;
+
+      var count = cards.length;
+      var pos = 0;
+      var target = 0;
+      var width = 0;
+      var rafId = null;
+      var drag = null;
+      var selected = 0;
+
+      var rotate = 44;
+      var depth = 0.6;
+      var falloff = 0.56;
+      var fade = 0.12;
+      var gap = 0.06;
+      var loop = true;
+
+      var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      function indexAt(p) {
+        return ((Math.round(p) % count) + count) % count;
+      }
+
+      function clamp(p) {
+        return loop ? p : Math.max(0, Math.min(count - 1, p));
+      }
+
+      function updateActiveState(idx) {
+        idx = ((idx % count) + count) % count;
+        if (idx === selected) return;
+        selected = idx;
+
+        detailSlides.forEach(function (slide, sIdx) {
+          if (sIdx === selected) {
+            slide.classList.add('is-active');
+          } else {
+            slide.classList.remove('is-active');
+          }
+        });
+
+        dots.forEach(function (dot, dIdx) {
+          if (dIdx === selected) {
+            dot.classList.add('is-active');
+            dot.setAttribute('aria-current', 'true');
+          } else {
+            dot.classList.remove('is-active');
+            dot.removeAttribute('aria-current');
+          }
+        });
+      }
+
+      function paint() {
+        if (prefersReducedMotion) return;
+        if (!width && cards[0]) {
+          width = cards[0].offsetWidth;
+        }
+        if (!width) return;
+
+        var pitch = width * (1 + gap);
+
+        cards.forEach(function (card, index) {
+          var offset = index - pos;
+          if (loop) {
+            offset = ((offset % count) + count) % count;
+            if (offset > count / 2) offset -= count;
+          }
+
+          var distance = Math.abs(offset);
+          var ramp = Math.pow(distance, falloff);
+          var tilt = Math.min(rotate * ramp, 82) * (offset === 0 ? 0 : offset > 0 ? 1 : -1);
+
+          card.style.transform = 'translateX(calc(-50% + ' + (offset * pitch) + 'px)) ' +
+                                 'translateZ(' + (-depth * width * ramp) + 'px) ' +
+                                 'rotateY(' + (-tilt) + 'deg)';
+
+          var edge = loop ? Math.min(1, Math.max(0, count / 2 - distance)) : 1;
+          card.style.opacity = String(Math.max(0, 1 - fade * distance) * edge);
+          card.style.zIndex = String(100 - Math.round(distance));
+
+          if (distance < 0.35) {
+            card.classList.add('is-center');
+          } else {
+            card.classList.remove('is-center');
+          }
+        });
+      }
+
+      function settle(t) {
+        if (rafId !== null) cancelAnimationFrame(rafId);
+        target = t;
+        updateActiveState(indexAt(target));
+
+        if (prefersReducedMotion) {
+          pos = target;
+          return;
+        }
+
+        function step() {
+          var remaining = target - pos;
+          if (Math.abs(remaining) < 0.0004) {
+            pos = target;
+            paint();
+            rafId = null;
+            return;
+          }
+          pos += remaining * 0.16;
+          paint();
+          rafId = requestAnimationFrame(step);
+        }
+        rafId = requestAnimationFrame(step);
+      }
+
+      function goTo(index) {
+        var tgt = loop
+          ? index + Math.round((target - index) / count) * count
+          : index;
+        settle(clamp(tgt));
+      }
+
+      function nudge(by) {
+        settle(clamp(Math.round(target) + by));
+      }
+
+      // Pointer drag events
+      if (frame && !prefersReducedMotion) {
+        frame.addEventListener('pointerdown', function (e) {
+          if (rafId !== null) {
+            cancelAnimationFrame(rafId);
+            rafId = null;
+          }
+          if (frame.setPointerCapture) {
+            try { frame.setPointerCapture(e.pointerId); } catch (err) {}
+          }
+          target = pos;
+          drag = {
+            id: e.pointerId,
+            x: e.clientX,
+            pos: pos,
+            v: 0,
+            t: performance.now()
+          };
+        });
+
+        frame.addEventListener('pointermove', function (e) {
+          if (!drag || drag.id !== e.pointerId) return;
+          var pitch = width * (1 + gap);
+          if (!pitch) return;
+
+          var now = performance.now();
+          var prev = pos;
+          pos = clamp(drag.pos - (e.clientX - drag.x) / pitch);
+          drag.v = ((pos - prev) / Math.max(now - drag.t, 1)) * 1000;
+          drag.t = now;
+
+          var idx = indexAt(pos);
+          updateActiveState(idx);
+          paint();
+        });
+
+        var endDrag = function (e) {
+          if (!drag || drag.id !== e.pointerId) return;
+          var v = drag.v;
+          drag = null;
+          var carried = Math.max(-2, Math.min(2, v * 0.18));
+          settle(clamp(Math.round(pos + carried)));
+        };
+
+        frame.addEventListener('pointerup', endDrag);
+        frame.addEventListener('pointercancel', endDrag);
+
+        // Keyboard navigation
+        frame.addEventListener('keydown', function (e) {
+          if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            nudge(-1);
+          } else if (e.key === 'ArrowRight') {
+            e.preventDefault();
+            nudge(1);
+          }
+        });
+      }
+
+      if (prevBtn) {
+        prevBtn.addEventListener('click', function (e) {
+          e.preventDefault();
+          nudge(-1);
+        });
+      }
+      if (nextBtn) {
+        nextBtn.addEventListener('click', function (e) {
+          e.preventDefault();
+          nudge(1);
+        });
+      }
+
+      dots.forEach(function (dot, idx) {
+        dot.addEventListener('click', function (e) {
+          e.preventDefault();
+          goTo(idx);
+        });
+      });
+
+      cards.forEach(function (card, idx) {
+        card.addEventListener('click', function (e) {
+          if (Math.abs(indexAt(pos) - idx) > 0.05) {
+            e.preventDefault();
+            goTo(idx);
+          }
+        });
+      });
+
+      function measure() {
+        if (cards[0]) {
+          width = cards[0].offsetWidth;
+          paint();
+        }
+      }
+
+      measure();
+      if ('ResizeObserver' in window && frame) {
+        var ro = new ResizeObserver(measure);
+        ro.observe(frame);
+      } else {
+        window.addEventListener('resize', measure);
+      }
+    }
+
+    initHeroBentoGrid();
     initHeroSlideshow();
     initAllInteractiveGrids();
+    initCoverflowCarousel();
   });
 })();

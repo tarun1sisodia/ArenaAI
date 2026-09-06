@@ -23,7 +23,7 @@ Open `http://localhost:4173`.
 
 ## Hosting
 
-The site is pure static HTML/CSS/JS — ready for any static host. All internal
+The site is pure static HTML/CSS/JS — redady for any static host. All internal
 URLs are root-relative, so when it is hosted under a subpath (e.g. GitHub
 Pages project site `https://<user>.github.io/ArenaAI/`) they must be prefixed
 with that subpath. The build script handles this automatically:
