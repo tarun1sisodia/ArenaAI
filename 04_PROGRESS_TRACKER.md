@@ -8,8 +8,8 @@ only check boxes, append log rows, and update the Current State block.
 
 ## Current State
 
-- **Current Phase:** 19 — Animation Governance Rules (`ANIMATION_RULES.md`) & SEO-Safe Premium Animation Combination ✅ completed
-- **Current Step:** Ready for next phase / client launch review
+- **Current Phase:** 22 — 21st.dev Interactive Background Grid on Trust Bar & Popular Routes ✅ completed
+- **Current Step:** Ready for next phase / client review
 - **Last updated:** 2026-09-06
 - **Open items:** `visual_audit.mjs` still needs a networked machine; fonts self-hosting (sandbox blocks Google Fonts download); real photos + real NAP before launch (see `LAUNCH_CHECKLIST.md`); PRD v3.0 master rewrite includes full SEO Final BOSS content. Client decision points from the deck are open (§25 of PRD.md).
 
@@ -53,6 +53,7 @@ can't be resolved without user input)_
 | 2026-09-06 | Hero Image Clarity (Blur Removed), 8s Relaxed Timing, Button Icons | Removed heavy dark/blur overlay and ambient orbs so landmark photos appear vivid and crystal clear; slowed slide rotation to 8.0s with 2.2s majestic crossfade; added icons (Phone, WhatsApp, Compass) and hover micro-animations to hero action buttons. 108/108 URLs OK. |
 | 2026-09-06 | Radial Quick Actions Dock (.about) & Navigation Text Hover Curtain Fill | Integrated expanding radial quick dock navigation (.about) and outline-to-fill text hover animation with brand color grading (Saffron Gold #D9943B, Warm Charcoal #121416, Cream #FAF7F0). Supports Phone, WhatsApp, Tours, and Instant Booking with spring cubic-bezier expansion, touch/keyboard accessibility, and zero crawler impact. 108/108 URLs OK. |
 | 2026-09-06 | Normal Navigation Font Weight & Google Maps Places Location Search | Normalized navigation link typography (font-weight 500, removed heavy 1px text stroke); integrated Google Maps Places Autocomplete API and 30+ destination catalog via `js/places.js`; replaced limited static selects with `.loc-picker` searchable comboboxes on Hero Widget and `book.html`; enhanced `fares.js` for dynamic distance & outstation fare quotes. 109/109 URLs OK. |
+| 2026-09-06 | 21st.dev Interactive Background Grid on Trust Bar & Popular Routes (Phase 22) | Implemented interactive background grid pattern behind Trust Bar chips and Popular Routes section per 21st.dev / Aceternity design. Features 44px hairline grid, dynamic cursor spotlight, and interactive glowing grid cell trail via hardware-accelerated canvas. Full dark mode support (amber in light, luminous gold in dark), zero idle CPU overhead, non-blocking click safety (`pointer-events: none`), and SEO-safe progressive scroll reveal. 109/109 URLs OK. |
 
 ---
 
@@ -252,6 +253,15 @@ can't be resolved without user input)_
 - [x] 8. Hero background destinations crossfade slideshow: Added rotating high-resolution destinations cycling every 5.5s with smooth 1.6s fade in/out, Ken Burns scale drift, location badge, and dot navigation, strictly obeying `ANIMATION_RULES.md` and reduced-motion safety.
 - [x] 9. Expansion to 11 Famous Heritage & Hill Destinations: Removed highway image per user request and added 11 world-famous destinations: Taj Mahal, Agra Fort, Fatehpur Sikri, Mathura Yamuna Ghats, Vrindavan Prem Mandir, Delhi India Gate, Delhi Red Fort, Jaipur Hawa Mahal, Jaipur Amber Palace, Himachal Manali & Solang Valley, and Himachal Shimla Ridge. Responsive dot navigation, bilingual captions, verified 107/107 URLs OK.
 - [x] 10. Hero Widget Animations, Logo removal & Dynamic Location Badge: Added micro-animations to the booking widget (`.hero-widget` entrance rise, hover elevation, focus gold halo ring, button shimmer wave); removed logo SVG mark from header, nav-sheet, and footer leaving clean typography; removed static `.hero-side` ("Based in Agra" & "The Experience"); updated dynamic location badge to sync with image changes in real time with smooth fade/scale transition; batch-converted all 17 downloaded images in `assets/images/` to optimized WebP format. Verified 108/108 URLs OK.
+- [x] 11. Navigation normal font weight & Google Maps Places API location picker: Normalized navigation links to 500 normal font weight; built `js/places.js` with Google Maps Places Autocomplete integration and 30+ destination database; upgraded Hero Widget and `book.html` to custom `.loc-picker` searchable comboboxes; updated `fares.js` for dynamic outstation fare pricing. Verified 109/109 URLs OK.
+
+### Phase 22 — 21st.dev Interactive Background Grid (Trust Bar & Popular Routes)
+- [x] 1. Interactive Grid Architecture: Added `.interactive-grid-section` container encompassing Trust Bar chips and Popular Routes cards in `scripts/render_pages.py`.
+- [x] 2. Hairline Grid Pattern: Implemented 44px × 44px radial hairline grid with smooth radial ellipse mask fade in `css/components.css`.
+- [x] 3. Dynamic Cursor Spotlight: Integrated cursor-following radial spotlight (`--grid-mouse-x`, `--grid-mouse-y`) with smooth opacity transitions on hover.
+- [x] 4. Canvas Glowing Grid Trail: Built hardware-accelerated `<canvas class="interactive-grid-canvas">` engine in `js/motion.js` rendering illuminated grid cells with glowing borders, intersection crosshairs, and smooth physics decay trail.
+- [x] 5. Dark Mode & Accessibility: Full theme switching support (amber glow in light mode, luminous warm gold in dark mode); zero idle CPU overhead (RAF pauses when idle or off-screen via IntersectionObserver); click safety (`pointer-events: none`); and SEO-safe progressive scroll reveal.
+- [x] 6. Build & Link Verification: Rebuilt all 54 pages; passed `scripts/check_links.py` with 109/109 OK; verified visually via Playwright in both light and dark modes.
 
 
 

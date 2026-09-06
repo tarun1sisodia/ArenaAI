@@ -785,21 +785,28 @@ def home_body(lang):
     <button class="btn-primary" type="submit">{t["check_fare"]} <span>↗</span></button>
   </form>
 </section>
-<div class="section--paper-lt"><div class="container trust-bar reveal-on-scroll">
-  <span class="chip">Govt-registered fleet</span>
-  <span class="chip">Verified drivers</span>
-  <span class="chip">GST invoice</span>
-  <span class="chip">★ 4.9/5 · <strong class="stat-number" data-count="380">380</strong>+ trips</span>
-  <span class="chip"><strong class="stat-number" data-count="15">15</strong>+ Years In Agra</span>
-  <span class="chip">24×7 on-route support</span>
-</div></div>
-<section class="section section--paper">
-  <div class="container">
-    <div class="section-head"><div><p class="eyebrow">{t["popular_routes"]}</p><h2>{t["h2_routes"]}</h2></div>
-    <a class="btn-text" href="{hub_path("routes", lang)}">{t["all_routes"]} <span>↗</span></a></div>
-    <div class="grid-3">{"".join(cards)}</div>
+<div class="interactive-grid-section" id="interactive-routes-grid">
+  <div class="interactive-grid-bg" aria-hidden="true">
+    <div class="interactive-grid-lines"></div>
+    <div class="interactive-grid-spotlight"></div>
+    <canvas class="interactive-grid-canvas"></canvas>
   </div>
-</section>
+  <div class="container trust-bar reveal-on-scroll" style="position:relative;z-index:2;">
+    <span class="chip">Govt-registered fleet</span>
+    <span class="chip">Verified drivers</span>
+    <span class="chip">GST invoice</span>
+    <span class="chip">★ 4.9/5 · <strong class="stat-number" data-count="380">380</strong>+ trips</span>
+    <span class="chip"><strong class="stat-number" data-count="15">15</strong>+ Years In Agra</span>
+    <span class="chip">24×7 on-route support</span>
+  </div>
+  <section class="section" style="position:relative;z-index:2;padding-top:16px;padding-bottom:12px;">
+    <div class="container">
+      <div class="section-head"><div><p class="eyebrow">{t["popular_routes"]}</p><h2>{t["h2_routes"]}</h2></div>
+      <a class="btn-text" href="{hub_path("routes", lang)}">{t["all_routes"]} <span>↗</span></a></div>
+      <div class="grid-3">{"".join(cards)}</div>
+    </div>
+  </section>
+</div>
 <section class="section section--paper-lt">
   <div class="container">
     <div class="section-head"><div><p class="eyebrow">{t["nav_services"]}</p><h2>{t["h2_services"]}</h2></div>

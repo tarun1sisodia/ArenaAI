@@ -1468,6 +1468,83 @@ figure.portrait img {
 }
 
 /* --------------------------------------------------------------------------
+   21st.dev INTERACTIVE GRID PATTERN (Trust Bar & Popular Routes)
+   -------------------------------------------------------------------------- */
+.interactive-grid-section {
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-alt, #FAFAF7);
+  padding-top: 36px;
+  padding-bottom: 54px;
+  transition: background-color 0.3s ease;
+}
+
+[data-theme="dark"] .interactive-grid-section,
+.dark .interactive-grid-section {
+  background: #131618;
+}
+
+.interactive-grid-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+/* Base grid pattern */
+.interactive-grid-lines {
+  position: absolute;
+  inset: -2px;
+  background-size: 44px 44px;
+  background-image: 
+    linear-gradient(to right, rgba(18, 20, 22, 0.065) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(18, 20, 22, 0.065) 1px, transparent 1px);
+  -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, #000 35%, transparent 95%);
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, #000 35%, transparent 95%);
+}
+
+[data-theme="dark"] .interactive-grid-lines,
+.dark .interactive-grid-lines {
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.075) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.075) 1px, transparent 1px);
+}
+
+/* Dynamic cursor-following spotlight */
+.interactive-grid-spotlight {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    560px circle at var(--grid-mouse-x, 50%) var(--grid-mouse-y, 50%),
+    rgba(217, 148, 59, 0.16),
+    transparent 65%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.interactive-grid-section:hover .interactive-grid-spotlight {
+  opacity: 1;
+}
+
+/* Interactive Canvas for glowing grid cells */
+.interactive-grid-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  -webkit-mask-image: radial-gradient(ellipse 85% 75% at 50% 50%, #000 40%, transparent 95%);
+  mask-image: radial-gradient(ellipse 85% 75% at 50% 50%, #000 40%, transparent 95%);
+}
+
+.interactive-grid-section .trust-bar {
+  margin-bottom: 24px;
+}
+
+/* --------------------------------------------------------------------------
    14. PROCESS TIMELINE ("How Booking Works")
    -------------------------------------------------------------------------- */
 .timeline {
@@ -2228,13 +2305,17 @@ html.dark .cinematic-puck-icon.moon {
   }
 }
 
-/* 4. Scroll Reveal for Cards (Services, Fleet, Routes, Trust) */
+/* 4. Scroll Reveal for Cards (Services, Fleet, Routes, Trust) - SEO Safe */
 .reveal-on-scroll {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.has-reveal .reveal-on-scroll:not(.is-visible) {
   opacity: 0;
   transform: translateY(18px);
-  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity, transform;
 }
 
 .reveal-on-scroll.is-visible {

@@ -136,6 +136,9 @@
       return;
     }
 
+    // Enable smooth scroll reveal
+    document.documentElement.classList.add('has-reveal');
+
     // 2. SCROLL REVEAL OBSERVER (Split text, blur-in, card reveals)
     if ('IntersectionObserver' in window) {
       var revealObserver = new IntersectionObserver(function (entries) {
@@ -145,7 +148,7 @@
             revealObserver.unobserve(entry.target);
           }
         });
-      }, { rootMargin: '0px 0px -6% 0px', threshold: 0.1 });
+      }, { rootMargin: '120px 0px 50px 0px', threshold: 0.02 });
 
       document.querySelectorAll('.split-text, .blur-in, [data-split], .contact-card, .reveal-on-scroll, .scroll-reveal').forEach(function (el) {
         revealObserver.observe(el);
@@ -502,6 +505,146 @@
       });
     }
 
+    // 21st.dev INTERACTIVE GRID PATTERN ENGINE
+    function initInteractiveGrid() {
+      var section = document.querySelector('.interactive-grid-section');
+      if (!section) return;
+
+      var canvas = section.querySelector('.interactive-grid-canvas');
+      if (!canvas) return;
+
+      var ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      var CELL_SIZE = 44;
+      var activeCells = {};
+      var animId = null;
+      var isVisible = true;
+      var dpr = window.devicePixelRatio || 1;
+      var width = 0;
+      var height = 0;
+
+      function resize() {
+        var rect = section.getBoundingClientRect();
+        width = rect.width;
+        height = rect.height;
+        dpr = window.devicePixelRatio || 1;
+        canvas.width = Math.floor(width * dpr);
+        canvas.height = Math.floor(height * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+
+      resize();
+      window.addEventListener('resize', resize, { passive: true });
+
+      function addCell(c, r, intensity) {
+        if (c < 0 || r < 0) return;
+        var key = c + '_' + r;
+        var current = activeCells[key];
+        if (!current || current.alpha < intensity) {
+          activeCells[key] = { col: c, row: r, alpha: intensity };
+        }
+      }
+
+      function onMouseMove(e) {
+        var rect = section.getBoundingClientRect();
+        var x = e.clientX - rect.left;
+        var y = e.clientY - rect.top;
+
+        // Set CSS spotlight coordinates
+        section.style.setProperty('--grid-mouse-x', x + 'px');
+        section.style.setProperty('--grid-mouse-y', y + 'px');
+
+        if (prefersReduced) return;
+
+        var centerCol = Math.floor(x / CELL_SIZE);
+        var centerRow = Math.floor(y / CELL_SIZE);
+
+        addCell(centerCol, centerRow, 1.0);
+        addCell(centerCol - 1, centerRow, 0.45);
+        addCell(centerCol + 1, centerRow, 0.45);
+        addCell(centerCol, centerRow - 1, 0.45);
+        addCell(centerCol, centerRow + 1, 0.45);
+
+        if (!animId && isVisible) {
+          animId = requestAnimationFrame(render);
+        }
+      }
+
+      function onMouseLeave() {
+        section.style.removeProperty('--grid-mouse-x');
+        section.style.removeProperty('--grid-mouse-y');
+      }
+
+      section.addEventListener('mousemove', onMouseMove, { passive: true });
+      section.addEventListener('mouseleave', onMouseLeave, { passive: true });
+
+      function render() {
+        if (!isVisible) {
+          animId = null;
+          return;
+        }
+
+        var keys = Object.keys(activeCells);
+        if (keys.length === 0) {
+          ctx.clearRect(0, 0, width, height);
+          animId = null;
+          return;
+        }
+
+        ctx.clearRect(0, 0, width, height);
+
+        var isDark = document.documentElement.getAttribute('data-theme') === 'dark' || document.documentElement.classList.contains('dark');
+        var rgb = isDark ? '229, 160, 68' : '217, 148, 59';
+
+        for (var i = 0; i < keys.length; i++) {
+          var key = keys[i];
+          var cell = activeCells[key];
+          var cx = cell.col * CELL_SIZE;
+          var cy = cell.row * CELL_SIZE;
+
+          // Inner soft glow
+          ctx.fillStyle = 'rgba(' + rgb + ',' + (cell.alpha * 0.12).toFixed(3) + ')';
+          ctx.fillRect(cx + 1, cy + 1, CELL_SIZE - 2, CELL_SIZE - 2);
+
+          // Glowing border
+          ctx.strokeStyle = 'rgba(' + rgb + ',' + (cell.alpha * 0.36).toFixed(3) + ')';
+          ctx.lineWidth = 1;
+          ctx.strokeRect(cx + 0.5, cy + 0.5, CELL_SIZE - 1, CELL_SIZE - 1);
+
+          // Crisp intersection crosshairs
+          ctx.fillStyle = 'rgba(' + rgb + ',' + (cell.alpha * 0.65).toFixed(3) + ')';
+          ctx.fillRect(cx - 1.5, cy - 1.5, 3, 3);
+          ctx.fillRect(cx + CELL_SIZE - 1.5, cy - 1.5, 3, 3);
+          ctx.fillRect(cx - 1.5, cy + CELL_SIZE - 1.5, 3, 3);
+          ctx.fillRect(cx + CELL_SIZE - 1.5, cy + CELL_SIZE - 1.5, 3, 3);
+
+          cell.alpha *= 0.92;
+          if (cell.alpha < 0.015) {
+            delete activeCells[key];
+          }
+        }
+
+        animId = requestAnimationFrame(render);
+      }
+
+      if ('IntersectionObserver' in window) {
+        var obs = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            isVisible = entry.isIntersecting;
+            if (!isVisible && animId) {
+              cancelAnimationFrame(animId);
+              animId = null;
+            } else if (isVisible && !animId && Object.keys(activeCells).length > 0) {
+              animId = requestAnimationFrame(render);
+            }
+          });
+        }, { threshold: 0.05 });
+        obs.observe(section);
+      }
+    }
+
     initHeroSlideshow();
+    initInteractiveGrid();
   });
 })();
