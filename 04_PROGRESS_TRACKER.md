@@ -8,7 +8,7 @@ only check boxes, append log rows, and update the Current State block.
 
 ## Current State
 
-- **Current Phase:** 18 — Interactive Motion, Clean White Theme (No Blue), Icon Suite, & Image Scroll Parallax ✅ completed
+- **Current Phase:** 19 — Animation Governance Rules (`ANIMATION_RULES.md`) & SEO-Safe Premium Animation Combination ✅ completed
 - **Current Step:** Ready for next phase / client launch review
 - **Last updated:** 2026-09-06
 - **Open items:** `visual_audit.mjs` still needs a networked machine; fonts self-hosting (sandbox blocks Google Fonts download); real photos + real NAP before launch (see `LAUNCH_CHECKLIST.md`); PRD v3.0 master rewrite includes full SEO Final BOSS content. Client decision points from the deck are open (§25 of PRD.md).
@@ -45,6 +45,8 @@ can't be resolved without user input)_
 | 2026-09-06 | Theme revert to initial Warm Paper with Soft Slate Blue (#2D3E50) | User requested returning to the initial theme and replacing the dark navy blue with a lighter color; updated tokens to initial Warm Paper (`#F5F0E8` / `#FCFAF6` / `#EAE4DA`) and Saffron Gold (`#E5A044`), with dark navy replaced by refined Soft Slate Blue (`#2D3E50` / `#1E2B37` / `#3B5268`). Rebuilt and crawled 102/102 URLs OK. |
 | 2026-09-06 | Clean White theme + neutral charcoal (all blue removed) & Image Scroll Parallax | User requested clean white background, removal of all blue colors, and parallax ("paradox") scroll animation on images so the site feels alive. Replaced canvas with pure white (`#FFFFFF`), alternate with `#F8F9FA`, text/chrome with neutral charcoal (`#1A1D20`, `#121416`), retained Saffron Gold (`#E5A044`), and implemented 60fps RAF-throttled image scroll depth engine. Rebuilt 102 pages; 102/102 URLs OK. |
 | 2026-09-06 | Fix contact form labels overlapping placeholder text | The floating label rule was positioning labels absolutely inside input boxes, colliding with placeholders. Restored top-aligned static labels with warm gold focus-within highlight, removed conflicting `field` class on contact form groups, and regenerated all pages. |
+| 2026-09-06 | Animation Governance Rules & Pre-Implementation Gate (`ANIMATION_RULES.md`) | Established mandatory verification rule file (`ANIMATION_RULES.md`) enforcing "Fast content + subtle motion + real HTML + excellent accessibility rather than lots of JS + huge animations + content hidden inside effects". Wired into `AGENTS.md` and `.agents/rules/`. |
+| 2026-09-06 | SEO-Safe Premium Animation Combination | Implemented top scroll progress bar, subtle hero animated gradient mesh, floating ambient shapes, CSS GPU headline fade-up, scroll-triggered card reveals with hover elevation, icon micro-interactions, animated statistics counters, and full reduced-motion accessibility. 102/102 URLs OK. |
 
 ---
 
@@ -230,5 +232,14 @@ can't be resolved without user input)_
 - [x] 5. Demo mock data badge: Completely removed from `templates/base.html`, `scripts/render_pages.py`, `book.html`, and hidden in `css/site.css`
 - [x] 6. Icon suite: Added high-performance inline SVG icons for Call, WhatsApp, Email, Map across Header actions, Mobile Sheet drawer, floating Lead-bar, Contact Card, and Footer
 - [x] 7. Build & crawl gate: 102/102 URLs verified 200 OK with `scripts/check_links.py` at both bases
+
+### Phase 19 — Animation Governance Rules (`ANIMATION_RULES.md`) & SEO-Safe Premium Animation Combination
+- [x] 1. Animation governance rule file: Created `ANIMATION_RULES.md` and `.agents/rules/ANIMATION_RULES.md` establishing the mandatory pre-implementation gate: "Fast content + subtle motion + real HTML + excellent accessibility rather than lots of JS + huge animations + content hidden inside effects". Updated `AGENTS.md` and `.agents/rules/` to mandate verification before adding animations.
+- [x] 2. Reading progress indicator: Added fixed 3px gold scroll indicator (`#scroll-progress`) at the top of the viewport driven by passive, RAF-throttled scroll offset calculations.
+- [x] 3. Hero animations: Implemented subtle animated gradient overlay mesh (`@keyframes hero-gradient-pulse`), floating ambient shapes (`.hero-ambient-orb`), GPU-accelerated headline fade-up, and CTA micro-interactions without hiding raw HTML text from crawlers.
+- [x] 4. Services & Cards: Staggered scroll reveal (`.reveal-on-scroll` via `IntersectionObserver`), subtle 4px hover elevation, and icon micro-interaction (scale & rotate on hover).
+- [x] 5. About & Trust metrics: Animated stat counter engine (`data-count`) animating numerical values with cubic ease-out upon viewport intersection.
+- [x] 6. Accessibility: Complete `@media (prefers-reduced-motion: reduce)` overrides neutralizing all transforms, keyframe loops, and JS counter delays.
+- [x] 7. Build & crawl gate: 102/102 URLs verified 200 OK with `scripts/check_links.py` at both bases.
 
 

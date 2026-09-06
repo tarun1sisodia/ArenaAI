@@ -466,6 +466,7 @@ def write_page(*, lang, path, alt_path, title, description, active, body, extra_
     {head}
   </head>
   <body data-page="{active}" data-lang="{lang}" data-base="{page_base(rel)}"{kind_attr}>
+    <div id="scroll-progress" aria-hidden="true"></div>
     <svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden;pointer-events:none">
       <defs>
         <filter id="grain-light">
@@ -565,7 +566,7 @@ def home_body(lang):
         origin, dest = CITIES[r["from"]], CITIES[r["to"]]
         label = t["local_label"] if r["kind"] == "local" else f"{origin[lang]} → {dest[lang]}"
         cards.append(f"""
-      <a class="route-card" href="{route_path(r, lang)}">
+      <a class="route-card reveal-on-scroll" href="{route_path(r, lang)}">
         <div class="route-codes"><span>{origin["code"]}</span><b>→</b><span>{dest["code"]}</span></div>
         <div class="route-meta"><span>{label}</span><span>{r["duration"]} · {r["km"]} km</span></div>
         <p class="fare">{inr(r["fares"]["sedan"])} <small>{t["from_word"]} · {vehicle("sedan")["name"][lang]}</small></p>
@@ -574,7 +575,7 @@ def home_body(lang):
     for vid, idx in (("sedan", "01"), ("innova", "03"), ("tempo", "04")):
         v = vehicle(vid)
         vcards.append(f"""
-      <article class="vehicle-card">
+      <article class="vehicle-card reveal-on-scroll">
         <div class="vehicle-photo">
           {resp_img(v["image"], v["name"]["en"] + " taxi in Agra", "(max-width: 700px) calc(100vw - 32px), (max-width: 1120px) 50vw, 348px")}
           <span>{idx} / 05 <b>{v["name"]["en"].upper()}</b></span>
@@ -593,6 +594,8 @@ def home_body(lang):
   <img class="hero-media" src="/assets/hero/hero-highway.webp" srcset="{hero_srcset}" sizes="100vw" width="{hero_w}" height="{hero_h}" alt="Luxury sedan taxi on an open highway at dusk near Agra" fetchpriority="high" onerror="this.style.display='none'" />
   <div class="hero-overlay"></div>
   <div class="hero-grain"></div>
+  <div class="hero-ambient-orb hero-ambient-orb-1" aria-hidden="true"></div>
+  <div class="hero-ambient-orb hero-ambient-orb-2" aria-hidden="true"></div>
   <div class="container hero-copy">
     <p class="eyebrow eyebrow--light">{t["home"]} · Agra, India</p>
     <h1>{t["h1_home"]}</h1>
@@ -633,11 +636,12 @@ def home_body(lang):
     <button class="btn-primary" type="submit">{t["check_fare"]} <span>↗</span></button>
   </form>
 </section>
-<div class="section--paper-lt"><div class="container trust-bar">
+<div class="section--paper-lt"><div class="container trust-bar reveal-on-scroll">
   <span class="chip">Govt-registered fleet</span>
   <span class="chip">Verified drivers</span>
   <span class="chip">GST invoice</span>
-  <span class="chip">4.9/5 · 380+ trips</span>
+  <span class="chip">★ 4.9/5 · <strong class="stat-number" data-count="380">380</strong>+ trips</span>
+  <span class="chip"><strong class="stat-number" data-count="15">15</strong>+ Years In Agra</span>
   <span class="chip">24×7 on-route support</span>
 </div></div>
 <section class="section section--paper">
@@ -652,9 +656,9 @@ def home_body(lang):
     <div class="section-head"><div><p class="eyebrow">{t["nav_services"]}</p><h2>{t["h2_services"]}</h2></div>
     <a class="btn-text" href="{hub_path("services", lang)}">{t["how_it_works"]} <span>↗</span></a></div>
     <div class="grid-3">
-      <article class="service-card service-card--navy"><span class="service-index">01</span><div class="service-mark">✦</div><h3>{"Taxi <i>/ Cab</i>" if lang == "en" else "टैक्सी <i>/ कैब</i>"}</h3><p>{"Sedan, Ertiga and Innova Crysta for city rides and intercity drops." if lang == "en" else "शहर और इंटरसिटी के लिए सेडान, अर्टिगा और इनोवा क्रिस्टा।"}</p><a class="card-link" href="{hub_path("fleet", lang)}">{t["choose_car"]} ↗</a></article>
-      <article class="service-card service-card--light"><span class="service-index">02</span><div class="service-mark">✦</div><h3>{"Tempo<br /><i>Traveller</i>" if lang == "en" else "टेम्पो<br /><i>ट्रैवलर</i>"}</h3><p>{"Comfortable group travel, from 12 seats to a premium Urbania." if lang == "en" else "12 सीट से प्रीमियम अर्बनिया तक — ग्रुप ट्रैवल आराम से।"}</p><a class="card-link" href="{vehicle_path(vehicle("tempo"), lang)}">{t["nav_fleet"]} ↗</a></article>
-      <article class="service-card service-card--gold"><span class="service-index">03</span><div class="service-mark">✦</div><h3>{"Tour<br /><i>packages</i>" if lang == "en" else "टूर<br /><i>पैकेज</i>"}</h3><p>{"Local sightseeing, one-way drops and ready-made multi-day itineraries." if lang == "en" else "लोकल दर्शन, वन-वे ड्रॉप और तैयार मल्टी-डे यात्राएँ।"}</p><a class="card-link" href="{hub_path("packages", lang)}">{t["explore_tours"]} ↗</a></article>
+      <article class="service-card service-card--navy reveal-on-scroll"><span class="service-index">01</span><div class="service-mark">✦</div><h3>{"Taxi <i>/ Cab</i>" if lang == "en" else "टैक्सी <i>/ कैब</i>"}</h3><p>{"Sedan, Ertiga and Innova Crysta for city rides and intercity drops." if lang == "en" else "शहर और इंटरसिटी के लिए सेडान, अर्टिगा और इनोवा क्रिस्टा।"}</p><a class="card-link" href="{hub_path("fleet", lang)}">{t["choose_car"]} ↗</a></article>
+      <article class="service-card service-card--light reveal-on-scroll"><span class="service-index">02</span><div class="service-mark">✦</div><h3>{"Tempo<br /><i>Traveller</i>" if lang == "en" else "टेम्पो<br /><i>ट्रैवलर</i>"}</h3><p>{"Comfortable group travel, from 12 seats to a premium Urbania." if lang == "en" else "12 सीट से प्रीमियम अर्बनिया तक — ग्रुप ट्रैवल आराम से।"}</p><a class="card-link" href="{vehicle_path(vehicle("tempo"), lang)}">{t["nav_fleet"]} ↗</a></article>
+      <article class="service-card service-card--gold reveal-on-scroll"><span class="service-index">03</span><div class="service-mark">✦</div><h3>{"Tour<br /><i>packages</i>" if lang == "en" else "टूर<br /><i>पैकेज</i>"}</h3><p>{"Local sightseeing, one-way drops and ready-made multi-day itineraries." if lang == "en" else "लोकल दर्शन, वन-वे ड्रॉप और तैयार मल्टी-डे यात्राएँ।"}</p><a class="card-link" href="{hub_path("packages", lang)}">{t["explore_tours"]} ↗</a></article>
     </div>
   </div>
 </section>

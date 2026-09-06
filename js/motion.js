@@ -105,9 +105,29 @@
 
     initCinematicThemeSwitcher();
 
+    // SCROLL PROGRESS BAR
+    var progressBar = document.getElementById('scroll-progress');
+    if (progressBar && !prefersReduced) {
+      var tickingProgress = false;
+      function updateProgress() {
+        var scrollTop = window.pageYOffset || document.documentElement.scrollTop || 0;
+        var docHeight = (document.documentElement.scrollHeight || 1) - window.innerHeight;
+        var progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+        progressBar.style.width = Math.min(100, Math.max(0, progress)) + '%';
+        tickingProgress = false;
+      }
+      window.addEventListener('scroll', function () {
+        if (!tickingProgress) {
+          window.requestAnimationFrame(updateProgress);
+          tickingProgress = true;
+        }
+      }, { passive: true });
+      updateProgress();
+    }
+
     // If reduced motion is preferred, mark everything visible immediately
     if (prefersReduced) {
-      document.querySelectorAll('.split-text, .blur-in, [data-split], .contact-card').forEach(function (el) {
+      document.querySelectorAll('.split-text, .blur-in, [data-split], .contact-card, .reveal-on-scroll, .scroll-reveal').forEach(function (el) {
         el.classList.add('is-visible');
       });
       document.querySelectorAll('.timeline-item').forEach(function (el) {
@@ -116,7 +136,7 @@
       return;
     }
 
-    // 2. SCROLL REVEAL OBSERVER (Split text, blur-in, timelines)
+    // 2. SCROLL REVEAL OBSERVER (Split text, blur-in, card reveals)
     if ('IntersectionObserver' in window) {
       var revealObserver = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
@@ -127,7 +147,7 @@
         });
       }, { rootMargin: '0px 0px -6% 0px', threshold: 0.1 });
 
-      document.querySelectorAll('.split-text, .blur-in, [data-split], .contact-card').forEach(function (el) {
+      document.querySelectorAll('.split-text, .blur-in, [data-split], .contact-card, .reveal-on-scroll, .scroll-reveal').forEach(function (el) {
         revealObserver.observe(el);
       });
 

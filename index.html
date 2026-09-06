@@ -38,6 +38,7 @@
     <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "name": "SK Baghel Tour & Travels", "url": "https://skbagheltravels.in", "inLanguage": "en-IN"}</script>
   </head>
   <body data-page="home" data-lang="en" data-base=".">
+    <div id="scroll-progress" aria-hidden="true"></div>
     <svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden;pointer-events:none">
       <defs>
         <filter id="grain-light">
@@ -143,6 +144,8 @@
   <img class="hero-media" src="./assets/hero/hero-highway.webp" srcset="./assets/hero/hero-highway-sm.webp 960w, ./assets/hero/hero-highway.webp 1920w" sizes="100vw" width="1920" height="815" alt="Luxury sedan taxi on an open highway at dusk near Agra" fetchpriority="high" onerror="this.style.display='none'" />
   <div class="hero-overlay"></div>
   <div class="hero-grain"></div>
+  <div class="hero-ambient-orb hero-ambient-orb-1" aria-hidden="true"></div>
+  <div class="hero-ambient-orb hero-ambient-orb-2" aria-hidden="true"></div>
   <div class="container hero-copy">
     <p class="eyebrow eyebrow--light">Home · Agra, India</p>
     <h1>Agra to anywhere,<br /><i>in first-class comfort.</i></h1>
@@ -183,11 +186,12 @@
     <button class="btn-primary" type="submit">Check fare <span>↗</span></button>
   </form>
 </section>
-<div class="section--paper-lt"><div class="container trust-bar">
+<div class="section--paper-lt"><div class="container trust-bar reveal-on-scroll">
   <span class="chip">Govt-registered fleet</span>
   <span class="chip">Verified drivers</span>
   <span class="chip">GST invoice</span>
-  <span class="chip">4.9/5 · 380+ trips</span>
+  <span class="chip">★ 4.9/5 · <strong class="stat-number" data-count="380">380</strong>+ trips</span>
+  <span class="chip"><strong class="stat-number" data-count="15">15</strong>+ Years In Agra</span>
   <span class="chip">24×7 on-route support</span>
 </div></div>
 <section class="section section--paper">
@@ -195,17 +199,17 @@
     <div class="section-head"><div><p class="eyebrow">Popular routes</p><h2>Know the fare<br /><i>before you pack.</i></h2></div>
     <a class="btn-text" href="./en/routes/">All routes <span>↗</span></a></div>
     <div class="grid-3">
-      <a class="route-card" href="./en/agra-to-delhi-taxi/">
+      <a class="route-card reveal-on-scroll" href="./en/agra-to-delhi-taxi/">
         <div class="route-codes"><span>AGR</span><b>→</b><span>DEL</span></div>
         <div class="route-meta"><span>Agra → Delhi</span><span>3h 30m · 230 km</span></div>
         <p class="fare">₹3,500 <small>from · Sedan</small></p>
       </a>
-      <a class="route-card" href="./en/delhi-to-agra-taxi/">
+      <a class="route-card reveal-on-scroll" href="./en/delhi-to-agra-taxi/">
         <div class="route-codes"><span>DEL</span><b>→</b><span>AGR</span></div>
         <div class="route-meta"><span>Delhi → Agra</span><span>3h 30m · 230 km</span></div>
         <p class="fare">₹3,500 <small>from · Sedan</small></p>
       </a>
-      <a class="route-card" href="./en/agra-to-jaipur-taxi/">
+      <a class="route-card reveal-on-scroll" href="./en/agra-to-jaipur-taxi/">
         <div class="route-codes"><span>AGR</span><b>→</b><span>JAI</span></div>
         <div class="route-meta"><span>Agra → Jaipur</span><span>4h 30m · 240 km</span></div>
         <p class="fare">₹4,500 <small>from · Sedan</small></p>
@@ -217,9 +221,9 @@
     <div class="section-head"><div><p class="eyebrow">Services</p><h2>Every kind of trip.<br /><i>One trusted team.</i></h2></div>
     <a class="btn-text" href="./en/services/">How it works <span>↗</span></a></div>
     <div class="grid-3">
-      <article class="service-card service-card--navy"><span class="service-index">01</span><div class="service-mark">✦</div><h3>Taxi <i>/ Cab</i></h3><p>Sedan, Ertiga and Innova Crysta for city rides and intercity drops.</p><a class="card-link" href="./en/fleet/">Choose this car ↗</a></article>
-      <article class="service-card service-card--light"><span class="service-index">02</span><div class="service-mark">✦</div><h3>Tempo<br /><i>Traveller</i></h3><p>Comfortable group travel, from 12 seats to a premium Urbania.</p><a class="card-link" href="./en/vehicles/tempo-traveller/">Fleet ↗</a></article>
-      <article class="service-card service-card--gold"><span class="service-index">03</span><div class="service-mark">✦</div><h3>Tour<br /><i>packages</i></h3><p>Local sightseeing, one-way drops and ready-made multi-day itineraries.</p><a class="card-link" href="./en/packages/">Explore tours ↗</a></article>
+      <article class="service-card service-card--navy reveal-on-scroll"><span class="service-index">01</span><div class="service-mark">✦</div><h3>Taxi <i>/ Cab</i></h3><p>Sedan, Ertiga and Innova Crysta for city rides and intercity drops.</p><a class="card-link" href="./en/fleet/">Choose this car ↗</a></article>
+      <article class="service-card service-card--light reveal-on-scroll"><span class="service-index">02</span><div class="service-mark">✦</div><h3>Tempo<br /><i>Traveller</i></h3><p>Comfortable group travel, from 12 seats to a premium Urbania.</p><a class="card-link" href="./en/vehicles/tempo-traveller/">Fleet ↗</a></article>
+      <article class="service-card service-card--gold reveal-on-scroll"><span class="service-index">03</span><div class="service-mark">✦</div><h3>Tour<br /><i>packages</i></h3><p>Local sightseeing, one-way drops and ready-made multi-day itineraries.</p><a class="card-link" href="./en/packages/">Explore tours ↗</a></article>
     </div>
   </div>
 </section>
@@ -228,7 +232,7 @@
     <div class="section-head"><div><p class="eyebrow">Fleet</p><h2>Choose your comfort.<br /><i>Bring your people.</i></h2></div>
     <a class="btn-text" href="./en/fleet/">Full fleet <span>↗</span></a></div>
     <div class="grid-3">
-      <article class="vehicle-card">
+      <article class="vehicle-card reveal-on-scroll">
         <div class="vehicle-photo">
           <img src="./assets/fleet/sedan.webp" srcset="./assets/fleet/sedan-480.webp 480w, ./assets/fleet/sedan-768.webp 768w, ./assets/fleet/sedan.webp 1312w" sizes="(max-width: 700px) calc(100vw - 32px), (max-width: 1120px) 50vw, 348px" alt="Sedan taxi in Agra" width="1312" height="816" loading="lazy" decoding="async" />
           <span>01 / 05 <b>SEDAN</b></span>
@@ -240,7 +244,7 @@
           <div class="vehicle-cta"><span class="muted">from ₹3,500</span><a class="btn-text" href="./en/vehicles/sedan/">Choose this car <span>↗</span></a></div>
         </div>
       </article>
-      <article class="vehicle-card">
+      <article class="vehicle-card reveal-on-scroll">
         <div class="vehicle-photo">
           <img src="./assets/fleet/innova.webp" srcset="./assets/fleet/innova-480.webp 480w, ./assets/fleet/innova-768.webp 768w, ./assets/fleet/innova.webp 1312w" sizes="(max-width: 700px) calc(100vw - 32px), (max-width: 1120px) 50vw, 348px" alt="Innova Crysta taxi in Agra" width="1312" height="816" loading="lazy" decoding="async" />
           <span>03 / 05 <b>INNOVA CRYSTA</b></span>
@@ -252,7 +256,7 @@
           <div class="vehicle-cta"><span class="muted">from ₹7,000</span><a class="btn-text" href="./en/vehicles/innova-crysta/">Choose this car <span>↗</span></a></div>
         </div>
       </article>
-      <article class="vehicle-card">
+      <article class="vehicle-card reveal-on-scroll">
         <div class="vehicle-photo">
           <img src="./assets/fleet/tempo.webp" srcset="./assets/fleet/tempo-480.webp 480w, ./assets/fleet/tempo-768.webp 768w, ./assets/fleet/tempo.webp 1312w" sizes="(max-width: 700px) calc(100vw - 32px), (max-width: 1120px) 50vw, 348px" alt="Tempo Traveller taxi in Agra" width="1312" height="816" loading="lazy" decoding="async" />
           <span>04 / 05 <b>TEMPO TRAVELLER</b></span>
