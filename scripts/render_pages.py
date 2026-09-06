@@ -419,10 +419,8 @@ def write_page(*, lang, path, alt_path, title, description, active, body, extra_
     fonts = FONTS_HI if lang == "hi" else FONTS_EN
     extra = extra_head
     if preload_hero:
-        hero_srcset, _hw, _hh = hero_media()
         extra = (
-            '<link rel="preload" as="image" href="/assets/hero/hero-highway.webp" '
-            f'imagesrcset="{hero_srcset}" imagesizes="100vw" fetchpriority="high" />\n    '
+            '<link rel="preload" as="image" href="/assets/packages/taj-dawn.webp" fetchpriority="high" />\n    '
         ) + extra
     kind_attr = f' data-kind="{kind}"' if kind else ""
     head = seo_head(
@@ -589,13 +587,70 @@ def home_body(lang):
       </article>""")
     pack = PACKAGES[0]
     hero_srcset, hero_w, hero_h = hero_media()
+    slides = [
+        {
+            "src": "/assets/packages/taj-dawn.webp",
+            "alt": "Majestic Taj Mahal at sunrise in Agra" if lang == "en" else "सूर्योदय के समय भव्य ताजमहल, आगरा",
+            "caption": "Taj Mahal · Dawn in Agra" if lang == "en" else "ताज महल · आगरा दर्शन",
+            "priority": True,
+        },
+        {
+            "src": "/assets/packages/agra-fort.webp",
+            "alt": "Historic red sandstone Agra Fort" if lang == "en" else "ऐतिहासिक लाल बलुआ पत्थर का आगरा किला",
+            "caption": "Agra Fort · Mughal Heritage" if lang == "en" else "आगरा का किला · मुग़ल विरासत",
+            "priority": False,
+        },
+        {
+            "src": "/assets/packages/mathura.webp",
+            "alt": "Sacred Ghats and Temples of Mathura and Vrindavan" if lang == "en" else "मथुरा और वृंदावन के पावन घाट और मंदिर",
+            "caption": "Mathura & Vrindavan · Sacred Ghats" if lang == "en" else "मथुरा एवं वृंदावन · पावन तीर्थ",
+            "priority": False,
+        },
+        {
+            "src": "/assets/packages/golden-triangle.webp",
+            "alt": "Golden Triangle Tour featuring Jaipur and Delhi" if lang == "en" else "जयपुर और दिल्ली की गोल्डन ट्रायंगल यात्रा",
+            "caption": "Golden Triangle · Jaipur & Delhi" if lang == "en" else "गोल्डन ट्रायंगल · जयपुर और दिल्ली",
+            "priority": False,
+        },
+        {
+            "src": "/assets/hero/hero-highway.webp",
+            "alt": "Luxury taxi on Yamuna Expressway" if lang == "en" else "यमुना एक्सप्रेसवे पर लक्ज़री टैक्सी यात्रा",
+            "caption": "Yamuna Expressway · Outstation Taxi" if lang == "en" else "यमुना एक्सप्रेसवे · सुरक्षित यात्रा",
+            "priority": False,
+            "srcset": hero_srcset,
+        },
+    ]
+    slides_html = []
+    dots_html = []
+    for i, s in enumerate(slides):
+        active_cls = " is-active" if i == 0 else ""
+        srcset_attr = f' srcset="{s["srcset"]}" sizes="100vw"' if "srcset" in s else ""
+        fetch_attr = ' fetchpriority="high"' if s.get("priority") else ' loading="lazy"'
+        slides_html.append(f"""    <div class="hero-slide{active_cls}" data-caption="{s["caption"]}" data-index="{i}">
+      <img class="hero-media" src="{s["src"]}"{srcset_attr} alt="{s["alt"]}"{fetch_attr} onerror="this.style.display=\'none\'" />
+    </div>""")
+        dots_html.append(f'<button type="button" class="hero-slide-dot{active_cls}" data-index="{i}" aria-label="Slide {i+1}: {s["caption"]}"></button>')
+
+    slideshow_block = "\n".join(slides_html)
+    dots_block = "\n    ".join(dots_html)
+    first_caption = slides[0]["caption"]
+
     return f"""
 <section class="hero">
-  <img class="hero-media" src="/assets/hero/hero-highway.webp" srcset="{hero_srcset}" sizes="100vw" width="{hero_w}" height="{hero_h}" alt="Luxury sedan taxi on an open highway at dusk near Agra" fetchpriority="high" onerror="this.style.display='none'" />
+  <div class="hero-slideshow" id="hero-slideshow" aria-hidden="true">
+{slideshow_block}
+  </div>
   <div class="hero-overlay"></div>
   <div class="hero-grain"></div>
   <div class="hero-ambient-orb hero-ambient-orb-1" aria-hidden="true"></div>
   <div class="hero-ambient-orb hero-ambient-orb-2" aria-hidden="true"></div>
+  <div class="hero-location-badge" id="hero-location-badge" aria-hidden="true">
+    <span class="hero-location-dot"></span>
+    <span class="hero-location-text">{first_caption}</span>
+  </div>
+  <div class="hero-slide-nav" id="hero-slide-nav" aria-label="Hero background slides">
+    {dots_block}
+  </div>
   <div class="container hero-copy">
     <p class="eyebrow eyebrow--light">{t["home"]} · Agra, India</p>
     <h1>{t["h1_home"]}</h1>

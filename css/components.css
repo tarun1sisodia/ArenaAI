@@ -703,6 +703,142 @@ figure.portrait img {
   transition: transform 0.08s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* --------------------------------------------------------------------------
+   HERO BACKGROUND SLIDESHOW (Taj Mahal & Scenic Destinations Fade In / Out)
+   -------------------------------------------------------------------------- */
+.hero-slideshow {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 0;
+  background: var(--navy-deep, #121416);
+}
+
+.hero-slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 1.6s cubic-bezier(0.4, 0, 0.2, 1), transform 8s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: scale(1.05);
+  will-change: opacity, transform;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.hero-slide.is-active {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+  z-index: 1;
+}
+
+.hero-slide .hero-media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 36%;
+}
+
+/* Location Badge */
+.hero-location-badge {
+  position: absolute;
+  top: calc(var(--header) + 20px);
+  right: clamp(16px, 4vw, 48px);
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(18, 20, 22, 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #FFFFFF;
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.hero-location-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--gold, #E5A044);
+  box-shadow: 0 0 8px var(--gold, #E5A044);
+  animation: hero-dot-pulse 2.4s infinite;
+}
+
+@keyframes hero-dot-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+.hero-location-text {
+  transition: opacity 0.35s ease;
+}
+
+/* Slide Navigation Dots */
+.hero-slide-nav {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(18, 20, 22, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.hero-slide-dot {
+  width: 20px;
+  height: 4px;
+  padding: 0;
+  border: none;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.35);
+  cursor: pointer;
+  transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1), background 0.35s ease;
+}
+
+.hero-slide-dot:hover {
+  background: rgba(255, 255, 255, 0.75);
+}
+
+.hero-slide-dot.is-active {
+  width: 36px;
+  background: var(--gold, #E5A044);
+}
+
+@media (max-width: 768px) {
+  .hero-location-badge {
+    top: calc(var(--header) + 12px);
+    right: 14px;
+    font-size: 0.75rem;
+    padding: 4px 10px;
+  }
+  .hero-slide-nav {
+    bottom: 12px;
+  }
+}
+
+
 /* Image reveal / alive entry */
 .img-alive-trigger {
   opacity: 0.88;
@@ -1604,6 +1740,21 @@ html.dark .cinematic-puck-icon.moon {
   [data-parallax] {
     transform: none !important;
     transition: none !important;
+  }
+
+  .hero-slide {
+    transition: none !important;
+    transform: none !important;
+  }
+  .hero-slide:not(:first-child) {
+    display: none !important;
+  }
+  .hero-slide:first-child {
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+  .hero-location-dot {
+    animation: none !important;
   }
 
   .timeline-item {

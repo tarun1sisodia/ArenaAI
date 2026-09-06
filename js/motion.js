@@ -386,5 +386,105 @@
         }
       });
     }
+
+    // 11. HERO BACKGROUND SLIDESHOW (Taj Mahal & Scenic Places Fade In / Fade Out)
+    function initHeroSlideshow() {
+      var slideshow = document.getElementById('hero-slideshow');
+      if (!slideshow) return;
+
+      var slides = slideshow.querySelectorAll('.hero-slide');
+      if (slides.length <= 1) return;
+
+      var badge = document.getElementById('hero-location-badge');
+      var badgeText = badge ? badge.querySelector('.hero-location-text') : null;
+      var dots = document.querySelectorAll('.hero-slide-dot');
+
+      var currentIndex = 0;
+      var timer = null;
+      var intervalTime = 5500; // 5.5s per landmark
+      var isPaused = false;
+
+      // Honor prefers-reduced-motion
+      if (prefersReduced) return;
+
+      function goToSlide(index) {
+        if (index === currentIndex) return;
+        slides[currentIndex].classList.remove('is-active');
+        if (dots[currentIndex]) dots[currentIndex].classList.remove('is-active');
+
+        currentIndex = (index + slides.length) % slides.length;
+
+        slides[currentIndex].classList.add('is-active');
+        if (dots[currentIndex]) dots[currentIndex].classList.add('is-active');
+
+        if (badgeText) {
+          var caption = slides[currentIndex].getAttribute('data-caption');
+          if (caption) {
+            badgeText.style.opacity = '0';
+            setTimeout(function () {
+              badgeText.textContent = caption;
+              badgeText.style.opacity = '1';
+            }, 350);
+          }
+        }
+      }
+
+      function nextSlide() {
+        goToSlide(currentIndex + 1);
+      }
+
+      function startTimer() {
+        stopTimer();
+        if (!isPaused) {
+          timer = setInterval(nextSlide, intervalTime);
+        }
+      }
+
+      function stopTimer() {
+        if (timer) {
+          clearInterval(timer);
+          timer = null;
+        }
+      }
+
+      // Interactive dot clicks
+      dots.forEach(function (dot, idx) {
+        dot.addEventListener('click', function () {
+          goToSlide(idx);
+          startTimer();
+        });
+      });
+
+      // Pause when browser tab is inactive
+      document.addEventListener('visibilitychange', function () {
+        if (document.hidden) {
+          isPaused = true;
+          stopTimer();
+        } else {
+          isPaused = false;
+          startTimer();
+        }
+      });
+
+      // Pause when scrolled out of viewport
+      if ('IntersectionObserver' in window) {
+        var heroObserver = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              isPaused = false;
+              startTimer();
+            } else {
+              isPaused = true;
+              stopTimer();
+            }
+          });
+        }, { threshold: 0.05 });
+        heroObserver.observe(slideshow.parentElement || slideshow);
+      } else {
+        startTimer();
+      }
+    }
+
+    initHeroSlideshow();
   });
 })();
