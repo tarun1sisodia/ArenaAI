@@ -26,5 +26,5 @@ documentation pack.
    - No placeholder / partial code
    - Frontend only, mock data, root-relative URLs
    - `booking.js` only on `book.html`
-   - Leave `design-guide/` and `proposal/` untouched
+   - Leave `design-guide/` untouched
    - Stay on branch `arena/01a05b8c-arenaai`

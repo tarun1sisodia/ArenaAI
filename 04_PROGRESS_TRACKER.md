@@ -47,6 +47,7 @@ can't be resolved without user input)_
 | 2026-09-06 | Fix contact form labels overlapping placeholder text | The floating label rule was positioning labels absolutely inside input boxes, colliding with placeholders. Restored top-aligned static labels with warm gold focus-within highlight, removed conflicting `field` class on contact form groups, and regenerated all pages. |
 | 2026-09-06 | Animation Governance Rules & Pre-Implementation Gate (`ANIMATION_RULES.md`) | Established mandatory verification rule file (`ANIMATION_RULES.md`) enforcing "Fast content + subtle motion + real HTML + excellent accessibility rather than lots of JS + huge animations + content hidden inside effects". Wired into `AGENTS.md` and `.agents/rules/`. |
 | 2026-09-06 | SEO-Safe Premium Animation Combination | Implemented top scroll progress bar, subtle hero animated gradient mesh, floating ambient shapes, CSS GPU headline fade-up, scroll-triggered card reveals with hover elevation, icon micro-interactions, animated statistics counters, and full reduced-motion accessibility. 102/102 URLs OK. |
+| 2026-09-06 | Remove `proposal/` directory | User requested deleting the legacy 24-slide proposal deck folder as the customer-facing website build is active. Removed `proposal/` and updated `robots.txt` and rule files accordingly. |
 
 ---
 

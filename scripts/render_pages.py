@@ -1374,7 +1374,7 @@ def main():
     write_sitemap()
     write_404()
     (ROOT / "robots.txt").write_text(
-        f"User-agent: *\nAllow: /\nDisallow: /book.html\nDisallow: /proposal/\nDisallow: /design-guide/\nSitemap: {SITE}/sitemap.xml\n",
+        f"User-agent: *\nAllow: /\nDisallow: /book.html\nDisallow: /design-guide/\nSitemap: {SITE}/sitemap.xml\n",
         encoding="utf-8",
     )
 
