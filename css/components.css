@@ -162,19 +162,10 @@
   margin: 0;
   padding: 0;
   color: var(--text-soft, #D8D2C5);
-  background-clip: text;
-  -webkit-background-clip: text;
-  text-fill-color: transparent;
-  -webkit-text-fill-color: transparent;
-  background-image: linear-gradient(transparent 50%, #ffffff 50%);
-  -webkit-text-stroke: none;
-  background-size: 100% 200%;
-  background-position: top;
   font-weight: 500;
   font-size: 0.92rem;
   letter-spacing: 0.01em;
-  transition: background-position 0.45s cubic-bezier(0.4, 0, 0.2, 1),
-              color 0.3s ease;
+  transition: color 0.3s ease;
 }
 
 .text:hover,
@@ -192,8 +183,6 @@
 .roll-link:focus-visible .text-fill,
 .roll:hover span:first-child,
 .roll-link:hover .roll-inner {
-  background-position: bottom;
-  -webkit-text-stroke: 1px #ffffff;
   color: #ffffff;
 }
 
