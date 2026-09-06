@@ -50,6 +50,7 @@ can't be resolved without user input)_
 | 2026-09-06 | Remove `proposal/` directory | User requested deleting the legacy 24-slide proposal deck folder as the customer-facing website build is active. Removed `proposal/` and updated `robots.txt` and rule files accordingly. |
 | 2026-09-06 | Hero Scenic Destinations Crossfade Slideshow | Implemented background slideshow cycling through Taj Mahal at dawn, Agra Fort, Mathura temples, Golden Triangle, and Yamuna Expressway every 5.5s with smooth 1.6s fade in/out, Ken Burns scale drift, location badge, and dot navigation. Strict compliance with `ANIMATION_RULES.md` and reduced-motion safety. |
 | 2026-09-06 | 11 Famous Heritage & Hill Destinations (Highway removed) | Removed highway photo per user request and expanded background slideshow to 11 world-famous destinations: Taj Mahal, Agra Fort, Fatehpur Sikri, Mathura Yamuna Ghats, Vrindavan Prem Mandir, Delhi India Gate, Delhi Red Fort, Jaipur Hawa Mahal, Jaipur Amber Palace, Himachal Manali & Solang, and Himachal Shimla Ridge. Optimized WebP assets in `assets/destinations/`, responsive slide dot navigation, bilingual captions, 107/107 URLs OK. |
+| 2026-09-06 | Hero Image Clarity (Blur Removed), 8s Relaxed Timing, Button Icons | Removed heavy dark/blur overlay and ambient orbs so landmark photos appear vivid and crystal clear; slowed slide rotation to 8.0s with 2.2s majestic crossfade; added icons (Phone, WhatsApp, Compass) and hover micro-animations to hero action buttons. 108/108 URLs OK. |
 
 ---
 
