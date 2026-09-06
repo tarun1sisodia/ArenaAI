@@ -106,7 +106,7 @@ html.dark {
   --paper: #181615;
   --paper-lt: #242220;
   --paper-dk: #201E1D;
-  --white: #242220;
+  --white: #FDFCFB; /* Crisp light white for all headings/text/buttons in dark mode */
   --muted-2: #B5AFA9;
   --muted-lt: #8C857E;
   --secondary: #5A5856;
@@ -124,6 +124,297 @@ html.dark {
   --shadow-lift: 0 12px 28px rgba(0, 0, 0, 0.55);
   --card-overlay: linear-gradient(180deg, rgba(20, 18, 17, 0.08) 0%, rgba(20, 18, 17, 0.85) 100%);
   --hero-overlay: linear-gradient(90deg, rgba(24, 22, 21, 0.95) 0%, rgba(24, 22, 21, 0.82) 48%, rgba(24, 22, 21, 0.32) 100%);
+}
+
+/* ==========================================================================
+   GLOBAL DARK THEME TEXT VISIBILITY & CONTRAST (WCAG 2.2 AA)
+   Guarantees light, readable text across all headings, cards, inputs, and components.
+   ========================================================================== */
+[data-theme="dark"],
+html.dark {
+  color-scheme: dark;
+}
+
+[data-theme="dark"] body,
+html.dark body {
+  color: var(--text) !important;
+  background-color: var(--bg) !important;
+}
+
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4,
+[data-theme="dark"] h5,
+[data-theme="dark"] h6,
+html.dark h1,
+html.dark h2,
+html.dark h3,
+html.dark h4,
+html.dark h5,
+html.dark h6 {
+  color: var(--text) !important;
+}
+
+[data-theme="dark"] p,
+[data-theme="dark"] li,
+html.dark p,
+html.dark li {
+  color: var(--text-soft);
+}
+
+[data-theme="dark"] strong,
+[data-theme="dark"] b,
+html.dark strong,
+html.dark b {
+  color: var(--text);
+}
+
+[data-theme="dark"] .lead,
+html.dark .lead {
+  color: var(--text-soft) !important;
+}
+
+[data-theme="dark"] .section--paper,
+[data-theme="dark"] .section--paper-lt,
+[data-theme="dark"] .page-hero,
+html.dark .section--paper,
+html.dark .section--paper-lt,
+html.dark .page-hero {
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+[data-theme="dark"] .route-card,
+[data-theme="dark"] .vehicle-card,
+[data-theme="dark"] .package-card,
+[data-theme="dark"] .service-card,
+[data-theme="dark"] .review-card,
+[data-theme="dark"] .step,
+html.dark .route-card,
+html.dark .vehicle-card,
+html.dark .package-card,
+html.dark .service-card,
+html.dark .review-card,
+html.dark .step {
+  background-color: var(--surface) !important;
+  border-color: var(--border) !important;
+  color: var(--text) !important;
+}
+
+[data-theme="dark"] .route-card .fare,
+html.dark .route-card .fare {
+  color: var(--text) !important;
+}
+
+[data-theme="dark"] .route-codes,
+html.dark .route-codes {
+  color: var(--text) !important;
+}
+
+[data-theme="dark"] .vehicle-body h3,
+[data-theme="dark"] .package-body h3,
+[data-theme="dark"] .service-card h3,
+html.dark .vehicle-body h3,
+html.dark .package-body h3,
+html.dark .service-card h3 {
+  color: var(--text) !important;
+}
+
+[data-theme="dark"] .vehicle-body p,
+[data-theme="dark"] .package-body p,
+[data-theme="dark"] .service-card p,
+html.dark .vehicle-body p,
+html.dark .package-body p,
+html.dark .service-card p {
+  color: var(--text-soft) !important;
+}
+
+[data-theme="dark"] .field label,
+[data-theme="dark"] .field span,
+[data-theme="dark"] .field-label,
+html.dark .field label,
+html.dark .field span,
+html.dark .field-label {
+  color: var(--text-soft) !important;
+}
+
+[data-theme="dark"] .field input,
+[data-theme="dark"] .field select,
+[data-theme="dark"] .field textarea,
+[data-theme="dark"] .input,
+html.dark .field input,
+html.dark .field select,
+html.dark .field textarea,
+html.dark .input {
+  background-color: var(--surface) !important;
+  color: var(--text) !important;
+  border-color: var(--border) !important;
+}
+
+[data-theme="dark"] .field input::placeholder,
+[data-theme="dark"] .field textarea::placeholder,
+[data-theme="dark"] .input::placeholder,
+html.dark .field input::placeholder,
+html.dark .field textarea::placeholder,
+html.dark .input::placeholder {
+  color: var(--text-soft) !important;
+  opacity: 0.65;
+}
+
+[data-theme="dark"] .btn-outline,
+html.dark .btn-outline {
+  border-color: var(--border) !important;
+  color: var(--text) !important;
+}
+
+[data-theme="dark"] .btn-outline:hover,
+html.dark .btn-outline:hover {
+  border-color: var(--gold) !important;
+  color: var(--gold-light) !important;
+}
+
+[data-theme="dark"] .btn-text,
+html.dark .btn-text {
+  color: var(--text) !important;
+}
+
+[data-theme="dark"] .faq summary,
+html.dark .faq summary {
+  color: var(--text) !important;
+}
+
+[data-theme="dark"] .faq details p,
+html.dark .faq details p {
+  color: var(--text-soft) !important;
+}
+
+[data-theme="dark"] .legal h2,
+[data-theme="dark"] .legal h3,
+html.dark .legal h2,
+html.dark .legal h3 {
+  color: var(--text) !important;
+}
+
+[data-theme="dark"] .legal p,
+[data-theme="dark"] .legal li,
+html.dark .legal p,
+html.dark .legal li {
+  color: var(--text-soft) !important;
+}
+
+[data-theme="dark"] table.data th,
+html.dark table.data th {
+  background-color: var(--surface) !important;
+  color: var(--gold-light) !important;
+}
+
+[data-theme="dark"] table.data td,
+html.dark table.data td {
+  border-bottom-color: var(--border) !important;
+  color: var(--text-soft) !important;
+}
+
+[data-theme="dark"] table.data td:first-child,
+[data-theme="dark"] table.data strong,
+html.dark table.data td:first-child,
+html.dark table.data strong {
+  color: var(--text) !important;
+}
+
+[data-theme="dark"] .chip,
+html.dark .chip {
+  border-color: var(--border) !important;
+  color: var(--text) !important;
+  background-color: var(--surface) !important;
+}
+
+[data-theme="dark"] .tag,
+html.dark .tag {
+  border-color: var(--border) !important;
+  color: var(--text-soft) !important;
+}
+
+[data-theme="dark"] .contact-action,
+html.dark .contact-action {
+  background-color: var(--surface) !important;
+  border-color: var(--border) !important;
+  color: var(--text) !important;
+}
+
+[data-theme="dark"] .contact-action strong,
+html.dark .contact-action strong {
+  color: var(--text) !important;
+}
+
+[data-theme="dark"] .contact-action:hover,
+html.dark .contact-action:hover {
+  background-color: var(--bg-alt) !important;
+}
+
+[data-theme="dark"] .stepper button,
+html.dark .stepper button {
+  color: var(--text-soft) !important;
+}
+
+[data-theme="dark"] .stepper button.is-current,
+html.dark .stepper button.is-current {
+  color: var(--text) !important;
+}
+
+[data-theme="dark"] .summary,
+html.dark .summary {
+  background-color: var(--surface) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+}
+
+[data-theme="dark"] .summary-lines strong,
+html.dark .summary-lines strong {
+  color: var(--text) !important;
+}
+
+[data-theme="dark"] .pay-methods label,
+html.dark .pay-methods label {
+  border-color: var(--border) !important;
+  color: var(--text) !important;
+  background-color: var(--surface) !important;
+}
+
+[data-theme="dark"] .vehicle-pick label,
+html.dark .vehicle-pick label {
+  border-color: var(--border) !important;
+  background-color: var(--surface) !important;
+  color: var(--text) !important;
+}
+
+[data-theme="dark"] .vehicle-pick label strong,
+html.dark .vehicle-pick label strong {
+  color: var(--text) !important;
+}
+
+[data-theme="dark"] .map-address,
+html.dark .map-address {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+}
+
+[data-theme="dark"] .nav-desktop a,
+html.dark .nav-desktop a {
+  color: var(--text-soft);
+}
+
+[data-theme="dark"] .nav-desktop a:hover,
+[data-theme="dark"] .nav-desktop a[aria-current="page"],
+html.dark .nav-desktop a:hover,
+html.dark .nav-desktop a[aria-current="page"] {
+  color: var(--text) !important;
+}
+
+[data-theme="dark"] .brand-copy strong,
+html.dark .brand-copy strong {
+  color: var(--text) !important;
 }
 
 /* Smooth Theme Switching Transitions */

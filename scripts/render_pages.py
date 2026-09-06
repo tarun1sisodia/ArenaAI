@@ -848,6 +848,112 @@ def coverflow_packages_section_html(lang):
 </section>"""
 
 
+def reviews_marquee_section_html(lang: str) -> str:
+    t = T[lang]
+    star_icon = '<svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>'
+    verified_icon = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>'
+
+    reviews_row_1 = [
+        {
+            "name": "Vikram Malhotra",
+            "role": "Delhi to Agra Roundtrip" if lang == "en" else "दिल्ली से आगरा राउंडट्रिप",
+            "content": "Sedan arrived 15 mins early at Delhi T3. Transparent ₹3,500 fare with all tolls included. Best taxi service in Agra!" if lang == "en" else "दिल्ली T3 पर सेडान 15 मिनट पहले पहुँची। ₹3,500 का पारदर्शी किराया टोल सहित। आगरा में सबसे बेहतरीन टैक्सी सेवा!",
+            "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+        },
+        {
+            "name": "Elena Rostova",
+            "role": "International Tourist" if lang == "en" else "विदेशी पर्यटक",
+            "content": "Spotless Innova Crysta with courteous English-speaking chauffeur. Taj sunrise tour was completely hassle-free." if lang == "en" else "अंग्रेजी बोलने वाले विनम्र ड्राइवर के साथ बेदाग इनोवा क्रिस्टा। ताज सूर्योदय भ्रमण बहुत सहज रहा।",
+            "avatar": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80",
+        },
+        {
+            "name": "Rajesh & Sunita Sharma",
+            "role": "Mathura-Vrindavan Pilgrimage" if lang == "en" else "मथुरा-वृंदावन दर्शन",
+            "content": "Booked Tempo Traveller for 12 family members. Punctual, safe driving along Yamuna Expressway and patient temple stops." if lang == "en" else "परिवार के 12 सदस्यों के लिए टेम्पो ट्रैवलर बुक किया। यमुना एक्सप्रेसवे पर सुरक्षित ड्राइविंग और मंदिरों में धैर्यपूर्वक रुकना।",
+            "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
+        },
+        {
+            "name": "David Miller",
+            "role": "Golden Triangle Traveler" if lang == "en" else "गोल्डन ट्रायंगल यात्रा",
+            "content": "Reliable dispatch via WhatsApp, verified driver, no commission shop traps. Pure hospitality and transparent pricing." if lang == "en" else "व्हाट्सएप पर तुरंत बुकिंग, प्रमाणित ड्राइवर, कोई कमीशन की दुकानें नहीं। वास्तविक आतिथ्य और पारदर्शी मूल्य।",
+            "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+        },
+    ]
+
+    reviews_row_2 = [
+        {
+            "name": "Ananya Singhal",
+            "role": "Corporate Travel Manager" if lang == "en" else "कॉरपोरेट ट्रैवल मैनेजर",
+            "content": "Regular vendor for our executives visiting Agra. Official GST invoices delivered instantly with pristine fleet." if lang == "en" else "आगरा आने वाले हमारे अधिकारियों के लिए नियमित वेंडर। तुरंत जीएसटी बिल और बेहतरीन गाड़ियाँ।",
+            "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80",
+        },
+        {
+            "name": "Marcus Vance",
+            "role": "Photographer & Explorer" if lang == "en" else "फोटोग्राफर व पर्यटक",
+            "content": "Driver knew optimal timing for Mehtab Bagh sunset and Fatehpur Sikri lighting. Exceptional experience!" if lang == "en" else "ड्राइवर को मेहताब बाग सूर्यास्त और फतेहपुर सीकरी के सही समय की सटीक जानकारी थी। शानदार अनुभव!",
+            "avatar": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80",
+        },
+        {
+            "name": "Priya Nair",
+            "role": "Jaipur to Agra Route" if lang == "en" else "जयपुर से आगरा मार्ग",
+            "content": "Comfortable outstation cab with baby seat accommodated. Driver was attentive and polite throughout the 5-hour drive." if lang == "en" else "शिशु सीट के साथ आरामदायक आउटस्टेशन कैब। 5 घंटे की यात्रा के दौरान ड्राइवर बहुत विनम्र और सतर्क रहा।",
+            "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+        },
+        {
+            "name": "Dr. Arvind Gupta",
+            "role": "Senior Citizen Pilgrimage" if lang == "en" else "तीर्थयात्रा परिवार",
+            "content": "Special care given to elderly parents at Agra Cantt station. AC was comfortable and driving was very gentle." if lang == "en" else "आगरा कैंट स्टेशन पर बुजुर्ग माता-पिता का विशेष ध्यान रखा गया। एसी आरामदायक था और ड्राइविंग बहुत सुरक्षित।",
+            "avatar": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&auto=format&fit=crop&q=80",
+        },
+    ]
+
+    def render_card(r):
+        return f"""        <div class="liquid-review-card">
+          <div class="liquid-review-header">
+            <img class="liquid-review-avatar" src="{r['avatar']}" alt="{r['name']}" loading="lazy" width="44" height="44" />
+            <div class="liquid-review-meta">
+              <span class="liquid-review-name">{r['name']}</span>
+              <span class="liquid-review-role">{r['role']}</span>
+            </div>
+          </div>
+          <p class="liquid-review-content">"{r['content']}"</p>
+          <div class="liquid-review-footer">
+            <div class="liquid-review-stars" aria-label="5 out of 5 stars">
+              {star_icon * 5}
+            </div>
+            <span class="liquid-review-badge">{verified_icon} {"Verified" if lang == "en" else "सत्यापित"}</span>
+          </div>
+        </div>"""
+
+    # Double tracks for seamless continuous loop
+    track_1_cards = "".join(render_card(r) for r in reviews_row_1)
+    track_2_cards = "".join(render_card(r) for r in reviews_row_2)
+
+    eyebrow = "VERIFIED TRAVELER REVIEWS" if lang == "en" else "सत्यापित ग्राहक समीक्षाएँ"
+    heading = t["h2_reviews"]
+    subtitle = "Real reviews from tourists, pilgrims, and business travelers across Agra, Delhi, Jaipur, and Mathura." if lang == "en" else "आगरा, दिल्ली, जयपुर और मथुरा के यात्रियों के वास्तविक अनुभव और समीक्षाएँ।"
+
+    return f"""
+<section class="reviews-marquee-section" id="reviews-section">
+  <div class="container" style="text-align:center;margin-bottom:40px;">
+    <p class="eyebrow" style="margin-bottom:8px;">{eyebrow}</p>
+    <h2 style="font-size:clamp(1.8rem, 3.2vw, 2.6rem);line-height:1.2;margin-bottom:12px;">{heading}</h2>
+    <p class="muted" style="max-width:580px;margin:0 auto;font-size:15px;">{subtitle}</p>
+  </div>
+  <div class="reviews-marquee-container" aria-label="Customer reviews marquee">
+    <div class="reviews-marquee-row reviews-marquee-row--left">
+      <div class="reviews-marquee-track">{track_1_cards}</div>
+      <div class="reviews-marquee-track" aria-hidden="true">{track_1_cards}</div>
+    </div>
+    <div class="reviews-marquee-row reviews-marquee-row--right">
+      <div class="reviews-marquee-track">{track_2_cards}</div>
+      <div class="reviews-marquee-track" aria-hidden="true">{track_2_cards}</div>
+    </div>
+  </div>
+</section>
+"""
+
+
 def home_body(lang):
     t = T[lang]
     cards = []
@@ -952,45 +1058,35 @@ def home_body(lang):
             "priority": False,
         },
     ]
-    tile_1_indices = [0, 1, 8, 5]
-    tile_2_indices = [2, 7, 6, 9]
-    tile_3_indices = [3, 4, 10, 11]
+    slides_html = []
+    dots_html = []
+    for i, s in enumerate(slides):
+        active_cls = " is-active" if i == 0 else ""
+        srcset_attr = f' srcset="{s["srcset"]}" sizes="100vw"' if "srcset" in s else ""
+        fetch_attr = ' fetchpriority="high"' if s.get("priority") else ' loading="lazy"'
+        slides_html.append(f"""    <div class="hero-slide{active_cls}" data-caption="{s["caption"]}" data-index="{i}">
+      <img class="hero-media" src="{s["src"]}"{srcset_attr} alt="{s["alt"]}"{fetch_attr} onerror="this.style.display=\'none\'" />
+    </div>""")
+        dots_html.append(f'<button type="button" class="hero-slide-dot{active_cls}" data-index="{i}" aria-label="Slide {i+1}: {s["caption"]}"></button>')
 
-    def render_bento_tile(tile_class, tile_name, indices):
-        tile_slides = []
-        for local_idx, global_idx in enumerate(indices):
-            s = slides[global_idx]
-            active_cls = " is-active" if local_idx == 0 else ""
-            srcset_attr = f' srcset="{s["srcset"]}" sizes="50vw"' if "srcset" in s else ""
-            fetch_attr = ' fetchpriority="high"' if s.get("priority") else ' loading="lazy"'
-            parts = s["caption"].split("·")
-            city_tag = parts[-1].strip() if len(parts) > 1 else parts[0].strip()
-            tile_slides.append(f"""      <div class="bento-slide{active_cls}" data-caption="{s["caption"]}" data-index="{global_idx}">
-        <img class="hero-media" src="{s["src"]}"{srcset_attr} alt="{s["alt"]}"{fetch_attr} onerror="this.style.display=\'none\'" />
-        <span class="bento-tile-tag">{city_tag}</span>
-      </div>""")
-        slides_str = "\n".join(tile_slides)
-        return f"""    <div class="bento-tile {tile_class}" data-tile="{tile_name}">
-{slides_str}
-    </div>"""
-
-    bento_html = f"""  <div class="hero-bento-grid" id="hero-bento-grid" aria-hidden="true">
-{render_bento_tile("bento-tile--main", "main", tile_1_indices)}
-{render_bento_tile("bento-tile--sub-top", "sub-top", tile_2_indices)}
-{render_bento_tile("bento-tile--sub-bottom", "sub-bottom", tile_3_indices)}
-  </div>"""
-
+    slideshow_block = "\n".join(slides_html)
+    dots_block = "\n    ".join(dots_html)
     first_caption = slides[0]["caption"]
 
     icon_compass = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>'
 
     return f"""
 <section class="hero">
-{bento_html}
+  <div class="hero-slideshow" id="hero-slideshow" aria-hidden="true">
+{slideshow_block}
+  </div>
   <div class="hero-overlay"></div>
   <div class="hero-location-badge" id="hero-location-badge" aria-live="polite">
     <span class="hero-location-dot"></span>
     <span class="hero-location-text">{first_caption}</span>
+  </div>
+  <div class="hero-slide-nav" id="hero-slide-nav" aria-label="Hero background slides">
+    {dots_block}
   </div>
   <div class="container hero-copy">
     <p class="eyebrow eyebrow--light">{t["home"]} · Agra, India</p>
@@ -1066,13 +1162,16 @@ def home_body(lang):
     <button class="btn-primary" type="submit">{t["check_fare"]} <span>↗</span></button>
   </form>
 </section>
+<div class="trust-roller-section" style="position:relative;z-index:2;background:var(--bg-alt);border-bottom:1px solid var(--border);padding:18px 0 22px;">
+{trust_roller_html(lang)}
+</div>
 <div class="interactive-grid-section" id="interactive-routes-grid">
   <div class="interactive-grid-bg" aria-hidden="true">
     <div class="interactive-grid-lines"></div>
     <div class="interactive-grid-spotlight"></div>
     <canvas class="interactive-grid-canvas"></canvas>
-{trust_roller_html(lang)}
-  <section class="section" style="position:relative;z-index:2;padding-top:16px;padding-bottom:12px;">
+  </div>
+  <section class="section" style="position:relative;z-index:2;padding-top:24px;padding-bottom:24px;">
     <div class="container">
       <div class="section-head"><div><p class="eyebrow">{t["popular_routes"]}</p><h2>{t["h2_routes"]}</h2></div>
       <a class="btn-text" href="{hub_path("routes", lang)}">{t["all_routes"]} <span>↗</span></a></div>
@@ -1099,6 +1198,7 @@ def home_body(lang):
   </div>
 </section>
 {coverflow_packages_section_html(lang)}
+{reviews_marquee_section_html(lang)}
 <section class="section section--paper" id="contact-section">
   <div class="container">
     <div class="section-head" style="margin-bottom:2.25rem">

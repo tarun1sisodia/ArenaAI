@@ -706,18 +706,32 @@
         animId = requestAnimationFrame(render);
       }
 
+      // ResizeObserver to track layout changes (crucial for content-visibility: auto sections)
+      if ('ResizeObserver' in window) {
+        var ro = new ResizeObserver(function () {
+          resize();
+        });
+        ro.observe(section);
+      }
+
       if ('IntersectionObserver' in window) {
         var obs = new IntersectionObserver(function (entries) {
           entries.forEach(function (entry) {
-            isVisible = entry.isIntersecting;
-            if (!isVisible && animId) {
-              cancelAnimationFrame(animId);
-              animId = null;
-            } else if (isVisible && !animId && Object.keys(activeCells).length > 0) {
-              animId = requestAnimationFrame(render);
+            if (entry.isIntersecting) {
+              isVisible = true;
+              resize();
+              if (!animId && Object.keys(activeCells).length > 0) {
+                animId = requestAnimationFrame(render);
+              }
+            } else {
+              isVisible = false;
+              if (animId) {
+                cancelAnimationFrame(animId);
+                animId = null;
+              }
             }
           });
-        }, { threshold: 0.05 });
+        }, { threshold: 0.02 });
         obs.observe(section);
       } else {
         isVisible = true;
@@ -734,8 +748,9 @@
       ];
       var sections = document.querySelectorAll(selectors.join(', '));
       sections.forEach(function (sec) {
-        // Avoid nested initialization if a section is inside another grid section
-        if (sec.parentElement && sec.parentElement.closest(selectors.join(', '))) return;
+        // Avoid nested initialization if a section is directly inside another grid section
+        var parentGrid = sec.parentElement ? sec.parentElement.closest(selectors.join(', ')) : null;
+        if (parentGrid && parentGrid !== sec) return;
         setupInteractiveGridSection(sec);
       });
     }

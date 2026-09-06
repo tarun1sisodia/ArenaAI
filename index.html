@@ -226,66 +226,62 @@
     <main id="main">
       
 <section class="hero">
-  <div class="hero-bento-grid" id="hero-bento-grid" aria-hidden="true">
-    <div class="bento-tile bento-tile--main" data-tile="main">
-      <div class="bento-slide is-active" data-caption="Taj Mahal · Dawn in Agra" data-index="0">
-        <img class="hero-media" src="./assets/packages/taj-dawn.webp" alt="Majestic Taj Mahal at sunrise in Agra" fetchpriority="high" onerror="this.style.display='none'" />
-        <span class="bento-tile-tag">Dawn in Agra</span>
-      </div>
-      <div class="bento-slide" data-caption="Agra Fort · Mughal Heritage" data-index="1">
-        <img class="hero-media" src="./assets/packages/agra-fort.webp" alt="Historic red sandstone Agra Fort" loading="lazy" onerror="this.style.display='none'" />
-        <span class="bento-tile-tag">Mughal Heritage</span>
-      </div>
-      <div class="bento-slide" data-caption="Amber Palace · Golden Triangle" data-index="8">
-        <img class="hero-media" src="./assets/packages/golden-triangle.webp" alt="Historic Amber Palace Fort in Jaipur" loading="lazy" onerror="this.style.display='none'" />
-        <span class="bento-tile-tag">Golden Triangle</span>
-      </div>
-      <div class="bento-slide" data-caption="India Gate · New Delhi" data-index="5">
-        <img class="hero-media" src="./assets/destinations/delhi-india-gate.webp" alt="India Gate memorial boulevard in New Delhi" loading="lazy" onerror="this.style.display='none'" />
-        <span class="bento-tile-tag">New Delhi</span>
-      </div>
+  <div class="hero-slideshow" id="hero-slideshow" aria-hidden="true">
+    <div class="hero-slide is-active" data-caption="Taj Mahal · Dawn in Agra" data-index="0">
+      <img class="hero-media" src="./assets/packages/taj-dawn.webp" alt="Majestic Taj Mahal at sunrise in Agra" fetchpriority="high" onerror="this.style.display='none'" />
     </div>
-    <div class="bento-tile bento-tile--sub-top" data-tile="sub-top">
-      <div class="bento-slide is-active" data-caption="Fatehpur Sikri · Buland Darwaza" data-index="2">
-        <img class="hero-media" src="./assets/destinations/fatehpur-sikri.webp" alt="Buland Darwaza at Fatehpur Sikri near Agra" loading="lazy" onerror="this.style.display='none'" />
-        <span class="bento-tile-tag">Buland Darwaza</span>
-      </div>
-      <div class="bento-slide" data-caption="Hawa Mahal · Pink City Jaipur" data-index="7">
-        <img class="hero-media" src="./assets/destinations/jaipur-hawa-mahal.webp" alt="Intricate pink sandstone Hawa Mahal in Jaipur" loading="lazy" onerror="this.style.display='none'" />
-        <span class="bento-tile-tag">Pink City Jaipur</span>
-      </div>
-      <div class="bento-slide" data-caption="Red Fort · Old Delhi" data-index="6">
-        <img class="hero-media" src="./assets/destinations/delhi-red-fort.webp" alt="Historic Red Fort Lal Qila in Old Delhi" loading="lazy" onerror="this.style.display='none'" />
-        <span class="bento-tile-tag">Old Delhi</span>
-      </div>
-      <div class="bento-slide" data-caption="Akshardham Temple · New Delhi" data-index="9">
-        <img class="hero-media" src="./assets/images/akshardham.webp" alt="Akshardham Temple architecture in New Delhi" loading="lazy" onerror="this.style.display='none'" />
-        <span class="bento-tile-tag">New Delhi</span>
-      </div>
+    <div class="hero-slide" data-caption="Agra Fort · Mughal Heritage" data-index="1">
+      <img class="hero-media" src="./assets/packages/agra-fort.webp" alt="Historic red sandstone Agra Fort" loading="lazy" onerror="this.style.display='none'" />
     </div>
-    <div class="bento-tile bento-tile--sub-bottom" data-tile="sub-bottom">
-      <div class="bento-slide is-active" data-caption="Mathura · Sacred Yamuna Ghats" data-index="3">
-        <img class="hero-media" src="./assets/packages/mathura.webp" alt="Sacred Ghats and Temples of Mathura and Vrindavan" loading="lazy" onerror="this.style.display='none'" />
-        <span class="bento-tile-tag">Sacred Yamuna Ghats</span>
-      </div>
-      <div class="bento-slide" data-caption="Prem Mandir · Vrindavan" data-index="4">
-        <img class="hero-media" src="./assets/destinations/vrindavan-prem-mandir.webp" alt="Illuminated Prem Mandir temple in Vrindavan, Mathura" loading="lazy" onerror="this.style.display='none'" />
-        <span class="bento-tile-tag">Vrindavan</span>
-      </div>
-      <div class="bento-slide" data-caption="Manali & Solang · Himachal Hills" data-index="10">
-        <img class="hero-media" src="./assets/destinations/himachal-manali.webp" alt="Snow-capped peaks and Solang Valley in Manali, Himachal" loading="lazy" onerror="this.style.display='none'" />
-        <span class="bento-tile-tag">Himachal Hills</span>
-      </div>
-      <div class="bento-slide" data-caption="The Ridge · Shimla Hills" data-index="11">
-        <img class="hero-media" src="./assets/destinations/himachal-shimla.webp" alt="The Ridge and Christ Church in Shimla, Himachal Pradesh" loading="lazy" onerror="this.style.display='none'" />
-        <span class="bento-tile-tag">Shimla Hills</span>
-      </div>
+    <div class="hero-slide" data-caption="Fatehpur Sikri · Buland Darwaza" data-index="2">
+      <img class="hero-media" src="./assets/destinations/fatehpur-sikri.webp" alt="Buland Darwaza at Fatehpur Sikri near Agra" loading="lazy" onerror="this.style.display='none'" />
+    </div>
+    <div class="hero-slide" data-caption="Mathura · Sacred Yamuna Ghats" data-index="3">
+      <img class="hero-media" src="./assets/packages/mathura.webp" alt="Sacred Ghats and Temples of Mathura and Vrindavan" loading="lazy" onerror="this.style.display='none'" />
+    </div>
+    <div class="hero-slide" data-caption="Prem Mandir · Vrindavan" data-index="4">
+      <img class="hero-media" src="./assets/destinations/vrindavan-prem-mandir.webp" alt="Illuminated Prem Mandir temple in Vrindavan, Mathura" loading="lazy" onerror="this.style.display='none'" />
+    </div>
+    <div class="hero-slide" data-caption="India Gate · New Delhi" data-index="5">
+      <img class="hero-media" src="./assets/destinations/delhi-india-gate.webp" alt="India Gate memorial boulevard in New Delhi" loading="lazy" onerror="this.style.display='none'" />
+    </div>
+    <div class="hero-slide" data-caption="Red Fort · Old Delhi" data-index="6">
+      <img class="hero-media" src="./assets/destinations/delhi-red-fort.webp" alt="Historic Red Fort Lal Qila in Old Delhi" loading="lazy" onerror="this.style.display='none'" />
+    </div>
+    <div class="hero-slide" data-caption="Hawa Mahal · Pink City Jaipur" data-index="7">
+      <img class="hero-media" src="./assets/destinations/jaipur-hawa-mahal.webp" alt="Intricate pink sandstone Hawa Mahal in Jaipur" loading="lazy" onerror="this.style.display='none'" />
+    </div>
+    <div class="hero-slide" data-caption="Amber Palace · Golden Triangle" data-index="8">
+      <img class="hero-media" src="./assets/packages/golden-triangle.webp" alt="Historic Amber Palace Fort in Jaipur" loading="lazy" onerror="this.style.display='none'" />
+    </div>
+    <div class="hero-slide" data-caption="Akshardham Temple · New Delhi" data-index="9">
+      <img class="hero-media" src="./assets/images/akshardham.webp" alt="Akshardham Temple architecture in New Delhi" loading="lazy" onerror="this.style.display='none'" />
+    </div>
+    <div class="hero-slide" data-caption="Manali & Solang · Himachal Hills" data-index="10">
+      <img class="hero-media" src="./assets/destinations/himachal-manali.webp" alt="Snow-capped peaks and Solang Valley in Manali, Himachal" loading="lazy" onerror="this.style.display='none'" />
+    </div>
+    <div class="hero-slide" data-caption="The Ridge · Shimla Hills" data-index="11">
+      <img class="hero-media" src="./assets/destinations/himachal-shimla.webp" alt="The Ridge and Christ Church in Shimla, Himachal Pradesh" loading="lazy" onerror="this.style.display='none'" />
     </div>
   </div>
   <div class="hero-overlay"></div>
   <div class="hero-location-badge" id="hero-location-badge" aria-live="polite">
     <span class="hero-location-dot"></span>
     <span class="hero-location-text">Taj Mahal · Dawn in Agra</span>
+  </div>
+  <div class="hero-slide-nav" id="hero-slide-nav" aria-label="Hero background slides">
+    <button type="button" class="hero-slide-dot is-active" data-index="0" aria-label="Slide 1: Taj Mahal · Dawn in Agra"></button>
+    <button type="button" class="hero-slide-dot" data-index="1" aria-label="Slide 2: Agra Fort · Mughal Heritage"></button>
+    <button type="button" class="hero-slide-dot" data-index="2" aria-label="Slide 3: Fatehpur Sikri · Buland Darwaza"></button>
+    <button type="button" class="hero-slide-dot" data-index="3" aria-label="Slide 4: Mathura · Sacred Yamuna Ghats"></button>
+    <button type="button" class="hero-slide-dot" data-index="4" aria-label="Slide 5: Prem Mandir · Vrindavan"></button>
+    <button type="button" class="hero-slide-dot" data-index="5" aria-label="Slide 6: India Gate · New Delhi"></button>
+    <button type="button" class="hero-slide-dot" data-index="6" aria-label="Slide 7: Red Fort · Old Delhi"></button>
+    <button type="button" class="hero-slide-dot" data-index="7" aria-label="Slide 8: Hawa Mahal · Pink City Jaipur"></button>
+    <button type="button" class="hero-slide-dot" data-index="8" aria-label="Slide 9: Amber Palace · Golden Triangle"></button>
+    <button type="button" class="hero-slide-dot" data-index="9" aria-label="Slide 10: Akshardham Temple · New Delhi"></button>
+    <button type="button" class="hero-slide-dot" data-index="10" aria-label="Slide 11: Manali & Solang · Himachal Hills"></button>
+    <button type="button" class="hero-slide-dot" data-index="11" aria-label="Slide 12: The Ridge · Shimla Hills"></button>
   </div>
   <div class="container hero-copy">
     <p class="eyebrow eyebrow--light">Home · Agra, India</p>
@@ -361,11 +357,7 @@
     <button class="btn-primary" type="submit">Check fare <span>↗</span></button>
   </form>
 </section>
-<div class="interactive-grid-section" id="interactive-routes-grid">
-  <div class="interactive-grid-bg" aria-hidden="true">
-    <div class="interactive-grid-lines"></div>
-    <div class="interactive-grid-spotlight"></div>
-    <canvas class="interactive-grid-canvas"></canvas>
+<div class="trust-roller-section" style="position:relative;z-index:2;background:var(--bg-alt);border-bottom:1px solid var(--border);padding:18px 0 22px;">
   <div class="trust-roller-wrap reveal-on-scroll" aria-label="Key Trust Credentials">
     <div class="trust-roller-track">
       <div class="trust-roller-group">
@@ -390,7 +382,14 @@
       </div>
     </div>
   </div>
-  <section class="section" style="position:relative;z-index:2;padding-top:16px;padding-bottom:12px;">
+</div>
+<div class="interactive-grid-section" id="interactive-routes-grid">
+  <div class="interactive-grid-bg" aria-hidden="true">
+    <div class="interactive-grid-lines"></div>
+    <div class="interactive-grid-spotlight"></div>
+    <canvas class="interactive-grid-canvas"></canvas>
+  </div>
+  <section class="section" style="position:relative;z-index:2;padding-top:24px;padding-bottom:24px;">
     <div class="container">
       <div class="section-head"><div><p class="eyebrow">Popular routes</p><h2>Know the fare<br /><i>before you pack.</i></h2></div>
       <a class="btn-text" href="./en/routes/">All routes <span>↗</span></a></div>
@@ -611,6 +610,265 @@
     </div>
   </div>
 </section>
+
+<section class="reviews-marquee-section" id="reviews-section">
+  <div class="container" style="text-align:center;margin-bottom:40px;">
+    <p class="eyebrow" style="margin-bottom:8px;">VERIFIED TRAVELER REVIEWS</p>
+    <h2 style="font-size:clamp(1.8rem, 3.2vw, 2.6rem);line-height:1.2;margin-bottom:12px;">380+ trips.<br /><i>Quiet confidence.</i></h2>
+    <p class="muted" style="max-width:580px;margin:0 auto;font-size:15px;">Real reviews from tourists, pilgrims, and business travelers across Agra, Delhi, Jaipur, and Mathura.</p>
+  </div>
+  <div class="reviews-marquee-container" aria-label="Customer reviews marquee">
+    <div class="reviews-marquee-row reviews-marquee-row--left">
+      <div class="reviews-marquee-track">        <div class="liquid-review-card">
+          <div class="liquid-review-header">
+            <img class="liquid-review-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" alt="Vikram Malhotra" loading="lazy" width="44" height="44" />
+            <div class="liquid-review-meta">
+              <span class="liquid-review-name">Vikram Malhotra</span>
+              <span class="liquid-review-role">Delhi to Agra Roundtrip</span>
+            </div>
+          </div>
+          <p class="liquid-review-content">"Sedan arrived 15 mins early at Delhi T3. Transparent ₹3,500 fare with all tolls included. Best taxi service in Agra!"</p>
+          <div class="liquid-review-footer">
+            <div class="liquid-review-stars" aria-label="5 out of 5 stars">
+              <svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <span class="liquid-review-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg> Verified</span>
+          </div>
+        </div>        <div class="liquid-review-card">
+          <div class="liquid-review-header">
+            <img class="liquid-review-avatar" src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80" alt="Elena Rostova" loading="lazy" width="44" height="44" />
+            <div class="liquid-review-meta">
+              <span class="liquid-review-name">Elena Rostova</span>
+              <span class="liquid-review-role">International Tourist</span>
+            </div>
+          </div>
+          <p class="liquid-review-content">"Spotless Innova Crysta with courteous English-speaking chauffeur. Taj sunrise tour was completely hassle-free."</p>
+          <div class="liquid-review-footer">
+            <div class="liquid-review-stars" aria-label="5 out of 5 stars">
+              <svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <span class="liquid-review-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg> Verified</span>
+          </div>
+        </div>        <div class="liquid-review-card">
+          <div class="liquid-review-header">
+            <img class="liquid-review-avatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80" alt="Rajesh & Sunita Sharma" loading="lazy" width="44" height="44" />
+            <div class="liquid-review-meta">
+              <span class="liquid-review-name">Rajesh & Sunita Sharma</span>
+              <span class="liquid-review-role">Mathura-Vrindavan Pilgrimage</span>
+            </div>
+          </div>
+          <p class="liquid-review-content">"Booked Tempo Traveller for 12 family members. Punctual, safe driving along Yamuna Expressway and patient temple stops."</p>
+          <div class="liquid-review-footer">
+            <div class="liquid-review-stars" aria-label="5 out of 5 stars">
+              <svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <span class="liquid-review-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg> Verified</span>
+          </div>
+        </div>        <div class="liquid-review-card">
+          <div class="liquid-review-header">
+            <img class="liquid-review-avatar" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80" alt="David Miller" loading="lazy" width="44" height="44" />
+            <div class="liquid-review-meta">
+              <span class="liquid-review-name">David Miller</span>
+              <span class="liquid-review-role">Golden Triangle Traveler</span>
+            </div>
+          </div>
+          <p class="liquid-review-content">"Reliable dispatch via WhatsApp, verified driver, no commission shop traps. Pure hospitality and transparent pricing."</p>
+          <div class="liquid-review-footer">
+            <div class="liquid-review-stars" aria-label="5 out of 5 stars">
+              <svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <span class="liquid-review-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg> Verified</span>
+          </div>
+        </div></div>
+      <div class="reviews-marquee-track" aria-hidden="true">        <div class="liquid-review-card">
+          <div class="liquid-review-header">
+            <img class="liquid-review-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" alt="Vikram Malhotra" loading="lazy" width="44" height="44" />
+            <div class="liquid-review-meta">
+              <span class="liquid-review-name">Vikram Malhotra</span>
+              <span class="liquid-review-role">Delhi to Agra Roundtrip</span>
+            </div>
+          </div>
+          <p class="liquid-review-content">"Sedan arrived 15 mins early at Delhi T3. Transparent ₹3,500 fare with all tolls included. Best taxi service in Agra!"</p>
+          <div class="liquid-review-footer">
+            <div class="liquid-review-stars" aria-label="5 out of 5 stars">
+              <svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <span class="liquid-review-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg> Verified</span>
+          </div>
+        </div>        <div class="liquid-review-card">
+          <div class="liquid-review-header">
+            <img class="liquid-review-avatar" src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80" alt="Elena Rostova" loading="lazy" width="44" height="44" />
+            <div class="liquid-review-meta">
+              <span class="liquid-review-name">Elena Rostova</span>
+              <span class="liquid-review-role">International Tourist</span>
+            </div>
+          </div>
+          <p class="liquid-review-content">"Spotless Innova Crysta with courteous English-speaking chauffeur. Taj sunrise tour was completely hassle-free."</p>
+          <div class="liquid-review-footer">
+            <div class="liquid-review-stars" aria-label="5 out of 5 stars">
+              <svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <span class="liquid-review-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg> Verified</span>
+          </div>
+        </div>        <div class="liquid-review-card">
+          <div class="liquid-review-header">
+            <img class="liquid-review-avatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80" alt="Rajesh & Sunita Sharma" loading="lazy" width="44" height="44" />
+            <div class="liquid-review-meta">
+              <span class="liquid-review-name">Rajesh & Sunita Sharma</span>
+              <span class="liquid-review-role">Mathura-Vrindavan Pilgrimage</span>
+            </div>
+          </div>
+          <p class="liquid-review-content">"Booked Tempo Traveller for 12 family members. Punctual, safe driving along Yamuna Expressway and patient temple stops."</p>
+          <div class="liquid-review-footer">
+            <div class="liquid-review-stars" aria-label="5 out of 5 stars">
+              <svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <span class="liquid-review-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg> Verified</span>
+          </div>
+        </div>        <div class="liquid-review-card">
+          <div class="liquid-review-header">
+            <img class="liquid-review-avatar" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80" alt="David Miller" loading="lazy" width="44" height="44" />
+            <div class="liquid-review-meta">
+              <span class="liquid-review-name">David Miller</span>
+              <span class="liquid-review-role">Golden Triangle Traveler</span>
+            </div>
+          </div>
+          <p class="liquid-review-content">"Reliable dispatch via WhatsApp, verified driver, no commission shop traps. Pure hospitality and transparent pricing."</p>
+          <div class="liquid-review-footer">
+            <div class="liquid-review-stars" aria-label="5 out of 5 stars">
+              <svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <span class="liquid-review-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg> Verified</span>
+          </div>
+        </div></div>
+    </div>
+    <div class="reviews-marquee-row reviews-marquee-row--right">
+      <div class="reviews-marquee-track">        <div class="liquid-review-card">
+          <div class="liquid-review-header">
+            <img class="liquid-review-avatar" src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80" alt="Ananya Singhal" loading="lazy" width="44" height="44" />
+            <div class="liquid-review-meta">
+              <span class="liquid-review-name">Ananya Singhal</span>
+              <span class="liquid-review-role">Corporate Travel Manager</span>
+            </div>
+          </div>
+          <p class="liquid-review-content">"Regular vendor for our executives visiting Agra. Official GST invoices delivered instantly with pristine fleet."</p>
+          <div class="liquid-review-footer">
+            <div class="liquid-review-stars" aria-label="5 out of 5 stars">
+              <svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <span class="liquid-review-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg> Verified</span>
+          </div>
+        </div>        <div class="liquid-review-card">
+          <div class="liquid-review-header">
+            <img class="liquid-review-avatar" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80" alt="Marcus Vance" loading="lazy" width="44" height="44" />
+            <div class="liquid-review-meta">
+              <span class="liquid-review-name">Marcus Vance</span>
+              <span class="liquid-review-role">Photographer & Explorer</span>
+            </div>
+          </div>
+          <p class="liquid-review-content">"Driver knew optimal timing for Mehtab Bagh sunset and Fatehpur Sikri lighting. Exceptional experience!"</p>
+          <div class="liquid-review-footer">
+            <div class="liquid-review-stars" aria-label="5 out of 5 stars">
+              <svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <span class="liquid-review-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg> Verified</span>
+          </div>
+        </div>        <div class="liquid-review-card">
+          <div class="liquid-review-header">
+            <img class="liquid-review-avatar" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80" alt="Priya Nair" loading="lazy" width="44" height="44" />
+            <div class="liquid-review-meta">
+              <span class="liquid-review-name">Priya Nair</span>
+              <span class="liquid-review-role">Jaipur to Agra Route</span>
+            </div>
+          </div>
+          <p class="liquid-review-content">"Comfortable outstation cab with baby seat accommodated. Driver was attentive and polite throughout the 5-hour drive."</p>
+          <div class="liquid-review-footer">
+            <div class="liquid-review-stars" aria-label="5 out of 5 stars">
+              <svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <span class="liquid-review-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg> Verified</span>
+          </div>
+        </div>        <div class="liquid-review-card">
+          <div class="liquid-review-header">
+            <img class="liquid-review-avatar" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&auto=format&fit=crop&q=80" alt="Dr. Arvind Gupta" loading="lazy" width="44" height="44" />
+            <div class="liquid-review-meta">
+              <span class="liquid-review-name">Dr. Arvind Gupta</span>
+              <span class="liquid-review-role">Senior Citizen Pilgrimage</span>
+            </div>
+          </div>
+          <p class="liquid-review-content">"Special care given to elderly parents at Agra Cantt station. AC was comfortable and driving was very gentle."</p>
+          <div class="liquid-review-footer">
+            <div class="liquid-review-stars" aria-label="5 out of 5 stars">
+              <svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <span class="liquid-review-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg> Verified</span>
+          </div>
+        </div></div>
+      <div class="reviews-marquee-track" aria-hidden="true">        <div class="liquid-review-card">
+          <div class="liquid-review-header">
+            <img class="liquid-review-avatar" src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80" alt="Ananya Singhal" loading="lazy" width="44" height="44" />
+            <div class="liquid-review-meta">
+              <span class="liquid-review-name">Ananya Singhal</span>
+              <span class="liquid-review-role">Corporate Travel Manager</span>
+            </div>
+          </div>
+          <p class="liquid-review-content">"Regular vendor for our executives visiting Agra. Official GST invoices delivered instantly with pristine fleet."</p>
+          <div class="liquid-review-footer">
+            <div class="liquid-review-stars" aria-label="5 out of 5 stars">
+              <svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <span class="liquid-review-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg> Verified</span>
+          </div>
+        </div>        <div class="liquid-review-card">
+          <div class="liquid-review-header">
+            <img class="liquid-review-avatar" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80" alt="Marcus Vance" loading="lazy" width="44" height="44" />
+            <div class="liquid-review-meta">
+              <span class="liquid-review-name">Marcus Vance</span>
+              <span class="liquid-review-role">Photographer & Explorer</span>
+            </div>
+          </div>
+          <p class="liquid-review-content">"Driver knew optimal timing for Mehtab Bagh sunset and Fatehpur Sikri lighting. Exceptional experience!"</p>
+          <div class="liquid-review-footer">
+            <div class="liquid-review-stars" aria-label="5 out of 5 stars">
+              <svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <span class="liquid-review-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg> Verified</span>
+          </div>
+        </div>        <div class="liquid-review-card">
+          <div class="liquid-review-header">
+            <img class="liquid-review-avatar" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80" alt="Priya Nair" loading="lazy" width="44" height="44" />
+            <div class="liquid-review-meta">
+              <span class="liquid-review-name">Priya Nair</span>
+              <span class="liquid-review-role">Jaipur to Agra Route</span>
+            </div>
+          </div>
+          <p class="liquid-review-content">"Comfortable outstation cab with baby seat accommodated. Driver was attentive and polite throughout the 5-hour drive."</p>
+          <div class="liquid-review-footer">
+            <div class="liquid-review-stars" aria-label="5 out of 5 stars">
+              <svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <span class="liquid-review-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg> Verified</span>
+          </div>
+        </div>        <div class="liquid-review-card">
+          <div class="liquid-review-header">
+            <img class="liquid-review-avatar" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&auto=format&fit=crop&q=80" alt="Dr. Arvind Gupta" loading="lazy" width="44" height="44" />
+            <div class="liquid-review-meta">
+              <span class="liquid-review-name">Dr. Arvind Gupta</span>
+              <span class="liquid-review-role">Senior Citizen Pilgrimage</span>
+            </div>
+          </div>
+          <p class="liquid-review-content">"Special care given to elderly parents at Agra Cantt station. AC was comfortable and driving was very gentle."</p>
+          <div class="liquid-review-footer">
+            <div class="liquid-review-stars" aria-label="5 out of 5 stars">
+              <svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="liquid-review-star" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <span class="liquid-review-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg> Verified</span>
+          </div>
+        </div></div>
+    </div>
+  </div>
+</section>
+
 <section class="section section--paper" id="contact-section">
   <div class="container">
     <div class="section-head" style="margin-bottom:2.25rem">

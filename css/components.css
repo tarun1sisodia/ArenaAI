@@ -1647,17 +1647,17 @@ figure.portrait img {
   inset: -2px;
   background-size: 44px 44px;
   background-image: 
-    linear-gradient(to right, rgba(18, 20, 22, 0.048) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(18, 20, 22, 0.048) 1px, transparent 1px);
-  -webkit-mask-image: radial-gradient(ellipse 92% 85% at 50% 50%, #000 50%, transparent 98%);
-  mask-image: radial-gradient(ellipse 92% 85% at 50% 50%, #000 50%, transparent 98%);
+    linear-gradient(to right, rgba(18, 20, 22, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(18, 20, 22, 0.08) 1px, transparent 1px);
+  -webkit-mask-image: radial-gradient(ellipse 95% 90% at 50% 50%, #000 65%, transparent 100%);
+  mask-image: radial-gradient(ellipse 95% 90% at 50% 50%, #000 65%, transparent 100%);
 }
 
 [data-theme="dark"] .interactive-grid-lines,
 .dark .interactive-grid-lines {
   background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.065) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.065) 1px, transparent 1px);
+    linear-gradient(to right, rgba(255, 255, 255, 0.09) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.09) 1px, transparent 1px);
 }
 
 /* Dynamic cursor-following spotlight */
@@ -1666,12 +1666,21 @@ figure.portrait img {
   inset: 0;
   background: radial-gradient(
     560px circle at var(--grid-mouse-x, 50%) var(--grid-mouse-y, 50%),
-    rgba(217, 148, 59, 0.14),
+    rgba(229, 160, 68, 0.2),
     transparent 65%
   );
   opacity: 0;
   transition: opacity 0.3s ease;
   pointer-events: none;
+}
+
+[data-theme="dark"] .interactive-grid-spotlight,
+.dark .interactive-grid-spotlight {
+  background: radial-gradient(
+    560px circle at var(--grid-mouse-x, 50%) var(--grid-mouse-y, 50%),
+    rgba(247, 96, 2, 0.25),
+    transparent 65%
+  );
 }
 
 [data-theme="dark"] .interactive-grid-spotlight,
@@ -2551,13 +2560,19 @@ html.dark .cinematic-puck-icon.moon {
 /* --------------------------------------------------------------------------
    TRUST ROLLER (Infinite Smooth Marquee with SEO & Rich Icons)
    -------------------------------------------------------------------------- */
+.trust-roller-section {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
 .trust-roller-wrap {
   position: relative;
   width: 100%;
   overflow: hidden;
-  padding: 16px 0 28px;
-  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
-  -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  padding: 16px 0;
+  mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
   z-index: 2;
 }
 
@@ -2595,15 +2610,15 @@ html.dark .cinematic-puck-icon.moon {
   gap: 9px;
   padding: 8px 18px;
   border-radius: var(--radius-pill, 999px);
-  background: var(--surface, #242220);
-  border: 1px solid var(--border, rgba(255, 255, 255, 0.12));
-  color: var(--text, #FDFCFB);
+  background: var(--surface, #FFFFFF);
+  border: 1px solid var(--border, rgba(0, 0, 0, 0.09));
+  color: var(--text, #1A1D20);
   font-family: var(--font-mono, monospace);
   font-size: 0.74rem;
-  font-weight: 500;
-  letter-spacing: 0.06em;
+  font-weight: 600;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.14);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
   white-space: nowrap;
   transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
               border-color 0.22s ease,
@@ -2612,10 +2627,24 @@ html.dark .cinematic-puck-icon.moon {
   cursor: default;
 }
 
+[data-theme="dark"] .chip--trust,
+.dark .chip--trust {
+  background: var(--surface, #242220);
+  border-color: var(--border, rgba(255, 255, 255, 0.12));
+  color: var(--text, #FDFCFB);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+}
+
 .chip--trust:hover {
   transform: translateY(-2px) scale(1.02);
+  border-color: var(--gold, #E5A044);
+  box-shadow: 0 6px 18px rgba(229, 160, 68, 0.25);
+  background: var(--bg-alt, #F8F9FA);
+}
+
+[data-theme="dark"] .chip--trust:hover,
+.dark .chip--trust:hover {
   border-color: var(--gold, #F76002);
-  box-shadow: 0 6px 18px rgba(247, 96, 2, 0.25);
   background: var(--bg-alt, #201E1D);
 }
 
@@ -3208,5 +3237,233 @@ html.dark .cinematic-puck-icon.moon {
     left: auto !important;
     top: auto !important;
     opacity: 1 !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   LIQUID GLASS REVIEWS 2-ROW MARQUEE (Dual-Direction Infinite Smooth Scroll)
+   -------------------------------------------------------------------------- */
+.reviews-marquee-section {
+  position: relative;
+  overflow: hidden;
+  padding: 88px 0 96px;
+  background: var(--bg-alt, #F8F9FA);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+[data-theme="dark"] .reviews-marquee-section,
+html.dark .reviews-marquee-section {
+  background: #151312;
+}
+
+.reviews-marquee-container {
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+  padding: 10px 0;
+}
+
+.reviews-marquee-row {
+  display: flex;
+  width: max-content;
+  gap: 20px;
+  will-change: transform;
+}
+
+.reviews-marquee-row--left {
+  animation: reviews-scroll-left 52s linear infinite;
+}
+
+.reviews-marquee-row--right {
+  animation: reviews-scroll-right 56s linear infinite;
+}
+
+.reviews-marquee-row:hover {
+  animation-play-state: paused;
+}
+
+.reviews-marquee-track {
+  display: flex;
+  align-items: stretch;
+  gap: 20px;
+  flex-shrink: 0;
+}
+
+@keyframes reviews-scroll-left {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(calc(-50% - 10px)); }
+}
+
+@keyframes reviews-scroll-right {
+  0% { transform: translateX(calc(-50% - 10px)); }
+  100% { transform: translateX(0); }
+}
+
+/* Liquid Glass Review Card */
+.liquid-review-card {
+  position: relative;
+  width: 340px;
+  min-width: 340px;
+  max-width: 340px;
+  padding: 24px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04), 
+              inset 0 1px 1px rgba(255, 255, 255, 0.8);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.28s ease,
+              border-color 0.28s ease;
+  user-select: none;
+}
+
+[data-theme="dark"] .liquid-review-card,
+html.dark .liquid-review-card {
+  background: rgba(36, 34, 32, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.45),
+              inset 0 1px 1px rgba(255, 255, 255, 0.12);
+  color: #FDFCFB;
+}
+
+.liquid-review-card:hover {
+  transform: translateY(-4px) scale(1.015);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.08),
+              0 0 0 1px var(--gold-border, rgba(229, 160, 68, 0.35));
+}
+
+[data-theme="dark"] .liquid-review-card:hover,
+html.dark .liquid-review-card:hover {
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.55),
+              0 0 0 1px var(--gold-border, rgba(247, 96, 2, 0.35));
+}
+
+.liquid-review-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.liquid-review-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 2px solid var(--gold, #E5A044);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.liquid-review-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.liquid-review-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text, #1A1D20);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+[data-theme="dark"] .liquid-review-name,
+html.dark .liquid-review-name {
+  color: #FDFCFB;
+}
+
+.liquid-review-role {
+  font-size: 0.76rem;
+  color: var(--text-soft, #555B62);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+[data-theme="dark"] .liquid-review-role,
+html.dark .liquid-review-role {
+  color: #B5AFA9;
+}
+
+.liquid-review-content {
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--text, #1A1D20);
+  opacity: 0.92;
+  margin: 0;
+}
+
+[data-theme="dark"] .liquid-review-content,
+html.dark .liquid-review-content {
+  color: #EAE6E1;
+}
+
+.liquid-review-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+  border-top: 1px solid var(--border, rgba(0, 0, 0, 0.08));
+}
+
+.liquid-review-stars {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.liquid-review-star {
+  width: 14px;
+  height: 14px;
+  fill: #E5A044;
+  color: #E5A044;
+}
+
+[data-theme="dark"] .liquid-review-star,
+html.dark .liquid-review-star {
+  fill: #F76002;
+  color: #F76002;
+}
+
+.liquid-review-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  font-family: var(--font-mono, monospace);
+  font-weight: 600;
+  color: var(--gold-text, #8A5A17);
+  background: var(--gold-wash, #FDF7ED);
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--gold-border, rgba(229, 160, 68, 0.28));
+}
+
+[data-theme="dark"] .liquid-review-badge,
+html.dark .liquid-review-badge {
+  color: #FF8533;
+  background: rgba(247, 96, 2, 0.12);
+  border-color: rgba(247, 96, 2, 0.3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reviews-marquee-row--left,
+  .reviews-marquee-row--right {
+    animation: none !important;
+    overflow-x: auto;
   }
 }

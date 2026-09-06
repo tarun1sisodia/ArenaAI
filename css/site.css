@@ -13,7 +13,7 @@ body {
   margin: 0;
   min-width: 320px;
   overflow-wrap: break-word;
-  color: var(--navy);
+  color: var(--text);
   background: var(--paper);
   font-family: var(--sans);
   font-size: 16px;
@@ -262,12 +262,13 @@ h3 i,
 
 .btn-outline {
   border: 1px solid var(--line);
-  color: var(--navy);
+  color: var(--text);
   background: transparent;
 }
 
 .btn-outline:hover {
-  border-color: var(--navy);
+  border-color: var(--gold);
+  color: var(--gold);
   transform: translateY(-2px);
   box-shadow: var(--shadow-lift);
 }
@@ -282,7 +283,7 @@ h3 i,
   padding: 0 0 6px;
   border-radius: 0;
   border-bottom: 1px solid var(--coral);
-  color: var(--navy);
+  color: var(--text);
   background: transparent;
 }
 
@@ -776,9 +777,9 @@ body[data-page="book"] .lead-bar {
   display: inline-flex;
   align-items: center;
   padding: 7px 12px;
-  border: 1px solid rgba(16, 33, 45, 0.28);
+  border: 1px solid var(--border, rgba(16, 33, 45, 0.28));
   border-radius: var(--radius-pill);
-  color: var(--navy);
+  color: var(--text);
   font-family: var(--mono);
   font-size: 10px;
   font-weight: 500;
@@ -939,7 +940,7 @@ body[data-page="book"] .lead-bar {
 
 .route-card .fare {
   font-size: 28px;
-  color: var(--navy);
+  color: var(--text);
 }
 
 .route-card .fare small {
@@ -1149,12 +1150,20 @@ body[data-page="book"] .lead-bar {
   width: 100%;
   min-height: 44px;
   padding: 10px 12px;
-  border: 1px solid rgba(16, 33, 45, 0.15);
+  border: 1px solid var(--border, rgba(16, 33, 45, 0.15));
   border-radius: 2px;
   outline: 0;
-  color: var(--navy);
-  background: var(--white);
+  color: var(--text);
+  background: var(--surface, #FFFFFF);
   transition: border var(--ease), box-shadow var(--ease);
+}
+
+.field input::placeholder,
+.field select::placeholder,
+.field textarea::placeholder,
+.input::placeholder {
+  color: var(--text-soft);
+  opacity: 0.65;
 }
 
 .field textarea {
@@ -1225,7 +1234,7 @@ table.data td {
 
 table.data td:first-child,
 table.data strong {
-  color: var(--navy);
+  color: var(--text);
   font-weight: 600;
 }
 
@@ -1413,7 +1422,7 @@ table.data tbody tr.is-active {
 }
 
 .stepper button.is-current {
-  color: var(--navy);
+  color: var(--text);
 }
 
 .panel {
