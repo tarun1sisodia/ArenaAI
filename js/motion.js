@@ -485,6 +485,23 @@
       }
     }
 
+    // RADIAL QUICK DOCK (.about) TOUCH/CLICK HANDLER
+    var aboutDock = document.querySelector('.about');
+    if (aboutDock) {
+      var dockTrigger = aboutDock.querySelector('.logo');
+      if (dockTrigger) {
+        dockTrigger.addEventListener('click', function (e) {
+          e.preventDefault();
+          aboutDock.classList.toggle('is-open');
+        });
+      }
+      document.addEventListener('click', function (e) {
+        if (!aboutDock.contains(e.target)) {
+          aboutDock.classList.remove('is-open');
+        }
+      });
+    }
+
     initHeroSlideshow();
   });
 })();

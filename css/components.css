@@ -84,78 +84,308 @@
 }
 
 /* --------------------------------------------------------------------------
-   3. ROLLING TEXT NAVIGATION LINKS (Header Nav)
+   3. NAVIGATION LINKS & TEXT HOVER FILL (.roll, .roll-link, .text)
    -------------------------------------------------------------------------- */
+.text,
 .roll,
 .roll-link {
   position: relative;
   display: inline-flex;
-  height: var(--touch, 44px);
   align-items: center;
-  font-weight: 500;
-  color: var(--text-soft, #4A5578);
+  justify-content: center;
+  padding: 6px 14px;
+  border: 1.5px solid transparent;
+  border-radius: 6px;
   overflow: hidden;
   text-decoration: none;
-  padding: 0 0.25rem;
+  background: transparent;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+  cursor: pointer;
 }
 
-.roll:hover,
-.roll:focus-visible,
-.roll-link:hover,
-.roll-link:focus-visible {
-  color: var(--text, #1A1D20);
-}
-
-.roll span:first-child,
-.roll-inner {
-  display: inline-block;
-  transition: transform var(--motion-medium, 400ms) var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1));
-}
-
-.roll span:last-child,
-.roll-duplicate {
+.text::before,
+.roll::before,
+.roll-link::before {
+  content: "";
   position: absolute;
-  left: 0.25rem;
-  top: 100%;
-  display: inline-block;
-  color: var(--gold, #B8941F);
-  transition: transform var(--motion-medium, 400ms) var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1));
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 0%;
+  background-color: var(--gold, #D9943B);
+  z-index: 1;
+  transition: height 0.45s 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
 }
 
-.roll:hover span:first-child,
-.roll:focus-visible span:first-child,
-.roll-link:hover .roll-inner,
-.roll-link:focus-visible .roll-inner {
-  transform: translateY(-100%);
+.text:hover::before,
+.text:focus-visible::before,
+.roll:hover::before,
+.roll:focus-visible::before,
+.roll-link:hover::before,
+.roll-link:focus-visible::before {
+  height: 100%;
 }
 
-.roll:hover span:last-child,
-.roll:focus-visible span:last-child,
-.roll-link:hover .roll-duplicate,
-.roll-link:focus-visible .roll-duplicate {
-  transform: translateY(-100%);
-}
-
+.text::after,
 .roll::after,
 .roll-link::after {
-  content: '';
+  content: "";
   position: absolute;
-  bottom: 8px;
   left: 0;
+  top: 0;
   width: 100%;
-  height: 2px;
-  background: var(--gold, #B8941F);
-  transform: scaleX(0);
-  transform-origin: right;
-  transition: transform var(--motion-medium, 400ms) var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1));
+  height: 0%;
+  background-color: rgba(255, 255, 255, 0.16);
+  z-index: 0;
+  transition: height 0.45s 0.02s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
 }
 
+.text:hover::after,
+.text:focus-visible::after,
 .roll:hover::after,
 .roll:focus-visible::after,
 .roll-link:hover::after,
 .roll-link:focus-visible::after {
-  transform: scaleX(1);
-  transform-origin: left;
+  height: 100%;
+}
+
+.text h1,
+.text .text-fill,
+.roll-link .text-fill,
+.roll .text-fill,
+.roll span:first-child,
+.roll-inner {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  padding: 0;
+  color: var(--text-soft, #D8D2C5);
+  background-clip: text;
+  -webkit-background-clip: text;
+  text-fill-color: transparent;
+  -webkit-text-fill-color: transparent;
+  background-image: linear-gradient(transparent 50%, #ffffff 50%);
+  -webkit-text-stroke: 1px var(--text-soft, #D8D2C5);
+  background-size: 100% 200%;
+  background-position: top;
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+  transition: background-position 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+              -webkit-text-stroke-color 0.3s ease,
+              color 0.3s ease;
+}
+
+.text:hover,
+.text:focus-visible,
+.roll-link:hover,
+.roll-link:focus-visible {
+  border-color: rgba(217, 148, 59, 0.45);
+}
+
+.text:hover h1,
+.text:hover .text-fill,
+.text:focus-visible h1,
+.text:focus-visible .text-fill,
+.roll-link:hover .text-fill,
+.roll-link:focus-visible .text-fill,
+.roll:hover span:first-child,
+.roll-link:hover .roll-inner {
+  background-position: bottom;
+  -webkit-text-stroke: 1px #ffffff;
+  color: #ffffff;
+}
+
+/* --------------------------------------------------------------------------
+   RADIAL QUICK NAVIGATION DOCK (.about)
+   -------------------------------------------------------------------------- */
+.about {
+  --cubic: cubic-bezier(0.64, 0.01, 0.07, 1.65);
+  --transition: 0.6s var(--cubic);
+  --size: 46px;
+  position: fixed;
+  z-index: 990;
+  bottom: 24px;
+  right: 24px;
+  width: var(--size);
+  height: var(--size);
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  transition: all 0.25s ease;
+  pointer-events: auto;
+}
+
+@media (max-width: 768px) {
+  .about {
+    bottom: 76px;
+    right: 16px;
+  }
+}
+
+.about .bg_links {
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(18, 20, 22, 0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(217, 148, 59, 0.35);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  position: absolute;
+  text-decoration: none;
+  color: #FAF7F0;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+/* Center trigger button */
+.about .logo {
+  width: var(--size);
+  height: var(--size);
+  z-index: 9;
+  background: linear-gradient(135deg, var(--gold, #D9943B) 0%, #B87A24 100%);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 0 16px rgba(217, 148, 59, 0.5), 0 4px 12px rgba(0, 0, 0, 0.4);
+  opacity: 1;
+  bottom: 0;
+  right: 0;
+  transition: transform 0.4s var(--cubic), box-shadow 0.3s ease;
+}
+
+.about .logo .icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #121416;
+  transition: transform 0.4s var(--cubic);
+}
+
+.about:hover .logo,
+.about:focus-within .logo,
+.about.is-open .logo {
+  transform: rotate(45deg);
+  box-shadow: 0 0 22px rgba(217, 148, 59, 0.7), 0 6px 16px rgba(0, 0, 0, 0.5);
+}
+
+.about .social {
+  opacity: 0;
+  pointer-events: none;
+  right: 0;
+  bottom: 0;
+  transition: all 0.25s ease;
+}
+
+.about .social .icon {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease, background-color 0.4s ease;
+  opacity: 0;
+  border-radius: 50%;
+  color: #FAF7F0;
+}
+
+.about .social.portfolio {
+  transition: all 0.8s ease;
+}
+
+.about .social.dribbble {
+  transition: all 0.3s ease;
+}
+
+.about .social.linkedin {
+  transition: all 0.8s ease;
+}
+
+.about .social.booking {
+  transition: all 0.5s ease;
+}
+
+/* Hover & Focus-Within expansion */
+.about:hover,
+.about:focus-within,
+.about.is-open {
+  width: 140px;
+  height: 140px;
+  transition: all var(--transition);
+}
+
+.about:hover .social,
+.about:focus-within .social,
+.about.is-open .social {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.about:hover .social .icon,
+.about:focus-within .social .icon,
+.about.is-open .social .icon {
+  opacity: 1;
+}
+
+.about .social:hover {
+  transform: scale(1.12);
+}
+
+.about .social:hover .icon {
+  transform: scale(1.08);
+}
+
+/* Radial fan-out positioning */
+.about:hover .social.portfolio,
+.about:focus-within .social.portfolio,
+.about.is-open .social.portfolio {
+  right: 0;
+  bottom: 94px;
+  transition: all 0.35s 0s var(--cubic);
+}
+.about .social.portfolio .icon:hover {
+  background-color: var(--gold, #D9943B);
+  color: #121416;
+}
+
+.about:hover .social.dribbble,
+.about:focus-within .social.dribbble,
+.about.is-open .social.dribbble {
+  right: 48px;
+  bottom: 74px;
+  transition: all 0.35s 0.08s var(--cubic);
+}
+.about .social.dribbble .icon:hover {
+  background-color: #25D366;
+  color: #ffffff;
+}
+
+.about:hover .social.linkedin,
+.about:focus-within .social.linkedin,
+.about.is-open .social.linkedin {
+  right: 74px;
+  bottom: 48px;
+  transition: all 0.35s 0.16s var(--cubic);
+}
+.about .social.linkedin .icon:hover {
+  background-color: #3B82F6;
+  color: #ffffff;
+}
+
+.about:hover .social.booking,
+.about:focus-within .social.booking,
+.about.is-open .social.booking {
+  right: 94px;
+  bottom: 0;
+  transition: all 0.35s 0.24s var(--cubic);
+}
+.about .social.booking .icon:hover {
+  background-color: #E5A044;
+  color: #121416;
 }
 
 /* --------------------------------------------------------------------------
@@ -1818,7 +2048,15 @@ html.dark .cinematic-puck-icon.moon {
   .reveal-on-scroll,
   .hero-copy h1,
   .hero-copy .lead,
-  .hero-actions {
+  .hero-actions,
+  .about,
+  .about .social,
+  .about .logo,
+  .about .bg_links,
+  .text,
+  .text::before,
+  .text::after,
+  .text .text-fill {
     transform: none !important;
     opacity: 1 !important;
     filter: none !important;

@@ -41,6 +41,9 @@ ICON_CALL = '<span class="icon icon-call" aria-hidden="true"><svg viewBox="0 0 2
 ICON_WA = '<span class="icon icon-wa" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span>'
 ICON_EMAIL = '<span class="icon icon-email" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></span>'
 ICON_MAP = '<span class="icon icon-map" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></span>'
+ICON_COMPASS = '<span class="icon icon-compass" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg></span>'
+ICON_CAR = '<span class="icon icon-car" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg></span>'
+ICON_ACTION = '<span class="icon icon-action" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>'
 
 # Offer validity for JSON-LD: rebuilds roll this forward automatically, so the
 # schema never advertises a stale date (Google flags expired priceValidUntil).
@@ -317,7 +320,7 @@ def header(lang: str, active: str, alt_path: str):
         ("contact", t["nav_contact"]),
     ]
     links = "\n          ".join(
-        f'<a href="{hub_path(key, lang)}" data-nav="{key}" class="roll-link"><span class="roll-inner">{label}</span><span class="roll-duplicate">{label}</span></a>'
+        f'<a href="{hub_path(key, lang)}" data-nav="{key}" class="roll-link text"><span class="text-fill">{label}</span></a>'
         for key, label in nav
     )
     sheet = "\n        ".join(
@@ -408,6 +411,25 @@ def footer(lang: str):
   <a class="lead-wa" href="https://wa.me/{WHATSAPP}" target="_blank" rel="noreferrer">{ICON_WA}<span>{t["whatsapp"]}</span></a>
   <a class="lead-book" href="/book.html">{t["book_cta"]}</a>
 </div>
+<!-- about -->
+<div class="about" role="region" aria-label="Quick Actions">
+   <a class="bg_links social portfolio" href="tel:{PHONE}" aria-label="Call {PHONE_DISPLAY}" title="Call {PHONE_DISPLAY}">
+      <span class="icon">{ICON_CALL}</span>
+   </a>
+   <a class="bg_links social dribbble" href="https://wa.me/{WHATSAPP}" target="_blank" rel="noreferrer" aria-label="WhatsApp {PHONE_DISPLAY}" title="WhatsApp">
+      <span class="icon">{ICON_WA}</span>
+   </a>
+   <a class="bg_links social linkedin" href="{hub_path('packages', lang)}" aria-label="Explore Tours" title="Explore Tours">
+      <span class="icon">{ICON_COMPASS}</span>
+   </a>
+   <a class="bg_links social booking" href="/book.html" aria-label="Instant Taxi Booking" title="Instant Booking">
+      <span class="icon">{ICON_CAR}</span>
+   </a>
+   <a class="bg_links logo" href="javascript:void(0)" role="button" aria-label="Quick Navigation" tabindex="0" title="Quick Navigation">
+      <span class="icon">{ICON_ACTION}</span>
+   </a>
+</div>
+<!-- end about -->
 <div class="toast" id="toast" role="status" aria-live="polite"></div>"""
 
 

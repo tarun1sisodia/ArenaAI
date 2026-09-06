@@ -51,6 +51,7 @@ can't be resolved without user input)_
 | 2026-09-06 | Hero Scenic Destinations Crossfade Slideshow | Implemented background slideshow cycling through Taj Mahal at dawn, Agra Fort, Mathura temples, Golden Triangle, and Yamuna Expressway every 5.5s with smooth 1.6s fade in/out, Ken Burns scale drift, location badge, and dot navigation. Strict compliance with `ANIMATION_RULES.md` and reduced-motion safety. |
 | 2026-09-06 | 11 Famous Heritage & Hill Destinations (Highway removed) | Removed highway photo per user request and expanded background slideshow to 11 world-famous destinations: Taj Mahal, Agra Fort, Fatehpur Sikri, Mathura Yamuna Ghats, Vrindavan Prem Mandir, Delhi India Gate, Delhi Red Fort, Jaipur Hawa Mahal, Jaipur Amber Palace, Himachal Manali & Solang, and Himachal Shimla Ridge. Optimized WebP assets in `assets/destinations/`, responsive slide dot navigation, bilingual captions, 107/107 URLs OK. |
 | 2026-09-06 | Hero Image Clarity (Blur Removed), 8s Relaxed Timing, Button Icons | Removed heavy dark/blur overlay and ambient orbs so landmark photos appear vivid and crystal clear; slowed slide rotation to 8.0s with 2.2s majestic crossfade; added icons (Phone, WhatsApp, Compass) and hover micro-animations to hero action buttons. 108/108 URLs OK. |
+| 2026-09-06 | Radial Quick Actions Dock (.about) & Navigation Text Hover Curtain Fill | Integrated expanding radial quick dock navigation (.about) and outline-to-fill text hover animation with brand color grading (Saffron Gold #D9943B, Warm Charcoal #121416, Cream #FAF7F0). Supports Phone, WhatsApp, Tours, and Instant Booking with spring cubic-bezier expansion, touch/keyboard accessibility, and zero crawler impact. 108/108 URLs OK. |
 
 ---
 
@@ -110,6 +111,7 @@ can't be resolved without user input)_
 | 2026-09-06 | 18 / 2 | Clean White palette (#FFFFFF canvas, #F8F9FA alternate), eliminated all blue hues (neutral charcoal #1A1D20, #121416), installed 60fps luxury image scroll parallax engine | `css/tokens.css`, `css/site.css`, `css/components.css`, `js/motion.js`, `DESIGN.md`, `04_PROGRESS_TRACKER.md` |
 | 2026-09-06 | 18 / 3 | Fixed form label collision with placeholder text: restored top-aligned labels with gold focus-within glow, removed conflicting field class, and rebuilt all 102 pages (102/102 OK) | `css/components.css`, `scripts/render_pages.py`, `04_PROGRESS_TRACKER.md` |
 | 2026-09-06 | 18 / 4 | Positioned theme toggle at the last position on the right of the header (after CTA button) | `scripts/render_pages.py`, `templates/base.html`, `04_PROGRESS_TRACKER.md` |
+| 2026-09-06 | 20 / 1 | Radial floating dock (.about) with Phone, WhatsApp, Tours, and Instant Booking actions; dual curtain wipe and text stroke-fill gradient transition on desktop navigation links; mobile touch toggle in motion.js; rebuilt 102 pages (108/108 URLs OK) | `scripts/render_pages.py`, `css/components.css`, `js/motion.js`, `04_PROGRESS_TRACKER.md` |
 
 
 ---
