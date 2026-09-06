@@ -788,32 +788,37 @@ figure.portrait img {
   transition: opacity 0.35s ease;
 }
 
-/* Slide Navigation Dots */
+/* Slide Navigation Dots (Responsive for 11+ destinations) */
 .hero-slide-nav {
   position: absolute;
-  bottom: 20px;
+  bottom: 18px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 3;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 12px;
+  gap: 5px;
+  max-width: calc(100vw - 32px);
+  overflow-x: auto;
+  padding: 5px 10px;
   border-radius: 999px;
-  background: rgba(18, 20, 22, 0.55);
+  background: rgba(18, 20, 22, 0.6);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.12);
+  scrollbar-width: none;
 }
+.hero-slide-nav::-webkit-scrollbar { display: none; }
 
 .hero-slide-dot {
-  width: 20px;
+  width: 12px;
   height: 4px;
   padding: 0;
   border: none;
   border-radius: 2px;
   background: rgba(255, 255, 255, 0.35);
   cursor: pointer;
+  flex-shrink: 0;
   transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1), background 0.35s ease;
 }
 
@@ -822,7 +827,7 @@ figure.portrait img {
 }
 
 .hero-slide-dot.is-active {
-  width: 36px;
+  width: 26px;
   background: var(--gold, #E5A044);
 }
 

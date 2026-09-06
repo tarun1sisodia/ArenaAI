@@ -49,6 +49,7 @@ can't be resolved without user input)_
 | 2026-09-06 | SEO-Safe Premium Animation Combination | Implemented top scroll progress bar, subtle hero animated gradient mesh, floating ambient shapes, CSS GPU headline fade-up, scroll-triggered card reveals with hover elevation, icon micro-interactions, animated statistics counters, and full reduced-motion accessibility. 102/102 URLs OK. |
 | 2026-09-06 | Remove `proposal/` directory | User requested deleting the legacy 24-slide proposal deck folder as the customer-facing website build is active. Removed `proposal/` and updated `robots.txt` and rule files accordingly. |
 | 2026-09-06 | Hero Scenic Destinations Crossfade Slideshow | Implemented background slideshow cycling through Taj Mahal at dawn, Agra Fort, Mathura temples, Golden Triangle, and Yamuna Expressway every 5.5s with smooth 1.6s fade in/out, Ken Burns scale drift, location badge, and dot navigation. Strict compliance with `ANIMATION_RULES.md` and reduced-motion safety. |
+| 2026-09-06 | 11 Famous Heritage & Hill Destinations (Highway removed) | Removed highway photo per user request and expanded background slideshow to 11 world-famous destinations: Taj Mahal, Agra Fort, Fatehpur Sikri, Mathura Yamuna Ghats, Vrindavan Prem Mandir, Delhi India Gate, Delhi Red Fort, Jaipur Hawa Mahal, Jaipur Amber Palace, Himachal Manali & Solang, and Himachal Shimla Ridge. Optimized WebP assets in `assets/destinations/`, responsive slide dot navigation, bilingual captions, 107/107 URLs OK. |
 
 ---
 
@@ -243,7 +244,9 @@ can't be resolved without user input)_
 - [x] 5. About & Trust metrics: Animated stat counter engine (`data-count`) animating numerical values with cubic ease-out upon viewport intersection.
 - [x] 6. Accessibility: Complete `@media (prefers-reduced-motion: reduce)` overrides neutralizing all transforms, keyframe loops, and JS counter delays.
 - [x] 7. Build & crawl gate: 102/102 URLs verified 200 OK with `scripts/check_links.py` at both bases.
-- [x] 8. Hero background destinations crossfade slideshow: Added 5 rotating high-resolution destinations (Taj Mahal at dawn, Agra Fort, Mathura temples, Golden Triangle, Yamuna Expressway) cycling every 5.5s with smooth 1.6s fade in/out, Ken Burns scale drift, location badge, and dot navigation, strictly obeying `ANIMATION_RULES.md` and reduced-motion safety.
+- [x] 8. Hero background destinations crossfade slideshow: Added rotating high-resolution destinations cycling every 5.5s with smooth 1.6s fade in/out, Ken Burns scale drift, location badge, and dot navigation, strictly obeying `ANIMATION_RULES.md` and reduced-motion safety.
+- [x] 9. Expansion to 11 Famous Heritage & Hill Destinations: Removed highway image per user request and added 11 world-famous destinations: Taj Mahal, Agra Fort, Fatehpur Sikri, Mathura Yamuna Ghats, Vrindavan Prem Mandir, Delhi India Gate, Delhi Red Fort, Jaipur Hawa Mahal, Jaipur Amber Palace, Himachal Manali & Solang Valley, and Himachal Shimla Ridge. Responsive dot navigation, bilingual captions, verified 107/107 URLs OK.
+
 
 
 
