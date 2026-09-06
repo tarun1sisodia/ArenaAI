@@ -201,22 +201,60 @@
     </div>
   </div>
   <form class="hero-widget" action="./book.html" method="get">
-    <label class="field"><span>Pickup city</span>
-      <select name="from">
-        <option value="agra" selected>Agra (AGR)</option>
-        <option value="delhi">Delhi (DEL)</option>
-        <option value="jaipur">Jaipur (JAI)</option>
-      </select>
-    </label>
-    <label class="field"><span>Drop city</span>
-      <select name="to">
-        <option value="delhi" selected>Delhi (DEL)</option>
-        <option value="jaipur">Jaipur (JAI)</option>
-        <option value="mathura">Mathura (MAT)</option>
-        <option value="gwalior">Gwalior (GWL)</option>
-        <option value="agra">Agra sightseeing</option>
-      </select>
-    </label>
+    <div class="field loc-field">
+      <span>Pickup city</span>
+      <div class="loc-picker" id="hero-from-picker">
+        <button type="button" class="loc-display-btn" aria-haspopup="listbox" aria-expanded="false" aria-label="Pickup city">
+          <span class="loc-pin">📍</span>
+          <span class="loc-value">Agra (AGR)</span>
+          <span class="loc-chevron">▾</span>
+        </button>
+        <input type="hidden" name="from" value="agra" />
+        <div class="loc-dropdown" hidden>
+          <div class="loc-search-head">
+            <span class="loc-search-icon">🔍</span>
+            <input type="text" class="loc-search-query" placeholder="Search city, airport, landmark..." autocomplete="off" />
+            <span class="loc-api-tag" title="Connect Google Maps API">Google Maps</span>
+          </div>
+          <div class="loc-quick-tags">
+            <span class="loc-tag" data-val="agra">Agra</span>
+            <span class="loc-tag" data-val="delhi">Delhi (DEL)</span>
+            <span class="loc-tag" data-val="jaipur">Jaipur (JAI)</span>
+            <span class="loc-tag" data-val="mathura">Mathura</span>
+            <span class="loc-tag" data-val="ayodhya">Ayodhya</span>
+            <span class="loc-tag" data-val="rishikesh">Rishikesh</span>
+          </div>
+          <div class="loc-results" role="listbox"></div>
+        </div>
+      </div>
+    </div>
+    <div class="field loc-field">
+      <span>Drop city</span>
+      <div class="loc-picker" id="hero-to-picker">
+        <button type="button" class="loc-display-btn" aria-haspopup="listbox" aria-expanded="false" aria-label="Drop city">
+          <span class="loc-pin">📍</span>
+          <span class="loc-value">Delhi (DEL)</span>
+          <span class="loc-chevron">▾</span>
+        </button>
+        <input type="hidden" name="to" value="delhi" />
+        <div class="loc-dropdown" hidden>
+          <div class="loc-search-head">
+            <span class="loc-search-icon">🔍</span>
+            <input type="text" class="loc-search-query" placeholder="Search drop city, airport, hotel..." autocomplete="off" />
+            <span class="loc-api-tag" title="Connect Google Maps API">Google Maps</span>
+          </div>
+          <div class="loc-quick-tags">
+            <span class="loc-tag" data-val="delhi">Delhi</span>
+            <span class="loc-tag" data-val="jaipur">Jaipur</span>
+            <span class="loc-tag" data-val="mathura">Mathura</span>
+            <span class="loc-tag" data-val="gwalior">Gwalior</span>
+            <span class="loc-tag" data-val="lucknow">Lucknow</span>
+            <span class="loc-tag" data-val="agra">Agra tour</span>
+          </div>
+          <div class="loc-results" role="listbox"></div>
+        </div>
+      </div>
+    </div>
     <label class="field"><span>Travel date</span>
       <!-- no `required`: with JS disabled the field stays empty but the GET
            still submits and the booking app defaults to tomorrow. app.js
@@ -488,6 +526,6 @@
 </div>
 <!-- end about -->
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-    <script src="./js/data.js" defer></script><script src="./js/contact.js" defer></script><script src="./js/fares.js" defer></script><script src="./js/motion.js" defer></script><script src="./js/app.js" defer></script>
+    <script src="./js/data.js" defer></script><script src="./js/contact.js" defer></script><script src="./js/fares.js" defer></script><script src="./js/places.js" defer></script><script src="./js/motion.js" defer></script><script src="./js/app.js" defer></script>
   </body>
 </html>

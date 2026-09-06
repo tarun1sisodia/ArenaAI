@@ -71,9 +71,21 @@
     });
 
   const fillSelect = (el, items, value, labelFn) => {
-    el.innerHTML = items
-      .map((item) => `<option value="${item.id}" ${item.id === value ? "selected" : ""}>${labelFn(item)}</option>`)
-      .join("");
+    if (!el) return;
+    if (el.tagName === "SELECT") {
+      el.innerHTML = items
+        .map((item) => `<option value="${item.id}" ${item.id === value ? "selected" : ""}>${labelFn(item)}</option>`)
+        .join("");
+    }
+    el.value = value;
+    const picker = el.closest(".loc-picker");
+    if (picker) {
+      const valSpan = picker.querySelector(".loc-value");
+      const found = items.find((x) => x.id === value) || SKB.city(value);
+      if (valSpan && found) {
+        valSpan.textContent = found.name + (found.code && found.code !== "LOC" && found.code !== "MAPS" ? ` (${found.code})` : "");
+      }
+    }
   };
 
   const paxLabel = (n) => {
@@ -170,14 +182,21 @@
     $("#time").value = state.time;
     $("#tripType").value = state.tripType;
     $("#passengers").value = String(paxLabel(state.passengers));
-    if (state.packageId) {
-      const pack = SKB.packageById(state.packageId);
-      const banner = $("#package-banner");
-      if (pack && banner) {
-        banner.hidden = false;
-        banner.innerHTML = `<strong>${pack.name}</strong> · ${pack.duration} · from ${SKB.inr(pack.from)}. Vehicle upgrades add to the sample fare.`;
-      }
-    }
+    $("#from")?.addEventListener("change", () => {
+      readStep1();
+      persist();
+      renderSummary();
+    });
+    $("#to")?.addEventListener("change", () => {
+      readStep1();
+      persist();
+      renderSummary();
+    });
+    $("#tripType")?.addEventListener("change", () => {
+      readStep1();
+      persist();
+      renderSummary();
+    });
   };
 
   const readStep1 = () => {

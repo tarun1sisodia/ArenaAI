@@ -458,6 +458,7 @@ def write_page(*, lang, path, alt_path, title, description, active, body, extra_
         # truth for NAP) — do not hand-edit it.
         '<script src="/js/contact.js" defer></script>',
         '<script src="/js/fares.js" defer></script>',
+        '<script src="/js/places.js" defer></script>',
         '<script src="/js/motion.js" defer></script>',
         '<script src="/js/app.js" defer></script>',
     ]
@@ -721,22 +722,60 @@ def home_body(lang):
     </div>
   </div>
   <form class="hero-widget" action="/book.html" method="get">
-    <label class="field"><span>{t["pickup"]}</span>
-      <select name="from">
-        <option value="agra" selected>Agra (AGR)</option>
-        <option value="delhi">Delhi (DEL)</option>
-        <option value="jaipur">Jaipur (JAI)</option>
-      </select>
-    </label>
-    <label class="field"><span>{t["drop"]}</span>
-      <select name="to">
-        <option value="delhi" selected>Delhi (DEL)</option>
-        <option value="jaipur">Jaipur (JAI)</option>
-        <option value="mathura">Mathura (MAT)</option>
-        <option value="gwalior">Gwalior (GWL)</option>
-        <option value="agra">Agra sightseeing</option>
-      </select>
-    </label>
+    <div class="field loc-field">
+      <span>{t["pickup"]}</span>
+      <div class="loc-picker" id="hero-from-picker">
+        <button type="button" class="loc-display-btn" aria-haspopup="listbox" aria-expanded="false" aria-label="{t["pickup"]}">
+          <span class="loc-pin">📍</span>
+          <span class="loc-value">Agra (AGR)</span>
+          <span class="loc-chevron">▾</span>
+        </button>
+        <input type="hidden" name="from" value="agra" />
+        <div class="loc-dropdown" hidden>
+          <div class="loc-search-head">
+            <span class="loc-search-icon">🔍</span>
+            <input type="text" class="loc-search-query" placeholder="Search city, airport, landmark..." autocomplete="off" />
+            <span class="loc-api-tag" title="Connect Google Maps API">Google Maps</span>
+          </div>
+          <div class="loc-quick-tags">
+            <span class="loc-tag" data-val="agra">Agra</span>
+            <span class="loc-tag" data-val="delhi">Delhi (DEL)</span>
+            <span class="loc-tag" data-val="jaipur">Jaipur (JAI)</span>
+            <span class="loc-tag" data-val="mathura">Mathura</span>
+            <span class="loc-tag" data-val="ayodhya">Ayodhya</span>
+            <span class="loc-tag" data-val="rishikesh">Rishikesh</span>
+          </div>
+          <div class="loc-results" role="listbox"></div>
+        </div>
+      </div>
+    </div>
+    <div class="field loc-field">
+      <span>{t["drop"]}</span>
+      <div class="loc-picker" id="hero-to-picker">
+        <button type="button" class="loc-display-btn" aria-haspopup="listbox" aria-expanded="false" aria-label="{t["drop"]}">
+          <span class="loc-pin">📍</span>
+          <span class="loc-value">Delhi (DEL)</span>
+          <span class="loc-chevron">▾</span>
+        </button>
+        <input type="hidden" name="to" value="delhi" />
+        <div class="loc-dropdown" hidden>
+          <div class="loc-search-head">
+            <span class="loc-search-icon">🔍</span>
+            <input type="text" class="loc-search-query" placeholder="Search drop city, airport, hotel..." autocomplete="off" />
+            <span class="loc-api-tag" title="Connect Google Maps API">Google Maps</span>
+          </div>
+          <div class="loc-quick-tags">
+            <span class="loc-tag" data-val="delhi">Delhi</span>
+            <span class="loc-tag" data-val="jaipur">Jaipur</span>
+            <span class="loc-tag" data-val="mathura">Mathura</span>
+            <span class="loc-tag" data-val="gwalior">Gwalior</span>
+            <span class="loc-tag" data-val="lucknow">Lucknow</span>
+            <span class="loc-tag" data-val="agra">Agra tour</span>
+          </div>
+          <div class="loc-results" role="listbox"></div>
+        </div>
+      </div>
+    </div>
     <label class="field"><span>{t["date"]}</span>
       <!-- no `required`: with JS disabled the field stays empty but the GET
            still submits and the booking app defaults to tomorrow. app.js
@@ -1168,26 +1207,74 @@ def book_body():
     <div class="panel is-active" data-step="1" id="step-1">
       <div class="note" id="package-banner" hidden></div>
       <div class="grid-2" style="margin-top:16px">
-        <label class="field"><span>Pickup city</span>
-          <select id="from">
-            <option value="agra" selected>Agra (AGR)</option>
-            <option value="delhi">Delhi (DEL)</option>
-            <option value="jaipur">Jaipur (JAI)</option>
-            <option value="mathura">Mathura (MAT)</option>
-            <option value="gwalior">Gwalior (GWL)</option>
-            <option value="lucknow">Lucknow (LKO)</option>
-          </select>
-        </label>
-        <label class="field"><span>Drop city</span>
-          <select id="to">
-            <option value="delhi" selected>Delhi (DEL)</option>
-            <option value="jaipur">Jaipur (JAI)</option>
-            <option value="mathura">Mathura (MAT)</option>
-            <option value="gwalior">Gwalior (GWL)</option>
-            <option value="lucknow">Lucknow (LKO)</option>
-            <option value="agra">Agra (AGR)</option>
-          </select>
-        </label>
+        <div class="field loc-field">
+          <span>Pickup city</span>
+          <div class="loc-picker" id="book-from-picker">
+            <button type="button" class="loc-display-btn" aria-haspopup="listbox" aria-expanded="false" aria-label="Pickup city">
+              <span class="loc-pin">📍</span>
+              <span class="loc-value">Agra (AGR)</span>
+              <span class="loc-chevron">▾</span>
+            </button>
+            <select id="from" style="display:none">
+              <option value="agra" selected>Agra (AGR)</option>
+              <option value="delhi">Delhi (DEL)</option>
+              <option value="jaipur">Jaipur (JAI)</option>
+              <option value="mathura">Mathura (MAT)</option>
+              <option value="gwalior">Gwalior (GWL)</option>
+              <option value="lucknow">Lucknow (LKO)</option>
+            </select>
+            <div class="loc-dropdown" hidden>
+              <div class="loc-search-head">
+                <span class="loc-search-icon">🔍</span>
+                <input type="text" class="loc-search-query" placeholder="Search city, airport, landmark..." autocomplete="off" />
+                <span class="loc-api-tag" title="Connect Google Maps API">Google Maps</span>
+              </div>
+              <div class="loc-quick-tags">
+                <span class="loc-tag" data-val="agra">Agra</span>
+                <span class="loc-tag" data-val="delhi">Delhi (DEL)</span>
+                <span class="loc-tag" data-val="jaipur">Jaipur (JAI)</span>
+                <span class="loc-tag" data-val="mathura">Mathura</span>
+                <span class="loc-tag" data-val="ayodhya">Ayodhya</span>
+                <span class="loc-tag" data-val="rishikesh">Rishikesh</span>
+              </div>
+              <div class="loc-results" role="listbox"></div>
+            </div>
+          </div>
+        </div>
+        <div class="field loc-field">
+          <span>Drop city</span>
+          <div class="loc-picker" id="book-to-picker">
+            <button type="button" class="loc-display-btn" aria-haspopup="listbox" aria-expanded="false" aria-label="Drop city">
+              <span class="loc-pin">📍</span>
+              <span class="loc-value">Delhi (DEL)</span>
+              <span class="loc-chevron">▾</span>
+            </button>
+            <select id="to" style="display:none">
+              <option value="delhi" selected>Delhi (DEL)</option>
+              <option value="jaipur">Jaipur (JAI)</option>
+              <option value="mathura">Mathura (MAT)</option>
+              <option value="gwalior">Gwalior (GWL)</option>
+              <option value="lucknow">Lucknow (LKO)</option>
+              <option value="agra">Agra (AGR)</option>
+            </select>
+            <div class="loc-dropdown" hidden>
+              <div class="loc-search-head">
+                <span class="loc-search-icon">🔍</span>
+                <input type="text" class="loc-search-query" placeholder="Search drop city, airport, hotel..." autocomplete="off" />
+                <span class="loc-api-tag" title="Connect Google Maps API">Google Maps</span>
+              </div>
+              <div class="loc-quick-tags">
+                <span class="loc-tag" data-val="delhi">Delhi</span>
+                <span class="loc-tag" data-val="jaipur">Jaipur</span>
+                <span class="loc-tag" data-val="mathura">Mathura</span>
+                <span class="loc-tag" data-val="gwalior">Gwalior</span>
+                <span class="loc-tag" data-val="lucknow">Lucknow</span>
+                <span class="loc-tag" data-val="agra">Agra tour</span>
+              </div>
+              <div class="loc-results" role="listbox"></div>
+            </div>
+          </div>
+        </div>
         <label class="field"><span>Travel date</span><input id="date" type="date" required /></label>
         <label class="field"><span>Pickup time</span><input id="time" type="time" /></label>
         <label class="field"><span>Trip type</span>
@@ -1209,7 +1296,7 @@ def book_body():
       <div class="grid-2">
         <label class="field"><span>Full name</span><input id="fullName" autocomplete="name" /></label>
         <label class="field"><span>Mobile number</span><input id="phone" type="tel" inputmode="tel" autocomplete="tel" /></label>
-        <label class="field" style="grid-column:1/-1"><span>Pickup point</span><input id="pickupPoint" /></label>
+        <label class="field" style="grid-column:1/-1"><span>Pickup point (hotel, airport terminal, or address)</span><input id="pickupPoint" placeholder="e.g. ITC Mughal Taj Ganj, IGI Airport Terminal 3, Agra Cantt Railway Station" autocomplete="off" /></label>
         <label class="field" style="grid-column:1/-1"><span>Note to driver</span><textarea id="note"></textarea></label>
       </div>
       <div class="form-actions"><button class="btn-outline" type="button" data-back="2">Back</button>
