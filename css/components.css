@@ -1468,20 +1468,37 @@ figure.portrait img {
 }
 
 /* --------------------------------------------------------------------------
-   21st.dev INTERACTIVE GRID PATTERN (Trust Bar & Popular Routes)
+   21st.dev INTERACTIVE GRID PATTERN (All White & Light Background Sections)
    -------------------------------------------------------------------------- */
-.interactive-grid-section {
+.interactive-grid-section,
+.section--paper,
+.section--paper-lt,
+.page-hero,
+.book-layout {
   position: relative;
   overflow: hidden;
+  transition: background-color 0.3s ease;
+}
+
+.interactive-grid-section {
   background: var(--bg-alt, #FAFAF7);
   padding-top: 36px;
   padding-bottom: 54px;
-  transition: background-color 0.3s ease;
 }
 
 [data-theme="dark"] .interactive-grid-section,
 .dark .interactive-grid-section {
   background: #131618;
+}
+
+/* Ensure all content sits on z-index 2 above the background grid & canvas */
+.interactive-grid-section > :not(.interactive-grid-bg),
+.section--paper > :not(.interactive-grid-bg),
+.section--paper-lt > :not(.interactive-grid-bg),
+.page-hero > :not(.interactive-grid-bg),
+.book-layout > :not(.interactive-grid-bg) {
+  position: relative;
+  z-index: 2;
 }
 
 .interactive-grid-bg {
@@ -1492,23 +1509,23 @@ figure.portrait img {
   overflow: hidden;
 }
 
-/* Base grid pattern */
+/* Base grid pattern - light, elegant & subtle (44px x 44px) */
 .interactive-grid-lines {
   position: absolute;
   inset: -2px;
   background-size: 44px 44px;
   background-image: 
-    linear-gradient(to right, rgba(18, 20, 22, 0.065) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(18, 20, 22, 0.065) 1px, transparent 1px);
-  -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, #000 35%, transparent 95%);
-  mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, #000 35%, transparent 95%);
+    linear-gradient(to right, rgba(18, 20, 22, 0.048) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(18, 20, 22, 0.048) 1px, transparent 1px);
+  -webkit-mask-image: radial-gradient(ellipse 92% 85% at 50% 50%, #000 50%, transparent 98%);
+  mask-image: radial-gradient(ellipse 92% 85% at 50% 50%, #000 50%, transparent 98%);
 }
 
 [data-theme="dark"] .interactive-grid-lines,
 .dark .interactive-grid-lines {
   background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.075) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.075) 1px, transparent 1px);
+    linear-gradient(to right, rgba(255, 255, 255, 0.065) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.065) 1px, transparent 1px);
 }
 
 /* Dynamic cursor-following spotlight */
@@ -1517,7 +1534,7 @@ figure.portrait img {
   inset: 0;
   background: radial-gradient(
     560px circle at var(--grid-mouse-x, 50%) var(--grid-mouse-y, 50%),
-    rgba(217, 148, 59, 0.16),
+    rgba(217, 148, 59, 0.14),
     transparent 65%
   );
   opacity: 0;
@@ -1525,7 +1542,20 @@ figure.portrait img {
   pointer-events: none;
 }
 
-.interactive-grid-section:hover .interactive-grid-spotlight {
+[data-theme="dark"] .interactive-grid-spotlight,
+.dark .interactive-grid-spotlight {
+  background: radial-gradient(
+    560px circle at var(--grid-mouse-x, 50%) var(--grid-mouse-y, 50%),
+    rgba(229, 160, 68, 0.20),
+    transparent 65%
+  );
+}
+
+.interactive-grid-section:hover .interactive-grid-spotlight,
+.section--paper:hover .interactive-grid-spotlight,
+.section--paper-lt:hover .interactive-grid-spotlight,
+.page-hero:hover .interactive-grid-spotlight,
+.book-layout:hover .interactive-grid-spotlight {
   opacity: 1;
 }
 
@@ -1536,8 +1566,8 @@ figure.portrait img {
   width: 100%;
   height: 100%;
   pointer-events: none;
-  -webkit-mask-image: radial-gradient(ellipse 85% 75% at 50% 50%, #000 40%, transparent 95%);
-  mask-image: radial-gradient(ellipse 85% 75% at 50% 50%, #000 40%, transparent 95%);
+  -webkit-mask-image: radial-gradient(ellipse 92% 85% at 50% 50%, #000 50%, transparent 98%);
+  mask-image: radial-gradient(ellipse 92% 85% at 50% 50%, #000 50%, transparent 98%);
 }
 
 .interactive-grid-section .trust-bar {

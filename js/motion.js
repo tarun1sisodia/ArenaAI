@@ -505,12 +505,22 @@
       });
     }
 
-    // 21st.dev INTERACTIVE GRID PATTERN ENGINE
-    function initInteractiveGrid() {
-      var section = document.querySelector('.interactive-grid-section');
+    // 21st.dev INTERACTIVE GRID PATTERN ENGINE (All White & Light Background Sections)
+    function setupInteractiveGridSection(section) {
       if (!section) return;
 
-      var canvas = section.querySelector('.interactive-grid-canvas');
+      var bg = section.querySelector(':scope > .interactive-grid-bg');
+      if (!bg) {
+        bg = document.createElement('div');
+        bg.className = 'interactive-grid-bg';
+        bg.setAttribute('aria-hidden', 'true');
+        bg.innerHTML = '<div class="interactive-grid-lines"></div>' +
+                       '<div class="interactive-grid-spotlight"></div>' +
+                       '<canvas class="interactive-grid-canvas"></canvas>';
+        section.insertBefore(bg, section.firstChild);
+      }
+
+      var canvas = bg.querySelector('.interactive-grid-canvas');
       if (!canvas) return;
 
       var ctx = canvas.getContext('2d');
@@ -519,7 +529,7 @@
       var CELL_SIZE = 44;
       var activeCells = {};
       var animId = null;
-      var isVisible = true;
+      var isVisible = false;
       var dpr = window.devicePixelRatio || 1;
       var width = 0;
       var height = 0;
@@ -551,7 +561,7 @@
         var x = e.clientX - rect.left;
         var y = e.clientY - rect.top;
 
-        // Set CSS spotlight coordinates
+        // Set CSS spotlight coordinates on this section
         section.style.setProperty('--grid-mouse-x', x + 'px');
         section.style.setProperty('--grid-mouse-y', y + 'px');
 
@@ -561,10 +571,10 @@
         var centerRow = Math.floor(y / CELL_SIZE);
 
         addCell(centerCol, centerRow, 1.0);
-        addCell(centerCol - 1, centerRow, 0.45);
-        addCell(centerCol + 1, centerRow, 0.45);
-        addCell(centerCol, centerRow - 1, 0.45);
-        addCell(centerCol, centerRow + 1, 0.45);
+        addCell(centerCol - 1, centerRow, 0.42);
+        addCell(centerCol + 1, centerRow, 0.42);
+        addCell(centerCol, centerRow - 1, 0.42);
+        addCell(centerCol, centerRow + 1, 0.42);
 
         if (!animId && isVisible) {
           animId = requestAnimationFrame(render);
@@ -603,17 +613,17 @@
           var cx = cell.col * CELL_SIZE;
           var cy = cell.row * CELL_SIZE;
 
-          // Inner soft glow
-          ctx.fillStyle = 'rgba(' + rgb + ',' + (cell.alpha * 0.12).toFixed(3) + ')';
+          // Inner subtle glow (light & refined)
+          ctx.fillStyle = 'rgba(' + rgb + ',' + (cell.alpha * 0.10).toFixed(3) + ')';
           ctx.fillRect(cx + 1, cy + 1, CELL_SIZE - 2, CELL_SIZE - 2);
 
           // Glowing border
-          ctx.strokeStyle = 'rgba(' + rgb + ',' + (cell.alpha * 0.36).toFixed(3) + ')';
+          ctx.strokeStyle = 'rgba(' + rgb + ',' + (cell.alpha * 0.30).toFixed(3) + ')';
           ctx.lineWidth = 1;
           ctx.strokeRect(cx + 0.5, cy + 0.5, CELL_SIZE - 1, CELL_SIZE - 1);
 
           // Crisp intersection crosshairs
-          ctx.fillStyle = 'rgba(' + rgb + ',' + (cell.alpha * 0.65).toFixed(3) + ')';
+          ctx.fillStyle = 'rgba(' + rgb + ',' + (cell.alpha * 0.58).toFixed(3) + ')';
           ctx.fillRect(cx - 1.5, cy - 1.5, 3, 3);
           ctx.fillRect(cx + CELL_SIZE - 1.5, cy - 1.5, 3, 3);
           ctx.fillRect(cx - 1.5, cy + CELL_SIZE - 1.5, 3, 3);
@@ -641,10 +651,28 @@
           });
         }, { threshold: 0.05 });
         obs.observe(section);
+      } else {
+        isVisible = true;
       }
     }
 
+    function initAllInteractiveGrids() {
+      var selectors = [
+        '.interactive-grid-section',
+        '.section--paper',
+        '.section--paper-lt',
+        '.page-hero',
+        '.book-layout'
+      ];
+      var sections = document.querySelectorAll(selectors.join(', '));
+      sections.forEach(function (sec) {
+        // Avoid nested initialization if a section is inside another grid section
+        if (sec.parentElement && sec.parentElement.closest(selectors.join(', '))) return;
+        setupInteractiveGridSection(sec);
+      });
+    }
+
     initHeroSlideshow();
-    initInteractiveGrid();
+    initAllInteractiveGrids();
   });
 })();

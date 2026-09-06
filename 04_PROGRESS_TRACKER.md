@@ -8,7 +8,7 @@ only check boxes, append log rows, and update the Current State block.
 
 ## Current State
 
-- **Current Phase:** 22 — 21st.dev Interactive Background Grid on Trust Bar & Popular Routes ✅ completed
+- **Current Phase:** 23 — Interactive Background Grid across All White & Light Background Sections ✅ completed
 - **Current Step:** Ready for next phase / client review
 - **Last updated:** 2026-09-06
 - **Open items:** `visual_audit.mjs` still needs a networked machine; fonts self-hosting (sandbox blocks Google Fonts download); real photos + real NAP before launch (see `LAUNCH_CHECKLIST.md`); PRD v3.0 master rewrite includes full SEO Final BOSS content. Client decision points from the deck are open (§25 of PRD.md).
@@ -54,6 +54,7 @@ can't be resolved without user input)_
 | 2026-09-06 | Radial Quick Actions Dock (.about) & Navigation Text Hover Curtain Fill | Integrated expanding radial quick dock navigation (.about) and outline-to-fill text hover animation with brand color grading (Saffron Gold #D9943B, Warm Charcoal #121416, Cream #FAF7F0). Supports Phone, WhatsApp, Tours, and Instant Booking with spring cubic-bezier expansion, touch/keyboard accessibility, and zero crawler impact. 108/108 URLs OK. |
 | 2026-09-06 | Normal Navigation Font Weight & Google Maps Places Location Search | Normalized navigation link typography (font-weight 500, removed heavy 1px text stroke); integrated Google Maps Places Autocomplete API and 30+ destination catalog via `js/places.js`; replaced limited static selects with `.loc-picker` searchable comboboxes on Hero Widget and `book.html`; enhanced `fares.js` for dynamic distance & outstation fare quotes. 109/109 URLs OK. |
 | 2026-09-06 | 21st.dev Interactive Background Grid on Trust Bar & Popular Routes (Phase 22) | Implemented interactive background grid pattern behind Trust Bar chips and Popular Routes section per 21st.dev / Aceternity design. Features 44px hairline grid, dynamic cursor spotlight, and interactive glowing grid cell trail via hardware-accelerated canvas. Full dark mode support (amber in light, luminous gold in dark), zero idle CPU overhead, non-blocking click safety (`pointer-events: none`), and SEO-safe progressive scroll reveal. 109/109 URLs OK. |
+| 2026-09-06 | Universal Interactive Background Grid on All White Background Sections (Phase 23) | Extended the light and interactive background grid animation to every section with a white or light background (`.section--paper`, `.section--paper-lt`, `.page-hero`, `.book-layout`). Standardized subtle hairline grid lines (`rgba(18,20,22,0.048)` light / `rgba(255,255,255,0.065)` dark), cursor spotlight tracking, and hardware-accelerated glowing grid cell physics trail. Zero nesting conflicts, 0% idle CPU via per-section IntersectionObserver pausing, non-blocking click safety (`z-index: 2` on content). 109/109 URLs OK. |
 
 ---
 
@@ -262,6 +263,14 @@ can't be resolved without user input)_
 - [x] 4. Canvas Glowing Grid Trail: Built hardware-accelerated `<canvas class="interactive-grid-canvas">` engine in `js/motion.js` rendering illuminated grid cells with glowing borders, intersection crosshairs, and smooth physics decay trail.
 - [x] 5. Dark Mode & Accessibility: Full theme switching support (amber glow in light mode, luminous warm gold in dark mode); zero idle CPU overhead (RAF pauses when idle or off-screen via IntersectionObserver); click safety (`pointer-events: none`); and SEO-safe progressive scroll reveal.
 - [x] 6. Build & Link Verification: Rebuilt all 54 pages; passed `scripts/check_links.py` with 109/109 OK; verified visually via Playwright in both light and dark modes.
+
+### Phase 23 — Interactive Background Grid across All White Background Sections
+- [x] 1. Universal Coverage: Expanded interactive grid to every section with a white or light background (`.section--paper`, `.section--paper-lt`, `.page-hero`, `.book-layout`).
+- [x] 2. Dynamic Injection Engine: Updated `initAllInteractiveGrids()` in `js/motion.js` to automatically mount the grid lines, spotlight, and canvas to every qualifying section with zero boilerplate overhead.
+- [x] 3. Nested Protection: Prevented duplicate canvas initialization on nested elements with `:scope` and parent grid checks.
+- [x] 4. Independent Viewport Tracking: Individual `IntersectionObserver` per section ensuring 0% idle CPU and only active rendering when scrolled into view.
+- [x] 5. Light & Interactive Aesthetics: Hairline grid lines (`0.048` opacity in light, `0.065` in dark), delicate spotlight tracking, and subtle decaying cell highlights across Services, Fleet, Contact, and Inner Page Heros.
+- [x] 6. Visual QA & Build: Rebuilt all 54 pages; passed `check_links.py` 109/109 OK; captured multi-section visual previews in light and dark modes.
 
 
 
