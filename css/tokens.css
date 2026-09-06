@@ -1,37 +1,40 @@
-/* SK Baghel website tokens · v2.0 · Light Premium (Warm Ivory + Navy + Gold) */
+/* SK Baghel website tokens · v2.2 · Clean White + Neutral Charcoal (No Blue) + Saffron Gold */
 :root {
-  /* Core Light Premium Palette (Approved Session 1b / PRD §10) */
-  --bg: #FAF7F0;
-  --bg-alt: #F0EBE0;
+  /* Core Theme Palette (Clean White Canvas + Crisp Neutral Surfaces) */
+  --bg: #FFFFFF;
+  --bg-alt: #F8F9FA;
   --surface: #FFFFFF;
-  --text: #0A1128;
-  --text-soft: #4A5578;
-  --gold: #B8941F;
-  --gold-deep: #9A7B14;
-  --gold-soft: rgba(184, 148, 31, 0.1);
-  --gold-border: rgba(184, 148, 31, 0.25);
-  --border: rgba(10, 17, 40, 0.08);
+  --text: #1A1D20;
+  --text-soft: #555B62;
+  --gold: #E5A044;
+  --gold-light: #F3C36C;
+  --gold-deep: #B27123;
+  --gold-soft: rgba(229, 160, 68, 0.12);
+  --gold-border: rgba(229, 160, 68, 0.28);
+  --gold-wash: #FDF7ED;
+  --gold-text: #8A5A17;
+  --gold-glow: rgba(229, 160, 68, 0.35);
+  --border: rgba(0, 0, 0, 0.08);
 
-  /* Semantic backward-compatible mappings for site.css */
-  --navy-deep: #0A1128;
-  --navy: #0A1128;
-  --navy-soft: #142146;
-  --navy-tint: #F0EBE0;
-  --paper: #FAF7F0;
+  /* Neutral Dark Charcoal (Replacing all navy/blue tones) */
+  --navy-deep: #121416;
+  --navy: #1A1D20;
+  --navy-soft: #2A2E33;
+  --navy-tint: #F1F3F5;
+
+  /* Paper Canvas Tokens */
+  --paper: #FFFFFF;
   --paper-lt: #FFFFFF;
-  --paper-dk: #F0EBE0;
+  --paper-dk: #F8F9FA;
   --white: #FFFFFF;
-  --muted-2: #4A5578;
-  --muted-lt: #8A96B4;
-  --gold-light: #D8B23E;
-  --gold-wash: #FAF2DA;
-  --gold-text: #9A7B14;
-  --coral: #D96A43;
-  --teal: #3B7A75;
-  --success: #2A7E56;
-  --error: #C0392B;
-  --line: rgba(10, 17, 40, 0.08);
-  --line-lt: rgba(255, 255, 255, 0.16);
+  --muted-2: #555B62;
+  --muted-lt: #8C9298;
+  --coral: #E16F4B;
+  --teal: #3F7A74;
+  --success: #2E7D32;
+  --error: #C62828;
+  --line: rgba(0, 0, 0, 0.08);
+  --line-lt: rgba(255, 255, 255, 0.18);
 
   /* Typography */
   --font-display: 'Fraunces', 'Noto Serif Devanagari', Georgia, serif;
@@ -47,6 +50,7 @@
   --motion-slow: 1200ms;
   --ease: 180ms ease;
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
   /* Geometry & Layout */
   --header: 78px;
@@ -65,40 +69,40 @@
   --space-7: 96px;
 
   /* Shadows & Overlays */
-  --shadow-gold: 0 8px 24px rgba(184, 148, 31, 0.25);
-  --shadow-lift: 0 12px 28px rgba(10, 17, 40, 0.08);
-  --hero-overlay: linear-gradient(90deg, rgba(10, 17, 40, 0.95) 0%, rgba(10, 17, 40, 0.72) 48%, rgba(10, 17, 40, 0.2) 100%);
-  --card-overlay: linear-gradient(180deg, rgba(10, 17, 40, 0.05) 0%, rgba(10, 17, 40, 0.65) 100%);
-  --gold-highlight: linear-gradient(90deg, #B8941F 0%, #D8B23E 100%);
+  --shadow-gold: 0 8px 24px rgba(229, 160, 68, 0.22);
+  --shadow-lift: 0 10px 25px -5px rgba(0, 0, 0, 0.07), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+  --hero-overlay: linear-gradient(90deg, rgba(18, 20, 22, 0.94) 0%, rgba(26, 29, 32, 0.72) 48%, rgba(26, 29, 32, 0.18) 100%);
+  --card-overlay: linear-gradient(180deg, rgba(18, 20, 22, 0.06) 0%, rgba(18, 20, 22, 0.65) 100%);
+  --gold-highlight: linear-gradient(90deg, #E5A044 0%, #F3C36C 100%);
   --grain: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.16'/%3E%3C/svg%3E");
 }
 
 /* ==========================================================================
-   DARK NAVY THEME OVERRIDES (WCAG 2.2 AA Contrast Preserved)
+   DARK THEME OVERRIDES (Neutral Charcoal Night Edition, AA Contrast Preserved)
    ========================================================================== */
 [data-theme="dark"],
 html.dark {
-  --bg: #0A1128;
-  --bg-alt: #0F1A3A;
-  --surface: #142146;
-  --text: #FAF7F0;
-  --text-soft: #A2B1D6;
+  --bg: #121416;
+  --bg-alt: #191C1F;
+  --surface: #22262B;
+  --text: #F8F9FA;
+  --text-soft: #ADB5BD;
   --gold: #E5A044;
   --gold-deep: #F3C36C;
   --gold-soft: rgba(229, 160, 68, 0.15);
   --gold-border: rgba(229, 160, 68, 0.35);
   --border: rgba(255, 255, 255, 0.12);
 
-  --navy-deep: #050914;
-  --navy: #0A1128;
-  --navy-soft: #142146;
-  --navy-tint: #1C2E60;
-  --paper: #0A1128;
-  --paper-lt: #142146;
-  --paper-dk: #0F1A3A;
-  --white: #142146;
-  --muted-2: #A2B1D6;
-  --muted-lt: #6B7B9E;
+  --navy-deep: #0D0E10;
+  --navy: #121416;
+  --navy-soft: #22262B;
+  --navy-tint: #2F353C;
+  --paper: #121416;
+  --paper-lt: #22262B;
+  --paper-dk: #191C1F;
+  --white: #22262B;
+  --muted-2: #ADB5BD;
+  --muted-lt: #6C757D;
   --gold-light: #F3C36C;
   --gold-wash: rgba(229, 160, 68, 0.18);
   --gold-text: #E5A044;
@@ -107,8 +111,8 @@ html.dark {
 
   --shadow-gold: 0 8px 24px rgba(229, 160, 68, 0.3);
   --shadow-lift: 0 12px 28px rgba(0, 0, 0, 0.5);
-  --card-overlay: linear-gradient(180deg, rgba(5, 9, 20, 0.1) 0%, rgba(5, 9, 20, 0.75) 100%);
-  --hero-overlay: linear-gradient(90deg, rgba(5, 9, 20, 0.96) 0%, rgba(5, 9, 20, 0.78) 48%, rgba(5, 9, 20, 0.25) 100%);
+  --card-overlay: linear-gradient(180deg, rgba(13, 14, 16, 0.1) 0%, rgba(13, 14, 16, 0.75) 100%);
+  --hero-overlay: linear-gradient(90deg, rgba(13, 14, 16, 0.96) 0%, rgba(18, 20, 22, 0.78) 48%, rgba(18, 20, 22, 0.25) 100%);
 }
 
 /* Smooth Theme Switching Transitions */

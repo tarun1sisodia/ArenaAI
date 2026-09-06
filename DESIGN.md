@@ -1,32 +1,35 @@
 ---
 version: beta
-name: Light Premium (Ivory + Navy + Gold)
-description: Premium bilingual travel identity for SK Baghel Tour & Travels — Agra taxi, Tempo Traveller, and tours. Warm ivory canvas, white cards, deep navy text/chrome, and refined gold accents.
+name: Clean White + Neutral Charcoal (No Blue) + Saffron Gold
+description: Premium bilingual travel identity for SK Baghel Tour & Travels — Agra taxi, Tempo Traveller, and tours. Clean White canvas (#FFFFFF), crisp surfaces (#FFFFFF), neutral charcoal typography and chrome (#1A1D20, no blue tones), and warm saffron gold accents (#E5A044) with 60fps image scroll parallax engine.
 colors:
-  bg: "#FAF7F0"
-  bg-alt: "#F0EBE0"
+  bg: "#FFFFFF"
+  bg-alt: "#F8F9FA"
   surface: "#FFFFFF"
-  text: "#0A1128"
-  text-soft: "#4A5578"
-  gold: "#B8941F"
-  gold-deep: "#9A7B14"
-  gold-soft: "rgba(184, 148, 31, 0.1)"
-  gold-border: "rgba(184, 148, 31, 0.25)"
-  border: "rgba(10, 17, 40, 0.08)"
-  navy-deep: "#0A1128"
-  navy: "#0A1128"
-  navy-soft: "#142146"
-  navy-tint: "#F0EBE0"
-  paper: "#FAF7F0"
+  text: "#1A1D20"
+  text-soft: "#555B62"
+  gold: "#E5A044"
+  gold-light: "#F3C36C"
+  gold-deep: "#B27123"
+  gold-soft: "rgba(229, 160, 68, 0.12)"
+  gold-border: "rgba(229, 160, 68, 0.28)"
+  gold-wash: "#FDF7ED"
+  gold-text: "#8A5A17"
+  border: "rgba(0, 0, 0, 0.08)"
+  navy-deep: "#121416"
+  navy: "#1A1D20"
+  navy-soft: "#2A2E33"
+  navy-tint: "#F1F3F5"
+  paper: "#FFFFFF"
   paper-lt: "#FFFFFF"
-  paper-dk: "#F0EBE0"
+  paper-dk: "#F8F9FA"
   white: "#FFFFFF"
-  muted-2: "#4A5578"
-  muted-lt: "#8A96B4"
-  coral: "#D96A43"
-  teal: "#3B7A75"
-  success: "#2A7E56"
-  error: "#C0392B"
+  muted-2: "#555B62"
+  muted-lt: "#8C9298"
+  coral: "#E16F4B"
+  teal: "#3F7A74"
+  success: "#2E7D32"
+  error: "#C62828"
 typography:
   display:
     fontFamily: Fraunces
@@ -127,23 +130,24 @@ components:
 
 ## Overview
 
-Light Premium (Warm Ivory + Navy + Gold) is the approved identity for SK Baghel Travels.
-The mix is ivory backgrounds (`#FAF7F0`), cream section alternation (`#F0EBE0`), crisp white card surfaces (`#FFFFFF`), deep navy typography and chrome (`#0A1128`), and refined gold accents (`#B8941F`). The site feels like an exclusive, well-run private travel desk, with smooth micro-animations that enhance trust.
+Warm Paper + Soft Slate Blue + Saffron Gold is the refined identity for SK Baghel Travels.
+The mix is warm paper backgrounds (`#F5F0E8`), dark paper section alternation (`#EAE4DA`), crisp warm white card surfaces (`#FCFAF6` / `#FFFDF8`), refined Soft Slate Blue typography and chrome (`#2D3E50`), and warm saffron gold accents (`#E5A044`). The site balances comfortable warmth with executive polish.
 
 This file is the agent-facing design spec. `css/tokens.css` must stay in lockstep with the YAML above.
 
 ## Colors
 
-- **Background Ivory (`#FAF7F0`):** Main page canvas and light atmosphere.
-- **Background Alt Cream (`#F0EBE0`):** Subtle section alternation.
-- **Surface White (`#FFFFFF`):** Cards, booking panels, elevated elements.
-- **Navy Deep / Navy (`#0A1128`):** Primary text, header background, dark CTAs, footer.
-- **Navy Soft (`#142146`):** Secondary dark surfaces, WhatsApp lead button.
-- **Text Soft (`#4A5578`):** Subtitles, meta descriptions, secondary copy.
-- **Gold (`#B8941F`):** Primary CTA, key accents, focus rings, active indicators.
-- **Gold Deep (`#9A7B14`):** Hover/active states, accessible gold on light backgrounds.
-- **Gold Soft (`rgba(184, 148, 31, 0.1)`): Spotlight cards, badge backgrounds, pill highlights.
-- **Border (`rgba(10, 17, 40, 0.08)`):** Dividers, subtle borders.
+- **Background Paper (`#F5F0E8`):** Main page canvas and comfortable warm atmosphere.
+- **Background Alt Paper Dark (`#EAE4DA`):** Subtle section alternation.
+- **Surface Warm White (`#FCFAF6` / `#FFFDF8`):** Cards, booking panels, elevated elements.
+- **Soft Slate Blue (`#2D3E50`):** Primary text, header background, dark CTAs, footer (lighter, elegant replacement for dark navy).
+- **Deep Slate (`#1E2B37`):** Dark section bases, night mode canvas.
+- **Mid Slate Blue (`#3B5268`):** Secondary dark surfaces, WhatsApp lead button.
+- **Text Soft (`#5B6E80`):** Subtitles, meta descriptions, secondary copy.
+- **Saffron Gold (`#E5A044`):** Primary CTA, key accents, focus rings, active indicators.
+- **Gold Deep (`#B27123`):** Hover/active states, accessible gold on light backgrounds.
+- **Gold Soft (`rgba(229, 160, 68, 0.12)`): Spotlight cards, badge backgrounds, pill highlights.
+- **Border (`rgba(45, 62, 80, 0.12)`):** Dividers, subtle borders.
 - **Error / Success:** Functional feedback states only.
 
 

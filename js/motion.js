@@ -239,42 +239,75 @@
       });
     });
 
-    // 8. ZOOM PARALLAX ON SCROLL
-    var parallaxImgs = document.querySelectorAll('[data-parallax]');
-    if (parallaxImgs.length && 'IntersectionObserver' in window) {
-      var activeParallax = [];
-      var pObserver = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          var idx = activeParallax.indexOf(entry.target);
-          if (entry.isIntersecting && idx === -1) {
-            activeParallax.push(entry.target);
-          } else if (!entry.isIntersecting && idx !== -1) {
-            activeParallax.splice(idx, 1);
-          }
-        });
-      }, { threshold: 0.05 });
+    // 8. LUXURY IMAGE SCROLL PARALLAX ENGINE (Hero + Cards + Tours + Highlights)
+    if (!prefersReduced) {
+      var heroMedia = document.querySelector('.hero-media');
+      var contentImages = document.querySelectorAll(
+        '.vehicle-photo img, .package-photo img, .split > img, figure.portrait img, .zoom-parallax-img, [data-parallax]'
+      );
 
-      parallaxImgs.forEach(function (img) { pObserver.observe(img); });
+      contentImages.forEach(function (img) {
+        img.classList.add('img-alive-trigger');
+      });
 
-      var ticking = false;
-      window.addEventListener('scroll', function () {
-        if (!ticking && activeParallax.length > 0) {
-          window.requestAnimationFrame(function () {
-            var viewHeight = window.innerHeight;
-            activeParallax.forEach(function (img) {
-              var container = img.parentElement;
-              var rect = container.getBoundingClientRect();
-              var progress = 1 - (rect.top / viewHeight);
-              progress = Math.max(0, Math.min(1, progress));
-              var translateY = progress * -12;
-              var scale = 1.1 - (progress * 0.1);
-              img.style.transform = 'translateY(' + translateY + '%) scale(' + scale + ')';
-            });
-            ticking = false;
+      var activeImages = [];
+
+      if ('IntersectionObserver' in window) {
+        var parallaxObserver = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            var img = entry.target;
+            var idx = activeImages.indexOf(img);
+            if (entry.isIntersecting) {
+              img.classList.add('is-alive');
+              if (idx === -1) activeImages.push(img);
+            } else {
+              if (idx !== -1) activeImages.splice(idx, 1);
+            }
           });
-          ticking = true;
+        }, { rootMargin: '120px 0px 120px 0px', threshold: [0, 0.25, 0.5, 0.75, 1] });
+
+        contentImages.forEach(function (img) {
+          parallaxObserver.observe(img);
+        });
+      } else {
+        activeImages = Array.prototype.slice.call(contentImages);
+        contentImages.forEach(function (img) { img.classList.add('is-alive'); });
+      }
+
+      var isParallaxTicking = false;
+      function updateParallax() {
+        var scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+        var winH = window.innerHeight || document.documentElement.clientHeight;
+
+        // Hero highway smooth depth parallax
+        if (heroMedia && scrollY < winH * 1.3) {
+          var heroShift = scrollY * 0.32;
+          heroMedia.style.transform = 'translate3d(0, ' + heroShift.toFixed(1) + 'px, 0) scale(1.05)';
+        }
+
+        // Active content photos scroll parallax
+        for (var i = 0; i < activeImages.length; i++) {
+          var img = activeImages[i];
+          var rect = img.getBoundingClientRect();
+          var centerOffset = (rect.top + rect.height / 2 - winH / 2) / (winH / 2);
+          if (centerOffset >= -1.8 && centerOffset <= 1.8) {
+            var shift = Math.max(-28, Math.min(28, centerOffset * -24));
+            img.style.setProperty('--parallax-y', shift.toFixed(1) + 'px');
+            img.style.transform = 'translate3d(0, ' + shift.toFixed(1) + 'px, 0) scale(1.08)';
+          }
+        }
+        isParallaxTicking = false;
+      }
+
+      window.addEventListener('scroll', function () {
+        if (!isParallaxTicking) {
+          window.requestAnimationFrame(updateParallax);
+          isParallaxTicking = true;
         }
       }, { passive: true });
+
+      // Trigger initial layout calculation
+      window.requestAnimationFrame(updateParallax);
     }
 
     // 9. FAQ ACCORDION INTERACTION ENHANCER

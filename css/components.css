@@ -103,7 +103,7 @@
 .roll:focus-visible,
 .roll-link:hover,
 .roll-link:focus-visible {
-  color: var(--text, #0A1128);
+  color: var(--text, #1A1D20);
 }
 
 .roll span:first-child,
@@ -199,7 +199,7 @@ button:active:not(:disabled) {
 }
 
 .btn-primary:hover {
-  box-shadow: 0 6px 18px rgba(10, 17, 40, 0.25), 0 0 16px var(--gold-glow, rgba(184, 148, 31, 0.3));
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18), 0 0 16px var(--gold-glow, rgba(229, 160, 68, 0.3));
 }
 
 .btn-gold:hover,
@@ -249,8 +249,8 @@ button:active:not(:disabled) {
 .btn-glow {
   padding: 0.85rem 1.75rem;
   min-height: var(--touch, 44px);
-  background: var(--text, #0A1128);
-  color: var(--bg, #FAF7F0);
+  background: var(--text, #1A1D20);
+  color: var(--bg, #FFFFFF);
   border-radius: var(--radius, 4px);
   font-weight: 600;
   text-decoration: none;
@@ -262,7 +262,7 @@ button:active:not(:disabled) {
   content: '';
   position: absolute;
   inset: 2px;
-  background: var(--text, #0A1128);
+  background: var(--text, #1A1D20);
   border-radius: calc(var(--radius, 4px) - 1px);
   z-index: 0;
 }
@@ -303,7 +303,7 @@ button:active:not(:disabled) {
 .spotlight-card {
   position: relative;
   background: var(--surface, #FFFFFF);
-  border: 1px solid var(--border, rgba(10, 17, 40, 0.08));
+  border: 1px solid var(--border, rgba(0, 0, 0, 0.08));
   border-radius: var(--radius-lg, 8px);
   padding: 1.75rem;
   overflow: hidden;
@@ -329,7 +329,7 @@ button:active:not(:disabled) {
   .spotlight-card:hover {
     transform: translateY(-4px);
     border-color: var(--gold-border, rgba(184, 148, 31, 0.25));
-    box-shadow: 0 12px 30px rgba(10, 17, 40, 0.08);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
   }
 
   .spotlight-card:hover::before {
@@ -431,7 +431,7 @@ button:active:not(:disabled) {
 
 .faq-item {
   background: var(--surface, #FFFFFF);
-  border: 1px solid var(--border, rgba(10, 17, 40, 0.08));
+  border: 1px solid var(--border, rgba(0, 0, 0, 0.08));
   border-radius: var(--radius-lg, 8px);
   overflow: hidden;
   transition: border-color var(--motion-fast, 180ms) ease;
@@ -454,7 +454,7 @@ button:active:not(:disabled) {
   font-family: var(--font-display, 'Fraunces', serif);
   font-size: 1.15rem;
   font-weight: 500;
-  color: var(--text, #0A1128);
+  color: var(--text, #1A1D20);
   text-align: left;
   cursor: pointer;
   min-height: var(--touch, 44px);
@@ -562,7 +562,7 @@ button:active:not(:disabled) {
   overflow: hidden;
   aspect-ratio: 16/10;
   cursor: pointer;
-  background: var(--navy-deep, #0A1128);
+  background: var(--navy-deep, #121416);
 }
 
 .curtain-image {
@@ -575,7 +575,7 @@ button:active:not(:disabled) {
 .curtain-overlay {
   position: absolute;
   inset: 0;
-  background: var(--navy, #0A1128);
+  background: var(--navy, #1A1D20);
   display: flex;
   align-items: flex-end;
   padding: 1.5rem;
@@ -666,21 +666,61 @@ button:active:not(:disabled) {
 }
 
 /* --------------------------------------------------------------------------
-   13. ZOOM PARALLAX (Hero / Destination Images)
+   13. LUXURY IMAGE SCROLL PARALLAX ENGINE ("Alive" Scroll Depth)
    -------------------------------------------------------------------------- */
-.zoom-parallax-container {
+.zoom-parallax-container,
+.parallax-wrap,
+.vehicle-photo,
+.package-photo,
+.split > img,
+figure.portrait {
   position: relative;
-  height: 420px;
-  border-radius: var(--radius-lg, 8px);
   overflow: hidden;
 }
 
-.zoom-parallax-img {
+.zoom-parallax-container {
+  height: 420px;
+  border-radius: var(--radius-lg, 8px);
+}
+
+.zoom-parallax-img,
+[data-parallax],
+.vehicle-photo img,
+.package-photo img,
+.split > img,
+figure.portrait img {
   width: 100%;
-  height: 120%;
+  height: 100%;
   object-fit: cover;
-  transform: translateY(0) scale(1.1);
   will-change: transform;
+  transform: translate3d(0, var(--parallax-y, 0px), 0) scale(1.08);
+  transition: transform 0.14s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hero-media {
+  will-change: transform;
+  transform-origin: center center;
+  transition: transform 0.08s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Image reveal / alive entry */
+.img-alive-trigger {
+  opacity: 0.88;
+  filter: brightness(0.96);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+              filter 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.14s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.img-alive-trigger.is-alive {
+  opacity: 1;
+  filter: brightness(1);
+}
+
+/* Card hover zoom keeps parallax offset aligned */
+.vehicle-card:hover .vehicle-photo img,
+.package-card:hover .package-photo img {
+  transform: translate3d(0, var(--parallax-y, 0px), 0) scale(1.14);
 }
 
 /* --------------------------------------------------------------------------
@@ -700,7 +740,7 @@ button:active:not(:disabled) {
   top: 0;
   bottom: 0;
   width: 2px;
-  background: var(--border, rgba(10, 17, 40, 0.08));
+  background: var(--border, rgba(0, 0, 0, 0.08));
 }
 
 .timeline-item {
@@ -738,11 +778,11 @@ button:active:not(:disabled) {
   font-size: 1.25rem;
   font-weight: 500;
   margin-bottom: 0.5rem;
-  color: var(--text, #0A1128);
+  color: var(--text, #1A1D20);
 }
 
 .timeline-text {
-  color: var(--text-soft, #4A5578);
+  color: var(--text-soft, #555B62);
   line-height: 1.6;
 }
 
@@ -758,7 +798,7 @@ button:active:not(:disabled) {
   min-height: var(--touch, 44px);
   font-weight: 600;
   background: var(--surface, #FFFFFF);
-  color: var(--text, #0A1128);
+  color: var(--text, #1A1D20);
   border-radius: var(--radius, 4px);
   border: none;
   cursor: pointer;
@@ -801,8 +841,8 @@ button:active:not(:disabled) {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(var(--border, rgba(10, 17, 40, 0.08)) 1px, transparent 1px),
-    linear-gradient(90deg, var(--border, rgba(10, 17, 40, 0.08)) 1px, transparent 1px);
+    linear-gradient(var(--border, rgba(0, 0, 0, 0.08)) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border, rgba(0, 0, 0, 0.08)) 1px, transparent 1px);
   background-size: 44px 44px;
   opacity: 0.6;
   animation: portal-grid-move 24s linear infinite;
@@ -838,7 +878,7 @@ button:active:not(:disabled) {
     inset -3px -3px 8px rgba(255, 255, 255, 0.95),
     inset 0 2px 4px rgba(148, 163, 184, 0.35),
     inset 0 0 15px rgba(203, 213, 225, 0.25),
-    0 2px 6px rgba(10, 17, 40, 0.1);
+    0 2px 6px rgba(0, 0, 0, 0.08);
   cursor: pointer;
   outline: none;
   touch-action: manipulation;
@@ -921,8 +961,8 @@ html.dark .cinematic-icon-moon {
   box-shadow:
     inset 1px 1px 2px rgba(255, 255, 255, 1),
     inset -1px -1px 2px rgba(148, 163, 184, 0.25),
-    0 2px 8px rgba(10, 17, 40, 0.18),
-    0 1px 3px rgba(10, 17, 40, 0.12);
+    0 2px 8px rgba(0, 0, 0, 0.14),
+    0 1px 3px rgba(0, 0, 0, 0.08);
   transform: translateX(0);
   transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1),
     background 300ms ease,
@@ -1041,7 +1081,7 @@ html.dark .cinematic-puck-icon.moon {
 .contact-card {
   position: relative;
   background: var(--surface, #FFFFFF);
-  border: 1px solid var(--border, rgba(10, 17, 40, 0.08));
+  border: 1px solid var(--border, rgba(0, 0, 0, 0.08));
   border-radius: var(--radius-lg, 8px);
   box-shadow: var(--shadow-lift);
   overflow: visible;
@@ -1108,13 +1148,13 @@ html.dark .cinematic-puck-icon.moon {
 .contact-card-header .contact-card-title {
   font-family: var(--font-display, 'Fraunces', serif);
   font-size: clamp(1.75rem, 3vw, 2.5rem);
-  color: var(--text, #0A1128);
+  color: var(--text, #1A1D20);
   margin-bottom: 0.75rem;
   line-height: 1.2;
 }
 
 .contact-card-desc {
-  color: var(--text-soft, #4A5578);
+  color: var(--text-soft, #555B62);
   font-size: 1rem;
   line-height: 1.6;
   max-width: 540px;
@@ -1138,8 +1178,8 @@ html.dark .cinematic-puck-icon.moon {
   align-items: center;
   gap: 0.85rem;
   padding: 1rem;
-  background: var(--bg-alt, #F0EBE0);
-  border: 1px solid var(--border, rgba(10, 17, 40, 0.08));
+  background: var(--bg-alt, #F8F9FA);
+  border: 1px solid var(--border, rgba(0, 0, 0, 0.08));
   border-radius: var(--radius, 4px);
   text-decoration: none;
   color: inherit;
@@ -1167,7 +1207,7 @@ html.dark .cinematic-puck-icon.moon {
   border-radius: var(--radius, 4px);
   background: var(--surface, #FFFFFF);
   color: var(--gold, #B8941F);
-  border: 1px solid var(--border, rgba(10, 17, 40, 0.08));
+  border: 1px solid var(--border, rgba(0, 0, 0, 0.08));
 }
 
 .contact-tile-label {
@@ -1176,22 +1216,22 @@ html.dark .cinematic-puck-icon.moon {
   font-size: 0.75rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--text-soft, #4A5578);
+  color: var(--text-soft, #555B62);
 }
 
 .contact-tile-value {
   display: block;
   font-weight: 600;
   font-size: 0.95rem;
-  color: var(--text, #0A1128);
+  color: var(--text, #1A1D20);
   margin-top: 2px;
 }
 
 /* Right Form Section */
 .contact-card-form {
   padding: 2.5rem;
-  background: var(--bg, #FAF7F0);
-  border-left: 1px solid var(--border, rgba(10, 17, 40, 0.08));
+  background: var(--bg, #FFFFFF);
+  border-left: 1px solid var(--border, rgba(0, 0, 0, 0.08));
   border-top-right-radius: var(--radius-lg, 8px);
   border-bottom-right-radius: var(--radius-lg, 8px);
   display: flex;
@@ -1203,7 +1243,7 @@ html.dark .cinematic-puck-icon.moon {
 @media (max-width: 900px) {
   .contact-card-form {
     border-left: none;
-    border-top: 1px solid var(--border, rgba(10, 17, 40, 0.08));
+    border-top: 1px solid var(--border, rgba(0, 0, 0, 0.08));
     border-top-right-radius: 0;
     border-bottom-left-radius: var(--radius-lg, 8px);
   }
@@ -1219,7 +1259,7 @@ html.dark .cinematic-puck-icon.moon {
 .contact-form-label {
   font-size: 0.85rem;
   font-weight: 600;
-  color: var(--text, #0A1128);
+  color: var(--text, #1A1D20);
 }
 
 .contact-form-input,
@@ -1227,9 +1267,9 @@ html.dark .cinematic-puck-icon.moon {
   width: 100%;
   padding: 0.75rem 0.95rem;
   border-radius: var(--radius, 4px);
-  border: 1px solid var(--border, rgba(10, 17, 40, 0.12));
+  border: 1px solid var(--border, rgba(0, 0, 0, 0.08));
   background: var(--surface, #FFFFFF);
-  color: var(--text, #0A1128);
+  color: var(--text, #1A1D20);
   font-family: var(--font-ui, 'DM Sans', sans-serif);
   font-size: 0.95rem;
   transition: border-color var(--motion-fast, 180ms) ease,
@@ -1384,8 +1424,15 @@ html.dark .cinematic-puck-icon.moon {
     animation: none !important;
   }
 
-  .zoom-parallax-img {
+  .zoom-parallax-img,
+  .hero-media,
+  .vehicle-photo img,
+  .package-photo img,
+  .split > img,
+  figure.portrait img,
+  [data-parallax] {
     transform: none !important;
+    transition: none !important;
   }
 
   .timeline-item {

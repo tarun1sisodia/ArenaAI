@@ -6,7 +6,7 @@
 
 html {
   scroll-behavior: smooth;
-  background: var(--navy-deep);
+  background: var(--bg);
 }
 
 body {
@@ -309,9 +309,9 @@ h3 i,
 }
 
 .site-header.is-scrolled {
-  background: rgba(11, 23, 30, 0.88);
+  background: rgba(18, 20, 22, 0.92);
   backdrop-filter: blur(16px);
-  box-shadow: 0 8px 24px rgba(11, 23, 30, 0.28);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
 }
 
 .header-inner {

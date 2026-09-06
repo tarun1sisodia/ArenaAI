@@ -8,7 +8,7 @@ only check boxes, append log rows, and update the Current State block.
 
 ## Current State
 
-- **Current Phase:** 18 — Interactive Motion Polish, Brand/Nav/Button/Form Animations, Icon Suite & Mock Banner Deletion ✅ completed
+- **Current Phase:** 18 — Interactive Motion, Clean White Theme (No Blue), Icon Suite, & Image Scroll Parallax ✅ completed
 - **Current Step:** Ready for next phase / client launch review
 - **Last updated:** 2026-09-06
 - **Open items:** `visual_audit.mjs` still needs a networked machine; fonts self-hosting (sandbox blocks Google Fonts download); real photos + real NAP before launch (see `LAUNCH_CHECKLIST.md`); PRD v3.0 master rewrite includes full SEO Final BOSS content. Client decision points from the deck are open (§25 of PRD.md).
@@ -42,6 +42,8 @@ can't be resolved without user input)_
 | 2026-09-05 | Adopt Light Premium tokens & production animation split (Phase 16 / Session 2) | User approved Session 1b Light Premium theme (`#FAF7F0` Ivory, `#0A1128` Navy, `#B8941F` Gold) and 16 animation patterns; modularized into `css/tokens.css`, `css/components.css`, `js/motion.js`, and `templates/base.html` |
 | 2026-09-06 | Integrate 21st.dev Cinematic Theme Switcher & Architectural Contact Card (Phase 17) | Faithful zero-dependency vanilla MPA implementation maintaining strict SEO rules: single H1 per page, strict heading hierarchy (H1 -> H2 -> H3), crawlable mailto fallback, 44px touch targets, zero link check errors. |
 | 2026-09-06 | Brand/Nav/Button/Form animations, Icon Suite & Mock badge deletion (Phase 18) | Applied animations from `client` project: Brand wordmark scramble on hover, rolling nav link dual-layer text, button shimmer wave & active press feedback, form floating labels & gold focus ring glow, removed Demo Mock Data pill across all pages, and added SVG icons for Call, WhatsApp, Email, Map. 102/102 URLs OK. |
+| 2026-09-06 | Theme revert to initial Warm Paper with Soft Slate Blue (#2D3E50) | User requested returning to the initial theme and replacing the dark navy blue with a lighter color; updated tokens to initial Warm Paper (`#F5F0E8` / `#FCFAF6` / `#EAE4DA`) and Saffron Gold (`#E5A044`), with dark navy replaced by refined Soft Slate Blue (`#2D3E50` / `#1E2B37` / `#3B5268`). Rebuilt and crawled 102/102 URLs OK. |
+| 2026-09-06 | Clean White theme + neutral charcoal (all blue removed) & Image Scroll Parallax | User requested clean white background, removal of all blue colors, and parallax ("paradox") scroll animation on images so the site feels alive. Replaced canvas with pure white (`#FFFFFF`), alternate with `#F8F9FA`, text/chrome with neutral charcoal (`#1A1D20`, `#121416`), retained Saffron Gold (`#E5A044`), and implemented 60fps RAF-throttled image scroll depth engine. Rebuilt 102 pages; 102/102 URLs OK. |
 
 ---
 
@@ -69,6 +71,7 @@ can't be resolved without user input)_
 | 2026-09-05 | 16 / 1–4 | Session 2: Production file split — Light Premium tokens in `tokens.css` + `DESIGN.md`; 16 animation patterns in `css/components.css`; motion engine in `js/motion.js`; shell in `templates/base.html`; wired into `render_pages.py` (102/102 URLs OK). | `DESIGN.md`, `css/tokens.css`, `css/components.css`, `js/motion.js`, `templates/base.html`, `scripts/render_pages.py`, `03_PHASE_PLAN.md`, `04_PROGRESS_TRACKER.md` |
 | 2026-09-06 | 17 / 1–4 | Phase 17: Integrated 21st.dev Cinematic Theme Switcher & Architectural Contact Card. Dark theme tokens in `tokens.css`; styling in `components.css`; interactive logic & persistence in `motion.js`; wired into `render_pages.py` and `templates/base.html` with anti-FOUC script, SVG defs, and single-H1 SEO compliance; verified 102/102 links OK at both bases. | `css/tokens.css`, `css/components.css`, `js/motion.js`, `scripts/render_pages.py`, `templates/base.html`, `03_PHASE_PLAN.md`, `04_PROGRESS_TRACKER.md` |
 | 2026-09-06 | 18 / 1–6 | Phase 18: Applied Brand Name scramble, rolling nav links, button shimmer wave & active scale, form floating labels & gold focus rings, removed Demo Mock Data badge across 102 pages, added SVG icons (Call, WhatsApp, Email, Map). Verified 102/102 URLs OK. | `css/components.css`, `css/site.css`, `js/motion.js`, `templates/base.html`, `scripts/render_pages.py`, `book.html`, `03_PHASE_PLAN.md`, `04_PROGRESS_TRACKER.md` |
+| 2026-09-06 | Theme | Updated site theme to initial Warm Paper (`#F5F0E8` / `#FCFAF6` / `#EAE4DA`) and Saffron Gold (`#E5A044`), replacing dark navy blue with Soft Slate Blue (`#2D3E50` / `#1E2B37` / `#3B5268`). Verified 102/102 URLs OK. | `css/tokens.css`, `DESIGN.md`, `css/components.css`, `scripts/render_pages.py`, `04_PROGRESS_TRACKER.md` |
 
 
 ---
@@ -96,6 +99,8 @@ can't be resolved without user input)_
 | 2026-09-03 | Docs / PRD | Rewrote `PRD.md` to v2.0 Master: full-SEO strategy (intent → keyword → page → content → schema → technical → local → multilingual → measurement), engineering/architecture/scalability/security/QA/CI, design/UX, accessibility, analytics, definition-of-done and SEO checklist; wired it into `00_START_HERE.md` and `01_AI_OPERATING_INSTRUCTIONS.md`. **Note:** the user's attached `SEO Final BOSS.md` was not present as `/home/user/uploads/SEO Final BOSS.md` in the sandbox and was not read. | `PRD.md`, `00_START_HERE.md`, `01_AI_OPERATING_INSTRUCTIONS.md`, `README.md`, `04_PROGRESS_TRACKER.md` |
 | 2026-09-05 | 16 / 1–4 | Session 2: Production file split — Light Premium tokens in `tokens.css` + `DESIGN.md`; 16 animation patterns in `css/components.css`; motion engine in `js/motion.js`; shell in `templates/base.html`; wired into `render_pages.py` (102/102 URLs OK). | `DESIGN.md`, `css/tokens.css`, `css/components.css`, `js/motion.js`, `templates/base.html`, `scripts/render_pages.py`, `03_PHASE_PLAN.md`, `04_PROGRESS_TRACKER.md` |
 | 2026-09-06 | 17 / 1–4 | Phase 17: Integrated 21st.dev Cinematic Theme Switcher & Architectural Contact Card. Dark theme tokens in `tokens.css`; styling in `components.css`; interactive logic & persistence in `motion.js`; wired into `render_pages.py` and `templates/base.html` with anti-FOUC script, SVG defs, and single-H1 SEO compliance; verified 102/102 links OK at both bases. | `css/tokens.css`, `css/components.css`, `js/motion.js`, `scripts/render_pages.py`, `templates/base.html`, `03_PHASE_PLAN.md`, `04_PROGRESS_TRACKER.md` |
+| 2026-09-06 | 18 / 1 | Brand hover scramble, rolling nav links, button shimmer wave & active press, form floating labels & glow, removed Demo Mock Data badge across 102 pages, added SVG icons (Call, WhatsApp, Email, Map) | `css/components.css`, `js/motion.js`, `templates/base.html`, `scripts/render_pages.py`, `book.html`, `css/site.css` |
+| 2026-09-06 | 18 / 2 | Clean White palette (#FFFFFF canvas, #F8F9FA alternate), eliminated all blue hues (neutral charcoal #1A1D20, #121416), installed 60fps luxury image scroll parallax engine | `css/tokens.css`, `css/site.css`, `css/components.css`, `js/motion.js`, `DESIGN.md`, `04_PROGRESS_TRACKER.md` |
 
 
 ---
