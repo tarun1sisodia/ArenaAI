@@ -8,10 +8,10 @@ only check boxes, append log rows, and update the Current State block.
 
 ## Current State
 
-- **Current Phase:** 23 — Interactive Background Grid across All White & Light Background Sections ✅ completed
+- **Current Phase:** 25 — Compact Header + Nav Hover Flyout Suggestion Cards ✅ completed
 - **Current Step:** Ready for next phase / client review
 - **Last updated:** 2026-09-06
-- **Open items:** `visual_audit.mjs` still needs a networked machine; fonts self-hosting (sandbox blocks Google Fonts download); real photos + real NAP before launch (see `LAUNCH_CHECKLIST.md`); PRD v3.0 master rewrite includes full SEO Final BOSS content. Client decision points from the deck are open (§25 of PRD.md).
+- **Open items:** `visual_audit.mjs` still needs a networked machine; fonts self-hosting (sandbox blocks Google Fonts download); real photos + real NAP before launch (see `LAUNCH_CHECKLIST.md`).
 
 ---
 
@@ -55,6 +55,8 @@ can't be resolved without user input)_
 | 2026-09-06 | Normal Navigation Font Weight & Google Maps Places Location Search | Normalized navigation link typography (font-weight 500, removed heavy 1px text stroke); integrated Google Maps Places Autocomplete API and 30+ destination catalog via `js/places.js`; replaced limited static selects with `.loc-picker` searchable comboboxes on Hero Widget and `book.html`; enhanced `fares.js` for dynamic distance & outstation fare quotes. 109/109 URLs OK. |
 | 2026-09-06 | 21st.dev Interactive Background Grid on Trust Bar & Popular Routes (Phase 22) | Implemented interactive background grid pattern behind Trust Bar chips and Popular Routes section per 21st.dev / Aceternity design. Features 44px hairline grid, dynamic cursor spotlight, and interactive glowing grid cell trail via hardware-accelerated canvas. Full dark mode support (amber in light, luminous gold in dark), zero idle CPU overhead, non-blocking click safety (`pointer-events: none`), and SEO-safe progressive scroll reveal. 109/109 URLs OK. |
 | 2026-09-06 | Universal Interactive Background Grid on All White Background Sections (Phase 23) | Extended the light and interactive background grid animation to every section with a white or light background (`.section--paper`, `.section--paper-lt`, `.page-hero`, `.book-layout`). Standardized subtle hairline grid lines (`rgba(18,20,22,0.048)` light / `rgba(255,255,255,0.065)` dark), cursor spotlight tracking, and hardware-accelerated glowing grid cell physics trail. Zero nesting conflicts, 0% idle CPU via per-section IntersectionObserver pausing, non-blocking click safety (`z-index: 2` on content). 109/109 URLs OK. |
+| 2026-09-06 | Card Fan Carousel + Contact Form Inversion + Production Footer (Phase 24) | Replaced fullscreen crossfade slideshow with scroll-driven stacked card-fan on right side of hero (CSS transforms only, RAF-throttled, aria-hidden, reduced-motion safe). Contact section inverted: dark (#121416) bg in light mode, light (#F5F7FA) bg in dark mode with full cascade overrides. Stripped "Frontend Preview" and "Sample mock data" footer strings — replaced with "All rights reserved" and "GST invoice on request · Govt. registered fleet". 109/109 URLs OK. |
+| 2026-09-06 | Compact Header + Nav Hover Flyout Cards (Phase 25) | Reduced header height 78px→56px (mobile 64px→48px) with matching token + inner layout tightening. Added .nav-item flyout panel system on Routes, Packages, Fleet links: dark glass card (rgba 0.96, blur 20px), caret arrow, 3 live suggestion rows each with thumbnail/name/meta/price pulled from catalog data. Services and Contact stay as plain links. 109/109 URLs OK. |
 
 ---
 

@@ -318,7 +318,7 @@ h3 i,
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  gap: 16px;
   height: var(--header);
 }
 
@@ -348,7 +348,7 @@ h3 i,
 }
 
 .brand-copy strong {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.14em;
 }
@@ -363,7 +363,7 @@ h3 i,
 .nav-desktop {
   display: flex;
   align-items: center;
-  gap: 22px;
+  gap: 4px;
 }
 
 .nav-desktop a {
@@ -400,7 +400,7 @@ h3 i,
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .demo-chip {
