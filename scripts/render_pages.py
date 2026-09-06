@@ -331,7 +331,6 @@ def header(lang: str, active: str, alt_path: str):
 <header class="site-header" id="site-header">
   <div class="container header-inner">
     <a class="brand" href="{home}" aria-label="SK Baghel Tour &amp; Travels">
-      <span class="brand-mark">{BRAND_SVG}</span>
       <span class="brand-copy"><strong id="brand" data-scramble>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
     </a>
     <nav class="nav-desktop" aria-label="Primary">{links}</nav>
@@ -349,7 +348,6 @@ def header(lang: str, active: str, alt_path: str):
 <div class="nav-sheet" id="nav-sheet" role="dialog" aria-modal="true" aria-label="{t["menu"]}" hidden>
   <div class="sheet-head">
     <a class="brand" href="{home}">
-      <span class="brand-mark">{BRAND_SVG}</span>
       <span class="brand-copy"><strong data-scramble>SK BAGHEL</strong><small>TOUR &amp; TRAVELS</small></span>
     </a>
     <button type="button" id="nav-close" class="btn-outline btn-outline--light btn-sm">{t["close"]}</button>
@@ -372,10 +370,9 @@ def footer(lang: str):
 <footer class="site-footer">
   <div class="container footer-grid">
     <div class="footer-brand">
-      <span class="brand-mark" style="width:28px;color:#fffdf8">{BRAND_SVG}</span>
-      <strong>Agra → India</strong>
-      <p>Discover → Book → Go</p>
-      <p>{ICON_MAP} Near Taj East Gate Road, Taj Ganj, Agra</p>
+      <strong class="footer-brand-title">SK BAGHEL</strong>
+      <p style="color:var(--gold,#E5A044);font-size:0.82rem;font-weight:600;letter-spacing:0.08em;margin-top:2px;">TOUR &amp; TRAVELS · AGRA</p>
+      <p style="margin-top:8px;">{ICON_MAP} Near Taj East Gate Road, Taj Ganj, Agra</p>
       <p><a href="tel:{PHONE}">{ICON_CALL} {PHONE_DISPLAY}</a></p>
     </div>
     <div>
@@ -643,6 +640,12 @@ def home_body(lang):
             "priority": False,
         },
         {
+            "src": "/assets/images/akshardham.webp",
+            "alt": "Akshardham Temple architecture in New Delhi" if lang == "en" else "अक्षरधाम मंदिर, नई दिल्ली",
+            "caption": "Akshardham Temple · New Delhi" if lang == "en" else "अक्षरधाम मंदिर · नई दिल्ली",
+            "priority": False,
+        },
+        {
             "src": "/assets/destinations/himachal-manali.webp",
             "alt": "Snow-capped peaks and Solang Valley in Manali, Himachal" if lang == "en" else "बर्फ़ीली चोटियाँ और सोलांग वैली, मनाली हिमाचल",
             "caption": "Manali & Solang · Himachal Hills" if lang == "en" else "मनाली व सोलांग · हिमाचल प्रदेश",
@@ -679,7 +682,7 @@ def home_body(lang):
   <div class="hero-grain"></div>
   <div class="hero-ambient-orb hero-ambient-orb-1" aria-hidden="true"></div>
   <div class="hero-ambient-orb hero-ambient-orb-2" aria-hidden="true"></div>
-  <div class="hero-location-badge" id="hero-location-badge" aria-hidden="true">
+  <div class="hero-location-badge" id="hero-location-badge" aria-live="polite">
     <span class="hero-location-dot"></span>
     <span class="hero-location-text">{first_caption}</span>
   </div>
@@ -695,10 +698,6 @@ def home_body(lang):
       <a class="btn-outline btn-outline--light" href="https://wa.me/{WHATSAPP}" target="_blank" rel="noreferrer">{t["whatsapp"]}</a>
       <a class="btn-outline btn-outline--light" href="{hub_path("packages", lang)}">{t["explore_tours"]}</a>
     </div>
-  </div>
-  <div class="hero-side">
-    <span>{t["based"]}</span><strong>Agra, India</strong>
-    <span>{t["experience"]}</span><strong>Discover → Book → Go</strong>
   </div>
   <form class="hero-widget" action="/book.html" method="get">
     <label class="field"><span>{t["pickup"]}</span>

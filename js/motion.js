@@ -417,14 +417,14 @@
         slides[currentIndex].classList.add('is-active');
         if (dots[currentIndex]) dots[currentIndex].classList.add('is-active');
 
-        if (badgeText) {
+        if (badge && badgeText) {
           var caption = slides[currentIndex].getAttribute('data-caption');
           if (caption) {
-            badgeText.style.opacity = '0';
+            badge.classList.add('is-updating');
             setTimeout(function () {
               badgeText.textContent = caption;
-              badgeText.style.opacity = '1';
-            }, 350);
+              badge.classList.remove('is-updating');
+            }, 260);
           }
         }
       }

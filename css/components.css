@@ -746,36 +746,42 @@ figure.portrait img {
   object-position: center 36%;
 }
 
-/* Location Badge */
+/* Location Badge (Prominent top-right luxury destination badge) */
 .hero-location-badge {
   position: absolute;
-  top: calc(var(--header) + 20px);
-  right: clamp(16px, 4vw, 48px);
+  top: calc(var(--header) + 24px);
+  right: max(24px, calc((100% - var(--container)) / 2));
   z-index: 3;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 14px;
+  gap: 10px;
+  padding: 8px 18px;
   border-radius: 999px;
-  background: rgba(18, 20, 22, 0.72);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(18, 20, 22, 0.78);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   color: #FFFFFF;
-  font-size: 0.82rem;
+  font-size: 0.88rem;
   font-weight: 500;
   letter-spacing: 0.02em;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
   pointer-events: none;
-  transition: opacity 0.4s ease;
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hero-location-badge.is-updating {
+  opacity: 0;
+  transform: translateY(-5px) scale(0.96);
 }
 
 .hero-location-dot {
-  width: 7px;
-  height: 7px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background: var(--gold, #E5A044);
-  box-shadow: 0 0 8px var(--gold, #E5A044);
+  box-shadow: 0 0 10px var(--gold, #E5A044);
   animation: hero-dot-pulse 2.4s infinite;
 }
 
@@ -785,7 +791,91 @@ figure.portrait img {
 }
 
 .hero-location-text {
-  transition: opacity 0.35s ease;
+  transition: opacity 0.25s ease;
+}
+
+/* --------------------------------------------------------------------------
+   HERO BOOKING WIDGET (Glassmorphism, entrance animation & micro-interactions)
+   -------------------------------------------------------------------------- */
+.hero-widget {
+  animation: hero-widget-rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both;
+  background: rgba(26, 29, 32, 0.82) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(229, 160, 68, 0.28) !important;
+  box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.5), 0 0 24px -2px rgba(229, 160, 68, 0.12) !important;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.3s ease !important;
+}
+
+.hero-widget:hover {
+  transform: translateY(-3px);
+  border-color: rgba(229, 160, 68, 0.5) !important;
+  box-shadow: 0 24px 48px -6px rgba(0, 0, 0, 0.55), 0 0 32px rgba(229, 160, 68, 0.22) !important;
+}
+
+@keyframes hero-widget-rise {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-widget .field select,
+.hero-widget .field input {
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, transform 0.2s ease;
+}
+
+.hero-widget .field select:hover,
+.hero-widget .field input:hover {
+  border-color: rgba(229, 160, 68, 0.45);
+}
+
+.hero-widget .field select:focus,
+.hero-widget .field input:focus {
+  outline: none;
+  border-color: var(--gold, #E5A044) !important;
+  box-shadow: 0 0 0 3px rgba(229, 160, 68, 0.28) !important;
+  transform: translateY(-1px);
+}
+
+.hero-widget button[type="submit"] {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hero-widget button[type="submit"]::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -60%;
+  width: 40%;
+  height: 200%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  transform: rotate(25deg);
+  animation: widget-btn-shimmer 4s infinite 2s;
+  pointer-events: none;
+}
+
+@keyframes widget-btn-shimmer {
+  0% { left: -60%; }
+  30%, 100% { left: 140%; }
+}
+
+.hero-widget button[type="submit"]:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 24px rgba(229, 160, 68, 0.45);
+}
+
+.hero-widget button[type="submit"]:active {
+  transform: scale(0.97);
 }
 
 /* Slide Navigation Dots (Responsive for 11+ destinations) */

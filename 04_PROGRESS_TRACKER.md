@@ -246,6 +246,8 @@ can't be resolved without user input)_
 - [x] 7. Build & crawl gate: 102/102 URLs verified 200 OK with `scripts/check_links.py` at both bases.
 - [x] 8. Hero background destinations crossfade slideshow: Added rotating high-resolution destinations cycling every 5.5s with smooth 1.6s fade in/out, Ken Burns scale drift, location badge, and dot navigation, strictly obeying `ANIMATION_RULES.md` and reduced-motion safety.
 - [x] 9. Expansion to 11 Famous Heritage & Hill Destinations: Removed highway image per user request and added 11 world-famous destinations: Taj Mahal, Agra Fort, Fatehpur Sikri, Mathura Yamuna Ghats, Vrindavan Prem Mandir, Delhi India Gate, Delhi Red Fort, Jaipur Hawa Mahal, Jaipur Amber Palace, Himachal Manali & Solang Valley, and Himachal Shimla Ridge. Responsive dot navigation, bilingual captions, verified 107/107 URLs OK.
+- [x] 10. Hero Widget Animations, Logo removal & Dynamic Location Badge: Added micro-animations to the booking widget (`.hero-widget` entrance rise, hover elevation, focus gold halo ring, button shimmer wave); removed logo SVG mark from header, nav-sheet, and footer leaving clean typography; removed static `.hero-side` ("Based in Agra" & "The Experience"); updated dynamic location badge to sync with image changes in real time with smooth fade/scale transition; batch-converted all 17 downloaded images in `assets/images/` to optimized WebP format. Verified 108/108 URLs OK.
+
 
 
 
