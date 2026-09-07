@@ -1,0 +1,62 @@
+name: "Frontend Quality, SEO & Cloudflare Deployment Guard"
+
+on:
+  push:
+    branches:
+      - main
+      - "arena/**"
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  quality-gate:
+    name: "Senior Quality & SEO Audit"
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout Codebase
+        uses: actions/checkout@v4
+
+      - name: Setup Python Runtime
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Setup Node.js Runtime
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Execute SSG Static Page Generation
+        run: |
+          python3 scripts/render_pages.py
+
+      - name: Launch Lightweight Preview Server
+        run: |
+          python3 scripts/serve.py 4173 &
+          sleep 2
+
+      - name: Run Senior Frontend Quality & SEO Auditor
+        run: |
+          python3 scripts/quality_audit.py
+
+      - name: Verify Cloudflare Asset Size Budgets (<25 MiB)
+        run: |
+          echo "Scanning all repository assets for Cloudflare 25 MiB limits..."
+          find . -type f -size +25M -not -path "./.git/*" -not -path "./node_modules/*" | tee oversized_assets.txt
+          if [ -s oversized_assets.txt ]; then
+            echo "::error::Found assets exceeding Cloudflare 25 MiB threshold!"
+            cat oversized_assets.txt
+            exit 1
+          else
+            echo "All assets strictly within Cloudflare 25 MiB limits."
+          fi
+
+      - name: Publish Quality Scorecard to GitHub Step Summary
+        if: always()
+        run: |
+          if [ -f quality_report.md ]; then
+            cat quality_report.md >> $GITHUB_STEP_SUMMARY
+          fi

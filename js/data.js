@@ -26,6 +26,8 @@ SKB.vehicles = [
     tags: ["4+1 SEATS", "AC", "2 BAGS"],
     blurb: "Everyday comfort for city rides, Yamuna Expressway drops, and local sightseeing.",
     perKm: 10,
+    rateRange: "₹10–₹12/km",
+    models: ["Maruti Suzuki Dzire", "Toyota Etios", "Hyundai Aura", "Wagon R / Tiago (Hatchback ₹10/km)"],
     image: "/assets/fleet/sedan-480.webp",
     suitable: "Couples, airport transfers, 1–4 passengers",
   },
@@ -39,6 +41,8 @@ SKB.vehicles = [
     tags: ["6+1 SEATS", "AC", "3 BAGS"],
     blurb: "A little more room for families without stepping up to a large SUV.",
     perKm: 14,
+    rateRange: "₹14–₹16/km",
+    models: ["Maruti Suzuki Ertiga", "Toyota Rumion", "Renault Triber"],
     image: "/assets/fleet/ertiga-480.webp",
     suitable: "Families, 5–6 passengers",
   },
@@ -52,6 +56,8 @@ SKB.vehicles = [
     tags: ["6+1 SEATS", "AC", "4 BAGS"],
     blurb: "The outstation favourite — plush pushback seats, smooth suspension, and a quiet cabin.",
     perKm: 18,
+    rateRange: "₹18–₹23/km",
+    models: ["Toyota Innova Crysta", "Toyota Innova Hycross", "Toyota Fortuner VIP (₹35/km)"],
     image: "/assets/fleet/innova-480.webp",
     suitable: "Longer routes, elders, 4–6 passengers",
   },
@@ -65,6 +71,8 @@ SKB.vehicles = [
     tags: ["12+1 SEATS", "AC", "LUGGAGE BAY"],
     blurb: "Spacious pushback seats, luggage bay, individual AC vents, and ice-box for group travel.",
     perKm: 25,
+    rateRange: "₹22–₹34/km",
+    models: ["9-Seater Maharaja", "12-Seater Standard", "16-Seater Executive", "20-Seater Deluxe", "26-Seater Tourer"],
     image: "/assets/fleet/tempo-480.webp",
     suitable: "Family tours, pilgrimage groups, 7–12 passengers",
   },
@@ -78,9 +86,17 @@ SKB.vehicles = [
     tags: ["16 SEATS", "PREMIUM", "AC"],
     blurb: "Chauffeur-grade luxury executive travel with airplane-style cabin styling and sealed acoustics.",
     perKm: 34,
+    rateRange: "₹34–₹38/km",
+    models: ["Force Urbania 9-Seater VIP", "12-Seater Luxury Cabin", "17-Seater Royal Van"],
     image: "/assets/fleet/urbania-480.webp",
     suitable: "Wedding parties, corporate delegations, 13–16 passengers",
   },
+];
+
+SKB.airportTransfers = [
+  { id: "agra-station", name: "Agra Cantt / Fort Railway Station Transfer", fares: { sedan: 800, ertiga: 900, innova: 1100, tempo: 2200, urbania: 3500 } },
+  { id: "agra-airport", name: "Agra Kheria Airport (AGR) Transfer", fares: { sedan: 900, ertiga: 1000, innova: 1250, tempo: 2500, urbania: 3800 } },
+  { id: "delhi-airport", name: "Delhi IGI Airport (DEL) ⇄ Agra Express Transfer", fares: { sedan: 3499, ertiga: 4499, innova: 6499, tempo: 9500, urbania: 14000 } },
 ];
 
 SKB.routes = [

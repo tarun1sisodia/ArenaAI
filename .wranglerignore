@@ -1,0 +1,53 @@
+# ==============================================================================
+# Cloudflare Wrangler Static Assets Ignore List
+# Prevents uploading node_modules (workerd 147 MiB binary), scripts, and dev files
+# ==============================================================================
+
+# Node dependencies & binaries (Strictly blocks Cloudflare 25 MiB asset error)
+node_modules/
+.npm/
+package-lock.json
+
+# Version control & internal agent docs
+.git/
+.github/
+.agents/
+.gemini/
+
+# Build & maintenance scripts
+scripts/
+scratch/
+templates/
+styles/
+components/
+lib/
+design-guide/
+proposal/
+qa-shots/
+
+# Python bytecode & virtual environments
+*.py
+*.pyc
+__pycache__/
+venv/
+.venv/
+
+# Build configurations & documentation
+package.json
+tsconfig.json
+tailwind.config.js
+wrangler.jsonc
+wrangler.toml
+*.patch
+*.md
+*.log
+
+# Scratch / prototype HTML files
+Qwen_*.html
+coverflow-carousel.html
+
+# Ignore files
+.gitignore
+.wranglerignore
+.pagesignore
+.ignore

@@ -2,3 +2,6 @@ __pycache__/
 *.pyc
 qa-shots/
 node_modules/
+.wrangler/
+.pages/
+dist/

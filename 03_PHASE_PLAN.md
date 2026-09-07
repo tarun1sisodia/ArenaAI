@@ -194,3 +194,16 @@ Admin, live Razorpay, WhatsApp Cloud API, CMS, Next.js rewrite, auth.
 
 **Acceptance criteria:** Hero maintains 100% psychological and color harmony with headline typography in both light and dark modes; JSON-LD contains valid `FAQPage` and `BreadcrumbList` schemas; Currency switcher converts package fares instantly; 0 broken links across all pages.
 
+---
+
+## Phase 31 — Automated Frontend Quality CI/CD & Cloudflare Deployment Guard
+**Depends on:** Phase 30
+
+1. Deployment Guardrails & Cloudflare Configuration: Create `.wranglerignore`, `.pagesignore`, `.ignore`, and `wrangler.jsonc` to strictly block `node_modules/`, `workerd` (147 MiB binary), and development files from static asset uploads.
+2. Automated Senior Frontend Quality Auditor Engine: Build `scripts/quality_audit.py` with multi-category scorecard checks (SEO & metadata, Schema.org JSON-LD graph, asset size ceiling, crawl/link health, accessibility, client JS syntax).
+3. GitHub Actions CI Workflow: Build `.github/workflows/quality.yml` running the complete build, audit, and asset size verification on every push and PR with automated step summary generation.
+4. Comprehensive QA & Final Verification: Run `quality_audit.py`, verify 10/10 Scorecard pass, confirm preview server and static tree health, and finalize tracker log.
+
+**Acceptance criteria:** Cloudflare asset uploads contain 0 files > 25 MiB; `quality_audit.py` passes with 10.0/10.0 A+ grade; GitHub Actions workflow is fully specified; 113/113 URLs OK.
+
+

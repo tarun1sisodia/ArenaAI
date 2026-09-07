@@ -8,8 +8,8 @@ only check boxes, append log rows, and update the Current State block.
 
 ## Current State
 
-- **Current Phase:** 30 — Hero Visual-Psychological Color Tuning & 10/10 Scorecard Completion 🟢 complete
-- **Current Step:** Phase 30 Complete — All steps delivered and verified
+- **Current Phase:** 31 — Automated Frontend Quality CI/CD & Cloudflare Deployment Guard ✅ complete
+- **Current Step:** Phase 31 Complete — Ready for Next Instructions / Deployment
 - **Last updated:** 2026-09-07
 - **Open items:** `visual_audit.mjs` still needs a networked machine; fonts self-hosting (sandbox blocks Google Fonts download); real photos + real NAP before launch (see `LAUNCH_CHECKLIST.md`); PRD v3.0 master rewrite includes full SEO Final BOSS content. Client decision points from the deck are open (§25 of PRD.md).
 
@@ -133,6 +133,10 @@ can't be resolved without user input)_
 | 2026-09-07 | 30 / 2 | Step 30.2: Remaining Fleet Tiers & Transfers Matrix. Enriched fleet definitions with sub-tier models (Wagon R/Tiago hatchback at ₹10/km under Sedan, Fortuner VIP at ₹35/km under Innova, 9–26s Tempos, 9–17s Urbanias) and rate ranges in `catalog.py` and `data.js`; created comprehensive Airport & Station transfers matrix (Agra Cantt/Fort ₹800, Agra Airport ₹900, Delhi IGI Airport ₹3,499); rendered responsive transfers table and model lists in `fleet_hub_body` and `vehicle_body`; rebuilt static tree and verified 113/113 links OK. | `scripts/catalog.py`, `js/data.js`, `scripts/render_pages.py`, `04_PROGRESS_TRACKER.md` |
 | 2026-09-07 | 30 / 3 | Step 30.3: 10/10 Scorecard SEO & CRO Upgrades. Injected comprehensive `BreadcrumbList` and contextual `FAQPage` JSON-LD schemas across all route and package detail pages; added `og:locale:alternate` to `<head>`; upgraded WhatsApp CTA links with contextual pre-filled enquiry strings and coupon `ASTTCAR500OFF`; built International Currency Estimator (INR / USD / EUR / GBP) on package detail pages with live price switching; added semantic FAQ accordions to route and package templates; verified 113/113 URLs OK. | `scripts/render_pages.py`, `css/components.css`, `js/motion.js`, `04_PROGRESS_TRACKER.md` |
 | 2026-09-07 | 30 / 4 | Step 30.4: Rebuild, Crawl Gate, and Visual QA. Executed static rebuild (`python3 scripts/render_pages.py`); ran link audit crawling 113 URLs with 113 OK and 0 failed (`scripts/check_links.py`); verified syntax of all client JS modules (`node -c`); verified single H1, valid title and meta descriptions, and complete 4-schema JSON-LD graphs across all pages; confirmed HTTP 200 responses on running preview server. Phase 30 complete. | `scripts/render_pages.py`, `04_PROGRESS_TRACKER.md` |
+| 2026-09-07 | 31 / 1 | Step 31.1: Deployment Guardrails & Cloudflare Configuration. Created `.wranglerignore`, `.pagesignore`, `.ignore`, and `wrangler.jsonc` to strictly block `node_modules/`, `workerd` (147 MiB binary), scripts, and dev files from static asset uploads; updated `.gitignore` with `.wrangler/` and build directories. | `.wranglerignore`, `.pagesignore`, `.ignore`, `wrangler.jsonc`, `.gitignore`, `04_PROGRESS_TRACKER.md` |
+| 2026-09-07 | 31 / 2 | Step 31.2: Automated Senior Frontend Quality Auditor Engine. Built `scripts/quality_audit.py` auditing 5 core categories (Technical SEO, Schema.org JSON-LD, Cloudflare asset budget ceiling, crawl/link integrity, accessibility & JS health). Verified 10.0/10.0 A+ score across all 60 production pages and generated `quality_report.md`. | `scripts/quality_audit.py`, `scripts/i18n.py`, `quality_report.md`, `04_PROGRESS_TRACKER.md` |
+| 2026-09-07 | 31 / 3 | Step 31.3: GitHub Actions CI Workflow. Created `.github/workflows/quality.yml` executing SSG page build, preview server launch, Senior Quality & SEO Auditor (`quality_audit.py`), Cloudflare 25 MiB asset budget scan, and automated GitHub Step Summary publication. | `.github/workflows/quality.yml`, `04_PROGRESS_TRACKER.md` |
+| 2026-09-07 | 31 / 4 | Step 31.4: Comprehensive QA & Final Verification. Executed full static regeneration (`python3 scripts/render_pages.py`), verified 113/113 URLs OK (0 broken links) via `scripts/check_links.py`, executed Senior Frontend Quality Auditor (`scripts/quality_audit.py`) achieving 10.0/10.0 A+ score, verified 0 assets > 25 MiB, and confirmed HTTP 200 responses on local preview server. Phase 31 complete. | `scripts/quality_audit.py`, `quality_report.md`, `04_PROGRESS_TRACKER.md` |
 
 
 
@@ -308,6 +312,13 @@ can't be resolved without user input)_
 - [x] 2. Remaining Fleet Tiers & Transfers: Add Hatchback (Wagon R/Tiago at ₹10/km), luxury references, Tempo/Urbania variants, and dedicated airport/station transfer flat-fare matrix to `catalog.py`, `data.js`, and `fares.js`.
 - [x] 3. 10/10 Scorecard SEO & CRO Upgrades: Inject `FAQPage` and `BreadcrumbList` JSON-LD schema, `fetchpriority="high"`, dynamic WhatsApp booking query generator, and International Currency Estimator (INR/USD/EUR) on package pages.
 - [x] 4. Rebuild, Crawl Gate, and Visual QA: Static rebuild, link audit, visual verification across viewports, and tracker log finalization.
+
+### Phase 31 — Automated Frontend Quality CI/CD & Cloudflare Deployment Guard
+- [x] 1. Deployment Guardrails & Cloudflare Configuration: Create `.wranglerignore`, `.pagesignore`, `.ignore`, and `wrangler.jsonc` to strictly block `node_modules/`, `workerd` (147 MiB binary), and development files from static asset uploads.
+- [x] 2. Automated Senior Frontend Quality Auditor Engine: Build `scripts/quality_audit.py` with multi-category scorecard checks (SEO & metadata, Schema.org JSON-LD graph, asset size ceiling, crawl/link health, accessibility, client JS syntax).
+- [x] 3. GitHub Actions CI Workflow: Build `.github/workflows/quality.yml` running the complete build, audit, and asset size verification on every push and PR with automated step summary generation.
+- [x] 4. Comprehensive QA & Final Verification: Run `quality_audit.py`, verify 10/10 Scorecard pass, confirm preview server and static tree health, and finalize tracker log.
+
 
 
 
