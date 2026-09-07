@@ -3522,11 +3522,15 @@ html.dark .liquid-review-badge {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+              background-color 0.26s ease,
+              color 0.26s ease;
 }
 
 .benefit-card:hover .benefit-icon-wrapper {
   transform: scale(1.12) rotate(4deg);
+  background-color: var(--gold, #E5A044);
+  color: #FFFFFF;
 }
 
 .benefit-pill {
@@ -3585,6 +3589,12 @@ html.dark .benefit-card:hover {
 html.dark .benefit-icon-wrapper {
   background: rgba(247, 96, 2, 0.15);
   color: var(--gold, #F76002);
+}
+
+[data-theme="dark"] .benefit-card:hover .benefit-icon-wrapper,
+html.dark .benefit-card:hover .benefit-icon-wrapper {
+  background-color: var(--gold, #F76002);
+  color: #FFFFFF;
 }
 
 [data-theme="dark"] .benefit-pill,
