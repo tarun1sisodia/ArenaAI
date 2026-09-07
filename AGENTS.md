@@ -8,6 +8,7 @@ Read these files **before writing any code**, every session:
 4. `03_PHASE_PLAN.md` — **current phase only**
 5. `DESIGN.md` — if the step touches UI
 6. `ANIMATION_RULES.md` — before adding or modifying any animation
+7. `docs/PAYMENT_SYSTEM.md` + `.agents/rules/PAYMENT_AGENT_RULES.md` — before any Razorpay, webhook, refund, or “mark paid” work
 
 Then implement **exactly one step** from the tracker. Update
 `04_PROGRESS_TRACKER.md` when that step is done. Never skip ahead.

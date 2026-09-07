@@ -11,7 +11,7 @@ only check boxes, append log rows, and update the Current State block.
 - **Current Phase:** 31 — Automated Frontend Quality CI/CD & Cloudflare Deployment Guard ✅ complete
 - **Current Step:** Post-Phase 31 — Vercel light-mode theme applied; awaiting next instruction
 - **Last updated:** 2026-09-07
-- **Open items:** `visual_audit.mjs` still needs a networked machine; fonts self-hosting (sandbox blocks Google Fonts download); real photos + real NAP before launch (see `LAUNCH_CHECKLIST.md`); PRD v3.0 master rewrite includes full SEO Final BOSS content. Client decision points from the deck are open (§25 of PRD.md).
+- **Open items:** `visual_audit.mjs` still needs a networked machine; fonts self-hosting (sandbox blocks Google Fonts download); real photos + real NAP before launch (see `LAUNCH_CHECKLIST.md`); PRD v3.0 master rewrite includes full SEO Final BOSS content. Client decision points from the deck are open (§25 of PRD.md). Payments remain mock until `docs/PAYMENT_SYSTEM.md` is implemented.
 
 ---
 
@@ -26,6 +26,7 @@ can't be resolved without user input)_
 
 | Date | Decision | Why |
 |---|---|---|
+| 2026-09-07 | Payments spec lives in `docs/PAYMENT_SYSTEM.md`; agents follow `.agents/rules/PAYMENT_AGENT_RULES.md`; webhook+server fare is source of truth; Razorpay + Cloudflare Worker/D1 | User asked for a zero-miss payment gateway template before buying Razorpay; live charges stay out of scope until that spec is built |
 | 2026-09-01 | Vanilla static MPA, not Next.js | Design-guide handoff is static; JS budget; booking is the only app page |
 | 2026-09-01 | Bilingual SSG `/en/` + `/hi/` with EN home at `/` | Fast + bilingual SEO approach approved for this project |
 | 2026-09-01 | Call + WhatsApp primary; `/book.html` noindex | Call/WhatsApp are primary conversions; payment is secondary |

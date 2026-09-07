@@ -16,6 +16,8 @@ build the site phase by phase, without losing context between sessions.
 
 Also always-on: `AGENTS.md` (repo root) and `.agents/rules/AGENTS.md`.
 
+Payments (future phase): `docs/PAYMENT_SYSTEM.md` (architecture, Razorpay, webhooks, scenarios, security) and `.agents/rules/PAYMENT_AGENT_RULES.md` (hard rules for agents). Live charges are still out of scope until that spec is implemented.
+
 ## How to run this with another AI
 
 **Every time you open a new chat/session**, the first message should be:
