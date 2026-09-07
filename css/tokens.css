@@ -71,7 +71,18 @@
   /* Shadows & Overlays */
   --shadow-gold: 0 8px 24px rgba(229, 160, 68, 0.22);
   --shadow-lift: 0 10px 25px -5px rgba(0, 0, 0, 0.07), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
-  --hero-overlay: linear-gradient(90deg, rgba(18, 20, 22, 0.94) 0%, rgba(26, 29, 32, 0.72) 48%, rgba(26, 29, 32, 0.18) 100%);
+  --hero-overlay: linear-gradient(90deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.80) 46%, rgba(255, 255, 255, 0.24) 84%, transparent 100%);
+  --hero-overlay-mobile: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 255, 255, 0.84) 55%, rgba(255, 255, 255, 0.35) 100%);
+  --hero-text: #1A1D20;
+  --hero-lead: #3D444C;
+  --hero-gold: #D98A28;
+  --hero-filter: contrast(1.04) brightness(1.04) saturate(1.08);
+  --hero-badge-bg: rgba(255, 255, 255, 0.88);
+  --hero-badge-text: #1A1D20;
+  --hero-badge-border: rgba(26, 29, 32, 0.14);
+  --hero-badge-shadow: 0 6px 20px rgba(0, 0, 0, 0.10);
+  --hero-eyebrow: #B87B28;
+  --hero-text-shadow: none;
   --card-overlay: linear-gradient(180deg, rgba(18, 20, 22, 0.06) 0%, rgba(18, 20, 22, 0.65) 100%);
   --gold-highlight: linear-gradient(90deg, #E5A044 0%, #F3C36C 100%);
   --grain: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.16'/%3E%3C/svg%3E");
@@ -124,6 +135,17 @@ html.dark {
   --shadow-lift: 0 12px 28px rgba(0, 0, 0, 0.55);
   --card-overlay: linear-gradient(180deg, rgba(20, 18, 17, 0.08) 0%, rgba(20, 18, 17, 0.85) 100%);
   --hero-overlay: linear-gradient(90deg, rgba(24, 22, 21, 0.95) 0%, rgba(24, 22, 21, 0.82) 48%, rgba(24, 22, 21, 0.32) 100%);
+  --hero-overlay-mobile: linear-gradient(180deg, rgba(24, 22, 21, 0.96) 0%, rgba(24, 22, 21, 0.86) 60%, rgba(24, 22, 21, 0.45) 100%);
+  --hero-text: #FDFCFB;
+  --hero-lead: #C6D0CD;
+  --hero-gold: #F76002;
+  --hero-filter: contrast(1.10) brightness(0.88) saturate(1.18);
+  --hero-badge-bg: rgba(24, 22, 21, 0.85);
+  --hero-badge-text: #FFFFFF;
+  --hero-badge-border: rgba(255, 255, 255, 0.2);
+  --hero-badge-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  --hero-eyebrow: var(--gold-light, #FF8533);
+  --hero-text-shadow: 0 2px 14px rgba(0, 0, 0, 0.65), 0 0 24px rgba(247, 96, 2, 0.22);
 }
 
 /* ==========================================================================

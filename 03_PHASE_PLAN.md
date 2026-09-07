@@ -181,3 +181,16 @@ Admin, live Razorpay, WhatsApp Cloud API, CMS, Next.js rewrite, auth.
 6. Rebuild full static tree (`python3 scripts/render_pages.py`), run link verification, verify booking flow, and update `04_PROGRESS_TRACKER.md`.
 
 **Acceptance criteria:** Fares in SSG and client JS match 100%; authentic 24-hr and tour package cancellation policies published; Benefits section renders with design tokens; all 100+ bilingual URLs pass with 0 link errors.
+
+---
+
+## Phase 30 — Hero Visual-Psychological Color Tuning & 10/10 Scorecard Completion
+**Depends on:** Phase 29
+
+1. Harmonize Home page hero visual psychology across light and dark modes: light sunlit morning overlay, vivid daylight image filter, high-contrast charcoal/gold typography; dark Solar Dusk vignette with jewel tones and glowing amber; image skeleton loading shimmer.
+2. Integrate remaining fleet tiers (Hatchback Wagon R / Tiago ₹10/km, Luxury Fortuner / BMW / Mercedes reference options, Tempo/Urbania variants) and airport/station transfer flat-fare matrix into `catalog.py`, `data.js`, and `fares.js`.
+3. Implement 10/10 Scorecard upgrades: `FAQPage` and `BreadcrumbList` JSON-LD schema on FAQ, route, and package pages; `fetchpriority="high"` on LCP hero image; dynamic WhatsApp pre-fill query generator with dates, cars, and coupons; and an interactive Currency Estimator (INR ₹ / USD $ / EUR €) on package pages.
+4. Execute full static rebuild (`python3 scripts/render_pages.py`), run link verification (`scripts/check_links.py`), verify responsive layouts, and update `04_PROGRESS_TRACKER.md`.
+
+**Acceptance criteria:** Hero maintains 100% psychological and color harmony with headline typography in both light and dark modes; JSON-LD contains valid `FAQPage` and `BreadcrumbList` schemas; Currency switcher converts package fares instantly; 0 broken links across all pages.
+

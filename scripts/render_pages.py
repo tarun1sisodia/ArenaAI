@@ -23,6 +23,7 @@ from catalog import (
     SITE,
     VEHICLES,
     WHATSAPP,
+    AIRPORT_STATION_TRANSFERS,
     CANCELLATION_POLICY_CAB,
     CANCELLATION_SLABS_TOUR,
     NIGHT_ALLOWANCE_CAB,
@@ -174,6 +175,7 @@ def seo_head(*, title, description, path, alt_path, lang, extra="", noindex=Fals
         f'<link rel="alternate" hreflang="x-default" href="{url(path if lang == "en" else alt_path)}" />',
         f'<meta property="og:type" content="website" />',
         f'<meta property="og:locale" content="{t["locale"]}" />',
+        f'<meta property="og:locale:alternate" content="{T[other]["locale"]}" />',
         f'<meta property="og:site_name" content="SK Baghel Tour &amp; Travels" />',
         f'<meta property="og:title" content="{title}" />',
         f'<meta property="og:description" content="{description}" />',
@@ -1320,6 +1322,52 @@ def home_body(lang):
 """
 
 
+def get_route_faqs(route, origin, dest):
+    return [
+        (
+            f"Are toll taxes, state border permits, and fuel included in the {origin['en']} to {dest['en']} fare?",
+            f"Yes. All one-way taxi fares for {origin['en']} to {dest['en']} (starting at {inr(route['fares']['sedan'])} for Sedan) are 100% all-inclusive of toll plaza charges on the Yamuna Expressway/National Highways, state entry tax, and fuel. There are zero hidden surcharges at drop-off.",
+            f"क्या {origin['hi']} से {dest['hi']} के किराए में टोल टैक्स, स्टेट परमिट और ईंधन शामिल है?",
+            f"हाँ, {origin['hi']} से {dest['hi']} के सभी वन-वे किराए ({inr(route['fares']['sedan'])} से) में एक्सप्रेसवे/हाईवे टोल, राज्य सीमा टैक्स और ईंधन पूरी तरह शामिल हैं। कोई छिपा हुआ शुल्क नहीं है।"
+        ),
+        (
+            "What happens if our train or flight arrives late for pickup?",
+            "We track live train and flight arrival schedules in real time. Your chauffeur will be waiting at the arrival terminal or station exit with a name-board. We never charge waiting penalties for train or flight delays.",
+            "यदि हमारी ट्रेन या फ्लाइट लेट हो जाती है तो क्या अतिरिक्त चार्ज लगेगा?",
+            "हम रियल-टाइम ट्रेन व फ्लाइट स्टेटस ट्रैक करते हैं। आपका शोफर स्टेशन या एयरपोर्ट पर नेम-बोर्ड के साथ स्वागत करेगा और देरी के लिए कोई अतिरिक्त वेटिंग चार्ज नहीं लगेगा।"
+        ),
+        (
+            "Is there a night driving allowance for late departures?",
+            f"For trips departing between 8:00 PM and 6:00 AM, a standard driver night allowance of ₹{NIGHT_ALLOWANCE_CAB} applies for cars and ₹{NIGHT_ALLOWANCE_TEMPO} for Tempo Travellers.",
+            "रात में यात्रा शुरू होने पर क्या नाइट अलाउंस लागू होता है?",
+            f"रात 8:00 बजे से सुबह 6:00 बजे के बीच यात्रा शुरू होने पर कारों के लिए ₹{NIGHT_ALLOWANCE_CAB} और टेम्पो के लिए ₹{NIGHT_ALLOWANCE_TEMPO} ड्राइवर नाइट अलाउंस लागू होता है।"
+        )
+    ]
+
+
+def get_package_faqs(pack):
+    return [
+        (
+            f"Does the {pack['name']['en']} price include monument entrance tickets?",
+            f"The package fare covers 100% of the private sanitized air-conditioned vehicle, verified commercial chauffeur, fuel, toll taxes, and parking fees. Monument entry tickets (e.g. Taj Mahal, Agra Fort, Fatehpur Sikri) are paid directly by guests at official ASI counters or online at asi.payumoney.com to prevent middleman markup.",
+            f"क्या {pack['name']['hi']} में स्मारकों का टिकट शुल्क शामिल है?",
+            f"पैकेज किराए में प्राइवेट एसी कैब, वेरिफाइड शोफर, ईंधन, टोल टैक्स और पार्किंग 100% शामिल हैं। स्मारक टिकट (ताजमहल, आगरा किला आदि) यात्री आधिकारिक एएसआई काउंटर या ऑनलाइन ले सकते हैं।"
+        ),
+        (
+            "Can the departure time be adjusted for Taj Mahal sunrise photography?",
+            "Yes, absolutely. All our tours are 100% private and customizable. For sunrise photography at the Taj Mahal, we recommend a 5:30 AM hotel pickup to catch the best dawn light before crowds arrive.",
+            "क्या ताजमहल सनराइज फोटोग्राफी के लिए पिकअप समय बदला जा सकता है?",
+            "हाँ, हमारे सभी पैकेज 100% प्राइवेट हैं। ताजमहल सनराइज के लिए हम सुबह 5:30 बजे पिकअप की सलाह देते हैं जिससे भीड़ से पहले बेहतरीन दृश्य मिल सके।"
+        ),
+        (
+            "What is the cancellation and refund policy if our schedule changes?",
+            "Tours cancelled 61+ days prior to departure receive a 100% refund. Between 31–60 days, a 25% fee applies; 16–30 days 50% fee; and 6–15 days 75% fee. See the cancellation policy table above for complete details.",
+            "यदि यात्रा कार्यक्रम बदल जाए तो कैंसिलेशन और रिफंड की क्या नीति है?",
+            "यात्रा से 61+ दिन पूर्व रद्द करने पर 100% रिफंड मिलता है। 31–60 दिन पूर्व 25% और 16–30 दिन पूर्व 50% शुल्क लगता है। विस्तृत विवरण ऊपर दी गई तालिका में उपलब्ध है।"
+        )
+    ]
+
+
 def route_body(lang, route):
     t = T[lang]
     origin, dest = CITIES[route["from"]], CITIES[route["to"]]
@@ -1396,6 +1444,28 @@ def route_body(lang, route):
       </div>
     </div>"""
 
+    wa_route_msg = f"Hello SK Baghel Travels, I would like to book a taxi for {origin['en']} to {dest['en']} ({route['duration']}, starting at {inr(route['fares']['sedan'])}). Please confirm chauffeur availability and apply coupon ASTTCAR500OFF."
+    wa_route_link = f"https://wa.me/{WHATSAPP}?text={quote_plus(wa_route_msg)}"
+
+    r_faqs = get_route_faqs(route, origin, dest)
+    r_faq_items = [
+        f"<details><summary>{q_en if lang == 'en' else q_hi}</summary><p>{a_en if lang == 'en' else a_hi}</p></details>"
+        for q_en, a_en, q_hi, a_hi in r_faqs
+    ]
+    r_faq_section = f"""
+<section class="section section--paper">
+  <div class="container faq" style="max-width:800px">
+    <div class="section-head" style="margin-bottom:24px">
+      <div>
+        <p class="eyebrow">{"Route Guidance & FAQ" if lang == "en" else "रूट जानकारी व अक्सर पूछे जाने वाले सवाल"}</p>
+        <h2>{"Frequently Asked Questions" if lang == "en" else "अक्सर पूछे जाने वाले प्रश्न"}</h2>
+      </div>
+    </div>
+    {"".join(r_faq_items)}
+  </div>
+</section>
+"""
+
     return f"""
 <section class="page-hero">
   <div class="container">
@@ -1405,7 +1475,7 @@ def route_body(lang, route):
     <p class="muted">{route["duration"]} · {route["km"]} km</p>
     <div class="hero-actions" style="margin-top:24px">
       <a class="btn-primary" href="tel:{PHONE}">{t["call"]} {PHONE_DISPLAY}</a>
-      <a class="btn-outline" href="https://wa.me/{WHATSAPP}?text={quote_plus(origin['en'] + ' to ' + dest['en'] + ' taxi')}" target="_blank" rel="noreferrer">{t["whatsapp"]}</a>
+      <a class="btn-outline" href="{wa_route_link}" target="_blank" rel="noreferrer">{t["whatsapp"]}</a>
       <a class="btn-text" href="{book}">{t["book_route"]} <span>↗</span></a>
     </div>
     <p class="note" style="margin-top:24px">{t["primary_lead"]}</p>
@@ -1438,6 +1508,7 @@ def route_body(lang, route):
     {guidance_block}
   </div>
 </section>
+{r_faq_section}
 {render_benefits_section(lang)}
 <section class="section section--paper-lt">
   <div class="container">
@@ -1456,6 +1527,37 @@ def vehicle_body(lang, veh):
         name = t["local_label"] if r["kind"] == "local" else f"{o[lang]} → {d[lang]}"
         fare_rows.append(f'<tr data-href="{route_path(r, lang)}"><td><a href="{route_path(r, lang)}">{name}</a></td><td>{r["duration"]}</td><td><strong>{inr(r["fares"][veh["id"]])}</strong></td></tr>')
     title = veh["name"][lang]
+
+    rate_range_pill = f'<span class="badge" style="font-family:var(--mono);font-size:13px;margin-left:10px;color:var(--gold-text);background:var(--gold-wash);padding:3px 8px;border-radius:4px;vertical-align:middle">{veh.get("rate_range", "")}</span>' if veh.get("rate_range") else ""
+
+    models = veh.get("models", {}).get(lang, [])
+    models_html = "".join(f'<li style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span style="color:var(--gold);font-weight:bold">✓</span> <span>{m}</span></li>' for m in models)
+    models_box = f"""
+      <div style="margin-top:20px;padding:16px 18px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius)">
+        <p style="margin:0 0 10px;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:var(--gold-text)">{"Available Models & Variants" if lang == "en" else "उपलब्ध मॉडल व वेरिएंट"}</p>
+        <ul style="list-style:none;padding:0;margin:0;font-size:14px;color:var(--text);line-height:1.5">
+          {models_html}
+        </ul>
+      </div>""" if models else ""
+
+    transfer_rows = []
+    for tr in AIRPORT_STATION_TRANSFERS:
+        fare_val = tr["fares"].get(veh["id"], 0)
+        book_url = f'/book.html?from={"delhi" if tr["id"] == "delhi-airport" else "agra"}&amp;to={"agra" if tr["id"] == "delhi-airport" else "delhi"}&amp;vehicle={veh["id"]}'
+        transfer_rows.append(f'<tr data-href="{book_url}" tabindex="0"><td><strong>{tr["name"][lang]}</strong><br><small class="muted">{tr["desc"][lang]}</small></td><td><span class="table-tag">{tr["duration"]}</span></td><td><strong>{inr(fare_val)}</strong></td><td><a class="btn-text" href="{book_url}">{t["book_cta"]} ↗</a></td></tr>')
+
+    transfers_table_html = f"""
+    <div style="margin-top:36px">
+      <h3>{"Airport & Railway Station Transfers" if lang == "en" else "एयरपोर्ट व रेलवे स्टेशन ट्रांसफर"}</h3>
+      <p class="muted" style="margin-bottom:16px">{"Fixed flat-fare doorstep pickup & drop for this vehicle class with live delay tracking." if lang == "en" else "इस वाहन श्रेणी के लिए फिक्स डोरस्टेप पिकअप व ड्रॉप — लाइव फ्लाइट/ट्रेन ट्रैकिंग के साथ।"}</p>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>{"Transfer Route" if lang == "en" else "ट्रांसफर रूट"}</th><th>{t["time"]}</th><th>{t["sample_fare"]}</th><th>{t["book_cta"]}</th></tr></thead>
+          <tbody>{"".join(transfer_rows)}</tbody>
+        </table>
+      </div>
+    </div>"""
+
     return f"""
 <section class="page-hero">
   <div class="container">
@@ -1475,8 +1577,9 @@ def vehicle_body(lang, veh):
     <div>
       <p class="eyebrow">{veh["klass"][lang]}</p>
       <p class="spec-row">{veh["tags"]}</p>
-      <p class="fare">{inr(veh["per_km"])}<small style="font-family:var(--mono);font-size:12px;color:var(--gold-text)"> / km</small></p>
+      <p class="fare">{inr(veh["per_km"])}<small style="font-family:var(--mono);font-size:12px;color:var(--gold-text)"> / km</small>{rate_range_pill}</p>
       <p class="muted">{t["from_word"]} {inr(ROUTES[0]["fares"][veh["id"]])} Agra → Delhi</p>
+      {models_box}
       <p class="note" style="margin-top:20px">{t["primary_lead"]}</p>
     </div>
   </div>
@@ -1487,6 +1590,7 @@ def vehicle_body(lang, veh):
     <div class="table-wrap" style="margin-top:16px">
       <table class="data"><thead><tr><th>{t["route"]}</th><th>{t["time"]}</th><th>{t["sample_fare"]}</th></tr></thead><tbody>{"".join(fare_rows)}</tbody></table>
     </div>
+    {transfers_table_html}
   </div>
 </section>
 """
@@ -1516,7 +1620,7 @@ def package_body(lang, pack):
             f'<tr data-href="{book_link}" tabindex="0">'
             f'<td><strong>{up["name"][lang]}</strong></td>'
             f'<td>{up["seats"]}</td>'
-            f'<td><strong>{inr(up["price"])}</strong></td>'
+            f'<td><strong data-inr-val="{up["price"]}">{inr(up["price"])}</strong></td>'
             f'<td><a class="btn-text" href="{book_link}">{t["book_cta"]} ↗</a></td>'
             f'</tr>'
         )
@@ -1541,17 +1645,58 @@ def package_body(lang, pack):
       </table>
     </div>"""
 
+    usd_approx = round(pack["price"] / 84)
+    eur_approx = round(pack["price"] / 90)
+    gbp_approx = round(pack["price"] / 105)
+    currency_bar = f"""
+    <div class="currency-estimator-bar" data-inr-price="{pack['price']}">
+      <span class="currency-label">{"Currency Estimator:" if lang == "en" else "मुद्रा अनुमान:"}</span>
+      <div class="currency-pills" role="group" aria-label="{"Select Currency" if lang == "en" else "मुद्रा चुनें"}">
+        <button type="button" class="currency-pill is-active" data-currency="INR">₹ INR</button>
+        <button type="button" class="currency-pill" data-currency="USD">$ USD (~${usd_approx})</button>
+        <button type="button" class="currency-pill" data-currency="EUR">€ EUR (~€{eur_approx})</button>
+        <button type="button" class="currency-pill" data-currency="GBP">£ GBP (~£{gbp_approx})</button>
+      </div>
+      <small class="currency-disclaimer">{"*Indicative international rates based on standard conversion (~₹84/USD, ~₹90/EUR, ~₹105/GBP). Payment is collected in INR (₹) upon departure." if lang == "en" else "*मानक विनिमय दरों पर आधारित अनुमान (~₹84/USD, ~₹90/EUR)। वास्तविक भुगतान यात्रा प्रस्थान पर भारतीय रुपये (₹) में लिया जाएगा।"}</small>
+    </div>"""
+
+    wa_pack_msg = f"Hello SK Baghel Travels, I would like to book the {pack['name']['en']} tour ({pack['duration']['en']}, starting at {inr(pack['price'])}). Please confirm availability and apply coupon ASTTCAR500OFF."
+    wa_pack_link = f"https://wa.me/{WHATSAPP}?text={quote_plus(wa_pack_msg)}"
+
+    h1_fare = f'<span data-inr-val="{pack["price"]}">{inr(pack["price"])}</span>'
+    h1_price_str = f"from {h1_fare}" if lang == "en" else f"{h1_fare} से"
+
+    pack_faqs = get_package_faqs(pack)
+    pack_faq_items = [
+        f"<details><summary>{q_en if lang == 'en' else q_hi}</summary><p>{a_en if lang == 'en' else a_hi}</p></details>"
+        for q_en, a_en, q_hi, a_hi in pack_faqs
+    ]
+    pack_faq_section = f"""
+<section class="section section--paper">
+  <div class="container faq" style="max-width:800px">
+    <div class="section-head" style="margin-bottom:24px">
+      <div>
+        <p class="eyebrow">{"Tour FAQ" if lang == "en" else "अक्सर पूछे जाने वाले सवाल"}</p>
+        <h2>{"Frequently Asked Questions" if lang == "en" else "अक्सर पूछे जाने वाले प्रश्न"}</h2>
+      </div>
+    </div>
+    {"".join(pack_faq_items)}
+  </div>
+</section>
+"""
+
     return f"""
 <section class="page-hero">
   <div class="container">
     {breadcrumb(lang, [(t["home"], hub_path("home", lang)), (t["crumb_packages"], hub_path("packages", lang)), (pack["name"][lang], "")])}
-    <h1>{pack["name"][lang]},<br /><i>{"from " + inr(pack["price"]) if lang == "en" else inr(pack["price"]) + " से"}.</i></h1>
+    <h1>{pack["name"][lang]},<br /><i>{h1_price_str}.</i></h1>
     <p class="lead">{pack["blurb"][lang]}</p>
     <div class="hero-actions" style="margin-top:24px">
       <a class="btn-primary" href="tel:{PHONE}">{t["call"]} {PHONE_DISPLAY}</a>
-      <a class="btn-outline" href="https://wa.me/{WHATSAPP}?text={quote_plus('Booking enquiry for ' + pack['name']['en'])}" target="_blank" rel="noreferrer">{t["whatsapp"]}</a>
+      <a class="btn-outline" href="{wa_pack_link}" target="_blank" rel="noreferrer">{t["whatsapp"]}</a>
       <a class="btn-text" href="/book.html?package={pack["id"]}">{t["book_package"]} <span>↗</span></a>
     </div>
+    {currency_bar}
     <p class="note" style="margin-top:24px">{t["primary_lead"]}</p>
   </div>
 </section>
@@ -1615,6 +1760,7 @@ def package_body(lang, pack):
     {cancel_table}
   </div>
 </section>
+{pack_faq_section}
 {render_benefits_section(lang)}
 <section class="section section--paper-lt" id="contact-section">
   <div class="container">
@@ -1808,16 +1954,72 @@ def fleet_hub_body(lang):
     t = T[lang]
     cards = []
     for i, v in enumerate(VEHICLES, 1):
+        rate_badge = f'<span class="badge" style="font-family:var(--mono);font-size:12px;margin-bottom:8px;color:var(--gold-text);background:var(--gold-wash);padding:3px 8px;border-radius:4px;display:inline-block">{v.get("rate_range", "")}</span>' if v.get("rate_range") else ""
+        models_sample = ", ".join(v.get("models", {}).get(lang, [])[:3])
+        models_p = f'<p class="muted" style="font-size:13px;margin:6px 0 10px"><strong>{"Models: " if lang == "en" else "मॉडल: "}</strong>{models_sample}</p>' if models_sample else ""
         cards.append(f"""
       <article class="vehicle-card" data-seats="{v["seats"]}">
         <a href="{vehicle_path(v, lang)}">
         <div class="vehicle-photo">{resp_img(v["image"], v["name"]["en"] + " hire in Agra", "(max-width: 700px) calc(100vw - 32px), (max-width: 1120px) 50vw, 348px")}<span>{i:02d} / 05 <b>{v["name"]["en"].upper()}</b></span></div>
         <div class="vehicle-body">
+          {rate_badge}
           <h3>{v["name"][lang]}</h3>
           <p>{v["blurb"][lang]}</p>
+          {models_p}
           <div class="vehicle-cta"><span>{t["from_word"]} {inr(ROUTES[0]["fares"][v["id"]])}</span><span class="btn-text">{t["view_fares"]} <span>↗</span></span></div>
         </div></a>
       </article>""")
+
+    transfer_rows = []
+    for tr in AIRPORT_STATION_TRANSFERS:
+        book_url = f'/book.html?from={"delhi" if tr["id"] == "delhi-airport" else "agra"}&amp;to={"agra" if tr["id"] == "delhi-airport" else "agra"}&amp;trip=one-way'
+        transfer_rows.append(f"""
+        <tr data-href="{book_url}" tabindex="0">
+          <td><strong>{tr["name"][lang]}</strong><br><small class="muted">{tr["desc"][lang]}</small></td>
+          <td><span class="table-tag">{tr["duration"]}</span></td>
+          <td><strong>{inr(tr["fares"]["sedan"])}</strong></td>
+          <td><strong>{inr(tr["fares"]["ertiga"])}</strong></td>
+          <td><strong>{inr(tr["fares"]["innova"])}</strong></td>
+          <td><strong>{inr(tr["fares"]["tempo"])}</strong></td>
+          <td><strong>{inr(tr["fares"]["urbania"])}</strong></td>
+          <td><a class="btn-text" href="{book_url}">{t["book_cta"]} ↗</a></td>
+        </tr>""")
+
+    transfers_section = f"""
+<section class="section section--paper-lt">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">{"Punctual Doorstep Drops" if lang == "en" else "समयबद्ध डोरस्टेप ड्रॉप्स"}</p>
+        <h2>{"Airport & Railway Station Direct Transfers" if lang == "en" else "एयरपोर्ट व रेलवे स्टेशन डायरेक्ट ट्रांसफर"}</h2>
+      </div>
+    </div>
+    <p class="lead" style="max-width:760px;margin-bottom:24px">
+      {"Fixed flat-fare transfers with flight delay tracking, platform meet & greet with name-board, sanitized AC cabs, and zero surge pricing." if lang == "en" else "फ्लाइट डिले ट्रैकिंग, प्लेटफॉर्म पर नेम-बोर्ड के साथ स्वागत, सैनिटाइज्ड एसी कैब और बिना किसी सर्ज के फिक्स फ्लैट किराया ट्रांसफर।"}
+    </p>
+    <div class="table-wrap">
+      <table class="data">
+        <thead>
+          <tr>
+            <th>{"Transfer Route" if lang == "en" else "ट्रांसफर रूट"}</th>
+            <th>{"Est. Time" if lang == "en" else "अनुमानित समय"}</th>
+            <th>Sedan (Dzire)</th>
+            <th>MPV (Ertiga)</th>
+            <th>SUV (Innova)</th>
+            <th>Tempo (12s)</th>
+            <th>Urbania (16s)</th>
+            <th>{"Book" if lang == "en" else "बुक"}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {"".join(transfer_rows)}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+"""
+
     return f"""
 <section class="page-hero"><div class="container">
   {breadcrumb(lang, [(t["home"], hub_path("home", lang)), (t["nav_fleet"], "")])}
@@ -1832,6 +2034,7 @@ def fleet_hub_body(lang):
   </div>
   <div class="grid-3" id="fleet-grid">{"".join(cards)}</div>
 </div></section>
+{transfers_section}
 """
 
 
@@ -2255,7 +2458,11 @@ def generate_lang(lang: str):
         "terms": (lambda l: legal_body(l, "terms"), t["title_terms"], t["desc_terms"]),
     }
     for hub, (fn, title, desc) in hubs.items():
-        extra_ld = [org_schema()]
+        clean_title = title.split("—")[0].split("|")[0].strip()
+        extra_ld = [
+            org_schema(),
+            crumbs([(t["home"], hub_path("home", lang)), (clean_title, hub_path(hub, lang))]),
+        ]
         if hub == "faq":
             extra_ld.append({
                 "@context": "https://schema.org",
@@ -2286,6 +2493,21 @@ def generate_lang(lang: str):
             title = f"{origin['hi']} से {dest['hi']} टैक्सी — {inr(route['fares']['sedan'])} से | एसके बाघेल" if route["kind"] != "local" else f"आगरा दर्शन टैक्सी — {inr(route['fares']['sedan'])} से | एसके बाघेल"
             desc = route["intro"]["hi"]
             hname = f"{origin['hi']} से {dest['hi']} टैक्सी" if route["kind"] != "local" else "आगरा दर्शन टैक्सी"
+
+        route_faqs = get_route_faqs(route, origin, dest)
+        route_faq_ld = {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+                {
+                    "@type": "Question",
+                    "name": (q_en if lang == "en" else q_hi),
+                    "acceptedAnswer": {"@type": "Answer", "text": (a_en if lang == "en" else a_hi)},
+                }
+                for q_en, a_en, q_hi, a_hi in route_faqs
+            ],
+        }
+
         write_page(
             lang=lang,
             path=route_path(route, lang),
@@ -2298,6 +2520,7 @@ def generate_lang(lang: str):
             jsonld=[
                 org_schema(),
                 crumbs([(t["home"], hub_path("home", lang)), (t["crumb_routes"], hub_path("routes", lang)), (hname, route_path(route, lang))]),
+                route_faq_ld,
                 {
                     "@context": "https://schema.org",
                     "@type": "Service",
@@ -2331,6 +2554,19 @@ def generate_lang(lang: str):
 
     for pack in PACKAGES:
         title = f"{pack['name'][lang]} — from {inr(pack['price'])} | SK Baghel"
+        pack_faqs = get_package_faqs(pack)
+        pack_faq_ld = {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+                {
+                    "@type": "Question",
+                    "name": (q_en if lang == "en" else q_hi),
+                    "acceptedAnswer": {"@type": "Answer", "text": (a_en if lang == "en" else a_hi)},
+                }
+                for q_en, a_en, q_hi, a_hi in pack_faqs
+            ],
+        }
         write_page(
             lang=lang,
             path=package_path(pack, lang),
@@ -2341,6 +2577,8 @@ def generate_lang(lang: str):
             body=package_body(lang, pack),
             jsonld=[
                 org_schema(),
+                crumbs([(t["home"], hub_path("home", lang)), (t["crumb_packages"], hub_path("packages", lang)), (pack["name"][lang], package_path(pack, lang))]),
+                pack_faq_ld,
                 {
                     "@context": "https://schema.org",
                     "@type": "Service",

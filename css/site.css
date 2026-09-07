@@ -668,9 +668,10 @@ body[data-page="book"] .lead-bar {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  color: var(--white);
-  background: var(--navy-deep);
+  color: var(--hero-text);
+  background: var(--bg);
   overflow: hidden;
+  transition: color 0.4s ease, background-color 0.4s ease;
 }
 
 .hero-media {
@@ -680,18 +681,21 @@ body[data-page="book"] .lead-bar {
   height: 100%;
   object-fit: cover;
   object-position: 62% center;
+  filter: var(--hero-filter);
+  transition: filter 0.8s ease;
 }
 
 .hero-overlay {
   position: absolute;
   inset: 0;
   background: var(--hero-overlay);
+  transition: background 0.5s ease;
 }
 
 .hero-grain {
   position: absolute;
   inset: 0;
-  opacity: 0.34;
+  opacity: 0.22;
   background-image: var(--grain);
   pointer-events: none;
 }
@@ -705,12 +709,29 @@ body[data-page="book"] .lead-bar {
 
 .hero h1 {
   margin: 24px 0 20px;
-  color: var(--white);
+  color: var(--hero-text);
+  text-shadow: var(--hero-text-shadow);
+  transition: color 0.4s ease, text-shadow 0.4s ease;
+}
+
+.hero h1 i {
+  color: var(--hero-gold);
+  font-style: italic;
+  transition: color 0.4s ease;
+}
+
+.hero .eyebrow {
+  color: var(--hero-eyebrow);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  transition: color 0.4s ease;
 }
 
 .hero .lead {
-  color: #c6d0cd;
+  color: var(--hero-lead);
   margin-bottom: 32px;
+  font-weight: 400;
+  transition: color 0.4s ease;
 }
 
 .hero-actions {
@@ -718,6 +739,19 @@ body[data-page="book"] .lead-bar {
   flex-wrap: wrap;
   align-items: center;
   gap: 16px;
+}
+
+.hero-actions .btn-outline {
+  border-color: var(--border);
+  color: var(--hero-text);
+  background: var(--hero-badge-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.hero-actions .btn-outline:hover {
+  border-color: var(--gold);
+  color: var(--gold);
 }
 
 .hero-widget {
@@ -1985,7 +2019,8 @@ table.data tbody tr.is-active {
   }
 
   .hero-overlay {
-    background: linear-gradient(180deg, rgba(11, 23, 30, 0.42) 0%, rgba(11, 23, 30, 0.68) 55%, rgba(11, 23, 30, 0.92) 100%);
+    background: var(--hero-overlay-mobile);
+    transition: background 0.5s ease;
   }
 
   .hero-widget {

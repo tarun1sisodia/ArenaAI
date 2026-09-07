@@ -39,6 +39,11 @@ VEHICLES = [
             "hi": "कपल, एयरपोर्ट ट्रांसफर, 1–4 यात्री",
         },
         "tags": "4+1 SEATS · AC · 2 BAGS",
+        "rate_range": "₹10–₹12/km",
+        "models": {
+            "en": ["Maruti Suzuki Dzire", "Toyota Etios", "Hyundai Aura", "Wagon R / Tiago (Hatchback ₹10/km)"],
+            "hi": ["मारुति सुजुकी डिजायर", "टोयोटा इटियोस", "हुंडई ऑरा", "वैगन आर / टियागो (हैचबैक ₹10/किमी)"],
+        },
     },
     {
         "id": "ertiga",
@@ -58,6 +63,11 @@ VEHICLES = [
             "hi": "परिवार, 5–6 यात्री",
         },
         "tags": "6+1 SEATS · AC · 3 BAGS",
+        "rate_range": "₹14–₹16/km",
+        "models": {
+            "en": ["Maruti Suzuki Ertiga", "Toyota Rumion", "Renault Triber"],
+            "hi": ["मारुति सुजुकी अर्टिगा", "टोयोटा रुमियन", "रेनॉ ट्राइबर"],
+        },
     },
     {
         "id": "innova",
@@ -77,6 +87,11 @@ VEHICLES = [
             "hi": "लंबे रूट, बुजुर्ग, 4–6 यात्री",
         },
         "tags": "6+1 SEATS · AC · 4 BAGS",
+        "rate_range": "₹18–₹23/km",
+        "models": {
+            "en": ["Toyota Innova Crysta", "Toyota Innova Hycross", "Toyota Fortuner VIP (₹35/km)"],
+            "hi": ["टोयोटा इनोवा क्रिस्टा", "टोयोटा इनोवा हाइक्रॉस", "टोयोटा फॉर्च्यूनर वीआईपी (₹35/किमी)"],
+        },
     },
     {
         "id": "tempo",
@@ -96,6 +111,11 @@ VEHICLES = [
             "hi": "पारिवारिक टूर, तीर्थ यात्रा, 7–12 यात्री",
         },
         "tags": "12+1 SEATS · AC · LUGGAGE BAY",
+        "rate_range": "₹22–₹34/km",
+        "models": {
+            "en": ["9-Seater Luxury Maharaja", "12-Seater Standard Pushback", "16-Seater Executive", "20-Seater Deluxe", "26-Seater Grand Tourer"],
+            "hi": ["9-सीटर लग्जरी महाराजा", "12-सीटर स्टैंडर्ड पुशबैक", "16-सीटर एग्जीक्यूटिव", "20-सीटर डीलक्स", "26-सीटर ग्रैंड टूरर"],
+        },
     },
     {
         "id": "urbania",
@@ -115,8 +135,38 @@ VEHICLES = [
             "hi": "शादी, कॉर्पोरेट डेलिगेशन, 13–16 यात्री",
         },
         "tags": "16 SEATS · PREMIUM · AC",
+        "rate_range": "₹34–₹38/km",
+        "models": {
+            "en": ["Force Urbania 9-Seater Executive VIP", "12-Seater Luxury Cabin", "17-Seater Royal Van"],
+            "hi": ["फ़ोर्स अर्बनिया 9-सीटर एग्जीक्यूटिव वीआईपी", "12-सीटर लग्जरी केबिन", "17-सीटर रॉयल वैन"],
+        },
     },
 ]
+
+AIRPORT_STATION_TRANSFERS = [
+    {
+        "id": "agra-station",
+        "name": {"en": "Agra Cantt / Fort Railway Station Transfer", "hi": "आगरा कैंट / फोर्ट रेलवे स्टेशन ट्रांसफर"},
+        "desc": {"en": "Doorstep chauffeur pickup with name-board at station platform exit; luggage assistance to hotel.", "hi": "प्लेटफॉर्म एग्जिट पर नेम-बोर्ड के साथ स्वागत और होटल तक आरामदायक ड्रॉप।"},
+        "duration": "45m",
+        "fares": {"sedan": 800, "ertiga": 900, "innova": 1100, "tempo": 2200, "urbania": 3500},
+    },
+    {
+        "id": "agra-airport",
+        "name": {"en": "Agra Kheria Airport (AGR) Transfer", "hi": "आगरा खेरिया एयरपोर्ट ट्रांसफर"},
+        "desc": {"en": "Flight tracking, terminal arrival meet & greet, sanitized air-conditioned transfer to city.", "hi": "फ्लाइट ट्रैकिंग और टर्मिनल अराइवल पर त्वरित पिकअप व होटल ड्रॉप।"},
+        "duration": "40m",
+        "fares": {"sedan": 900, "ertiga": 1000, "innova": 1250, "tempo": 2500, "urbania": 3800},
+    },
+    {
+        "id": "delhi-airport",
+        "name": {"en": "Delhi IGI Airport (DEL) ⇄ Agra Express Transfer", "hi": "दिल्ली आईजीआई एयरपोर्ट ⇄ आगरा एक्सप्रेसवे ट्रांसफर"},
+        "desc": {"en": "Direct Yamuna Expressway non-stop highway drop between IGI Airport Terminals 1/2/3 and Agra hotels.", "hi": "दिल्ली एयरपोर्ट टर्मिनलों से सीधे यमुना एक्सप्रेसवे द्वारा आगरा होटल ड्रॉप।"},
+        "duration": "3h 30m",
+        "fares": {"sedan": 3499, "ertiga": 4499, "innova": 6499, "tempo": 9500, "urbania": 14000},
+    },
+]
+
 
 ROUTES = [
     {

@@ -994,9 +994,51 @@
       }
     }
 
+    // INTERNATIONAL CURRENCY ESTIMATOR (INR / USD / EUR / GBP)
+    function initCurrencyEstimator() {
+      var bars = document.querySelectorAll('.currency-estimator-bar');
+      if (!bars.length) return;
+
+      var RATES = {
+        INR: { symbol: '₹', rate: 1 },
+        USD: { symbol: '$', rate: 0.012 },
+        EUR: { symbol: '€', rate: 0.011 },
+        GBP: { symbol: '£', rate: 0.0095 }
+      };
+
+      bars.forEach(function (bar) {
+        var pills = bar.querySelectorAll('.currency-pill');
+        pills.forEach(function (pill) {
+          pill.addEventListener('click', function () {
+            var curr = pill.getAttribute('data-currency');
+            if (!RATES[curr]) return;
+
+            pills.forEach(function (p) {
+              p.classList.toggle('is-active', p === pill);
+            });
+
+            var targets = document.querySelectorAll('[data-inr-val]');
+            targets.forEach(function (target) {
+              var inrVal = parseFloat(target.getAttribute('data-inr-val'));
+              if (isNaN(inrVal)) return;
+
+              var config = RATES[curr];
+              if (curr === 'INR') {
+                target.textContent = '₹' + inrVal.toLocaleString('en-IN');
+              } else {
+                var converted = Math.round(inrVal * config.rate);
+                target.textContent = config.symbol + converted.toLocaleString('en-US');
+              }
+            });
+          });
+        });
+      });
+    }
+
     initHeroBentoGrid();
     initHeroSlideshow();
     initAllInteractiveGrids();
     initCoverflowCarousel();
+    initCurrencyEstimator();
   });
 })();
