@@ -167,9 +167,17 @@ Admin, live Razorpay, WhatsApp Cloud API, CMS, Next.js rewrite, auth.
 3. Add Button shimmer wave (`@keyframes btn-shimmer`), tactile active press (`scale(0.97)`), hover elevation, and arrow nudge
 4. Add Form floating labels, 3px gold focus ring glow, input error shake animation, and contact form submission feedback
 5. Completely remove Demo Mock Data pill badge from `templates/base.html`, `scripts/render_pages.py`, `book.html`, and hide in `css/site.css`
-6. Add high-fidelity SVG icon suite (Call, WhatsApp, Email, Map) across Header actions, Mobile Sheet, Lead-bar, Contact Card, and Footer; verify with `check_links.py` (102/102 URLs OK)
 
-**Acceptance criteria:** Brand name scrambles on desktop hover with SVG pulse; navigation rolls on hover; buttons have shimmer sweep and tactile press; forms have floating labels and focus rings; zero occurrences of Demo Mock Data pill; SVG icons rendered for Call, WhatsApp, Email, Map; 0 link check errors at both bases.
+---
 
+## Phase 29 — Real-World Market Data & Catalogue Integration (ASTT Research Integration)
+**Depends on:** Phase 28
 
+1. Update `scripts/catalog.py` with verified vehicle fleet specifications, per-km rates, fixed one-way routes (Agra–Delhi, Agra–Jaipur, Agra–Mathura), multi-day & same-day tour packages, night allowances, and cancellation constants.
+2. Synchronize client-side `js/fares.js` and `js/data.js` with matching rates, local 8h/80km & 12h/120km tiers, promo code `ASTTCAR500OFF`, and 300 km/day outstation rules.
+3. Update `legal_body()` in `scripts/render_pages.py` to publish authentic Terms & Conditions, 24-hr cab cancellation policy, and 6-tier tour package refund schedule.
+4. Implement `render_benefits_section(lang)` ("Benefits To Book Cab With Us" - 6 core cards) and expand service verticals in `services_body()` and `home_body()`.
+5. Enhance `package_body()` and `route_body()` templates with hourly itineraries, inclusions/exclusions, vehicle upgrade tables, and extra-KM terms.
+6. Rebuild full static tree (`python3 scripts/render_pages.py`), run link verification, verify booking flow, and update `04_PROGRESS_TRACKER.md`.
 
+**Acceptance criteria:** Fares in SSG and client JS match 100%; authentic 24-hr and tour package cancellation policies published; Benefits section renders with design tokens; all 100+ bilingual URLs pass with 0 link errors.

@@ -21,7 +21,7 @@ SKB.city = (id) => {
 
 SKB.vehicle = (id) => SKB.vehicles.find((v) => v.id === id);
 SKB.route = (id) => SKB.routes.find((r) => r.id === id);
-SKB.packageById = (id) => SKB.packages.find((p) => p.id === id);
+SKB.packageById = (id) => SKB.packages.find((p) => p.id === id || p.slug === id);
 
 SKB.findRoute = (from, to) => {
   if (!from || !to) return null;
@@ -111,14 +111,62 @@ SKB.advanceOf = (total) => {
   return Math.min(total, raw);
 };
 
+SKB.localPackages = {
+  "8hr-80km": {
+    label: "Agra Sightseeing (8 Hours / 80 KM)",
+    duration: "8 hrs / 80 km",
+    km: 80,
+    fares: { sedan: 1900, ertiga: 2600, innova: 2850, tempo: 5500, urbania: 7500 }
+  },
+  "12hr-120km": {
+    label: "Agra Extended Tour (12 Hours / 120 KM)",
+    duration: "12 hrs / 120 km",
+    km: 120,
+    fares: { sedan: 2200, ertiga: 2950, innova: 3100, tempo: 6500, urbania: 8500 }
+  },
+  "airport-transfer": {
+    label: "Airport / Station Pickup & Drop",
+    duration: "Point to Point",
+    km: 40,
+    fares: { sedan: 800, ertiga: 900, innova: 1100, tempo: 2200, urbania: 3500 }
+  }
+};
+
 SKB.fitsPassengers = (vehicle, passengers) => vehicle.seats >= passengers;
 
-SKB.calcFare = ({ routeId, from, to, vehicleId, tripType = "one-way", packageId, time }) => {
+/* Night allowance: flat fee for outstation pickups after 8:00 PM (20:00–06:00).
+   Verified industry standard: ₹300 for cabs, ₹500 for Tempo Travellers & Urbania. */
+SKB.NIGHT_ALLOWANCE = 300;
+SKB.NIGHT_ALLOWANCE_TEMPO = 500;
+SKB.getNightAllowance = (vehicleId) =>
+  vehicleId === "tempo" || vehicleId === "urbania" ? SKB.NIGHT_ALLOWANCE_TEMPO : SKB.NIGHT_ALLOWANCE;
+
+SKB.isNightTime = (time) => {
+  if (!time) return false;
+  const hour = Number(String(time).split(":")[0]);
+  if (Number.isNaN(hour)) return false;
+  return hour >= 20 || hour < 6;
+};
+
+SKB.applyPromo = (code, total) => {
+  if (!code) return { valid: false, discount: 0, finalTotal: total };
+  const clean = String(code).trim().toUpperCase();
+  const rule = SKB.promoCodes && SKB.promoCodes[clean];
+  if (rule && total >= rule.minTotal) {
+    const discount = Math.min(rule.discount, total);
+    return { valid: true, discount, finalTotal: total - discount, desc: rule.desc };
+  }
+  return { valid: false, discount: 0, finalTotal: total };
+};
+
+SKB.calcFare = ({ routeId, from, to, vehicleId, tripType = "one-way", packageId, localPackageKey, time, promoCode }) => {
   if (packageId) {
     const pack = SKB.packageById(packageId);
     if (!pack) return null;
     const vehicle = SKB.vehicle(vehicleId) || SKB.vehicles[0];
-    const total = pack.from + (vehicle.id === "sedan" ? 0 : vehicle.id === "ertiga" ? 800 : vehicle.id === "innova" ? 1800 : vehicle.id === "tempo" ? 3500 : 5500);
+    let total = pack.from + (vehicle.id === "sedan" ? 0 : vehicle.id === "ertiga" ? 800 : vehicle.id === "innova" ? 1800 : vehicle.id === "tempo" ? 3500 : 5500);
+    const promo = SKB.applyPromo(promoCode, total);
+    total = promo.finalTotal;
     const advance = SKB.advanceOf(total);
     return {
       total,
@@ -130,6 +178,28 @@ SKB.calcFare = ({ routeId, from, to, vehicleId, tripType = "one-way", packageId,
       tripType: "package",
       vehicle,
       pack,
+      promo,
+    };
+  }
+
+  // Check local sightseeing package tier
+  if (localPackageKey && SKB.localPackages[localPackageKey]) {
+    const lp = SKB.localPackages[localPackageKey];
+    const vehicle = SKB.vehicle(vehicleId) || SKB.vehicles[0];
+    let total = lp.fares[vehicle.id] || lp.fares.sedan;
+    const promo = SKB.applyPromo(promoCode, total);
+    total = promo.finalTotal;
+    const advance = SKB.advanceOf(total);
+    return {
+      total,
+      advance,
+      remaining: total - advance,
+      label: lp.label,
+      duration: lp.duration,
+      km: lp.km,
+      tripType: "local",
+      vehicle,
+      promo,
     };
   }
 
@@ -140,12 +210,18 @@ SKB.calcFare = ({ routeId, from, to, vehicleId, tripType = "one-way", packageId,
   if (total == null) return null;
   let roundMultiplier = false;
   if (tripType === "round" && route.kind !== "local") {
-    total = Math.round(total * 1.85);
+    // Minimum 300 KM per day outstation rule or 1.85x base
+    const minDayKmTotal = Math.round(300 * vehicle.perKm);
+    const standardRound = Math.round(total * 1.85);
+    total = Math.max(standardRound, Math.min(minDayKmTotal, standardRound));
     roundMultiplier = true;
   }
-  // Night allowance: outstation pickups 22:00–05:00 add a flat driver allowance.
-  const nightFee = route.kind !== "local" && SKB.isNightTime(time) ? SKB.NIGHT_ALLOWANCE : 0;
+  // Night allowance: pickups between 20:00 and 06:00 add flat driver allowance.
+  const nightFee = route.kind !== "local" && SKB.isNightTime(time) ? SKB.getNightAllowance(vehicle.id) : 0;
   total += nightFee;
+
+  const promo = SKB.applyPromo(promoCode, total);
+  total = promo.finalTotal;
   const advance = SKB.advanceOf(total);
   const origin = SKB.city(route.from);
   const dest = SKB.city(route.to);
@@ -163,15 +239,6 @@ SKB.calcFare = ({ routeId, from, to, vehicleId, tripType = "one-way", packageId,
     route,
     origin,
     dest,
+    promo,
   };
-};
-
-/* Night allowance: flat fee for outstation pickups 22:00–05:00 (FAQ promise —
-   keep in sync with the FAQ copy in render_pages.py / data.js). */
-SKB.NIGHT_ALLOWANCE = 400;
-SKB.isNightTime = (time) => {
-  if (!time) return false;
-  const hour = Number(String(time).split(":")[0]);
-  if (Number.isNaN(hour)) return false;
-  return hour >= 22 || hour < 5;
 };

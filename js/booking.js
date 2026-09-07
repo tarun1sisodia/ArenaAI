@@ -38,6 +38,7 @@
     passengers: Number(params.get("pax") || saved.passengers || 3),
     vehicleId: params.get("vehicle") || saved.vehicleId || "sedan",
     packageId: params.get("package") || saved.packageId || "",
+    promoCode: params.get("coupon") || params.get("promo") || saved.promoCode || "",
     name: saved.name || "",
     phone: saved.phone || "",
     pickupPoint: saved.pickupPoint || "",
@@ -68,6 +69,7 @@
       tripType: state.tripType,
       packageId: state.packageId || undefined,
       time: state.time,
+      promoCode: state.promoCode || undefined,
     });
 
   const fillSelect = (el, items, value, labelFn) => {
@@ -130,6 +132,7 @@
         <div><span>Passengers</span><strong>${state.passengers}</strong></div>
         <div><span>Trip</span><strong>${fare.tripType}${fare.roundMultiplier ? " (×1.85)" : ""}</strong></div>
         ${fare.nightFee ? `<div><span>Night allowance</span><strong>+ ${SKB.inr(fare.nightFee)}</strong></div>` : ""}
+        ${fare.promo && fare.promo.valid ? `<div><span>Promo (${state.promoCode.toUpperCase()})</span><strong style="color:var(--gold, #E5A044)">- ${SKB.inr(fare.promo.discount)}</strong></div>` : ""}
         <div><span>Advance now</span><strong>${SKB.inr(fare.advance)}</strong></div>
         <div><span>To driver</span><strong>${SKB.inr(fare.remaining)}</strong></div>
       </div>
@@ -267,10 +270,64 @@
       $$("input[name=pay]").forEach((el) => {
         el.checked = el.value === state.pay;
       });
+      initCouponHandler();
     }
     if (step === 5) renderTicket();
     SKB.track("booking_step", { step });
     window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const initCouponHandler = () => {
+    const input = $("#couponCode");
+    const btn = $("#btn-apply-coupon");
+    const feedback = $("#coupon-feedback");
+    if (!input || !btn || !feedback) return;
+
+    const apply = () => {
+      const code = input.value.trim().toUpperCase();
+      if (!code) {
+        state.promoCode = "";
+        feedback.style.display = "none";
+        persist();
+        renderSummary();
+        const f = fareNow();
+        $("#pay-amount").textContent = f ? SKB.inr(f.advance) : "—";
+        return;
+      }
+      const rawFare = fareNow();
+      const baseTotal = rawFare ? (rawFare.total + (rawFare.promo && rawFare.promo.valid ? rawFare.promo.discount : 0)) : 0;
+      const res = SKB.applyPromo(code, baseTotal);
+      if (res.valid) {
+        state.promoCode = code;
+        feedback.style.display = "block";
+        feedback.style.color = "var(--gold, #E5A044)";
+        feedback.textContent = `✓ Coupon applied! ${res.desc}`;
+        persist();
+        renderSummary();
+        const updated = fareNow();
+        $("#pay-amount").textContent = updated ? SKB.inr(updated.advance) : "—";
+        SKB.toast && SKB.toast(`Coupon applied: -${SKB.inr(res.discount)}`);
+      } else {
+        feedback.style.display = "block";
+        feedback.style.color = "#E53935";
+        feedback.textContent = "Invalid coupon or booking total does not meet minimum requirement.";
+      }
+    };
+
+    btn.onclick = (e) => {
+      e.preventDefault();
+      apply();
+    };
+    input.onkeydown = (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        apply();
+      }
+    };
+    if (state.promoCode) {
+      input.value = state.promoCode;
+      apply();
+    }
   };
 
   const renderTicket = () => {
@@ -286,6 +343,7 @@
           <div><span>Date / time</span><strong>${state.date} · ${state.time}</strong></div>
           <div><span>Vehicle</span><strong>${fare.vehicle.name}</strong></div>
           ${fare.nightFee ? `<div><span>Night allowance</span><strong>incl. ${SKB.inr(fare.nightFee)}</strong></div>` : ""}
+          ${fare.promo && fare.promo.valid ? `<div><span>Promo applied (${state.promoCode.toUpperCase()})</span><strong style="color:var(--gold, #E5A044)">- ${SKB.inr(fare.promo.discount)}</strong></div>` : ""}
           <div><span>Driver</span><strong>Rakesh · 4.9/5 · arrives 15 min early</strong></div>
           <div><span>Remaining</span><strong>${SKB.inr(fare.remaining)} to driver</strong></div>
         </div>

@@ -23,6 +23,14 @@ from catalog import (
     SITE,
     VEHICLES,
     WHATSAPP,
+    CANCELLATION_POLICY_CAB,
+    CANCELLATION_SLABS_TOUR,
+    NIGHT_ALLOWANCE_CAB,
+    NIGHT_ALLOWANCE_TEMPO,
+    OUTSTATION_MIN_KM,
+    PROMO_CODE,
+    PROMO_DISCOUNT,
+    ROUTE_GUIDANCE,
     hub_path,
     inr,
     package_path,
@@ -954,6 +962,101 @@ def reviews_marquee_section_html(lang: str) -> str:
 """
 
 
+def render_benefits_section(lang):
+    t = T[lang]
+    benefits = [
+        {
+            "icon": """<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="m9 16 2 2 4-4"/></svg>""",
+            "title_en": "Easy Booking",
+            "title_hi": "आसान व त्वरित बुकिंग",
+            "desc_en": "Book your taxi in minutes with a simple, hassle-free process. Instant confirmation via Call & WhatsApp with zero waiting.",
+            "desc_hi": "सरल और त्वरित प्रक्रिया — बस कुछ ही मिनटों में अपनी टैक्सी बुक करें। कॉल और व्हाट्सऐप पर तुरंत कन्फर्मेशन।",
+            "tag_en": "Instant Confirm",
+            "tag_hi": "त्वरित पुष्टि",
+        },
+        {
+            "icon": """<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2.1 10.7 2 11 2 11.3V16c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>""",
+            "title_en": "Multiple Fleets",
+            "title_hi": "विशाल व आधुनिक वाहन बेड़ा",
+            "desc_en": "Choose from clean Sedans, Ertiga, Innova Crysta, 9–26 seater Tempo Travellers, and luxury Force Urbania suited for any group.",
+            "desc_hi": "अपनी जरूरत के अनुसार सेडान, अर्टिगा, इनोवा क्रिस्टा, टेम्पो ट्रैवलर (9–26 सीट) और लग्जरी अर्बनिया में से चुनें।",
+            "tag_en": "Sedan to 26-Seater",
+            "tag_hi": "सेडान से 26-सीटर",
+        },
+        {
+            "icon": """<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12"/><path d="M6 8h12"/><path d="m6 13 8.5 8"/><path d="M6 13h3a4.5 4.5 0 0 0 0-9"/></svg>""",
+            "title_en": "Lowest Fares",
+            "title_hi": "किफायती व पारदर्शी किराया",
+            "desc_en": "Book with confidence enjoying the best guaranteed rates, transparent per-km billing, and zero hidden platform surcharges.",
+            "desc_hi": "सर्वोत्तम दरों, पारदर्शी प्रति-किमी बिलिंग और बिना किसी छिपे शुल्क के पूरे विश्वास के साथ अपनी यात्रा बुक करें।",
+            "tag_en": "Zero Hidden Fees",
+            "tag_hi": "शून्य छिपा शुल्क",
+        },
+        {
+            "icon": """<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/><path d="M4 6v12c0 1.1.9 2 2 2h14v-4"/><circle cx="18" cy="16" r="2"/></svg>""",
+            "title_en": "Exciting Offers",
+            "title_hi": "आकर्षक ऑफर्स व बचत",
+            "desc_en": f"Unlock seasonal tour deals and instant savings. Use coupon <code class=\"benefit-code\">{PROMO_CODE}</code> for flat ₹{PROMO_DISCOUNT} off on outstation trips.",
+            "desc_hi": f"विशेष टूर डिस्काउंट और बचत। आउटस्टेशन बुकिंग पर फ्लैट ₹{PROMO_DISCOUNT} की छूट के लिए कूपन कोड <code class=\"benefit-code\">{PROMO_CODE}</code> का उपयोग करें।",
+            "tag_en": f"Coupon {PROMO_CODE}",
+            "tag_hi": f"कूपन {PROMO_CODE}",
+        },
+        {
+            "icon": """<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>""",
+            "title_en": "On-Time Service",
+            "title_hi": "समयबद्ध डोरस्टेप सेवा",
+            "desc_en": "Punctual doorstep pickups, GPS-tracked vehicles, flight delay monitoring, and experienced chauffeurs who know Agra inside out.",
+            "desc_hi": "समय पर पिकअप, जीपीएस ट्रैक्ड गाड़ियाँ, फ्लाइट ट्रैकिंग और अनुभवी ड्राइवर जो सभी मार्गों से भली-भाँति परिचित हैं।",
+            "tag_en": "100% Punctual",
+            "tag_hi": "100% समयबद्ध",
+        },
+        {
+            "icon": """<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>""",
+            "title_en": "24×7 Dedicated Support",
+            "title_hi": "24×7 समर्पित ग्राहक सहायता",
+            "desc_en": "Get instant human assistance anytime, anywhere you travel with our round-the-clock live dispatch desk on Call & WhatsApp.",
+            "desc_hi": "यात्रा के दौरान कभी भी और कहीं भी तुरंत सहायता प्राप्त करें — कॉल और व्हाट्सऐप पर 24 घंटे सक्रिय सहायता केंद्र।",
+            "tag_en": "Live Support 24×7",
+            "tag_hi": "24×7 लाइव सपोर्ट",
+        },
+    ]
+    cards = []
+    for b in benefits:
+        title = b["title_en"] if lang == "en" else b["title_hi"]
+        desc = b["desc_en"] if lang == "en" else b["desc_hi"]
+        tag = b["tag_en"] if lang == "en" else b["tag_hi"]
+        cards.append(f"""
+      <article class="benefit-card reveal-on-scroll">
+        <div class="benefit-head">
+          <div class="benefit-icon-wrapper" aria-hidden="true">{b["icon"]}</div>
+          <span class="benefit-pill">{tag}</span>
+        </div>
+        <h3>{title}</h3>
+        <p>{desc}</p>
+      </article>""")
+
+    eyebrow = t["benefits_eyebrow"]
+    h2 = t["benefits_h2"]
+    sub = t["benefits_sub"]
+
+    return f"""
+<section class="section section--paper benefits-section" id="benefits">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">{eyebrow}</p>
+        <h2>{h2}</h2>
+        <p class="lead" style="margin-top:8px;max-width:64ch;">{sub}</p>
+      </div>
+    </div>
+    <div class="grid-3 benefits-grid">
+      {"".join(cards)}
+    </div>
+  </div>
+</section>
+"""
+
+
 def home_body(lang):
     t = T[lang]
     cards = []
@@ -1184,9 +1287,12 @@ def home_body(lang):
     <div class="section-head"><div><p class="eyebrow">{t["nav_services"]}</p><h2>{t["h2_services"]}</h2></div>
     <a class="btn-text" href="{hub_path("services", lang)}">{t["how_it_works"]} <span>↗</span></a></div>
     <div class="grid-3">
-      <article class="service-card service-card--navy reveal-on-scroll"><span class="service-index">01</span><div class="service-mark">✦</div><h3>{"Taxi <i>/ Cab</i>" if lang == "en" else "टैक्सी <i>/ कैब</i>"}</h3><p>{"Sedan, Ertiga and Innova Crysta for city rides and intercity drops." if lang == "en" else "शहर और इंटरसिटी के लिए सेडान, अर्टिगा और इनोवा क्रिस्टा।"}</p><a class="card-link" href="{hub_path("fleet", lang)}">{t["choose_car"]} ↗</a></article>
-      <article class="service-card service-card--light reveal-on-scroll"><span class="service-index">02</span><div class="service-mark">✦</div><h3>{"Tempo<br /><i>Traveller</i>" if lang == "en" else "टेम्पो<br /><i>ट्रैवलर</i>"}</h3><p>{"Comfortable group travel, from 12 seats to a premium Urbania." if lang == "en" else "12 सीट से प्रीमियम अर्बनिया तक — ग्रुप ट्रैवल आराम से।"}</p><a class="card-link" href="{vehicle_path(vehicle("tempo"), lang)}">{t["nav_fleet"]} ↗</a></article>
-      <article class="service-card service-card--gold reveal-on-scroll"><span class="service-index">03</span><div class="service-mark">✦</div><h3>{"Tour<br /><i>packages</i>" if lang == "en" else "टूर<br /><i>पैकेज</i>"}</h3><p>{"Local sightseeing, one-way drops and ready-made multi-day itineraries." if lang == "en" else "लोकल दर्शन, वन-वे ड्रॉप और तैयार मल्टी-डे यात्राएँ।"}</p><a class="card-link" href="{hub_path("packages", lang)}">{t["explore_tours"]} ↗</a></article>
+      <article class="service-card service-card--navy reveal-on-scroll"><span class="service-index">01</span><div class="service-mark">✦</div><h3>{"One-Way Cabs" if lang == "en" else "वन-वे कैब"}</h3><p>{"Agra to Delhi (from ₹2,999), Jaipur (from ₹3,299) and Mathura. Pay only one side." if lang == "en" else "आगरा से दिल्ली (₹2,999 से), जयपुर (₹3,299 से) व मथुरा। केवल एक तरफ का किराया।"}</p><div class="spec-row"><span>{"Pay One Side · No Return Fare" if lang == "en" else "सिर्फ एक तरफ का किराया"}</span></div><a class="card-link" href="{hub_path("routes", lang)}">{t["all_routes"]} ↗</a></article>
+      <article class="service-card service-card--gold reveal-on-scroll"><span class="service-index">02</span><div class="service-mark">✦</div><h3>{"Outstation Round Trips" if lang == "en" else "आउटस्टेशन राउंड ट्रिप"}</h3><p>{"North India multi-day tours with 300 KM/day minimum billing and verified chauffeurs." if lang == "en" else "उत्तर भारत की बहु-दिवसीय यात्राएँ — 300 किमी/दिन न्यूनतम बिलिंग व वेरिफाइड ड्राइवर।"}</p><div class="spec-row"><span>{"300 KM/Day Min · All India Permit" if lang == "en" else "300 किमी/दिन · ऑल इंडिया परमिट"}</span></div><a class="card-link" href="{hub_path("routes", lang)}">{t["all_routes"]} ↗</a></article>
+      <article class="service-card service-card--light reveal-on-scroll"><span class="service-index">03</span><div class="service-mark">✦</div><h3>{"Local Sightseeing" if lang == "en" else "लोकल आगरा दर्शन"}</h3><p>{"8h/80km (from ₹1,800) and 12h/120km tours for Taj Mahal, Agra Fort & Fatehpur Sikri." if lang == "en" else "ताजमहल, आगरा किला और फतेहपुर सीकरी के लिए 8घंटे/80किमी (₹1,800 से) व 12घंटे/120किमी टूर।"}</p><div class="spec-row"><span>{"8h/80km · 12h/120km · Heritage" if lang == "en" else "8घंटे/80किमी · 12घंटे/120किमी"}</span></div><a class="card-link" href="{hub_path("packages", lang)}">{t["nav_packages"]} ↗</a></article>
+      <article class="service-card service-card--light reveal-on-scroll"><span class="service-index">04</span><div class="service-mark">✦</div><h3>{"Airport Transfers" if lang == "en" else "एयरपोर्ट ट्रांसफर"}</h3><p>{"IGI Delhi Airport, Agra Kheria & Cantt station transfers with live flight tracking." if lang == "en" else "दिल्ली आईजीआई एयरपोर्ट, आगरा खेरिया व कैंट स्टेशन ट्रांसफर — फ्लाइट ट्रैकिंग के साथ।"}</p><div class="spec-row"><span>{"Flight Tracking · Punctual Pickup" if lang == "en" else "फ्लाइट ट्रैकिंग · समयबद्ध पिकअप"}</span></div><a class="card-link" href="{route_path(ROUTES[1], lang)}">{t["airport"]} ↗</a></article>
+      <article class="service-card service-card--navy reveal-on-scroll"><span class="service-index">05</span><div class="service-mark">✦</div><h3>{"Tempo & Urbania" if lang == "en" else "टेम्पो व अर्बनिया"}</h3><p>{"9 to 26 seater Tempo Travellers & luxury Force Urbania for family and corporate groups." if lang == "en" else "9 से 26 सीटर टेम्पो ट्रैवलर व लग्जरी फ़ोर्स अर्बनिया — फैमिली व कॉर्पोरेट ग्रुप्स के लिए।"}</p><div class="spec-row"><span>{"9–26 Seats · Pushback AC" if lang == "en" else "9–26 सीटें · पुशबैक एसी"}</span></div><a class="card-link" href="{vehicle_path(vehicle("tempo"), lang)}">{t["nav_fleet"]} ↗</a></article>
+      <article class="service-card service-card--gold reveal-on-scroll"><span class="service-index">06</span><div class="service-mark">✦</div><h3>{"Tour Packages" if lang == "en" else "टूर पैकेज"}</h3><p>{"Golden Triangle (from ₹18,500), Same Day Taj (from ₹3,499), & Mathura Vrindavan." if lang == "en" else "गोल्डन ट्रायंगल (₹18,500 से), सेम डे ताज (₹3,499 से), व मथुरा-वृंदावन दर्शन।"}</p><div class="spec-row"><span>{"Golden Triangle · Mathura · Same Day" if lang == "en" else "गोल्डन ट्रायंगल · मथुरा · सेम डे"}</span></div><a class="card-link" href="{hub_path("packages", lang)}">{t["explore_tours"]} ↗</a></article>
     </div>
   </div>
 </section>
@@ -1199,6 +1305,7 @@ def home_body(lang):
 </section>
 {coverflow_packages_section_html(lang)}
 {reviews_marquee_section_html(lang)}
+{render_benefits_section(lang)}
 <section class="section section--paper" id="contact-section">
   <div class="container">
     <div class="section-head" style="margin-bottom:2.25rem">
@@ -1224,8 +1331,20 @@ def route_body(lang, route):
     )
     rows = []
     for v in VEHICLES:
+        billable_rt_km = max(route["km"] * 2, OUTSTATION_MIN_KM) if route["kind"] != "local" else route["km"]
+        rt_fare = round(billable_rt_km * v["per_km"] / 10) * 10
+        oneway_fare = route["fares"][v["id"]]
+        extra_km_str = f"{inr(v['per_km'])}/km"
+        book_href = f'/book.html?from={route["from"]}&amp;to={route["to"]}&amp;vehicle={v["id"]}'
         rows.append(
-            f'<tr data-href="/book.html?from={route["from"]}&amp;to={route["to"]}&amp;vehicle={v["id"]}" tabindex="0"><td><a href="{vehicle_path(v, lang)}">{v["name"][lang]}</a></td><td>{v["seats"]}+1</td><td><strong>{inr(route["fares"][v["id"]])}</strong></td><td>{inr(v["per_km"])}/km</td></tr>'
+            f'<tr data-href="{book_href}" tabindex="0">'
+            f'<td><a href="{vehicle_path(v, lang)}"><strong>{v["name"][lang]}</strong></a></td>'
+            f'<td>{v["seats"]}+1</td>'
+            f'<td><strong>{inr(oneway_fare)}</strong> <span class="table-tag table-tag--green">{t["toll_included"]}</span></td>'
+            f'<td><strong>{inr(rt_fare)}</strong> <span class="table-tag table-tag--amber">{t["toll_separate"]}</span></td>'
+            f'<td>{extra_km_str}</td>'
+            f'<td><a class="btn-text" href="{book_href}">{t["book_cta"]} ↗</a></td>'
+            f'</tr>'
         )
     related = []
     for r in ROUTES:
@@ -1239,6 +1358,44 @@ def route_body(lang, route):
     book = f'/book.html?from={route["from"]}&to={route["to"]}'
     fare = inr(route["fares"]["sedan"])
     fare_line = f"{t['from_word']} {fare}" if lang == "en" else f"{fare} {t['from_word']}"
+
+    guidance = ROUTE_GUIDANCE.get(route["id"])
+    guidance_block = ""
+    if guidance:
+        via_label = "Highway / Route" if lang == "en" else "हाईवे / मार्ग"
+        time_label = t["est_travel_time"]
+        dep_label = t["best_departure"]
+        stops_label = t["highway_stops"]
+        night_label = t["night_allowance_rule"]
+        night_text = f"₹{NIGHT_ALLOWANCE_CAB} for cabs / ₹{NIGHT_ALLOWANCE_TEMPO} for Tempos after 8:00 PM" if lang == "en" else f"रात 8:00 बजे के बाद कारों पर ₹{NIGHT_ALLOWANCE_CAB} / टेम्पो पर ₹{NIGHT_ALLOWANCE_TEMPO}"
+
+        guidance_block = f"""
+    <div class="guidance-box reveal-on-scroll">
+      <h3>{t["route_insights"]}</h3>
+      <div class="guidance-grid">
+        <div class="guidance-item">
+          <span class="guidance-label">{via_label}</span>
+          <span class="guidance-val">{guidance["highway"]}</span>
+        </div>
+        <div class="guidance-item">
+          <span class="guidance-label">{time_label}</span>
+          <span class="guidance-val">{guidance["transit_time"]}</span>
+        </div>
+        <div class="guidance-item">
+          <span class="guidance-label">{dep_label}</span>
+          <span class="guidance-val">{guidance["departure_tip"][lang]}</span>
+        </div>
+        <div class="guidance-item">
+          <span class="guidance-label">{stops_label}</span>
+          <span class="guidance-val">{guidance["rest_stops"][lang]}</span>
+        </div>
+        <div class="guidance-item">
+          <span class="guidance-label">{night_label}</span>
+          <span class="guidance-val">{night_text}</span>
+        </div>
+      </div>
+    </div>"""
+
     return f"""
 <section class="page-hero">
   <div class="container">
@@ -1248,7 +1405,7 @@ def route_body(lang, route):
     <p class="muted">{route["duration"]} · {route["km"]} km</p>
     <div class="hero-actions" style="margin-top:24px">
       <a class="btn-primary" href="tel:{PHONE}">{t["call"]} {PHONE_DISPLAY}</a>
-      <a class="btn-outline" href="https://wa.me/{WHATSAPP}?text={origin['en']}%20to%20{dest['en']}%20taxi" target="_blank" rel="noreferrer">{t["whatsapp"]}</a>
+      <a class="btn-outline" href="https://wa.me/{WHATSAPP}?text={quote_plus(origin['en'] + ' to ' + dest['en'] + ' taxi')}" target="_blank" rel="noreferrer">{t["whatsapp"]}</a>
       <a class="btn-text" href="{book}">{t["book_route"]} <span>↗</span></a>
     </div>
     <p class="note" style="margin-top:24px">{t["primary_lead"]}</p>
@@ -1256,16 +1413,32 @@ def route_body(lang, route):
 </section>
 <section class="section section--paper">
   <div class="container">
-    <h2>{t["fare_table"]}</h2>
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">{t["sample_fare"]}</p>
+        <h2>{t["oneway_vs_round"]}</h2>
+      </div>
+    </div>
     <div class="table-wrap" style="margin-top:16px">
       <table class="data">
-        <thead><tr><th>{t["vehicle"]}</th><th>{t["capacity"]}</th><th>{t["sample_fare"]}</th><th>{t["per_km"]}</th></tr></thead>
+        <thead>
+          <tr>
+            <th>{t["vehicle"]}</th>
+            <th>{t["capacity"]}</th>
+            <th>{t["one_way"]}</th>
+            <th>{t["round"]}</th>
+            <th>{t["per_km"]}</th>
+            <th>{t["book_cta"]}</th>
+          </tr>
+        </thead>
         <tbody>{"".join(rows)}</tbody>
       </table>
     </div>
-    <p class="muted" style="margin-top:14px">{t["round_note"]}</p>
+    <p class="muted" style="margin-top:14px">{t["round_trip_rule"]}</p>
+    {guidance_block}
   </div>
 </section>
+{render_benefits_section(lang)}
 <section class="section section--paper-lt">
   <div class="container">
     <h2>{t["related_routes"]}</h2>
@@ -1322,7 +1495,52 @@ def vehicle_body(lang, veh):
 def package_body(lang, pack):
     t = T[lang]
     places = "".join(f"<span>{p}</span><i>→</i>" for p in pack["places"][lang])
-    includes = "".join(f"<li>{x}</li>" for x in pack["includes"][lang])
+    inc_items = "".join(f"<li>{x}</li>" for x in pack["includes"][lang])
+    exc_items = "".join(f"<li>{x}</li>" for x in pack.get("excludes", {}).get(lang, []))
+
+    itin_items = []
+    for step in pack.get("itinerary", []):
+        itin_items.append(f"""
+      <div class="itinerary-item reveal-on-scroll">
+        <span class="itinerary-dot" aria-hidden="true"></span>
+        <span class="itinerary-time">{step["time"]}</span>
+        <h3 class="itinerary-title">{step["title"][lang]}</h3>
+        <p class="itinerary-desc">{step["desc"][lang]}</p>
+      </div>""")
+    itin_html = "\n".join(itin_items)
+
+    upgrade_rows = []
+    for up in pack.get("upgrades", []):
+        book_link = f'/book.html?package={pack["id"]}&amp;vehicle={up["veh_id"]}'
+        upgrade_rows.append(
+            f'<tr data-href="{book_link}" tabindex="0">'
+            f'<td><strong>{up["name"][lang]}</strong></td>'
+            f'<td>{up["seats"]}</td>'
+            f'<td><strong>{inr(up["price"])}</strong></td>'
+            f'<td><a class="btn-text" href="{book_link}">{t["book_cta"]} ↗</a></td>'
+            f'</tr>'
+        )
+    upgrade_table = f"""
+    <div class="table-wrap" style="margin-top:18px">
+      <table class="data">
+        <thead><tr><th>{t["vehicle"]}</th><th>{t["capacity"]}</th><th>{t["sample_fare"]}</th><th>{t["book_cta"]}</th></tr></thead>
+        <tbody>{"".join(upgrade_rows)}</tbody>
+      </table>
+    </div>"""
+
+    cancel_rows = []
+    for slab in CANCELLATION_SLABS_TOUR:
+        days_str = slab["days"] if lang == "en" else slab["days"].replace("days", "दिन")
+        refund_text = f"{slab['refund']} refund ({slab['fee']} fee)" if lang == "en" else f"{slab['refund']} रिफंड ({slab['fee']} शुल्क)"
+        cancel_rows.append(f'<tr><td>{days_str}</td><td><strong>{refund_text}</strong></td></tr>')
+    cancel_table = f"""
+    <div class="table-wrap" style="margin-top:18px;max-width:680px">
+      <table class="data">
+        <thead><tr><th>{"Cancellation Notice" if lang == "en" else "रद्दीकरण की पूर्व सूचना"}</th><th>{"Refund / Deduction" if lang == "en" else "रिफंड / कटौती"}</th></tr></thead>
+        <tbody>{"".join(cancel_rows)}</tbody>
+      </table>
+    </div>"""
+
     return f"""
 <section class="page-hero">
   <div class="container">
@@ -1330,10 +1548,11 @@ def package_body(lang, pack):
     <h1>{pack["name"][lang]},<br /><i>{"from " + inr(pack["price"]) if lang == "en" else inr(pack["price"]) + " से"}.</i></h1>
     <p class="lead">{pack["blurb"][lang]}</p>
     <div class="hero-actions" style="margin-top:24px">
-      <a class="btn-primary" href="tel:{PHONE}">{t["call"]}</a>
-      <a class="btn-outline" href="https://wa.me/{WHATSAPP}" target="_blank" rel="noreferrer">{t["whatsapp"]}</a>
+      <a class="btn-primary" href="tel:{PHONE}">{t["call"]} {PHONE_DISPLAY}</a>
+      <a class="btn-outline" href="https://wa.me/{WHATSAPP}?text={quote_plus('Booking enquiry for ' + pack['name']['en'])}" target="_blank" rel="noreferrer">{t["whatsapp"]}</a>
       <a class="btn-text" href="/book.html?package={pack["id"]}">{t["book_package"]} <span>↗</span></a>
     </div>
+    <p class="note" style="margin-top:24px">{t["primary_lead"]}</p>
   </div>
 </section>
 <section class="section section--paper">
@@ -1342,9 +1561,70 @@ def package_body(lang, pack):
     <div>
       <p class="eyebrow">{pack["kicker"][lang]} · {pack["duration"][lang]}</p>
       <div class="place-row">{places.removesuffix("<i>→</i>")}</div>
-      <ul class="includes">{includes}</ul>
-      <p class="note" style="margin-top:20px">{t["primary_lead"]}</p>
+      <p style="margin-top:16px;line-height:1.6;color:var(--text);font-size:1.05rem;">{pack["blurb"][lang]}</p>
+      <div class="spec-row" style="margin-top:18px"><span>{"100% Guaranteed Private Tour · Sanitized Chauffeur Cab" if lang == "en" else "100% प्राइवेट टूर · सैनिटाइज्ड एसी कैब"}</span></div>
     </div>
+  </div>
+</section>
+<section class="section section--paper-lt" id="itinerary">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">{pack["duration"][lang]}</p>
+        <h2>{t["tour_itinerary"]}</h2>
+      </div>
+    </div>
+    <div class="itinerary-timeline">
+      {itin_html}
+    </div>
+  </div>
+</section>
+<section class="section section--paper">
+  <div class="container">
+    <div class="grid-2">
+      <div class="checklist-card reveal-on-scroll">
+        <h3>{t["inclusions_title"]}</h3>
+        <ul class="check-list">{inc_items}</ul>
+      </div>
+      <div class="checklist-card reveal-on-scroll">
+        <h3>{t["exclusions_title"]}</h3>
+        <ul class="cross-list">{exc_items}</ul>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="section section--paper-lt">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">{t["sample_fare"]}</p>
+        <h2>{t["vehicle_upgrades"]}</h2>
+      </div>
+    </div>
+    {upgrade_table}
+  </div>
+</section>
+<section class="section section--paper">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">{t["terms"]}</p>
+        <h2>{t["cancellation_terms"]}</h2>
+      </div>
+    </div>
+    {cancel_table}
+  </div>
+</section>
+{render_benefits_section(lang)}
+<section class="section section--paper-lt" id="contact-section">
+  <div class="container">
+    <div class="section-head" style="margin-bottom:2.25rem">
+      <div>
+        <p class="eyebrow">{t["nav_contact"]}</p>
+        <h2>{t["h2_reach"]}</h2>
+      </div>
+    </div>
+    {contact_card_html(lang, is_standalone_page=False)}
   </div>
 </section>
 """
@@ -1352,18 +1632,133 @@ def package_body(lang, pack):
 
 def services_body(lang):
     t = T[lang]
+    services = [
+        {
+            "idx": "01",
+            "cls": "service-card--navy",
+            "title_en": "One-Way Intercity Taxi",
+            "title_hi": "वन-वे इंटरसिटी टैक्सी",
+            "desc_en": "Affordable one-way drops from Agra to Delhi (from ₹2,999), Jaipur (from ₹3,299), Mathura, and Noida. Pay only for one side — zero return fare.",
+            "desc_hi": "आगरा से दिल्ली (₹2,999 से), जयपुर (₹3,299 से), मथुरा व नोएडा के लिए वन-वे ड्रॉप। केवल एक तरफ का किराया — वापसी का कोई शुल्क नहीं।",
+            "tags_en": "Agra–Delhi · Agra–Jaipur · Pay One Side",
+            "tags_hi": "आगरा–दिल्ली · आगरा–जयपुर · सिर्फ एक तरफ का किराया",
+            "link": hub_path("routes", lang),
+            "cta_en": "Explore routes",
+            "cta_hi": "रूट देखें",
+        },
+        {
+            "idx": "02",
+            "cls": "service-card--gold",
+            "title_en": "Outstation Round Trips",
+            "title_hi": "आउटस्टेशन राउंड ट्रिप",
+            "desc_en": "Reliable multi-day round trips across North India (Rajasthan, Uttarakhand, Himachal) with transparent 300 KM/day billing and commercial tourist permits.",
+            "desc_hi": "उत्तर भारत (राजस्थान, उत्तराखंड, हिमाचल) की बहु-दिवसीय यात्राओं के लिए 300 किमी/दिन पारदर्शी बिलिंग और ऑल-इंडिया टूरिस्ट परमिट।",
+            "tags_en": "300 KM/Day Min · Verified Chauffeurs",
+            "tags_hi": "300 किमी/दिन न्यूनतम · वेरिफाइड ड्राइवर",
+            "link": hub_path("routes", lang),
+            "cta_en": "Check outstation fares",
+            "cta_hi": "आउटस्टेशन किराया देखें",
+        },
+        {
+            "idx": "03",
+            "cls": "service-card--light",
+            "title_en": "Local Agra Sightseeing",
+            "title_hi": "लोकल आगरा दर्शन पैकेज",
+            "desc_en": "Comfortable 8-Hour / 80-KM (from ₹1,800) and 12-Hour / 120-KM packages covering Taj Mahal sunrise, Agra Fort, Mehtab Bagh, and Fatehpur Sikri.",
+            "desc_hi": "ताजमहल सनराइज, आगरा किला, मेहताब बाग और फतेहपुर सीकरी के लिए 8 घंटे/80 किमी (₹1,800 से) व 12 घंटे/120 किमी के किफायती लोकल पैकेज।",
+            "tags_en": "8h/80km · 12h/120km · Monument Tour",
+            "tags_hi": "8घंटे/80किमी · 12घंटे/120किमी · स्मारक दर्शन",
+            "link": hub_path("packages", lang),
+            "cta_en": "View local packages",
+            "cta_hi": "लोकल पैकेज देखें",
+        },
+        {
+            "idx": "04",
+            "cls": "service-card--light",
+            "title_en": "Airport & Railway Transfers",
+            "title_hi": "एयरपोर्ट व रेलवे स्टेशन ट्रांसफर",
+            "desc_en": "Punctual doorstep transfers for Delhi IGI Airport (DEL), Agra Kheria Airport (AGR), Agra Cantt, and Gatimaan Express with live flight delay tracking.",
+            "desc_hi": "दिल्ली एयरपोर्ट (IGI), आगरा खेरिया एयरपोर्ट, आगरा कैंट व गतिमान एक्सप्रेस के लिए समयबद्ध पिकअप व ड्रॉप — फ्लाइट ट्रैकिंग के साथ।",
+            "tags_en": "Flight Tracking · Zero Waiting Fee",
+            "tags_hi": "फ्लाइट ट्रैकिंग · समयबद्ध पिकअप",
+            "link": route_path(ROUTES[1], lang),
+            "cta_en": "Delhi airport transfer",
+            "cta_hi": "दिल्ली एयरपोर्ट ट्रांसफर",
+        },
+        {
+            "idx": "05",
+            "cls": "service-card--navy",
+            "title_en": "Tempo Traveller & Urbania",
+            "title_hi": "टेम्पो ट्रैवलर व फ़ोर्स अर्बनिया",
+            "desc_en": "9 to 26-seater luxury pushback Tempo Travellers & 9–17 seater Force Urbania with high-roof AC cabins, charging points, and dedicated luggage space.",
+            "desc_hi": "9 से 26 सीटर लग्जरी पुशबैक टेम्पो ट्रैवलर व 9–17 सीटर फ़ोर्स अर्बनिया — बड़ी फैमिली, स्कूल व कॉर्पोरेट ग्रुप्स के लिए उत्तम।",
+            "tags_en": "9 to 26 Seats · Force Urbania",
+            "tags_hi": "9 से 26 सीटें · फ़ोर्स अर्बनिया",
+            "link": vehicle_path(vehicle("tempo"), lang),
+            "cta_en": "View tempo fleet",
+            "cta_hi": "टेम्पो बेड़ा देखें",
+        },
+        {
+            "idx": "06",
+            "cls": "service-card--gold",
+            "title_en": "Heritage & Multi-Day Tours",
+            "title_hi": "हेरिटेज व मल्टी-डे टूर पैकेज",
+            "desc_en": "Curated Golden Triangle (Delhi–Agra–Jaipur from ₹18,500), Same Day Taj by Gatimaan (₹14,999), Mathura–Vrindavan (₹4,200), and Overnight tours.",
+            "desc_hi": "सुनियोजित टूर: गोल्डन ट्रायंगल (दिल्ली-आगरा-जयपुर ₹18,500 से), गतिमान ट्रेन टूर (₹14,999), मथुरा-वृंदावन दर्शन (₹4,200 से)।",
+            "tags_en": "Golden Triangle · Mathura · Same Day",
+            "tags_hi": "गोल्डन ट्रायंगल · मथुरा · सेम डे",
+            "link": hub_path("packages", lang),
+            "cta_en": "Explore tour packages",
+            "cta_hi": "टूर पैकेज देखें",
+        },
+    ]
+    cards = []
+    for s in services:
+        title = s["title_en"] if lang == "en" else s["title_hi"]
+        desc = s["desc_en"] if lang == "en" else s["desc_hi"]
+        tags = s["tags_en"] if lang == "en" else s["tags_hi"]
+        cta = s["cta_en"] if lang == "en" else s["cta_hi"]
+        cards.append(f"""
+    <article class="service-card {s["cls"]} reveal-on-scroll">
+      <span class="service-index">{s["idx"]}</span>
+      <div class="service-mark">✦</div>
+      <h3>{title}</h3>
+      <p>{desc}</p>
+      <div class="spec-row" style="margin-top:14px"><span>{tags}</span></div>
+      <a class="card-link" href="{s["link"]}">{cta} ↗</a>
+    </article>""")
+
     return f"""
 <section class="page-hero"><div class="container">
   {breadcrumb(lang, [(t["home"], hub_path("home", lang)), (t["nav_services"], "")])}
-  <h1>{t["h2_services"]}</h1>
-  <p class="lead">{t["primary_lead"]}</p>
+  <h1>{t["services_h2"]}</h1>
+  <p class="lead">{t["services_lead"]}</p>
 </div></section>
-<section class="section section--paper"><div class="container grid-2">
-  <article class="service-card service-card--navy"><span class="service-index">01</span><h3>{"Taxi <i>/ Cab</i>" if lang == "en" else "टैक्सी <i>/ कैब</i>"}</h3><p>{"Sedan, Ertiga, Innova Crysta." if lang == "en" else "सेडान, अर्टिगा, इनोवा क्रिस्टा।"}</p><a class="card-link" href="{hub_path("fleet", lang)}">{t["nav_fleet"]} ↗</a></article>
-  <article class="service-card service-card--gold"><span class="service-index">02</span><h3>{"Tour <i>packages</i>" if lang == "en" else "टूर <i>पैकेज</i>"}</h3><p>{"Agra, Golden Triangle, Mathura." if lang == "en" else "आगरा, गोल्डन ट्रायंगल, मथुरा।"}</p><a class="card-link" href="{hub_path("packages", lang)}">{t["nav_packages"]} ↗</a></article>
-  <article class="service-card service-card--light"><span class="service-index">03</span><h3>{"Tempo <i>Traveller</i>" if lang == "en" else "टेम्पो <i>ट्रैवलर</i>"}</h3><p>{"12–16 seat group travel." if lang == "en" else "12–16 सीट ग्रुप ट्रैवल।"}</p><a class="card-link" href="{vehicle_path(vehicle("tempo"), lang)}">Tempo Traveller ↗</a></article>
-  <article class="service-card service-card--light"><span class="service-index">04</span><h3>{"Airport <i>transfer</i>" if lang == "en" else "एयरपोर्ट <i>ट्रांसफर</i>"}</h3><p>{"Delhi Airport, Agra Cantt, Gatimaan." if lang == "en" else "दिल्ली एयरपोर्ट, आगरा कैंट, गतिमान।"}</p><a class="card-link" href="{route_path(ROUTES[1], lang)}">{t["airport"]} ↗</a></article>
-</div></section>
+<section class="section section--paper-lt">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">{t["services_eyebrow"]}</p>
+        <h2>{t["h2_services"]}</h2>
+      </div>
+    </div>
+    <div class="grid-3">
+      {"".join(cards)}
+    </div>
+  </div>
+</section>
+{render_benefits_section(lang)}
+<section class="section section--paper" id="contact-section">
+  <div class="container">
+    <div class="section-head" style="margin-bottom:2.25rem">
+      <div>
+        <p class="eyebrow">{t["nav_contact"]}</p>
+        <h2>{t["h2_reach"]}</h2>
+      </div>
+    </div>
+    {contact_card_html(lang, is_standalone_page=False)}
+  </div>
+</section>
 """
 
 
@@ -1496,22 +1891,23 @@ def about_body(lang):
     <p style="margin-top:28px"><a class="btn-primary" href="tel:{PHONE}">{t["call"]}</a></p>
   </div>
 </div></section>
+{render_benefits_section(lang)}
 """
 
 
 FAQS = [
     ("How does the advance payment work?", "You pay a part of the fare after the car is confirmed — often by call or WhatsApp first. The rest is paid to the driver. This demo does not charge anyone.",
      "एडवांस भुगतान कैसे होता है?", "गाड़ी कन्फर्म होने के बाद किराये का एक हिस्सा — अक्सर पहले कॉल या व्हाट्सऐप पर। बाकी ड्राइवर को। यह डेमो चार्ज नहीं करता।"),
-    ("Can I cancel?", "Free cancellation up to 12 hours before pickup. Inside 12 hours the advance is retained.",
-     "क्या रद्द कर सकते हैं?", "पिकअप से 12 घंटे पहले तक मुफ्त रद्दीकरण। उसके बाद एडवांस रहता है।"),
-    ("Is GST included?", "Sample fares are all-inclusive as currently quoted for Agra → Delhi. A GST invoice is issued on confirmed paid bookings.",
-     "क्या जीएसटी शामिल है?", "आगरा → दिल्ली के नमूना किराये ऑल-इनक्लूसिव हैं। कन्फर्म भुगतान पर जीएसटी इनवॉइस।"),
-    ("Do I need to show ID?", "Yes — a government photo ID for the lead passenger at pickup.",
-     "क्या आईडी चाहिए?", "हाँ — पिकअप पर मुख्य यात्री की सरकारी फोटो आईडी।"),
-    ("What about night driving?", "Pickups between 10:00 PM and 5:00 AM may include a night allowance, shown before you pay.",
-     "रात की ड्राइविंग?", "रात 10 से सुबह 5 के बीच पिकअप पर नाइट अलाउंस, भुगतान से पहले दिखता है।"),
-    ("How do I know the driver?", "After confirmation you receive driver name, vehicle number and a phone number.",
-     "ड्राइवर कैसे पता चलेगा?", "कन्फर्मेशन के बाद ड्राइवर का नाम, गाड़ी नंबर और फोन मिलता है।"),
+    ("Can I cancel?", "Free cancellation up to 24 hours before pickup for cabs with 100% refund (processed in 5–7 business days). Multi-day tour packages follow a tiered refund slab (61+ days: 100% refund; 0–5 days: 0%).",
+     "क्या रद्द कर सकते हैं?", "पिकअप से 24 घंटे पहले तक कैब रद्दीकरण पर शत-प्रतिशत रिफंड (5–7 कार्यदिवसों में)। मल्टी-डे टूर पैकेजों पर टियर आधारित रिफंड नियम लागू होते हैं।"),
+    ("Is GST included?", "Sample fares are transparently quoted. A GST tax invoice is issued on confirmed paid bookings for corporate and family billing.",
+     "क्या जीएसटी शामिल है?", "किराये पारदर्शी रूप से दर्शाए गए हैं। कॉर्पोरेट व फैमिली बिलिंग के लिए कन्फर्म बुकिंग पर अधिकृत जीएसटी इनवॉइस जारी किया जाता है।"),
+    ("Do I need to show ID?", "Yes — a valid government photo ID (Aadhaar, Passport, Voter ID) for the lead passenger at pickup.",
+     "क्या आईडी चाहिए?", "हाँ — पिकअप पर मुख्य यात्री की वैध सरकारी फोटो आईडी (आधार, पासपोर्ट आदि)।"),
+    ("What about night driving allowance?", "Pickups or driving between 8:00 PM and 6:00 AM incur a night allowance of ₹300 for cars and ₹500 for Tempo Travellers, shown transparently before you confirm.",
+     "रात की ड्राइविंग का क्या नियम है?", "रात 8:00 बजे से सुबह 6:00 बजे के बीच ड्राइविंग या पिकअप पर कारों के लिए ₹300 और टेम्पो ट्रैवलर के लिए ₹500 नाइट अलाउंस लागू होता है।"),
+    ("How do I know the driver?", "Upon booking confirmation, you receive driver name, mobile number, and vehicle registration number via SMS and WhatsApp at least 2 hours before scheduled departure.",
+     "ड्राइवर कैसे पता चलेगा?", "बुकिंग कन्फर्म होने पर यात्रा से कम से कम 2 घंटे पहले ड्राइवर का नाम, मोबाइल नंबर और गाड़ी का नंबर एसएमएस व व्हाट्सऐप पर प्राप्त हो जाता है।"),
 ]
 
 
@@ -1533,15 +1929,76 @@ def faq_body(lang):
 def legal_body(lang, kind):
     t = T[lang]
     if kind == "privacy":
-        title, body = t["title_privacy"], t["desc_privacy"]
+        title = t["title_privacy"]
+        content = f"""
+        <div class="legal-card" style="background:var(--surface, #FFFFFF);border:1px solid var(--border, rgba(0,0,0,0.08));border-radius:12px;padding:2rem;margin-top:1.5rem;line-height:1.75;">
+          <h2>{"1. Information Collection & Use" if lang == "en" else "1. जानकारी संग्रह और उपयोग"}</h2>
+          <p>{"We collect only essential details necessary for trip coordination, chauffeur dispatch, and billing: passenger name, contact phone, pickup address, and travel schedule. We do not store financial card or banking credentials on our servers." if lang == "en" else "हम केवल यात्रा समन्वय, शोफर डिस्पैच और बिलिंग के लिए आवश्यक जानकारी (यात्री का नाम, संपर्क नंबर, पिकअप पता और समय) एकत्र करते हैं। हम अपने सर्वर पर कोई भी बैंक या कार्ड विवरण संग्रहीत नहीं करते हैं।"}</p>
+          
+          <h2 style="margin-top:1.5rem">{"2. Zero Third-Party Sharing" if lang == "en" else "2. थर्ड पार्टी के साथ कोई साझाकरण नहीं"}</h2>
+          <p>{"Your personal travel data is strictly private and is never sold, rented, or shared with third-party advertisers. Chauffeur details (name, phone, and vehicle registration) are shared exclusively with confirmed booking passengers via SMS and WhatsApp." if lang == "en" else "आपकी व्यक्तिगत यात्रा जानकारी पूरी तरह से गोपनीय है और कभी भी किसी तीसरे पक्ष के साथ बेची या साझा नहीं की जाती है। ड्राइवर का विवरण केवल कन्फर्म बुकिंग वाले यात्रियों के साथ साझा किया जाता है।"}</p>
+
+          <h2 style="margin-top:1.5rem">{"3. 256-Bit SSL Security" if lang == "en" else "3. 256-बिट एसएसएल सुरक्षा"}</h2>
+          <p>{"All communications and form transmissions through our website are secured using standard 256-bit SSL encryption. Advance tokens are processed through certified and compliant payment gateways." if lang == "en" else "हमारी वेबसाइट के माध्यम से सभी फॉर्म और संचार 256-बिट एसएसएल एन्क्रिप्शन से सुरक्षित हैं। एडवांस टोकन प्रमाणित पेमेंट गेटवे के माध्यम से सुरक्षित संसाधित होते हैं।"}</p>
+
+          <h2 style="margin-top:1.5rem">{"4. Contact for Privacy Inquiries" if lang == "en" else "4. गोपनीयता संबंधी संपर्क"}</h2>
+          <p>{PHONE_DISPLAY} · {EMAIL} · {ADDRESS}</p>
+        </div>
+        """
     else:
-        title, body = t["title_terms"], t["desc_terms"]
+        title = t["title_terms"]
+        slabs_rows = "".join([
+            f"<tr><td style='padding:0.75rem 1rem;border-bottom:1px solid var(--border, rgba(0,0,0,0.08));font-weight:600'>{row['days']}</td><td style='padding:0.75rem 1rem;border-bottom:1px solid var(--border, rgba(0,0,0,0.08));color:var(--gold, #E5A044)'>{row['fee']}</td><td style='padding:0.75rem 1rem;border-bottom:1px solid var(--border, rgba(0,0,0,0.08))'>{row['refund']}</td></tr>"
+            for row in CANCELLATION_SLABS_TOUR
+        ])
+        content = f"""
+        <div class="legal-card" style="background:var(--surface, #FFFFFF);border:1px solid var(--border, rgba(0,0,0,0.08));border-radius:12px;padding:2rem;margin-top:1.5rem;line-height:1.75;">
+          <h2>{"1. Booking & Advance Confirmation" if lang == "en" else "1. बुकिंग और एडवांस कन्फर्मेशन"}</h2>
+          <p>{"A booking is considered confirmed once the passenger selects their vehicle and pays the agreed initial advance (typically 20–28%). The remaining balance is payable directly to the chauffeur upon trip completion or as agreed prior to departure." if lang == "en" else "बुकिंग तब कन्फर्म मानी जाती है जब यात्री वाहन चुनकर तय एडवांस (सामान्यतः 20–28%) का भुगतान कर देता है। शेष राशि यात्रा पूरी होने पर सीधे शोफर को देय होती है।"}</p>
+
+          <h2 style="margin-top:1.5rem">{"2. Point-to-Point Cab Cancellation Policy" if lang == "en" else "2. पॉइंट-टू-पॉइंट कैब कैंसलेशन नीति"}</h2>
+          <p style="background:var(--bg-alt, #F8F9FA);padding:1rem;border-left:4px solid var(--gold, #E5A044);border-radius:4px;">
+            <strong>{CANCELLATION_POLICY_CAB[lang]}</strong>
+          </p>
+          <p>{"All refunds are processed and credited to the original payment source within 5 to 7 business days. For cancellations, please call our 24×7 dispatch at " + PHONE_DISPLAY + " or contact us via WhatsApp." if lang == "en" else "सभी रिफंड 5 से 7 कार्य दिवसों के भीतर मूल भुगतान माध्यम में जमा किए जाते हैं। रद्दीकरण के लिए कृपया हमारे 24×7 नंबर " + PHONE_DISPLAY + " पर कॉल करें या व्हाट्सऐप करें।"}</p>
+
+          <h2 style="margin-top:1.5rem">{"3. Multi-Day Tour Package Cancellation Schedule" if lang == "en" else "3. मल्टी-डे टूर पैकेज रद्दीकरण समय-सारणी"}</h2>
+          <div style="overflow-x:auto;margin:1rem 0;">
+            <table style="width:100%;border-collapse:collapse;text-align:left;font-size:0.95rem;">
+              <thead>
+                <tr style="background:var(--bg-alt, #F8F9FA);">
+                  <th style="padding:0.75rem 1rem;border-bottom:2px solid var(--border, rgba(0,0,0,0.12));">{"Notice Period" if lang == "en" else "सूचना अवधि"}</th>
+                  <th style="padding:0.75rem 1rem;border-bottom:2px solid var(--border, rgba(0,0,0,0.12));">{"Cancellation Fee" if lang == "en" else "कैंसलेशन शुल्क"}</th>
+                  <th style="padding:0.75rem 1rem;border-bottom:2px solid var(--border, rgba(0,0,0,0.12));">{"Refund Payable" if lang == "en" else "देय रिफंड"}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {slabs_rows}
+              </tbody>
+            </table>
+          </div>
+
+          <h2 style="margin-top:1.5rem">{"4. Night Allowance, Tolls & Outstation Rules" if lang == "en" else "4. नाइट चार्ज, टोल और आउटस्टेशन नियम"}</h2>
+          <ul style="padding-left:1.25rem;margin:0.5rem 0;">
+            <li>{"Driver Night Allowance: Flat ₹" + str(NIGHT_ALLOWANCE_CAB) + " for cabs and ₹" + str(NIGHT_ALLOWANCE_TEMPO) + " for Tempo Travellers applies when the vehicle is in service between 8:00 PM and 6:00 AM." if lang == "en" else "ड्राइवर नाइट चार्ज: रात 8:00 बजे से सुबह 6:00 बजे के बीच सेवा देने पर कैब के लिए ₹" + str(NIGHT_ALLOWANCE_CAB) + " और टेम्पो के लिए ₹" + str(NIGHT_ALLOWANCE_TEMPO) + " लागू होता है।"}</li>
+            <li>{"Outstation Minimum Billing: Multi-day round-trip bookings adhere to a standard minimum billing of " + str(OUTSTATION_MIN_KM) + " KM per calendar day." if lang == "en" else "आउटस्टेशन न्यूनतम बिलिंग: मल्टी-डे राउंड ट्रिप बुकिंग में प्रति कैलेंडर दिन न्यूनतम " + str(OUTSTATION_MIN_KM) + " किमी बिलिंग का नियम लागू होता है।"}</li>
+            <li>{"State permits, expressway tolls, and monument parking charges are payable at actuals unless explicitly quoted as inclusive in the package voucher." if lang == "en" else "स्टेट परमिट, एक्सप्रेसवे टोल और स्मारक पार्किंग शुल्क वास्तविक रसीदों के आधार पर देय होते हैं (जब तक कि पैकेज में शामिल न हों)।"}</li>
+          </ul>
+
+          <h2 style="margin-top:1.5rem">{"5. Passenger Conduct & Vehicle Safety" if lang == "en" else "5. यात्री आचरण और वाहन सुरक्षा"}</h2>
+          <p>{"Smoking, consumption of alcohol, or possession of prohibited substances inside the vehicle is strictly forbidden under transport regulations. Passengers are requested to carry a government-issued photo ID. Any intentional damage caused to vehicle upholstery or equipment will be chargeable to the passenger." if lang == "en" else "परिवहन नियमों के तहत वाहन के अंदर धूम्रपान, शराब का सेवन या प्रतिबंधित पदार्थों का उपयोग सख्त वर्जित है। यात्रियों से वैध फोटो पहचान पत्र साथ रखने का अनुरोध किया जाता है। वाहन को किसी भी प्रकार की क्षति होने पर यात्री जिम्मेदार होंगे।"}</p>
+
+          <h2 style="margin-top:1.5rem">{"6. Legal Jurisdiction" if lang == "en" else "6. कानूनी क्षेत्राधिकार"}</h2>
+          <p>{"Any claims, disputes, or legal proceedings arising out of services provided by SK Baghel Tour & Travels shall fall exclusively within the jurisdiction of courts located in Agra, Uttar Pradesh, India." if lang == "en" else "एसके बघेल टूर एंड ट्रैवल्स द्वारा प्रदान की जाने वाली सेवाओं से संबंधित कोई भी कानूनी विवाद केवल आगरा, उत्तर प्रदेश न्यायालय के क्षेत्राधिकार के अधीन होगा।"}</p>
+        </div>
+        """
+
     return f"""
 <section class="page-hero"><div class="container legal">
   {breadcrumb(lang, [(t["home"], hub_path("home", lang)), (title.split("|")[0].strip(), "")])}
   <h1>{title.split("|")[0].strip()}</h1>
-  <p>{body}</p>
-  <p>{PHONE_DISPLAY} · {EMAIL} · Taj Ganj, Agra.</p>
+  <p class="lead">{t["desc_privacy"] if kind == "privacy" else t["desc_terms"]}</p>
+  {content}
 </div></section>
 """
 
@@ -1669,6 +2126,14 @@ def book_body():
     <div class="panel" data-step="4">
       <p class="muted">Payment is secondary. Most guests call first. This button is a 900ms demo.</p>
       <form id="pay-form">
+        <div class="coupon-box" style="background:var(--bg-alt, #F8F9FA);border:1px solid var(--border, rgba(0,0,0,0.08));border-radius:8px;padding:12px 14px;margin-bottom:18px;">
+          <label for="couponCode" style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:6px;">Have a Promo / Coupon Code?</label>
+          <div style="display:flex;gap:8px;">
+            <input id="couponCode" placeholder="Try ASTTCAR500OFF" style="flex:1;text-transform:uppercase;padding:8px 12px;border:1px solid var(--border, rgba(0,0,0,0.15));border-radius:6px;font-family:var(--font-mono, monospace);font-size:0.9rem;" />
+            <button type="button" class="btn-outline btn-sm" id="btn-apply-coupon" style="padding:6px 14px;">Apply</button>
+          </div>
+          <div id="coupon-feedback" style="font-size:0.8rem;margin-top:6px;display:none;"></div>
+        </div>
         <div class="pay-methods">
           <label><input type="radio" name="pay" value="upi" checked /> UPI</label>
           <label><input type="radio" name="pay" value="card" /> Card</label>
