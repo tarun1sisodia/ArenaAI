@@ -1,0 +1,72 @@
+# ==============================================================================
+# Cloudflare Workers Static Assets Ignore List (.assetsignore)
+# Reference: https://developers.cloudflare.com/workers/static-assets/
+# Strictly excludes .git, node_modules, and dev files from Cloudflare 25 MiB ceiling
+# ==============================================================================
+
+# Version control & internal metadata (Blocks 51.7 MiB packfile error)
+.git
+.git/**
+.github
+.github/**
+.agents
+.agents/**
+.gemini
+.gemini/**
+
+# Node dependencies & binaries (Blocks 147 MiB workerd error)
+node_modules
+node_modules/**
+.npm
+.npm/**
+.wrangler
+.wrangler/**
+
+# Build & maintenance scripts
+scripts
+scripts/**
+scratch
+scratch/**
+templates
+templates/**
+design-guide
+design-guide/**
+components
+components/**
+lib
+lib/**
+styles
+styles/**
+qa-shots
+qa-shots/**
+proposal
+proposal/**
+
+# Source code & configs
+*.py
+*.pyc
+__pycache__
+__pycache__/**
+package.json
+package-lock.json
+tsconfig.json
+tailwind.config.js
+wrangler.jsonc
+wrangler.toml
+*.patch
+*.md
+*.log
+*.sh
+
+# Prototype / test files
+Qwen_*.html
+coverflow-carousel.html
+oversized_assets.txt
+
+# System & ignore files
+.DS_Store
+.gitignore
+.ignore
+.pagesignore
+.wranglerignore
+.assetsignore

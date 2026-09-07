@@ -247,18 +247,30 @@ class QualityAudit:
         print(f"\n{BOLD}{CYAN}3. Cloudflare Asset Budget & Performance Guard{RESET}")
         score = 100.0
 
-        # Check 1: Verify .wranglerignore exists and excludes node_modules
+        # Check 1: Verify .assetsignore and .wranglerignore exist and exclude .git and node_modules
+        assetsignore_path = ROOT / ".assetsignore"
         wranglerignore_path = ROOT / ".wranglerignore"
+        if not assetsignore_path.exists():
+            self.log_fail("performance", ".assetsignore is missing! Risk of .git packfile upload failure.")
+            score -= 30
+        else:
+            a_text = assetsignore_path.read_text(encoding="utf-8")
+            if ".git" in a_text and "node_modules" in a_text:
+                self.log_pass("performance", ".assetsignore present with strict .git/ and node_modules/ exclusion")
+            else:
+                self.log_fail("performance", ".assetsignore missing .git or node_modules patterns")
+                score -= 20
+
         if not wranglerignore_path.exists():
             self.log_fail("performance", ".wranglerignore is missing! Risk of 147MB workerd upload failure.")
-            score -= 40
+            score -= 20
         else:
             w_text = wranglerignore_path.read_text(encoding="utf-8")
             if "node_modules/" in w_text:
                 self.log_pass("performance", ".wranglerignore present with strict node_modules/ exclusion rule")
             else:
                 self.log_fail("performance", ".wranglerignore missing node_modules/ pattern")
-                score -= 25
+                score -= 15
 
         # Check 2: Verify wrangler.jsonc exists with static assets configuration
         wrangler_jsonc = ROOT / "wrangler.jsonc"
