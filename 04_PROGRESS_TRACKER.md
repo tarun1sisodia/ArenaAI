@@ -9,7 +9,7 @@ only check boxes, append log rows, and update the Current State block.
 ## Current State
 
 - **Current Phase:** 31 — Automated Frontend Quality CI/CD & Cloudflare Deployment Guard ✅ complete
-- **Current Step:** Phase 31 Complete — Ready for Next Instructions / Deployment
+- **Current Step:** Post-Phase 31 — Vercel light-mode theme applied; awaiting next instruction
 - **Last updated:** 2026-09-07
 - **Open items:** `visual_audit.mjs` still needs a networked machine; fonts self-hosting (sandbox blocks Google Fonts download); real photos + real NAP before launch (see `LAUNCH_CHECKLIST.md`); PRD v3.0 master rewrite includes full SEO Final BOSS content. Client decision points from the deck are open (§25 of PRD.md).
 
@@ -138,6 +138,7 @@ can't be resolved without user input)_
 | 2026-09-07 | 31 / 3 | Step 31.3: GitHub Actions CI Workflow. Created `.github/workflows/quality.yml` executing SSG page build, preview server launch, Senior Quality & SEO Auditor (`quality_audit.py`), Cloudflare 25 MiB asset budget scan, and automated GitHub Step Summary publication. | `.github/workflows/quality.yml`, `04_PROGRESS_TRACKER.md` |
 | 2026-09-07 | 31 / 4 | Step 31.4: Comprehensive QA & Final Verification. Executed full static regeneration (`python3 scripts/render_pages.py`), verified 113/113 URLs OK (0 broken links) via `scripts/check_links.py`, executed Senior Frontend Quality Auditor (`scripts/quality_audit.py`) achieving 10.0/10.0 A+ score, verified 0 assets > 25 MiB, and confirmed HTTP 200 responses on local preview server. Phase 31 complete. | `scripts/quality_audit.py`, `quality_report.md`, `04_PROGRESS_TRACKER.md` |
 | 2026-09-07 | Cloudflare | Deployment Hotfix: Created `.assetsignore` (official Cloudflare Workers Static Assets ignore file) to strictly exclude `.git/` (blocking the 51.7 MiB packfile error) and `node_modules/` from Wrangler asset scans. | `.assetsignore`, `scripts/quality_audit.py`, `04_PROGRESS_TRACKER.md` |
+| 2026-09-07 | Theme / Light Mode | Applied Vercel 21st.dev light-mode palette to `:root` in `css/tokens.css`: near-black `#0A0A0A` text, `#FAFAFA` alt bg, Vercel neutral grays (`#737373` muted, `#A3A3A3` muted-lt, `#F5F5F5` tint), 6px/10px radius, Geist+Inter prepended to UI font stack, subtle shadows (`rgba(0,0,0,0.06)`). Brand Saffron Gold retained as CTA/focus accent. Dark mode (Solar Dusk) unchanged. Updated `DESIGN.md` to v3.0. Rebuilt and verified 113/113 URLs OK. | `css/tokens.css`, `DESIGN.md`, `04_PROGRESS_TRACKER.md` |
 
 
 

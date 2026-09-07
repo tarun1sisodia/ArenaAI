@@ -1,32 +1,32 @@
 ---
-version: beta
-name: Clean White + Neutral Charcoal (No Blue) + Saffron Gold
-description: Premium bilingual travel identity for SK Baghel Tour & Travels — Agra taxi, Tempo Traveller, and tours. Clean White canvas (#FFFFFF), crisp surfaces (#FFFFFF), neutral charcoal typography and chrome (#1A1D20, no blue tones), and warm saffron gold accents (#E5A044) with 60fps image scroll parallax engine.
+version: v3.0
+name: Vercel Light Mode (21st.dev) + Saffron Gold Brand Accent
+description: Premium bilingual travel identity for SK Baghel Tour & Travels — Agra taxi, Tempo Traveller, and tours. Vercel shadcn/ui light-mode palette (pure #FFFFFF canvas, #FAFAFA alternates, near-black #0A0A0A text, Vercel neutral-500 #737373 muted, 6px radius) with Saffron Gold (#E5A044) as brand CTA and focus-ring accent. Geist/Inter prepended to UI font stack. Dark mode: Solar Dusk (unchanged).
 colors:
   bg: "#FFFFFF"
-  bg-alt: "#F8F9FA"
+  bg-alt: "#FAFAFA"
   surface: "#FFFFFF"
-  text: "#1A1D20"
-  text-soft: "#555B62"
+  text: "#0A0A0A"
+  text-soft: "#737373"
   gold: "#E5A044"
   gold-light: "#F3C36C"
   gold-deep: "#B27123"
-  gold-soft: "rgba(229, 160, 68, 0.12)"
-  gold-border: "rgba(229, 160, 68, 0.28)"
+  gold-soft: "rgba(229, 160, 68, 0.10)"
+  gold-border: "rgba(229, 160, 68, 0.26)"
   gold-wash: "#FDF7ED"
   gold-text: "#8A5A17"
   border: "rgba(0, 0, 0, 0.08)"
-  navy-deep: "#121416"
-  navy: "#1A1D20"
-  navy-soft: "#2A2E33"
-  navy-tint: "#F1F3F5"
+  navy-deep: "#0A0A0A"
+  navy: "#171717"
+  navy-soft: "#262626"
+  navy-tint: "#F5F5F5"
   paper: "#FFFFFF"
   paper-lt: "#FFFFFF"
-  paper-dk: "#F8F9FA"
+  paper-dk: "#FAFAFA"
   white: "#FFFFFF"
-  muted-2: "#555B62"
-  muted-lt: "#8C9298"
-  coral: "#E16F4B"
+  muted-2: "#737373"
+  muted-lt: "#A3A3A3"
+  coral: "#EF4444"
   teal: "#3F7A74"
   success: "#2E7D32"
   error: "#C62828"
@@ -40,7 +40,7 @@ typography:
   display-hi:
     fontFamily: Noto Serif Devanagari
   sans:
-    fontFamily: DM Sans
+    fontFamily: "Geist, Inter, DM Sans"
     fontWeight: 400
     fontSize: 16px
     lineHeight: 1.6
@@ -73,7 +73,8 @@ typography:
     fontSize: clamp(30px, 3vw, 40px)
 rounded:
   none: 0px
-  default: 3px
+  default: 6px
+  card: 10px
   pill: 999px
 spacing:
   base: 8px
@@ -130,8 +131,8 @@ components:
 
 ## Overview
 
-Warm Paper + Soft Slate Blue + Saffron Gold is the refined identity for SK Baghel Travels.
-The mix is warm paper backgrounds (`#F5F0E8`), dark paper section alternation (`#EAE4DA`), crisp warm white card surfaces (`#FCFAF6` / `#FFFDF8`), refined Soft Slate Blue typography and chrome (`#2D3E50`), and warm saffron gold accents (`#E5A044`). The site balances comfortable warmth with executive polish.
+**Vercel Light Mode (21st.dev) + Saffron Gold Brand Accent** — Light mode uses the Vercel shadcn/ui palette:
+pure `#FFFFFF` canvas, `#FAFAFA` alternate section, near-black `#0A0A0A` primary text, Vercel neutral-500 `#737373` for subtitles/captions, hairline `rgba(0,0,0,0.08)` borders, and 6px default radius. Saffron Gold (`#E5A044`) is retained as the brand's CTA color (primary buttons, lead bar, focus rings, active states). The UI font stack now begins with **Geist** (Vercel's system font), followed by Inter and DM Sans. Dark mode is unchanged (Solar Dusk).
 
 This file is the agent-facing design spec. `css/tokens.css` must stay in lockstep with the YAML above.
 
