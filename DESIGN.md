@@ -199,3 +199,32 @@ demo chip are pills. Do not mix large rounded-xl cards with 3px buttons.
 - Do respect `prefers-reduced-motion`.
 - Don't edit files under `design-guide/` or `proposal/`.
 - Do keep fares identical in EN and HI; translate copy only.
+
+## Responsive repair contract (2026-09-08)
+
+- Keep desktop styling above 1120px. Use the existing navigation drawer at
+  ≤1120px, with scrollable contents and non-shrinking 44px touch targets.
+- At ≤700px use the 64px header, 16px gutters, 48px section spacing, stacked
+  primary actions, and 16px form text (prevents iOS focus zoom).
+- Grid children must shrink within their tracks. Tables and booking steps may
+  scroll locally; the document must not rely on hidden horizontal overflow.
+- Mobile hero uses the existing theme-aware mobile overlay, text and shadow
+  tokens. Location choices expand in document flow, not a fixed overlay clipped
+  by the hero. Keep destination captions and controls clear of copy/forms.
+- Fixed lead actions and quick dock account for device safe-area insets; the
+  drawer sits above both. Mobile review cards fit the viewport minus two gutters.
+- Hindi headings use 1.3 line height to protect Devanagari marks. No new palette,
+  type scale, radii, dependencies or animation effects are introduced.
+
+## Mobile bottom navigation (2026-09-08)
+
+User-requested app-style navigation on marketing pages at ≤700px supersedes the
+old mobile floating lead bar/quick dock. Five equal columns: Home, Tours, Call,
+WhatsApp, Menu; localized labels with decorative 24px icons, existing 11px mono
+label scale and ≥44px touch targets. Use surface/text/border tokens, gold active
+state with a non-color underline, and gold/navy-soft Call/WhatsApp accents.
+Navigation height is content-driven with 8px padding plus device safe-area inset;
+reserve 96px plus inset below content. No new motion. Booking remains in the
+header/menu; `book.html` keeps its distraction-free flow without a bottom bar.
+The existing drawer opens from Menu and returns focus to the invoking control.
+Desktop and tablet navigation are unchanged by this addition.

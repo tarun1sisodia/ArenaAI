@@ -995,3 +995,12 @@ opt in/out of n8n/SMS via §25.
 ---
 
 *End of PRD v3.0 — Master / Final.*
+
+### Approved mobile navigation amendment — 2026-09-08
+
+Marketing pages at ≤700px gain a persistent app-style bottom navigation:
+Home / Tours / Call / WhatsApp / Menu, bilingual, safe-area-aware, ≥44px targets.
+It replaces—not stacks with—the floating lead bar and radial quick dock on
+phones. Menu reuses the accessible drawer; Book remains in the header/drawer.
+Desktop and the no-bottom-bar booking flow remain unchanged. This supersedes
+older mobile lead-bar placement requirements, not Call/WhatsApp conversion goals.

@@ -439,6 +439,17 @@ def header(lang: str, active: str, alt_path: str):
     sheet = "\n    ".join(sheet_items)
     home = hub_path("home", lang)
     wa = f"https://wa.me/{WHATSAPP}"
+    # Semantic links stay usable without JavaScript; Menu progressively opens the drawer.
+    def nav_icon(path):
+        return f'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{path}</svg>'
+    home_icon = nav_icon('<path d="m3 10 9-7 9 7v10H3Z"/><path d="M9 20v-7h6v7"/>')
+    tours_icon = nav_icon('<circle cx="12" cy="12" r="9"/><path d="m16 8-3 5-5 3 3-5Z"/>')
+    menu_icon = nav_icon('<path d="M4 6h16M4 12h16M4 18h16"/>')
+    home_current = ' aria-current="page"' if active == "home" else ""
+    tours_current = ' aria-current="page"' if active == "packages" else ""
+    tours_label = "Tours" if lang == "en" else "टूर"
+    menu_label = "Menu" if lang == "en" else "मेनू"
+    mobile_label = "Mobile navigation" if lang == "en" else "मोबाइल नेविगेशन"
     return f"""\
 <a class="skip-link" href="#main">{t["skip"]}</a>
 <header class="site-header" id="site-header">
@@ -474,7 +485,14 @@ def header(lang: str, active: str, alt_path: str):
   <a class="btn-outline btn-sm" href="tel:{PHONE}">{ICON_CALL}<span>{t["call"]} {PHONE_DISPLAY}</span></a>
   <a class="btn-gold btn-sm" href="{wa}" target="_blank" rel="noreferrer">{ICON_WA}<span>{t["whatsapp"]} Us</span></a>
   <a class="btn-primary" href="/book.html">{t["book"]} <span>↗</span></a>
-</div>"""
+</div>
+<nav class="mobile-bottom-nav" aria-label="{mobile_label}">
+  <a href="{home}"{home_current}>{home_icon}<span>{t["home"]}</span></a>
+  <a href="{hub_path("packages", lang)}"{tours_current}>{tours_icon}<span>{tours_label}</span></a>
+  <a class="mobile-nav-call" href="tel:{PHONE}" data-event="cta_click">{ICON_CALL}<span>{t["call"]}</span></a>
+  <a class="mobile-nav-wa" href="{wa}" target="_blank" rel="noreferrer" data-event="cta_click">{ICON_WA}<span>{t["whatsapp"]}</span></a>
+  <a href="{hub_path("services", lang)}" id="mobile-menu-toggle" aria-controls="nav-sheet" aria-expanded="false" aria-haspopup="dialog">{menu_icon}<span>{menu_label}</span></a>
+</nav>"""
 
 
 def footer(lang: str):

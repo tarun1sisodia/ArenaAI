@@ -207,3 +207,17 @@ Admin, live Razorpay, WhatsApp Cloud API, CMS, Next.js rewrite, auth.
 **Acceptance criteria:** Cloudflare asset uploads contain 0 files > 25 MiB; `quality_audit.py` passes with 10.0/10.0 A+ grade; GitHub Actions workflow is fully specified; 113/113 URLs OK.
 
 
+
+## Phase 32 — Mobile responsive repair
+**Depends on:** Phase 31; explicitly requested by user on 2026-09-08.
+
+1. Repair shared mobile/tablet chrome, hero, form and content containment without
+   altering desktop design or business logic; expand responsive regression widths,
+   rebuild and run available QA, recording browser-test blockers honestly.
+   User scope amendment (2026-09-08): include app-style mobile bottom navigation
+   replacing overlapping mobile action bars; retain Call/WhatsApp and booking rules.
+
+**Acceptance criteria:** Shrinkable grids, scrollable mobile navigation, reachable
+location choices, safe-area-aware actions, retained EN/HI content and mock fares;
+static build/link gates pass. Browser QA at 320–1440px, both themes, navigation and
+booking interactions must pass before claiming visual verification complete.

@@ -113,3 +113,10 @@ translate copy, not fares.
 - n8n / WhatsApp Cloud API
 - Next.js / React rewrite
 - Editing `design-guide/` or `proposal/`
+
+### Mobile navigation amendment — 2026-09-08
+
+At ≤700px marketing pages use the user-requested app-style bottom navigation
+(Home / Tours / Call / WhatsApp / Menu) instead of the floating lead bar and
+radial dock. Call + WhatsApp remain primary; Book stays in the header and drawer.
+The booking app retains no bottom bar. Desktop route lead bars are unchanged.

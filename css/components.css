@@ -3985,3 +3985,134 @@ html.dark .currency-pill.is-active {
   color: #181615 !important;
   font-weight: 700;
 }
+/* Responsive contract — keep after component styles so desktop enhancements
+   cannot override the shared small-screen layout. See DESIGN.md. */
+@media (max-width: 1120px) {
+  .nav-desktop { display: none; }
+  .nav-toggle { display: grid; }
+  .nav-sheet {
+    z-index: 1000;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+  }
+  .nav-sheet > *, .nav-sheet a { flex-shrink: 0; }
+  .nav-sheet .cinematic-theme-toggle { min-height: var(--touch); }
+  .noscript-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+    padding: var(--space-2);
+    background: var(--navy-deep);
+    color: var(--white);
+  }
+  .noscript-nav a { min-height: var(--touch); display: inline-flex; align-items: center; }
+  .book-layout > *, .hero-widget > *, .contact-card > *,
+  .coverflow-split > *, .field, .loc-picker, .loc-display-btn {
+    min-width: 0;
+  }
+  .field input, .field select, .field textarea { min-width: 0; max-width: 100%; }
+}
+
+@media (max-width: 700px) {
+  :root { --header: 64px; }
+  .header-inner, .header-actions { gap: var(--space-1); }
+  /* Theme remains available inside the drawer; retain the booking CTA. */
+  .header-actions .cinematic-theme-toggle { display: none; }
+  .header-actions .btn-primary { padding-inline: var(--space-1); }
+  .section, .reviews-marquee-section, .coverflow-section { padding-block: var(--space-5); }
+  .hero-overlay { background: var(--hero-overlay-mobile) !important; }
+  .hero-copy h1 { text-shadow: var(--hero-text-shadow); }
+  .hero-copy .lead { color: var(--hero-lead) !important; text-shadow: var(--hero-text-shadow); }
+  .hero-copy { padding-top: var(--space-3); }
+  .hero-location-badge {
+    position: relative;
+    inset: auto;
+    align-self: flex-start;
+    margin: var(--space-2);
+    max-width: calc(100% - var(--space-4));
+  }
+  .hero-slide-nav { position: relative; left: auto; bottom: auto; transform: none; align-self: center; margin-bottom: var(--space-2); }
+  .hero-actions { align-items: stretch; }
+  .hero-actions > a { width: 100%; min-height: var(--touch); padding-block: var(--space-1); }
+  .hero-widget { margin-bottom: var(--space-3); }
+  /* Flow layout avoids fixed-position containment by animated/overflowed ancestors. */
+  .loc-dropdown {
+    position: static;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    margin-top: var(--space-1);
+  }
+  .loc-search-head { flex-wrap: wrap; }
+  .loc-search-query { min-width: 0; }
+  input, select, textarea, .loc-search-query, .contact-form-input,
+  .contact-form-textarea { font-size: 16px; }
+  .guidance-grid { grid-template-columns: minmax(0, 1fr); }
+  .contact-card-info, .contact-card-form, .guidance-box { padding: var(--space-2); }
+  .summary .codes, .summary .total, .form-actions { flex-wrap: wrap; }
+  .table-wrap { max-width: 100%; margin-inline: 0; padding-inline: 0; overflow-x: auto; }
+  .stepper { max-width: 100%; }
+  .stepper button { flex-shrink: 0; }
+  .lead-bar { bottom: calc(var(--space-2) + env(safe-area-inset-bottom, 0px)); }
+  body:not([data-page="book"]) { padding-bottom: calc(var(--space-6) + var(--space-4) + env(safe-area-inset-bottom, 0px)); }
+  .about { bottom: calc(var(--space-6) + var(--space-4) + env(safe-area-inset-bottom, 0px)); }
+  body[data-page="book"] .about { bottom: calc(var(--space-2) + env(safe-area-inset-bottom, 0px)); }
+  .liquid-review-card {
+    width: calc(100vw - var(--space-4));
+    min-width: 0;
+    max-width: calc(100vw - var(--space-4));
+    flex-shrink: 0;
+  }
+  :lang(hi) h1, :lang(hi) h2, :lang(hi) h3 { line-height: 1.3; }
+}
+
+/* App-style phone navigation. Shared SSG chrome; no client-rendered SEO links. */
+.mobile-bottom-nav { display: none; }
+@media (max-width: 700px) {
+  body:not([data-page="book"]) .mobile-bottom-nav {
+    position: fixed;
+    z-index: 40;
+    inset-inline: 0;
+    bottom: 0;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: var(--space-1);
+    padding: var(--space-1) max(var(--space-1), env(safe-area-inset-right, 0px))
+      calc(var(--space-1) + env(safe-area-inset-bottom, 0px))
+      max(var(--space-1), env(safe-area-inset-left, 0px));
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    color: var(--text);
+  }
+  .mobile-bottom-nav a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-1);
+    min-width: 0;
+    min-height: var(--touch);
+    padding-block: var(--space-1);
+    border-radius: var(--radius);
+    font-size: 11px;
+    line-height: 1.3;
+    text-align: center;
+    overflow-wrap: anywhere;
+  }
+  .mobile-bottom-nav svg { width: var(--space-3); height: var(--space-3); flex-shrink: 0; }
+  .mobile-bottom-nav a[aria-current="page"] {
+    background: var(--gold-soft);
+    color: var(--gold-text);
+    text-decoration: underline;
+    text-underline-offset: var(--space-1);
+  }
+  .mobile-bottom-nav .mobile-nav-call { background: var(--gold); color: var(--navy); }
+  .mobile-bottom-nav .mobile-nav-wa { background: var(--navy-soft); color: var(--white); }
+  /* One bottom surface only; no dock obscuring a tab or the open drawer. */
+  body:not([data-page="book"]) .lead-bar,
+  body:not([data-page="book"]) .about { display: none; }
+  body:not([data-page="book"]) .toast {
+    bottom: calc(var(--space-7) + env(safe-area-inset-bottom, 0px));
+  }
+}

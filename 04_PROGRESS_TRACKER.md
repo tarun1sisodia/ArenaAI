@@ -8,9 +8,9 @@ only check boxes, append log rows, and update the Current State block.
 
 ## Current State
 
-- **Current Phase:** 31 — Automated Frontend Quality CI/CD & Cloudflare Deployment Guard ✅ complete
-- **Current Step:** Post-Phase 31 — Vercel light-mode theme applied; awaiting next instruction
-- **Last updated:** 2026-09-07
+- **Current Phase:** 32 — Mobile responsive repair
+- **Current Step:** 32.1 — Responsive repair + user-requested mobile bottom navigation implemented; browser/mobile interaction verification pending (Chromium download blocked)
+- **Last updated:** 2026-09-08
 - **Open items:** `visual_audit.mjs` still needs a networked machine; fonts self-hosting (sandbox blocks Google Fonts download); real photos + real NAP before launch (see `LAUNCH_CHECKLIST.md`); PRD v3.0 master rewrite includes full SEO Final BOSS content. Client decision points from the deck are open (§25 of PRD.md). Payments remain mock until `docs/PAYMENT_SYSTEM.md` is implemented.
 
 ---
@@ -325,3 +325,41 @@ can't be resolved without user input)_
 
 
 
+
+
+## Phase 32 — Mobile responsive repair
+
+- [ ] **32.1** Shared responsive repair and regression QA — code implemented;
+  browser acceptance gate pending, not marked complete.
+
+### Session Log — 2026-09-08 responsive repair
+
+| Date | Work | Files / verification |
+|---|---|---|
+| 2026-09-08 | User-requested responsive repair: tablet drawer, scrollable menu above dock, mobile theme-token hero, in-flow location choices, shrinkable booking/contact grids, safe-area actions, viewport-sized review cards, Hindi line-height; desktop styling above 1120px retained | `css/components.css`, `js/app.js`, `scripts/visual_audit.mjs`, `DESIGN.md`, `03_PHASE_PLAN.md`; SSG regenerated date metadata; build and JS syntax pass; links 113/113 at both root and `/ArenaAI`; static quality audit passes. Browser screenshots and interaction checks NOT run: Playwright Chromium download failed with ECONNRESET. |
+
+### Decision Log — responsive repair
+
+| Date | Decision | Why |
+|---|---|---|
+| 2026-09-08 | Add one user-authorized Phase 32 step and responsive contract to DESIGN.md, reusing spacing/theme tokens and existing drawer at ≤1120px | Later component styles superseded original mobile rules; fix shared source rather than hand-edit generated pages. No stack, SEO, fare or payment changes. Session stays on `arena/01a07f20-arenaai`. |
+
+### Blocker — Phase 32 / Step 1
+
+Chromium installation failed (cdn.playwright.dev ECONNRESET). Run the expanded
+`scripts/visual_audit.mjs` sweep on a browser-enabled machine, plus light/dark,
+reduced-motion, drawer scroll/focus, location selection and booking flow checks
+on mobile before closing this step. Static quality score is not visual QA.
+
+
+### Session Log — 2026-09-08 mobile bottom navigation
+
+| Date | Work | Files / verification |
+|---|---|---|
+| 2026-09-08 | Added app-style Home / Tours / Call / WhatsApp / Menu on phone marketing pages; replaced floating lead bar/dock, preserved header booking and desktop; drawer restores focus to its actual opener | `scripts/render_pages.py`, regenerated HTML, `css/components.css`, `js/app.js`, expanded `scripts/visual_audit.mjs`; build, JS syntax and static quality audit pass; 113/113 URLs at root and subpath; parser verified five semantic tabs + drawer wiring on 59 generated pages. Browser tests added but not executed due to existing Chromium blocker. |
+
+### Decision Log — mobile navigation amendment
+
+| Date | Decision | Why |
+|---|---|---|
+| 2026-09-08 | Amend current Phase 32.1 with user-requested app-style bottom navigation; document mobile-only exception to legacy floating lead placement in DESIGN, PRD and project context | Avoid stacking competing fixed controls on small screens; keep Call/WhatsApp primary, booking header/drawer accessible, and booking app free of bottom navigation. No architecture or business-rule changes; visual acceptance remains pending. |

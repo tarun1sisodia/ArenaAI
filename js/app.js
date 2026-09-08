@@ -37,20 +37,37 @@
   const sheet = $("#nav-sheet");
   const toggle = $("#nav-toggle");
   const closeSheet = $("#nav-close");
+  const bottomToggle = $("#mobile-menu-toggle");
+  let sheetOpener = toggle;
   const setSheet = (open) => {
     if (!sheet || !toggle) return;
     sheet.classList.toggle("is-open", open);
     sheet.hidden = !open;
     toggle.setAttribute("aria-expanded", String(open));
+    bottomToggle?.setAttribute("aria-expanded", String(open));
     document.body.style.overflow = open ? "hidden" : "";
     if (open) {
       closeSheet?.focus();
     } else if (document.activeElement && sheet.contains(document.activeElement)) {
-      toggle.focus(); // return focus where the user started
+      const target = sheetOpener?.getClientRects().length ? sheetOpener : toggle;
+      target?.focus(); // return focus to the actual visible opener
     }
   };
-  toggle?.addEventListener("click", () => setSheet(true));
+  toggle?.addEventListener("click", () => {
+    sheetOpener = toggle;
+    setSheet(true);
+  });
+  bottomToggle?.addEventListener("click", (event) => {
+    if (!sheet || !toggle) return;
+    event.preventDefault();
+    sheetOpener = bottomToggle;
+    setSheet(true);
+  });
   closeSheet?.addEventListener("click", () => setSheet(false));
+  // Do not leave page scrolling locked when rotating/resizing to desktop.
+  window.matchMedia("(min-width: 1121px)").addEventListener("change", (event) => {
+    if (event.matches && sheet?.classList.contains("is-open")) setSheet(false);
+  });
   sheet?.addEventListener("click", (e) => {
     if (e.target.closest("a")) setSheet(false);
   });

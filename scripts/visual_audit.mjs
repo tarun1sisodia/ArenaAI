@@ -28,7 +28,7 @@ const PAGES = [
   "/en/vehicles/urbania/", "/hi/vehicles/tempo-traveller/",
   "/en/packages/golden-triangle/", "/hi/packages/mathura-vrindavan/",
 ];
-const WIDTHS = [360, 390, 768, 1024, 1440];
+const WIDTHS = [320, 360, 390, 600, 700, 768, 1024, 1120, 1440];
 const HEIGHT = 900;
 
 const overflowProbe = `(() => {
@@ -63,6 +63,29 @@ const run = async () => {
         const res = await page.goto(url, { waitUntil: "networkidle", timeout: 20000 });
         const status = res ? res.status() : 0;
         if (status !== 200) { console.log(`FAIL ${width}px ${path} → HTTP ${status}`); failures++; continue; }
+        // App-style navigation must not stack with the legacy phone action bars.
+        const bottomNav = page.locator(".mobile-bottom-nav");
+        if (width <= 700 && path !== "/book.html") {
+          if (!await bottomNav.isVisible()) throw new Error("Mobile bottom navigation is missing");
+          const targets = await bottomNav.locator("a").evaluateAll((links) =>
+            links.length === 5 && links.every((link) => {
+              const box = link.getBoundingClientRect();
+              return box.width >= 44 && box.height >= 44;
+            }));
+          if (!targets) throw new Error("Mobile tabs must have five 44px touch targets");
+          if (await page.locator(".lead-bar").isVisible() || await page.locator(".about").isVisible()) {
+            throw new Error("Legacy mobile actions overlap bottom navigation");
+          }
+          await page.locator("#mobile-menu-toggle").click();
+          if (!await page.locator("#nav-sheet").isVisible()) throw new Error("Bottom Menu did not open drawer");
+          await page.keyboard.press("Escape");
+          if (await page.locator("#nav-sheet").isVisible()) throw new Error("Escape did not close drawer");
+          if (!await page.locator("#mobile-menu-toggle").evaluate((el) => el === document.activeElement)) {
+            throw new Error("Drawer did not return focus to bottom Menu");
+          }
+        } else if (await bottomNav.isVisible()) {
+          throw new Error("Bottom navigation must be hidden on desktop/tablet and booking");
+        }
         const result = await page.evaluate(overflowProbe);
         if (result.overflow) {
           failures++;
