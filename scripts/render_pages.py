@@ -1225,7 +1225,7 @@ def home_body(lang):
           <div class="loc-search-head">
             <span class="loc-search-icon">🔍</span>
             <input type="text" class="loc-search-query" placeholder="Search city, airport, landmark..." autocomplete="off" />
-            <span class="loc-api-tag" title="Connect Google Maps API">Google Maps</span>
+            <span class="loc-api-tag" title="Add LocationIQ token">LocationIQ</span>
           </div>
           <div class="loc-quick-tags">
             <span class="loc-tag" data-val="agra">Agra</span>
@@ -1252,7 +1252,7 @@ def home_body(lang):
           <div class="loc-search-head">
             <span class="loc-search-icon">🔍</span>
             <input type="text" class="loc-search-query" placeholder="Search drop city, airport, hotel..." autocomplete="off" />
-            <span class="loc-api-tag" title="Connect Google Maps API">Google Maps</span>
+            <span class="loc-api-tag" title="Add LocationIQ token">LocationIQ</span>
           </div>
           <div class="loc-quick-tags">
             <span class="loc-tag" data-val="delhi">Delhi</span>
@@ -2259,7 +2259,7 @@ def book_body():
               <div class="loc-search-head">
                 <span class="loc-search-icon">🔍</span>
                 <input type="text" class="loc-search-query" placeholder="Search city, airport, landmark..." autocomplete="off" />
-                <span class="loc-api-tag" title="Connect Google Maps API">Google Maps</span>
+                <span class="loc-api-tag" title="Add LocationIQ token">LocationIQ</span>
               </div>
               <div class="loc-quick-tags">
                 <span class="loc-tag" data-val="agra">Agra</span>
@@ -2293,7 +2293,7 @@ def book_body():
               <div class="loc-search-head">
                 <span class="loc-search-icon">🔍</span>
                 <input type="text" class="loc-search-query" placeholder="Search drop city, airport, hotel..." autocomplete="off" />
-                <span class="loc-api-tag" title="Connect Google Maps API">Google Maps</span>
+                <span class="loc-api-tag" title="Add LocationIQ token">LocationIQ</span>
               </div>
               <div class="loc-quick-tags">
                 <span class="loc-tag" data-val="delhi">Delhi</span>
