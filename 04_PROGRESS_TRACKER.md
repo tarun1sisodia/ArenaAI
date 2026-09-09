@@ -9,8 +9,8 @@ only check boxes, append log rows, and update the Current State block.
 ## Current State
 
 - **Current Phase:** 31 — Automated Frontend Quality CI/CD & Cloudflare Deployment Guard ✅ complete
-- **Current Step:** Post-Phase 31 — Vercel light-mode theme applied; awaiting next instruction
-- **Last updated:** 2026-09-07
+- **Current Step:** Post-Phase 31 — Persistent 600ms page loader and professional 404 completed; awaiting next instruction
+- **Last updated:** 2026-09-09
 - **Open items:** `visual_audit.mjs` still needs a networked machine; fonts self-hosting (sandbox blocks Google Fonts download); real photos + real NAP before launch (see `LAUNCH_CHECKLIST.md`); PRD v3.0 master rewrite includes full SEO Final BOSS content. Client decision points from the deck are open (§25 of PRD.md). Payments remain mock until `docs/PAYMENT_SYSTEM.md` is implemented.
 
 ---
@@ -86,6 +86,8 @@ can't be resolved without user input)_
 | 2026-09-06 | 17 / 1–4 | Phase 17: Integrated 21st.dev Cinematic Theme Switcher & Architectural Contact Card. Dark theme tokens in `tokens.css`; styling in `components.css`; interactive logic & persistence in `motion.js`; wired into `render_pages.py` and `templates/base.html` with anti-FOUC script, SVG defs, and single-H1 SEO compliance; verified 102/102 links OK at both bases. | `css/tokens.css`, `css/components.css`, `js/motion.js`, `scripts/render_pages.py`, `templates/base.html`, `03_PHASE_PLAN.md`, `04_PROGRESS_TRACKER.md` |
 | 2026-09-06 | 18 / 1–6 | Phase 18: Applied Brand Name scramble, rolling nav links, button shimmer wave & active scale, form floating labels & gold focus rings, removed Demo Mock Data badge across 102 pages, added SVG icons (Call, WhatsApp, Email, Map). Verified 102/102 URLs OK. | `css/components.css`, `css/site.css`, `js/motion.js`, `templates/base.html`, `scripts/render_pages.py`, `book.html`, `03_PHASE_PLAN.md`, `04_PROGRESS_TRACKER.md` |
 | 2026-09-06 | Theme | Updated site theme to initial Warm Paper (`#F5F0E8` / `#FCFAF6` / `#EAE4DA`) and Saffron Gold (`#E5A044`), replacing dark navy blue with Soft Slate Blue (`#2D3E50` / `#1E2B37` / `#3B5268`). Verified 102/102 URLs OK. | `css/tokens.css`, `DESIGN.md`, `css/components.css`, `scripts/render_pages.py`, `04_PROGRESS_TRACKER.md` |
+| 2026-09-09 | Post-Phase 31 | Added a non-blocking shining-text page-load overlay to generated pages, the booking page, and 404; it dismisses on the real window load event with reduced-motion support and no artificial fetch delay. | `scripts/render_pages.py`, `templates/base.html`, `css/components.css`, `js/motion.js`, `book.html`, `404.html`, generated pages |
+| 2026-09-09 | Post-Phase 31 | Made the loader remain visible for at least 600ms on every page view, then fade after resources load; redesigned 404 with a compass marker, recovery actions, route discovery, and click-to-call support. | `scripts/render_pages.py`, `templates/base.html`, `css/components.css`, `js/motion.js`, `04_PROGRESS_TRACKER.md`, generated pages |
 
 
 ---
@@ -321,7 +323,5 @@ can't be resolved without user input)_
 - [x] 2. Automated Senior Frontend Quality Auditor Engine: Build `scripts/quality_audit.py` with multi-category scorecard checks (SEO & metadata, Schema.org JSON-LD graph, asset size ceiling, crawl/link health, accessibility, client JS syntax).
 - [x] 3. GitHub Actions CI Workflow: Build `.github/workflows/quality.yml` running the complete build, audit, and asset size verification on every push and PR with automated step summary generation.
 - [x] 4. Comprehensive QA & Final Verification: Run `quality_audit.py`, verify 10/10 Scorecard pass, confirm preview server and static tree health, and finalize tracker log.
-
-
 
 

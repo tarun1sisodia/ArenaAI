@@ -19,6 +19,31 @@
   }
 
   onReady(function () {
+    // Dismiss on the browser's real load event instead of delaying network work.
+    var pageLoader = document.querySelector('[data-page-loader]');
+    if (pageLoader && !pageLoader.dataset.dismissed) {
+      var dismissPageLoader = function () {
+        if (pageLoader.dataset.dismissed) return;
+        pageLoader.dataset.dismissed = 'true';
+        pageLoader.classList.add('is-hidden');
+        window.setTimeout(function () {
+          if (pageLoader.parentNode) pageLoader.parentNode.removeChild(pageLoader);
+        }, prefersReduced ? 0 : 450);
+      };
+      var minimumVisibleMs = 600;
+      var startedAt = window.__skbLoaderStarted || Date.now();
+      var afterMinimum = function () {
+        var remaining = Math.max(0, minimumVisibleMs - (Date.now() - startedAt));
+        window.setTimeout(dismissPageLoader, remaining);
+      };
+      if (document.readyState === 'complete') {
+        afterMinimum();
+      } else {
+        window.addEventListener('load', afterMinimum, { once: true });
+        window.setTimeout(afterMinimum, 4500);
+      }
+    }
+
     // 1. TEXT SPLITTER
     var splitEls = document.querySelectorAll('[data-split]');
     splitEls.forEach(function (el) {

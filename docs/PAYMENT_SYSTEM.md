@@ -432,7 +432,7 @@ Implement tests for **each**. Missing one = money bugs.
 User pays UPI → `payment.captured` + `order.paid` → booking PAID → ticket → WhatsApp.
 
 ### 9.2 Double click / retry
-
+z
 Two submits: same Idempotency-Key → one Order. Two keys quickly: detect open `PENDING` order for same booking; reuse.
 
 ### 9.3 Webhook before browser handler
