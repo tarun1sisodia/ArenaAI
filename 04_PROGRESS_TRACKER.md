@@ -9,7 +9,7 @@ only check boxes, append log rows, and update the Current State block.
 ## Current State
 
 - **Current Phase:** 31 — Automated Frontend Quality CI/CD & Cloudflare Deployment Guard ✅ complete
-- **Current Step:** Post-Phase 31 — Persistent 600ms page loader and professional 404 completed; awaiting next instruction
+- **Current Step:** Post-Phase 31 — LocationIQ location search and runtime token configuration completed; awaiting next instruction
 - **Last updated:** 2026-09-09
 - **Open items:** `visual_audit.mjs` still needs a networked machine; fonts self-hosting (sandbox blocks Google Fonts download); real photos + real NAP before launch (see `LAUNCH_CHECKLIST.md`); PRD v3.0 master rewrite includes full SEO Final BOSS content. Client decision points from the deck are open (§25 of PRD.md). Payments remain mock until `docs/PAYMENT_SYSTEM.md` is implemented.
 
@@ -88,6 +88,7 @@ can't be resolved without user input)_
 | 2026-09-06 | Theme | Updated site theme to initial Warm Paper (`#F5F0E8` / `#FCFAF6` / `#EAE4DA`) and Saffron Gold (`#E5A044`), replacing dark navy blue with Soft Slate Blue (`#2D3E50` / `#1E2B37` / `#3B5268`). Verified 102/102 URLs OK. | `css/tokens.css`, `DESIGN.md`, `css/components.css`, `scripts/render_pages.py`, `04_PROGRESS_TRACKER.md` |
 | 2026-09-09 | Post-Phase 31 | Added a non-blocking shining-text page-load overlay to generated pages, the booking page, and 404; it dismisses on the real window load event with reduced-motion support and no artificial fetch delay. | `scripts/render_pages.py`, `templates/base.html`, `css/components.css`, `js/motion.js`, `book.html`, `404.html`, generated pages |
 | 2026-09-09 | Post-Phase 31 | Made the loader remain visible for at least 600ms on every page view, then fade after resources load; redesigned 404 with a compass marker, recovery actions, route discovery, and click-to-call support. | `scripts/render_pages.py`, `templates/base.html`, `css/components.css`, `js/motion.js`, `04_PROGRESS_TRACKER.md`, generated pages |
+| 2026-09-09 | Post-Phase 31 | Replaced Google Maps Places with LocationIQ autocomplete for city, airport, landmark, and pickup-point search. Tokens remain runtime-configured in browser storage/global/query input and are not committed; local destination fallback and dynamic fare estimation remain available without a token. Rebuilt and verified 113/113 URLs OK. | `js/places.js`, `scripts/render_pages.py`, `book.html`, generated pages, `04_PROGRESS_TRACKER.md` |
 
 
 ---
@@ -323,5 +324,4 @@ can't be resolved without user input)_
 - [x] 2. Automated Senior Frontend Quality Auditor Engine: Build `scripts/quality_audit.py` with multi-category scorecard checks (SEO & metadata, Schema.org JSON-LD graph, asset size ceiling, crawl/link health, accessibility, client JS syntax).
 - [x] 3. GitHub Actions CI Workflow: Build `.github/workflows/quality.yml` running the complete build, audit, and asset size verification on every push and PR with automated step summary generation.
 - [x] 4. Comprehensive QA & Final Verification: Run `quality_audit.py`, verify 10/10 Scorecard pass, confirm preview server and static tree health, and finalize tracker log.
-
 
