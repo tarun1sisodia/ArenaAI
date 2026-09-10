@@ -1,6 +1,6 @@
 # SK Baghel Tour & Travels — Master React Migration Blueprint
 
-**Status:** Approved Architecture Plan  
+**Status:** Approved Architecture & Phase Roadmap  
 **Target Platform:** Single Unified Responsive Web & Mobile App (Desktop, Tablet, Mobile Web, and PWA / Hybrid Shell)  
 **Stack:** React 19 + TypeScript (Strict) + Vite + Vanilla CSS Tokens  
 **Runtime Base:** Custom Domain Root (`https://skbagheltravels.in`) and Pages Subpath (`/ArenaAI`)  
@@ -198,91 +198,160 @@ All animations must satisfy [`ANIMATION_RULES.md`](file:///home/bot/Internship/A
 
 ---
 
-## 6. Phase Roadmap: Execution Status & Remaining Steps
+## 6. Granular Step-by-Step Phase Breakdown
+
+Every single unit of work is broken down into a discrete, verifiable step. Implementing agents MUST execute exactly one step at a time and update `04_PROGRESS_TRACKER.md`.
 
 ```
-[x] Phase R0 — Approval and baseline
-[x] Phase R1 — React foundation and build (R1.1 to R1.7 verified)
-[ ] Phase R2 — Data, fares, and shared utilities (R2.1 complete, R2.2 next)
-[ ] Phase R3 — Design system and responsive primitives
-[ ] Phase R4 — Shared chrome and navigation
-[ ] Phase R5 — Marketing pages and SEO pre-rendering
-[ ] Phase R6 — LocationIQ and interactive discovery
-[ ] Phase R7 — Fare calculator and 5-step booking app
-[ ] Phase R8 — Responsive QA and accessibility (320px to 1440px)
-[ ] Phase R9 — Regression, cutover, and Cloudflare deployment
+[x] Phase R0 — Scope, Architecture & Baseline Freeze
+[x] Phase R1 — Foundation & Static Build Infrastructure (R1.1 to R1.7 verified)
+[ ] Phase R2 — Data, Pure Fare Engine & Core Utilities (R2.1 complete, R2.2 next)
+[ ] Phase R3 — Design System & Responsive Primitives (R3.1 to R3.10)
+[ ] Phase R4 — Shared Chrome & Navigation Components (R4.1 to R4.9)
+[ ] Phase R5 — Marketing Pages, Detail Templates & Pre-Rendering (R5.1 to R5.27)
+[ ] Phase R6 — LocationIQ & Interactive Discovery (R6.1 to R6.5)
+[ ] Phase R7 — Fare Calculator & 5-Step Booking Flow (R7.1 to R7.8)
+[ ] Phase R8 — Responsive QA, Accessibility & Mobile App Shell (R8.1 to R8.7)
+[ ] Phase R9 — Quality, Cutover & Cloudflare Deployment (R9.1 to R9.6)
 ```
 
-### Detailed Breakdown of Every Step:
+---
 
-#### Phase R1 — Foundation and Build ✅ (Complete)
-- [x] **R1.1:** React + TypeScript + Vite project foundation in `react/`.
-- [x] **R1.2:** Static output configuration in `dist/react` with root and subpath base support.
-- [x] **R1.3:** Strict TypeScript paths (`@/*`) and Vite alias resolution.
-- [x] **R1.4:** React error boundary with reload action and call fallback.
-- [x] **R1.5:** Authoritative token integration from `css/tokens.css` into React global styles.
-- [x] **R1.6:** Typed production config (`react/src/config.ts`) with runtime LocationIQ token handling.
-- [x] **R1.7:** Migration feature gate (`VITE_REACT_MIGRATION_ENABLED`) and `.env.example`.
+### Phase R0: Scope, Architecture & Baseline Freeze ✅
+- [x] **R0.1:** Product Architecture Decision: Migrate to single responsive React 19 + TypeScript codebase for both web and mobile app (PWA/Capacitor ready) beside the legacy static site.
+- [x] **R0.2:** URL & Domain Contract: Canonical domain `https://skbagheltravels.in`, dual root & subpath `/ArenaAI` support, legacy `.html` redirect stubs to clean `/en/` and `/hi/` routes.
+- [x] **R0.3:** Scope & Non-Goals Freeze: Zero Auth (Public Browsing); Mock Payment Simulation only (~900ms); no live Razorpay, no backend database, no live driver tracking.
+- [x] **R0.4:** Full Baseline Inventory: Documented all 113 URLs, 5 vehicle tiers, 8 routes, 6 packages, 6 services, 16 animation patterns, and NAP contact data.
 
-#### Phase R2 — Data, Fares, and Shared Utilities 🟡 (In Progress)
-- [x] **R2.1:** Convert catalogue into typed cities, routes, vehicles, packages, reviews, NAP (`react/src/data.ts`).
-- [ ] **R2.2 (Current Step):** Port [`js/fares.js`](file:///home/bot/Internship/ArenaAI/js/fares.js) into pure typed fare engine (`react/src/fares.ts`).
-- [ ] **R2.3:** Add unit verification suite for 1-way, round-trip, local packages, night fees, and promo calculations.
-- [ ] **R2.4:** Typed URL query-param parser and safe builder for deep-linking (`/book?route=...`).
-- [ ] **R2.5:** Typed bilingual copy dictionaries (English & Hindi) for UI components.
-- [ ] **R2.6:** Typed `sessionStorage` manager for booking draft persistence (`skb-booking`).
+---
 
-#### Phase R3 — Design System and Responsive Primitives ⏳
-- [ ] **R3.1:** Container, Stack, Grid, and Section layout primitives with mobile-first breakpoints.
-- [ ] **R3.2:** Button and Link primitives with shimmer wave, active press, and icon slots.
-- [ ] **R3.3:** Form primitives (Input, Select, Combobox, Textarea) with floating labels and 44px touch targets.
-- [ ] **R3.4:** Card, Badge, and Chip components with light/dark adaptive tokens.
-- [ ] **R3.5:** Theme Switcher component with tactile 3D puck and anti-FOUC persistence.
-- [ ] **R3.6:** Interactive Canvas Background Grid component with spotlight and decaying trail.
+### Phase R1: Foundation & Static Build Infrastructure ✅
+- [x] **R1.1:** Project Foundation: Isolated React 19 + TypeScript + Vite project under `react/` with `package.json` build scripts (`npm run react:dev`, `npm run react:build`, `npm run react:preview`).
+- [x] **R1.2:** Static Output & Base Routing: Output configured to `dist/react/`, runtime base-path handling for custom domain root and GitHub Pages `/ArenaAI/` subpath.
+- [x] **R1.3:** Strict TypeScript & Path Aliases: `react/tsconfig.json` with `strict: true` and `@/*` path mapping matching `react/vite.config.ts`.
+- [x] **R1.4:** Application Shell Error Boundary: `AppErrorBoundary.tsx` with error recovery, direct click-to-call fallback, and dev-mode diagnostics.
+- [x] **R1.5:** Authoritative Token Integration: Global CSS reset, font declarations (`Outfit`, `Inter`), focus-visible indicators, and integration of `css/tokens.css`.
+- [x] **R1.6:** Typed Configuration Module: `config.ts` with typed NAP, domain, supported languages (`en`, `hi`), and runtime LocationIQ token resolution from browser storage / env.
+- [x] **R1.7:** Migration Build Gate: Environment flag `VITE_REACT_MIGRATION_ENABLED` and `.env.example` ensuring legacy static site remains uninterrupted until cutover.
 
-#### Phase R4 — Shared Chrome and Navigation ⏳
-- [ ] **R4.1:** Responsive Header with brand wordmark scrambler and navigation links.
-- [ ] **R4.2:** Touch-accessible mobile navigation sheet drawer.
-- [ ] **R4.3:** Rolling nav link dual-layer text effect.
-- [ ] **R4.4:** Sticky mobile bottom lead-bar (Call, WhatsApp, Instant Book).
-- [ ] **R4.5:** Footer with NAP details, route links, vehicle links, and copyright.
-- [ ] **R4.6:** Radial Quick Actions floating speed-dial dock.
+---
 
-#### Phase R5 — Marketing Pages and Pre-Rendering ⏳
-- [ ] **R5.1:** Home page sections: Hero Bento Grid, Fare Calculator, Popular Routes, 6 Benefits, 3D Coverflow Carousel, Review Marquee.
-- [ ] **R5.2:** Hub pages: Services, Routes, Packages, Fleet, About, Contact, FAQ, Privacy, Terms.
-- [ ] **R5.3:** Dynamic Route Landing page template.
-- [ ] **R5.4:** Dynamic Tour Package Landing page template with currency switcher.
-- [ ] **R5.5:** Dynamic Vehicle Landing page template with transfers matrix.
-- [ ] **R5.6:** SEO metadata generator (Title, Meta description, Canonical, Hreflang, Schema.org JSON-LD).
-- [ ] **R5.7:** SSG static HTML pre-rendering build script for all 113 pages.
+### Phase R2: Data, Pure Fare Engine & Core Utilities 🟡 (In Progress)
+- [x] **R2.1:** Catalogue Domain Models (`react/src/data.ts`): Typed definitions and data for `City`, `Vehicle`, `Route`, `TourPackage`, `AirportTransfer`, `Service`, `Review`, `PromoCode`, `NAP`, and `TrustSignal`.
+- [ ] **R2.2 (Current Step):** Pure Typed Fare Engine (`react/src/fares.ts`): Port `js/fares.js` into strict TypeScript (`localTomorrow`, `cityLookup`, `findRoute`, `formatInr`, `advanceOf`, `localPackages`, `getNightAllowance`, `isNightTime`, `applyPromo`, `calcFare`).
+- [ ] **R2.3:** Comprehensive Fare Engine Test Suite: Unit tests verifying one-way routes, round-trip 300km/day & 1.85x rule, local 8h/80km & 12h/120km packages, night fees (₹300/₹500), coupon `ASTTCAR500OFF`, and advance deposit calculations.
+- [ ] **R2.4:** Typed URL Query-Param Engine (`react/src/utils/url.ts`): Safe parsers and builders for deep-linking (`?from=...&to=...&vehicle=...&package=...&time=...&coupon=...`).
+- [ ] **R2.5:** Bilingual Copy Dictionaries (`react/src/i18n/`): Complete English & Hindi dictionary mappings for chrome, navigation, vehicle tags, fare labels, and error messages.
+- [ ] **R2.6:** Typed Session Storage Engine (`react/src/utils/storage.ts`): Type-safe serialization, deserialization, and schema migration for `skb-booking` draft persistence.
+- [ ] **R2.7:** Schema.org JSON-LD Generators (`react/src/utils/schema.ts`): Typed generators for `TaxiService`, `LocalBusiness`, `BreadcrumbList`, `FAQPage`, and `AggregateRating`.
 
-#### Phase R6 — LocationIQ and Interactive Discovery ⏳
-- [ ] **R6.1:** `useLocationIQ` React hook with debounced fetch and abort controller.
-- [ ] **R6.2:** Combobox UI with autocomplete suggestions and keyboard navigation (Arrow keys, Enter, Esc).
-- [ ] **R6.3:** Fallback distance calculation engine when offline or token is absent.
-- [ ] **R6.4:** Dynamic fare estimation based on custom location distance.
+---
 
-#### Phase R7 — Fare Calculator & 5-Step Booking Flow ⏳
-- [ ] **R7.1:** Hero & Routes interactive Fare Calculator widget.
-- [ ] **R7.2:** Step 1 (Route & Service Selection) component with query param hydration.
-- [ ] **R7.3:** Step 2 (Vehicle Tier Selection) component with capacity indicators.
-- [ ] **R7.4:** Step 3 (Traveler & Trip Details) component with night time detection.
-- [ ] **R7.5:** Step 4 (Fare Review & Promo) with coupon `ASTTCAR500OFF` and 28% advance.
-- [ ] **R7.6:** Step 5 (Confirmation & Ticket) with simulated payment and `AGR-` ticket generation.
+### Phase R3: Design System & Responsive Primitives ⏳
+- [ ] **R3.1:** Layout Primitives (`react/src/components/primitives/Layout.tsx`): Responsive `Container`, `Stack`, `Grid`, and `Section` components with design token breakpoints (320, 360, 390, 768, 1024, 1280, 1440px).
+- [ ] **R3.2:** Typography Primitives (`react/src/components/primitives/Typography.tsx`): Semantic `Heading` (h1-h4), `Text`, `Lead`, and `Kicker` with Outfit/Inter font stacks and strict hierarchy guards.
+- [ ] **R3.3:** Button & Action Primitives (`react/src/components/primitives/Button.tsx`): Primary, Secondary, Outline, Gold, and Ghost variants with `@keyframes btn-shimmer`, `scale(0.97)` active tactile press, and loading spinner slot.
+- [ ] **R3.4:** Form Input & Floating Label Primitives (`react/src/components/primitives/Input.tsx`): Accessible text, email, tel, date, and time inputs with floating labels, gold focus ring, and error shake animation.
+- [ ] **R3.5:** Form Select & Combobox Primitives (`react/src/components/primitives/Combobox.tsx`): Searchable combobox dropdown with keyboard navigation (Up/Down/Enter/Escape), ARIA 1.2 compliance, and clear button.
+- [ ] **R3.6:** Card & Badge Primitives (`react/src/components/primitives/Card.tsx`, `Badge.tsx`): Responsive cards with subtle hover elevation, frosted glass variants (`.liquid-glass-card`), and pill badges.
+- [ ] **R3.7:** Modal & Mobile Sheet Drawer Primitives (`react/src/components/primitives/Sheet.tsx`): Accessible bottom-sheet drawer for mobile with backdrop blur, focus trap, swipe/touch dismiss, and Escape listener.
+- [ ] **R3.8:** Toast Notification Primitive (`react/src/components/primitives/Toast.tsx`): Accessible live-region toast manager with success, error, and info toasts.
+- [ ] **R3.9:** Cinematic Theme Switcher Component (`react/src/components/primitives/ThemeToggle.tsx`): 3D tactile puck, ripple particle effect, anti-FOUC inline script, and persistent `localStorage` theme state (Clean White vs. Solar Dusk).
+- [ ] **R3.10:** Universal Interactive Canvas Background Grid (`react/src/components/primitives/InteractiveGrid.tsx`): 44px hairline grid, cursor spotlight tracking, decaying particle trail on light sections (0% idle CPU via `IntersectionObserver` pause).
 
-#### Phase R8 — Responsive QA, Accessibility & Mobile App Shell ⏳
-- [ ] **R8.1:** Viewport testing across 320px, 360px, 390px, 768px, 1024px, 1440px (Zero horizontal overflow).
-- [ ] **R8.2:** Touch ergonomics audit (44px touch targets, thumb-zone accessibility).
-- [ ] **R8.3:** PWA Web App Manifest (`manifest.json`) and service worker offline caching.
-- [ ] **R8.4:** Keyboard navigation, ARIA combobox attributes, and screen-reader accessibility.
-- [ ] **R8.5:** Reduced-motion compliance testing.
+---
 
-#### Phase R9 — Regression, Cutover & Cloudflare Deployment ⏳
-- [ ] **R9.1:** Static build and link crawler audit (0 broken links across 113 URLs).
-- [ ] **R9.2:** Quality auditor scorecard (`quality_audit.py`) achieving 10/10 A+ score.
-- [ ] **R9.3:** Cloudflare Pages upload budget verification (< 25 MiB ceiling).
-- [ ] **R9.4:** Production cutover and domain switchover.
+### Phase R4: Shared Chrome & Navigation Components ⏳
+- [ ] **R4.1:** Brand Wordmark Scrambler (`react/src/components/chrome/BrandLogo.tsx`): Interactive logo with character scrambler effect on hover, SVG compass emblem, and gold glow pulse.
+- [ ] **R4.2:** Rolling Nav Links Component (`react/src/components/chrome/RollLink.tsx`): Dual-layer vertical text curtain animation with golden hover slide and active page indicator.
+- [ ] **R4.3:** Desktop Navigation Header (`react/src/components/chrome/Header.tsx`): Sticky header, luxury dropdown menus (Services, Routes, Packages, Fleet, Contact), language toggle (EN/HI), theme toggle, and Book CTA.
+- [ ] **R4.4:** Mobile Navigation Sheet Drawer (`react/src/components/chrome/MobileNavSheet.tsx`): Touch-first full drawer with accordion category groups, quick call/WhatsApp buttons, and language switcher.
+- [ ] **R4.5:** Sticky Mobile Bottom Lead-Bar (`react/src/components/chrome/StickyLeadBar.tsx`): Fixed thumb-zone bar with Call button, WhatsApp button, and Book Now action (safe-area-inset padded, auto-hides at bottom of form).
+- [ ] **R4.6:** Radial Quick Actions Dock (`react/src/components/chrome/RadialDock.tsx`): Floating action speed-dial button expanding with spring motion to reveal Call, WhatsApp, Tours, and Instant Booking.
+- [ ] **R4.7:** Luxury Page Loader Overlay (`react/src/components/chrome/PageLoader.tsx`): Non-blocking shining text curtain with 600ms minimum display, dismissing on real window load.
+- [ ] **R4.8:** Global Footer Component (`react/src/components/chrome/Footer.tsx`): Full NAP block, interactive Google Maps link, legal links, vehicle directory, route directory, and copyright.
+- [ ] **R4.9:** Accessible Skip Link (`react/src/components/chrome/SkipLink.tsx`): Top skip-to-content link for keyboard users.
+
+---
+
+### Phase R5: Marketing Pages, Detail Templates & Pre-Rendering ⏳
+
+#### Sub-Phase R5A: Home Page Sections
+- [ ] **R5.1:** Home Hero Bento Grid (`react/src/components/home/HeroBentoGrid.tsx`): 3-cell living bento mosaic with independent staggered 8.0s crossfade cycles across 11 world-famous destinations and Ken Burns drift.
+- [ ] **R5.2:** Hero Quick Fare Calculator Widget (`react/src/components/home/HeroFareWidget.tsx`): Interactive tabbed widget (One-Way, Round-Trip, Local Tour) with live fare quote and 1-click book redirect.
+- [ ] **R5.3:** Trust Roller Marquee Component (`react/src/components/home/TrustRoller.tsx`): 42s infinite marquee with pause-on-hover and 8 E-E-A-T trust chips (Govt Fleet, GST Invoice, Chauffeur ID, etc.).
+- [ ] **R5.4:** Popular Routes Grid Section (`react/src/components/home/PopularRoutes.tsx`): Responsive cards for Agra-Delhi, Agra-Jaipur, Agra-Mathura, Agra-Gwalior with starting prices, duration badges, and book links.
+- [ ] **R5.5:** Six Operational Services Grid (`react/src/components/home/ServicesGrid.tsx`): 6 vertical cards with index numerals (01-06), variant color borders (navy, light, gold), tags, and CTAs.
+- [ ] **R5.6:** 3D Coverflow Sightseeing Carousel (`react/src/components/home/CoverflowCarousel.tsx`): 3D perspective carousel cycling 6 tour packages with cover reflection, package kicker, places pills, fare, and WhatsApp CTA.
+- [ ] **R5.7:** "Benefits To Book Cab With Us" Section (`react/src/components/home/BenefitsSection.tsx`): 6 core benefit cards with gold background fill-on-hover and crisp white icon transition.
+- [ ] **R5.8:** 2-Row Liquid Glass Marquee Reviews (`react/src/components/home/ReviewsMarquee.tsx`): Dual opposing marquee tracks with glassmorphism cards, verified customer quotes, and Lucide stars.
+- [ ] **R5.9:** Architectural Contact Card Section (`react/src/components/home/ContactCard.tsx`): Bento contact card with corner plus markers, verified NAP details, working inquiry form with feedback toast, and live map link.
+- [ ] **R5.10:** Complete Home Page Assembler (`react/src/pages/HomePage.tsx`): Bilingual Home page integrating all home sections, meta tags, and structured data.
+
+#### Sub-Phase R5B: Bilingual Marketing Hub Pages
+- [ ] **R5.11:** Services Hub Page (`react/src/pages/ServicesPage.tsx`): Complete guide to all 6 service verticals, vehicle allocation advice, pricing transparency, and FAQs.
+- [ ] **R5.12:** Routes Hub Page (`react/src/pages/RoutesPage.tsx`): Filterable outstation route directory, distance matrix, dynamic route calculator, and highway toll advice.
+- [ ] **R5.13:** Tour Packages Hub Page (`react/src/pages/PackagesPage.tsx`): Filterable tour catalogue (Same-Day vs. Multi-Day), currency switcher (INR/USD/EUR/GBP), and inclusions breakdown.
+- [ ] **R5.14:** Fleet Hub Page (`react/src/pages/FleetPage.tsx`): Complete fleet showcase (Sedan, Ertiga, Innova, Tempo, Urbania), passenger/luggage specs, per-km rates, and Airport/Station flat transfer table.
+- [ ] **R5.15:** About Us Hub Page (`react/src/pages/AboutPage.tsx`): Company heritage, founder message, chauffeur background verification, safety and hygiene standards.
+- [ ] **R5.16:** Contact Us Hub Page (`react/src/pages/ContactPage.tsx`): Full contact hub with architectural card, lead capture form, emergency contact numbers, and office directions.
+- [ ] **R5.17:** FAQ Hub Page (`react/src/pages/FaqPage.tsx`): 5 categorized FAQ accordions (Booking, Fares, Outstation Rules, Night Allowances, Luggage & Cancellations) with `FAQPage` JSON-LD schema.
+- [ ] **R5.18:** Terms & Conditions Hub Page (`react/src/pages/TermsPage.tsx`): Authentic 24-hr cab cancellation policy (100% refund in 5-7 days), 6-tier tour refund schedule, passenger code, and Agra jurisdiction.
+- [ ] **R5.19:** Privacy Policy Hub Page (`react/src/pages/PrivacyPage.tsx`): Transparent data collection, DPDP compliance, zero third-party data sharing policy.
+- [ ] **R5.20:** 404 Error Recovery Page (`react/src/pages/NotFoundPage.tsx`): Compass visual, recovery route links, search prompt, and emergency call button.
+
+#### Sub-Phase R5C: Dynamic Detail Templates
+- [ ] **R5.21:** Dynamic Route Landing Template (`react/src/pages/RouteDetailPage.tsx`): Dynamic page for all 8 route pairs with hero, vehicle fare comparison table, highway guidance (Yamuna Expressway, NH tips), transit times, rest stop advice, night allowance rule notes, and route-specific FAQ accordions.
+- [ ] **R5.22:** Dynamic Tour Package Landing Template (`react/src/pages/PackageDetailPage.tsx`): Dynamic page for all 6 tour packages with hero, hour-by-hour itinerary timeline, vehicle upgrade pricing matrix, inclusions/exclusions pills, departure advice, and live international currency estimator.
+- [ ] **R5.23:** Dynamic Vehicle Landing Template (`react/src/pages/VehicleDetailPage.tsx`): Dynamic page for all 5 fleet tiers with technical specifications (seats, luggage, AC, engine), model lineup, per-km pricing, transfers table, and suitable travel scenarios.
+
+#### Sub-Phase R5D: SEO Engine & Static Site Pre-Rendering (SSG)
+- [ ] **R5.24:** SEO Head & Metadata Manager (`react/src/components/seo/SeoHead.tsx`): Dynamic Title, Meta description, Canonical URL, Open Graph, Twitter cards, and Hreflang alternates (`en-IN`, `hi-IN`, `x-default`).
+- [ ] **R5.25:** Structured Data Injector (`react/src/components/seo/JsonLd.tsx`): Injects validated Schema.org graphs for `TaxiService`, `BreadcrumbList`, `FAQPage`, and `AggregateRating`.
+- [ ] **R5.26:** Static HTML Pre-Renderer / SSG Build Script (`react/scripts/prerender.ts`): Builds crawlable static HTML files for all 113 bilingual URLs so that primary copy and fares are 100% crawlable without client JS.
+- [ ] **R5.27:** XML Sitemap & Robots Generator: Generates `dist/react/sitemap.xml` with all 113 URLs, lastmod timestamps, and `robots.txt` pointing to sitemap.
+
+---
+
+### Phase R6: LocationIQ Search & Interactive Discovery ⏳
+- [ ] **R6.1:** Typed LocationIQ Client & Hook (`react/src/hooks/useLocationIQ.ts`): Debounced query hook (300ms), AbortController for race prevention, and runtime token injection.
+- [ ] **R6.2:** Searchable Combobox Component (`react/src/components/search/LocationCombobox.tsx`): Touch-friendly combobox with autocomplete suggestions, airport/station icons, and keyboard navigation.
+- [ ] **R6.3:** Static Destinations & Fallback Distance Matrix (`react/src/utils/distance.ts`): 30+ Indian destinations with verified highway distances from Agra/Delhi when offline or without API token.
+- [ ] **R6.4:** Custom Destination Distance & Fare Estimator: Estimates distance (km), travel hours, and fares for unlisted custom addresses or cities.
+- [ ] **R6.5:** Combobox ARIA & Screen Reader Accessibility: Full ARIA 1.2 combobox role, aria-expanded, aria-activedescendant, and voiceover verification.
+
+---
+
+### Phase R7: Fare Calculator & 5-Step Booking Application ⏳
+- [ ] **R7.1:** Booking State Machine Store (`react/src/stores/bookingStore.ts`): Central state management with validation, step transitions, and `sessionStorage` sync (`skb-booking`).
+- [ ] **R7.2:** Deep-Link Query Hydration Engine: Parses incoming URL search params from Home, Routes, Packages, and Vehicles to pre-fill the booking wizard.
+- [ ] **R7.3:** Booking Wizard Step 1 Component (`react/src/components/booking/Step1Route.tsx`): Trip type tabs (One-Way, Round-Trip, Local Tour, Airport Transfer), origin/destination search comboboxes, and date picker.
+- [ ] **R7.4:** Booking Wizard Step 2 Component (`react/src/components/booking/Step2Vehicle.tsx`): Vehicle cards (Sedan, Ertiga, Innova, Tempo, Urbania) with live total fare, passenger/luggage badges, and per-km rates.
+- [ ] **R7.5:** Booking Wizard Step 3 Component (`react/src/components/booking/Step3Details.tsx`): Traveler name, phone, email, pickup address, drop address, flight/train number, and night pickup detection.
+- [ ] **R7.6:** Booking Wizard Step 4 Component (`react/src/components/booking/Step4Review.tsx`): Detailed itemized fare breakdown, night allowance badge, promo code input with coupon `ASTTCAR500OFF`, 28% advance calculation, and remaining balance notice.
+- [ ] **R7.7:** Booking Wizard Step 5 Component (`react/src/components/booking/Step5Confirmation.tsx`): Mock payment simulation (~900ms), verified booking confirmation, unique ticket number generation `AGR-XXXXXX`, and print voucher action.
+- [ ] **R7.8:** Post-Booking WhatsApp & Driver Dispatch Actions: Pre-filled WhatsApp confirmation message generator and direct click-to-call driver coordinator.
+
+---
+
+### Phase R8: Responsive QA, Accessibility & Mobile App Shell (PWA) ⏳
+- [ ] **R8.1:** Progressive Web App Manifest (`react/public/manifest.json`): Standalone display mode, theme colors (`#FFFFFF` / `#181615`), app icons (192x192, 512x512 maskable), and app name.
+- [ ] **R8.2:** Service Worker Offline Cache (`react/src/sw.ts`): Caches static assets, fonts, and core routes for instantaneous repeat load and offline fallback.
+- [ ] **R8.3:** Native Safe-Area & Viewport Hardening: CSS environment variables (`env(safe-area-inset-top)`, `env(safe-area-inset-bottom)`) for iPhone Dynamic Island/home bar and Android gesture bars.
+- [ ] **R8.4:** Viewport Matrix Responsive Testing: Automated testing across 320px, 360px, 390px, 768px, 1024px, 1280px, and 1440px with zero horizontal page scroll.
+- [ ] **R8.5:** Touch Ergonomics Audit: 44px+ minimum touch targets, 16px minimum font size to prevent iOS zoom-on-focus, and thumb-friendly bottom placement.
+- [ ] **R8.6:** WCAG 2.2 AA Contrast & Theme Verification: Automated contrast checks in Clean White mode (4.5:1 text, 3:1 UI) and Solar Dusk dark mode (17.6:1 contrast).
+- [ ] **R8.7:** Keyboard Navigation & Reduced Motion Audit: Full Tab/Shift-Tab focus order, visible focus rings, and `@media (prefers-reduced-motion: reduce)` verification.
+
+---
+
+### Phase R9: Regression, Cutover & Cloudflare Deployment ⏳
+- [ ] **R9.1:** Static Build Generation & Cloudflare Budget Audit: Production build compilation with zero assets exceeding the 25 MiB Cloudflare Pages ceiling.
+- [ ] **R9.2:** Link Integrity & Crawl Audit: Automated crawl of all 113 bilingual URLs confirming 0 broken links and 100% HTTP 200 responses.
+- [ ] **R9.3:** Senior Frontend Quality Auditor Scorecard (`quality_audit.py`): Full scorecard execution verifying 10.0/10.0 A+ score on Technical SEO, Schema.org, Accessibility, and JS health.
+- [ ] **R9.4:** Legacy Redirect Stubs & URL Backward Compatibility: Verification of all `.html` redirect stubs to clean React routes.
+- [ ] **R9.5:** Production Cutover & Domain Switchover: Final approval and deployment to `https://skbagheltravels.in`.
+- [ ] **R9.6:** Rollback Plan & Operating Documentation: Documented rollback switch, updated `README.md`, and finalized `04_PROGRESS_TRACKER.md`.
 
 ---
 
