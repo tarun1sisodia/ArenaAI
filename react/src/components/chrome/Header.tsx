@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { BrandLogo } from "./BrandLogo";
 import { RollLink } from "./RollLink";
 import { ThemeToggle } from "./ThemeToggle";
+import { MobileNavSheet } from "./MobileNavSheet";
 import { contact } from "../../data/contact";
 import { prefetchDocument } from "../../app/prefetch";
 
@@ -17,11 +18,20 @@ export function Header({
   isMobileNavOpen = false,
 }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [internalMobileNav, setInternalMobileNav] = useState(false);
   const activePath =
     currentPath || (typeof window !== "undefined" ? window.location.pathname : "/");
   const isHindi = activePath.startsWith("/hi");
   const langSwitchHref = isHindi ? "/" : "/hi/";
   const langSwitchLabel = isHindi ? "English" : "हिन्दी";
+
+  const toggleMobileNav = useCallback(() => {
+    if (onToggleMobileNav) {
+      onToggleMobileNav();
+    } else {
+      setInternalMobileNav((prev) => !prev);
+    }
+  }, [onToggleMobileNav]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -349,7 +359,7 @@ export function Header({
           </a>
 
           <a
-            className="btn-outline btn-sm btn-outline--light"
+            className="btn-outline btn-sm btn-outline--light header-desktop-only"
             href={`tel:${contact.phone}`}
             aria-label={`Call us at ${contact.phoneDisplay}`}
           >
@@ -371,7 +381,7 @@ export function Header({
           </a>
 
           <a
-            className="btn-outline btn-sm btn-outline--light"
+            className="btn-outline btn-sm btn-outline--light header-desktop-only"
             href={`https://wa.me/${contact.whatsapp}`}
             target="_blank"
             rel="noreferrer"
@@ -395,7 +405,7 @@ export function Header({
           </a>
 
           <a
-            className="btn-primary btn-sm"
+            className="btn-primary btn-sm header-desktop-only"
             href="/book.html"
             onMouseEnter={() => prefetchDocument("/book.html")}
           >
@@ -410,15 +420,22 @@ export function Header({
             className="nav-toggle"
             id="nav-toggle"
             type="button"
-            aria-expanded={isMobileNavOpen}
+            aria-expanded={isMobileNavOpen || internalMobileNav}
             aria-controls="nav-sheet"
-            aria-label={isMobileNavOpen ? "Close menu" : "Open menu"}
-            onClick={onToggleMobileNav}
+            aria-label={isMobileNavOpen || internalMobileNav ? "Close menu" : "Open menu"}
+            onClick={toggleMobileNav}
           >
             <span aria-hidden="true" />
           </button>
         </div>
       </div>
+
+      {/* Mobile Navigation Drawer */}
+      <MobileNavSheet
+        isOpen={isMobileNavOpen || internalMobileNav}
+        onClose={() => setInternalMobileNav(false)}
+        currentPath={activePath}
+      />
     </header>
   );
 }

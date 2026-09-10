@@ -9,9 +9,9 @@ only check boxes, append log rows, and update the Current State block.
 ## Current State
 
 - **Current Phase:** React Standalone Development — Phase R4: Shared UI Components & Layouts
-- **Current Step:** Phase R4.4 — Mobile Navigation Sheet Drawer (`react/src/components/chrome/MobileNavSheet.tsx`)
+- **Current Step:** Phase R4.5 — Sticky Mobile Bottom Lead-Bar (`react/src/components/chrome/StickyLeadBar.tsx`)
 - **Last updated:** 2026-09-10
-- **Summary:** Built `Header` (`react/src/components/chrome/Header.tsx`) and `ThemeToggle` (`react/src/components/chrome/ThemeToggle.tsx`). Features sticky scroll detection (`.is-scrolled`), luxury dropdown menus for Services, Routes, Packages, Fleet, and Contact, language toggle (EN/HI), 3D tactile theme switcher (Clean White vs. Solar Dusk), and direct Book CTA. Typecheck and build pass with 0 errors.
+- **Summary:** Revamped mobile navigation per user direction: removed cluttered Call/WhatsApp/Book buttons from the top mobile header, implemented compact circular Avatar Theme Toggle and Language switch on mobile header, built `MobileNavSheet` slide-over drawer with full categories, and verified responsive behavior across desktop (1280px) and mobile (375px) viewports with browser subagent. Zero TypeScript errors, build succeeds in 1.67s.
 - **Open items:** Real photos + real NAP before launch (see `LAUNCH_CHECKLIST.md`); Client decision points from the dossier are pending client reply (`CLIENT_CONFIRMATION_FARES_AND_RULES.md`). Payments remain mock until `docs/PAYMENT_SYSTEM.md` is implemented.
 
 ---
@@ -366,3 +366,4 @@ can't be resolved without user input)_
 - [x] R4.1: Brand Wordmark Scrambler (`react/src/components/chrome/BrandLogo.tsx`): Built interactive brand component with SVG compass emblem, cardinal ring, gold needle fill, pivot gem, 30ms progressive character scramble on hover/focus, gold glow pulse, and WCAG 2.2 AA reduced-motion safety. Integrated into `Chrome.tsx` Header. Typecheck and build pass with 0 errors.
 - [x] R4.2: Rolling Nav Links Component (`react/src/components/chrome/RollLink.tsx`): Implemented dual-layer liquid golden curtain hover animation (`::before` gold wave + `::after` translucent highlight), active route indicator dot, prefetch trigger, and accessible keyboard navigation. Integrated into Header. Verified typecheck and build (0 errors).
 - [x] R4.3: Desktop Navigation Header (`react/src/components/chrome/Header.tsx` & `ThemeToggle.tsx`): Built full desktop navigation header with sticky scroll detection (`.is-scrolled`), luxury dropdown menus for Services, Routes, Packages, Fleet, and Contact, language switcher (EN/HI), 3D tactile theme switcher (Clean White vs. Solar Dusk), and direct Book CTA. Re-exported from `Chrome.tsx` and tested in `SiteLayout`. Typecheck and build pass with 0 errors.
+- [x] R4.4: Mobile Navigation Sheet Drawer (`react/src/components/chrome/MobileNavSheet.tsx`): Built accessible slide-over mobile drawer with backdrop blur, brand header, `✕` close button, theme row, language switch, and organized category links (Services, Routes, Packages, Fleet, Contact, FAQ). Removed duplicate Call/WhatsApp/Book buttons from top mobile header. Added compact avatar mode for ThemeToggle on mobile. Verified visually with browser subagent across 1280px and 375px viewports (0 errors).
