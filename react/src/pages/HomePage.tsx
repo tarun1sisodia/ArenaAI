@@ -3,6 +3,7 @@ import { contact } from "../data/contact";
 import { packages, routes, vehicles } from "../data/catalogue";
 import { HeroBentoGrid } from "../components/home/HeroBentoGrid";
 import { HeroFareWidget } from "../components/home/HeroFareWidget";
+import { TrustRoller } from "../components/home/TrustRoller";
 
 const services = [
   ["01", "Outstation cabs", "Agra to Delhi, Jaipur, Mathura, Gwalior and Lucknow with transparent one-way and round-trip fares.", "/en/routes/"],
@@ -37,9 +38,7 @@ export function HomePage() {
         <HeroFareWidget />
       </section>
 
-      <section className="trust-strip" aria-label="Key trust credentials">
-        {["Govt-registered fleet", "Verified commercial drivers", "Official GST invoice", "★ 4.9/5 · 380+ trips", "15+ years in Agra", "24×7 on-route support", "Transparent pricing"].map((item) => <span key={item}>{item}</span>)}
-      </section>
+      <TrustRoller />
 
       <section className="home-section" id="services" aria-labelledby="services-heading">
         <div className="section-heading"><div><p className="eyebrow">Services</p><h2 id="services-heading">One local team.<br /><i>Every kind of journey.</i></h2></div><a className="text-link" href="/en/services/">All services ↗</a></div>

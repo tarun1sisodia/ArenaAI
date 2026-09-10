@@ -1773,17 +1773,113 @@ a:focus-visible {
   }
 }
 
-.trust-strip {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 12px 24px;
+/* --------------------------------------------------------------------------
+   TRUST ROLLER MARQUEE — Infinite 42s E-E-A-T trust chip ticker
+   -------------------------------------------------------------------------- */
+.trust-roller {
+  overflow: hidden;
   margin-inline: calc(var(--gutter) * -1);
-  padding: 20px var(--gutter);
+  border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
   background: var(--bg-alt);
+  padding-block: 0;
+  /* Fade edges so chips smoothly enter/exit */
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    #000 6%,
+    #000 94%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    #000 6%,
+    #000 94%,
+    transparent 100%
+  );
+}
+
+.trust-roller-track {
+  display: flex;
+  width: max-content;
+  animation: trust-scroll 42s linear infinite;
+  will-change: transform;
+}
+
+/* Pause on hover/focus-within — accessible */
+.trust-roller:hover .trust-roller-track,
+.trust-roller:focus-within .trust-roller-track {
+  animation-play-state: paused;
+}
+
+@keyframes trust-scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.trust-roller-inner {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-shrink: 0;
+}
+
+.trust-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  white-space: nowrap;
+  font-size: 0.84rem;
+  font-weight: 600;
   color: var(--text-soft);
-  font-size: 0.875rem;
+  border-right: 1px solid var(--border);
+  transition: color 200ms, background 200ms;
+  cursor: default;
+}
+
+.trust-chip:hover {
+  color: var(--text);
+  background: rgba(229, 160, 68, 0.05);
+}
+
+.trust-chip-icon {
+  font-size: 1rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+/* Dark mode */
+[data-theme="dark"] .trust-roller {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+[data-theme="dark"] .trust-chip:hover {
+  background: rgba(229, 160, 68, 0.07);
+  color: var(--white);
+}
+
+/* Reduced-motion: collapse to simple wrapping flex, no animation */
+@media (prefers-reduced-motion: reduce) {
+  .trust-roller {
+    mask-image: none;
+    -webkit-mask-image: none;
+    overflow: visible;
+  }
+  .trust-roller-track {
+    animation: none;
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .trust-roller-inner:last-child {
+    display: none; /* hide duplicate set */
+  }
+  .trust-chip {
+    border-right: none;
+    padding: 10px 16px;
+  }
 }
 
 .home-section {
