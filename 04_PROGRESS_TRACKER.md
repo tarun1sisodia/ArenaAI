@@ -8,10 +8,11 @@ only check boxes, append log rows, and update the Current State block.
 
 ## Current State
 
-- **Current Phase:** React migration Phase R2 / Phase 32 — React Parallel Workspace & Data Integration
-- **Current Step:** React migration R2.3 — wire enriched data & pure fare engine into integrated React pages & test suite
+- **Current Phase:** React Standalone Development — Phase R4: Shared UI Components & Layouts
+- **Current Step:** Phase R4.1 — Navigation Shell & Header (`react/src/components/navigation/Header.tsx`)
 - **Last updated:** 2026-09-10
-- **Open items:** `visual_audit.mjs` still needs a networked machine; fonts self-hosting (sandbox blocks Google Fonts download); real photos + real NAP before launch (see `LAUNCH_CHECKLIST.md`); PRD v3.0 master rewrite includes full SEO Final BOSS content. Client decision points from the deck are open (§25 of PRD.md). Payments remain mock until `docs/PAYMENT_SYSTEM.md` is implemented.
+- **Summary:** Cleaned legacy HTML, CSS, JS, Python SSG codebase and clutter from root. Archived all screen and interaction references into `react/reference/` (`html/`, `css/`, `js/`, `templates/`). Copied image assets into `react/public/assets/` making `react/` completely self-contained. Updated route generator in `react/scripts/generate-routes.mjs` to derive routes deterministically from typed catalogue. Added root convenience scripts (`npm run dev`, `npm run build`, `npm run typecheck`, `npm run preview`). Zero TypeScript errors, Vite build succeeds in 1.72s with 68 static route entrypoints.
+- **Open items:** Real photos + real NAP before launch (see `LAUNCH_CHECKLIST.md`); Client decision points from the dossier are pending client reply (`CLIENT_CONFIRMATION_FARES_AND_RULES.md`). Payments remain mock until `docs/PAYMENT_SYSTEM.md` is implemented.
 
 ---
 
@@ -59,6 +60,7 @@ can't be resolved without user input)_
 | 2026-09-06 | Universal Interactive Background Grid on All White Background Sections (Phase 23) | Extended the light and interactive background grid animation to every section with a white or light background (`.section--paper`, `.section--paper-lt`, `.page-hero`, `.book-layout`). Standardized subtle hairline grid lines (`rgba(18,20,22,0.048)` light / `rgba(255,255,255,0.065)` dark), cursor spotlight tracking, and hardware-accelerated glowing grid cell physics trail. Zero nesting conflicts, 0% idle CPU via per-section IntersectionObserver pausing, non-blocking click safety (`z-index: 2` on content). 109/109 URLs OK. |
 | 2026-09-06 | 3D Coverflow Sightseeing & Packages Showcase in .section--navy (Phase 25) | Replaced static single-package card in `.section--navy` with an interactive 3D Coverflow Carousel displaying all same-day and heritage tour packages (Agra Sightseeing ₹3,500, Mathura Vrindavan ₹4,200, Agra Unhurried ₹7,800, Golden Triangle ₹18,500). Integrated React component in `components/ui/` with shadcn, Tailwind, and TypeScript setup, and implemented zero-dependency GPU-composite vanilla MPA version in `render_pages.py`, `components.css`, and `motion.js` meeting `ANIMATION_RULES.md`. |
 | 2026-09-07 | Integrate competitive market data & research findings (Phase 29) | User requested integrating all findings from market research on ASTT (Agra Shiv Tour & Travels) into the website: fleet specifications & per-km pricing, local 8h/80km & 12h/120km packages, verified one-way fares (Agra–Delhi ₹3,499, Agra–Jaipur ₹3,499), 300 km/day outstation rule, night allowance (₹300/₹500 after 8PM), tour packages, cancellation policies, and the 6 Benefits To Book Cab With Us. Created `DATA_INTEGRATION_PLAN.md` and executed Step 29.1 in `catalog.py`. |
+| 2026-09-10 | Legacy codebase cleanup & React workspace consolidation | User directed wiping legacy HTML, CSS, JS, and Python SSG codebase from root so only React remains active. All UI/UX references (`index.html`, `book.html`, hub pages, `components.css`, `site.css`, `booking.js`, `places.js`, `motion.js`, `contact.js`) preserved in `react/reference/`. Image assets copied into `react/public/assets/`. Route generation updated to be catalogue-driven. Root convenience scripts added. |
 
 ---
 
@@ -352,3 +354,10 @@ can't be resolved without user input)_
 
 **Phase 32 acceptance verification (2026-09-10):** Migration documents remain aligned, the vanilla tree was not replaced, and the React build now emits the complete bilingual route tree plus root and booking entry points. All generated HTML and copied assets returned HTTP 200 from the production preview. The React UI passed representative accessibility and responsive checks. React remains a parallel track until an explicit production cutover phase is approved.
 
+### Phase R3.5 — Legacy Codebase Cleanup & React Workspace Consolidation (2026-09-10)
+- [x] 1. Archived Essential UI/UX References: Preserved `index.html`, `book.html`, and all 10 marketing hub HTML files in `react/reference/html/`; `components.css`, `site.css`, `tokens.css` in `react/reference/css/`; `booking.js`, `places.js`, `motion.js`, `contact.js`, `fares.js`, `data.js` in `react/reference/js/`; and `base.html` in `react/reference/templates/`.
+- [x] 2. Self-Contained React Asset Pipeline: Copied `assets/` into `react/public/assets/` and `robots.txt` into `react/public/robots.txt`.
+- [x] 3. Deterministic Route Generator: Replaced legacy disk-scanning in `react/scripts/generate-routes.mjs` with deterministic route generation from typed catalogue (8 route pairs, 5 vehicles, 6 packages, 10 hubs in EN and HI).
+- [x] 4. Root Directory Cleanup: Wiped legacy `en/`, `hi/`, root `.html` files, legacy `css/`, `styles/`, `js/`, `lib/`, `components/`, `templates/`, `scripts/`, temporary patches, and redundant root markdown files already organized in `react/docs/`.
+- [x] 5. Root Convenience Scripts: Added root `dev`, `build`, `typecheck`, and `preview` scripts proxying to `react/`.
+- [x] 6. Build & Typecheck Verification: `npm run typecheck` passes with 0 errors; `npm run build` succeeds in 1.72s generating 68 route entrypoints. Workspace is clean and primed for Phase R4 React component development.

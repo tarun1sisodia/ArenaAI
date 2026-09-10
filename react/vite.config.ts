@@ -13,7 +13,7 @@ export default defineConfig(({ mode }) => {
   const base = normalizeBase(env.VITE_BASE_PATH || env.SITE_BASE);
 
   return {
-    root: "react",
+    root: fileURLToPath(new URL(".", import.meta.url)),
     base,
     plugins: [react()],
     resolve: {
@@ -32,7 +32,7 @@ export default defineConfig(({ mode }) => {
       strictPort: false,
     },
     build: {
-      outDir: "../dist/react",
+      outDir: "dist",
       emptyOutDir: true,
     },
   };

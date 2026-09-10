@@ -4,9 +4,13 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "react:dev": "vite --config react/vite.config.ts",
-    "react:build": "vite build --config react/vite.config.ts",
-    "react:preview": "vite preview --config react/vite.config.ts"
+    "dev": "npm --prefix react run dev",
+    "build": "npm --prefix react run build",
+    "typecheck": "npm --prefix react run typecheck",
+    "preview": "npm --prefix react run preview",
+    "react:dev": "npm --prefix react run dev",
+    "react:build": "npm --prefix react run build",
+    "react:preview": "npm --prefix react run preview"
   },
   "dependencies": {
     "react": "^19.1.1",
