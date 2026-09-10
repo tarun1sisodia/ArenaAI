@@ -298,6 +298,135 @@ input:focus-visible {
   text-decoration: none;
 }
 
+/* Rolling Nav Link with Liquid Golden Curtain */
+.roll-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 14px;
+  border: 1.5px solid transparent;
+  border-radius: var(--radius, 6px);
+  overflow: hidden;
+  text-decoration: none;
+  background: transparent;
+  cursor: pointer;
+  transition: border-color var(--motion-fast, 180ms) ease,
+              background-color var(--motion-fast, 180ms) ease;
+}
+
+.roll-link::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 0%;
+  background-color: var(--gold, #e5a044);
+  z-index: 1;
+  transition: height 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+.roll-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 0%;
+  background-color: rgba(255, 255, 255, 0.18);
+  z-index: 0;
+  transition: height 0.38s 0.05s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+.roll-link:hover::before,
+.roll-link:focus-visible::before,
+.nav-item:hover .roll-link::before,
+.nav-item:focus-within .roll-link::before {
+  height: 100%;
+}
+
+.roll-link:hover::after,
+.roll-link:focus-visible::after,
+.nav-item:hover .roll-link::after,
+.nav-item:focus-within .roll-link::after {
+  height: 100%;
+}
+
+.roll-link .text-fill {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0;
+  padding: 0;
+  color: var(--text);
+  font-weight: 500;
+  font-size: 0.92rem;
+  letter-spacing: 0.01em;
+  transition: color var(--motion-fast, 180ms) ease;
+}
+
+.roll-link:hover,
+.roll-link:focus-visible,
+.nav-item:hover .roll-link,
+.nav-item:focus-within .roll-link {
+  border-color: var(--gold-border, rgba(229, 160, 68, 0.45));
+}
+
+.roll-link:hover .text-fill,
+.roll-link:focus-visible .text-fill,
+.nav-item:hover .roll-link .text-fill,
+.nav-item:focus-within .roll-link .text-fill {
+  color: #ffffff;
+}
+
+.roll-link.is-active {
+  border-color: var(--gold-border, rgba(229, 160, 68, 0.35));
+}
+
+.roll-link.is-active .text-fill {
+  color: var(--gold-deep, #b27123);
+  font-weight: 600;
+}
+
+.roll-active-dot {
+  position: absolute;
+  bottom: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--gold, #e5a044);
+  z-index: 3;
+}
+
+.roll-link .nav-chevron {
+  transition: transform var(--motion-fast, 180ms) cubic-bezier(0.16, 1, 0.3, 1);
+  flex-shrink: 0;
+}
+
+.roll-link:hover .nav-chevron,
+.nav-item:hover .nav-chevron,
+.nav-item:focus-within .nav-chevron {
+  transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .roll-link::before,
+  .roll-link::after {
+    transition: none !important;
+  }
+  .roll-link:hover .text-fill,
+  .roll-link:focus-visible .text-fill {
+    color: var(--gold-deep, #b27123);
+  }
+}
+
 .menu-toggle {
   display: none;
 }

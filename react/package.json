@@ -5,9 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "react:dev": "vite",
     "build": "tsc --noEmit && vite build && node scripts/generate-routes.mjs",
+    "react:build": "tsc --noEmit && vite build && node scripts/generate-routes.mjs",
     "typecheck": "tsc --noEmit",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "react:preview": "vite preview"
   },
   "dependencies": {
     "react": "^19.1.1",

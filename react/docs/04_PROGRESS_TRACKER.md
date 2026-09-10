@@ -9,9 +9,9 @@ only check boxes, append log rows, and update the Current State block.
 ## Current State
 
 - **Current Phase:** React Standalone Development — Phase R4: Shared UI Components & Layouts
-- **Current Step:** Phase R4.2 — Rolling Nav Links Component (`react/src/components/chrome/RollLink.tsx`)
+- **Current Step:** Phase R4.3 — Desktop Navigation Header (`react/src/components/chrome/Header.tsx`)
 - **Last updated:** 2026-09-10
-- **Summary:** Built `BrandLogo` component (`react/src/components/chrome/BrandLogo.tsx`) with animated SVG compass emblem, golden needle fill, pivot gem, 30ms progressive character scramble on hover/focus, gold glow pulse, and WCAG reduced-motion safety. Wired into `Chrome.tsx` Header. Typecheck and build pass with 0 errors.
+- **Summary:** Built `RollLink` component (`react/src/components/chrome/RollLink.tsx`) with signature golden liquid curtain hover animation, active indicator dot, and document prefetching. Integrated into Header navigation with active route matching. Added `react:dev` and `react:build` aliases to `react/package.json`. Typecheck and build pass with 0 errors.
 - **Open items:** Real photos + real NAP before launch (see `LAUNCH_CHECKLIST.md`); Client decision points from the dossier are pending client reply (`CLIENT_CONFIRMATION_FARES_AND_RULES.md`). Payments remain mock until `docs/PAYMENT_SYSTEM.md` is implemented.
 
 ---
@@ -364,3 +364,4 @@ can't be resolved without user input)_
 
 ### Phase R4 — Shared Chrome & Navigation Components (2026-09-10)
 - [x] R4.1: Brand Wordmark Scrambler (`react/src/components/chrome/BrandLogo.tsx`): Built interactive brand component with SVG compass emblem, cardinal ring, gold needle fill, pivot gem, 30ms progressive character scramble on hover/focus, gold glow pulse, and WCAG 2.2 AA reduced-motion safety. Integrated into `Chrome.tsx` Header. Typecheck and build pass with 0 errors.
+- [x] R4.2: Rolling Nav Links Component (`react/src/components/chrome/RollLink.tsx`): Implemented dual-layer liquid golden curtain hover animation (`::before` gold wave + `::after` translucent highlight), active route indicator dot, prefetch trigger, and accessible keyboard navigation. Integrated into Header. Verified typecheck and build (0 errors).
