@@ -18,6 +18,10 @@
 </head>
 
 <body data-page="{{active_page}}" data-lang="{{lang}}" data-base="{{page_base}}" {{body_attrs}}>
+  <div class="page-loader" data-page-loader role="status" aria-label="Loading page">
+    <span class="page-loader__text" aria-hidden="true">SK BAGHEL</span>
+  </div>
+  <script>window.__skbLoaderStarted=Date.now();</script>
   <svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden;pointer-events:none">
     <defs>
       <filter id="grain-light">

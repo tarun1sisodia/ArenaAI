@@ -46,6 +46,13 @@ ROOT = Path(__file__).resolve().parents[1]
 FONTS_EN = "https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&display=swap"
 FONTS_HI = FONTS_EN + "&family=Noto+Sans+Devanagari:wght@400;500;700&family=Noto+Serif+Devanagari:wght@500;600"
 
+# Decorative page-load overlay; page content remains in the initial HTML below it.
+PAGE_LOADER_HTML = """\
+<div class="page-loader" data-page-loader role="status" aria-label="Loading page">
+  <span class="page-loader__text" aria-hidden="true">SK BAGHEL</span>
+</div>"""
+PAGE_LOADER_HTML += '<script>window.__skbLoaderStarted=Date.now();</script>'
+
 # Inline SVG icons for high-performance zero-dependency rendering
 ICON_CALL = '<span class="icon icon-call" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>'
 ICON_WA = '<span class="icon icon-wa" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span>'
@@ -594,6 +601,7 @@ def write_page(*, lang, path, alt_path, title, description, active, body, extra_
     {head}
   </head>
   <body data-page="{active}" data-lang="{lang}" data-base="{page_base(rel)}"{kind_attr}>
+    {PAGE_LOADER_HTML}
     <div id="scroll-progress" aria-hidden="true"></div>
     <svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden;pointer-events:none">
       <defs>
@@ -1217,7 +1225,7 @@ def home_body(lang):
           <div class="loc-search-head">
             <span class="loc-search-icon">🔍</span>
             <input type="text" class="loc-search-query" placeholder="Search city, airport, landmark..." autocomplete="off" />
-            <span class="loc-api-tag" title="Connect Google Maps API">Google Maps</span>
+            <span class="loc-api-tag" title="Add LocationIQ token">LocationIQ</span>
           </div>
           <div class="loc-quick-tags">
             <span class="loc-tag" data-val="agra">Agra</span>
@@ -1244,7 +1252,7 @@ def home_body(lang):
           <div class="loc-search-head">
             <span class="loc-search-icon">🔍</span>
             <input type="text" class="loc-search-query" placeholder="Search drop city, airport, hotel..." autocomplete="off" />
-            <span class="loc-api-tag" title="Connect Google Maps API">Google Maps</span>
+            <span class="loc-api-tag" title="Add LocationIQ token">LocationIQ</span>
           </div>
           <div class="loc-quick-tags">
             <span class="loc-tag" data-val="delhi">Delhi</span>
@@ -2251,7 +2259,7 @@ def book_body():
               <div class="loc-search-head">
                 <span class="loc-search-icon">🔍</span>
                 <input type="text" class="loc-search-query" placeholder="Search city, airport, landmark..." autocomplete="off" />
-                <span class="loc-api-tag" title="Connect Google Maps API">Google Maps</span>
+                <span class="loc-api-tag" title="Add LocationIQ token">LocationIQ</span>
               </div>
               <div class="loc-quick-tags">
                 <span class="loc-tag" data-val="agra">Agra</span>
@@ -2285,7 +2293,7 @@ def book_body():
               <div class="loc-search-head">
                 <span class="loc-search-icon">🔍</span>
                 <input type="text" class="loc-search-query" placeholder="Search drop city, airport, hotel..." autocomplete="off" />
-                <span class="loc-api-tag" title="Connect Google Maps API">Google Maps</span>
+                <span class="loc-api-tag" title="Add LocationIQ token">LocationIQ</span>
               </div>
               <div class="loc-quick-tags">
                 <span class="loc-tag" data-val="delhi">Delhi</span>
@@ -2398,9 +2406,14 @@ def write_404():
         rebase(
             f"""<!doctype html><html lang="en-IN"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Page not found | SK Baghel</title>
 <link rel="stylesheet" href="/css/tokens.css"/><link rel="stylesheet" href="/css/site.css"/><link rel="stylesheet" href="/css/components.css"/></head>
-<body><main class="page-hero"><div class="container"><h1>This page<br /><i>isn’t on the map.</i></h1>
-<p class="lead">Try the home page, or call {PHONE_DISPLAY}.</p>
-<p><a class="btn-primary" href="/">Home</a></p></div></main></body></html>""",
+<body>{PAGE_LOADER_HTML}<main class="not-found-page"><div class="not-found-card">
+<div class="not-found-compass" aria-hidden="true"><span>404</span><i></i></div>
+<p class="eyebrow">Off the usual route</p>
+<h1>This page <i>isn’t on the map.</i></h1>
+<p class="lead">The link may be outdated, or this road has not been added yet. Let’s get you back to the journey.</p>
+<div class="not-found-actions"><a class="btn-primary" href="/">Back to home <span>↗</span></a><a class="btn-outline" href="/en/routes/">Explore routes <span>↗</span></a></div>
+<p class="not-found-help">Need a ride? Call <a href="tel:{PHONE}">{PHONE_DISPLAY}</a>.</p>
+</div></main><script src="/js/motion.js" defer></script></body></html>""",
             "404.html",
         ),
         encoding="utf-8",
