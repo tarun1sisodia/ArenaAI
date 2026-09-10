@@ -8,9 +8,9 @@ only check boxes, append log rows, and update the Current State block.
 
 ## Current State
 
-- **Current Phase:** 31 — Automated Frontend Quality CI/CD & Cloudflare Deployment Guard ✅ complete
-- **Current Step:** Post-Phase 31 — LocationIQ location search and runtime token configuration completed; awaiting next instruction
-- **Last updated:** 2026-09-09
+- **Current Phase:** 32 — React migration documentation and parallel workspace ✅ booking funnel foundation complete
+- **Current Step:** Phase 32 complete — React migration gates verified; vanilla site remains production baseline pending cutover decision
+- **Last updated:** 2026-09-10
 - **Open items:** `visual_audit.mjs` still needs a networked machine; fonts self-hosting (sandbox blocks Google Fonts download); real photos + real NAP before launch (see `LAUNCH_CHECKLIST.md`); PRD v3.0 master rewrite includes full SEO Final BOSS content. Client decision points from the deck are open (§25 of PRD.md). Payments remain mock until `docs/PAYMENT_SYSTEM.md` is implemented.
 
 ---
@@ -49,6 +49,7 @@ can't be resolved without user input)_
 | 2026-09-06 | Animation Governance Rules & Pre-Implementation Gate (`ANIMATION_RULES.md`) | Established mandatory verification rule file (`ANIMATION_RULES.md`) enforcing "Fast content + subtle motion + real HTML + excellent accessibility rather than lots of JS + huge animations + content hidden inside effects". Wired into `AGENTS.md` and `.agents/rules/`. |
 | 2026-09-06 | SEO-Safe Premium Animation Combination | Implemented top scroll progress bar, subtle hero animated gradient mesh, floating ambient shapes, CSS GPU headline fade-up, scroll-triggered card reveals with hover elevation, icon micro-interactions, animated statistics counters, and full reduced-motion accessibility. 102/102 URLs OK. |
 | 2026-09-06 | Remove `proposal/` directory | User requested deleting the legacy 24-slide proposal deck folder as the customer-facing website build is active. Removed `proposal/` and updated `robots.txt` and rule files accordingly. |
+| 2026-09-09 | Begin Phase 32 React migration in parallel | The user requested a React migration. The existing vanilla MPA remains the production baseline while React is introduced under `react/`, avoiding an unsafe in-place rewrite and recording the architecture deviation explicitly. |
 | 2026-09-06 | Hero Scenic Destinations Crossfade Slideshow | Implemented background slideshow cycling through Taj Mahal at dawn, Agra Fort, Mathura temples, Golden Triangle, and Yamuna Expressway every 5.5s with smooth 1.6s fade in/out, Ken Burns scale drift, location badge, and dot navigation. Strict compliance with `ANIMATION_RULES.md` and reduced-motion safety. |
 | 2026-09-06 | 11 Famous Heritage & Hill Destinations (Highway removed) | Removed highway photo per user request and expanded background slideshow to 11 world-famous destinations: Taj Mahal, Agra Fort, Fatehpur Sikri, Mathura Yamuna Ghats, Vrindavan Prem Mandir, Delhi India Gate, Delhi Red Fort, Jaipur Hawa Mahal, Jaipur Amber Palace, Himachal Manali & Solang, and Himachal Shimla Ridge. Optimized WebP assets in `assets/destinations/`, responsive slide dot navigation, bilingual captions, 107/107 URLs OK. |
 | 2026-09-06 | Hero Image Clarity (Blur Removed), 8s Relaxed Timing, Button Icons | Removed heavy dark/blur overlay and ambient orbs so landmark photos appear vivid and crystal clear; slowed slide rotation to 8.0s with 2.2s majestic crossfade; added icons (Phone, WhatsApp, Compass) and hover micro-animations to hero action buttons. 108/108 URLs OK. |
@@ -89,6 +90,19 @@ can't be resolved without user input)_
 | 2026-09-09 | Post-Phase 31 | Added a non-blocking shining-text page-load overlay to generated pages, the booking page, and 404; it dismisses on the real window load event with reduced-motion support and no artificial fetch delay. | `scripts/render_pages.py`, `templates/base.html`, `css/components.css`, `js/motion.js`, `book.html`, `404.html`, generated pages |
 | 2026-09-09 | Post-Phase 31 | Made the loader remain visible for at least 600ms on every page view, then fade after resources load; redesigned 404 with a compass marker, recovery actions, route discovery, and click-to-call support. | `scripts/render_pages.py`, `templates/base.html`, `css/components.css`, `js/motion.js`, `04_PROGRESS_TRACKER.md`, generated pages |
 | 2026-09-09 | Post-Phase 31 | Replaced Google Maps Places with LocationIQ autocomplete for city, airport, landmark, and pickup-point search. Tokens remain runtime-configured in browser storage/global/query input and are not committed; local destination fallback and dynamic fare estimation remain available without a token. Rebuilt and verified 113/113 URLs OK. | `js/places.js`, `scripts/render_pages.py`, `book.html`, generated pages, `04_PROGRESS_TRACKER.md` |
+| 2026-09-09 | 32 / 1 | Created the parallel React migration contract and documentation pack; reserved `react/` while keeping the vanilla site as the production baseline. | `REACT-MIGRATION-PLAN.MD`, `Architecture.md`, `Rules.md`, `Phases.md`, `Design.md`, `react/README.md`, `03_PHASE_PLAN.md`, `04_PROGRESS_TRACKER.md` |
+| 2026-09-09 | 32 / 2 | Created the isolated React/Vite/TypeScript foundation with an accessible responsive shell, call and WhatsApp fallbacks, strict type checking, and a production build. | `react/package.json`, `react/package-lock.json`, `react/tsconfig.json`, `react/vite.config.ts`, `react/index.html`, `react/src/` |
+| 2026-09-09 | 32 / 3 | Ported the approved design tokens, typed catalogue, contact data, fare engine, and runtime catalogue invariants into React. Built the app and verified the preview shell serves successfully. | `react/src/styles/tokens.css`, `react/src/styles/global.css`, `react/src/data/`, `react/src/features/booking/fareEngine.ts`, `react/src/main.tsx` |
+| 2026-09-09 | 32 / 4a | Added the React shared shell: responsive header/mobile navigation, Call/WhatsApp/Book lead bar, safe document prefetching, loading indicator, error state, and application error boundary. | `react/src/components/Chrome.tsx`, `react/src/components/ErrorBoundary.tsx`, `react/src/app/prefetch.ts`, `react/src/app/App.tsx`, `react/src/styles/global.css` |
+| 2026-09-09 | 32 / 4a-structure | Materialized the feature-based React structure with app routes, shared components, layout, page, data-feature ownership docs, utilities, and style ownership; moved the home composition into `HomePage` and the global shell into `SiteLayout`. | `react/src/app/routes.tsx`, `react/src/layouts/SiteLayout.tsx`, `react/src/pages/HomePage.tsx`, `react/src/features/contact/README.md`, `react/src/features/catalogue/README.md`, `react/src/utils/format.ts`, `react/src/components/README.md`, `react/src/styles/README.md`, `react/src/app/App.tsx`, `Architecture.md`, `react/README.md` |
+| 2026-09-09 | 32 / 4b | Implemented the MakeMyTrip-style booking funnel foundation: journey search, route/date/time/passenger controls, responsive vehicle results, live fare summary, traveller details, promo code, payment method, mock processing, session draft persistence, validation, and AGR ticket confirmation. | `react/src/features/booking/BookingPage.tsx`, `react/src/app/App.tsx`, `react/src/styles/global.css` |
+| 2026-09-09 | 32 / 5 | Migrated the marketing hubs into the React feature structure with localized, data-driven fleet, route, package, service, contact, about, and FAQ page rendering, responsive catalogue cards, and booking deep links. | `react/src/pages/MarketingPage.tsx`, `react/src/app/App.tsx`, `react/src/styles/global.css` |
+| 2026-09-09 | 32 / 6 | Added route-aware React detail rendering for route, vehicle, and package slugs, with localized booking links, detail content, document titles, and description metadata. Verified the React dev server, fleet hub, vehicle detail page, mobile width, and production build. | `react/src/pages/MarketingPage.tsx`, `react/src/styles/global.css` |
+| 2026-09-09 | 32 / 7a | Added a centralized React route registry and legacy hub normalization, expanded English/Hindi route-detail matching, added local-date-safe booking defaults, 24-hour draft expiry, and query hydration for route/from/to/date/time/trip/pax/vehicle/coupon. Verified English, Hindi, legacy root hub, and booking deep-link routes in the browser; typecheck/build passed. | `react/src/app/routes.tsx`, `react/src/app/App.tsx`, `react/src/features/booking/BookingPage.tsx`, `react/src/pages/MarketingPage.tsx` |
+| 2026-09-09 | 32 / 7b | Replaced the React home placeholder with the source HTML's core responsive composition: scenic hero slideshow controls, fare search widget, trust credentials, service cards, fleet cards, package cards, and conversion CTA. Preserved typed catalogue data, responsive layout, image dimensions/lazy loading, and approved design tokens. Verified at a mobile browser viewport with no horizontal overflow; typecheck/build passed. | `react/src/pages/HomePage.tsx`, `react/src/styles/global.css`, `react/src/styles/tokens.css` |
+| 2026-09-09 | 32 / 8a | Expanded route, vehicle, and package detail pages beyond placeholders to match source HTML patterns: responsive image/content split, fare and vehicle specs, model lists, package included/excluded checklists, route fare comparison table, localized vehicle links, and call/WhatsApp/booking actions. Verified package and Hindi route pages in the browser; typecheck/build passed. | `react/src/pages/MarketingPage.tsx`, `react/src/styles/global.css` |
+| 2026-09-09 | 32 / 8b | Migrated remaining hub content patterns for services, contact, FAQ, privacy, and terms; added FAQ disclosure sections, legal sections, contact details, service cards, and corrected shared React navigation to link to real migrated hubs plus Hindi home. Verified FAQ rendering and production build. | `react/src/pages/MarketingPage.tsx`, `react/src/styles/global.css`, `react/src/components/Chrome.tsx` |
+| 2026-09-09 | 32 / 8c | Crawled all 60 generated EN/HI, home, and booking paths through the React Vite dev server; every path returned HTTP 200. Verified services hub at mobile width with one H1, five service cards, seven navigation links, and no horizontal overflow; typecheck/build passed. | React dev server, `react/src/app/App.tsx`, `react/src/app/routes.tsx` |
 
 
 ---
@@ -325,3 +339,33 @@ can't be resolved without user input)_
 - [x] 3. GitHub Actions CI Workflow: Build `.github/workflows/quality.yml` running the complete build, audit, and asset size verification on every push and PR with automated step summary generation.
 - [x] 4. Comprehensive QA & Final Verification: Run `quality_audit.py`, verify 10/10 Scorecard pass, confirm preview server and static tree health, and finalize tracker log.
 
+### Phase 32 — React migration documentation and parallel workspace
+- [x] 1. Created the React migration plan, architecture, rules, phases, design
+  reference, and reserved `react/` workspace without changing the vanilla site.
+- [x] 2. Created the React foundation without changing the root vanilla site.
+- [x] 3. Ported the design system and typed data with parity checks.
+- [ ] 4. Port shared chrome, marketing pages, detail pages, and booking in
+  separate verified steps.
+- [x] 5. Add React route metadata (canonical, robots, language, Open Graph,
+  LocalBusiness JSON-LD) and generate static entry points for the migrated
+  route tree during the Vite production build.
+- [x] 6. Complete parity, accessibility, responsive, and performance gates
+  before cutover. Verified with React typecheck/build, 60 generated entry points,
+  58/58 bilingual route parity, full HTML and asset crawl, representative
+  browser checks at desktop/mobile widths, one-H1 and labelled-control checks,
+  reduced-motion emulation, and no horizontal overflow at desktop width.
+
+**Phase 32 acceptance verification (2026-09-10):** Migration documents remain
+aligned, the vanilla tree was not replaced, and the React build now emits the
+complete bilingual route tree plus root and booking entry points. All generated
+HTML and copied assets returned HTTP 200 from the production preview. The React
+UI passed representative accessibility and responsive checks. React remains a
+parallel track until an explicit production cutover phase is approved.
+
+### Session log
+
+| 2026-09-10 | React parity gates: normalized the tracker state, added detail-aware bilingual metadata, hreflang, Twitter/Open Graph tags, and route-specific descriptions. Updated `react/src/app/App.tsx` and `react/src/app/SeoHead.tsx`. |
+| 2026-09-10 | React static output now discovers every generated `en/` and `hi/` route from the vanilla source tree instead of maintaining a duplicate route list. Production build generated 58 entry points, including all bilingual pages plus `/book.html`. Updated `react/scripts/generate-routes.mjs`. |
+| 2026-09-10 | Accessibility gate improvement: hero slideshow controls now expose `aria-pressed` state and use 44px touch targets while preserving the small visual dots. Updated `react/src/pages/HomePage.tsx` and `react/src/styles/global.css`. |
+| 2026-09-10 | Static route parity fix: included `/en/` and `/hi/` landing pages in generated output; source and React route trees now target the same 58 bilingual entry pages plus root and booking. |
+| 2026-09-10 | Production audit fix: copied the shared root `assets/` tree into React `dist/assets` during the post-build route-generation step, resolving broken fleet/package/hero image URLs. |
