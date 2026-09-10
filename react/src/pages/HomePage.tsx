@@ -4,14 +4,8 @@ import { packages, routes, vehicles } from "../data/catalogue";
 import { HeroBentoGrid } from "../components/home/HeroBentoGrid";
 import { HeroFareWidget } from "../components/home/HeroFareWidget";
 import { TrustRoller } from "../components/home/TrustRoller";
-
-const services = [
-  ["01", "Outstation cabs", "Agra to Delhi, Jaipur, Mathura, Gwalior and Lucknow with transparent one-way and round-trip fares.", "/en/routes/"],
-  ["02", "Local Agra sightseeing", "A full day around the Taj Mahal, Agra Fort, Mehtab Bagh and the city's quieter heritage corners.", "/en/agra-sightseeing-taxi/"],
-  ["03", "Airport transfers", "Reliable pickups and drops for Agra Kheria, Agra Cantt and Delhi IGI Airport.", "/en/services/"],
-  ["04", "Tempo & Urbania", "9 to 26 seater Tempo Travellers and luxury Force Urbania for family and corporate groups.", "/en/vehicles/tempo-traveller/"],
-  ["05", "Tour packages", "Golden Triangle, Same Day Taj, Mathura Vrindavan and private multi-day journeys.", "/en/packages/"]
-] as const;
+import { PopularRoutes } from "../components/home/PopularRoutes";
+import { ServicesGrid } from "../components/home/ServicesGrid";
 
 export function HomePage() {
   const [activeLandmark, setActiveLandmark] = useState("Taj Mahal · Dawn in Agra");
@@ -40,10 +34,9 @@ export function HomePage() {
 
       <TrustRoller />
 
-      <section className="home-section" id="services" aria-labelledby="services-heading">
-        <div className="section-heading"><div><p className="eyebrow">Services</p><h2 id="services-heading">One local team.<br /><i>Every kind of journey.</i></h2></div><a className="text-link" href="/en/services/">All services ↗</a></div>
-        <div className="service-grid">{services.map(([index, title, body, href]) => <article className="service-card" key={title}><span className="service-index">{index}</span><h3>{title}</h3><p>{body}</p><a className="text-link" href={href}>Explore ↗</a></article>)}</div>
-      </section>
+      <PopularRoutes />
+
+      <ServicesGrid />
 
       <section className="home-section home-section-alt" aria-labelledby="fleet-heading">
         <div className="section-heading"><div><p className="eyebrow">Fleet</p><h2 id="fleet-heading">Choose your comfort.<br /><i>Bring your people.</i></h2></div><a className="text-link" href="/en/fleet/">Full fleet ↗</a></div>
