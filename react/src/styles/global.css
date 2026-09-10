@@ -1169,25 +1169,191 @@ a:focus-visible {
   color: var(--white);
 }
 
-.home-hero-media,
 .home-hero-overlay {
   position: absolute;
   inset: 0;
+  background: linear-gradient(90deg, rgba(10, 10, 10, 0.92) 0%, rgba(10, 10, 10, 0.68) 50%, rgba(10, 10, 10, 0.35) 100%);
+  pointer-events: none;
+  z-index: 1;
 }
 
-.home-hero-media img {
+/* --------------------------------------------------------------------------
+   HERO LIVING BENTO GRID (Asymmetric Multi-Destination Tapestry)
+   -------------------------------------------------------------------------- */
+.hero-bento-grid {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1.55fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 12px;
+  padding: 12px;
+  overflow: hidden;
+  z-index: 0;
+  background: var(--navy-deep, #141211);
+  pointer-events: none;
+}
+
+.bento-tile {
+  position: relative;
+  border-radius: var(--radius, 0.3rem);
+  overflow: hidden;
+  background: var(--surface, #242220);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+.bento-tile--main {
+  grid-column: 1 / 2;
+  grid-row: 1 / 3;
+}
+
+.bento-tile--sub-top {
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
+}
+
+.bento-tile--sub-bottom {
+  grid-column: 2 / 3;
+  grid-row: 2 / 3;
+}
+
+.bento-slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 1.8s cubic-bezier(0.4, 0, 0.2, 1), transform 14s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: scale(1.04);
+  will-change: opacity, transform;
+}
+
+.bento-slide.is-active {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1.0);
+  z-index: 1;
+}
+
+.bento-slide .hero-media {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center center;
+  filter: contrast(1.04) brightness(1.02);
 }
 
-.home-hero-overlay {
-  background: linear-gradient(90deg, rgba(10, 10, 10, 0.94), rgba(10, 10, 10, 0.56), rgba(10, 10, 10, 0.2));
+.bento-tile-tag {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  z-index: 3;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  background: rgba(24, 22, 21, 0.82);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: var(--radius, 0.3rem);
+  padding: 3px 9px;
+  opacity: 0.9;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+}
+
+/* Subtle architectural grid lines overlay across bento grid */
+.hero-bento-grid::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+@media (max-width: 900px) {
+  .hero-bento-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    padding: 0;
+    gap: 0;
+  }
+  .bento-tile--main {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+  }
+  .bento-tile--sub-top,
+  .bento-tile--sub-bottom {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bento-slide {
+    transition: none !important;
+    transform: none !important;
+  }
+  .bento-slide.is-active {
+    transform: none !important;
+  }
+}
+
+/* Location Badge (Floating destination indicator) */
+.hero-location-badge {
+  position: absolute;
+  top: 28px;
+  right: max(24px, calc((100% - var(--container)) / 2));
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 18px;
+  border-radius: var(--radius-pill);
+  background: rgba(20, 18, 17, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+  font-size: 0.84rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+  transition: opacity 0.35s var(--ease-out-expo), transform 0.35s var(--ease-out-expo);
+}
+
+.hero-location-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 10px var(--gold);
+}
+
+@media (max-width: 900px) {
+  .hero-location-badge {
+    top: 16px;
+    right: 16px;
+    font-size: 0.75rem;
+    padding: 5px 12px;
+  }
 }
 
 .home-hero-content {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   width: min(100%, 760px);
   margin-inline: auto;
   margin-left: max(0px, calc((100% - var(--container)) / 2));
@@ -1270,6 +1436,341 @@ a:focus-visible {
   border: 0;
   padding-inline: 0;
   background: transparent;
+}
+
+/* --------------------------------------------------------------------------
+   HERO FARE WIDGET (HFW) — Tabbed Quick Fare Calculator
+   -------------------------------------------------------------------------- */
+.hfw {
+  position: absolute;
+  right: max(var(--gutter), calc((100% - var(--container)) / 2));
+  bottom: 48px;
+  z-index: 4;
+  width: min(100% - (var(--gutter) * 2), 540px);
+  border-radius: var(--radius-card);
+  background: rgba(255, 255, 255, 0.97);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.22);
+  overflow: hidden;
+  color: var(--text);
+}
+
+/* Tab bar */
+.hfw-tabs {
+  display: flex;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+}
+
+.hfw-tab {
+  flex: 1;
+  padding: 10px 4px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: color 180ms, border-color 180ms, background 180ms;
+}
+
+.hfw-tab:hover {
+  color: var(--text);
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.hfw-tab.is-active {
+  color: var(--gold-deep);
+  border-bottom-color: var(--gold);
+  background: var(--gold-wash);
+}
+
+/* Body panel */
+.hfw-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Input row */
+.hfw-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.hfw-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.hfw-field--wide {
+  flex: 2;
+}
+
+.hfw-field--date {
+  flex: 1.2;
+}
+
+.hfw-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+}
+
+.hfw-field select,
+.hfw-field input[type="date"] {
+  width: 100%;
+  min-height: 38px;
+  padding: 6px 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius);
+  background: transparent;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 180ms, box-shadow 180ms;
+}
+
+.hfw-field select:focus,
+.hfw-field input[type="date"]:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px var(--gold-soft);
+}
+
+/* City swap button */
+.hfw-swap {
+  flex-shrink: 0;
+  width: 34px;
+  height: 38px;
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text-soft);
+  cursor: pointer;
+  transition: background 180ms, color 180ms, border-color 180ms;
+  align-self: flex-end;
+}
+
+.hfw-swap:hover {
+  background: var(--gold-wash);
+  color: var(--gold-deep);
+  border-color: var(--gold-border);
+}
+
+/* Vehicle selector */
+.hfw-vehicles {
+  display: flex;
+  gap: 6px;
+}
+
+.hfw-veh {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 4px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius);
+  background: transparent;
+  cursor: pointer;
+  transition: background 180ms, border-color 180ms, transform 120ms;
+}
+
+.hfw-veh:hover {
+  background: rgba(229, 160, 68, 0.06);
+  border-color: var(--gold-border);
+  transform: translateY(-1px);
+}
+
+.hfw-veh.is-active {
+  background: var(--gold-wash);
+  border-color: var(--gold);
+}
+
+.hfw-veh-icon {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.hfw-veh-name {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.hfw-veh-seats {
+  font-size: 0.6rem;
+  color: var(--text-soft);
+}
+
+/* Live fare quote strip */
+.hfw-quote {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  background: var(--gold-wash);
+  border: 1px solid var(--gold-border);
+}
+
+.hfw-quote-main {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.hfw-quote-total {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--gold-deep);
+  line-height: 1;
+  font-family: var(--font-display);
+}
+
+.hfw-quote-advance {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-soft);
+}
+
+.hfw-quote-meta {
+  display: flex;
+  gap: 8px;
+  font-size: 0.72rem;
+  color: var(--text-soft);
+  font-weight: 500;
+}
+
+.hfw-quote-badge {
+  padding: 1px 6px;
+  border-radius: var(--radius-pill);
+  background: var(--gold-border);
+  color: var(--gold-deep);
+  font-weight: 700;
+  font-size: 0.64rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* CTA button */
+.hfw-cta {
+  width: 100%;
+  text-align: center;
+  justify-content: center;
+}
+
+/* Dark mode adaptation */
+[data-theme="dark"] .hfw {
+  background: rgba(20, 18, 17, 0.96);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: var(--white);
+}
+
+[data-theme="dark"] .hfw-tab {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+[data-theme="dark"] .hfw-tab:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--white);
+}
+
+[data-theme="dark"] .hfw-tab.is-active {
+  color: var(--gold-light);
+  border-bottom-color: var(--gold-light);
+  background: rgba(229, 160, 68, 0.08);
+}
+
+[data-theme="dark"] .hfw-field select,
+[data-theme="dark"] .hfw-field input[type="date"] {
+  border-color: rgba(255, 255, 255, 0.12);
+  color: var(--white);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+[data-theme="dark"] .hfw-veh {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .hfw-veh.is-active {
+  background: rgba(229, 160, 68, 0.12);
+  border-color: var(--gold);
+}
+
+[data-theme="dark"] .hfw-veh-name {
+  color: var(--white);
+}
+
+[data-theme="dark"] .hfw-quote {
+  background: rgba(229, 160, 68, 0.08);
+  border-color: rgba(229, 160, 68, 0.2);
+}
+
+[data-theme="dark"] .hfw-swap {
+  border-color: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .hfw {
+    position: static;
+    width: 100%;
+    margin-top: auto;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+  }
+}
+
+@media (max-width: 540px) {
+  .hfw-row {
+    flex-wrap: wrap;
+  }
+  .hfw-field--date {
+    flex: 1 0 100%;
+  }
+  .hfw-veh-name,
+  .hfw-veh-seats {
+    display: none;
+  }
+  .hfw-veh {
+    padding: 8px 6px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hfw-tab,
+  .hfw-veh,
+  .hfw-swap {
+    transition: none !important;
+  }
 }
 
 .trust-strip {
