@@ -1,0 +1,36 @@
+# Version control & internal metadata
+.git
+.git/**
+.github
+.github/**
+.agents
+.agents/**
+.gemini
+.gemini/**
+
+# Dependencies & build cache
+node_modules
+node_modules/**
+.npm
+.npm/**
+.wrangler
+.wrangler/**
+
+# Source directories & scripts
+react/src
+react/src/**
+react/reference
+react/reference/**
+react/node_modules
+react/node_modules/**
+
+# Configs & documentation
+*.py
+*.pyc
+*.md
+*.json
+*.jsonc
+*.ts
+*.tsx
+*.log
+*.sh
