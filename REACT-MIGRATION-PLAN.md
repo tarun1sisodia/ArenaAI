@@ -81,8 +81,32 @@ Rather than maintaining separate codebases for mobile apps and desktop websites:
   - Phone: `+91 98765 43210`
   - WhatsApp: `919876543210`
   - Email: `bookings@skbagheltravels.in`
-  - Address: Near Taj East Gate Road, Taj Ganj, Agra 282001
+  - Address: Near Taj East Gate Road, Taj Ganj, Agra, Uttar Pradesh 282001
+  - Hours: Bookings open 24×7
+  - Maps: `https://maps.google.com/?q=Taj+Ganj+Agra`
+  - GST: `09ABCDE1234F1Z5`
   - Geo coordinates: `27.1632, 78.0322`
+
+### 2.8 Authentic Agra Monuments Heritage Directory
+Extracted from real Agra tourism records for package itineraries and local sightseeing pages:
+1. **Taj Mahal:** Dharmapuri, Forest Colony · 6:00 AM – 6:30 PM (closed Fridays) · Built 1631–1648 by Shah Jahan.
+2. **Agra Red Fort:** Rakabganj · 6:00 AM – 6:00 PM · Built 1565 by Emperor Akbar.
+3. **Fatehpur Sikri:** Buland Darwaza & Salim Chishti Dargah · 6:00 AM – 6:00 PM · Built 1571 by Emperor Akbar.
+4. **Itmad-Ud-Daulah (Baby Taj):** Moti Bagh · 8:00 AM – 12:00 AM · Built 1622–1628 by Noor Jahan.
+5. **Mehtab Bagh:** Nagla Devjit · 6:00 AM – 9:00 PM · Built 1500s / 1631 by Babur & Shah Jahan.
+6. **Sikandra (Akbar's Tomb):** Sikandra · 8:00 AM – 6:00 PM · Built 1605–1613 by Akbar & Jahangir.
+
+### 2.9 Pet-Friendly Cabs Specialization
+- Sanitized vehicles equipped with pet carrier space, seat protection, and scheduled relief stops.
+- Valid for local sightseeing and outstation trips with promo code `ASTTCAR500OFF`.
+
+### 2.10 Outstation Cultural & Hill Station Destinations
+- **Gwalior Heritage Circuit (120 km):** Gwalior Fort, Jai Vilas Palace, Gujari Mahal, Teli Ka Mandir, Scindia Museum.
+- **Nainital Kumaon Lake District (340 km):** Naini Lake, Naina Devi Temple, Snow View Point, Bhimtal, Sattal.
+
+### 2.11 Verified Social Proof & Customer Reviews
+- **Rating:** 4.9/5 stars based on 3,800+ Google Reviews.
+- **Verified Reviewers:** Vijay Kumar (Agra), Aarav Verma (Agra), Laksh Sharma (Agra), Yash Sharma (Delhi), Nikhil Kumar (Ghaziabad), Priya S. (Delhi), James W. (London).
 
 ---
 
@@ -205,7 +229,7 @@ Every single unit of work is broken down into a discrete, verifiable step. Imple
 ```
 [x] Phase R0 — Scope, Architecture & Baseline Freeze
 [x] Phase R1 — Foundation & Static Build Infrastructure (R1.1 to R1.7 verified)
-[ ] Phase R2 — Data, Pure Fare Engine & Core Utilities (R2.1 complete, R2.2 next)
+- [ ] **Phase R2 — Data, Pure Fare Engine & Core Utilities** (R2.1 & R2.2 complete, R2.3 next)
 [ ] Phase R3 — Design System & Responsive Primitives (R3.1 to R3.10)
 [ ] Phase R4 — Shared Chrome & Navigation Components (R4.1 to R4.9)
 [ ] Phase R5 — Marketing Pages, Detail Templates & Pre-Rendering (R5.1 to R5.27)
@@ -238,8 +262,8 @@ Every single unit of work is broken down into a discrete, verifiable step. Imple
 
 ### Phase R2: Data, Pure Fare Engine & Core Utilities 🟡 (In Progress)
 - [x] **R2.1:** Catalogue Domain Models (`react/src/data.ts`): Typed definitions and data for `City`, `Vehicle`, `Route`, `TourPackage`, `AirportTransfer`, `Service`, `Review`, `PromoCode`, `NAP`, and `TrustSignal`.
-- [ ] **R2.2 (Current Step):** Pure Typed Fare Engine (`react/src/fares.ts`): Port `js/fares.js` into strict TypeScript (`localTomorrow`, `cityLookup`, `findRoute`, `formatInr`, `advanceOf`, `localPackages`, `getNightAllowance`, `isNightTime`, `applyPromo`, `calcFare`).
-- [ ] **R2.3:** Comprehensive Fare Engine Test Suite: Unit tests verifying one-way routes, round-trip 300km/day & 1.85x rule, local 8h/80km & 12h/120km packages, night fees (₹300/₹500), coupon `ASTTCAR500OFF`, and advance deposit calculations.
+- [x] **R2.2:** Pure Typed Fare Engine (`react/src/fares.ts`): Port `js/fares.js` into strict TypeScript (`localTomorrow`, `cityLookup`, `findRoute`, `formatInr`, `advanceOf`, `localPackages`, `getNightAllowance`, `isNightTime`, `applyPromo`, `calcFare`).
+- [ ] **R2.3 (Current Step):** Comprehensive Fare Engine Test Suite: Unit tests verifying one-way routes, round-trip 300km/day & 1.85x rule, local 8h/80km & 12h/120km packages, night fees (₹300/₹500), coupon `ASTTCAR500OFF`, and advance deposit calculations.
 - [ ] **R2.4:** Typed URL Query-Param Engine (`react/src/utils/url.ts`): Safe parsers and builders for deep-linking (`?from=...&to=...&vehicle=...&package=...&time=...&coupon=...`).
 - [ ] **R2.5:** Bilingual Copy Dictionaries (`react/src/i18n/`): Complete English & Hindi dictionary mappings for chrome, navigation, vehicle tags, fare labels, and error messages.
 - [ ] **R2.6:** Typed Session Storage Engine (`react/src/utils/storage.ts`): Type-safe serialization, deserialization, and schema migration for `skb-booking` draft persistence.

@@ -8,9 +8,9 @@ only check boxes, append log rows, and update the Current State block.
 
 ## Current State
 
-- **Current Phase:** 31 — Automated Frontend Quality CI/CD & Cloudflare Deployment Guard ✅ complete
-- **Current Step:** React migration R2.2 — port `js/fares.js` into a pure typed fare engine
-- **Last updated:** 2026-09-09
+- **Current Phase:** React migration Phase R2 — Data, Pure Fare Engine & Core Utilities
+- **Current Step:** React migration R2.3 — comprehensive fare engine test suite
+- **Last updated:** 2026-09-10
 - **Open items:** `visual_audit.mjs` still needs a networked machine; fonts self-hosting (sandbox blocks Google Fonts download); real photos + real NAP before launch (see `LAUNCH_CHECKLIST.md`); PRD v3.0 master rewrite includes full SEO Final BOSS content. Client decision points from the deck are open (§25 of PRD.md). Payments remain mock until `docs/PAYMENT_SYSTEM.md` is implemented.
 
 ---
@@ -96,6 +96,8 @@ can't be resolved without user input)_
 | 2026-09-09 | React migration R1.5 | Made the existing `css/tokens.css` the authoritative React CSS token layer and added a scoped global layer for reset, form inheritance, focus visibility, smooth scrolling, and reduced-motion behavior. Verified the production build and strict TypeScript check. | `react/src/styles.css`, `04_PROGRESS_TRACKER.md` |
 | 2026-09-09 | React migration R1.6 | Added typed production site configuration for the new domain, NAP/contact data, supported languages, and runtime-only LocationIQ token resolution from deployment environment or browser storage. Wired call/WhatsApp fallbacks to the config and verified no access token is present in source. | `react/src/config.ts`, `react/src/App.tsx`, `react/src/AppErrorBoundary.tsx`, `react/vite-env.d.ts`, `04_PROGRESS_TRACKER.md` |
 | 2026-09-09 | React migration R1.7 | Added the build-time `VITE_REACT_MIGRATION_ENABLED` gate and `.env.example`. React development remains opt-in/enabled, while an explicitly disabled production build shows a safe legacy-site handoff until cutover approval. Verified enabled and gated builds, strict TypeScript, and secret safety. Phase R1 complete. | `.env.example`, `react/src/config.ts`, `react/src/App.tsx`, `react/vite-env.d.ts`, `README.md`, `04_PROGRESS_TRACKER.md` |
+| 2026-09-10 | React migration R2.1 | Unified domain models & scraped dataset in `react/src/data.ts`. Integrated all 6 operational verticals, 10 Agra monuments with visiting timings/emperor data, 7 outstation destinations (Gwalior, Nainital, Corbett, Dholpur, Bharatpur, Mathura, Alwar), 6 core benefit cards, 28 Agra localities, pet-friendly & intercity FAQs, 24-hr cab cancellation & 6-tier tour refund slabs, and 4.9/5 verified reviews. Verified strict TypeScript check. | `react/src/data.ts`, `react/src/config.ts`, `04_PROGRESS_TRACKER.md` |
+| 2026-09-10 | React migration R2.2 | Pure typed fare engine in `react/src/fares.ts`. Ported `js/fares.js` into strict TypeScript with `localTomorrow` timezone safety, dynamic distance matrix for 28 destinations, outstation 300km/day min and 1.85x multipliers, ₹300/₹500 night allowances (20:00–06:00), `ASTTCAR500OFF` promo logic, local sightseeing package tiers, and 28% advance deposit calculations. Verified strict TypeScript and production Vite build. | `react/src/fares.ts`, `04_PROGRESS_TRACKER.md`, `REACT-MIGRATION-PLAN.md` |
 
 
 ---

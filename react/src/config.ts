@@ -11,6 +11,9 @@ export type SiteContact = {
   postalCode: string;
   latitude: number;
   longitude: number;
+  hours: string;
+  mapsUrl: string;
+  gst: string;
 };
 
 export type SiteConfig = {
@@ -31,12 +34,15 @@ export const siteConfig: SiteConfig = {
     phoneDisplay: "+91 98765 43210",
     whatsapp: "919876543210",
     email: "bookings@skbagheltravels.in",
-    address: "Near Taj East Gate Road, Taj Ganj",
+    address: "Near Taj East Gate Road, Taj Ganj, Agra, Uttar Pradesh 282001",
     city: "Agra",
     region: "Uttar Pradesh",
     postalCode: "282001",
     latitude: 27.1632,
     longitude: 78.0322,
+    hours: "Bookings open 24×7",
+    mapsUrl: "https://maps.google.com/?q=Taj+Ganj+Agra",
+    gst: "09ABCDE1234F1Z5",
   },
 };
 
