@@ -4,6 +4,7 @@ export { RollLink } from "./chrome/RollLink";
 export { ThemeToggle } from "./chrome/ThemeToggle";
 export { MobileNavSheet } from "./chrome/MobileNavSheet";
 export { StickyLeadBar, StickyLeadBar as LeadBar } from "./chrome/StickyLeadBar";
+export { RadialDock } from "./chrome/RadialDock";
 
 export function LoadingIndicator({ label = "Loading" }: { label?: string }) {
   return (

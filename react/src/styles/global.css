@@ -1838,6 +1838,202 @@ html.dark .lead-bar {
   }
 }
 
+/* --------------------------------------------------------------------------
+   RADIAL QUICK NAVIGATION DOCK (.about / .radial-dock)
+   -------------------------------------------------------------------------- */
+.about {
+  --cubic: cubic-bezier(0.64, 0.01, 0.07, 1.65);
+  --transition: 0.6s var(--cubic);
+  --size: 46px;
+  position: fixed;
+  z-index: 990;
+  bottom: 24px;
+  right: 24px;
+  width: var(--size);
+  height: var(--size);
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  transition: width 0.25s ease, height 0.25s ease;
+  pointer-events: auto;
+}
+
+@media (max-width: 768px) {
+  .about {
+    bottom: 76px;
+    right: 16px;
+  }
+}
+
+.about .bg_links {
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(18, 20, 22, 0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(229, 160, 68, 0.35);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  position: absolute;
+  text-decoration: none;
+  color: #FAF7F0;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+[data-theme="dark"] .about .bg_links {
+  background-color: rgba(32, 30, 29, 0.92);
+  border-color: rgba(247, 96, 2, 0.4);
+}
+
+/* Center trigger button */
+.about .logo {
+  width: var(--size);
+  height: var(--size);
+  z-index: 9;
+  background: linear-gradient(135deg, var(--gold, #E5A044) 0%, #B87A24 100%);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 0 16px rgba(229, 160, 68, 0.5), 0 4px 12px rgba(0, 0, 0, 0.4);
+  opacity: 1;
+  bottom: 0;
+  right: 0;
+  transition: transform 0.4s var(--cubic), box-shadow 0.3s ease;
+  padding: 0;
+}
+
+.about .logo .icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #121416;
+  transition: transform 0.4s var(--cubic);
+}
+
+.about:hover .logo,
+.about:focus-within .logo,
+.about.is-open .logo {
+  transform: rotate(45deg);
+  box-shadow: 0 0 22px rgba(229, 160, 68, 0.7), 0 6px 16px rgba(0, 0, 0, 0.5);
+}
+
+.about .social {
+  opacity: 0;
+  pointer-events: none;
+  right: 0;
+  bottom: 0;
+  transition: all 0.25s ease;
+}
+
+.about .social .icon {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease, background-color 0.4s ease;
+  opacity: 0;
+  border-radius: 50%;
+  color: #FAF7F0;
+}
+
+.about .social.portfolio {
+  transition: all 0.8s ease;
+}
+
+.about .social.dribbble {
+  transition: all 0.3s ease;
+}
+
+.about .social.linkedin {
+  transition: all 0.8s ease;
+}
+
+.about .social.booking {
+  transition: all 0.5s ease;
+}
+
+/* Hover & Focus-Within expansion */
+.about:hover,
+.about:focus-within,
+.about.is-open {
+  width: 140px;
+  height: 140px;
+  transition: width var(--transition), height var(--transition);
+}
+
+.about:hover .social,
+.about:focus-within .social,
+.about.is-open .social {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.about:hover .social .icon,
+.about:focus-within .social .icon,
+.about.is-open .social .icon {
+  opacity: 1;
+}
+
+.about .social:hover {
+  transform: scale(1.12);
+}
+
+.about .social:hover .icon {
+  transform: scale(1.08);
+}
+
+/* Radial fan-out positioning */
+.about:hover .social.portfolio,
+.about:focus-within .social.portfolio,
+.about.is-open .social.portfolio {
+  right: 0;
+  bottom: 94px;
+  transition: all 0.35s 0s var(--cubic);
+}
+.about .social.portfolio .icon:hover {
+  background-color: var(--gold, #E5A044);
+  color: #121416;
+}
+
+.about:hover .social.dribbble,
+.about:focus-within .social.dribbble,
+.about.is-open .social.dribbble {
+  right: 48px;
+  bottom: 74px;
+  transition: all 0.35s 0.08s var(--cubic);
+}
+.about .social.dribbble .icon:hover {
+  background-color: #25D366;
+  color: #ffffff;
+}
+
+.about:hover .social.linkedin,
+.about:focus-within .social.linkedin,
+.about.is-open .social.linkedin {
+  right: 74px;
+  bottom: 48px;
+  transition: all 0.35s 0.16s var(--cubic);
+}
+.about .social.linkedin .icon:hover {
+  background-color: #3B82F6;
+  color: #ffffff;
+}
+
+.about:hover .social.booking,
+.about:focus-within .social.booking,
+.about.is-open .social.booking {
+  right: 94px;
+  bottom: 0;
+  transition: all 0.35s 0.24s var(--cubic);
+}
+.about .social.booking .icon:hover {
+  background-color: var(--gold, #E5A044);
+  color: #121416;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -1846,4 +2042,13 @@ html.dark .lead-bar {
     transition-duration: 0.01ms !important;
     transform: none !important;
   }
+  .about,
+  .about .logo,
+  .about .bg_links,
+  .about .social,
+  .about .social .icon {
+    transition: none !important;
+    transform: none !important;
+  }
 }
+

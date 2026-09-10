@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { contact } from "../../data/contact";
 import { prefetchDocument } from "../../app/prefetch";
 
@@ -6,13 +7,40 @@ export interface StickyLeadBarProps {
 }
 
 export function StickyLeadBar({ currentPath }: StickyLeadBarProps) {
-  const isBookingPage = currentPath?.includes("book");
+  const [isVisible, setIsVisible] = useState(true);
+  const path =
+    currentPath ||
+    (typeof window !== "undefined" ? window.location.pathname : "/");
+  const isBookingPage = path.includes("book");
+  const isHindi = path.startsWith("/hi");
 
-  // Don't show on the actual booking page itself to avoid form overlap
-  if (isBookingPage) return null;
+  // Auto-hide when near the bottom of page to prevent collision with footer
+  useEffect(() => {
+    if (isBookingPage) return;
+
+    const handleScroll = () => {
+      const scrollHeight = document.documentElement.scrollHeight;
+      const scrollTop = window.scrollY;
+      const clientHeight = window.innerHeight;
+      const nearBottom = scrollHeight - (scrollTop + clientHeight) < 120;
+
+      setIsVisible(!nearBottom);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [isBookingPage]);
+
+  // Don't show on the booking page itself
+  if (isBookingPage || !isVisible) return null;
 
   return (
-    <aside className="lead-bar" aria-label="Quick contact and booking bar">
+    <aside
+      className="lead-bar"
+      aria-label="Quick contact and booking bar"
+      data-nosnippet
+    >
       <a
         className="lead-bar-btn lead-call"
         href={`tel:${contact.phone}`}
@@ -32,7 +60,7 @@ export function StickyLeadBar({ currentPath }: StickyLeadBarProps) {
             <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
           </svg>
         </span>
-        <span>Call</span>
+        <span>{isHindi ? "कॉल करें" : "Call"}</span>
       </a>
 
       <a
@@ -56,7 +84,7 @@ export function StickyLeadBar({ currentPath }: StickyLeadBarProps) {
             <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
           </svg>
         </span>
-        <span>WhatsApp</span>
+        <span>{isHindi ? "व्हाट्सएप" : "WhatsApp"}</span>
       </a>
 
       <a
@@ -65,7 +93,7 @@ export function StickyLeadBar({ currentPath }: StickyLeadBarProps) {
         onMouseEnter={() => prefetchDocument("/book.html")}
         aria-label="Instant cab booking"
       >
-        <span>Book</span>
+        <span>{isHindi ? "बुक करें" : "Book"}</span>
         <span aria-hidden="true">↗</span>
       </a>
     </aside>
