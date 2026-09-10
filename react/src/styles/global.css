@@ -2467,6 +2467,310 @@ a:focus-visible {
   }
 }
 
+/* --------------------------------------------------------------------------
+   3D COVERFLOW SIGHTSEEING & PACKAGES CAROUSEL (R5.6)
+   -------------------------------------------------------------------------- */
+
+.section--coverflow {
+  position: relative;
+  overflow: hidden;
+  padding: 80px 0 96px;
+  background: var(--navy, #121416);
+  color: var(--white, #FDFCFB);
+}
+
+.coverflow-split {
+  display: grid;
+  grid-template-columns: 1fr 1.25fr;
+  gap: 56px;
+  align-items: center;
+  max-width: var(--max-w, 1280px);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+@media (max-width: 980px) {
+  .coverflow-split {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+}
+
+/* Detail column */
+.coverflow-details-column {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.coverflow-detail-title {
+  font-family: var(--font-display, 'Fraunces', serif);
+  font-size: clamp(2rem, 3.2vw, 2.75rem);
+  font-weight: 500;
+  line-height: 1.15;
+  color: #FDFCFB;
+  margin: 12px 0 16px;
+  letter-spacing: -0.02em;
+}
+
+.coverflow-detail-blurb {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: rgba(253, 252, 251, 0.82);
+  margin-bottom: 20px;
+}
+
+.coverflow-places-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.coverflow-pill {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.78rem;
+  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: rgba(253, 252, 251, 0.92);
+  backdrop-filter: blur(4px);
+}
+
+.coverflow-fare-wrap {
+  margin-bottom: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.coverflow-fare-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(253, 252, 251, 0.65);
+  font-weight: 600;
+}
+
+.coverflow-fare {
+  font-family: var(--font-mono, monospace);
+  font-size: clamp(2.2rem, 3.2vw, 2.85rem);
+  font-weight: 700;
+  color: var(--gold, #E5A044);
+  line-height: 1;
+  margin: 0;
+  text-shadow: 0 0 24px rgba(229, 160, 68, 0.35);
+}
+
+.coverflow-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.coverflow-wa-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.coverflow-wa-icon {
+  flex-shrink: 0;
+}
+
+/* 3D Coverflow Stage Column */
+.coverflow-stage-column {
+  position: relative;
+  width: 100%;
+}
+
+.coverflow-container {
+  --cf-card: clamp(240px, 30vw, 360px);
+  position: relative;
+  width: 100%;
+  user-select: none;
+  outline: none;
+}
+
+.coverflow-frame {
+  position: relative;
+  overflow: hidden;
+  padding: 40px 0 60px;
+  perspective: calc(var(--cf-card) * 3);
+  touch-action: pan-y;
+}
+
+.coverflow-track {
+  position: relative;
+  height: calc(var(--cf-card) * 0.72);
+  min-height: 240px;
+  transform-style: preserve-3d;
+}
+
+.coverflow-card {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: var(--cf-card);
+  aspect-ratio: 16/11;
+  border-radius: var(--radius-card, 1rem);
+  overflow: hidden;
+  background: var(--surface, #242220);
+  box-shadow: 0 20px 45px -12px rgba(0, 0, 0, 0.75);
+  will-change: transform, opacity;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  cursor: pointer;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+  -webkit-box-reflect: below 8px linear-gradient(transparent 70%, rgba(0, 0, 0, 0.28));
+}
+
+.coverflow-card.is-center {
+  border-color: var(--gold, #E5A044);
+  box-shadow: 0 24px 50px -10px rgba(0, 0, 0, 0.85), 0 0 30px rgba(229, 160, 68, 0.28);
+}
+
+.coverflow-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  user-select: none;
+  pointer-events: none;
+}
+
+.coverflow-card-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+  background: rgba(24, 22, 21, 0.82);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #FDFCFB;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.coverflow-card-badge-fare {
+  color: var(--gold, #E5A044);
+  font-family: var(--font-mono, monospace);
+}
+
+.coverflow-card-glass {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 24px 16px 14px;
+  background: linear-gradient(180deg, transparent 0%, rgba(18, 20, 22, 0.85) 55%, rgba(18, 20, 22, 0.98) 100%);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.coverflow-card-heading {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #FDFCFB;
+  margin: 0 0 4px;
+  line-height: 1.25;
+}
+
+.coverflow-card-sub {
+  font-size: 0.72rem;
+  color: rgba(253, 252, 251, 0.72);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Nav Chevrons */
+.coverflow-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(24, 22, 21, 0.78);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #FDFCFB;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 200;
+  transition: background 0.2s, transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+  padding: 0;
+}
+
+.coverflow-nav:hover {
+  background: rgba(36, 34, 32, 0.95);
+  border-color: var(--gold, #E5A044);
+  transform: translateY(-50%) scale(1.08);
+  box-shadow: 0 0 16px rgba(229, 160, 68, 0.35);
+}
+
+.coverflow-nav--prev {
+  left: 6px;
+}
+
+.coverflow-nav--next {
+  right: 6px;
+}
+
+/* Pagination Dots */
+.coverflow-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.coverflow-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: rgba(253, 252, 251, 0.3);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: width 0.25s ease, background-color 0.25s ease, opacity 0.25s ease;
+}
+
+.coverflow-dot.is-active {
+  width: 28px;
+  background: var(--gold, #E5A044);
+  box-shadow: 0 0 10px rgba(229, 160, 68, 0.4);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .coverflow-card {
+    transition: none !important;
+    transform: none !important;
+  }
+  .coverflow-nav,
+  .coverflow-dot {
+    transition: none !important;
+  }
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
