@@ -206,4 +206,21 @@ Admin, live Razorpay, WhatsApp Cloud API, CMS, Next.js rewrite, auth.
 
 **Acceptance criteria:** Cloudflare asset uploads contain 0 files > 25 MiB; `quality_audit.py` passes with 10.0/10.0 A+ grade; GitHub Actions workflow is fully specified; 113/113 URLs OK.
 
+---
+
+## Phase 32 — React migration documentation and parallel workspace
+**Depends on:** Phase 31
+
+1. Create the React migration contract, requirements references, architecture,
+   rules, phases, design guidance, and reserved `react/` workspace.
+2. Create the React foundation without changing the root vanilla site.
+3. Port the design system and typed data with parity checks.
+4. Port shared chrome, marketing pages, detail pages, and booking in separate
+   verified steps.
+5. Add static SEO output and complete parity, accessibility, responsive, and
+   performance gates before cutover.
+
+**Acceptance criteria:** the migration documents agree on scope and boundaries;
+the vanilla site remains the production baseline; the tracker points to the
+next React foundation step.
 
