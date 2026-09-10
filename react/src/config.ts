@@ -1,0 +1,64 @@
+export type SupportedLanguage = "en" | "hi";
+
+export type SiteContact = {
+  phone: string;
+  phoneDisplay: string;
+  whatsapp: string;
+  email: string;
+  address: string;
+  city: string;
+  region: string;
+  postalCode: string;
+  latitude: number;
+  longitude: number;
+};
+
+export type SiteConfig = {
+  name: string;
+  domain: string;
+  contact: SiteContact;
+  defaultLanguage: SupportedLanguage;
+  supportedLanguages: readonly SupportedLanguage[];
+};
+
+export const siteConfig: SiteConfig = {
+  name: "SK Baghel Tour & Travels",
+  domain: "https://agraskbagheltourandtravels.com",
+  defaultLanguage: "en",
+  supportedLanguages: ["en", "hi"],
+  contact: {
+    phone: "+919876543210",
+    phoneDisplay: "+91 98765 43210",
+    whatsapp: "919876543210",
+    email: "bookings@skbagheltravels.in",
+    address: "Near Taj East Gate Road, Taj Ganj",
+    city: "Agra",
+    region: "Uttar Pradesh",
+    postalCode: "282001",
+    latitude: 27.1632,
+    longitude: 78.0322,
+  },
+};
+
+export function isReactMigrationEnabled(): boolean {
+  return import.meta.env.VITE_REACT_MIGRATION_ENABLED !== "false";
+}
+
+function readRuntimeToken(): string {
+  const configured = import.meta.env.VITE_LOCATIONIQ_ACCESS_TOKEN?.trim();
+  if (configured) return configured;
+
+  if (typeof window === "undefined") return "";
+
+  try {
+    return (
+      window.localStorage.getItem("locationiq_access_token")?.trim() || ""
+    );
+  } catch {
+    return "";
+  }
+}
+
+export function getLocationIqAccessToken(): string {
+  return readRuntimeToken();
+}

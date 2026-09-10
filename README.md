@@ -60,6 +60,34 @@ Rebuild after editing `scripts/catalog.py`, `scripts/i18n.py` or `scripts/render
 python3 scripts/render_pages.py
 ```
 
+## React migration preview
+
+The responsive React platform is being migrated beside the current static site.
+It is not production cutover yet. Start its development server with:
+
+```bash
+npm install
+VITE_REACT_MIGRATION_ENABLED=true npm run react:dev
+```
+
+The migration gate defaults to enabled for local development and can be
+explicitly disabled in a production build until cutover is approved:
+
+```bash
+VITE_REACT_MIGRATION_ENABLED=false npm run react:build
+```
+
+The React build defaults to the custom-domain root. To test a project-site
+subpath, set the base explicitly:
+
+```bash
+VITE_BASE_PATH=/ArenaAI npm run react:build
+npm run react:preview
+```
+
+Production output is written to `dist/react/`; the legacy static pages remain
+outside that output until the migration is approved for cutover.
+
 ## Speed notes
 
 - No framework. Booking JS loads only on `book.html`.
