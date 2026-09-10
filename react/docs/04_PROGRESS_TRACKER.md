@@ -9,9 +9,9 @@ only check boxes, append log rows, and update the Current State block.
 ## Current State
 
 - **Current Phase:** React Standalone Development — Phase R4: Shared UI Components & Layouts
-- **Current Step:** Phase R4.1 — Navigation Shell & Header (`react/src/components/navigation/Header.tsx`)
+- **Current Step:** Phase R4.2 — Rolling Nav Links Component (`react/src/components/chrome/RollLink.tsx`)
 - **Last updated:** 2026-09-10
-- **Summary:** Cleaned legacy HTML, CSS, JS, Python SSG codebase and clutter from root. Archived all screen and interaction references into `react/reference/` (`html/`, `css/`, `js/`, `templates/`). Copied image assets into `react/public/assets/` making `react/` completely self-contained. Updated route generator in `react/scripts/generate-routes.mjs` to derive routes deterministically from typed catalogue. Added root convenience scripts (`npm run dev`, `npm run build`, `npm run typecheck`, `npm run preview`). Zero TypeScript errors, Vite build succeeds in 1.72s with 68 static route entrypoints.
+- **Summary:** Built `BrandLogo` component (`react/src/components/chrome/BrandLogo.tsx`) with animated SVG compass emblem, golden needle fill, pivot gem, 30ms progressive character scramble on hover/focus, gold glow pulse, and WCAG reduced-motion safety. Wired into `Chrome.tsx` Header. Typecheck and build pass with 0 errors.
 - **Open items:** Real photos + real NAP before launch (see `LAUNCH_CHECKLIST.md`); Client decision points from the dossier are pending client reply (`CLIENT_CONFIRMATION_FARES_AND_RULES.md`). Payments remain mock until `docs/PAYMENT_SYSTEM.md` is implemented.
 
 ---
@@ -361,3 +361,6 @@ can't be resolved without user input)_
 - [x] 4. Root Directory Cleanup: Wiped legacy `en/`, `hi/`, root `.html` files, legacy `css/`, `styles/`, `js/`, `lib/`, `components/`, `templates/`, `scripts/`, temporary patches, and redundant root markdown files already organized in `react/docs/`.
 - [x] 5. Root Convenience Scripts: Added root `dev`, `build`, `typecheck`, and `preview` scripts proxying to `react/`.
 - [x] 6. Build & Typecheck Verification: `npm run typecheck` passes with 0 errors; `npm run build` succeeds in 1.72s generating 68 route entrypoints. Workspace is clean and primed for Phase R4 React component development.
+
+### Phase R4 — Shared Chrome & Navigation Components (2026-09-10)
+- [x] R4.1: Brand Wordmark Scrambler (`react/src/components/chrome/BrandLogo.tsx`): Built interactive brand component with SVG compass emblem, cardinal ring, gold needle fill, pivot gem, 30ms progressive character scramble on hover/focus, gold glow pulse, and WCAG 2.2 AA reduced-motion safety. Integrated into `Chrome.tsx` Header. Typecheck and build pass with 0 errors.

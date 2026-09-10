@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { contact } from "../data/contact";
 import { prefetchDocument } from "../app/prefetch";
+import { BrandLogo } from "./chrome/BrandLogo";
 
 interface NavLinkProps {
   href: string;
@@ -27,10 +28,7 @@ export function Header() {
 
   return (
     <header className="site-header">
-      <a className="brand" href="/" aria-label="SK Baghel Tour & Travels home" onClick={closeMenu}>
-        <strong>SK BAGHEL</strong>
-        <span>Tour &amp; Travels</span>
-      </a>
+      <BrandLogo href="/" onClick={closeMenu} />
       <button
         className="menu-toggle"
         type="button"

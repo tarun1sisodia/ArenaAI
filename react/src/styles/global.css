@@ -212,15 +212,77 @@ input:focus-visible {
 }
 
 .brand {
-  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
   text-decoration: none;
+  flex: 0 0 auto;
+  color: var(--text);
+  transition: transform var(--motion-fast, 180ms) ease;
 }
 
-.brand span {
-  display: block;
+.brand-mark {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+  flex-shrink: 0;
+  transition: transform var(--motion-medium, 300ms) cubic-bezier(0.34, 1.56, 0.64, 1),
+              filter var(--motion-fast, 180ms) ease;
+}
+
+.brand-mark svg {
+  width: 100%;
+  height: 100%;
+}
+
+.brand:hover .brand-mark,
+.brand:focus-visible .brand-mark {
+  transform: scale(1.08) rotate(-3deg);
+  filter: drop-shadow(0 0 8px rgba(229, 160, 68, 0.5));
+}
+
+.brand-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  line-height: 1;
+}
+
+.brand-copy strong.brand-wordmark {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--text);
+  font-family: var(--font-ui);
+  transition: color var(--motion-fast, 180ms) ease;
+}
+
+.brand:hover .brand-copy strong.brand-wordmark,
+.brand:focus-visible .brand-copy strong.brand-wordmark {
+  color: var(--gold-deep, #b27123);
+}
+
+.brand-copy small.brand-subtext {
   color: var(--text-soft);
-  font-size: 0.75rem;
-  font-weight: 400;
+  font-family: var(--font-mono);
+  font-size: 7.5px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-mark {
+    transition: none !important;
+  }
+  .brand:hover .brand-mark,
+  .brand:focus-visible .brand-mark {
+    transform: none !important;
+    filter: none !important;
+  }
 }
 
 .primary-nav,
