@@ -231,7 +231,7 @@ Every single unit of work is broken down into a discrete, verifiable step. Imple
 [x] Phase R1 — Foundation & Static Build Infrastructure (R1.1 to R1.7 verified)
 - [ ] **Phase R2 — Data, Pure Fare Engine & Core Utilities** (R2.1 & R2.2 complete, R2.3 next)
 [ ] Phase R3 — Design System & Responsive Primitives (R3.1 to R3.10)
-[ ] Phase R4 — Shared Chrome & Navigation Components (R4.1 to R4.9)
+[x] Phase R4 — Shared Chrome & Navigation Components (R4.1 to R4.9 complete)
 [ ] Phase R5 — Marketing Pages, Detail Templates & Pre-Rendering (R5.1 to R5.27)
 [ ] Phase R6 — LocationIQ & Interactive Discovery (R6.1 to R6.5)
 [ ] Phase R7 — Fare Calculator & 5-Step Booking Flow (R7.1 to R7.8)
@@ -285,16 +285,16 @@ Every single unit of work is broken down into a discrete, verifiable step. Imple
 
 ---
 
-### Phase R4: Shared Chrome & Navigation Components ⏳
-- [ ] **R4.1:** Brand Wordmark Scrambler (`react/src/components/chrome/BrandLogo.tsx`): Interactive logo with character scrambler effect on hover, SVG compass emblem, and gold glow pulse.
-- [ ] **R4.2:** Rolling Nav Links Component (`react/src/components/chrome/RollLink.tsx`): Dual-layer vertical text curtain animation with golden hover slide and active page indicator.
-- [ ] **R4.3:** Desktop Navigation Header (`react/src/components/chrome/Header.tsx`): Sticky header, luxury dropdown menus (Services, Routes, Packages, Fleet, Contact), language toggle (EN/HI), theme toggle, and Book CTA.
-- [ ] **R4.4:** Mobile Navigation Sheet Drawer (`react/src/components/chrome/MobileNavSheet.tsx`): Touch-first full drawer with accordion category groups, quick call/WhatsApp buttons, and language switcher.
-- [ ] **R4.5:** Sticky Mobile Bottom Lead-Bar (`react/src/components/chrome/StickyLeadBar.tsx`): Fixed thumb-zone bar with Call button, WhatsApp button, and Book Now action (safe-area-inset padded, auto-hides at bottom of form).
-- [ ] **R4.6:** Radial Quick Actions Dock (`react/src/components/chrome/RadialDock.tsx`): Floating action speed-dial button expanding with spring motion to reveal Call, WhatsApp, Tours, and Instant Booking.
-- [ ] **R4.7:** Luxury Page Loader Overlay (`react/src/components/chrome/PageLoader.tsx`): Non-blocking shining text curtain with 600ms minimum display, dismissing on real window load.
-- [ ] **R4.8:** Global Footer Component (`react/src/components/chrome/Footer.tsx`): Full NAP block, interactive Google Maps link, legal links, vehicle directory, route directory, and copyright.
-- [ ] **R4.9:** Accessible Skip Link (`react/src/components/chrome/SkipLink.tsx`): Top skip-to-content link for keyboard users.
+### Phase R4: Shared Chrome & Navigation Components ✅
+- [x] **R4.1:** Brand Wordmark Scrambler (`react/src/components/chrome/BrandLogo.tsx`): Interactive logo with character scrambler effect on hover, SVG compass emblem, and gold glow pulse.
+- [x] **R4.2:** Rolling Nav Links Component (`react/src/components/chrome/RollLink.tsx`): Dual-layer vertical text curtain animation with golden hover slide and active page indicator.
+- [x] **R4.3:** Desktop Navigation Header (`react/src/components/chrome/Header.tsx`): Sticky header, luxury dropdown menus (Services, Routes, Packages, Fleet, Contact), language toggle (EN/HI), theme toggle, and Book CTA.
+- [x] **R4.4:** Mobile Navigation Sheet Drawer (`react/src/components/chrome/MobileNavSheet.tsx`): Touch-first full drawer with accordion category groups, quick call/WhatsApp buttons, and language switcher.
+- [x] **R4.5:** Sticky Mobile Bottom Lead-Bar (`react/src/components/chrome/StickyLeadBar.tsx`): Fixed thumb-zone bar with Call button, WhatsApp button, and Book Now action (safe-area-inset padded, auto-hides at bottom of form).
+- [x] **R4.6:** Radial Quick Actions Dock (`react/src/components/chrome/RadialDock.tsx`): Floating action speed-dial button expanding with spring motion to reveal Call, WhatsApp, Tours, and Instant Booking.
+- [x] **R4.7:** Luxury Page Loader Overlay (`react/src/components/chrome/PageLoader.tsx`): Non-blocking shining text curtain with 600ms minimum display, dismissing on real window load.
+- [x] **R4.8:** Global Footer Component (`react/src/components/chrome/Footer.tsx`): Full NAP block, interactive Google Maps link, legal links, vehicle directory, route directory, and copyright.
+- [x] **R4.9:** Accessible Skip Link (`react/src/components/chrome/SkipLink.tsx`): Top skip-to-content link for keyboard users.
 
 ---
 

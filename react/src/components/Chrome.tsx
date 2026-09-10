@@ -5,6 +5,9 @@ export { ThemeToggle } from "./chrome/ThemeToggle";
 export { MobileNavSheet } from "./chrome/MobileNavSheet";
 export { StickyLeadBar, StickyLeadBar as LeadBar } from "./chrome/StickyLeadBar";
 export { RadialDock } from "./chrome/RadialDock";
+export { PageLoader } from "./chrome/PageLoader";
+export { Footer } from "./chrome/Footer";
+export { SkipLink } from "./chrome/SkipLink";
 
 export function LoadingIndicator({ label = "Loading" }: { label?: string }) {
   return (

@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
-import { Header, LeadBar, RadialDock } from "../components/Chrome";
-import { contact } from "../data/contact";
+import { Header, LeadBar, RadialDock, PageLoader, Footer, SkipLink } from "../components/Chrome";
 
 interface SiteLayoutProps {
   children: ReactNode;
@@ -9,14 +8,13 @@ interface SiteLayoutProps {
 export function SiteLayout({ children }: SiteLayoutProps) {
   return (
     <div className="app-shell">
+      <SkipLink />
+      <PageLoader />
       <Header />
       {children}
       <LeadBar />
       <RadialDock />
-      <footer className="site-footer">
-        <span>SK Baghel Tour &amp; Travels</span>
-        <a href={`tel:${contact.phone}`}>Call the travel desk</a>
-      </footer>
+      <Footer />
     </div>
   );
 }
