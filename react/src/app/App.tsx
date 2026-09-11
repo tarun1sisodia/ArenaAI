@@ -8,6 +8,7 @@ import { FleetPage } from "../pages/FleetPage";
 import { AboutPage } from "../pages/AboutPage";
 import { ContactPage } from "../pages/ContactPage";
 import { FaqPage } from "../pages/FaqPage";
+import { TermsPage } from "../pages/TermsPage";
 import { BookingPage } from "../features/booking/BookingPage";
 import { MarketingPage } from "../pages/MarketingPage";
 import { marketingHubs } from "./routes";
@@ -134,6 +135,18 @@ function getSeo(pathname: string, section: string, language: "en" | "hi", isBook
       description: "Find clear answers about outstation taxi rules, 300 km/day minimums, Yamuna Expressway toll inclusions, night allowances, and our 24-hr refund policy."
     };
   }
+  if (section === "terms") {
+    if (language === "hi") {
+      return {
+        title: "नियम व शर्तें — एस के बघेल टूर एंड ट्रेवल्स आगरा | कैंसिलेशन व रिफंड नीति",
+        description: "हमारी पारदर्शी वाणिज्यिक शर्तें पढ़ें: 24 घंटे में 100% पूरा रिफंड, मल्टी-डे टूर कैंसिलेशन तालिका, 300 किमी आउटस्टेशन नियम व आगरा कानूनी क्षेत्राधिकार।"
+      };
+    }
+    return {
+      title: "Terms & Conditions — SK Baghel Tour & Travels Agra | Cancellation Policy",
+      description: "Review our transparent commercial terms: 24-hr cab cancellation with 100% refund, 6-tier tour schedule, 300 km/day outstation rules, and Agra jurisdiction."
+    };
+  }
   const languagePrefix = language === "hi" ? " | SK Baghel Tour & Travels" : " | SK Baghel Tour & Travels";
   return {
     title: `${section.replaceAll("-", " ")}${languagePrefix}`,
@@ -178,6 +191,8 @@ function App() {
           <ContactPage language={language} />
         ) : section === "faq" ? (
           <FaqPage language={language} />
+        ) : section === "terms" ? (
+          <TermsPage language={language} />
         ) : isMarketingHub || pathname.startsWith("/en/") || pathname.startsWith("/hi/") ? (
           <MarketingPage language={language} section={section} />
         ) : (

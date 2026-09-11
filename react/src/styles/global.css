@@ -9739,6 +9739,352 @@ html.dark .page-loader__bar-fill {
   background: var(--bg-alt);
 }
 
+/* ==========================================================================
+   Phase R5.18 — Terms & Conditions Hub Page Styles (TermsPage.tsx)
+   ========================================================================== */
+
+.terms-page {
+  background: var(--bg);
+  color: var(--text);
+  position: relative;
+}
+
+.terms-hero {
+  padding: clamp(48px, 6vw, 72px) 0 40px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+
+/* Quick Jump Sticky Navigation Pill Bar */
+.terms-toc-strip {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 72px;
+  z-index: 20;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.terms-toc-scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 10px 0;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.terms-toc-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.terms-toc-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.terms-toc-link:hover {
+  border-color: var(--gold);
+  color: var(--gold-dark);
+  background: rgba(229, 160, 68, 0.06);
+}
+
+/* Main Content Section */
+.terms-content-section {
+  padding: clamp(40px, 5vw, 64px) 0;
+  background: var(--bg);
+}
+
+.terms-layout {
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+.terms-article {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+/* Introduction Callout */
+.terms-callout {
+  display: flex;
+  gap: 18px;
+  padding: 24px;
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.terms-callout--brand {
+  border-color: rgba(229, 160, 68, 0.4);
+  background: linear-gradient(180deg, var(--surface) 0%, rgba(229, 160, 68, 0.04) 100%);
+}
+
+.terms-callout__icon {
+  font-size: 1.8rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.terms-callout__body h4 {
+  margin: 0 0 8px;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.terms-callout__body p {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--text-soft);
+  line-height: 1.6;
+}
+
+/* Clauses */
+.terms-clause {
+  display: flex;
+  gap: 24px;
+  padding-top: 36px;
+  border-top: 1px solid var(--border);
+  scroll-margin-top: 130px;
+}
+
+.terms-clause__num {
+  font-family: var(--font-mono);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--gold);
+  line-height: 1;
+  flex-shrink: 0;
+  width: 44px;
+}
+
+.terms-clause__content {
+  flex: 1;
+}
+
+.terms-clause__content h2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 2.2vw, 1.75rem);
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 14px;
+  line-height: 1.3;
+}
+
+.terms-clause__content p {
+  font-size: 0.95rem;
+  color: var(--text-soft);
+  line-height: 1.65;
+  margin: 0 0 16px;
+}
+
+.terms-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.terms-list li {
+  position: relative;
+  padding-left: 24px;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--text-soft);
+}
+
+.terms-list li::before {
+  content: '•';
+  position: absolute;
+  left: 8px;
+  color: var(--gold);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.terms-list li strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* Cancellation Table */
+.cancellation-table-wrap {
+  overflow-x: auto;
+  margin: 20px 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+
+.cancellation-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.cancellation-table th {
+  padding: 14px 18px;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  color: var(--text-soft);
+  background: var(--bg-alt);
+  border-bottom: 1px solid var(--border);
+  letter-spacing: 0.04em;
+}
+
+.cancellation-table td {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+
+.cancellation-table tr:last-child td {
+  border-bottom: none;
+}
+
+.refund-highlight {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: #16a34a;
+}
+
+.terms-table-note {
+  font-size: 0.82rem;
+  color: var(--text-soft);
+  line-height: 1.5;
+  margin: 8px 0 0;
+}
+
+/* Legal Box */
+.terms-legal-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 18px 22px;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: var(--text-soft);
+}
+
+.terms-legal-box strong {
+  color: var(--text);
+}
+
+.terms-legal-box p {
+  margin: 0;
+}
+
+/* Terms Bottom CTA Strip */
+.terms-cta-strip {
+  padding: clamp(40px, 5vw, 64px) 0 clamp(64px, 7vw, 96px);
+  background: var(--bg-alt);
+  border-top: 1px solid var(--border);
+}
+
+/* Responsive Media Queries for Terms Hub */
+@media (max-width: 768px) {
+  .terms-clause {
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 28px;
+  }
+
+  .terms-clause__num {
+    width: auto;
+  }
+
+  .cancellation-table th,
+  .cancellation-table td {
+    padding: 10px 12px;
+    font-size: 0.82rem;
+  }
+}
+
+/* Solar Dusk Dark Mode Overrides for Terms Hub */
+[data-theme="dark"] .terms-page {
+  background: var(--bg);
+}
+
+[data-theme="dark"] .terms-hero {
+  background: var(--bg);
+}
+
+[data-theme="dark"] .terms-toc-strip {
+  background: rgba(36, 34, 32, 0.95);
+  border-color: var(--border);
+}
+
+[data-theme="dark"] .terms-toc-link {
+  background: var(--bg);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+[data-theme="dark"] .terms-content-section {
+  background: var(--bg);
+}
+
+[data-theme="dark"] .terms-callout {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+[data-theme="dark"] .terms-callout--brand {
+  border-color: rgba(229, 160, 68, 0.35);
+  background: linear-gradient(180deg, var(--surface) 0%, rgba(229, 160, 68, 0.06) 100%);
+}
+
+[data-theme="dark"] .terms-clause {
+  border-color: var(--border);
+}
+
+[data-theme="dark"] .cancellation-table-wrap {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+[data-theme="dark"] .cancellation-table th {
+  background: var(--bg);
+  border-color: var(--border);
+}
+
+[data-theme="dark"] .cancellation-table td {
+  border-color: var(--border);
+}
+
+[data-theme="dark"] .terms-legal-box {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+[data-theme="dark"] .terms-cta-strip {
+  background: var(--bg-alt);
+}
+
+
 
 
 
