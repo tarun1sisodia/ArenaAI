@@ -5058,3 +5058,218 @@ html.dark .page-loader__bar-fill {
   }
 }
 
+/* ==========================================================================
+   Fleet Section & Luxury Vehicle Cards
+   ========================================================================== */
+.fleet-section {
+  position: relative;
+  background: var(--bg-alt);
+  padding: 80px 0;
+}
+
+.fleet-grid,
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.vehicle-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--radius-card, 16px);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 300ms cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 300ms ease;
+}
+
+.vehicle-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(229, 160, 68, 0.45);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08), 0 0 16px rgba(229, 160, 68, 0.12);
+}
+
+.vehicle-photo {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: #1A1D20;
+}
+
+.vehicle-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
+  display: block;
+}
+
+.vehicle-card:hover .vehicle-photo img {
+  transform: scale(1.04);
+}
+
+.vehicle-photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(10, 17, 40, 0.45) 0%, transparent 40%, rgba(10, 17, 40, 0.2) 100%);
+  pointer-events: none;
+}
+
+.vehicle-photo-tag {
+  position: absolute;
+  z-index: 2;
+  top: 14px;
+  left: 14px;
+  right: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #FFFFFF;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+
+.vehicle-photo-tag b {
+  color: var(--gold, #E5A044);
+  font-weight: 600;
+}
+
+.vehicle-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 22px 20px 20px;
+}
+
+.vehicle-body h3 {
+  margin: 0 0 8px;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.25;
+}
+
+.vehicle-body p {
+  margin: 0 0 16px;
+  color: var(--text-soft);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  flex: 1;
+}
+
+.vehicle-specs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+
+.vehicle-spec-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  color: var(--text-soft);
+  font-family: var(--font-mono, monospace);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.vehicle-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.vehicle-price {
+  display: flex;
+  flex-direction: column;
+}
+
+.vehicle-price-label {
+  font-size: 0.75rem;
+  color: var(--text-soft);
+}
+
+.vehicle-price-val {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.vehicle-action-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--gold-deep, #D9943B);
+  text-decoration: none;
+  transition: color 200ms ease, transform 200ms ease;
+}
+
+.vehicle-action-link:hover {
+  color: var(--gold, #E5A044);
+  transform: translateX(2px);
+}
+
+@media (max-width: 992px) {
+  .fleet-grid,
+  .grid-3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .fleet-grid,
+  .grid-3 {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .vehicle-body {
+    padding: 18px 16px 16px;
+  }
+}
+
+/* Solar Dusk Dark Mode Overrides */
+[data-theme="dark"] .fleet-section {
+  background: var(--bg-alt);
+}
+
+[data-theme="dark"] .vehicle-card {
+  background: var(--surface);
+  border-color: var(--border);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+}
+
+[data-theme="dark"] .vehicle-spec-pill {
+  background: var(--bg);
+  border-color: var(--border);
+  color: var(--text-soft);
+}
+
+[data-theme="dark"] .vehicle-card:hover {
+  border-color: rgba(229, 160, 68, 0.5);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5), 0 0 20px rgba(229, 160, 68, 0.15);
+}
+
