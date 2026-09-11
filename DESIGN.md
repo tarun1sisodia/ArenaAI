@@ -199,3 +199,7 @@ demo chip are pills. Do not mix large rounded-xl cards with 3px buttons.
 - Do respect `prefers-reduced-motion`.
 - Don't edit files under `design-guide/` or `proposal/`.
 - Do keep fares identical in EN and HI; translate copy only.
+
+## Design Locks & Immutability
+
+Before modifying or refactoring any existing UI component, style, or animation, consult `DESIGN_LOCKS.md`. Any component, pattern, or logic marked as `LOCKED` is protected from unintended modification and must NOT be changed without explicit user instruction and confirmation.

@@ -12,6 +12,7 @@ documentation pack.
 2. **Consult single sources of truth**
    - Stack & architecture: `02_PROJECT_CONTEXT.md`
    - Visual system: `DESIGN.md` — never hardcode arbitrary colors/sizes
+   - Locked designs & patterns: `DESIGN_LOCKS.md` — verify status before editing any existing component, pattern, or logic
    - Animation verification: `ANIMATION_RULES.md` — SEO safety & accessibility before adding animations
    - Payments: `docs/PAYMENT_SYSTEM.md` + `.agents/rules/PAYMENT_AGENT_RULES.md` — never live-charge without webhook + server fare
    - Sequence & acceptance: `03_PHASE_PLAN.md`
@@ -29,3 +30,7 @@ documentation pack.
    - `booking.js` only on `book.html`
    - Leave `design-guide/` untouched
    - Stay on branch `arena/01a05b8c-arenaai`
+
+5. **Design Lock Compliance**
+   - NEVER modify, restyle, refactor, or override any component, design, pattern, or logic listed as `LOCKED` in `DESIGN_LOCKS.md` without explicit user permission.
+   - If a requested step or change touches a locked component, STOP and ask the user for confirmation first. If not locked, proceed normally.
