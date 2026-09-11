@@ -8,6 +8,7 @@ import { PopularRoutes } from "../components/home/PopularRoutes";
 import { ServicesGrid } from "../components/home/ServicesGrid";
 import { CoverflowCarousel } from "../components/home/CoverflowCarousel";
 import { BenefitsSection } from "../components/home/BenefitsSection";
+import { ReviewsMarquee } from "../components/home/ReviewsMarquee";
 
 export function HomePage() {
   const [activeLandmark, setActiveLandmark] = useState("Taj Mahal · Dawn in Agra");
@@ -48,6 +49,8 @@ export function HomePage() {
       <CoverflowCarousel />
 
       <BenefitsSection />
+
+      <ReviewsMarquee />
 
       <section className="contact-card" id="contact" aria-labelledby="contact-heading"><div><p className="eyebrow">Start a conversation</p><h2 id="contact-heading">Plan your next journey.</h2></div><a className="button button-primary" href={`https://wa.me/${contact.whatsapp}`}>Message on WhatsApp</a></section>
     </main>

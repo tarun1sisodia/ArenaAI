@@ -305,10 +305,10 @@ Every single unit of work is broken down into a discrete, verifiable step. Imple
 - [ ] **R5.2:** Hero Quick Fare Calculator Widget (`react/src/components/home/HeroFareWidget.tsx`): Interactive tabbed widget (One-Way, Round-Trip, Local Tour) with live fare quote and 1-click book redirect.
 - [ ] **R5.3:** Trust Roller Marquee Component (`react/src/components/home/TrustRoller.tsx`): 42s infinite marquee with pause-on-hover and 8 E-E-A-T trust chips (Govt Fleet, GST Invoice, Chauffeur ID, etc.).
 - [ ] **R5.4:** Popular Routes Grid Section (`react/src/components/home/PopularRoutes.tsx`): Responsive cards for Agra-Delhi, Agra-Jaipur, Agra-Mathura, Agra-Gwalior with starting prices, duration badges, and book links.
-- [ ] **R5.5:** Six Operational Services Grid (`react/src/components/home/ServicesGrid.tsx`): 6 vertical cards with index numerals (01-06), variant color borders (navy, light, gold), tags, and CTAs.
-- [ ] **R5.6:** 3D Coverflow Sightseeing Carousel (`react/src/components/home/CoverflowCarousel.tsx`): 3D perspective carousel cycling 6 tour packages with cover reflection, package kicker, places pills, fare, and WhatsApp CTA.
-- [ ] **R5.7:** "Benefits To Book Cab With Us" Section (`react/src/components/home/BenefitsSection.tsx`): 6 core benefit cards with gold background fill-on-hover and crisp white icon transition.
-- [ ] **R5.8:** 2-Row Liquid Glass Marquee Reviews (`react/src/components/home/ReviewsMarquee.tsx`): Dual opposing marquee tracks with glassmorphism cards, verified customer quotes, and Lucide stars.
+- [x] **R5.5:** Six Operational Services Grid (`react/src/components/home/ServicesGrid.tsx`): 6 vertical cards with index numerals (01-06), variant color borders (navy, light, gold), tags, and CTAs.
+- [x] **R5.6:** 3D Coverflow Sightseeing Carousel (`react/src/components/home/CoverflowCarousel.tsx`): 3D perspective carousel cycling 6 tour packages with cover reflection, package kicker, places pills, fare, and WhatsApp CTA.
+- [x] **R5.7:** "Benefits To Book Cab With Us" Section (`react/src/components/home/BenefitsSection.tsx`): 6 core benefit cards with gold background fill-on-hover and crisp white icon transition.
+- [x] **R5.8:** 2-Row Liquid Glass Marquee Reviews (`react/src/components/home/ReviewsMarquee.tsx`): Dual opposing marquee tracks with glassmorphism cards, verified customer quotes, and Lucide stars.
 - [ ] **R5.9:** Architectural Contact Card Section (`react/src/components/home/ContactCard.tsx`): Bento contact card with corner plus markers, verified NAP details, working inquiry form with feedback toast, and live map link.
 - [ ] **R5.10:** Complete Home Page Assembler (`react/src/pages/HomePage.tsx`): Bilingual Home page integrating all home sections, meta tags, and structured data.
 
