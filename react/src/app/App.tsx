@@ -3,6 +3,7 @@ import { SiteLayout } from "../layouts/SiteLayout";
 import { HomePage } from "../pages/HomePage";
 import { ServicesPage } from "../pages/ServicesPage";
 import { RoutesPage } from "../pages/RoutesPage";
+import { PackagesPage } from "../pages/PackagesPage";
 import { BookingPage } from "../features/booking/BookingPage";
 import { MarketingPage } from "../pages/MarketingPage";
 import { marketingHubs } from "./routes";
@@ -69,6 +70,18 @@ function getSeo(pathname: string, section: string, language: "en" | "hi", isBook
       description: "Outstation cab network from Agra to Delhi, Jaipur, Mathura, Gwalior & Lucknow. Live route calculator, distance matrix, expressway tolls included from ₹3,499."
     };
   }
+  if (section === "packages") {
+    if (language === "hi") {
+      return {
+        title: "आगरा टूर पैकेज व ताज महल दर्शनीय यात्रा | SK Baghel",
+        description: "ताज महल सूर्योदय टूर, मथुरा-वृंदावन, गतिमान एक्सप्रेस एवं 3-दिवसीय गोल्डन ट्रायंगल टूर पैकेज। टोल-टैक्स सहित पारदर्शी मूल्य व मुद्रा परिवर्तक (INR/USD/EUR/GBP)।"
+      };
+    }
+    return {
+      title: "Agra Tour Packages & Taj Mahal Sightseeing Circuits | SK Baghel",
+      description: "Curated private tour packages: Taj Mahal Sunrise tour, Mathura Vrindavan, Gatimaan train package & Golden Triangle. Multi-currency switcher, transparent all-inclusive fares."
+    };
+  }
   const languagePrefix = language === "hi" ? " | SK Baghel Tour & Travels" : " | SK Baghel Tour & Travels";
   return {
     title: `${section.replaceAll("-", " ")}${languagePrefix}`,
@@ -103,6 +116,8 @@ function App() {
           <ServicesPage language={language} />
         ) : section === "routes" ? (
           <RoutesPage language={language} />
+        ) : section === "packages" ? (
+          <PackagesPage language={language} />
         ) : isMarketingHub || pathname.startsWith("/en/") || pathname.startsWith("/hi/") ? (
           <MarketingPage language={language} section={section} />
         ) : (
