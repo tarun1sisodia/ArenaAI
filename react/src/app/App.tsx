@@ -6,6 +6,7 @@ import { RoutesPage } from "../pages/RoutesPage";
 import { PackagesPage } from "../pages/PackagesPage";
 import { FleetPage } from "../pages/FleetPage";
 import { AboutPage } from "../pages/AboutPage";
+import { ContactPage } from "../pages/ContactPage";
 import { BookingPage } from "../features/booking/BookingPage";
 import { MarketingPage } from "../pages/MarketingPage";
 import { marketingHubs } from "./routes";
@@ -108,6 +109,18 @@ function getSeo(pathname: string, section: string, language: "en" | "hi", isBook
       description: "Founded in Taj Ganj, Agra. Over 15 years of trusted chauffeur-driven outstation cabs, verified drivers, and transparent zero-commission heritage tours."
     };
   }
+  if (section === "contact") {
+    if (language === "hi") {
+      return {
+        title: "संपर्क करें — एस के बघेल टूर एंड ट्रेवल्स आगरा | 24×7 ट्रेवल डेस्क",
+        description: "ताजगंज आगरा में स्थित 24×7 कंट्रोल रूम से संपर्क करें। आउटस्टेशन टैक्सी, ताज महल टूर व एयरपोर्ट ट्रांसफर के लिए फोन कॉल या व्हाट्सएप करें।"
+      };
+    }
+    return {
+      title: "Contact Us — SK Baghel Tour & Travels Agra | 24×7 Travel Desk",
+      description: "Get in touch with our 24×7 Taj Ganj dispatch desk for outstation cabs, sunrise Taj Mahal tours, and luxury group travel in Agra. Call +91 98765 43210."
+    };
+  }
   const languagePrefix = language === "hi" ? " | SK Baghel Tour & Travels" : " | SK Baghel Tour & Travels";
   return {
     title: `${section.replaceAll("-", " ")}${languagePrefix}`,
@@ -148,6 +161,8 @@ function App() {
           <FleetPage language={language} />
         ) : section === "about" ? (
           <AboutPage language={language} />
+        ) : section === "contact" ? (
+          <ContactPage language={language} />
         ) : isMarketingHub || pathname.startsWith("/en/") || pathname.startsWith("/hi/") ? (
           <MarketingPage language={language} section={section} />
         ) : (
