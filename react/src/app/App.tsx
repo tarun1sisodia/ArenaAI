@@ -11,6 +11,7 @@ import { FaqPage } from "../pages/FaqPage";
 import { TermsPage } from "../pages/TermsPage";
 import { PrivacyPage } from "../pages/PrivacyPage";
 import { NotFoundPage } from "../pages/NotFoundPage";
+import { RouteDetailPage } from "../pages/RouteDetailPage";
 import { BookingPage } from "../features/booking/BookingPage";
 import { MarketingPage } from "../pages/MarketingPage";
 import { marketingHubs } from "./routes";
@@ -39,6 +40,14 @@ function getSeo(pathname: string, section: string, language: "en" | "hi", isBook
   if (route) {
     const from = route.from[0].toUpperCase() + route.from.slice(1);
     const to = route.to[0].toUpperCase() + route.to.slice(1);
+    const fromHi = route.from === "agra" ? "आगरा" : route.from === "delhi" ? "दिल्ली" : route.from;
+    const toHi = route.to === "agra" ? "आगरा" : route.to === "delhi" ? "दिल्ली" : route.to === "jaipur" ? "जयपुर" : route.to === "mathura" ? "मथुरा" : route.to === "gwalior" ? "ग्वालियर" : route.to === "lucknow" ? "लखनऊ" : route.to;
+    if (language === "hi") {
+      return {
+        title: `${fromHi} से ${toHi} टैक्सी किराया व बुकिंग | SK Baghel`,
+        description: `${fromHi} से ${toHi} तक ${route.duration} की निजी एसी टैक्सी। पारदर्शी किराया, एक्सप्रेसवे टोल सहित, ₹${route.fares.sedan.toLocaleString("en-IN")} से शुरू।`
+      };
+    }
     return { title: `${from} to ${to} taxi fare | SK Baghel`, description: `${route.duration} private taxi from ${from} to ${to}, with transparent fares across our fleet.` };
   }
   if (section === "home") {
@@ -194,21 +203,23 @@ function App() {
   const isMarketingHub = marketingHubs.includes(section as (typeof marketingHubs)[number]);
   const isBooking = pathname.endsWith("book.html");
 
+  const matchedRoute = routes.find((item) => {
+    const from = item.from === "agra" && item.to === "agra" ? "agra-sightseeing" : `${item.from}-to-${item.to}`;
+    const hindiFrom = item.from === "agra" && item.to === "agra" ? "agra-darshan" : `${item.from}-se-${item.to}`;
+    return pathname.includes(`${from}-taxi`) || pathname.includes(`${hindiFrom}-taxi`);
+  });
+
   const isKnownRoute =
     isHome ||
     isBooking ||
     isMarketingHub ||
+    Boolean(matchedRoute) ||
     vehicles.some(
       (item) =>
         pathname.endsWith(item.id === "innova" ? "innova-crysta" : item.id === "tempo" ? "tempo-traveller" : item.id) ||
         pathname.endsWith((item.id === "innova" ? "innova-crysta" : item.id === "tempo" ? "tempo-traveller" : item.id) + "/")
     ) ||
-    packages.some((item) => pathname.endsWith(item.slug) || pathname.endsWith(item.slug + "/")) ||
-    routes.some((item) => {
-      const from = item.from === "agra" && item.to === "agra" ? "agra-sightseeing" : `${item.from}-to-${item.to}`;
-      const hindiFrom = item.from === "agra" && item.to === "agra" ? "agra-darshan" : `${item.from}-se-${item.to}`;
-      return pathname.includes(`${from}-taxi`) || pathname.includes(`${hindiFrom}-taxi`);
-    });
+    packages.some((item) => pathname.endsWith(item.slug) || pathname.endsWith(item.slug + "/"));
 
   const is404 =
     !isKnownRoute ||
@@ -230,6 +241,8 @@ function App() {
           <BookingPage />
         ) : isHome ? (
           <HomePage language={language} />
+        ) : matchedRoute ? (
+          <RouteDetailPage language={language} route={matchedRoute} />
         ) : section === "services" ? (
           <ServicesPage language={language} />
         ) : section === "routes" ? (

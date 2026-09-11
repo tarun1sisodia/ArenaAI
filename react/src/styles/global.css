@@ -10804,3 +10804,469 @@ html.dark .page-loader__bar-fill {
 [data-theme="dark"] .not-found-bento-card p {
   color: #9CA3AF;
 }
+
+/* ==========================================================================
+   Route Detail Landing Template (Step R5.21)
+   ========================================================================== */
+.route-detail-page {
+  background: var(--bg, #FFFFFF);
+}
+
+.route-detail-hero .hero-cta-buttons {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+/* Vehicle Matrix Section */
+.route-matrix-section {
+  padding: 56px 0;
+  background: var(--surface-muted, #F9FAFB);
+  border-top: 1px solid var(--border, #E5E7EB);
+  border-bottom: 1px solid var(--border, #E5E7EB);
+}
+
+.matrix-inclusions-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px 0 36px 0;
+}
+
+.inclusion-chip {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--primary, #D9943B);
+  background: rgba(217, 148, 59, 0.08);
+  border: 1px solid rgba(217, 148, 59, 0.22);
+  padding: 6px 14px;
+  border-radius: 9999px;
+}
+
+.route-vehicles-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+}
+
+.route-vehicle-card {
+  position: relative;
+  background: var(--surface, #FFFFFF);
+  border: 1px solid var(--border, #E5E7EB);
+  border-radius: 16px;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.route-vehicle-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--primary, #D9943B);
+  box-shadow: 0 12px 28px rgba(217, 148, 59, 0.12);
+}
+
+.route-vehicle-card--popular {
+  border: 2px solid var(--primary, #D9943B);
+}
+
+.vehicle-badge-popular {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #F5B942, #D9943B);
+  color: #121416;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 3px 12px;
+  border-radius: 9999px;
+  box-shadow: 0 2px 8px rgba(217, 148, 59, 0.3);
+  white-space: nowrap;
+}
+
+.vehicle-card-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.vehicle-icon-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(217, 148, 59, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.vehicle-class-tag {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--primary, #D9943B);
+  letter-spacing: 0.05em;
+  display: block;
+}
+
+.vehicle-name {
+  font-family: var(--font-heading, "Playfair Display", serif);
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: var(--text, #1A1D20);
+  margin: 2px 0 0 0;
+}
+
+.vehicle-models-text {
+  font-size: 0.75rem;
+  color: var(--text-muted, #5A626A);
+  margin-bottom: 14px;
+}
+
+.vehicle-specs-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+
+.spec-pill {
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 3px 8px;
+  background: var(--surface-muted, #F3F4F6);
+  border-radius: 6px;
+  color: var(--text, #1A1D20);
+}
+
+.vehicle-fare-block {
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px dashed var(--border, #E5E7EB);
+  margin-bottom: 16px;
+}
+
+.fare-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-muted, #5A626A);
+  letter-spacing: 0.04em;
+}
+
+.fare-amount {
+  font-family: var(--font-heading, "Playfair Display", serif);
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--primary, #D9943B);
+  line-height: 1.1;
+  margin: 4px 0 2px 0;
+}
+
+.fare-subtext {
+  font-size: 0.75rem;
+  color: var(--text-muted, #5A626A);
+}
+
+.vehicle-book-btn {
+  width: 100%;
+  justify-content: center;
+}
+
+/* Highway Intelligence Bento Section */
+.route-advisory-section {
+  padding: 56px 0;
+}
+
+.route-advisory-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.advisory-bento-card {
+  background: var(--surface, #FFFFFF);
+  border: 1px solid var(--border, #E5E7EB);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.advisory-bento-card:hover {
+  border-color: var(--primary, #D9943B);
+}
+
+.advisory-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.advisory-icon {
+  font-size: 1.75rem;
+}
+
+.advisory-tag {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(217, 148, 59, 0.1);
+  color: var(--primary, #D9943B);
+}
+
+.advisory-bento-card h3 {
+  font-family: var(--font-heading, "Playfair Display", serif);
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: var(--text, #1A1D20);
+  margin-bottom: 10px;
+  line-height: 1.35;
+}
+
+.advisory-bento-card p {
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--text-muted, #5A626A);
+}
+
+/* En-Route Stopovers Section */
+.route-stopovers-section {
+  padding: 52px 0;
+  background: var(--surface-muted, #F9FAFB);
+  border-top: 1px solid var(--border, #E5E7EB);
+  border-bottom: 1px solid var(--border, #E5E7EB);
+}
+
+.stopovers-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.stopover-card {
+  background: var(--surface, #FFFFFF);
+  border: 1px solid var(--border, #E5E7EB);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.stopover-icon {
+  font-size: 2rem;
+  margin-bottom: 12px;
+}
+
+.stopover-card h3 {
+  font-family: var(--font-heading, "Playfair Display", serif);
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: var(--text, #1A1D20);
+  margin-bottom: 8px;
+}
+
+.stopover-card p {
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--text-muted, #5A626A);
+}
+
+/* Route FAQs Accordion */
+.route-faqs-section {
+  padding: 56px 0;
+}
+
+.route-faqs-accordion {
+  max-width: 840px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.route-faq-item {
+  background: var(--surface, #FFFFFF);
+  border: 1px solid var(--border, #E5E7EB);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.route-faq-item--open {
+  border-color: var(--primary, #D9943B);
+  box-shadow: 0 4px 16px rgba(217, 148, 59, 0.08);
+}
+
+.route-faq-question-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+  background: none;
+  border: none;
+  text-align: left;
+  font-family: var(--font-heading, "Playfair Display", serif);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--text, #1A1D20);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.route-faq-question-btn:hover {
+  color: var(--primary, #D9943B);
+}
+
+.faq-toggle-icon {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--primary, #D9943B);
+  flex-shrink: 0;
+}
+
+.route-faq-answer {
+  padding: 0 20px 18px 20px;
+  font-size: 0.875rem;
+  line-height: 1.65;
+  color: var(--text-muted, #5A626A);
+  border-top: 1px solid var(--border, #E5E7EB);
+  padding-top: 14px;
+}
+
+.route-cta-strip {
+  padding: 0 0 64px 0;
+}
+
+/* Responsive Overrides */
+@media (max-width: 1200px) {
+  .route-vehicles-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 1024px) {
+  .route-advisory-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .stopovers-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .route-vehicles-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .route-advisory-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-cta-buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hero-cta-buttons .button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Solar Dusk Dark Mode Overrides */
+[data-theme="dark"] .route-detail-page {
+  background: var(--bg);
+}
+
+[data-theme="dark"] .route-matrix-section {
+  background: #16181B;
+  border-color: var(--border);
+}
+
+[data-theme="dark"] .route-vehicle-card {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+[data-theme="dark"] .vehicle-name {
+  color: #FAF7F0;
+}
+
+[data-theme="dark"] .vehicle-models-text {
+  color: #9CA3AF;
+}
+
+[data-theme="dark"] .spec-pill {
+  background: rgba(255, 255, 255, 0.08);
+  color: #FAF7F0;
+}
+
+[data-theme="dark"] .vehicle-fare-block {
+  border-color: var(--border);
+}
+
+[data-theme="dark"] .advisory-bento-card {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+[data-theme="dark"] .advisory-bento-card h3 {
+  color: #FAF7F0;
+}
+
+[data-theme="dark"] .advisory-bento-card p {
+  color: #9CA3AF;
+}
+
+[data-theme="dark"] .route-stopovers-section {
+  background: #16181B;
+  border-color: var(--border);
+}
+
+[data-theme="dark"] .stopover-card {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+[data-theme="dark"] .stopover-card h3 {
+  color: #FAF7F0;
+}
+
+[data-theme="dark"] .stopover-card p {
+  color: #9CA3AF;
+}
+
+[data-theme="dark"] .route-faq-item {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+[data-theme="dark"] .route-faq-question-btn {
+  color: #FAF7F0;
+}
+
+[data-theme="dark"] .route-faq-answer {
+  color: #9CA3AF;
+  border-color: var(--border);
+}
+

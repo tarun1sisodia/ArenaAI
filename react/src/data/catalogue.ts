@@ -9,6 +9,7 @@ import {
   type Service,
   type Review,
   type PromoCode,
+  type RouteGuidanceItem,
   cities,
   vehicles,
   routes,
@@ -17,6 +18,7 @@ import {
   services,
   reviews,
   promoCodes,
+  routeGuidance,
 } from "../data";
 import { contact } from "./contact";
 
@@ -30,6 +32,7 @@ export type {
   Service,
   Review,
   PromoCode,
+  RouteGuidanceItem,
 };
 
 export type Package = TourPackage;
@@ -46,4 +49,5 @@ export {
   services,
   reviews,
   promoCodes,
+  routeGuidance,
 };
