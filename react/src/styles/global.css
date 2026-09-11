@@ -5878,3 +5878,800 @@ html.dark .page-loader__bar-fill {
   border-color: var(--border);
 }
 
+/* ==========================================================================
+   ROUTES HUB PAGE STYLES (Phase R5.12)
+   ========================================================================== */
+
+.routes-hub-page {
+  padding-bottom: 60px;
+}
+
+.routes-hub-hero {
+  padding: clamp(60px, 8vw, 96px) 0 clamp(40px, 6vw, 64px);
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+
+.routes-hub-hero .eyebrow {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold, #E5A044);
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.routes-hub-hero h1 {
+  font-family: var(--font-display, serif);
+  font-size: clamp(2.4rem, 4.5vw, 3.8rem);
+  font-weight: 500;
+  line-height: 1.15;
+  color: var(--text);
+  margin-bottom: 24px;
+}
+
+.routes-hub-hero h1 i {
+  font-style: italic;
+  color: var(--gold, #E5A044);
+}
+
+.routes-hub-hero .hero-copy {
+  font-size: clamp(1.05rem, 1.3vw, 1.2rem);
+  line-height: 1.65;
+  color: var(--text-dim);
+  max-width: 820px;
+  margin-bottom: 32px;
+}
+
+.routes-hub-hero .hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+}
+
+/* Interactive Dynamic Route & Fare Calculator */
+.route-calculator-section {
+  background: var(--bg-alt);
+}
+
+.route-calc-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: clamp(24px, 4vw, 40px);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.04);
+}
+
+.route-calc-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.calc-toggle-group {
+  display: inline-flex;
+  background: var(--bg);
+  padding: 4px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  width: fit-content;
+}
+
+.calc-toggle-btn {
+  padding: 8px 20px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  border-radius: var(--radius-pill);
+  border: none;
+  background: transparent;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.calc-toggle-btn.is-active {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.calc-inputs-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: flex-end;
+  gap: 16px;
+}
+
+.calc-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.calc-field label {
+  font-size: 0.82rem;
+  font-family: var(--font-mono, monospace);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  font-weight: 600;
+}
+
+.calc-select {
+  padding: 14px 18px;
+  font-size: 1rem;
+  font-family: var(--font-sans);
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+  outline: none;
+}
+
+.calc-select:focus {
+  border-color: var(--gold, #E5A044);
+}
+
+.calc-swap-icon {
+  font-size: 1.4rem;
+  color: var(--gold, #E5A044);
+  padding: 12px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+.route-calc-output {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  border-top: 1px solid var(--border);
+  padding-top: 28px;
+}
+
+.route-calc-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.calc-stat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg);
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  font-size: 0.88rem;
+  color: var(--text);
+}
+
+.calc-stat-pill .stat-label {
+  color: var(--text-dim);
+}
+
+.calc-stat-pill strong {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.route-calc-fares-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.calc-fare-box {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.calc-fare-box:hover {
+  transform: translateY(-2px);
+  border-color: var(--gold, #E5A044);
+}
+
+.calc-fare-box.is-featured {
+  border-color: var(--gold, #E5A044);
+  background: var(--surface);
+  box-shadow: 0 4px 16px rgba(229, 160, 68, 0.12);
+}
+
+.calc-fare-box .car-type {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.calc-fare-box .car-pax {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+}
+
+.calc-fare-box .car-price {
+  font-family: var(--font-mono, monospace);
+  font-size: 1.4rem;
+  color: var(--gold, #E5A044);
+  margin: 6px 0;
+}
+
+.button-sm {
+  padding: 6px 14px;
+  font-size: 0.82rem;
+  border-radius: var(--radius-pill);
+}
+
+.button-xs {
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  border-radius: var(--radius-pill);
+}
+
+.calc-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding-top: 12px;
+}
+
+.calc-note {
+  font-size: 0.86rem;
+  color: var(--text-dim);
+  margin: 0;
+}
+
+/* Filterable Outstation Route Directory */
+.route-directory-section {
+  background: var(--bg);
+}
+
+.directory-filter-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 36px;
+}
+
+.filter-tab-btn {
+  padding: 8px 18px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-tab-btn:hover {
+  border-color: var(--gold, #E5A044);
+  color: var(--text);
+}
+
+.filter-tab-btn.is-active {
+  background: var(--gold, #E5A044);
+  border-color: var(--gold, #E5A044);
+  color: #FFFFFF;
+}
+
+.directory-routes-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+.directory-route-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.directory-route-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  border-color: var(--gold, #E5A044);
+}
+
+.route-title-badge-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.route-type-badge {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold, #E5A044);
+  background: rgba(229, 160, 68, 0.1);
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.route-dist-badge {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  font-weight: 600;
+}
+
+.route-endpoints-title {
+  font-family: var(--font-display, serif);
+  font-size: 1.4rem;
+  color: var(--text);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.route-arrow {
+  color: var(--gold, #E5A044);
+}
+
+.route-highway-tag {
+  font-size: 0.88rem;
+  color: var(--text-dim);
+  margin-bottom: 16px;
+}
+
+.route-highway-tag strong {
+  color: var(--text);
+}
+
+.route-guidance-snippet {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.guidance-point {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.guidance-point .point-icon {
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.guidance-point p {
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: var(--text-dim);
+  margin: 0;
+}
+
+.guidance-point strong {
+  color: var(--text);
+}
+
+.route-fares-mini-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  padding: 12px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 18px;
+}
+
+.mini-fare {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.mini-fare .label {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+}
+
+.mini-fare .val {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.route-card-actions {
+  display: flex;
+  gap: 12px;
+}
+
+/* Distance Matrix Table */
+.distance-matrix-section {
+  background: var(--bg-alt);
+}
+
+.matrix-table-wrapper {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+
+.matrix-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.matrix-table th {
+  background: var(--bg);
+  font-family: var(--font-mono, monospace);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.matrix-table td {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.matrix-table tr:last-child td {
+  border-bottom: none;
+}
+
+.matrix-table tr:hover td {
+  background: var(--bg);
+}
+
+.highway-badge {
+  display: inline-block;
+  font-size: 0.76rem;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--text-dim);
+  font-weight: 600;
+}
+
+.toll-badge {
+  display: inline-block;
+  font-size: 0.76rem;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: rgba(229, 160, 68, 0.12);
+  color: var(--gold, #E5A044);
+  font-weight: 600;
+}
+
+.table-fare {
+  font-family: var(--font-mono, monospace);
+  font-weight: 700;
+  color: var(--gold, #E5A044);
+}
+
+/* Highway Rules & Operating Advice */
+.highway-rules-section {
+  background: var(--bg);
+}
+
+.highway-rules-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.highway-rule-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.rule-card-icon {
+  font-size: 1.8rem;
+}
+
+.highway-rule-card h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+}
+
+.highway-rule-card p {
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: var(--text-dim);
+  margin: 0;
+}
+
+/* Routes FAQ Accordion */
+.routes-faq-section {
+  background: var(--bg-alt);
+}
+
+.routes-faq-accordion {
+  max-width: 860px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.routes-faq-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+}
+
+.routes-faq-item.is-open {
+  border-color: var(--gold, #E5A044);
+}
+
+.routes-faq-question {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 24px;
+  background: transparent;
+  border: none;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+}
+
+.routes-faq-answer {
+  padding: 0 24px 20px;
+  border-top: 1px solid var(--border);
+}
+
+.routes-faq-answer p {
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--text-dim);
+  margin-top: 14px;
+  margin-bottom: 0;
+}
+
+/* Bottom CTA Card */
+.routes-cta-container {
+  margin-top: 40px;
+}
+
+.routes-cta-card {
+  background: #181615;
+  color: #FDFCFB;
+  border-radius: var(--radius-lg);
+  padding: clamp(32px, 6vw, 48px);
+  position: relative;
+  overflow: hidden;
+}
+
+.routes-cta-card::before {
+  content: "";
+  position: absolute;
+  top: -80px;
+  right: -80px;
+  width: 260px;
+  height: 260px;
+  background: radial-gradient(circle, rgba(229, 160, 68, 0.22) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.routes-cta-badge {
+  display: inline-block;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold, #E5A044);
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.routes-cta-content h2 {
+  font-family: var(--font-display, serif);
+  font-size: clamp(1.8rem, 3.2vw, 2.4rem);
+  font-weight: 500;
+  line-height: 1.25;
+  color: #FDFCFB;
+  margin-bottom: 14px;
+}
+
+.routes-cta-content p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: rgba(253, 252, 251, 0.78);
+  max-width: 680px;
+  margin-bottom: 28px;
+}
+
+.routes-cta-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+/* Responsive Media Queries */
+@media (max-width: 1024px) {
+  .calc-inputs-row {
+    grid-template-columns: 1fr;
+  }
+  .calc-swap-icon {
+    display: none;
+  }
+  .route-calc-fares-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .directory-routes-grid {
+    grid-template-columns: 1fr;
+  }
+  .highway-rules-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .route-calc-fares-grid {
+    grid-template-columns: 1fr;
+  }
+  .highway-rules-grid {
+    grid-template-columns: 1fr;
+  }
+  .route-fares-mini-row {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}
+
+/* Solar Dusk Dark Mode Overrides for Routes Page */
+[data-theme="dark"] .routes-hub-hero {
+  background: var(--bg);
+}
+
+[data-theme="dark"] .route-calculator-section {
+  background: var(--bg-alt);
+}
+
+[data-theme="dark"] .route-calc-card {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+[data-theme="dark"] .calc-toggle-group {
+  background: var(--bg);
+  border-color: var(--border);
+}
+
+[data-theme="dark"] .calc-toggle-btn.is-active {
+  background: var(--card);
+}
+
+[data-theme="dark"] .calc-select {
+  background: var(--bg);
+  border-color: var(--border);
+}
+
+[data-theme="dark"] .calc-stat-pill {
+  background: var(--bg);
+  border-color: var(--border);
+}
+
+[data-theme="dark"] .calc-fare-box {
+  background: var(--bg);
+  border-color: var(--border);
+}
+
+[data-theme="dark"] .calc-fare-box.is-featured {
+  background: var(--card);
+}
+
+[data-theme="dark"] .route-directory-section {
+  background: var(--bg);
+}
+
+[data-theme="dark"] .filter-tab-btn {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+[data-theme="dark"] .directory-route-card {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+[data-theme="dark"] .route-guidance-snippet {
+  background: var(--bg);
+  border-color: var(--border);
+}
+
+[data-theme="dark"] .distance-matrix-section {
+  background: var(--bg-alt);
+}
+
+[data-theme="dark"] .matrix-table-wrapper {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+[data-theme="dark"] .matrix-table th {
+  background: var(--bg);
+  border-color: var(--border);
+}
+
+[data-theme="dark"] .matrix-table td {
+  border-color: var(--border);
+}
+
+[data-theme="dark"] .matrix-table tr:hover td {
+  background: var(--bg);
+}
+
+[data-theme="dark"] .highway-rules-section {
+  background: var(--bg);
+}
+
+[data-theme="dark"] .highway-rule-card {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+[data-theme="dark"] .routes-faq-section {
+  background: var(--bg-alt);
+}
+
+[data-theme="dark"] .routes-faq-item {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+[data-theme="dark"] .routes-cta-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+

@@ -314,7 +314,7 @@ Every single unit of work is broken down into a discrete, verifiable step. Imple
 
 #### Sub-Phase R5B: Bilingual Marketing Hub Pages
 - [x] **R5.11:** Services Hub Page (`react/src/pages/ServicesPage.tsx`): Complete guide to all 6 service verticals, vehicle allocation advice, pricing transparency, and FAQs.
-- [ ] **R5.12:** Routes Hub Page (`react/src/pages/RoutesPage.tsx`): Filterable outstation route directory, distance matrix, dynamic route calculator, and highway toll advice.
+- [x] **R5.12:** Routes Hub Page (`react/src/pages/RoutesPage.tsx`): Filterable outstation route directory, distance matrix, dynamic route calculator, and highway toll advice.
 - [ ] **R5.13:** Tour Packages Hub Page (`react/src/pages/PackagesPage.tsx`): Filterable tour catalogue (Same-Day vs. Multi-Day), currency switcher (INR/USD/EUR/GBP), and inclusions breakdown.
 - [ ] **R5.14:** Fleet Hub Page (`react/src/pages/FleetPage.tsx`): Complete fleet showcase (Sedan, Ertiga, Innova, Tempo, Urbania), passenger/luggage specs, per-km rates, and Airport/Station flat transfer table.
 - [ ] **R5.15:** About Us Hub Page (`react/src/pages/AboutPage.tsx`): Company heritage, founder message, chauffeur background verification, safety and hygiene standards.

@@ -2,6 +2,7 @@ import { ErrorBoundary } from "../components/ErrorBoundary";
 import { SiteLayout } from "../layouts/SiteLayout";
 import { HomePage } from "../pages/HomePage";
 import { ServicesPage } from "../pages/ServicesPage";
+import { RoutesPage } from "../pages/RoutesPage";
 import { BookingPage } from "../features/booking/BookingPage";
 import { MarketingPage } from "../pages/MarketingPage";
 import { marketingHubs } from "./routes";
@@ -56,6 +57,18 @@ function getSeo(pathname: string, section: string, language: "en" | "hi", isBook
       description: "Complete guide to Agra taxi services: One-way outstation cabs to Delhi & Jaipur from ₹3,499, local sightseeing packages from ₹1,900, Tempo Travellers, and 24x7 airport transfers."
     };
   }
+  if (section === "routes") {
+    if (language === "hi") {
+      return {
+        title: "आगरा आउटस्टेशन कैब रूट्स व किराया सूची | SK Baghel",
+        description: "आगरा से दिल्ली, जयपुर, मथुरा, ग्वालियर व लखनऊ के लिए आउटस्टेशन टैक्सी। 100% ऑल-इनक्लूसिव एक्सप्रेसवे टोल, लाइव रूट कैलकुलेटर व दूरी सारणी।"
+      };
+    }
+    return {
+      title: "Agra Outstation Taxi Routes & Fares Directory | SK Baghel",
+      description: "Outstation cab network from Agra to Delhi, Jaipur, Mathura, Gwalior & Lucknow. Live route calculator, distance matrix, expressway tolls included from ₹3,499."
+    };
+  }
   const languagePrefix = language === "hi" ? " | SK Baghel Tour & Travels" : " | SK Baghel Tour & Travels";
   return {
     title: `${section.replaceAll("-", " ")}${languagePrefix}`,
@@ -88,6 +101,8 @@ function App() {
           <HomePage language={language} />
         ) : section === "services" ? (
           <ServicesPage language={language} />
+        ) : section === "routes" ? (
+          <RoutesPage language={language} />
         ) : isMarketingHub || pathname.startsWith("/en/") || pathname.startsWith("/hi/") ? (
           <MarketingPage language={language} section={section} />
         ) : (
