@@ -1,6 +1,7 @@
 import { ErrorBoundary } from "../components/ErrorBoundary";
 import { SiteLayout } from "../layouts/SiteLayout";
 import { HomePage } from "../pages/HomePage";
+import { ServicesPage } from "../pages/ServicesPage";
 import { BookingPage } from "../features/booking/BookingPage";
 import { MarketingPage } from "../pages/MarketingPage";
 import { marketingHubs } from "./routes";
@@ -43,6 +44,18 @@ function getSeo(pathname: string, section: string, language: "en" | "hi", isBook
       description: "Book an Agra taxi, Tempo Traveller or Innova. Agra to Delhi from ₹3,500. Call or WhatsApp to confirm. Transparent fares, GST invoice."
     };
   }
+  if (section === "services") {
+    if (language === "hi") {
+      return {
+        title: "आगरा टैक्सी सेवाएं | आउटस्टेशन, लोकल दर्शन व एयरपोर्ट कैब | SK Baghel",
+        description: "आगरा टैक्सी सेवाओं की संपूर्ण जानकारी: दिल्ली व जयपुर वन-वे कैब ₹3,499 से, लोकल आगरा दर्शन ₹1,900 से, टेम्पो ट्रैवलर एवं 24 घंटे एयरपोर्ट ट्रांसफर।"
+      };
+    }
+    return {
+      title: "Taxi Services in Agra | Outstation, Local & Airport Cabs | SK Baghel",
+      description: "Complete guide to Agra taxi services: One-way outstation cabs to Delhi & Jaipur from ₹3,499, local sightseeing packages from ₹1,900, Tempo Travellers, and 24x7 airport transfers."
+    };
+  }
   const languagePrefix = language === "hi" ? " | SK Baghel Tour & Travels" : " | SK Baghel Tour & Travels";
   return {
     title: `${section.replaceAll("-", " ")}${languagePrefix}`,
@@ -73,6 +86,8 @@ function App() {
           <BookingPage />
         ) : isHome ? (
           <HomePage language={language} />
+        ) : section === "services" ? (
+          <ServicesPage language={language} />
         ) : isMarketingHub || pathname.startsWith("/en/") || pathname.startsWith("/hi/") ? (
           <MarketingPage language={language} section={section} />
         ) : (

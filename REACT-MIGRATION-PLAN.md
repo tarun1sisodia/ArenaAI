@@ -313,7 +313,7 @@ Every single unit of work is broken down into a discrete, verifiable step. Imple
 - [x] **R5.10:** Complete Home Page Assembler (`react/src/pages/HomePage.tsx`): Bilingual Home page integrating all home sections, meta tags, and structured data.
 
 #### Sub-Phase R5B: Bilingual Marketing Hub Pages
-- [ ] **R5.11:** Services Hub Page (`react/src/pages/ServicesPage.tsx`): Complete guide to all 6 service verticals, vehicle allocation advice, pricing transparency, and FAQs.
+- [x] **R5.11:** Services Hub Page (`react/src/pages/ServicesPage.tsx`): Complete guide to all 6 service verticals, vehicle allocation advice, pricing transparency, and FAQs.
 - [ ] **R5.12:** Routes Hub Page (`react/src/pages/RoutesPage.tsx`): Filterable outstation route directory, distance matrix, dynamic route calculator, and highway toll advice.
 - [ ] **R5.13:** Tour Packages Hub Page (`react/src/pages/PackagesPage.tsx`): Filterable tour catalogue (Same-Day vs. Multi-Day), currency switcher (INR/USD/EUR/GBP), and inclusions breakdown.
 - [ ] **R5.14:** Fleet Hub Page (`react/src/pages/FleetPage.tsx`): Complete fleet showcase (Sedan, Ertiga, Innova, Tempo, Urbania), passenger/luggage specs, per-km rates, and Airport/Station flat transfer table.
