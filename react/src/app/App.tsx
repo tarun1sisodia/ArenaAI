@@ -5,6 +5,7 @@ import { ServicesPage } from "../pages/ServicesPage";
 import { RoutesPage } from "../pages/RoutesPage";
 import { PackagesPage } from "../pages/PackagesPage";
 import { FleetPage } from "../pages/FleetPage";
+import { AboutPage } from "../pages/AboutPage";
 import { BookingPage } from "../features/booking/BookingPage";
 import { MarketingPage } from "../pages/MarketingPage";
 import { marketingHubs } from "./routes";
@@ -95,6 +96,18 @@ function getSeo(pathname: string, section: string, language: "en" | "hi", isBook
       description: "Explore our sanitized, chauffeur-driven Agra cab fleet: Dzire sedan, Ertiga MPV, Innova Crysta, Tempo Traveller & Urbania van. Transparent per-km rates & flat transfers."
     };
   }
+  if (section === "about") {
+    if (language === "hi") {
+      return {
+        title: "हमारे बारे में — एस के बघेल टूर एंड ट्रेवल्स आगरा",
+        description: "15+ वर्षों का अनुभव, स्थानीय ताजगंज आगरा मुख्यालय, सत्यापित ड्राइवर और पारदर्शी कैब सेवा। जानिए हमारी कहानी और सिद्धांत।"
+      };
+    }
+    return {
+      title: "About Us — SK Baghel Tour & Travels Agra | 15+ Years Heritage",
+      description: "Founded in Taj Ganj, Agra. Over 15 years of trusted chauffeur-driven outstation cabs, verified drivers, and transparent zero-commission heritage tours."
+    };
+  }
   const languagePrefix = language === "hi" ? " | SK Baghel Tour & Travels" : " | SK Baghel Tour & Travels";
   return {
     title: `${section.replaceAll("-", " ")}${languagePrefix}`,
@@ -133,6 +146,8 @@ function App() {
           <PackagesPage language={language} />
         ) : section === "fleet" ? (
           <FleetPage language={language} />
+        ) : section === "about" ? (
+          <AboutPage language={language} />
         ) : isMarketingHub || pathname.startsWith("/en/") || pathname.startsWith("/hi/") ? (
           <MarketingPage language={language} section={section} />
         ) : (
