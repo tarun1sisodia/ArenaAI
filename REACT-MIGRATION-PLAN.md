@@ -319,7 +319,7 @@ Every single unit of work is broken down into a discrete, verifiable step. Imple
 - [x] **R5.14:** Fleet Hub Page (`react/src/pages/FleetPage.tsx`): Complete fleet showcase (Sedan, Ertiga, Innova, Tempo, Urbania), passenger/luggage specs, per-km rates, and Airport/Station flat transfer table.
 - [x] **R5.15:** About Us Hub Page (`react/src/pages/AboutPage.tsx`): Company heritage, founder message, chauffeur background verification, safety and hygiene standards.
 - [x] **R5.16:** Contact Us Hub Page (`react/src/pages/ContactPage.tsx`): Full contact hub with architectural card, lead capture form, emergency contact numbers, and office directions.
-- [ ] **R5.17:** FAQ Hub Page (`react/src/pages/FaqPage.tsx`): 5 categorized FAQ accordions (Booking, Fares, Outstation Rules, Night Allowances, Luggage & Cancellations) with `FAQPage` JSON-LD schema.
+- [x] **R5.17:** FAQ Hub Page (`react/src/pages/FaqPage.tsx`): 5 categorized FAQ accordions (Booking, Fares, Outstation Rules, Night Allowances, Luggage & Cancellations) with `FAQPage` JSON-LD schema.
 - [ ] **R5.18:** Terms & Conditions Hub Page (`react/src/pages/TermsPage.tsx`): Authentic 24-hr cab cancellation policy (100% refund in 5-7 days), 6-tier tour refund schedule, passenger code, and Agra jurisdiction.
 - [ ] **R5.19:** Privacy Policy Hub Page (`react/src/pages/PrivacyPage.tsx`): Transparent data collection, DPDP compliance, zero third-party data sharing policy.
 - [ ] **R5.20:** 404 Error Recovery Page (`react/src/pages/NotFoundPage.tsx`): Compass visual, recovery route links, search prompt, and emergency call button.

@@ -7,6 +7,7 @@ import { PackagesPage } from "../pages/PackagesPage";
 import { FleetPage } from "../pages/FleetPage";
 import { AboutPage } from "../pages/AboutPage";
 import { ContactPage } from "../pages/ContactPage";
+import { FaqPage } from "../pages/FaqPage";
 import { BookingPage } from "../features/booking/BookingPage";
 import { MarketingPage } from "../pages/MarketingPage";
 import { marketingHubs } from "./routes";
@@ -121,6 +122,18 @@ function getSeo(pathname: string, section: string, language: "en" | "hi", isBook
       description: "Get in touch with our 24×7 Taj Ganj dispatch desk for outstation cabs, sunrise Taj Mahal tours, and luxury group travel in Agra. Call +91 98765 43210."
     };
   }
+  if (section === "faq") {
+    if (language === "hi") {
+      return {
+        title: "सामान्य प्रश्न (FAQs) — कैब बुकिंग, किराया व नियम | एस के बघेल आगरा",
+        description: "आगरा कैब बुकिंग, आउटस्टेशन 300 किमी नियम, टोल-टैक्स, नाइट चार्ज, लगेज क्षमता और 24 घंटे में मुफ्त कैंसिलेशन से जुड़े सभी सवालों के स्पष्ट जवाब।"
+      };
+    }
+    return {
+      title: "Frequently Asked Questions (FAQs) — Cab Booking & Fares | SK Baghel Agra",
+      description: "Find clear answers about outstation taxi rules, 300 km/day minimums, Yamuna Expressway toll inclusions, night allowances, and our 24-hr refund policy."
+    };
+  }
   const languagePrefix = language === "hi" ? " | SK Baghel Tour & Travels" : " | SK Baghel Tour & Travels";
   return {
     title: `${section.replaceAll("-", " ")}${languagePrefix}`,
@@ -163,6 +176,8 @@ function App() {
           <AboutPage language={language} />
         ) : section === "contact" ? (
           <ContactPage language={language} />
+        ) : section === "faq" ? (
+          <FaqPage language={language} />
         ) : isMarketingHub || pathname.startsWith("/en/") || pathname.startsWith("/hi/") ? (
           <MarketingPage language={language} section={section} />
         ) : (
