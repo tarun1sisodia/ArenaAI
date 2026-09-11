@@ -9,6 +9,7 @@ import { AboutPage } from "../pages/AboutPage";
 import { ContactPage } from "../pages/ContactPage";
 import { FaqPage } from "../pages/FaqPage";
 import { TermsPage } from "../pages/TermsPage";
+import { PrivacyPage } from "../pages/PrivacyPage";
 import { BookingPage } from "../features/booking/BookingPage";
 import { MarketingPage } from "../pages/MarketingPage";
 import { marketingHubs } from "./routes";
@@ -147,6 +148,18 @@ function getSeo(pathname: string, section: string, language: "en" | "hi", isBook
       description: "Review our transparent commercial terms: 24-hr cab cancellation with 100% refund, 6-tier tour schedule, 300 km/day outstation rules, and Agra jurisdiction."
     };
   }
+  if (section === "privacy") {
+    if (language === "hi") {
+      return {
+        title: "गोपनीयता नीति — एस के बघेल टूर एंड ट्रेवल्स आगरा | डेटा सुरक्षा",
+        description: "हमारी ग्राहक डेटा गोपनीयता नीति: DPDP अधिनियम 2023 अनुपालन, शून्य तृतीय-पक्ष डेटा बिक्री, और सुरक्षित बुकिंग व ड्राइवर समन्वय दिशानिर्देश।"
+      };
+    }
+    return {
+      title: "Privacy Policy — SK Baghel Tour & Travels Agra | Data Protection",
+      description: "Learn how we protect your personal information: DPDP Act 2023 compliance, zero third-party data selling, and secure booking phone & WhatsApp communication."
+    };
+  }
   const languagePrefix = language === "hi" ? " | SK Baghel Tour & Travels" : " | SK Baghel Tour & Travels";
   return {
     title: `${section.replaceAll("-", " ")}${languagePrefix}`,
@@ -193,6 +206,8 @@ function App() {
           <FaqPage language={language} />
         ) : section === "terms" ? (
           <TermsPage language={language} />
+        ) : section === "privacy" ? (
+          <PrivacyPage language={language} />
         ) : isMarketingHub || pathname.startsWith("/en/") || pathname.startsWith("/hi/") ? (
           <MarketingPage language={language} section={section} />
         ) : (
