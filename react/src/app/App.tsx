@@ -4,6 +4,7 @@ import { HomePage } from "../pages/HomePage";
 import { ServicesPage } from "../pages/ServicesPage";
 import { RoutesPage } from "../pages/RoutesPage";
 import { PackagesPage } from "../pages/PackagesPage";
+import { FleetPage } from "../pages/FleetPage";
 import { BookingPage } from "../features/booking/BookingPage";
 import { MarketingPage } from "../pages/MarketingPage";
 import { marketingHubs } from "./routes";
@@ -82,6 +83,18 @@ function getSeo(pathname: string, section: string, language: "en" | "hi", isBook
       description: "Curated private tour packages: Taj Mahal Sunrise tour, Mathura Vrindavan, Gatimaan train package & Golden Triangle. Multi-currency switcher, transparent all-inclusive fares."
     };
   }
+  if (section === "fleet") {
+    if (language === "hi") {
+      return {
+        title: "हमारी गाड़ियाँ व टैक्सी फ्लीट | SK Baghel Tour & Travels",
+        description: "सेडान, अर्टिगा, इनोवा क्रिस्टा, टेम्पो ट्रैवलर व अर्बनिया लग्जरी वैन। पारदर्शी प्रति किमी दरें व स्टेशन/एयरपोर्ट ट्रांसफर।"
+      };
+    }
+    return {
+      title: "Our Fleet — Sedan, Ertiga, Innova Crysta & Tempo Traveller | SK Baghel",
+      description: "Explore our sanitized, chauffeur-driven Agra cab fleet: Dzire sedan, Ertiga MPV, Innova Crysta, Tempo Traveller & Urbania van. Transparent per-km rates & flat transfers."
+    };
+  }
   const languagePrefix = language === "hi" ? " | SK Baghel Tour & Travels" : " | SK Baghel Tour & Travels";
   return {
     title: `${section.replaceAll("-", " ")}${languagePrefix}`,
@@ -118,6 +131,8 @@ function App() {
           <RoutesPage language={language} />
         ) : section === "packages" ? (
           <PackagesPage language={language} />
+        ) : section === "fleet" ? (
+          <FleetPage language={language} />
         ) : isMarketingHub || pathname.startsWith("/en/") || pathname.startsWith("/hi/") ? (
           <MarketingPage language={language} section={section} />
         ) : (
