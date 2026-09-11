@@ -12,6 +12,7 @@ import { TermsPage } from "../pages/TermsPage";
 import { PrivacyPage } from "../pages/PrivacyPage";
 import { NotFoundPage } from "../pages/NotFoundPage";
 import { RouteDetailPage } from "../pages/RouteDetailPage";
+import { PackageDetailPage } from "../pages/PackageDetailPage";
 import { BookingPage } from "../features/booking/BookingPage";
 import { MarketingPage } from "../pages/MarketingPage";
 import { marketingHubs } from "./routes";
@@ -36,7 +37,18 @@ function getSeo(pathname: string, section: string, language: "en" | "hi", isBook
     return path.includes(`${from}-taxi`) || path.includes(`${hindiFrom}-taxi`);
   });
   if (vehicle) return { title: `${vehicle.name} hire in Agra | SK Baghel`, description: `${vehicle.blurb} Compare seats, luggage, models, and transparent sample fares.` };
-  if (tour) return { title: `${tour.name} | SK Baghel Tour & Travels`, description: tour.blurb };
+  if (tour) {
+    if (language === "hi") {
+      return {
+        title: `${tour.name} — निजी टूर पैकेज व किराया | SK Baghel`,
+        description: `${tour.blurb} 100% निजी वातानुकूलित कैब, गाइड सहायता व पारदर्शी दरें। अभी ऑनलाइन या कॉल पर बुक करें।`
+      };
+    }
+    return {
+      title: `${tour.name} — Private Tour Package & Fares | SK Baghel`,
+      description: `${tour.blurb} 100% private sanitized AC cab, verified guide, transparent all-inclusive fares. Book online or call 24x7.`
+    };
+  }
   if (route) {
     const from = route.from[0].toUpperCase() + route.from.slice(1);
     const to = route.to[0].toUpperCase() + route.to.slice(1);
@@ -209,11 +221,17 @@ function App() {
     return pathname.includes(`${from}-taxi`) || pathname.includes(`${hindiFrom}-taxi`);
   });
 
+  const matchedPackage = pathname.includes("/packages/") && packages.find((item) => {
+    const p = pathname.replace(/\/$/, "");
+    return p.endsWith(`/${item.slug}`) || p.endsWith(item.slug);
+  });
+
   const isKnownRoute =
     isHome ||
     isBooking ||
     isMarketingHub ||
     Boolean(matchedRoute) ||
+    Boolean(matchedPackage) ||
     vehicles.some(
       (item) =>
         pathname.endsWith(item.id === "innova" ? "innova-crysta" : item.id === "tempo" ? "tempo-traveller" : item.id) ||
@@ -243,6 +261,8 @@ function App() {
           <HomePage language={language} />
         ) : matchedRoute ? (
           <RouteDetailPage language={language} route={matchedRoute} />
+        ) : matchedPackage ? (
+          <PackageDetailPage language={language} pkg={matchedPackage} />
         ) : section === "services" ? (
           <ServicesPage language={language} />
         ) : section === "routes" ? (

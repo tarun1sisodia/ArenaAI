@@ -6,3 +6,6 @@ node_modules/
 .pages/
 dist/
 01a08958-2105-7485-8e71-c13b53ceeeba/*
+.env
+.env.*
+!.env.example
