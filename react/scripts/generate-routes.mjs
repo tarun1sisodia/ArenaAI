@@ -69,6 +69,9 @@ const hindiRoutePairs = [
 const routes = [
   "/",
   "/book.html",
+  "/404.html",
+  "/en/404/",
+  "/hi/404/",
   "/en/",
   "/hi/",
   // English & Hindi Hubs

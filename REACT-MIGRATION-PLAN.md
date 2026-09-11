@@ -322,7 +322,7 @@ Every single unit of work is broken down into a discrete, verifiable step. Imple
 - [x] **R5.17:** FAQ Hub Page (`react/src/pages/FaqPage.tsx`): 5 categorized FAQ accordions (Booking, Fares, Outstation Rules, Night Allowances, Luggage & Cancellations) with `FAQPage` JSON-LD schema.
 - [x] **R5.18:** Terms & Conditions Hub Page (`react/src/pages/TermsPage.tsx`): Authentic 24-hr cab cancellation policy (100% refund in 5-7 days), 6-tier tour refund schedule, passenger code, and Agra jurisdiction.
 - [x] **R5.19:** Privacy Policy Hub Page (`react/src/pages/PrivacyPage.tsx`): Transparent data collection, DPDP compliance, zero third-party data sharing policy.
-- [ ] **R5.20:** 404 Error Recovery Page (`react/src/pages/NotFoundPage.tsx`): Compass visual, recovery route links, search prompt, and emergency call button.
+- [x] **R5.20:** 404 Error Recovery Page (`react/src/pages/NotFoundPage.tsx`): Compass visual, recovery route links, search prompt, and emergency call button.
 
 #### Sub-Phase R5C: Dynamic Detail Templates
 - [ ] **R5.21:** Dynamic Route Landing Template (`react/src/pages/RouteDetailPage.tsx`): Dynamic page for all 8 route pairs with hero, vehicle fare comparison table, highway guidance (Yamuna Expressway, NH tips), transit times, rest stop advice, night allowance rule notes, and route-specific FAQ accordions.

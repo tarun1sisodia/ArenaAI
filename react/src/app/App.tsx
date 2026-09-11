@@ -10,6 +10,7 @@ import { ContactPage } from "../pages/ContactPage";
 import { FaqPage } from "../pages/FaqPage";
 import { TermsPage } from "../pages/TermsPage";
 import { PrivacyPage } from "../pages/PrivacyPage";
+import { NotFoundPage } from "../pages/NotFoundPage";
 import { BookingPage } from "../features/booking/BookingPage";
 import { MarketingPage } from "../pages/MarketingPage";
 import { marketingHubs } from "./routes";
@@ -160,6 +161,18 @@ function getSeo(pathname: string, section: string, language: "en" | "hi", isBook
       description: "Learn how we protect your personal information: DPDP Act 2023 compliance, zero third-party data selling, and secure booking phone & WhatsApp communication."
     };
   }
+  if (section === "404") {
+    if (language === "hi") {
+      return {
+        title: "404 पृष्ठ नहीं मिला — एस के बघेल टूर एंड ट्रेवल्स आगरा",
+        description: "अनजान रास्ता — आइए आपकी यात्रा को सही दिशा दें। आगरा टैक्सी, आउटस्टेशन कैब व टूर पैकेज तुरंत खोजें।"
+      };
+    }
+    return {
+      title: "404 Page Not Found — SK Baghel Tour & Travels Agra",
+      description: "Uncharted route — let us guide you back. Search verified Agra cabs, outstation routes and private tour packages."
+    };
+  }
   const languagePrefix = language === "hi" ? " | SK Baghel Tour & Travels" : " | SK Baghel Tour & Travels";
   return {
     title: `${section.replaceAll("-", " ")}${languagePrefix}`,
@@ -180,13 +193,40 @@ function App() {
     section === "home";
   const isMarketingHub = marketingHubs.includes(section as (typeof marketingHubs)[number]);
   const isBooking = pathname.endsWith("book.html");
-  const { title: pageTitle, description: pageDescription } = getSeo(pathname, isHome ? "home" : section, language, isBooking);
+
+  const isKnownRoute =
+    isHome ||
+    isBooking ||
+    isMarketingHub ||
+    vehicles.some(
+      (item) =>
+        pathname.endsWith(item.id === "innova" ? "innova-crysta" : item.id === "tempo" ? "tempo-traveller" : item.id) ||
+        pathname.endsWith((item.id === "innova" ? "innova-crysta" : item.id === "tempo" ? "tempo-traveller" : item.id) + "/")
+    ) ||
+    packages.some((item) => pathname.endsWith(item.slug) || pathname.endsWith(item.slug + "/")) ||
+    routes.some((item) => {
+      const from = item.from === "agra" && item.to === "agra" ? "agra-sightseeing" : `${item.from}-to-${item.to}`;
+      const hindiFrom = item.from === "agra" && item.to === "agra" ? "agra-darshan" : `${item.from}-se-${item.to}`;
+      return pathname.includes(`${from}-taxi`) || pathname.includes(`${hindiFrom}-taxi`);
+    });
+
+  const is404 =
+    !isKnownRoute ||
+    section === "404" ||
+    pathname.endsWith("/404") ||
+    pathname.endsWith("/404.html") ||
+    pathname.endsWith("/404/");
+
+  const effectiveSection = is404 ? "404" : isHome ? "home" : section;
+  const { title: pageTitle, description: pageDescription } = getSeo(pathname, effectiveSection, language, isBooking);
 
   return (
     <ErrorBoundary>
-      <SeoHead language={language} pathname={pathname} title={pageTitle} description={pageDescription} noindex={isBooking} />
+      <SeoHead language={language} pathname={pathname} title={pageTitle} description={pageDescription} noindex={isBooking || is404} />
       <SiteLayout>
-        {isBooking ? (
+        {is404 ? (
+          <NotFoundPage language={language} />
+        ) : isBooking ? (
           <BookingPage />
         ) : isHome ? (
           <HomePage language={language} />
@@ -211,7 +251,7 @@ function App() {
         ) : isMarketingHub || pathname.startsWith("/en/") || pathname.startsWith("/hi/") ? (
           <MarketingPage language={language} section={section} />
         ) : (
-          <MarketingPage language={language} section={section} />
+          <NotFoundPage language={language} />
         )}
       </SiteLayout>
     </ErrorBoundary>
