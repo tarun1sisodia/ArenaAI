@@ -337,12 +337,12 @@ Every single unit of work is broken down into a discrete, verifiable step. Imple
 
 ---
 
-### Phase R6: LocationIQ Search & Interactive Discovery ⏳
+### Phase R6: LocationIQ Search & Interactive Discovery ✅
 - [x] **R6.1:** Typed LocationIQ Client & Hook (`react/src/hooks/useLocationIQ.ts`): Debounced query hook (300ms), AbortController for race prevention, and runtime token injection.
-- [ ] **R6.2:** Searchable Combobox Component (`react/src/components/search/LocationCombobox.tsx`): Touch-friendly combobox with autocomplete suggestions, airport/station icons, and keyboard navigation.
-- [ ] **R6.3:** Static Destinations & Fallback Distance Matrix (`react/src/utils/distance.ts`): 30+ Indian destinations with verified highway distances from Agra/Delhi when offline or without API token.
-- [ ] **R6.4:** Custom Destination Distance & Fare Estimator: Estimates distance (km), travel hours, and fares for unlisted custom addresses or cities.
-- [ ] **R6.5:** Combobox ARIA & Screen Reader Accessibility: Full ARIA 1.2 combobox role, aria-expanded, aria-activedescendant, and voiceover verification.
+- [x] **R6.2:** Searchable Combobox Component (`react/src/components/search/LocationCombobox.tsx`): Touch-friendly combobox with autocomplete suggestions, airport/station icons, and keyboard navigation.
+- [x] **R6.3:** Static Destinations & Fallback Distance Matrix (`react/src/utils/distance.ts`): 30+ Indian destinations with verified highway distances from Agra/Delhi when offline or without API token.
+- [x] **R6.4:** Custom Destination Distance & Fare Estimator (`react/src/utils/customDistance.ts`): Estimates distance (km), travel hours, and fares for unlisted custom addresses or cities.
+- [x] **R6.5:** Combobox ARIA & Screen Reader Accessibility: Full ARIA 1.2 combobox role, aria-expanded, aria-activedescendant, and voiceover verification.
 
 ---
 
