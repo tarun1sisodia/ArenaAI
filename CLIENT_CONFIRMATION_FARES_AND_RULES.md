@@ -40,13 +40,19 @@ Fixed flat packages for Agra city movement with zero meter disputes.
 
 | Package Name | Included Duration & KM | Sedan | Ertiga | Innova Crysta | Tempo Traveller | Force Urbania |
 |---|---|:---:|:---:|:---:|:---:|:---:|
-| **Agra Standard Sightseeing** | 8 Hours / 80 KM | **₹1,900** | **₹2,600** | **₹2,850** | **₹5,500** | **₹7,500** |
-| **Agra Extended City Tour** | 12 Hours / 120 KM | **₹2,200** | **₹2,950** | **₹3,100** | **₹6,500** | **₹8,500** |
+| **Agra Standard Sightseeing** | 8 Hours / 80 KM | **₹2,200** | **₹2,900** | **₹4,150** | **₹7,500** | **₹9,500** |
+| **Agra Full Day Sightseeing** | Full Day | **₹3,000** | **₹4,000** | **₹5,499** | **₹8,500** | **₹11,500** |
 | **Extra KM Rate (Beyond limit)** | Per additional KM | ₹10 / km | ₹14 / km | ₹18 / km | ₹25 / km | ₹34 / km |
 | **Extra Hour Rate (Beyond limit)** | Per additional Hour | ₹150 / hr | ₹200 / hr | ₹250 / hr | ₹400 / hr | ₹600 / hr |
 
+* **Full Day Nomenclature:** 12 Hours / 120 KM is officially designated as **Full Day**.
+* **Evening / Night Driver Allowance (Past 8:00 PM):** If local sightseeing extends past **8:00 PM (20:00)**, an additional driver allowance applies:
+  * **Sedan / Ertiga / Innova Crysta:** **₹300 extra**
+  * **Tempo Traveller / Force Urbania:** **₹500 extra**
+* **Parking Charges:** Parking fees at all monuments, railway stations, and attractions are strictly **extra at actuals** (paid by guest).
+* **Tempo Traveller Full Day Clause:** Full-day Tempo Traveller rentals benchmark at the standard **300 KM charge** if traveling beyond municipal city limits.
 * **Covers:** Taj Mahal, Agra Fort, Mehtab Bagh, Itmad-Ud-Daulah (Baby Taj), Sadar Bazaar, and Kinari Bazaar.
-* **Monument Entry Fees & Parking:** Monuments tickets are paid directly by guests. City parking charges are billed at actuals.
+* **Monument Entry Fees:** Monument entry tickets are paid directly by guests.
 
 ### 2.2 Point-to-Point Airport & Railway Transfers
 
@@ -54,30 +60,30 @@ Flat rates for one-way pickup or drop within Agra city limits:
 
 | Transfer Route | Distance | Sedan | Ertiga | Innova Crysta | Tempo Traveller | Force Urbania |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|
-| **Agra Cantt Railway Station (AGC) Drop/Pickup** | ~15–20 km | **₹800** | **₹900** | **₹1,100** | **₹2,200** | **₹3,500** |
+| **Agra Cantt Railway Station (AGC) Drop/Pickup** | ~15–20 km | **₹1200** | **₹1500** | **₹2000** | **₹3500** | **₹4,500** |
 | **Agra Fort Railway Station (AF) Drop/Pickup** | ~12–15 km | **₹800** | **₹900** | **₹1,100** | **₹2,200** | **₹3,500** |
 | **Agra Airport (Kheria AGR) Transfer** | ~15–25 km | **₹900** | **₹1,050** | **₹1,250** | **₹2,400** | **₹3,800** |
-| **Delhi IGI Airport (DEL) Direct Transfer (One-Way)** | 225 km | **₹3,499** | **₹4,200** | **₹5,200** | **₹8,500** | **₹11,500** |
+| **Delhi IGI Airport (DEL) Direct Transfer (One-Way)** | 225 km | **₹4,999** | **₹5,999** | **₹7,500** | **₹8,500** | **₹11,500** |
 
 ---
 
 ## 3. Fixed Intercity One-Way Expressway Routes
 
-Guaranteed fixed one-way drops on key tourist and expressway corridors.
-
-> **Important Guarantee:** All one-way drops are **100% all-inclusive** of Highway Tolls (Yamuna Expressway, Eastern Peripheral, Agra-Lucknow Expressway), State Border Taxes, and Chauffeur charges. **No return fare or empty-run fee is charged to the passenger.**
+> **Important Guarantee & Fleet Operating Policy:**
+> 1. **Cabs (Sedan, Ertiga, Innova Crysta):** One-way drops are **100% all-inclusive** of Highway Tolls, State Border Taxes, and Chauffeur charges. **No return fare or empty-run fee is charged to the passenger.**
+> 2. **Tempo Traveller & Force Urbania (Commercial Tourist Vans):** In the transport market, standalone one-way drops are unavailable because large commercial vehicles cannot secure return loads. Therefore, all Tempo Traveller and Force Urbania bookings are billed on a **round-trip basis (आने-जाने का दोनों तरफ का किराया)** or benchmarked against the standard **300 KM/day minimum billing**. Where one-way drop rates are listed below, they are pre-calculated to cover the essential two-way mobilization and return empty run.
 
 | Corridor Route | Highway / Expressway | Approx Distance | Approx Transit | Sedan | Ertiga | Innova Crysta | Tempo Traveller | Force Urbania |
 |---|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| **Agra ⇄ Delhi (or IGI Airport)** | Yamuna Expressway | 210 km | 3.5 Hours | **₹3,499** | **₹4,200** | **₹5,200** | **₹8,500** | **₹11,500** |
-| **Agra ⇄ Noida / Greater Noida** | Yamuna Expressway | 190 km | 3.0 Hours | **₹3,499** | **₹4,200** | **₹5,200** | **₹8,500** | **₹11,500** |
-| **Agra ⇄ Gurgaon / Cyber City** | Yamuna Exp + KMP / NH48 | 215 km | 3.8 Hours | **₹3,699** | **₹4,400** | **₹5,500** | **₹8,900** | **₹11,900** |
-| **Agra ⇄ Jaipur (Pink City)** | NH-21 (Agra–Bikaner) | 240 km | 4.5 Hours | **₹3,499** | **₹4,200** | **₹5,200** | **₹8,500** | **₹11,500** |
-| **Agra ⇄ Mathura / Vrindavan** | NH-19 (Delhi–Agra) | 58 km | 1.2 Hours | **₹2,200** | **₹2,800** | **₹3,600** | **₹5,200** | **₹7,200** |
-| **Agra ⇄ Gwalior** | NH-44 (North–South) | 120 km | 2.5 Hours | **₹2,800** | **₹3,600** | **₹4,600** | **₹7,200** | **₹9,800** |
-| **Agra ⇄ Lucknow** | Agra–Lucknow Expressway | 335 km | 4.5 Hours | **₹5,200** | **₹6,800** | **₹8,400** | **₹12,800** | **₹16,500** |
-| **Agra ⇄ Ayodhya** | Agra-LKO + Purvanchal | 470 km | 7.0 Hours | **₹7,800** | **₹9,600** | **₹11,900** | **₹17,500** | **₹23,000** |
-| **Delhi ⇄ Jaipur (Intercity)** | NH-48 / NE-4 (Mumbai Exp) | 280 km | 4.5 Hours | **₹4,200** | **₹5,400** | **₹6,800** | **₹10,500** | **₹14,200** |
+| **Agra ⇄ Delhi (or IGI Airport)** | Yamuna Expressway | 210 km | 3.5 Hours | **₹4,999** | **₹5,999** | **₹7,500** | **₹8,500** | **₹11,500** |
+| **Agra ⇄ Noida / Greater Noida** | Yamuna Expressway | 190 km | 3.0 Hours | **₹3,999** | **₹4,999** | **₹6,999** | **₹8,500** | **₹11,500** |
+| **Agra ⇄ Gurgaon / Cyber City** | Yamuna Exp + KMP / NH48 | 215 km | 3.8 Hours | **₹4,999** | **₹5,499** | **₹6,550** | **₹8,900** | **₹11,900** |
+| **Agra ⇄ Jaipur (Pink City)** | NH-21 (Agra–Bikaner) | 240 km | 4.5 Hours | **₹4,500** | **₹6,800** | **₹8,500** | **₹8,500** | **₹11,500** |
+| **Agra ⇄ Mathura / Vrindavan** | NH-19 (Delhi–Agra) | 58 km | 1.2 Hours | **₹2,500** | **₹3,000** | **₹4,000** | **₹5,200** | **₹7,200** |
+| **Agra ⇄ Gwalior** | NH-44 (North–South) | 120 km | 2.5 Hours | **₹3,999** | **₹4,500** | **₹6,899** | **₹7,200** | **₹9,800** |
+| **Agra ⇄ Lucknow** | Agra–Lucknow Expressway | 335 km | 4.5 Hours | **₹7,500** | **₹8,500** | **₹9,500** | **₹12,800** | **₹16,500** |
+| **Agra ⇄ Ayodhya** | Agra-LKO + Purvanchal | 470 km | 7.0 Hours | **₹9,999** | **₹11,999** | **₹13,999** | **₹17,500** | **₹23,000** |
+| **Delhi ⇄ Jaipur (Intercity)** | NH-48 / NE-4 (Mumbai Exp) | 280 km | 4.5 Hours | **₹5,999** | **₹6,999** | **₹8,499** | **₹10,500** | **₹14,200** |
 
 ---
 
@@ -240,8 +246,8 @@ Please verify the official business credentials displayed on invoices and online
 Please review and place a checkmark next to each approved section, or state requested modifications below.
 
 - [ ] **Section 1: Fleet Specifications & Per-KM Rates** (Sedan ₹10, Ertiga ₹14, Innova ₹18, Tempo ₹25, Urbania ₹34)
-- [ ] **Section 2: Local Packages & Transfers** (8h/80km ₹1,900 · 12h/120km ₹2,200 · Station ₹800 · Airport ₹900)
-- [ ] **Section 3: One-Way Expressway Routes** (Agra–Delhi ₹3,499 · Agra–Jaipur ₹3,499 · Agra–Mathura ₹2,200)
+- [ ] **Section 2: Local Packages & Transfers** (8h/80km ₹2,200 · Full Day ₹3,000 · Station ₹1,200 · Airport ₹900)
+- [ ] **Section 3: One-Way Expressway Routes** (Agra–Delhi ₹4,999 · Agra–Jaipur ₹4,500 · Agra–Mathura ₹2,500)
 - [ ] **Section 4: Outstation Rules** (300 km/day minimum billing & 1.85× same-day return multiplier)
 - [ ] **Section 5: Driver Night Allowance** (₹300 cabs / ₹500 tempo for pickups between 20:00 and 06:00)
 - [ ] **Section 6: Advance Deposit Rule** (28% advance rounded to ₹100, min ₹500)

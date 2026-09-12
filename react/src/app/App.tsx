@@ -13,6 +13,7 @@ import { PrivacyPage } from "../pages/PrivacyPage";
 import { NotFoundPage } from "../pages/NotFoundPage";
 import { RouteDetailPage } from "../pages/RouteDetailPage";
 import { PackageDetailPage } from "../pages/PackageDetailPage";
+import { VehicleDetailPage } from "../pages/VehicleDetailPage";
 import { BookingPage } from "../features/booking/BookingPage";
 import { MarketingPage } from "../pages/MarketingPage";
 import { marketingHubs } from "./routes";
@@ -36,7 +37,18 @@ function getSeo(pathname: string, section: string, language: "en" | "hi", isBook
     const hindiFrom = item.from === "agra" && item.to === "agra" ? "agra-darshan" : `${item.from}-se-${item.to}`;
     return path.includes(`${from}-taxi`) || path.includes(`${hindiFrom}-taxi`);
   });
-  if (vehicle) return { title: `${vehicle.name} hire in Agra | SK Baghel`, description: `${vehicle.blurb} Compare seats, luggage, models, and transparent sample fares.` };
+  if (vehicle) {
+    if (language === "hi") {
+      return {
+        title: `${vehicle.name} किराया व बुकिंग आगरा | SK Baghel`,
+        description: `${vehicle.blurb} सीटें: ${vehicle.seats}, बैग: ${vehicle.bags}, दरें: ₹${vehicle.perKm}/किमी से शुरू। पारदर्शी किराया, सत्यापित ड्राइवर।`
+      };
+    }
+    return {
+      title: `${vehicle.name} Hire in Agra — Fares & Booking | SK Baghel`,
+      description: `${vehicle.blurb} Compare seats (${vehicle.seats}), luggage (${vehicle.bags}), outstation rate from ₹${vehicle.perKm}/km, local & transfers.`
+    };
+  }
   if (tour) {
     if (language === "hi") {
       return {
@@ -226,17 +238,21 @@ function App() {
     return p.endsWith(`/${item.slug}`) || p.endsWith(item.slug);
   });
 
+  const matchedVehicle =
+    (pathname.includes("/vehicles/") || pathname.includes("/fleet/")) &&
+    vehicles.find((item) => {
+      const p = pathname.replace(/\/$/, "").replace(/\.html$/, "");
+      const slug = item.id === "innova" ? "innova-crysta" : item.id === "tempo" ? "tempo-traveller" : item.id;
+      return p.endsWith(`/${slug}`) || p.endsWith(slug) || p.endsWith(`/${item.id}`) || p.endsWith(item.id);
+    });
+
   const isKnownRoute =
     isHome ||
     isBooking ||
     isMarketingHub ||
     Boolean(matchedRoute) ||
     Boolean(matchedPackage) ||
-    vehicles.some(
-      (item) =>
-        pathname.endsWith(item.id === "innova" ? "innova-crysta" : item.id === "tempo" ? "tempo-traveller" : item.id) ||
-        pathname.endsWith((item.id === "innova" ? "innova-crysta" : item.id === "tempo" ? "tempo-traveller" : item.id) + "/")
-    ) ||
+    Boolean(matchedVehicle) ||
     packages.some((item) => pathname.endsWith(item.slug) || pathname.endsWith(item.slug + "/"));
 
   const is404 =
@@ -263,6 +279,8 @@ function App() {
           <RouteDetailPage language={language} route={matchedRoute} />
         ) : matchedPackage ? (
           <PackageDetailPage language={language} pkg={matchedPackage} />
+        ) : matchedVehicle ? (
+          <VehicleDetailPage language={language} vehicle={matchedVehicle} />
         ) : section === "services" ? (
           <ServicesPage language={language} />
         ) : section === "routes" ? (

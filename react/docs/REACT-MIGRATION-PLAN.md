@@ -325,9 +325,9 @@ Every single unit of work is broken down into a discrete, verifiable step. Imple
 - [ ] **R5.20:** 404 Error Recovery Page (`react/src/pages/NotFoundPage.tsx`): Compass visual, recovery route links, search prompt, and emergency call button.
 
 #### Sub-Phase R5C: Dynamic Detail Templates
-- [ ] **R5.21:** Dynamic Route Landing Template (`react/src/pages/RouteDetailPage.tsx`): Dynamic page for all 8 route pairs with hero, vehicle fare comparison table, highway guidance (Yamuna Expressway, NH tips), transit times, rest stop advice, night allowance rule notes, and route-specific FAQ accordions.
-- [ ] **R5.22:** Dynamic Tour Package Landing Template (`react/src/pages/PackageDetailPage.tsx`): Dynamic page for all 6 tour packages with hero, hour-by-hour itinerary timeline, vehicle upgrade pricing matrix, inclusions/exclusions pills, departure advice, and live international currency estimator.
-- [ ] **R5.23:** Dynamic Vehicle Landing Template (`react/src/pages/VehicleDetailPage.tsx`): Dynamic page for all 5 fleet tiers with technical specifications (seats, luggage, AC, engine), model lineup, per-km pricing, transfers table, and suitable travel scenarios.
+- [x] **R5.21:** Dynamic Route Landing Template (`react/src/pages/RouteDetailPage.tsx`): Dynamic page for all 8 route pairs with hero, vehicle fare comparison table, highway guidance (Yamuna Expressway, NH tips), transit times, rest stop advice, night allowance rule notes, and route-specific FAQ accordions.
+- [x] **R5.22:** Dynamic Tour Package Landing Template (`react/src/pages/PackageDetailPage.tsx`): Dynamic page for all 6 tour packages with hero, hour-by-hour itinerary timeline, vehicle upgrade pricing matrix, inclusions/exclusions pills, departure advice, and live international currency estimator.
+- [x] **R5.23:** Dynamic Vehicle Landing Template (`react/src/pages/VehicleDetailPage.tsx`): Dynamic page for all 5 fleet tiers with technical specifications (seats, luggage, AC, engine), model lineup, per-km pricing, transfers table, and suitable travel scenarios.
 
 #### Sub-Phase R5D: SEO Engine & Static Site Pre-Rendering (SSG)
 - [ ] **R5.24:** SEO Head & Metadata Manager (`react/src/components/seo/SeoHead.tsx`): Dynamic Title, Meta description, Canonical URL, Open Graph, Twitter cards, and Hreflang alternates (`en-IN`, `hi-IN`, `x-default`).

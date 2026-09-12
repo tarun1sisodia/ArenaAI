@@ -12612,4 +12612,1001 @@ html.dark .page-loader__bar-fill {
   color: #A8A29E;
 }
 
+/* ==========================================================================
+   VEHICLE DETAIL LANDING TEMPLATE STYLES (Step R5.23)
+   ========================================================================== */
+
+.vehicle-detail-page {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.veh-hero-section {
+  padding: 48px 0 64px;
+  border-bottom: 1px solid var(--border);
+}
+
+.veh-hero-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 48px;
+  align-items: center;
+}
+
+.veh-kicker-strip {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.veh-kicker-badge {
+  display: inline-block;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--gold-deep);
+  background: var(--gold-soft);
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+}
+
+.veh-rating-badge {
+  display: inline-block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #B45309;
+  background: #FEF3C7;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+}
+
+.veh-title {
+  font-family: var(--font-display, serif);
+  font-size: clamp(2.1rem, 3.4vw, 2.8rem);
+  line-height: 1.2;
+  margin: 0 0 12px;
+  color: var(--text);
+}
+
+.veh-subtitle {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--text-soft);
+  margin: 0 0 14px;
+}
+
+.veh-blurb {
+  font-size: 0.96rem;
+  line-height: 1.65;
+  color: var(--text-soft);
+  margin: 0 0 24px;
+}
+
+.veh-highlights-strip {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  margin-bottom: 28px;
+}
+
+.veh-h-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.veh-h-item .check-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--gold-soft);
+  color: var(--gold-deep);
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.veh-pricing-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+  background: var(--surface);
+  border: 2px solid var(--gold);
+  border-radius: var(--radius-xl);
+  padding: 22px 28px;
+  box-shadow: 0 8px 30px rgba(229, 160, 68, 0.08);
+}
+
+.pricing-headline {
+  display: flex;
+  flex-direction: column;
+}
+
+.pricing-headline .pricing-caption {
+  font-size: 0.76rem;
+  font-family: var(--font-mono, monospace);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-soft);
+}
+
+.pricing-amount {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin: 4px 0 2px;
+}
+
+.pricing-amount .currency-symbol {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--gold-deep);
+}
+
+.pricing-amount .amount-num {
+  font-family: var(--font-mono, monospace);
+  font-size: 2.3rem;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1;
+}
+
+.pricing-amount .unit-label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-soft);
+}
+
+.pricing-subtext {
+  font-size: 0.82rem;
+  color: #15803D;
+  font-weight: 600;
+}
+
+.pricing-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* Vehicle Media Card */
+.veh-image-card {
+  position: relative;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
+  background: var(--surface);
+}
+
+.veh-main-image {
+  width: 100%;
+  height: 380px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.veh-image-card:hover .veh-main-image {
+  transform: scale(1.03);
+}
+
+.veh-image-overlay {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  right: 16px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.veh-overlay-pill {
+  background: rgba(10, 10, 10, 0.82);
+  backdrop-filter: blur(8px);
+  color: #FFFFFF;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.veh-media-trust {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.veh-media-trust .trust-micro-item {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+}
+
+.veh-media-trust .trust-micro-item strong {
+  font-size: 0.88rem;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.veh-media-trust .trust-micro-item span {
+  font-size: 0.78rem;
+  color: var(--text-soft);
+  margin-top: 2px;
+}
+
+/* Specifications Bento Grid */
+.veh-specs-section {
+  padding: 72px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.specs-bento-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin-top: 40px;
+}
+
+.spec-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.spec-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--gold);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+}
+
+.spec-icon-wrap {
+  font-size: 2rem;
+  margin-bottom: 16px;
+}
+
+.spec-card-title {
+  font-family: var(--font-display, serif);
+  font-size: 1.22rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 10px;
+}
+
+.spec-card-desc {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--text-soft);
+  margin: 0 0 20px;
+  flex-grow: 1;
+}
+
+.spec-pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.spec-detail-pill {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text-soft);
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+}
+
+/* Models Available Section */
+.veh-models-section {
+  padding: 64px 0;
+  background: var(--bg-alt);
+  border-bottom: 1px solid var(--border);
+}
+
+.models-chips-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin-top: 36px;
+}
+
+.model-chip-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 22px;
+  transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+.model-chip-card:hover {
+  transform: translateX(4px);
+  border-color: var(--gold);
+}
+
+.model-chip-badge {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--gold-deep);
+  background: var(--gold-soft);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.model-chip-info {
+  flex-grow: 1;
+}
+
+.model-chip-name {
+  font-family: var(--font-sans);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 4px;
+}
+
+.model-chip-tag {
+  font-size: 0.78rem;
+  color: var(--text-soft);
+}
+
+.model-chip-arrow {
+  color: var(--gold-deep);
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+/* Rate Tables Section */
+.veh-pricing-table-section {
+  padding: 72px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.rate-tables-wrapper {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 32px;
+  margin-top: 40px;
+}
+
+.rate-table-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+}
+
+.table-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  background: var(--bg-alt);
+  border-bottom: 1px solid var(--border);
+}
+
+.table-card-title {
+  font-family: var(--font-display, serif);
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--text);
+}
+
+.table-card-badge {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--gold-deep);
+  background: var(--gold-soft);
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+.veh-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.veh-table th {
+  padding: 14px 20px;
+  font-size: 0.78rem;
+  font-family: var(--font-mono, monospace);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-soft);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.veh-table td {
+  padding: 16px 20px;
+  font-size: 0.9rem;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+}
+
+.veh-table tr:last-child td {
+  border-bottom: none;
+}
+
+.veh-table .price-td {
+  font-family: var(--font-mono, monospace);
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--gold-deep);
+  white-space: nowrap;
+}
+
+.highway-pill {
+  display: inline-block;
+  font-size: 0.75rem;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  padding: 2px 8px;
+  border-radius: 4px;
+  color: var(--text-soft);
+}
+
+.table-book-link {
+  display: inline-block;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--gold-deep);
+  text-decoration: none;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  background: var(--gold-soft);
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.table-book-link:hover {
+  background: var(--gold);
+  color: #FFFFFF;
+}
+
+/* Operating Rules Callout */
+.veh-rules-callout {
+  margin-top: 36px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--gold);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+}
+
+.rules-icon {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.rules-text {
+  flex-grow: 1;
+}
+
+.rules-heading {
+  font-family: var(--font-display, serif);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 12px;
+}
+
+.rules-list {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.rules-list li {
+  font-size: 0.92rem;
+  line-height: 1.65;
+  color: var(--text-soft);
+  margin-bottom: 8px;
+}
+
+.rules-list li.highlight-rule {
+  color: var(--text);
+  background: var(--gold-soft);
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--gold-deep);
+  list-style-type: none;
+  margin-left: -20px;
+}
+
+/* Scenarios Grid */
+.veh-scenarios-section {
+  padding: 64px 0;
+  background: var(--bg-alt);
+  border-bottom: 1px solid var(--border);
+}
+
+.scenarios-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-top: 36px;
+}
+
+.scenario-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px 20px;
+  transition: transform 0.25s ease;
+}
+
+.scenario-card:hover {
+  transform: translateY(-3px);
+}
+
+.sc-icon {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.sc-title {
+  font-family: var(--font-display, serif);
+  font-size: 1.08rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 8px;
+}
+
+.sc-desc {
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--text-soft);
+  margin: 0;
+}
+
+/* FAQ Accordion Section */
+.veh-faqs-section {
+  padding: 72px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.faqs-accordion-list {
+  max-width: 860px;
+  margin: 36px auto 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.faq-accordion-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+}
+
+.faq-accordion-item.is-open {
+  border-color: var(--gold);
+}
+
+.faq-question-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 22px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.faq-q-text {
+  font-family: var(--font-display, serif);
+  font-size: 1.08rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.faq-chevron-icon {
+  font-size: 1.4rem;
+  color: var(--gold-deep);
+  font-weight: 400;
+  line-height: 1;
+}
+
+.faq-answer-body {
+  padding: 0 22px 20px;
+}
+
+.faq-answer-body p {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--text-soft);
+}
+
+/* Bottom CTA Banner */
+.veh-cta-section {
+  padding: 64px 0 80px;
+}
+
+.veh-cta-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 28px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 40px 48px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+}
+
+.cta-left {
+  max-width: 600px;
+}
+
+.cta-eyebrow {
+  display: inline-block;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--gold-deep);
+  margin-bottom: 6px;
+}
+
+.cta-title {
+  font-family: var(--font-display, serif);
+  font-size: clamp(1.6rem, 2.8vw, 2.1rem);
+  color: var(--text);
+  margin: 0 0 10px;
+  line-height: 1.25;
+}
+
+.cta-desc {
+  font-size: 0.95rem;
+  color: var(--text-soft);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.cta-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* ==========================================================================
+   RESPONSIVE OVERFLOW & COLLAPSE GUARDS FOR VEHICLE DETAIL
+   ========================================================================== */
+
+@media (max-width: 960px) {
+  .veh-hero-grid {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+
+  .specs-bento-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .rate-tables-wrapper {
+    grid-template-columns: 1fr;
+  }
+
+  .scenarios-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .veh-cta-banner {
+    padding: 32px 24px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+  .veh-highlights-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .veh-pricing-box {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 18px 20px;
+  }
+
+  .pricing-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .pricing-actions .button {
+    width: 100%;
+    text-align: center;
+  }
+
+  .veh-media-trust {
+    grid-template-columns: 1fr;
+  }
+
+  .specs-bento-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .scenarios-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cta-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .cta-actions .button {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* ==========================================================================
+   SOLAR DUSK DARK MODE OVERRIDES FOR VEHICLE DETAIL
+   ========================================================================== */
+
+[data-theme="dark"] .vehicle-detail-page {
+  background: #181615;
+}
+
+[data-theme="dark"] .veh-hero-section {
+  border-color: #3D3936;
+}
+
+[data-theme="dark"] .veh-title {
+  color: #FDFCFB;
+}
+
+[data-theme="dark"] .veh-subtitle,
+[data-theme="dark"] .veh-blurb {
+  color: #A8A29E;
+}
+
+[data-theme="dark"] .veh-highlights-strip {
+  background: #201E1D;
+  border-color: #3D3936;
+}
+
+[data-theme="dark"] .veh-h-item {
+  color: #FDFCFB;
+}
+
+[data-theme="dark"] .veh-pricing-box {
+  background: #242220;
+  border-color: #3D3936;
+}
+
+[data-theme="dark"] .pricing-headline .pricing-caption {
+  color: #A8A29E;
+}
+
+[data-theme="dark"] .pricing-amount .amount-num {
+  color: #FDFCFB;
+}
+
+[data-theme="dark"] .pricing-amount .unit-label {
+  color: #A8A29E;
+}
+
+[data-theme="dark"] .pricing-subtext {
+  color: #4ADE80;
+}
+
+[data-theme="dark"] .veh-image-card {
+  border-color: #3D3936;
+}
+
+[data-theme="dark"] .veh-media-trust .trust-micro-item {
+  background: #242220;
+  border-color: #3D3936;
+}
+
+[data-theme="dark"] .veh-media-trust .trust-micro-item strong {
+  color: #FDFCFB;
+}
+
+[data-theme="dark"] .veh-media-trust .trust-micro-item span {
+  color: #A8A29E;
+}
+
+[data-theme="dark"] .veh-specs-section {
+  border-color: #3D3936;
+}
+
+[data-theme="dark"] .spec-card {
+  background: #242220;
+  border-color: #3D3936;
+}
+
+[data-theme="dark"] .spec-card-title {
+  color: #FDFCFB;
+}
+
+[data-theme="dark"] .spec-card-desc {
+  color: #A8A29E;
+}
+
+[data-theme="dark"] .spec-detail-pill {
+  background: #181615;
+  border-color: #3D3936;
+  color: #A8A29E;
+}
+
+[data-theme="dark"] .veh-models-section {
+  background: #201E1D;
+  border-color: #3D3936;
+}
+
+[data-theme="dark"] .model-chip-card {
+  background: #242220;
+  border-color: #3D3936;
+}
+
+[data-theme="dark"] .model-chip-name {
+  color: #FDFCFB;
+}
+
+[data-theme="dark"] .model-chip-tag {
+  color: #A8A29E;
+}
+
+[data-theme="dark"] .veh-pricing-table-section {
+  border-color: #3D3936;
+}
+
+[data-theme="dark"] .rate-table-card {
+  background: #242220;
+  border-color: #3D3936;
+}
+
+[data-theme="dark"] .table-card-header {
+  background: #181615;
+  border-color: #3D3936;
+}
+
+[data-theme="dark"] .table-card-title {
+  color: #FDFCFB;
+}
+
+[data-theme="dark"] .veh-table th {
+  background: #242220;
+  color: #A8A29E;
+  border-color: #3D3936;
+}
+
+[data-theme="dark"] .veh-table td {
+  border-color: #3D3936;
+  color: #E7E5E4;
+}
+
+[data-theme="dark"] .highway-pill {
+  background: #181615;
+  border-color: #3D3936;
+  color: #A8A29E;
+}
+
+[data-theme="dark"] .veh-rules-callout {
+  background: #201E1D;
+  border-color: #3D3936;
+}
+
+[data-theme="dark"] .rules-heading {
+  color: #FDFCFB;
+}
+
+[data-theme="dark"] .rules-list li {
+  color: #A8A29E;
+}
+
+[data-theme="dark"] .rules-list li.highlight-rule {
+  background: rgba(229, 160, 68, 0.15);
+  color: #FDFCFB;
+}
+
+[data-theme="dark"] .veh-scenarios-section {
+  background: #201E1D;
+  border-color: #3D3936;
+}
+
+[data-theme="dark"] .scenario-card {
+  background: #242220;
+  border-color: #3D3936;
+}
+
+[data-theme="dark"] .sc-title {
+  color: #FDFCFB;
+}
+
+[data-theme="dark"] .sc-desc {
+  color: #A8A29E;
+}
+
+[data-theme="dark"] .veh-faqs-section {
+  border-color: #3D3936;
+}
+
+[data-theme="dark"] .faq-accordion-item {
+  background: #242220;
+  border-color: #3D3936;
+}
+
+[data-theme="dark"] .faq-q-text {
+  color: #FDFCFB;
+}
+
+[data-theme="dark"] .faq-answer-body p {
+  color: #A8A29E;
+}
+
+[data-theme="dark"] .veh-cta-banner {
+  background: #242220;
+  border-color: #3D3936;
+}
+
+[data-theme="dark"] .cta-title {
+  color: #FDFCFB;
+}
+
+[data-theme="dark"] .cta-desc {
+  color: #A8A29E;
+}
+
+
 
