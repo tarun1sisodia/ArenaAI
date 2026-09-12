@@ -14,6 +14,7 @@
 
 import React, { useEffect } from "react";
 import { contact } from "../../data/contact";
+import { JsonLd } from "./JsonLd";
 
 export const CANONICAL_DOMAIN = "https://skbagheltravels.in";
 export const DEFAULT_OG_IMAGE = `${CANONICAL_DOMAIN}/assets/brand/og-banner.webp`;
@@ -349,10 +350,7 @@ export function SeoHead({
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaToInject) }}
-      />
+      <JsonLd schema={schemaToInject} />
       {children}
     </>
   );

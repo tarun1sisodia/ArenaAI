@@ -331,7 +331,7 @@ Every single unit of work is broken down into a discrete, verifiable step. Imple
 
 #### Sub-Phase R5D: SEO Engine & Static Site Pre-Rendering (SSG)
 - [x] **R5.24:** SEO Head & Metadata Manager (`react/src/components/seo/SeoHead.tsx`): Dynamic Title, Meta description, Canonical URL, Open Graph, Twitter cards, and Hreflang alternates (`en-IN`, `hi-IN`, `x-default`).
-- [ ] **R5.25:** Structured Data Injector (`react/src/components/seo/JsonLd.tsx`): Injects validated Schema.org graphs for `TaxiService`, `BreadcrumbList`, `FAQPage`, and `AggregateRating`.
+- [x] **R5.25:** Structured Data Injector (`react/src/components/seo/JsonLd.tsx`): Injects validated Schema.org graphs for `TaxiService`, `BreadcrumbList`, `FAQPage`, and `AggregateRating`.
 - [ ] **R5.26:** Static HTML Pre-Renderer / SSG Build Script (`react/scripts/prerender.ts`): Builds crawlable static HTML files for all 113 bilingual URLs so that primary copy and fares are 100% crawlable without client JS.
 - [ ] **R5.27:** XML Sitemap & Robots Generator: Generates `dist/react/sitemap.xml` with all 113 URLs, lastmod timestamps, and `robots.txt` pointing to sitemap.
 
