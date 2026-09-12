@@ -50,6 +50,7 @@ const initialState: BookingState = {
 
 function loadDraft(): BookingState {
   try {
+    if (typeof window === "undefined") return initialState;
     const saved = sessionStorage.getItem("skb-booking");
     const draft = saved ? JSON.parse(saved) as Partial<BookingState> & { createdAt?: number } : null;
     const isFresh = draft?.createdAt && Date.now() - draft.createdAt < 24 * 60 * 60 * 1000;

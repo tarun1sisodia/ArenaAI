@@ -1,5 +1,9 @@
+# Robots.txt — SK Baghel Tour & Travels Agra
 User-agent: *
 Allow: /
 Disallow: /book.html
+Disallow: /404.html
 Disallow: /design-guide/
+
+# Sitemaps
 Sitemap: https://skbagheltravels.in/sitemap.xml

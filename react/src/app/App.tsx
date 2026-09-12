@@ -20,21 +20,21 @@ import { marketingHubs } from "./routes";
 import { SeoHead } from "../components/seo/SeoHead";
 import { packages, routes, vehicles } from "../data/catalogue";
 
-function getMarketingPath(pathname: string) {
+export function getMarketingPath(pathname: string) {
   const segments = pathname.split("/").filter(Boolean);
   const localizedSegments = segments[0] === "en" || segments[0] === "hi" ? segments.slice(1) : segments;
   const lastSegment = localizedSegments.at(-1)?.replace(/\.html$/, "") ?? "home";
   return { language: segments[0] === "hi" ? "hi" as const : "en" as const, section: lastSegment };
 }
 
-interface SeoMetadata {
+export interface SeoMetadata {
   title: string;
   description: string;
   ogImage?: string;
   keywords?: string[];
 }
 
-function getSeo(pathname: string, section: string, language: "en" | "hi", isBooking: boolean): SeoMetadata {
+export function getSeo(pathname: string, section: string, language: "en" | "hi", isBooking: boolean): SeoMetadata {
   if (isBooking) {
     return {
       title: "Book a ride | SK Baghel Tour & Travels",
@@ -98,16 +98,16 @@ function getSeo(pathname: string, section: string, language: "en" | "hi", isBook
       route.to === "agra"
         ? "आगरा"
         : route.to === "delhi"
-        ? "दिल्ली"
-        : route.to === "jaipur"
-        ? "जयपुर"
-        : route.to === "mathura"
-        ? "मथुरा"
-        : route.to === "gwalior"
-        ? "ग्वालियर"
-        : route.to === "lucknow"
-        ? "लखनऊ"
-        : route.to;
+          ? "दिल्ली"
+          : route.to === "jaipur"
+            ? "जयपुर"
+            : route.to === "mathura"
+              ? "मथुरा"
+              : route.to === "gwalior"
+                ? "ग्वालियर"
+                : route.to === "lucknow"
+                  ? "लखनऊ"
+                  : route.to;
     if (language === "hi") {
       return {
         title: `${fromHi} से ${toHi} टैक्सी किराया व बुकिंग | SK Baghel`,
@@ -320,8 +320,12 @@ function getSeo(pathname: string, section: string, language: "en" | "hi", isBook
   };
 }
 
-function App() {
-  const pathname = window.location.pathname;
+export interface AppProps {
+  pathname?: string;
+}
+
+export function App({ pathname: propPathname }: AppProps = {}) {
+  const pathname = propPathname || (typeof window !== "undefined" ? window.location.pathname : "/");
   const { language, section } = getMarketingPath(pathname);
   const isHome =
     pathname === "/" ||

@@ -57,6 +57,13 @@ function readRuntimeToken(): string {
   if (typeof window === "undefined") return "";
 
   try {
+    const params = new URLSearchParams(window.location.search);
+    const paramKey = params.get("locationiq_key")?.trim();
+    if (paramKey) return paramKey;
+
+    const globalKey = (window as unknown as { LOCATIONIQ_ACCESS_TOKEN?: string }).LOCATIONIQ_ACCESS_TOKEN?.trim();
+    if (globalKey) return globalKey;
+
     return (
       window.localStorage.getItem("locationiq_access_token")?.trim() || ""
     );
@@ -67,4 +74,22 @@ function readRuntimeToken(): string {
 
 export function getLocationIqAccessToken(): string {
   return readRuntimeToken();
+}
+
+export function setLocationIqAccessToken(token: string): void {
+  if (typeof window === "undefined") return;
+  try {
+    const trimmed = token.trim();
+    if (trimmed) {
+      window.localStorage.setItem("locationiq_access_token", trimmed);
+    } else {
+      window.localStorage.removeItem("locationiq_access_token");
+    }
+  } catch {
+    // Ignore storage quota / access errors
+  }
+}
+
+export function clearLocationIqAccessToken(): void {
+  setLocationIqAccessToken("");
 }

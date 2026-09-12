@@ -232,7 +232,7 @@ Every single unit of work is broken down into a discrete, verifiable step. Imple
 - [ ] **Phase R2 — Data, Pure Fare Engine & Core Utilities** (R2.1 & R2.2 complete, R2.3 next)
 [ ] Phase R3 — Design System & Responsive Primitives (R3.1 to R3.10)
 [x] Phase R4 — Shared Chrome & Navigation Components (R4.1 to R4.9 complete)
-[ ] Phase R5 — Marketing Pages, Detail Templates & Pre-Rendering (R5.1 to R5.27)
+[x] Phase R5 — Marketing Pages, Detail Templates & Pre-Rendering (R5.1 to R5.27) ✅
 [ ] Phase R6 — LocationIQ & Interactive Discovery (R6.1 to R6.5)
 [ ] Phase R7 — Fare Calculator & 5-Step Booking Flow (R7.1 to R7.8)
 [ ] Phase R8 — Responsive QA, Accessibility & Mobile App Shell (R8.1 to R8.7)
@@ -332,13 +332,13 @@ Every single unit of work is broken down into a discrete, verifiable step. Imple
 #### Sub-Phase R5D: SEO Engine & Static Site Pre-Rendering (SSG)
 - [x] **R5.24:** SEO Head & Metadata Manager (`react/src/components/seo/SeoHead.tsx`): Dynamic Title, Meta description, Canonical URL, Open Graph, Twitter cards, and Hreflang alternates (`en-IN`, `hi-IN`, `x-default`).
 - [x] **R5.25:** Structured Data Injector (`react/src/components/seo/JsonLd.tsx`): Injects validated Schema.org graphs for `TaxiService`, `BreadcrumbList`, `FAQPage`, and `AggregateRating`.
-- [ ] **R5.26:** Static HTML Pre-Renderer / SSG Build Script (`react/scripts/prerender.ts`): Builds crawlable static HTML files for all 113 bilingual URLs so that primary copy and fares are 100% crawlable without client JS.
-- [ ] **R5.27:** XML Sitemap & Robots Generator: Generates `dist/react/sitemap.xml` with all 113 URLs, lastmod timestamps, and `robots.txt` pointing to sitemap.
+- [x] **R5.26:** Static HTML Pre-Renderer / SSG Build Script (`react/scripts/prerender.ts`): Builds crawlable static HTML files for all 113 bilingual URLs so that primary copy and fares are 100% crawlable without client JS.
+- [x] **R5.27:** XML Sitemap & Robots Generator: Generates `dist/react/sitemap.xml` with all 113 URLs, lastmod timestamps, and `robots.txt` pointing to sitemap.
 
 ---
 
 ### Phase R6: LocationIQ Search & Interactive Discovery ⏳
-- [ ] **R6.1:** Typed LocationIQ Client & Hook (`react/src/hooks/useLocationIQ.ts`): Debounced query hook (300ms), AbortController for race prevention, and runtime token injection.
+- [x] **R6.1:** Typed LocationIQ Client & Hook (`react/src/hooks/useLocationIQ.ts`): Debounced query hook (300ms), AbortController for race prevention, and runtime token injection.
 - [ ] **R6.2:** Searchable Combobox Component (`react/src/components/search/LocationCombobox.tsx`): Touch-friendly combobox with autocomplete suggestions, airport/station icons, and keyboard navigation.
 - [ ] **R6.3:** Static Destinations & Fallback Distance Matrix (`react/src/utils/distance.ts`): 30+ Indian destinations with verified highway distances from Agra/Delhi when offline or without API token.
 - [ ] **R6.4:** Custom Destination Distance & Fare Estimator: Estimates distance (km), travel hours, and fares for unlisted custom addresses or cities.
