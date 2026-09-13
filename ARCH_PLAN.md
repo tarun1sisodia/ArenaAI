@@ -1,1 +1,0 @@
-Production Backend Architecture Plan — SK Baghel Tour & Travels.md

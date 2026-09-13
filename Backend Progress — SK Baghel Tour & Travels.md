@@ -28,23 +28,19 @@
 
 ## Completed
 
-- [x] Defined Supabase PostgreSQL as the primary financial and operational system of record.
-- [x] Defined product scope: Customer website and Admin panel only (no driver app, no driver login, no GPS telemetry, no live tracking).
-- [x] Specified provider-neutral advance payment (28%, min ₹500, in paise/cents), provider webhook verification (`/payments/webhooks/:provider`), and idempotency rules.
-- [x] Defined post-payment admin manual driver assignment workflow (no customer driver selection, no driver app; admin dispatches details via WhatsApp).
-- [x] Refined booking state machine: `draft` -> `pending_payment` -> `paid_confirmed` -> `driver_assigned` -> `completed`.
-- [x] Documented public booking, catalog, gallery, verified review, and admin management API routes.
-- [x] Integrated catalog content, gallery media, and review moderation architecture (`GALLERY_REVIEWS_ADMIN.md`).
-- [x] Created `BACKEND_RULES.md` as the supreme canonical operational rule for all backend development.
-- [x] Synchronized all backend architecture decisions and document embeddings into Supermemory (`sk_baghel_travels`).
+- [x] Defined Supabase PostgreSQL as the financial and operational system of record.
+- [x] Defined MongoDB Atlas as the high-throughput telemetry and document store for the scale phase.
+- [x] Specified the Razorpay advance, webhook, signature, and idempotency rules.
+- [x] Documented public, operations, and driver API routes.
+- [x] Created phase, plan, bug register, API, model, and system-flow documents.
 
 ## Next Actions
 
-- [ ] Initialize the `backend/` repository structure (Fastify/Express, TypeScript 5.5+, Zod).
-- [ ] Add environment validation (`src/config/env.ts`) and health endpoints (`/health`, `/ready`).
-- [ ] Create and apply Supabase migrations for profiles, vehicles, drivers, bookings, payments, refunds, catalog_items, and reviews.
-- [ ] Port and test the server-authoritative fare engine (`src/modules/fares/fare.engine.ts`).
-- [ ] Implement booking draft and ticket generation (`AGR-YYYYMMDD-XXXX`).
+- [ ] Initialize the `backend/` repository structure.
+- [ ] Add environment validation and health endpoints.
+- [ ] Create and apply Supabase migrations.
+- [ ] Port and test the fare engine.
+- [ ] Implement booking draft and ticket generation.
 - [ ] Implement Razorpay test-mode order and webhook flows.
 - [ ] Add contract tests for routes and state transitions.
 - [ ] Review critical items in [BUGS.md](BUGS.md).
@@ -54,7 +50,6 @@
 | Date | Change | Owner |
 |---|---|---|
 | 2026-09-13 | Created the documentation baseline from the master architecture plan | Manus AI |
-| 2026-09-13 | Refined scope to Customer Website + Admin Panel; added Catalog, Gallery & Verified Reviews architecture; finalized BACKEND_RULES.md and synced Supermemory | Antigravity AI |
 
 ## References
 

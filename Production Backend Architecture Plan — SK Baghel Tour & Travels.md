@@ -327,8 +327,7 @@ In accordance with [`docs/PAYMENT_SYSTEM.md`](file:///home/bot/Internship/ArenaA
 |---|---|---|---|
 | `GET` | `/admin/bookings` | Filterable dispatch master table | Admin/Dispatcher |
 | `PATCH` | `/admin/bookings/:id/assign` | Assign chauffeur and vehicle to booking | Admin/Dispatcher |
-| `PATCH` | `/driver/trips/:id/status` | Trip start, toll recorded, trip completed | Driver JWT |
-| `POST` | `/admin/refunds` | Process cancellation refund via Razorpay | Super Admin |
+| `POST` | `/admin/refunds` | Process cancellation refund through the original payment provider | Super Admin |
 
 ---
 
@@ -337,11 +336,13 @@ In accordance with [`docs/PAYMENT_SYSTEM.md`](file:///home/bot/Internship/ArenaA
 ```
 backend/
 ├── src/
-│   ├── config/              # Environment, Supabase, Mongo, Razorpay clients
+│   ├── config/              # Environment, Supabase, Mongo, and payment-provider clients
 │   │   ├── env.ts           # Zod-validated process.env schema
 │   │   ├── supabase.ts      # Supabase admin client
 │   │   ├── mongo.ts         # Mongoose connection manager
-│   │   └── razorpay.ts      # Razorpay SDK instance
+│   │   ├── razorpay.ts      # Razorpay adapter
+│   │   ├── paypal.ts        # PayPal adapter
+│   │   └── cardProvider.ts  # International card adapter
 │   ├── modules/             # Domain feature modules
 │   │   ├── fares/           # Pure typed fare engine & distance calculator
 │   │   │   ├── fareEngine.ts
@@ -352,7 +353,7 @@ backend/
 │   │   │   ├── bookingService.ts
 │   │   │   ├── bookingController.ts
 │   │   │   └── bookingRoutes.ts
-│   │   ├── payments/        # Razorpay Orders & Webhook Processor
+│   │   ├── payments/        # Provider-neutral checkout and reconciliation
 │   │   │   ├── paymentService.ts
 │   │   │   ├── webhookHandler.ts
 │   │   │   └── paymentRoutes.ts
@@ -416,17 +417,17 @@ When implementation begins, execute in this precise order:
   - Implement `/api/v1/bookings/draft` with ticket format `AGR-YYYYMMDD-XXXX`.
   - Wire booking validation and transactional insertion into Supabase.
 
-- [ ] **Step B4: Razorpay Orders & Secure Webhook Gateway**
-  - Configure Razorpay SDK with test credentials.
-  - Implement `/api/v1/payments/create-order` (28% advance calculation).
-  - Implement `/api/v1/payments/webhook` with HMAC SHA256 signature verification and idempotency.
+- [ ] **Step B4: Multi-Provider Checkout & Secure Reconciliation**
+  - Configure Razorpay, PayPal, and the selected international card processor in sandbox mode.
+  - Implement `/api/v1/payments/create-checkout` using the persisted booking advance.
+  - Implement `/api/v1/payments/webhooks/:provider` with provider-specific signature/server verification, amount/currency checks, and idempotency.
 
 - [ ] **Step B5: Catalog, Gallery & Review Administration**
   - Implement admin CRUD for rides, tours, packages, fare rules, promo codes, and drivers.
   - Implement Supabase Storage media uploads and publication metadata.
   - Implement review submission, booking verification, moderation, publication, and audit logs.
 
-- [ ] **Step B6:** Automated WhatsApp & Email Dispatch**
+- [ ] **Step B6: Manual Assignment & Automated Notifications****
   - Integrate WhatsApp Business API template notifications for payment confirmation and driver assignment.
   - Show assigned driver's approved basic contact details to the verified customer; do not expose live tracking.
   - Integrate PDF voucher generation and email delivery via Resend/SES.
@@ -434,4 +435,4 @@ When implementation begins, execute in this precise order:
 - [ ] **Step B7: CI/CD Pipeline & Production Cloud Deployment**
   - Set up GitHub Actions workflow (lint -> test -> docker build).
   - Deploy Node.js API to Render/Railway in Mumbai region.
-  - Configure Razorpay Live Webhooks pointing to production domain.
+  - Configure production webhooks for Razorpay, PayPal, and the selected international card processor after sandbox verification.

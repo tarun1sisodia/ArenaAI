@@ -5,7 +5,7 @@
 
 ## Objective
 
-Deliver a secure Node.js and TypeScript backend for cab bookings, tours, airport transfers, driver dispatch, admin-managed driver assignment and contact details, and Razorpay payments. The implementation must preserve Supabase PostgreSQL as the financial and operational system of record.
+Deliver a secure Node.js and TypeScript backend for cab bookings, tours, airport transfers, admin-managed manual driver assignment and contact details, and multi-provider payments. The implementation must preserve Supabase PostgreSQL as the financial and operational system of record.
 
 ## Workstreams
 
@@ -14,9 +14,9 @@ Deliver a secure Node.js and TypeScript backend for cab bookings, tours, airport
 | W1 Foundation | Runtime, repository, configuration, CI, logging | Buildable service with validated configuration |
 | W2 Fare and locations | Fare rules, distance inputs, LocationIQ proxy and cache | Server-authoritative fare endpoint |
 | W3 Bookings | Validation, ticket IDs, lifecycle, vouchers | Draft and verified booking flow |
-| W4 Payments | Razorpay orders, signatures, idempotency, refunds | Money-safe payment integration |
-| W5 Operations | Drivers, vehicles, assignment, trip status | Dispatcher and driver workflows |
-| W6 Content and trust | Catalog, gallery, reviews, moderation, and audit | Admin-controlled public content | High-throughput document services |
+| W4 Payments | Razorpay, PayPal, international cards, signatures, idempotency, refunds | Provider-neutral money-safe payment integration |
+| W5 Operations | Manual admin driver assignment and WhatsApp contact delivery | Admin-only post-payment workflow |
+| W6 Content and trust | Catalog, gallery, reviews, moderation, and audit | Admin-controlled public content |
 | W7 Notifications | WhatsApp, email, voucher delivery, retries | Customer and driver communications |
 | W8 Delivery | Tests, Docker, CI/CD, deployment, monitoring | Production-ready release |
 
@@ -40,11 +40,11 @@ Validate guest and authenticated booking input. Generate unique ticket IDs. Pers
 
 ### 5. Payment Service
 
-Create Razorpay orders only from the server-persisted advance amount. Store order identifiers and idempotency keys. Verify webhook signatures using the raw request body, transition payment and booking state atomically, and dispatch side effects only once.
+Create provider checkouts only from the server-persisted advance amount. Store provider, order/session/payment identifiers, currency, minor-unit amount, and idempotency keys. Verify provider webhooks or server-side payment state using the raw request body where applicable, transition payment and booking state atomically, and dispatch side effects only once.
 
 ### 6. Operations Service
 
-Implement role-protected admin, dispatcher, and driver routes. Validate driver availability, assignment windows, trip state transitions, toll records, completion, cancellation, and refund authorization.
+Implement role-protected admin and dispatcher routes. Allow manual assignment only after payment confirmation, record the assignment audit event, and send approved driver details through WhatsApp. Keep drivers as managed records, not authenticated application users.
 
 ### 7. Scale Services
 
@@ -52,7 +52,7 @@ Add MongoDB Atlas after transaction workflows are stable. Introduce telemetry, g
 
 ### 8. Verification and Deployment
 
-Run unit, integration, contract, security, and failure-path tests. Build a multi-stage Docker image. Deploy to the selected Mumbai-region host. Configure production Razorpay webhooks, CORS, rate limits, alerts, backups, and rollback procedures.
+Run unit, integration, contract, security, and failure-path tests for all payment providers. Build a multi-stage Docker image. Deploy to the selected Mumbai-region host. Configure production provider webhooks, CORS, rate limits, alerts, backups, and rollback procedures.
 
 ## Definition of Done
 

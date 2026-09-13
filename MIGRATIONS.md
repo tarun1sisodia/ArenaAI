@@ -1,1 +1,0 @@
-Database Migration and Rollback Safety — Initial Phase.md

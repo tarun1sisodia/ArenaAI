@@ -1,53 +1,27 @@
----
-name: technical-writing
-description: Produce precise, structured writing for technical or academic purposes. Use when presenting a Markdown report, article, analysis, or other long-form written document to the user.
----
+# Backend Engineering Skill — SK Baghel Tour & Travels
 
-# Technical Writing
+**Scope:** Implementation skill for the customer website and admin panel backend.
 
-## When to Use
+## Non-Negotiable Product Scope
 
-- When writing a report, multi-chapter article, analysis, or other long-form document as a deliverable for the user
-- When presenting research findings, factual claims, or external data in Markdown
-- When the task requires precise, structured writing for technical or academic purposes
+The product has a customer website and an admin panel. Customers do not select drivers or vehicles. There is no driver application, driver login, GPS telemetry, live tracking, WebSocket telemetry, or passenger tracking link. After payment is verified, an admin manually assigns a driver and sends approved driver details to the customer through WhatsApp.
 
-## Technical Writing Best Practices
+## Payment Implementation
 
-- MUST strictly follow the format instructions below
-- MUST organize reports and concept explanations from the overall conclusion to supporting details; apply the same general-to-specific order within sections and list items
-- MUST keep syntax and logic unnested; present one reasoning step at a time
-- MUST express one main proposition per sentence and avoid mixing definitions, facts, judgments, examples, exceptions, or recommendations
-- MUST not assume unstated reader knowledge; define specialized terms, expand abbreviations, and state necessary premises
-- Use plain, direct, concise, and information-dense language; remove filler and make logical relationships explicit
-- Avoid unnecessary metaphors and analogies; use literal explanations by default and state the limits of an analogy when one is necessary
-- MUST include a "References" section at the end using Markdown reference definitions
-- MUST use one numeric reference ID end-to-end: cite as `[1]` and define every source as `[1]: https://example.com "Descriptive source title"`; the double-quoted page, article, report, or video title is required—never output a bare URL, append an unquoted title, place prose before the URL, use alias IDs such as `r1`, full-reference forms such as `[1][r1]`, nested inline links, or custom HTML anchors
-- When citing multiple sources, separate each complete citation with a space (e.g., `[1] [2]`); never concatenate them as `[1][2]`
-- Use Markdown blockquotes to quote full passages from sources, with clear attribution
-- MUST include well-structured tables to organize key information wherever applicable
-- Actively insert charts and images when needed to support analysis or convey insights
-- MUST save data visualizations to image files first, then insert them into documents using Markdown syntax
-- NEVER deliver intermediate notes as final result; MUST rewrite into information-rich but readable final document
-- MUST avoid using excessive bullet points; instead, write in full sentences and paragraphs
-- DO NOT convert documents to PDF unless explicitly requested by the user
-- Default author is **Manus AI**, unless the user specifies otherwise
-- Take pride in your work and aim to exceed user expectations
+Use one provider-neutral payment service with separate adapters for Razorpay, PayPal, and an approved international card processor. Create checkouts only from the persisted server-calculated booking advance. Store provider, order or session ID, payment ID, currency, amount in minor units, event ID, status, and reconciliation data. A redirect or browser callback never proves payment. Only a signed provider webhook or server-side provider verification can set `paid_confirmed`.
 
-## Format
+## Engineering Flow
 
-- Use GitHub-flavored Markdown as the default format for all messages and documents unless otherwise specified
-- MUST write in a professional, academic style, using complete paragraphs rather than bullet points
-- Alternate between well-structured paragraphs and tables, where tables are used to clarify, organize, or compare key information
-- Use **bold** text for emphasis on key concepts, terms, or distinctions where appropriate
-- Use blockquotes to highlight definitions, cited statements, or noteworthy excerpts
-- Use inline hyperlinks when mentioning a website or resource for direct access
-- Use inline numeric citations with Markdown reference-style links for factual claims
-- Use Markdown pipe tables only; never use HTML `<table>` in Markdown files
-- MUST avoid using emoji unless absolutely necessary, as it is not considered professional
+Implement each feature vertically: Zod contract, pure business rules, service, migration, repository, controller, route, tests, and documentation. Keep Supabase PostgreSQL as the source of truth for bookings, payments, drivers, assignments, catalog, gallery, reviews, moderation, and audit records. Use MongoDB only for explicitly approved cache or provider-event workloads. Use Firebase only for optional web notifications and diagnostics.
 
-## Final Rewrite
+## Manual Assignment Flow
 
-You must rewrite the final version of the document; everything written up to this point is only a draft.
+The admin filters paid bookings, manually selects a driver from internal records, optionally associates a vehicle, records an audit event, and sends an approved WhatsApp message. The assignment route is never exposed to customers. Drivers are managed records, not authenticated application users.
 
-- NEVER deliver intermediate notes as the only result; MUST prepare information-rich but readable final versions
-- When delivering key files (e.g., reports), MUST keep message text concise and guide the user to view the attachments directly
+## Required Verification
+
+Before declaring a slice complete, test valid input, invalid input, authorization, duplicate requests, provider outages, signed webhook verification, amount and currency mismatch, refund behavior, notification retries, and audit logging. Keep the API, models, requirements, diagrams, and implementation plan synchronized.
+
+## Source Documents
+
+Use `BACKEND_RULES.md` as the supreme rule set. Then consult `BACKEND_ARCHITECTURE_PLAN.md`, `TECHNICAL_REQUIREMENTS_DOCUMENT.md`, `API.md`, `MODELS.md`, `CONTROLLERS.md`, `DATABASE_PLATFORM_DECISION.md`, `PHASE.md`, `PLAN.md`, `REALTIME.md`, and `GALLERY_REVIEWS_ADMIN.md`.

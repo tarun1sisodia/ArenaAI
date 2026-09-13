@@ -1,4 +1,4 @@
-# Real-Time Operations and Failure Handling — SK Baghel Tour & Travels
+# Booking Status, Notifications, and Failure Handling — SK Baghel Tour & Travels
 
 **Document status:** Operational design reference  
 **Related documents:** [FRAME.md](FRAME.md), [CONTROLLERS.md](CONTROLLERS.md), [MODELS.md](MODELS.md)
@@ -7,13 +7,12 @@
 
 The system must remain safe and understandable when payments, drivers, networks, databases, external providers, and user devices behave unpredictably. Real-time behavior is implemented as a combination of REST commands, event records, short-lived status updates, and asynchronous retries.
 
-## Real-Time Channels
+## Interaction Channels
 
 | Channel | Use | Source of truth | Delivery behavior |
 |---|---|---|---|
 | REST | Commands and authoritative reads | PostgreSQL or service result | Request/response with explicit error |
-| WebSocket or Supabase Realtime | Dispatch and booking status updates | Persisted booking event | Reconnect and resynchronize from REST |
-| Driver telemetry | GPS points approximately every five seconds | MongoDB telemetry collection | Best-effort, out-of-order tolerant |
+| REST | Customer and admin commands and authoritative reads | Supabase PostgreSQL | Request/response with explicit error |
 | Provider webhook | Payment and refund confirmation | Razorpay event plus PostgreSQL ledger | Signature verified and idempotent |
 | Job queue | Notifications, retries, invoice generation | PostgreSQL event or outbox record | Retry with backoff and dead-letter state |
 
@@ -47,21 +46,17 @@ Order creation returns a retry-safe error and leaves the booking pending. The cl
 
 The assignment service uses a transaction, current-state predicate, and optimistic version or row lock. Only one assignment succeeds. The other receives `ASSIGNMENT_CONFLICT` and must refresh the booking.
 
-### Driver loses network connectivity
+### Admin assigns a driver
 
-The driver app stores a bounded local queue of telemetry and trip events. Events include client event IDs and timestamps. On reconnect, the app retries them. The server deduplicates events and rejects timestamps outside the allowed drift window for status commands.
+The assignment service uses a transaction, current-state predicate, and optimistic version or row lock. Only one assignment succeeds. The other receives `ASSIGNMENT_CONFLICT`. After assignment, the customer sees only approved driver contact details.
 
-### GPS points arrive late or out of order
+### Customer cannot reach the assigned driver
 
-Telemetry is ordered by device timestamp for display, while ingestion time is retained for operations. A late point must not move the driver's current location backward if a newer point is already accepted. Invalid coordinates and impossible speed jumps are flagged rather than used for customer tracking.
+The customer can refresh the verified booking page or contact the business. Admins can correct contact details or reassign the driver. There is no live location fallback and no driver-app synchronization to recover.
 
-### Driver stops sending GPS
+### Driver contact details change
 
-A monitoring job marks telemetry stale after the configured threshold. The dispatch dashboard shows the last known point and age. The system does not claim that the vehicle is stationary; it distinguishes `stale`, `offline`, and `active` states.
-
-### Driver application sends an unauthorized trip update
-
-The API verifies the JWT, driver identity, assignment, booking state, and transition. It rejects the event without changing the booking and records a security-relevant audit entry.
+An admin updates the driver record and the system records an audit event. The customer-facing booking response uses the current approved contact projection while preserving booking and payment history.
 
 ## Location Provider Situations
 
@@ -69,13 +64,13 @@ LocationIQ requests use a timeout and bounded retry policy. A normalized cache k
 
 ## Notification Situations
 
-Payment confirmation and driver assignment are persisted as domain events before notification delivery. WhatsApp and email workers consume those events. Each delivery has a provider message ID, attempt count, last error, and next retry time. Repeated jobs use a deterministic notification key to prevent duplicate customer messages.
+Payment confirmation and manual driver assignment are persisted as domain events before notification delivery. WhatsApp and email workers consume those events. Driver assignment is never automatic and never customer-selected. Each delivery has a provider message ID, attempt count, last error, and next retry time. Repeated jobs use a deterministic notification key to prevent duplicate customer messages.
 
 A notification failure must not reverse a confirmed payment or booking. Operations must be able to resend a message manually through an authorized action.
 
 ## Client Reconnection
 
-A real-time client reconnects with exponential backoff and jitter. After reconnecting, it sends the last received event sequence or timestamp. The server returns missed events when available; otherwise the client performs a full REST refresh. UI state must be derived from the refreshed booking state, not from assumptions about missed events.
+The customer website and admin panel use REST as the authoritative interaction model. If a request times out, the client retries only safe or idempotent operations and then refreshes the booking from REST. Notifications are hints; users must retrieve current state from the API.
 
 ## Consistency Model
 
@@ -84,18 +79,17 @@ A real-time client reconnects with exponential backoff and jitter. After reconne
 | Payment amount and status | Strong, transactional |
 | Booking lifecycle | Strong, transactional |
 | Driver assignment | Strong, conflict-detected |
-| Driver GPS display | Eventual and freshness-aware |
 | Location autocomplete | Eventually consistent cache |
 | Notifications | At-least-once delivery with deduplication |
 | Analytics | Eventual consistency |
 
 ## Observability and Alerts
 
-Alert on payment webhook signature failures, repeated webhook duplicates, payment-to-booking mismatch, stale telemetry, queue dead letters, notification failure rate, database latency, cache miss spikes, and provider timeout rate. Each alert should include a request ID, event ID, booking or driver identifier, and a safe remediation hint.
+Alert on payment webhook signature failures, repeated webhook duplicates, payment-to-booking mismatch, notification failure rate, database latency, cache miss spikes, provider timeout rate, unpublished-content leakage, and review moderation failures. Each alert should include a request ID, event ID, booking or driver identifier, and a safe remediation hint.
 
 ## Recovery Principles
 
-The system must prefer a visible pending state over an incorrect success state. Financial state is recovered from the provider and payment ledger. Booking state is recovered from PostgreSQL. Telemetry is disposable after its retention window. Raw webhook records support forensic replay but must never be replayed without idempotency checks.
+The system must prefer a visible pending state over an incorrect success state. Financial state is recovered from the provider and payment ledger. Booking, assignment, driver contact, catalog, and moderation state are recovered from PostgreSQL. Optional cache and raw provider records may be rebuilt or expired.
 
 ## References
 

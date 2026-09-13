@@ -69,7 +69,7 @@ The controller validates the ticket format and verifies the supplied token or ph
 
 ### `createPaymentOrderController`
 
-**Route:** `POST /api/v1/payments/create-order`
+**Route:** `POST /api/v1/payments/create-checkout`
 
 The controller authenticates the booking token, validates the booking state, accepts an idempotency key, and validates an allowed provider/currency combination. It calls `paymentService.createCheckout`, which reads the persisted advance from PostgreSQL and delegates to the selected Razorpay, PayPal, or card-provider adapter.
 

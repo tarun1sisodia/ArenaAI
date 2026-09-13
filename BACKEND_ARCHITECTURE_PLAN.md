@@ -2,14 +2,14 @@
 
 **Document Version:** 1.0.0 (Master Final)  
 **Status:** Canonical Backend Architecture & Implementation Plan  
-**Target Services:** Cab Booking, Outstation Cabs, Tour Packages, Airport Transfers, Real-Time Dispatch, and Secure Payments.  
+**Target Services:** Customer Website Booking, Outstation Cabs, Tour Packages, Airport Transfers, Admin Dispatch, Catalog Management, Verified Reviews, Gallery Content, and Secure Payments.
 **Stack Alignment:** Node.js (TypeScript) + Supabase (PostgreSQL) + MongoDB Atlas + Razorpay India Gateway.
 
 ---
 
 ## 1. Executive Summary & Architectural Overview
 
-SK Baghel Tour & Travels requires a production-grade, highly resilient backend to power both the web booking application and future mobile applications (PWA/Capacitor). The backend must support high-intent phone/WhatsApp inquiries while automating the MakeMyTrip-style 5-step booking and payment flow, chauffeur dispatch, and flight/train arrival monitoring along key travel corridors (Agra, Delhi NCR, Jaipur, Mathura, Gwalior, Lucknow).
+SK Baghel Tour & Travels requires a production-grade backend to power a customer website and an administrator panel. The backend supports high-intent phone/WhatsApp inquiries, the MakeMyTrip-style 5-step booking and payment flow, admin-controlled catalog and fares, verified reviews and gallery content, chauffeur assignment, and sharing of assigned-driver contact details. There is no driver application, GPS telemetry, live customer tracking, or driver-side trip update workflow in the current scope.
 
 ### 1.1 Dual-Database Strategy: Why PostgreSQL (Supabase) + MongoDB?
 
@@ -21,7 +21,7 @@ Rather than forcing relational and unstructured data into a single database para
                                   |  (React Web App, PWA, Mobile Shell)   |
                                   +---------------------------------------+
                                                       |
-                                                      | HTTPS / REST / WSS
+                                                      | HTTPS / REST
                                                       v
                                   +---------------------------------------+
                                   |         Node.js / TypeScript API      |
@@ -35,11 +35,11 @@ Rather than forcing relational and unstructured data into a single database para
 |       Supabase (PostgreSQL)        |                                     |           MongoDB Atlas            |
 |   ACID Relational Core Ledger      |                                     |    High-Throughput Document Store  |
 +------------------------------------+                                     +------------------------------------+
-| • Bookings & Ticket Numbers (AGR-) |                                     | • Driver GPS Telemetry (5s pings)  |
+| • Bookings & Ticket Numbers (AGR-) |                                     | • Optional provider-event logs       |
 | • Payments, Advances & Refunds     |                                     | • LocationIQ Cache (30-day TTL)    |
 | • Vehicle Fleet & Drivers Directory|                                     | • Raw Webhook Payloads (Forensics) |
-| • Static Fares & Promo Codes       |                                     | • Lead Inquiries & Chat Sessions   |
-| • Supabase Auth & Row-Level Security|                                    | • Real-Time Trip Event Logs        |
+| • Static Fares & Promo Codes       |                                     | • Optional cache and analytics buffers |
+| • Supabase Auth & Row-Level Security|                                    |                                   |
 | • Supabase Storage (Docs/Photos)   |                                     | • User Analytics & Funnel Metrics  |
 +------------------------------------+                                     +------------------------------------+
                |                                                                             |
@@ -57,11 +57,11 @@ Rather than forcing relational and unstructured data into a single database para
 
 | Dimension | Supabase (PostgreSQL) | MongoDB Atlas |
 |---|---|---|
-| **Role** | **System of Record (Financial & Operational Core)** | **System of Engagement & Telemetry (High-Throughput)** |
+| **Role** | **System of Record for business and content** | **Optional document store for cache and provider events** |
 | **Data Characteristics** | Structured, strongly-typed, ACID transactional, strict FKs | Unstructured/semi-structured, time-series, TTL-expiring |
-| **Entities** | Bookings, Transactions, Refunds, Fleet, Drivers, Auth | GPS Breadcrumbs, Raw Webhook Dumps, Location Caches, Logs |
+| **Entities** | Bookings, Transactions, Refunds, Fleet, Drivers, Catalog, Reviews, Auth | Raw Webhook Dumps, Location Caches, Optional Logs |
 | **Consistency** | Immediate consistency (`SERIALIZABLE` / `READ COMMITTED`) | Eventual consistency, high write availability |
-| **Special Capabilities**| Row-Level Security (RLS), Supabase Auth, WebSockets | Geospatial 2dsphere indexing, TTL automatic record eviction |
+| **Special Capabilities**| Row-Level Security (RLS), Supabase Auth, Storage | TTL retention for optional cache and provider records |
 
 ---
 
@@ -76,22 +76,20 @@ In the initial phase, **Supabase (PostgreSQL)** serves as the primary data store
 - **Single Primary Database:** Supabase PostgreSQL handles bookings, payments, drivers, and fleet. Unstructured payloads (raw Razorpay webhooks, LocationIQ cache entries) are temporarily stored inside PostgreSQL using `JSONB` columns with GIN indexing.
 - **Node.js API Layer:** A lightweight TypeScript service handling:
   1. Server-side fare recalculation (enforcing the 300 km/day outstation rule, night allowances, and promo discounts).
-  2. Razorpay Orders creation (charging 28% advance deposit only).
-  3. Razorpay Webhook signature verification (`X-Razorpay-Signature`).
-  4. WhatsApp confirmation dispatch and Email voucher delivery.
+  2. Provider-neutral checkout creation for the booking advance through Razorpay, PayPal, or an approved international card processor.
+  3. Provider webhook signature verification and server-side reconciliation for each payment provider.
+  4. WhatsApp confirmation dispatch and Email voucher delivery; driver assignment remains a later manual admin action.
   5. LocationIQ token protection (server-side proxy to protect the API token).
 - **Hosting:** Node.js API hosted on **Render / Railway / Fly.io** (Mumbai region for lowest Indian latency).
 - **Result:** Fully functional, secure, money-safe backend running in less than 2 weeks with near-zero infrastructure overhead.
 
-### 2.2 Scale Phase (Phase 2 — Dual-Database & Real-Time Driver Operations)
+### 2.2 Scale Phase (Phase 2 — Content, Operations, and Optional Document Workloads)
 
-Once live transactions are flowing and driver operations expand:
+Once live transactions and catalog administration are stable:
 
-- **MongoDB Atlas Integration:** Activated to offload high-frequency, non-relational operations:
-  - **Driver GPS Telemetry:** Real-time driver location updates every 5 seconds without taxing the relational database.
-  - **LocationIQ Geocoding Cache:** Stored in MongoDB with a 30-day TTL index, eliminating 80–90% of recurring LocationIQ API fees.
-  - **Forensic Webhook Log:** All raw payloads permanently preserved with MongoDB TTL indexing (90-day retention).
-- **Message Queues (Redis + BullMQ):** For asynchronous background tasks (automated invoice PDF rendering, SMS retries, WhatsApp follow-up schedules).
+- **Catalog and Trust Layer:** Expand admin CRUD for rides, tours, packages, fares, gallery media, verified reviews, moderation, and audit history.
+- **Optional MongoDB Atlas Integration:** Activate only for measured needs such as LocationIQ caching, raw provider webhook retention, or analytics buffers. Do not introduce GPS telemetry or live tracking.
+- **Message Queues (Redis + BullMQ):** Use only for asynchronous tasks such as invoice rendering, notification retries, review moderation notifications, and scheduled content publication.
 
 ---
 
@@ -103,13 +101,13 @@ Once live transactions are flowing and driver operations expand:
 - **HTTP Framework:** **Fastify** (Recommended for 4x throughput over Express, built-in schema compilation via TypeBox/Zod, native JSON serialization) OR **Express 4.21+ with Zod**.
 - **Data Validation:** **Zod** (Shared request/response contracts with frontend).
 - **Database Clients:**
-  - PostgreSQL: `@supabase/supabase-js` (for Auth/Storage/Realtime) + `drizzle-orm` or `prisma` (for typed SQL queries and migrations).
+  - PostgreSQL: `@supabase/supabase-js` (for Auth and Storage) + `drizzle-orm` or `prisma` (for typed SQL queries and migrations).
   - MongoDB: `mongoose` or native `mongodb` driver.
 
 ### 3.2 Cloud Infrastructure & Providers
 - **Relational DB & Auth:** **Supabase Cloud** (PostgreSQL 16, hosted in AWS ap-south-1 Mumbai).
 - **Document DB:** **MongoDB Atlas** (M0 Free Tier initially -> M10 Dedicated cluster in AWS Mumbai).
-- **Payment Gateway:** **Razorpay India** (UPI Intent, NetBanking, Credit/Debit Cards, Wallets).
+- **Payment Providers:** Razorpay for Indian payment methods, PayPal for customers who prefer PayPal, and an approved international card processor for foreign cards. The backend uses one provider-neutral payment service and separate adapters.
 - **Geocoding & Maps:** **LocationIQ Autocomplete API** (Server-side proxied).
 - **Communications:** **WhatsApp Business Cloud API** (Direct Meta Graph API or Twilio) + **Resend / AWS SES** (Transactional email).
 - **Object Storage:** **Supabase Storage** (Buckets: `driver-documents`, `vehicle-inspections`, `booking-invoices`).
@@ -241,7 +239,7 @@ CREATE TABLE payments (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_payments_order_id ON payments(razorpay_order_id);
+CREATE INDEX idx_payments_provider_order ON payments(provider, provider_order_id);
 CREATE INDEX idx_payments_booking_id ON payments(booking_id);
 
 -- 6. Refunds Table
@@ -257,75 +255,9 @@ CREATE TABLE refunds (
 );
 ```
 
-### 4.2 MongoDB Schemas (Mongoose Definitions)
+### 4.2 Optional MongoDB Schemas
 
-```typescript
-import mongoose, { Schema, Document } from "mongoose";
-
-// 1. High-Frequency Driver GPS Telemetry (5-second pings)
-export interface IDriverTelemetry extends Document {
-  bookingId: string;
-  driverId: string;
-  location: {
-    type: "Point";
-    coordinates: [number, number]; // [longitude, latitude]
-  };
-  speedKmH: number;
-  heading: number;
-  batteryPct: number;
-  timestamp: Date;
-}
-
-export const DriverTelemetrySchema = new Schema<IDriverTelemetry>({
-  bookingId: { type: String, required: true, index: true },
-  driverId: { type: String, required: true, index: true },
-  location: {
-    type: { type: String, enum: ["Point"], default: "Point" },
-    coordinates: { type: [Number], required: true },
-  },
-  speedKmH: { type: Number, default: 0 },
-  heading: { type: Number, default: 0 },
-  batteryPct: { type: Number, default: 100 },
-  timestamp: { type: Date, default: Date.now, expires: "7d" }, // Auto-delete after 7 days
-});
-DriverTelemetrySchema.index({ location: "2dsphere" });
-
-// 2. LocationIQ Geocoding Autocomplete Cache (30-day TTL)
-export interface ILocationCache extends Document {
-  cacheKey: string; // MD5/normalized lowercase query string
-  query: string;
-  results: Array<any>;
-  createdAt: Date;
-}
-
-export const LocationCacheSchema = new Schema<ILocationCache>({
-  cacheKey: { type: String, required: true, unique: true, index: true },
-  query: { type: String, required: true },
-  results: { type: [Schema.Types.Mixed], required: true },
-  createdAt: { type: Date, default: Date.now, expires: "30d" }, // 30-day TTL
-});
-
-// 3. Raw Webhook Payload Audit Trail (Forensics & Idempotency)
-export interface IRawWebhook extends Document {
-  eventId: string;
-  provider: "razorpay" | "whatsapp" | "twilio";
-  headers: Record<string, string>;
-  payload: Record<string, any>;
-  processed: boolean;
-  processingError?: string;
-  receivedAt: Date;
-}
-
-export const RawWebhookSchema = new Schema<IRawWebhook>({
-  eventId: { type: String, required: true, unique: true, index: true },
-  provider: { type: String, required: true, enum: ["razorpay", "whatsapp", "twilio"] },
-  headers: { type: Schema.Types.Mixed, required: true },
-  payload: { type: Schema.Types.Mixed, required: true },
-  processed: { type: Boolean, default: false },
-  processingError: { type: String },
-  receivedAt: { type: Date, default: Date.now, expires: "90d" }, // 90-day retention
-});
-```
+MongoDB is not required for the initial customer website and admin panel. If enabled later, use it only for explicitly approved cache, raw provider payload, or analytics-buffer collections. Do not create driver telemetry, GPS, geospatial, or live-tracking collections.
 
 ---
 
@@ -385,8 +317,8 @@ In accordance with [`docs/PAYMENT_SYSTEM.md`](file:///home/bot/Internship/ArenaA
 | `POST` | `/fares/calculate` | Server-authoritative fare estimation | No |
 | `GET` | `/locations/autocomplete` | LocationIQ autocomplete with cache check | No (Server token) |
 | `POST` | `/bookings/draft` | Create draft booking & calculate exact advance | No |
-| `POST` | `/payments/create-order` | Generate Razorpay order for 28% advance | No |
-| `POST` | `/payments/webhook` | Process Razorpay payment/refund webhooks | Signature Verified |
+| `POST` | `/payments/create-checkout` | Booking Token | 20/min | Generates provider checkout for the booking advance |
+| `POST` | `/payments/webhooks/:provider` | Provider signature | None | Processes signed provider event |
 | `GET` | `/bookings/:ticketId` | Fetch verified booking status & voucher details | Token / Phone verify |
 | `POST` | `/inquiries` | Contact and custom tour lead submission | Rate Limited |
 
@@ -395,9 +327,7 @@ In accordance with [`docs/PAYMENT_SYSTEM.md`](file:///home/bot/Internship/ArenaA
 |---|---|---|---|
 | `GET` | `/admin/bookings` | Filterable dispatch master table | Admin/Dispatcher |
 | `PATCH` | `/admin/bookings/:id/assign` | Assign chauffeur and vehicle to booking | Admin/Dispatcher |
-| `POST` | `/driver/telemetry` | Driver app GPS ping ingestion (writes to Mongo) | Driver JWT |
-| `PATCH` | `/driver/trips/:id/status` | Trip start, toll recorded, trip completed | Driver JWT |
-| `POST` | `/admin/refunds` | Process cancellation refund via Razorpay | Super Admin |
+| `POST` | `/admin/refunds` | Process cancellation refund through the original payment provider | Super Admin |
 
 ---
 
@@ -406,11 +336,13 @@ In accordance with [`docs/PAYMENT_SYSTEM.md`](file:///home/bot/Internship/ArenaA
 ```
 backend/
 ├── src/
-│   ├── config/              # Environment, Supabase, Mongo, Razorpay clients
+│   ├── config/              # Environment, Supabase, Mongo, and payment-provider clients
 │   │   ├── env.ts           # Zod-validated process.env schema
 │   │   ├── supabase.ts      # Supabase admin client
 │   │   ├── mongo.ts         # Mongoose connection manager
-│   │   └── razorpay.ts      # Razorpay SDK instance
+│   │   ├── razorpay.ts      # Razorpay adapter
+│   │   ├── paypal.ts        # PayPal adapter
+│   │   └── cardProvider.ts  # International card adapter
 │   ├── modules/             # Domain feature modules
 │   │   ├── fares/           # Pure typed fare engine & distance calculator
 │   │   │   ├── fareEngine.ts
@@ -421,16 +353,22 @@ backend/
 │   │   │   ├── bookingService.ts
 │   │   │   ├── bookingController.ts
 │   │   │   └── bookingRoutes.ts
-│   │   ├── payments/        # Razorpay Orders & Webhook Processor
+│   │   ├── payments/        # Provider-neutral checkout and reconciliation
 │   │   │   ├── paymentService.ts
 │   │   │   ├── webhookHandler.ts
 │   │   │   └── paymentRoutes.ts
 │   │   ├── locations/       # LocationIQ proxy & MongoDB caching
 │   │   │   ├── locationService.ts
 │   │   │   └── locationRoutes.ts
-│   │   ├── telemetry/       # High-frequency GPS pings (MongoDB)
-│   │   │   ├── telemetryModel.ts
-│   │   │   └── telemetryController.ts
+│   │   ├── catalog/              # Rides, tours, packages, gallery, and reviews
+│   │   │   ├── catalogModel.ts
+│   │   │   ├── catalogService.ts
+│   │   │   ├── catalogController.ts
+│   │   │   └── catalogRoutes.ts
+│   │   ├── admin/                # Admin CRUD, moderation, roles, and audit logs
+│   │   │   ├── adminService.ts
+│   │   │   ├── adminController.ts
+│   │   │   └── adminRoutes.ts
 │   │   └── notifications/   # WhatsApp & Transactional Email
 │   │       ├── whatsappService.ts
 │   │       └── emailService.ts
@@ -457,7 +395,7 @@ backend/
    - Lead Capture (`/inquiries`): 5 requests / minute / IP.
    - Webhook Endpoint: Whitelisted Razorpay IP ranges or strict HMAC verification.
 3. **CORS Configuration:** Restricted to `https://skbagheltravels.in`, local dev previews, and designated admin staging origins.
-4. **Data Protection (DPDP India 2023):** Customer phone numbers and emails masked in public responses; passenger tracking links expire automatically upon trip completion.
+4. **Data Protection (DPDP India 2023):** Customer phone numbers and emails masked in public responses; assigned-driver contact details shown only to verified customers and authorized administrators; no live tracking exists.
 
 ---
 
@@ -479,21 +417,22 @@ When implementation begins, execute in this precise order:
   - Implement `/api/v1/bookings/draft` with ticket format `AGR-YYYYMMDD-XXXX`.
   - Wire booking validation and transactional insertion into Supabase.
 
-- [ ] **Step B4: Razorpay Orders & Secure Webhook Gateway**
-  - Configure Razorpay SDK with test credentials.
-  - Implement `/api/v1/payments/create-order` (28% advance calculation).
-  - Implement `/api/v1/payments/webhook` with HMAC SHA256 signature verification and idempotency.
+- [ ] **Step B4: Multi-Provider Checkout & Secure Reconciliation**
+  - Configure Razorpay, PayPal, and the selected international card processor in sandbox mode.
+  - Implement `/api/v1/payments/create-checkout` using the persisted booking advance.
+  - Implement `/api/v1/payments/webhooks/:provider` with provider-specific signature/server verification, amount/currency checks, and idempotency.
 
-- [ ] **Step B5: MongoDB Atlas Telemetry & Cache Integration**
-  - Connect MongoDB Atlas Mongoose client.
-  - Move LocationIQ cache layer into MongoDB with 30-day TTL.
-  - Implement `/api/v1/driver/telemetry` with 2dsphere indexing.
+- [ ] **Step B5: Catalog, Gallery & Review Administration**
+  - Implement admin CRUD for rides, tours, packages, fare rules, promo codes, and drivers.
+  - Implement Supabase Storage media uploads and publication metadata.
+  - Implement review submission, booking verification, moderation, publication, and audit logs.
 
-- [ ] **Step B6: Automated WhatsApp & Email Dispatch**
+- [ ] **Step B6: Manual Assignment & Automated Notifications****
   - Integrate WhatsApp Business API template notifications for payment confirmation and driver assignment.
+  - Show assigned driver's approved basic contact details to the verified customer; do not expose live tracking.
   - Integrate PDF voucher generation and email delivery via Resend/SES.
 
 - [ ] **Step B7: CI/CD Pipeline & Production Cloud Deployment**
   - Set up GitHub Actions workflow (lint -> test -> docker build).
   - Deploy Node.js API to Render/Railway in Mumbai region.
-  - Configure Razorpay Live Webhooks pointing to production domain.
+  - Configure production webhooks for Razorpay, PayPal, and the selected international card processor after sandbox verification.

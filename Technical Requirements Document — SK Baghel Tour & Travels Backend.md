@@ -11,7 +11,7 @@ This Technical Requirements Document defines the functional, non-functional, int
 
 ## 2. Scope
 
-The system includes a Node.js and TypeScript API, Supabase PostgreSQL, Supabase Auth and Storage, MongoDB Atlas for scale-phase document workloads, Razorpay payments, LocationIQ geocoding, WhatsApp or Twilio messaging, transactional email, and deployment automation.
+The system includes a Node.js and TypeScript API, Supabase PostgreSQL, Supabase Auth and Storage, MongoDB Atlas for scale-phase document workloads, Razorpay, PayPal, and international card payments, LocationIQ geocoding, WhatsApp or Twilio messaging, transactional email, and deployment automation.
 
 The system does not delegate fare authority to the browser. It does not use MongoDB as the financial ledger. It does not mark a booking paid solely because a browser return URL reports success.
 

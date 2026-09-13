@@ -463,9 +463,9 @@ export const CreateDraftBookingSchema = z.object({
 });
 ```
 
-#### 3. Payment Order Creation (`POST /api/v1/payments/create-order`)
+#### 3. Payment Checkout Creation (`POST /api/v1/payments/create-checkout`)
 ```typescript
-export const CreatePaymentOrderSchema = z.object({
+export const CreatePaymentCheckoutSchema = z.object({
   ticketId: z.string().regex(/^AGR-[0-9]{8}-[0-9]{4}$/),
   guestAccessToken: z.string().min(16),
   idempotencyKey: z.string().uuid(),
@@ -522,38 +522,25 @@ export function verifyRazorpayWebhook(
 ### 8.2 Frontend End-to-End Flow Mapping
 
 ```text
-React Frontend (Booking Engine)                       Backend API (Fastify/Express)
-===============================                       =============================
-1. User enters pickup & drop in LocationCombobox ---> GET /api/v1/locations/autocomplete?q=...
-                                                      (Backend queries cache / LocationIQ)
-                                                      <--- Returns normalized suggestions
+Customer Website                         Backend API / Providers
+================                         ======================
+1. Customer enters trip details --------> POST /api/v1/bookings/draft
+                                          Server recalculates fare and advance
+                                          <-------- ticket, token, advance amount
 
-2. Client calculates estimate display               
-   User selects vehicle & fills contact info
-   Clicks "Proceed to Advance Payment" -------------> POST /api/v1/bookings/draft
-                                                      (Backend recalculates fare, creates row)
-                                                      <--- Returns { ticketId, advanceAmount, guestAccessToken }
+2. Customer chooses an allowed payment --> POST /api/v1/payments/create-checkout
+   method: Razorpay, PayPal, or card      Backend creates provider checkout
+                                          <-------- checkout URL or public token
 
-3. Client requests Razorpay order ------------------> POST /api/v1/payments/create-order
-                                                      (Backend fetches persisted advance, calls Razorpay)
-                                                      <--- Returns { razorpayOrderId, amountPaise, keyId }
+3. Customer completes provider checkout
+4. Browser returns and polls -----------> GET /api/v1/bookings/:ticketId
+                                          Provider webhook/server verification arrives
+                                          <-------- pending or paid_confirmed
 
-4. Client launches Razorpay Checkout Modal
-   Customer completes UPI / Card payment
-   Modal triggers onDismiss / onSuccess callback
-
-5. Client begins polling ---------------------------> GET /api/v1/bookings/AGR-20260913-1001
-                                                      (Backend checks booking.status)
-                                                      <--- Returns { status: 'pending_payment' }
-
-                                  [Razorpay Webhook Arrives at Backend]
-                                  POST /api/v1/payments/webhook
-                                  (Verifies HMAC -> sets status to 'paid_confirmed')
-
-6. Client poll repeats -----------------------------> GET /api/v1/bookings/AGR-20260913-1001
-                                                      <--- Returns { status: 'paid_confirmed', voucher: {...} }
-
-7. Client renders confirmed booking screen with download voucher, call driver, and WhatsApp buttons.
+5. After payment, customer waits for admin assignment.
+6. Admin manually assigns driver --------> PATCH /api/v1/ops/admin/bookings/:id/assign
+7. Admin sends approved driver details --> POST /api/v1/ops/admin/bookings/:id/notify-driver
+8. Customer receives WhatsApp message and can view verified booking details.
 ```
 
 ---
