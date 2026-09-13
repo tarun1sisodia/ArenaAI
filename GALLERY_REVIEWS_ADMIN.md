@@ -1,0 +1,1 @@
+Gallery, Verified Reviews, and Admin Management — Architecture Refinement.md

@@ -1,0 +1,72 @@
+sequenceDiagram
+    autonumber
+    participant DR as Driver App
+    participant WS as WebSocket Gateway
+    participant API as Node.js API
+    participant AUTH as JWT/Auth Guard
+    participant DB as Supabase PostgreSQL
+    participant M as MongoDB Telemetry
+    participant OPS as Dispatcher Dashboard
+    participant C as Customer App
+    participant MON as Telemetry Monitor
+
+    DR->>WS: Open authenticated WebSocket
+    WS->>AUTH: Validate driver JWT
+    AUTH-->>WS: Driver identity and permissions
+    WS-->>DR: Connection accepted with sessionId
+
+    DR->>WS: Subscribe to assigned trip
+    WS->>API: Verify driver-trip ownership
+    API->>DB: Read assignment and trip state
+    DB-->>API: Valid assignment
+    API-->>WS: Subscription authorized
+    WS-->>DR: Trip telemetry channel ready
+
+    loop Every approximately 5 seconds
+        DR->>WS: GPS point(eventId, coordinates, timestamp)
+        WS->>API: Validate event envelope
+        API->>AUTH: Confirm session and driver identity
+        AUTH-->>API: Authorized driver
+        API->>API: Validate coordinates, timestamp, and speed
+        API->>M: Insert telemetry with eventId and timestamp
+        M-->>API: Accepted or duplicate event
+        API->>WS: Publish latest accepted point
+        WS-->>OPS: Live driver location and freshness
+        WS-->>C: Customer tracking update
+        API-->>DR: Ack eventId
+    end
+
+    alt Driver temporarily loses network
+        DR->>DR: Store bounded local event queue
+        DR->>WS: Reconnect with session token
+        WS->>AUTH: Revalidate JWT
+        AUTH-->>WS: Session restored
+        DR->>WS: Replay queued eventIds
+        WS->>API: Validate timestamp and deduplicate
+        API->>M: Insert only unseen points
+        API-->>DR: Ack accepted or rejected events
+    else Point is late or out of order
+        API->>M: Compare device timestamp with latest point
+        M-->>API: Older point detected
+        API-->>DR: Ack as stored, not current position
+        API-->>WS: Do not move current marker backward
+    else Invalid or unauthorized point
+        API-->>DR: Reject with telemetry error
+        API->>MON: Record security or data-quality event
+    end
+
+    MON->>M: Check latest telemetry timestamp
+    M-->>MON: Last accepted point and age
+    alt Telemetry exceeds stale threshold
+        MON->>DB: Record driver telemetry stale state
+        MON->>WS: Publish driver.stale
+        WS-->>OPS: Show last known point and age
+        WS-->>C: Show tracking unavailable or stale
+    else Telemetry is fresh
+        MON->>WS: Publish driver.active
+        WS-->>OPS: Show active location state
+    end
+
+    Note over M: Telemetry uses geospatial indexing and a seven-day TTL in the scale phase.
+    Note over OPS: Real-time messages are eventually consistent.
+    Note over C: REST remains authoritative for booking state.

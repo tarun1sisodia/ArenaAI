@@ -14,13 +14,15 @@ documentation pack.
    - Visual system: `DESIGN.md` — never hardcode arbitrary colors/sizes
    - Locked designs & patterns: `DESIGN_LOCKS.md` — verify status before editing any existing component, pattern, or logic
    - Animation verification: `ANIMATION_RULES.md` — SEO safety & accessibility before adding animations
-   - Sequence & acceptance: `03_PHASE_PLAN.md`
-   - State & history: `04_PROGRESS_TRACKER.md`
+   - Payments: `docs/PAYMENT_SYSTEM.md` + `.agents/rules/PAYMENT_AGENT_RULES.md` — never live-charge without webhook + server fare
+   - Backend Architecture & Engineering: `BACKEND_RULES.md` — for all backend APIs, database schemas, and integration
+   - Sequence & acceptance: `03_PHASE_PLAN.md` (frontend) / `PLAN.md` (backend)
+   - State & history: `04_PROGRESS_TRACKER.md` (frontend) / `PROGRESS.md` (backend)
 
 3. **Update the progress tracker after every step**
    - Check the step `[x]`
    - Update **Current State** (phase, next step, date, blockers)
-   - Append **Session Log**
+   - Append **Session Log** (in `04_PROGRESS_TRACKER.md` or `PROGRESS.md`)
    - Deviations → **Decision Log**; stalls → **Blockers**
 
 4. **Code quality**

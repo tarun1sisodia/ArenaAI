@@ -1,0 +1,1 @@
+Database and Platform Decision — MongoDB, Supabase, and Firebase.md
