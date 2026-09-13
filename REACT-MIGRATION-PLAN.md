@@ -301,10 +301,10 @@ Every single unit of work is broken down into a discrete, verifiable step. Imple
 ### Phase R5: Marketing Pages, Detail Templates & Pre-Rendering ⏳
 
 #### Sub-Phase R5A: Home Page Sections
-- [ ] **R5.1:** Home Hero Bento Grid (`react/src/components/home/HeroBentoGrid.tsx`): 3-cell living bento mosaic with independent staggered 8.0s crossfade cycles across 11 world-famous destinations and Ken Burns drift.
-- [ ] **R5.2:** Hero Quick Fare Calculator Widget (`react/src/components/home/HeroFareWidget.tsx`): Interactive tabbed widget (One-Way, Round-Trip, Local Tour) with live fare quote and 1-click book redirect.
-- [ ] **R5.3:** Trust Roller Marquee Component (`react/src/components/home/TrustRoller.tsx`): 42s infinite marquee with pause-on-hover and 8 E-E-A-T trust chips (Govt Fleet, GST Invoice, Chauffeur ID, etc.).
-- [ ] **R5.4:** Popular Routes Grid Section (`react/src/components/home/PopularRoutes.tsx`): Responsive cards for Agra-Delhi, Agra-Jaipur, Agra-Mathura, Agra-Gwalior with starting prices, duration badges, and book links.
+- [x] **R5.1:** Home Hero Bento Grid (`react/src/components/home/HeroBentoGrid.tsx`): 3-cell living bento mosaic with independent staggered 8.0s crossfade cycles across 11 world-famous destinations and Ken Burns drift.
+- [x] **R5.2:** Hero Quick Fare Calculator Widget (`react/src/components/home/HeroFareWidget.tsx`): Interactive tabbed widget (One-Way, Round-Trip, Local Tour) with live fare quote and 1-click book redirect.
+- [x] **R5.3:** Trust Roller Marquee Component (`react/src/components/home/TrustRoller.tsx`): 42s infinite marquee with pause-on-hover and 8 E-E-A-T trust chips (Govt Fleet, GST Invoice, Chauffeur ID, etc.).
+- [x] **R5.4:** Popular Routes Grid Section (`react/src/components/home/PopularRoutes.tsx`): Responsive cards for Agra-Delhi, Agra-Jaipur, Agra-Mathura, Agra-Gwalior with starting prices, duration badges, and book links.
 - [x] **R5.5:** Six Operational Services Grid (`react/src/components/home/ServicesGrid.tsx`): 6 vertical cards with index numerals (01-06), variant color borders (navy, light, gold), tags, and CTAs.
 - [x] **R5.6:** 3D Coverflow Sightseeing Carousel (`react/src/components/home/CoverflowCarousel.tsx`): 3D perspective carousel cycling 6 tour packages with cover reflection, package kicker, places pills, fare, and WhatsApp CTA.
 - [x] **R5.7:** "Benefits To Book Cab With Us" Section (`react/src/components/home/BenefitsSection.tsx`): 6 core benefit cards with gold background fill-on-hover and crisp white icon transition.
@@ -337,12 +337,12 @@ Every single unit of work is broken down into a discrete, verifiable step. Imple
 
 ---
 
-### Phase R6: LocationIQ Search & Interactive Discovery ⏳
+### Phase R6: LocationIQ Search & Interactive Discovery ✅
 - [x] **R6.1:** Typed LocationIQ Client & Hook (`react/src/hooks/useLocationIQ.ts`): Debounced query hook (300ms), AbortController for race prevention, and runtime token injection.
-- [ ] **R6.2:** Searchable Combobox Component (`react/src/components/search/LocationCombobox.tsx`): Touch-friendly combobox with autocomplete suggestions, airport/station icons, and keyboard navigation.
-- [ ] **R6.3:** Static Destinations & Fallback Distance Matrix (`react/src/utils/distance.ts`): 30+ Indian destinations with verified highway distances from Agra/Delhi when offline or without API token.
-- [ ] **R6.4:** Custom Destination Distance & Fare Estimator: Estimates distance (km), travel hours, and fares for unlisted custom addresses or cities.
-- [ ] **R6.5:** Combobox ARIA & Screen Reader Accessibility: Full ARIA 1.2 combobox role, aria-expanded, aria-activedescendant, and voiceover verification.
+- [x] **R6.2:** Searchable Combobox Component (`react/src/components/search/LocationCombobox.tsx`): Touch-friendly combobox with autocomplete suggestions, airport/station icons, and keyboard navigation.
+- [x] **R6.3:** Static Destinations & Fallback Distance Matrix (`react/src/utils/distance.ts`): 30+ Indian destinations with verified highway distances from Agra/Delhi when offline or without API token.
+- [x] **R6.4:** Custom Destination Distance & Fare Estimator (`react/src/utils/customDistance.ts`): Estimates distance (km), travel hours, and fares for unlisted custom addresses or cities.
+- [x] **R6.5:** Combobox ARIA & Screen Reader Accessibility: Full ARIA 1.2 combobox role, aria-expanded, aria-activedescendant, and voiceover verification.
 
 ---
 
