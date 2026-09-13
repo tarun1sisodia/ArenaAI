@@ -13,7 +13,9 @@ All request and response bodies use JSON unless an endpoint explicitly accepts a
 | Authentication | Supabase JWT for authenticated users; role checks for operations routes |
 | Validation | Zod schemas at the request boundary |
 | Errors | Stable machine-readable `code`, human-readable `message`, and optional `details` |
-| Idempotency | Required for payment creation and webhook processing where repeated requests are possible |
+| Idempotency | Required for payment creation, provider checkout creation, webhook processing, and manual assignment |
+| Payment providers | Provider-neutral payment intent; Razorpay for India and PayPal or international card checkout for foreign customers |
+| Assignment | No customer driver options; admin manually assigns a driver after payment and sends details through WhatsApp |
 | Rate limits | Public fare and booking routes: 60 requests/minute/IP; inquiries: 5 requests/minute/IP |
 | Privacy | Mask customer phone and email in public responses |
 
@@ -24,8 +26,9 @@ All request and response bodies use JSON unless an endpoint explicitly accepts a
 | `POST` | `/fares/calculate` | Calculate a server-authoritative fare breakdown | None |
 | `GET` | `/locations/autocomplete` | Return LocationIQ suggestions through the server proxy | None |
 | `POST` | `/bookings/draft` | Validate input, calculate fare, create a draft, and issue a ticket ID | None or guest token |
-| `POST` | `/payments/create-order` | Create a Razorpay order for the persisted 28% advance | Booking token |
-| `POST` | `/payments/webhook` | Process Razorpay payment and refund events | Razorpay signature |
+| `POST` | `/payments/create-checkout` | Create a provider checkout for the persisted booking advance | Booking token |
+| `GET` | `/payments/:paymentId/status` | Retrieve server-reconciled payment state | Booking token |
+| `POST` | `/payments/webhooks/:provider` | Process a signed provider event | Provider signature |
 | `GET` | `/bookings/:ticketId` | Return verified booking and voucher details | Token or phone verification |
 | `POST` | `/inquiries` | Capture custom-tour and contact leads | None; rate limited |
 
@@ -34,7 +37,8 @@ All request and response bodies use JSON unless an endpoint explicitly accepts a
 | Method | Endpoint | Purpose | Required role |
 |---|---|---|---|
 | `GET` | `/ops/admin/bookings` | Filter bookings by status, date, driver, and ticket | Admin or dispatcher |
-| `PATCH` | `/ops/admin/bookings/:id/assign` | Assign a driver and vehicle | Admin or dispatcher |
+| `PATCH` | `/ops/admin/bookings/:id/assign` | Manually assign a driver and optional vehicle after payment | Admin or dispatcher |
+| `POST` | `/ops/admin/bookings/:id/notify-driver` | Send approved driver details to the customer through WhatsApp | Admin or dispatcher |
 | `POST` | `/ops/admin/refunds` | Initiate an authorized Razorpay refund | Super admin |
 
 ## Public Catalog, Gallery, and Review Routes
@@ -84,6 +88,19 @@ Admin CRUD must use role guards and audit every mutation. Captured payments, ref
 }
 ```
 
+### Payment Checkout Request
+
+```json
+{
+  "provider": "razorpay | paypal | card",
+  "currency": "INR | USD | EUR | GBP",
+  "returnUrl": "https://example.com/payment/return",
+  "cancelUrl": "https://example.com/payment/cancel"
+}
+```
+
+The server selects the allowed provider and currency, creates the checkout from the persisted advance amount, and returns only a provider checkout URL or public client token. The browser must never supply or override the amount.
+
 ### Fare Response
 
 ```json
@@ -112,11 +129,13 @@ Admin CRUD must use role guards and audit every mutation. Captured payments, ref
 
 ## State and Status Rules
 
-A booking normally progresses through `draft`, `pending_payment`, `paid_confirmed`, `driver_assigned`, `in_transit`, and `completed`. Cancellation and refund transitions are authorized exceptions. A client redirect cannot create the `paid_confirmed` state; only a verified provider webhook can do so.
+A booking normally progresses through `draft`, `pending_payment`, `paid_confirmed`, `driver_assigned`, and `completed`. Cancellation and refund transitions are authorized exceptions. A client redirect cannot create the `paid_confirmed` state; only verified provider reconciliation can do so. Customers do not select drivers or vehicles. An admin manually assigns a driver after payment and may send the approved driver contact details through WhatsApp.
 
-## Webhook Requirements
+## Payment Provider Requirements
 
-The webhook handler must read the raw request body, validate the `X-Razorpay-Signature` HMAC, persist the provider event ID, and apply an atomic state transition. Duplicate events must receive a successful response without repeating notifications or ledger effects.
+The payment service must expose one provider-neutral contract and separate adapters for Razorpay, PayPal, and the selected international card processor. It must persist `provider`, `providerOrderId`, `providerPaymentId`, `currency`, `amountMinor`, `checkoutSessionId`, and reconciliation status.
+
+Provider events must be received through signed webhooks or server-side provider verification. The handler must persist the provider event ID, compare booking, amount, currency, and status, and apply an atomic state transition. Duplicate events must receive a successful response without repeating notifications or ledger effects. A redirect or client callback is never sufficient proof of payment.
 
 ## References
 

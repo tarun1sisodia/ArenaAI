@@ -18,7 +18,7 @@ The improved ownership model is:
 | Review records, moderation status, verification evidence, publication metadata | Supabase PostgreSQL |
 | Gallery image and video files | Supabase Storage |
 | Image transformations or CDN delivery | Storage/CDN layer in front of Supabase Storage when needed |
-| GPS telemetry and high-volume operational events | MongoDB Atlas |
+| Optional cache and provider-event records | MongoDB Atlas |
 | Admin and moderation notifications | Firebase FCM, WhatsApp, or email through the backend |
 
 MongoDB and Firebase should not become content-management databases for this feature. There is no driver app or live tracking feature to support.

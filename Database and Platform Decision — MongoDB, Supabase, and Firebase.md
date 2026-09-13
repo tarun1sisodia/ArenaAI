@@ -12,7 +12,7 @@ The project may use **Supabase, MongoDB, and Firebase together**, but each platf
 |---|---|---|
 | Supabase | System of record for identity, bookings, payments, drivers, vehicles, refunds, RLS, and durable business data | A high-frequency GPS event store or duplicate notification platform |
 | MongoDB Atlas | Optional LocationIQ cache, raw provider payloads, and explicitly approved high-volume documents | The source of truth for payments, booking status, catalog, reviews, or drivers |
-| Firebase | Mobile-facing services such as Firebase Cloud Messaging, Crashlytics, Analytics, and optionally Remote Config | A second booking database or a second authentication authority without an explicit migration decision |
+| Firebase | Optional web push, diagnostics, and analytics | A second booking database or payment processor without an explicit architecture decision |
 
 The most important rule is **one owner per type of truth**. A record should not be independently editable in two databases.
 
@@ -26,7 +26,7 @@ Supabase PostgreSQL should own:
 - Driver and vehicle records.
 - Booking records and ticket IDs.
 - Fare snapshots and promo references.
-- Payment ledger records, Razorpay order IDs, and refunds.
+- Payment ledger records, provider order/session/payment IDs, currencies, reconciliations, and refunds.
 - Booking lifecycle status.
 - Driver assignment and trip state.
 - Row-Level Security policies.
@@ -40,18 +40,18 @@ If a dispute involves how much a customer paid, whether a booking is confirmed, 
 MongoDB Atlas should own:
 
 - LocationIQ autocomplete cache with a 30-day TTL when needed.
-- Raw Razorpay, WhatsApp, and Twilio webhook payloads with a 90-day retention policy.
+- Raw Razorpay, PayPal, card-provider, WhatsApp, and Twilio webhook payloads with a 90-day retention policy.
 - Optional analytics buffers when PostgreSQL would receive excessive write traffic.
 
 MongoDB does not store driver GPS telemetry because there is no driver app or live tracking feature.
 
 MongoDB documents should reference stable PostgreSQL identifiers such as `bookingId`, `driverId`, and `ticketId`. They should not create a second authoritative booking or payment status.
 
-### Firebase owns mobile delivery and client diagnostics
+### Firebase owns optional web notifications and client diagnostics
 
-Firebase should primarily support mobile and client-facing capabilities:
+Firebase may support web and client-facing capabilities:
 
-- **Firebase Cloud Messaging:** Push notifications to Android, iOS, and web clients.
+- **Firebase Cloud Messaging:** Push notifications to web clients when enabled.
 - **Firebase Crashlytics:** Mobile crash reporting and release diagnostics.
 - **Firebase Analytics:** Product funnel and mobile usage analytics.
 - **Firebase Remote Config:** Controlled client feature flags and non-sensitive presentation settings.
@@ -85,28 +85,28 @@ Use different real-time mechanisms for different information types:
 | Assigned-driver contact details | REST booking response and approved notification | Supabase PostgreSQL |
 | Customer/admin alerts | Email, WhatsApp, or optional web push | Backend event and notification service | Analytics pipeline, not booking ledger |
 
-Do not broadcast a Firebase notification as proof of a state transition. Persist the state first, then publish a real-time update and optionally send FCM.
+Do not treat a redirect, client callback, WhatsApp message, or notification as proof of payment. Persist the provider-verified payment state first, then send a customer receipt or admin notification.
 
 ## 5. Request and Event Flow
 
 ```text
-Customer / Driver / Dispatcher client
+Customer / Admin client
               |
               v
        Node.js TypeScript API
           |        |        |
           |        |        +--> Firebase FCM / Analytics / Crashlytics integration
-          |        +-----------> MongoDB Atlas telemetry, cache, raw events
-          +--------------------> Supabase PostgreSQL, Auth, Storage, Realtime
+          |        +-----------> MongoDB Atlas optional cache and raw provider events
+          +--------------------> Supabase PostgreSQL, Auth, and Storage
 
 External providers
-  Razorpay / LocationIQ / WhatsApp / Email
+  Razorpay / PayPal / Card Processor / LocationIQ / WhatsApp / Email
               |
               v
        Node.js API and worker layer
 ```
 
-The Node.js backend remains the integration boundary. Clients should not receive database credentials or call MongoDB, Supabase service-role APIs, Razorpay secrets, or LocationIQ secrets directly.
+The Node.js backend remains the integration boundary. Clients should not receive database credentials or call MongoDB, Supabase service-role APIs, Razorpay, PayPal, and card-provider secrets, or LocationIQ secrets directly.
 
 ## 6. Notification Flow
 
@@ -148,13 +148,13 @@ Do not implement unrestricted bidirectional synchronization among all three plat
 | Supabase booking/payment event | Firebase FCM | Send a client notification |
 | Supabase booking/assignment event | Email, WhatsApp, or optional Firebase FCM | Notify customer of confirmed booking or assigned driver |
 | Firebase Analytics | Analytics store | Product and funnel reporting |
-| Razorpay webhook | Supabase and MongoDB | Update ledger and retain raw forensic payload |
+| Provider webhook | Supabase and MongoDB | Update ledger and retain raw forensic payload |
 
 Every synchronization event should include an event ID, source, aggregate ID, schema version, and processed status.
 
 ## 9. Security Boundaries
 
-- Keep Supabase service-role keys, MongoDB credentials, Firebase Admin SDK credentials, Razorpay secrets, and LocationIQ tokens on the backend only.
+- Keep Supabase service-role keys, MongoDB credentials, Firebase Admin SDK credentials, Razorpay, PayPal, and card-provider secrets, and LocationIQ tokens on the backend only.
 - Use Firebase Admin SDK only from trusted backend workers.
 - Use Supabase RLS for client-accessible Supabase resources.
 - Use MongoDB network controls, least-privilege users, and collection-level access boundaries.
@@ -166,11 +166,11 @@ Every synchronization event should include an event ID, source, aggregate ID, sc
 
 ### Initial phase
 
-Use Supabase for all transactional data, MongoDB only if telemetry or cache volume requires it, and Firebase for mobile push, crash reporting, and analytics. Keep the first release operationally simple.
+Use Supabase for bookings and a provider-neutral payment ledger. Enable Razorpay for Indian customers and PayPal or an approved international card processor for foreign customers. Keep provider adapters behind one payment service and reconcile every provider through signed events or server-side verification.
 
 ### Scale phase
 
-Activate MongoDB telemetry and cache workloads when measured PostgreSQL write volume, retention, or geospatial requirements justify it. Add queue workers for notification retries and invoice generation.
+Activate only optional cache or provider-event workloads when measured retention or provider-forensics requirements justify it. Add queue workers for notification retries and invoice generation.
 
 ### Avoided duplication
 

@@ -40,7 +40,7 @@ The API shall validate booking input, generate a unique ticket in the `AGR-YYYYM
 
 ### FR-004 Payment Verification
 
-The API shall create Razorpay orders server-side and shall mark a booking `paid_confirmed` only after verifying a valid Razorpay webhook signature. It shall persist provider IDs and prevent duplicate processing.
+The API shall create provider checkouts server-side for Razorpay, PayPal, and an approved international card processor. It shall mark a booking `paid_confirmed` only after signed webhook verification or server-side provider verification for the exact booking, amount, and currency. It shall persist provider IDs and prevent duplicate processing.
 
 ### FR-005 Booking Retrieval
 
@@ -48,11 +48,11 @@ The API shall return verified booking and voucher details through a ticket, toke
 
 ### FR-006 Dispatch
 
-Authorized dispatch users shall be able to filter bookings, assign compatible available drivers and vehicles, and observe assignment conflicts. The system shall prevent overlapping or invalid assignments.
+Authorized admin or dispatcher users shall be able to filter paid bookings and manually assign a driver after payment. The customer shall not select a driver or vehicle. The system shall record the assignment actor, timestamp, note, optional vehicle, and WhatsApp notification status.
 
 ### FR-007 Driver Contact and Assignment
 
-Authorized administrators shall be able to assign an available driver and vehicle to a booking. The system shall share only approved basic driver contact details with the verified customer through the booking response or notification. There shall be no driver application, driver JWT, GPS telemetry, or live tracking.
+Authorized administrators shall be able to manually assign a driver after payment and optionally associate a vehicle. The system shall share only approved basic driver contact details with the verified customer through an admin-triggered WhatsApp message or verified booking response. There shall be no driver application, driver JWT, GPS telemetry, or live tracking.
 
 ### FR-008 Notifications
 
@@ -122,7 +122,7 @@ The API shall enforce TLS in deployed environments, restrictive CORS, JWT verifi
 
 ## 10. Testing Requirements
 
-The implementation shall include unit tests for fare rules and state transitions, integration tests for Supabase repositories, contract tests for all API routes, payment tests using Razorpay test credentials, webhook signature and replay tests, authorization tests, catalog and review moderation tests, media publication tests, notification retry tests, and admin audit-log tests.
+The implementation shall include unit tests for fare rules and state transitions, integration tests for Supabase repositories, contract tests for all API routes, payment tests for Razorpay, PayPal, and the selected card processor in sandbox mode, webhook signature and replay tests, amount/currency mismatch tests, authorization tests, catalog and review moderation tests, media publication tests, notification retry tests, and admin audit-log tests.
 
 Release verification shall include altered fare requests, duplicate booking attempts, duplicate webhooks, invalid signatures, payment-provider downtime, LocationIQ timeout, concurrent assignment, unauthorized admin actions, unpublished-content leakage, review moderation errors, and refund replay.
 
@@ -134,7 +134,7 @@ Razorpay live webhooks shall point to the production HTTPS endpoint only after t
 
 ## 12. Acceptance Criteria
 
-The backend is acceptable for initial production use when a customer can calculate a fare, create a draft booking, pay the 28% advance, receive a webhook-confirmed payment state, retrieve a verified voucher, and see approved driver contact details after admin assignment. An authorized admin must be able to manage catalog content, fares, gallery assets, reviews, drivers, and operational bookings. Invalid, duplicate, unauthorized, unpublished-content, and provider-failure scenarios must produce safe, test-covered outcomes.
+The backend is acceptable for initial production use when a customer can calculate a fare, create a draft booking, pay the booking advance using Razorpay, PayPal, or an approved international card checkout, receive a provider-verified payment state, and retrieve a verified voucher. An admin can later manually assign a driver and send the approved driver details through WhatsApp. An authorized admin must be able to manage catalog content, fares, gallery assets, reviews, drivers, and operational bookings. Invalid, duplicate, unauthorized, unpublished-content, and provider-failure scenarios must produce safe, test-covered outcomes.
 
 ## 13. Traceability
 

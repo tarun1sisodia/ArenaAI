@@ -64,7 +64,7 @@ LocationIQ requests use a timeout and bounded retry policy. A normalized cache k
 
 ## Notification Situations
 
-Payment confirmation and driver assignment are persisted as domain events before notification delivery. WhatsApp and email workers consume those events. Each delivery has a provider message ID, attempt count, last error, and next retry time. Repeated jobs use a deterministic notification key to prevent duplicate customer messages.
+Payment confirmation and manual driver assignment are persisted as domain events before notification delivery. WhatsApp and email workers consume those events. Driver assignment is never automatic and never customer-selected. Each delivery has a provider message ID, attempt count, last error, and next retry time. Repeated jobs use a deterministic notification key to prevent duplicate customer messages.
 
 A notification failure must not reverse a confirmed payment or booking. Operations must be able to resend a message manually through an authorized action.
 

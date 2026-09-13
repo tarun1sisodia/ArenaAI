@@ -76,9 +76,9 @@ In the initial phase, **Supabase (PostgreSQL)** serves as the primary data store
 - **Single Primary Database:** Supabase PostgreSQL handles bookings, payments, drivers, and fleet. Unstructured payloads (raw Razorpay webhooks, LocationIQ cache entries) are temporarily stored inside PostgreSQL using `JSONB` columns with GIN indexing.
 - **Node.js API Layer:** A lightweight TypeScript service handling:
   1. Server-side fare recalculation (enforcing the 300 km/day outstation rule, night allowances, and promo discounts).
-  2. Razorpay Orders creation (charging 28% advance deposit only).
-  3. Razorpay Webhook signature verification (`X-Razorpay-Signature`).
-  4. WhatsApp confirmation dispatch and Email voucher delivery.
+  2. Provider-neutral checkout creation for the booking advance through Razorpay, PayPal, or an approved international card processor.
+  3. Provider webhook signature verification and server-side reconciliation for each payment provider.
+  4. WhatsApp confirmation dispatch and Email voucher delivery; driver assignment remains a later manual admin action.
   5. LocationIQ token protection (server-side proxy to protect the API token).
 - **Hosting:** Node.js API hosted on **Render / Railway / Fly.io** (Mumbai region for lowest Indian latency).
 - **Result:** Fully functional, secure, money-safe backend running in less than 2 weeks with near-zero infrastructure overhead.
@@ -107,7 +107,7 @@ Once live transactions and catalog administration are stable:
 ### 3.2 Cloud Infrastructure & Providers
 - **Relational DB & Auth:** **Supabase Cloud** (PostgreSQL 16, hosted in AWS ap-south-1 Mumbai).
 - **Document DB:** **MongoDB Atlas** (M0 Free Tier initially -> M10 Dedicated cluster in AWS Mumbai).
-- **Payment Gateway:** **Razorpay India** (UPI Intent, NetBanking, Credit/Debit Cards, Wallets).
+- **Payment Providers:** Razorpay for Indian payment methods, PayPal for customers who prefer PayPal, and an approved international card processor for foreign cards. The backend uses one provider-neutral payment service and separate adapters.
 - **Geocoding & Maps:** **LocationIQ Autocomplete API** (Server-side proxied).
 - **Communications:** **WhatsApp Business Cloud API** (Direct Meta Graph API or Twilio) + **Resend / AWS SES** (Transactional email).
 - **Object Storage:** **Supabase Storage** (Buckets: `driver-documents`, `vehicle-inspections`, `booking-invoices`).
@@ -239,7 +239,7 @@ CREATE TABLE payments (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_payments_order_id ON payments(razorpay_order_id);
+CREATE INDEX idx_payments_provider_order ON payments(provider, provider_order_id);
 CREATE INDEX idx_payments_booking_id ON payments(booking_id);
 
 -- 6. Refunds Table
@@ -317,8 +317,8 @@ In accordance with [`docs/PAYMENT_SYSTEM.md`](file:///home/bot/Internship/ArenaA
 | `POST` | `/fares/calculate` | Server-authoritative fare estimation | No |
 | `GET` | `/locations/autocomplete` | LocationIQ autocomplete with cache check | No (Server token) |
 | `POST` | `/bookings/draft` | Create draft booking & calculate exact advance | No |
-| `POST` | `/payments/create-order` | Generate Razorpay order for 28% advance | No |
-| `POST` | `/payments/webhook` | Process Razorpay payment/refund webhooks | Signature Verified |
+| `POST` | `/payments/create-checkout` | Booking Token | 20/min | Generates provider checkout for the booking advance |
+| `POST` | `/payments/webhooks/:provider` | Provider signature | None | Processes signed provider event |
 | `GET` | `/bookings/:ticketId` | Fetch verified booking status & voucher details | Token / Phone verify |
 | `POST` | `/inquiries` | Contact and custom tour lead submission | Rate Limited |
 

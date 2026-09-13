@@ -13,7 +13,7 @@ Supabase PostgreSQL is the system of record for identity, bookings, money, fleet
 | Supabase PostgreSQL | Profiles, vehicles, drivers, bookings, payments, refunds | ACID transactions and durable financial history |
 | Supabase Auth | User identity and sessions | Managed authentication lifecycle |
 | Supabase Storage | Driver documents, inspections, and invoices | Object retention governed by bucket policy |
-| MongoDB Atlas | GPS telemetry, LocationIQ cache, raw webhook payloads, event logs | TTL and geospatial indexes where applicable |
+| MongoDB Atlas | Optional LocationIQ cache, raw provider payloads, and analytics events | TTL indexes where applicable |
 
 ## PostgreSQL Entities
 
@@ -23,14 +23,14 @@ Supabase PostgreSQL is the system of record for identity, bookings, money, fleet
 | `vehicles` | Vehicle ID | Unique plate; vehicle tier and capacity required |
 | `drivers` | UUID | Unique phone and license; optional assigned vehicle |
 | `bookings` | UUID plus unique `ticket_id` | Fare snapshot, trip type, status, timestamps |
-| `payments` | UUID | Unique Razorpay order ID and idempotency key; amount in paise |
+| `payments` | UUID | Provider, order/session/payment IDs, currency, minor-unit amount, status, and idempotency key |
 | `refunds` | UUID | Provider refund ID, payment reference, amount, reason |
 | `catalog_items` | UUID | Ride, tour, or package content with draft/published/archive state |
 | `catalog_item_media` | UUID | Supabase Storage asset metadata, order, caption, and moderation state |
 | `reviews` | UUID | Customer review, booking link, verification state, and moderation decision |
 | `fare_rules` | UUID | Versioned fare configuration with effective dates |
 | `promo_codes` | UUID | Bounded discount rules, validity, and usage limits |
-| `device_registrations` | UUID | Firebase push-token relationship to a customer or driver |
+| `device_registrations` | UUID | Optional web-push token relationship to a customer |
 | `admin_audit_logs` | UUID | Append-only record of administrative mutations |
 
 ## Booking Model
@@ -41,7 +41,7 @@ The booking must preserve the calculated fare at creation time. It must not reco
 
 ## Payment Model
 
-Payment amounts are stored in paise as integers. A payment references one booking and may contain Razorpay order and payment identifiers, signature, method, VPA, bank, fees, taxes, verification time, and status. The payment record must support safe replay and reconciliation.
+Payment amounts are stored in paise as integers. A payment references one booking and contains a provider-neutral record: `provider` (`razorpay`, `paypal`, or `card`), `providerOrderId` or checkout session ID, provider payment/capture ID, currency, integer `amountMinor`, payment method type, provider fee and tax when available, verification time, webhook event ID, reconciliation status, and failure reason. INR amounts use paise; non-INR amounts use the provider currency's minor unit. The payment record must support safe replay, refunds, and reconciliation. Never store raw card numbers, CVV, or PayPal credentials.
 
 ## MongoDB Collections
 
@@ -49,7 +49,7 @@ Payment amounts are stored in paise as integers. A payment references one bookin
 |---|---|---|
 | `location_cache` | Normalized LocationIQ autocomplete responses | Unique cache key; created-at TTL of 30 days |
 | `raw_webhooks` | Provider payloads for forensics and idempotency | Unique event ID; received-at TTL of 90 days |
-| `trip_events` | Real-time operational events | Booking and timestamp indexes |
+| `provider_events` | Optional raw provider payloads for payment and notification forensics | Unique provider and event ID; received-at TTL |
 | `analytics_events` | Funnel and usage metrics | Time-based retention policy |
 
 ## Catalog and Review Entities
@@ -66,7 +66,7 @@ Payment amounts are stored in paise as integers. A payment references one bookin
 
 ## Relationships
 
-`profiles` can represent a customer, dispatcher, content editor, review moderator, finance operator, or super administrator. Drivers are managed records used for assignment and customer contact; they do not authenticate to a driver app. A `driver` may reference a profile and a vehicle. A booking may reference a customer profile and an assigned driver. A payment and refund always reference a booking. MongoDB documents use stable booking and driver identifiers but do not replace relational foreign keys.
+`profiles` can represent a customer, dispatcher, content editor, review moderator, finance operator, or super administrator. Drivers are managed records used for manual post-payment assignment and customer contact; they do not authenticate to an application. A `driver` may reference a vehicle. A booking may reference a customer profile and an assigned driver. The customer-facing booking model must not expose driver-selection options. A payment and refund always reference a booking. MongoDB documents use stable booking and driver identifiers but do not replace relational foreign keys.
 
 ## Data Protection Rules
 

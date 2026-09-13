@@ -71,17 +71,17 @@ The controller validates the ticket format and verifies the supplied token or ph
 
 **Route:** `POST /api/v1/payments/create-order`
 
-The controller authenticates the booking token, validates the booking state, and accepts an idempotency key. It calls `paymentService.createOrder`, which reads the persisted advance from PostgreSQL and creates a Razorpay order in paise.
+The controller authenticates the booking token, validates the booking state, accepts an idempotency key, and validates an allowed provider/currency combination. It calls `paymentService.createCheckout`, which reads the persisted advance from PostgreSQL and delegates to the selected Razorpay, PayPal, or card-provider adapter.
 
-The controller returns only the Razorpay order ID, public key, amount, currency, ticket ID, and expiry metadata. It must never return the Razorpay secret or accept a client-calculated amount.
+The controller returns only a provider checkout URL or public client token, amount, currency, provider name, ticket ID, and expiry metadata. It must never return provider secrets or accept a client-calculated amount.
 
-### `processRazorpayWebhookController`
+### `processPaymentWebhookController`
 
-**Route:** `POST /api/v1/payments/webhook`
+**Route:** `POST /api/v1/payments/webhooks/:provider`
 
-This controller must receive the raw body before JSON transformation. It passes the raw body, signature, provider headers, and parsed event metadata to `webhookService.process`. The service verifies HMAC SHA-256, persists the event ID, performs an atomic payment and booking transition, and queues notifications.
+This controller receives the raw body before JSON transformation and routes the request to the provider adapter. The adapter verifies the provider signature or performs server-side capture verification, normalizes the event, and passes it to `paymentService.reconcile`. The service compares booking ID, provider order, amount, currency, and event status before atomically updating the payment and booking.
 
-A valid duplicate event should return HTTP 200 without repeating side effects. An invalid signature should return an authentication error and must not mutate payment state.
+A valid duplicate event should return HTTP 200 without repeating side effects. An invalid signature, amount mismatch, currency mismatch, or unknown checkout must not mutate paid state.
 
 ## Operations and Admin Controllers
 
@@ -95,7 +95,7 @@ The controller requires an admin or dispatcher role. It validates filters and pa
 
 **Route:** `PATCH /api/v1/ops/admin/bookings/:id/assign`
 
-The controller requires an admin or dispatcher role. It validates driver and vehicle identifiers and an optional expected version. The service checks driver availability, vehicle compatibility, overlapping trips, and current booking state inside a transaction.
+The controller requires an admin or dispatcher role. It accepts a driver ID, optional vehicle ID, an admin note, and an optional expected version. It does not expose this action to customers. The service verifies that payment is confirmed, applies the manual assignment inside a transaction, records the admin audit event, and prepares the approved WhatsApp notification.
 
 A stale version must produce `ASSIGNMENT_CONFLICT` rather than silently overwriting another dispatcher’s work.
 

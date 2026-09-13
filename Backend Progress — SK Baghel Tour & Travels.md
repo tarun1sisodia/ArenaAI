@@ -30,7 +30,9 @@
 
 - [x] Defined Supabase PostgreSQL as the primary financial and operational system of record.
 - [x] Defined product scope: Customer website and Admin panel only (no driver app, no driver login, no GPS telemetry, no live tracking).
-- [x] Specified the Razorpay advance (28%, min ₹500, in paise), webhook HMAC SHA-256 verification, and idempotency rules.
+- [x] Specified provider-neutral advance payment (28%, min ₹500, in paise/cents), provider webhook verification (`/payments/webhooks/:provider`), and idempotency rules.
+- [x] Defined post-payment admin manual driver assignment workflow (no customer driver selection, no driver app; admin dispatches details via WhatsApp).
+- [x] Refined booking state machine: `draft` -> `pending_payment` -> `paid_confirmed` -> `driver_assigned` -> `completed`.
 - [x] Documented public booking, catalog, gallery, verified review, and admin management API routes.
 - [x] Integrated catalog content, gallery media, and review moderation architecture (`GALLERY_REVIEWS_ADMIN.md`).
 - [x] Created `BACKEND_RULES.md` as the supreme canonical operational rule for all backend development.

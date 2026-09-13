@@ -13,7 +13,7 @@ This document divides the backend implementation into controlled phases. Each ph
 |---|---|---|---|---|
 | 0 | Foundation | Repository, environments, standards, and access controls are ready | Supabase project provisioned | CI can lint, test, and build the service |
 | 1 | MVP transaction core | Customers can calculate fares, create bookings, and pay a 28% advance | Supabase PostgreSQL is the primary store | A payment can be verified end to end in test mode |
-| 2 | Operations | Admins can assign drivers and share approved contact details | PostgreSQL remains the operational ledger | A booking can move from payment to completion | PostgreSQL remains the operational ledger | A booking can move from payment to completion |
+| 2 | Operations | Admins manually assign drivers after payment and send approved contact details | PostgreSQL remains the operational ledger | A booking can move from payment to completion |
 | 3 | Content and trust | Catalog CRUD, gallery, verified reviews, and moderation are live | Supabase PostgreSQL and Storage remain primary | Public pages show only approved content |
 | 4 | Production hardening | Monitoring, recovery, security, and deployment controls are complete | Dual-database production topology | Launch checklist passes with rollback evidence |
 
@@ -42,8 +42,10 @@ Phase 1 prioritizes secure revenue flow over advanced real-time operations. Supa
 - Server-authoritative fare calculation.
 - LocationIQ server-side proxy.
 - Draft booking and ticket generation using `AGR-YYYYMMDD-XXXX`.
-- Razorpay order creation for a 28% advance, subject to the ₹500 minimum.
-- HMAC SHA-256 webhook verification and idempotency handling.
+- Provider-neutral checkout creation for the booking advance.
+- Razorpay sandbox integration for Indian payments.
+- PayPal sandbox and international card-provider sandbox integration.
+- Signed webhook/server verification, amount/currency checks, and idempotency handling.
 - WhatsApp and email payment confirmation.
 
 ### Exit criteria
@@ -52,20 +54,19 @@ A test customer can submit booking details, receive a server-calculated order, c
 
 ## Phase 2 — Dispatch Operations
 
-Phase 2 adds the operational workflows required after payment confirmation. Admins can inspect bookings, assign drivers and vehicles, and share approved driver contact details with verified customers. There is no driver-side status application.
+Phase 2 adds the operational workflow after payment confirmation. Admins inspect paid bookings, manually select and assign a driver, optionally associate a vehicle, and send approved driver details through WhatsApp. Customers have no driver-selection options and there is no driver-side application.
 
 ### Deliverables
 
 - Admin and dispatcher authorization.
-- Booking assignment workflow.
-- Approved driver contact sharing.
-- Cancellation and refund workflow for authorized staff.
-- Driver and vehicle availability validation.
-- Audit logging for assignment, status, and refund actions.
+- Manual post-payment driver assignment; no customer driver options.
+- Admin-triggered WhatsApp message with approved driver details.
+- Cancellation and provider-specific refund workflow for authorized staff.
+- Audit logging for assignment, payment reconciliation, notification, and refund actions.
 
 ### Exit criteria
 
-A paid booking can be assigned, started, completed, cancelled, or refunded according to permitted state transitions.
+A paid booking can remain awaiting manual assignment, be assigned by an admin, completed, cancelled, or refunded according to permitted state transitions. Each supported payment provider passes sandbox reconciliation tests.
 
 ## Phase 3 — Catalog and Trust
 

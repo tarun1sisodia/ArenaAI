@@ -59,7 +59,7 @@ If any specification file appears to conflict with another, resolve in this exac
 Every line of code written for the backend must comply with these ten non-negotiable laws:
 
 ### Law 1: Dual-Database Separation of Concerns (Zero Split Truth)
-- **Supabase (PostgreSQL 16):** The **System of Record** for all financial, customer, fleet, and operational transactions: `profiles`, `vehicles`, `drivers`, `bookings`, `payments`, `refunds`. All relational data must have strict foreign keys, check constraints, and Row-Level Security (RLS) enabled.
+- **Supabase (PostgreSQL 16):** The **System of Record** for all financial, customer, fleet, and operational transactions: `profiles`, `vehicles`, `drivers`, `bookings`, `payments`, `refunds`. Payment records must support multiple providers, currencies, provider order IDs, provider payment IDs, webhook event IDs, and reconciliation status. All relational data must have strict foreign keys, check constraints, and Row-Level Security (RLS) enabled.
 - **MongoDB Atlas:** Optional infrastructure for explicitly approved high-throughput or retention-managed documents such as LocationIQ cache entries and raw provider webhook payloads. MongoDB is not required for the initial customer website and admin panel, and it never holds the financial ledger, booking state, catalog truth, review moderation state, or driver records.
 - **Firebase:** Optional client notification and diagnostics services such as web push, Analytics, and Crashlytics where needed. Firebase is never a secondary database and never a secondary authentication system.
 
@@ -70,11 +70,13 @@ Every line of code written for the backend must comply with these ten non-negoti
 - **Night Allowance:** ₹400 (or vehicle-tier rate ₹300/₹500) strictly added if travel occurs between 22:00 and 05:00.
 - **Advance Deposit Formula:**
   $$\text{advanceAmount} = \max\left(500, \text{round}\left(\frac{\text{totalFare} \times 0.28}{100}\right) \times 100\right)$$
-- The payment amount sent to Razorpay is strictly `advanceAmount * 100` (in integer paise).
+- The payment amount sent to a provider is derived from the persisted server-calculated amount, never from client input.
+- The initial payment collection is for the booking advance only. Driver selection is not offered to customers; an admin manually assigns a driver after payment and sends the driver details through WhatsApp.
 
-### Law 3: Webhook-Driven Payment Confirmation
+### Law 3: Provider-Verified Payment Confirmation
 - A client-side payment success callback or browser redirect **never** marks a booking as `paid_confirmed`. A return redirect only instructs the frontend to poll the backend.
-- A booking is marked `paid_confirmed` **if and only if** a valid Razorpay webhook event (`payment.captured`) is received and verified with HMAC SHA-256 (`X-Razorpay-Signature`) against the raw request body.
+- A booking is marked `paid_confirmed` only after a valid server-to-server provider event or provider API verification is received for the exact booking, amount, currency, and provider order/payment identifier.
+- Each provider uses its own signature or verification mechanism: Razorpay webhook HMAC, PayPal webhook signature verification or server API capture verification, and the selected card processor's signed webhook or server-side payment-intent verification.
 
 ### Law 4: Strict Idempotency & Replay Defense
 - Every webhook delivery, payment creation, refund initiation, and trip transition must carry or compute an idempotency key.
@@ -103,8 +105,10 @@ Every line of code written for the backend must comply with these ten non-negoti
 
 ### Law 8: Explicit Finite State Machines
 - Booking status transitions must strictly adhere to the defined state machine:
-  $$\text{draft} \longrightarrow \text{pending\_payment} \longrightarrow \text{paid\_confirmed} \longrightarrow \text{driver\_assigned} \longrightarrow \text{in\_transit} \longrightarrow \text{completed}$$
+  $$\text{draft} \longrightarrow \text{pending\_payment} \longrightarrow \text{paid\_confirmed} \longrightarrow \text{driver\_assigned} \longrightarrow \text{completed}$$
   *Exceptions:* `pending_payment` $\rightarrow$ `cancelled`; `paid_confirmed` / `driver_assigned` $\rightarrow$ `refunded`.
+- `paid_confirmed` means the booking advance is verified; it does not mean a driver has already been selected.
+- `driver_assigned` is an admin-only transition performed manually after payment. The customer never selects a driver, vehicle, or driver option during checkout.
 - Disallowed transitions must be rejected with `INVALID_TRIP_TRANSITION` (HTTP 400).
 
 ### Law 9: REST and Notifications Are the Initial Interaction Model
@@ -161,13 +165,13 @@ backend/
 │   │   │   ├── booking.service.ts
 │   │   │   ├── booking.controller.ts
 │   │   │   └── booking.routes.ts
-│   │   ├── payments/           # Razorpay order generation & webhook processing
+│   │   ├── payments/           # Provider-neutral checkout and webhook reconciliation
 │   │   │   ├── payment.schema.ts
 │   │   │   ├── payment.service.ts
 │   │   │   ├── payment.controller.ts
 │   │   │   ├── payment.webhook.ts
 │   │   │   └── payment.routes.ts
-│   │   ├── dispatch/           # Fleet, driver availability & assignment
+│   │   ├── dispatch/           # Manual admin driver assignment and WhatsApp contact delivery
 │   │   │   ├── dispatch.schema.ts
 │   │   │   ├── dispatch.service.ts
 │   │   │   ├── dispatch.controller.ts
@@ -402,13 +406,13 @@ interface ApiResponse<T> {
 | `POST` | `/fares/calculate` | None | 60/min | Server fare recomputation |
 | `GET` | `/locations/autocomplete` | None | 60/min | Proxied LocationIQ with cache |
 | `POST` | `/bookings/draft` | None | 30/min | Validates & creates draft booking |
-| `POST` | `/payments/create-order` | Booking Token | 20/min | Generates Razorpay order for 28% advance |
-| `POST` | `/payments/webhook` | Raw Body HMAC | None | Authoritative Razorpay webhook receiver |
+| `POST` | `/payments/create-checkout` | Booking Token | 20/min | Generates provider checkout for the booking advance |
+| `POST` | `/payments/webhooks/:provider` | Provider signature | None | Authoritative provider event receiver |
 | `GET` | `/bookings/:ticketId` | Guest Token / Phone | 60/min | Fetches masked booking voucher |
 | `POST` | `/inquiries` | None | 5/min | Lead capture for custom tours |
 | `GET` | `/ops/admin/bookings` | Admin/Dispatcher JWT | 60/min | Paginated dispatch operations view |
-| `PATCH` | `/ops/admin/bookings/:id/assign` | Admin/Dispatcher JWT | 30/min | Assigns driver & vehicle with conflict check |
-| `POST` | `/ops/admin/refunds` | Super Admin JWT | 10/min | Processes cancellation refund via Razorpay |
+| `PATCH` | `/ops/admin/bookings/:id/assign` | Admin/Dispatcher JWT | 30/min | Manually assigns driver after payment |
+| `POST` | `/ops/admin/refunds` | Super Admin JWT | 10/min | Processes provider-specific cancellation refund |
 | `GET` | `/catalog/:slug` | None | 60/min | Published ride, tour, or package with gallery and reviews |
 | `POST` | `/reviews` | Guest Token / Customer JWT | 10/min | Submit review for moderation |
 | `GET` | `/ops/admin/catalog` | Content Admin JWT | 60/min | List catalog items |
