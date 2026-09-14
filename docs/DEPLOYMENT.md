@@ -1,75 +1,157 @@
-# Production deployment
+# Production deployment and uptime monitoring
 
-ArenaAI is maintained as one repository with three independently deployable applications. The applications are intentionally kept in separate directories so each hosting provider can use a different root directory and build command without coupling release cycles.
+ArenaAI is a single repository with three independently deployable applications. Each provider watches the same GitHub repository but builds from a different application directory.
 
-| Application | Repository root | Production host | Domain | Build command | Output |
+| Application | Root directory | Production platform | Domain | Build command | Output |
 |---|---|---|---|---|---|
-| Customer site | `react/` | Cloudflare Pages | `skbagheltravels.in` | `npm ci && npm run build` | `react/dist` / `dist` when root is `react` |
-| Admin panel | `admin/` | Cloudflare Pages | `admin.skbagheltravels.in` | `npm ci && npm run build` | `admin/dist` / `dist` when root is `admin` |
-| Backend API | `backend/` | Render Docker service or VPS Docker + Cloudflare Tunnel | `api.skbagheltravels.in` | Dockerfile | Node service on port `4000` |
+| Customer site | `react/` | Cloudflare Pages | `skbagheltravels.in` | `npm ci && npm run build` | `dist` |
+| Admin panel | `admin/` | Cloudflare Pages | `admin.skbagheltravels.in` | `npm ci && npm run build` | `dist` |
+| Backend API | `backend/` | Render Docker service | `api.skbagheltravels.in` | Dockerfile | Port `4000` |
 
-## Branches and promotion
+`main` is the production branch. `design/homepage` is the integration branch. The normal release path is: feature branch → pull request into `design/homepage` → validation → pull request into `main` → provider auto-deploy from `main`.
 
-`design/homepage` is the integration branch for the current combined implementation. `main` is the production branch. Changes should be developed in focused branches, merged into `design/homepage`, verified using the root commands, and then promoted to `main` through the normal pull-request review process. No application should be copied into a second repository or deployed from a generated artifact committed to Git.
+## 1. Prepare the GitHub repository
 
-The repository currently contains the merged backend architecture implementation on `design/homepage`, including the React customer site, admin panel, and Node.js API. The root scripts are the stable interface for CI and local verification:
+1. Confirm the deployment commit is pushed to `design/homepage`.
+2. In GitHub, open **Settings → Branches** and protect `main`. Require pull-request review and passing checks before merging.
+3. Create a pull request from `design/homepage` to `main` after the first deployment configuration review.
+4. The provider configurations below can initially deploy from `design/homepage` for staging. Change each provider to `main` for production.
+
+Run the local release gate from the repository root:
 
 ```bash
+npm ci
 npm run customer:typecheck
 npm run admin:typecheck
 npm run backend:typecheck
 npm test
 npm run build:all
+npm run healthcheck
 ```
 
-`npm test` runs the deterministic backend suite. The two external database
-connectivity checks are intentionally excluded from CI because they require
-live `DATABASE_URL` and `MONGODB_URI` credentials; run `npm run backend:test`
-when those credentials are available in `backend/.env`.
+`npm test` runs 38 deterministic backend tests. The external PostgreSQL and MongoDB connectivity checks are intentionally excluded because they require live `DATABASE_URL` and `MONGODB_URI`; run `npm run backend:test` when those credentials are available in `backend/.env`.
 
-## Cloudflare Pages
+## 2. Deploy the backend API on Render
 
-Create two Pages projects connected to the same repository and branch. Set the **Root directory** independently:
+The checked-in [`render.yaml`](../render.yaml) is the source of truth for the Render service. It uses [`backend/Dockerfile`](../backend/Dockerfile), listens on port `4000`, and checks `/health`.
 
-- Customer project: `/react`, project name `skbagheltravels-customer`, custom domain `skbagheltravels.in`.
-- Admin project: `/admin`, project name `skbagheltravels-admin`, custom domain `admin.skbagheltravels.in`.
+### Create the Render service
 
-When a Pages project root is set to the application directory, use `npm ci && npm run build` and `dist` as the output directory. The checked-in `react/cloudflare-pages.toml` and `admin/cloudflare-pages.toml` files document those settings. Set `VITE_API_BASE_URL=https://api.skbagheltravels.in` as a Pages environment variable for each project. Do not put private API, payment, database, or provider credentials in Pages variables.
-
-For manual deployment from the repository root:
+1. Sign in to [Render](https://render.com) and choose **New → Blueprint**.
+2. Connect the GitHub account and select `tarun1sisodia/ArenaAI`.
+3. Select the `main` branch for production.
+4. Render detects `render.yaml`; review the service named `skb-baghel-api`.
+5. Create the Blueprint. Render builds the Docker image from `backend/Dockerfile` and starts `node dist/server.js`.
+6. In the service settings, confirm the health check path is `/health` and the exposed application port is `4000`.
+7. Add every `sync: false` variable from `render.yaml` in Render's **Environment** page. At minimum, production needs `DATABASE_URL`, `API_BASE_URL`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_JWT_SECRET`, `CORS_ORIGINS`, and the provider credentials used by the enabled payment/notification features.
+8. Keep `NODE_ENV=production` and `ALLOW_TEST_AUTH=false`. Never upload `.env` to GitHub.
+9. Deploy and wait until Render reports the service as **Live**.
+10. Test the Render URL before adding the custom domain:
 
 ```bash
-npm run deploy:customer
-npm run deploy:admin
+curl -fsS https://<render-service>.onrender.com/health
+curl -fsS https://<render-service>.onrender.com/ready
 ```
 
-The customer and admin SPAs need a fallback rewrite to `index.html` in their Pages project settings so deep links remain routable. The application-owned `wrangler.jsonc` files can also be used for Wrangler asset deployments.
+### Add the API custom domain
 
-## Backend on Render
-
-`render.yaml` is the Render Blueprint for the API. It uses `backend/Dockerfile`, exposes port `4000`, and checks `GET /health`. Connect the repository to Render and create the service from the blueprint. Add every `sync: false` secret in the Render dashboard. Keep `ALLOW_TEST_AUTH=false` in production and use PostgreSQL/Supabase as the system of record.
-
-The API service must allow CORS from both the apex and `www` customer domains and the admin domain. After deployment, verify:
+1. In Render, open the service's **Settings → Custom Domains → Add Custom Domain**.
+2. Enter `api.skbagheltravels.in` and copy the DNS target Render gives you.
+3. In Cloudflare DNS, create the requested CNAME record. Start with the proxy disabled if Render's domain verification requires direct DNS; enable the orange-cloud proxy only after TLS and routing are confirmed.
+4. Wait for Render TLS issuance and verify:
 
 ```bash
 curl -fsS https://api.skbagheltravels.in/health
 curl -fsS https://api.skbagheltravels.in/ready
 ```
 
-If the final hosting decision is a VPS instead of Render, use the same `backend/Dockerfile` and `backend/docker-compose.yml` as the container contract. Put Cloudflare Tunnel in front of the container and route `api.skbagheltravels.in` to the local API port. Render and VPS are alternatives; do not run two production API instances against the same write path without an explicit migration and traffic plan.
+The API must allow CORS from `https://skbagheltravels.in`, `https://www.skbagheltravels.in`, and `https://admin.skbagheltravels.in`.
 
-## Vercel configuration
+### Render free-tier wake-up limitation
 
-`vercel.json` is a frontend fallback configuration for preview deployments from the monorepo. It builds the customer app by default and publishes `react/dist`. Cloudflare Pages remains the production frontend host. To preview the admin app on Vercel, change the Vercel project Root Directory to `admin` and set the build command to `npm ci && npm run build` with output directory `dist`; do not use the root `vercel.json` for that project.
+The monitor below sends a request every five minutes, which reduces idle sleep when the platform honors the requests. It is **not a guarantee** that a Render free service stays awake: scheduled GitHub Actions can be delayed, Render can suspend services, and free-tier policies can change. For guaranteed always-on behavior, use a paid Render instance or deploy the same Docker image to the planned VPS behind Cloudflare Tunnel.
 
-Vercel is not the backend production target in this setup because the API is a long-running Fastify service with Docker and a health endpoint. Use Render or the VPS deployment path for the API.
+## 3. Publish the customer site on Cloudflare Pages
 
-## Domain and release order
+1. Sign in to [Cloudflare Dashboard](https://dash.cloudflare.com) and choose **Workers & Pages → Create application → Pages → Connect to Git**.
+2. Select `tarun1sisodia/ArenaAI`.
+3. Create the project with the name `skbagheltravels-customer`.
+4. Set **Production branch** to `main`.
+5. Set **Root directory** to `/react`.
+6. Set **Build command** to `npm ci && npm run build`.
+7. Set **Build output directory** to `dist`.
+8. Add the production variable `VITE_API_BASE_URL=https://api.skbagheltravels.in` under **Settings → Environment variables → Production**.
+9. Deploy. Cloudflare Pages should show the generated site preview URL.
+10. Add `skbagheltravels.in` and `www.skbagheltravels.in` under **Custom domains**. Cloudflare will create or request the required DNS records.
+11. Confirm the site loads at `https://skbagheltravels.in/`, the Hindi routes load, and the booking flow can reach the API.
 
-Deploy the API first, then set the frontend environment variables to its stable hostname, then deploy customer and admin Pages projects. Configure DNS only after the target deployment is healthy:
+The same settings are recorded in [`react/cloudflare-pages.toml`](../react/cloudflare-pages.toml). For a manual deployment from a machine with Wrangler authentication:
 
-1. `api.skbagheltravels.in` → Render service or Cloudflare Tunnel.
-2. `skbagheltravels.in` and `www.skbagheltravels.in` → customer Pages project.
-3. `admin.skbagheltravels.in` → admin Pages project.
+```bash
+npm run deploy:customer
+```
 
-The API must remain the authority for fare calculations, booking state, payments, and admin permissions. Frontend builds are static clients and must never contain database, payment, webhook, or service-role secrets.
+For SPA deep links, configure a Pages fallback to `index.html` if Cloudflare does not automatically detect the Vite application routes.
+
+## 4. Publish the admin panel on Cloudflare Pages
+
+1. In Cloudflare Pages, create a second Git-connected project named `skbagheltravels-admin`.
+2. Select the same repository and set **Production branch** to `main`.
+3. Set **Root directory** to `/admin`.
+4. Set **Build command** to `npm ci && npm run build`.
+5. Set **Build output directory** to `dist`.
+6. Add `VITE_API_BASE_URL=https://api.skbagheltravels.in` under the production environment variables.
+7. Deploy and open the generated Pages URL.
+8. Add the custom domain `admin.skbagheltravels.in` under **Custom domains**.
+9. Confirm the admin login route, deep links such as `/bookings`, and API requests work over HTTPS.
+
+The same settings are recorded in [`admin/cloudflare-pages.toml`](../admin/cloudflare-pages.toml). For manual deployment:
+
+```bash
+npm run deploy:admin
+```
+
+The current admin login is a frontend demonstration flow. Before production use, connect it to the backend's real authentication and RBAC endpoints and remove any test-auth behavior from the production environment.
+
+## 5. DNS and release order
+
+Use this order to avoid deploying frontends that point at an unavailable API:
+
+1. Deploy Render and verify `/health` and `/ready` on the Render hostname.
+2. Add and verify `api.skbagheltravels.in`.
+3. Set `VITE_API_BASE_URL` in both Pages projects.
+4. Deploy the customer Pages project and add `skbagheltravels.in`.
+5. Deploy the admin Pages project and add `admin.skbagheltravels.in`.
+6. Run the complete public check:
+
+```bash
+HEALTHCHECK_URLS="https://api.skbagheltravels.in/health,https://skbagheltravels.in/,https://admin.skbagheltravels.in/" npm run healthcheck
+```
+
+The API is the authority for fares, booking state, payments, and admin permissions. Never put database, payment, webhook, or service-role secrets in Cloudflare or Vite variables.
+
+## 6. Automated uptime monitoring
+
+[`scripts/healthcheck.mjs`](../scripts/healthcheck.mjs) performs dependency-free HTTP checks against the API health endpoint, customer site, and admin site. It retries each endpoint once by default, accepts normal redirects for static sites, prints a result for every URL, and exits with code `1` if any service fails.
+
+The repository includes [`.github/workflows/uptime.yml`](../.github/workflows/uptime.yml), which runs every five minutes and can also be started manually from **GitHub → Actions → Production uptime → Run workflow**. GitHub Actions scheduled runs are best-effort and may be delayed. A failed check appears as a failed workflow run and can be connected to GitHub notifications or an external incident integration.
+
+Run it locally:
+
+```bash
+npm run healthcheck
+```
+
+Override the targets for staging or a Render preview service:
+
+```bash
+HEALTHCHECK_URLS="https://my-api.onrender.com/health,https://staging.example.com/,https://staging-admin.example.com/" npm run healthcheck
+```
+
+Available options are `HEALTHCHECK_TIMEOUT_MS`, `HEALTHCHECK_ATTEMPTS`, `HEALTHCHECK_URLS`, and `HEALTHCHECK_EXPECTED_STATUS`. The check is intentionally read-only; it does not create bookings, send payments, mutate data, or restart services.
+
+## 7. Vercel preview configuration
+
+[`vercel.json`](../vercel.json) is only a frontend preview fallback. It builds the customer application and publishes `react/dist`. Cloudflare Pages remains the production frontend host. Vercel is not the backend target because the API is a long-running Fastify Docker service.
+
+To preview the admin application on Vercel, set the Vercel project's root directory to `admin`, build command to `npm ci && npm run build`, and output directory to `dist`.

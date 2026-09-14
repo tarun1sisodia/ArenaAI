@@ -1,0 +1,29 @@
+name: Production uptime
+
+on:
+  workflow_dispatch:
+  schedule:
+    # GitHub Actions schedules are best-effort and may be delayed during load.
+    - cron: "*/5 * * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  healthcheck:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Check deployed services
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run uptime check
+        run: node scripts/healthcheck.mjs
+        env:
+          HEALTHCHECK_TIMEOUT_MS: 10000
+          HEALTHCHECK_ATTEMPTS: 2
