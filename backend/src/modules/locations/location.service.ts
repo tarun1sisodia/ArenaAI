@@ -16,18 +16,31 @@ export function createLocationService(deps: {
   const fallback = createStaticGeocodingProvider(CURATED_PLACES);
   return {
     async autocomplete(query: string) {
-      const key = query.trim().toLowerCase().replace(/\s+/g, " ");
+      const trimmed = query.trim();
+      if (trimmed.length < 2 || trimmed.length > 80) {
+        throw Errors.validation([{ path: "q", message: "Query must be 2-80 characters" }]);
+      }
+      // Prevent injection / XSS in query
+      if (/<script|javascript:/i.test(trimmed)) {
+        throw Errors.validation([{ path: "q", message: "Invalid query" }]);
+      }
+      const key = trimmed.toLowerCase().replace(/\s+/g, " ");
       const cached = await deps.db.locationCache.get(key);
       if (cached) {
         const age = deps.clock.now().getTime() - new Date(cached.storedAt).getTime();
-        if (age < CACHE_TTL_MS) {
+        if (age < CACHE_TTL_MS && age >= 0) {
           return { source: "cache" as const, suggestions: cached.suggestions };
         }
       }
       try {
         const suggestions = await deps.geocoding.autocomplete(key);
-        await deps.db.locationCache.set(key, suggestions, toIso(deps.clock.now()));
-        return { source: "provider" as const, suggestions };
+        // Validate suggestions don't contain malicious content
+        const safe = suggestions.slice(0, 8).map((s) => ({
+          ...s,
+          displayName: s.displayName.replace(/<[^>]*>/g, "").slice(0, 200),
+        }));
+        await deps.db.locationCache.set(key, safe, toIso(deps.clock.now()));
+        return { source: "provider" as const, suggestions: safe };
       } catch {
         const suggestions = await fallback.autocomplete(key);
         if (suggestions.length > 0) {

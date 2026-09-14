@@ -7,7 +7,7 @@ export function createFareController(service: ReturnType<typeof createFareServic
   return {
     async calculate(request: FastifyRequest, reply: FastifyReply) {
       const body = CalculateFareSchema.parse(request.body);
-      const fare = service.calculate(body);
+      const fare = await service.calculate(body);
       return sendSuccess(reply, fare);
     },
   };

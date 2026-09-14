@@ -64,11 +64,40 @@ export function loadEnv(source: NodeJS.ProcessEnv = process.env): Env {
     if (!env.DATABASE_URL) missing.push("DATABASE_URL");
     if (!env.SUPABASE_URL) missing.push("SUPABASE_URL");
     if (!env.SUPABASE_SERVICE_ROLE_KEY) missing.push("SUPABASE_SERVICE_ROLE_KEY");
+    if (!env.SUPABASE_JWT_SECRET && !env.SUPABASE_URL) {
+      // Need at least one way to verify JWTs
+      missing.push("SUPABASE_JWT_SECRET or SUPABASE_URL for JWT verification");
+    }
+    // Payment secrets should be present in production if payments are enabled
+    // We warn but don't hard fail for Razorpay if not using it, but require at least webhook secret to be set if key is set
+    if (env.RAZORPAY_KEY_ID && !env.RAZORPAY_KEY_SECRET) {
+      missing.push("RAZORPAY_KEY_SECRET required when RAZORPAY_KEY_ID is set");
+    }
+    if (env.RAZORPAY_KEY_ID && !env.RAZORPAY_WEBHOOK_SECRET) {
+      missing.push("RAZORPAY_WEBHOOK_SECRET required when RAZORPAY_KEY_ID is set");
+    }
     if (env.ALLOW_TEST_AUTH) missing.push("ALLOW_TEST_AUTH must be false in production");
+    // Validate CORS origins are HTTPS in production
+    const origins = env.CORS_ORIGINS.split(",").map((s) => s.trim()).filter(Boolean);
+    const insecure = origins.filter((o) => !o.startsWith("https://") && !o.includes("localhost"));
+    if (insecure.length > 0) {
+      missing.push(`CORS_ORIGINS contains insecure origins in production: ${insecure.join(", ")}`);
+    }
     if (missing.length > 0) {
       throw new Error(`Production environment is incomplete: ${missing.join(", ")}`);
     }
   }
+  // Validate FX rates are sane
+  if (env.FX_USD_PER_INR <= 0 || env.FX_USD_PER_INR > 1) {
+    throw new Error("FX_USD_PER_INR must be between 0 and 1");
+  }
+  if (env.FX_EUR_PER_INR <= 0 || env.FX_EUR_PER_INR > 1) {
+    throw new Error("FX_EUR_PER_INR must be between 0 and 1");
+  }
+  if (env.FX_GBP_PER_INR <= 0 || env.FX_GBP_PER_INR > 1) {
+    throw new Error("FX_GBP_PER_INR must be between 0 and 1");
+  }
+
   if (source === process.env) cached = env;
   return env;
 }
@@ -80,5 +109,18 @@ export function resetEnvCache(): void {
 export function corsOriginList(env: Env): string[] {
   return env.CORS_ORIGINS.split(",")
     .map((item) => item.trim())
-    .filter(Boolean);
+    .filter(Boolean)
+    .filter((origin) => {
+      // Basic validation: must be valid URL format
+      try {
+        const url = new URL(origin);
+        return url.protocol === "http:" || url.protocol === "https:";
+      } catch {
+        return false;
+      }
+    });
+}
+
+export function isProduction(env: Env): boolean {
+  return env.NODE_ENV === "production";
 }

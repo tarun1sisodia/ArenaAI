@@ -36,8 +36,9 @@ export const OUTSTATION_RULES = {
   minKmPerDay: 300,
   nightAllowanceCab: 300,
   nightAllowanceTempo: 500,
-  nightStartHour: 20,
-  nightEndHour: 6,
+  // Spec: night allowance applies when travel occurs between 22:00 and 05:00 IST
+  nightStartHour: 22,
+  nightEndHour: 5,
   sameDayRoundMultiplier: 1.85,
 } as const;
 

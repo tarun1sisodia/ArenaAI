@@ -3,11 +3,19 @@ import type { Clock } from "../../shared/clock.js";
 import { toIso } from "../../shared/clock.js";
 import { AppError, Errors } from "../../shared/errors.js";
 import { newId } from "../../shared/ids.js";
-import { maskEmail, maskPhone } from "../../shared/privacy.js";
+import { maskEmail, maskPhone, sanitizeText } from "../../shared/privacy.js";
 import { assertTransition, isPaidEnoughForAssignment } from "../../shared/stateMachine.js";
 import type { AuthUser, BookingRecord } from "../../types/domain.js";
 import { toInternalVehicleId } from "../fares/fare.catalogue.js";
 import type { createNotificationService } from "../notifications/notification.service.js";
+
+function isOverlapping(aStart: string, aEnd: string | null, bStart: string, bEnd: string | null): boolean {
+  const aS = new Date(aStart).getTime();
+  const aE = aEnd ? new Date(aEnd).getTime() : aS + 24 * 60 * 60 * 1000; // assume 24h if no return
+  const bS = new Date(bStart).getTime();
+  const bE = bEnd ? new Date(bEnd).getTime() : bS + 24 * 60 * 60 * 1000;
+  return aS < bE && bS < aE;
+}
 
 export function createDispatchService(deps: {
   db: Repositories;
@@ -56,6 +64,8 @@ export function createDispatchService(deps: {
       actor: AuthUser;
       requestId: string;
     }) {
+      const sanitizedNote = input.note ? sanitizeText(input.note, 500) : undefined;
+
       return deps.db.transaction(async (trx) => {
         const booking = await trx.bookings.getById(input.bookingId);
         if (!booking) throw Errors.notFound("BOOKING_NOT_FOUND", "Booking not found.");
@@ -73,14 +83,54 @@ export function createDispatchService(deps: {
         const driver = await trx.drivers.getById(input.driverId);
         if (!driver) throw Errors.notFound("DRIVER_NOT_FOUND", "Driver not found.");
         if (driver.currentStatus === "off_duty") {
-          throw Errors.conflict("DRIVER_UNAVAILABLE", "Driver is not available.");
+          throw Errors.conflict("DRIVER_UNAVAILABLE", "Driver is off duty and cannot be assigned.");
+        }
+
+        // Check for overlapping assignments - critical edge case
+        const driverBookings = await trx.bookings.list({
+          driverId: driver.id,
+          page: 1,
+          pageSize: 100,
+        });
+        const overlapping = driverBookings.items.find((b) => {
+          if (b.id === booking.id) return false;
+          if (!["driver_assigned", "in_transit"].includes(b.status)) return false;
+          return isOverlapping(
+            booking.pickupDatetime,
+            booking.returnDatetime,
+            b.pickupDatetime,
+            b.returnDatetime,
+          );
+        });
+        if (overlapping) {
+          throw Errors.conflict(
+            "DRIVER_OVERLAP",
+            `Driver is already assigned to ${overlapping.ticketId} overlapping this time window.`,
+            { conflictingTicketId: overlapping.ticketId },
+          );
         }
 
         const vehicleId = input.vehicleId ?? driver.assignedVehicleId;
+        let vehicle = null;
         if (vehicleId) {
-          const vehicle = await trx.vehicles.getById(vehicleId) ?? await trx.vehicles.getById(toInternalVehicleId(booking.vehicleTier));
+          vehicle = await trx.vehicles.getById(vehicleId) ?? await trx.vehicles.getById(toInternalVehicleId(booking.vehicleTier));
           if (input.vehicleId && !vehicle) {
             throw Errors.notFound("VEHICLE_NOT_FOUND", "Vehicle not found.");
+          }
+          if (vehicle && !vehicle.isActive) {
+            throw Errors.conflict("VEHICLE_INACTIVE", "Selected vehicle is not active.");
+          }
+        }
+
+        // Validate vehicle tier matches booking tier
+        if (vehicle && vehicle.tier !== booking.vehicleTier) {
+          // Allow upgrade but not downgrade? For safety, require exact or compatible
+          // Tempo/Urbania can serve smaller tiers but not vice versa
+          const tierOrder = ["sedan", "ertiga", "innova-crysta", "tempo-traveller", "urbania"];
+          const bookingIdx = tierOrder.indexOf(booking.vehicleTier);
+          const vehicleIdx = tierOrder.indexOf(vehicle.tier);
+          if (vehicleIdx < bookingIdx) {
+            throw Errors.conflict("VEHICLE_MISMATCH", `Vehicle tier ${vehicle.tier} cannot serve ${booking.vehicleTier} booking.`);
           }
         }
 
@@ -93,7 +143,7 @@ export function createDispatchService(deps: {
           status: "driver_assigned",
           assignedDriverId: driver.id,
           assignedVehicleId: vehicleId ?? booking.assignedVehicleId,
-          specialNotes: input.note ? `${booking.specialNotes ?? ""}\n${input.note}`.trim() : booking.specialNotes,
+          specialNotes: sanitizedNote ? `${booking.specialNotes ?? ""}\n${sanitizedNote}`.trim() : booking.specialNotes,
           version: booking.version + 1,
           updatedAt: now,
         });
@@ -107,7 +157,7 @@ export function createDispatchService(deps: {
           action: "assign",
           before: { status: booking.status, assignedDriverId: booking.assignedDriverId, version: booking.version },
           after: { status: updated.status, assignedDriverId: updated.assignedDriverId, version: updated.version },
-          reason: input.note ?? null,
+          reason: sanitizedNote ?? null,
           requestId: input.requestId,
           createdAt: now,
         });
@@ -123,6 +173,12 @@ export function createDispatchService(deps: {
       }
       const driver = await deps.db.drivers.getById(booking.assignedDriverId);
       if (!driver) throw Errors.notFound("DRIVER_NOT_FOUND", "Driver not found.");
+
+      // Ensure driver is police verified before sharing contact (safety)
+      if (!driver.policeVerified) {
+        throw Errors.conflict("DRIVER_NOT_VERIFIED", "Driver must be police verified before sharing contact.");
+      }
+
       await deps.notifications.queueDriverAssigned(booking, driver);
       await deps.db.audit.append({
         id: newId(),
