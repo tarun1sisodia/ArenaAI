@@ -1,115 +1,149 @@
 # Project Context — SK Baghel Tour & Travels
 
 This file is the single source of truth for architecture decisions. It should stay
-almost static; if the AI deviates from it, that deviation must be logged in
+almost static; if anyone deviates from it, that deviation must be logged in
 `04_PROGRESS_TRACKER.md`'s Decision Log, not made silently.
 
-## 1. What this site is
-
-A premium customer-facing website for **Agra SK Baghel Tour & Travels**. North
-star: *make travel feel easy before the journey even begins.* Taxi / cab, Tempo
-Traveller, Innova, and tour packages out of Agra. Frontend only on this pass:
-every button, form and flow works against **mock data**.
-
 Canonical domain: `https://skbagheltravels.in`
+Deployment topology and provider settings: [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
 
-## 2. Tech stack — decided, do not re-litigate mid-build
+## 1. What this is
+
+A premium customer platform for **Agra SK Baghel Tour & Travels**. North star:
+*make travel feel easy before the journey even begins.* Taxi and cab, Tempo
+Traveller, Innova Crysta and tour packages out of Agra, plus the internal
+operations desk that runs the business and the API that owns fares, bookings and
+payments.
+
+Three independently deployable applications live in one repository:
+
+| Application | Directory | Role | Production host |
+|---|---|---|---|
+| Customer site | `react/` | Bilingual marketing site + booking funnel | Cloudflare Pages (`skbagheltravels-customer`) |
+| Operations desk | `admin/` | Dispatch, finance, catalog, reviews, audit | Cloudflare Pages (`skbagheltravels-admin`) |
+| API | `backend/` | Server-authoritative fares, bookings, payments, catalog, reviews | Render Docker service (`skb-baghel-api`) or VPS + Cloudflare Tunnel |
+
+The browser is never trusted for amounts or payment success: PostgreSQL (Supabase)
+is the ledger; the API is the authority for fares, booking state, payments and
+admin permissions. Until the API integration phase lands, the frontends render
+from the in-repo catalogue and the booking flow stays a mock-data client app.
+
+## 2. Stack — decided, do not re-litigate mid-build
 
 | Concern | Choice | Why |
 |---|---|---|
-| Architecture | Vanilla static MPA (HTML + CSS + JS) | Design-guide handoff is a static tree; first paint stays tiny; SEO slugs without a JS framework |
-| Rendering | Python SSG (`scripts/render_pages.py`) | Data-driven bilingual marketing pages; booking stays a client app |
-| Languages | English + Hindi, localized URLs | Bilingual SEO: `/en/…` and `/hi/…`, hreflang `en-IN` / `hi-IN` / `x-default` |
-| Booking | `book.html` + `js/booking.js` only | App page, not SEO; `noindex`; mock UPI/card (~900ms) |
-| Data | `js/data.js` (client) + `scripts/catalog.py` (SSG) | Same fares in both languages; nothing hits a server |
-| Fares | `js/fares.js` | Round-trip `total * 1.85` (non-local); advance `min(total, max(500, round(total*0.28 to 100s)))` |
-| CSS | `css/tokens.css` + `css/site.css` | Tokens match `DESIGN.md` / design-guide Option A |
-| URLs | Root-relative in templates → build rewrites to **page-relative** | One build works at the custom-domain root AND the `/ArenaAI` Pages subpath AND any local preview |
-| Serve | `python3 scripts/serve.py` (port 4173, binds 0.0.0.0) | Serves repo root; also emulates the `/ArenaAI` Pages subpath locally |
-| QA | `scripts/check_links.py` + `scripts/visual_audit.mjs` | 0-failed-requests rule; overflow/console-error sweep at 360–1440px |
+| Customer site | React 19 + Vite 7 + TypeScript (strict) | Component system shared with the design language; typed catalogue |
+| Customer rendering | Static pre-render (`react/scripts/prerender.ts`) | Fully-formed HTML for every marketing URL: crawlable, JS-optional first paint |
+| Customer languages | English + Hindi, localized URLs (`/en/…`, `/hi/…`) | Bilingual SEO with hreflang `en-IN` / `hi-IN` / `x-default`; fares identical in both |
+| Booking | `/book.html` route inside the same React app | App page, not SEO; `noindex`; mock advance/card until payments go live |
+| Admin | React 19 + Vite 7 + Tailwind 4 + motion + react-router-dom | Vercel-light design system, Saffron Gold accents, custom SVG charts |
+| API | Fastify 5 + TypeScript strict, Node ≥ 22 | Small surface, first-class JSON schema and hooks; Docker/Render friendly |
+| API data | PostgreSQL via `pg` + Supabase; in-memory store for dev/test | One repository interface, two implementations (`src/db`) |
+| Optional store | MongoDB, cache/raw-webhook payloads only | Never the ledger |
+| Payments | Razorpay adapter + HMAC adapters (PayPal, card) | Provider-neutral registry; webhooks are the only source of payment truth |
+| Env validation | Zod at boot (`backend/src/config/env.ts`) | Refuses to start production with missing/insecure configuration |
+| Design system | Dark Navy + Golden, `DESIGN.md` + `design-guide/` | Locked brand; Option A palette |
+| Node | 22 everywhere (CI, Docker, Render, `engines`) | One supported runtime across all apps |
 
-Do not switch to Next.js, React, a CMS, or live Razorpay without logging why in
-the Decision Log and getting the user to add a phase.
+Do not introduce Next.js, a CMS, a second repository, or live charges without
+logging why in the Decision Log and getting the user to add a phase.
 
-## 2.5 Visual design system
-
-Visual design is defined in `DESIGN.md` (agent-facing) and archived in
-`design-guide/` (PDF source). `DESIGN.md` is authoritative for anything visual.
-If a needed value isn't in `DESIGN.md`, add it there first (Decision Log), don't
-invent a one-off in a component.
-
-## 3. Folder structure
+## 3. Repository map
 
 ```
-css/tokens.css              design tokens
-css/site.css                chrome + components + pages
-js/data.js                  mock catalogue
-js/fares.js                 fare engine
-js/app.js                   header, sheet, toast, filters, calc
-js/booking.js               5-step booking (book.html only)
-scripts/catalog.py          SSG cities / routes / vehicles / packages
-scripts/i18n.py             EN/HI chrome strings
-scripts/render_pages.py     bilingual HTML generator
-assets/{hero,fleet,packages,trust,brand}/
-en/  hi/                    generated marketing trees
-book.html                   booking app (noindex)
-design-guide/               untouched source PDF kit
-proposal/                   original 24-slide deck
+react/                customer site
+  src/app/            App shell, routes, SEO metadata
+  src/pages/          hubs, detail pages, 404
+  src/features/       booking funnel, catalogue, contact
+  src/data/           typed catalogue + parity guards
+  src/fares.ts        client fare engine (mirrors backend rules for preview)
+  public/assets/      WebP photography + responsive derivatives + brand
+  scripts/prerender.ts    SSG: writes every URL + sitemap.xml + robots.txt + 404.html
+  dist/               deployable Cloudflare Pages artifact
+admin/                operations desk (src/pages, src/components, src/lib)
+  public/_redirects   SPA fallback (mandatory: BrowserRouter)
+  public/_headers     noindex + cache policy for an internal panel
+backend/              API
+  src/modules/        fares, bookings, payments, admin, catalog, reviews, inquiries, locations, notifications
+  src/middlewares/    auth, roles, raw body, request id, error handler
+  src/providers/      Razorpay, HMAC checkout, LocationIQ, WhatsApp, Resend
+  migrations/         append-only SQL
+  tests/              unit, integration, contract (Vitest)
+scripts/              repository-level operational tooling (healthcheck.mjs)
+docs/                 DEPLOYMENT.md, PAYMENT_SYSTEM.md, admin/ and backend/ specs
+assets/               brand + photography masters (mirrored into react/public/assets)
+design-guide/         approved design system source
+scratch/              throwaway QA scripts
 ```
 
-Rebuild marketing HTML with `python3 scripts/render_pages.py`.
+Commands, environment variables and build hygiene are documented in
+[`README.md`](README.md); the verification contract is `npm run verify`.
 
 ## 4. URL map (SEO)
 
 | Kind | English | Hindi |
 |---|---|---|
 | Home | `/` | `/hi/` |
-| Hubs | `/en/{services,routes,packages,fleet,about,contact,faq,privacy,terms}/` | `/hi/{same}/` |
-| Route | `/en/agra-to-delhi-taxi/` | `/hi/agra-se-delhi-taxi/` |
-| Vehicle | `/en/vehicles/ertiga/` | `/hi/vehicles/ertiga/` |
-| Package | `/en/packages/agra-sightseeing/` | `/hi/packages/agra-sightseeing/` |
-| Booking | `/book.html` (app, noindex) | same |
+| Hubs (9) | `/en/{services,routes,packages,fleet,about,contact,faq,privacy,terms}/` | `/hi/{same}/` |
+| Route landings (8) | `/en/agra-to-delhi-taxi/`, `/en/delhi-to-agra-taxi/`, `/en/agra-to-jaipur-taxi/`, `/en/delhi-to-jaipur-taxi/`, `/en/agra-to-gwalior-taxi/`, `/en/agra-to-lucknow-taxi/`, `/en/agra-to-mathura-taxi/`, `/en/agra-sightseeing-taxi/` | English slugs plus transliterated slugs (`/hi/agra-se-delhi-taxi/`, `/hi/agra-darshan-taxi/`, …) |
+| Vehicle landings | `/en/vehicles/{sedan,ertiga,innova-crysta,tempo-traveller,urbania}/` (+ aliases `innova`, `tempo`) | `/hi/vehicles/…` |
+| Package landings | `/en/packages/{taj-mahal-sunrise-tour,agra-sightseeing,agra-unhurried,mathura-vrindavan,gatimaan-express-agra-tour,golden-triangle}/` | `/hi/packages/…` |
+| Booking | `/book.html` (app, `noindex`) | same |
+| Recovery | `/404.html`, `/en/404/`, `/hi/404/` | same |
 
-Old root `*.html` hubs (except `index.html` and `book.html`) are redirect stubs
-to `/en/{hub}/`.
+The pre-renderer also writes legacy redirect stubs (`services.html` → `/en/services/`,
+`routes.html`, `packages.html`, `fleet.html`, `about.html`, `contact.html`,
+`faq.html`, `privacy.html`, `terms.html`) so old links keep working. The build
+currently emits 75 pages + 10 redirects and a 71-URL sitemap.
 
-Primary conversion: **Call + WhatsApp**. Book is secondary. Sticky lead-bar on
-route pages (all marketing pages on mobile). Pricing identical in both langs;
-translate copy, not fares.
+Primary conversion: **Call + WhatsApp**. Book is secondary. Sticky lead bar on
+route pages (all marketing pages on mobile). Translate copy, never fares.
 
-## 5. Mock NAP & booking rules
+## 5. NAP and booking conventions
 
-- Phone `+91 98765 43210` · WhatsApp `919876543210`
+- Phone `+91 98765 43210` · WhatsApp `919876543210` — **placeholder until the
+  client supplies the real number** (see `LAUNCH_CHECKLIST` notes in
+  `react/docs/`).
 - Email `bookings@skbagheltravels.in`
-- Address: Near Taj East Gate Road, Taj Ganj, Agra 282001
-- Geo: 27.1632, 78.0322
-- Session key `skb-booking` · tickets `AGR-`
-- Package add-ons sit on top of package price; local sightseeing is not 1.85×
+- Address: Near Taj East Gate Road, Taj Ganj, Agra 282001 · Geo 27.1632, 78.0322
+- Session key `skb-booking` · ticket prefix `AGR-` (`AGR-YYYYMMDD-XXXX`)
+- Package add-ons sit on top of the package price; local sightseeing is not
+  round-trip priced. Fare rules of record:
+  `CLIENT_CONFIRMATION_FARES_AND_RULES.md` (business) and
+  `backend/src/modules/fares/fare.engine.ts` (authoritative implementation).
 
-## 6. Coding conventions
+## 6. Conventions
 
-- Templates emit root-relative URLs (`/book.html`, `/css/site.css`, `/assets/…`);
-  `render_pages.py` rewrites them to page-relative per output file at build
-  time. Never hard-code `/ArenaAI/` or any other base prefix anywhere.
-  JS-built URLs join onto `body[data-base]` ("." / "../.." per page).
-- Never hand-edit generated files (`index.html`, `book.html`, `en/`, `hi/`,
-  stubs, `sitemap.xml`, `robots.txt`, `404.html`): edit `scripts/render_pages.py`
-  (or `catalog.py` / `i18n.py`) and regenerate with
-  `python3 scripts/render_pages.py`.
-- Marketing pages: minimal JS (`data.js` + `fares.js` + `app.js`, all `defer`).
-  `booking.js` only on `book.html`.
-- Images: WebP, width/height or aspect-ratio, `loading="lazy"` below the fold,
-  hero preloaded + `onerror` fallback to the navy background.
-- Motion: 180ms ease; `prefers-reduced-motion` kills transforms.
-- Hindi pages: `lang="hi-IN"`, Noto Sans/Serif Devanagari.
-- After regenerating, run `python3 scripts/check_links.py` against a running
-  `scripts/serve.py` — the 0-failed-requests rule is the merge gate.
-- Do not commit generated junk that `.gitignore` already excludes.
+- **Money and fares** are computed server-side in production. The client engine
+  (`react/src/fares.ts`, `react/src/features/booking/fareEngine.ts`) exists so the
+  pre-rendered site can quote before the API integration phase; it must not
+  diverge from the backend engine, and it must never be treated as authoritative.
+- **Generated output is never hand-edited.** Marketing HTML, `sitemap.xml`,
+  `robots.txt`, `404.html` and redirect stubs come from `react/scripts/prerender.ts`
+  and `react/scripts/generate-sitemap.ts`; change the generator and rebuild.
+- **Builds write only inside `react/dist`, `admin/dist`, `backend/dist`.** The one
+  tracked file a build rewrites is `react/public/sitemap.xml` (the versioned
+  mirror). Nothing is written to the repository root.
+- **Frontend bundles are public.** No database, payment, webhook or service-role
+  secret may reach `react/` or `admin/` output; CI fails if a secret name appears.
+- **Routing semantics are per app.** The customer site keeps real 404s
+  (`404.html`, `not_found_handling: "404-page"`); the admin SPA keeps its
+  `_redirects` catch-all to `index.html`.
+- **Images**: WebP with measured `width`/`height`, responsive `-480`/`-768`
+  derivatives plus `srcset`/`sizes`, lazy below the fold, hero preloaded.
+- **Motion**: 180 ms ease, `prefers-reduced-motion` disables transforms;
+  `ANIMATION_RULES.md` is the gate.
+- **Accessibility**: ARIA 1.2 patterns on interactive widgets (see the combobox
+  implementation), keyboard-complete flows, single `<h1>` per page, `lang` per tree.
+- **Verification**: `npm run verify` (typecheck ×3, backend tests, build ×3) must be
+  green before any hand-off. Deployment changes additionally follow
+  `docs/DEPLOYMENT.md`.
+- Do not commit build output, `node_modules`, `.env*` (except the examples), or
+  anything `.gitignore` already excludes.
 
-## 7. Explicit non-goals (unless the user later adds a phase)
+## 7. Explicit non-goals (unless the user adds a phase)
 
-- Admin, auth, CMS
-- Live Razorpay / real charges
-- n8n / WhatsApp Cloud API
-- Next.js / React rewrite
-- Editing `design-guide/` or `proposal/`
+- Live payments before the payment spec's webhook drills pass
+- A CMS, multi-tenant reseller portal, or native mobile apps
+- A second repository or per-app release branches
+- Editing `design-guide/` sources

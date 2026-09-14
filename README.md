@@ -1,71 +1,94 @@
-# SK Baghel Tour & Travels — Website
+# SK Baghel Tour & Travels — Monorepo
 
-Frontend for **Agra SK Baghel Tour & Travels**, built from the approved **Dark Navy + Golden** design system (`design-guide/`). Static HTML/CSS/JS. Buttons, filters, fare calculator and the 5-step booking flow all run on **mock data** — nothing is sent to a server.
+Agra-based tour and travel operator platform. One repository, three independently
+deployable applications:
 
-Marketing pages are **bilingual SSG** (English + Hindi) with hreflang. Booking is a client-side app at `/book.html` (noindex). The original 24-slide proposal deck lives in `proposal/`.
+| Application | Directory | Stack | Dev command | Build output | Production host |
+|---|---|---|---|---|---|
+| Customer site | [`react/`](./react/) | React 19 + Vite 7, bilingual SSG pre-render | `npm run customer:dev` → http://localhost:5173 | `react/dist` | Cloudflare Pages (`skbagheltravels.in`) |
+| Operations desk | [`admin/`](./admin/) | React 19 + Vite 7 + Tailwind 4 (Vercel light design system) | `npm run admin:dev` → http://localhost:5174 | `admin/dist` | Cloudflare Pages (`admin.skbagheltravels.in`) |
+| API | [`backend/`](./backend/) | Fastify 5 + TypeScript, PostgreSQL ledger | `npm run backend:dev` → http://localhost:4000 | `backend/dist` | Render Docker service (`api.skbagheltravels.in`) |
 
-## Product requirements
+The full topology, provider settings, environment variables, release order and
+rollback notes are in [`docs/DEPLOYMENT.md`](./docs/DEPLOYMENT.md). Read that
+before deploying anything.
 
-The final product requirements master document lives in
-[`PRD.md`](./PRD.md) — it contains the full business goals, SEO strategy
-(intent → keyword → page → content → schema → technical), design/UX system,
-engineering and scalability plan, QA/launch gates, and the SEO checklist. Read it
-first for "what we want." Implementation detail and architecture remain in
-`02_PROJECT_CONTEXT.md`, `03_PHASE_PLAN.md`, and `04_PROGRESS_TRACKER.md`.
-
-## Run locally
-
-```bash
-python3 -m http.server 4173 --bind 0.0.0.0
-```
-
-Open `http://localhost:4173`.
-
-## Hosting
-
-The site is pure static HTML/CSS/JS — redady for any static host. All internal
-URLs are root-relative, so when it is hosted under a subpath (e.g. GitHub
-Pages project site `https://<user>.github.io/ArenaAI/`) they must be prefixed
-with that subpath. The build script handles this automatically:
-
-The production monorepo deployment topology for the React customer site, admin
-panel, and Node.js API is documented in [`docs/DEPLOYMENT.md`](./docs/DEPLOYMENT.md).
+## Quick start
 
 ```bash
-# GitHub Pages project site (default — uses /ArenaAI)
-python3 scripts/render_pages.py
-
-# Custom domain / repo root (e.g. skbagheltravels.in)
-SITE_BASE= python3 scripts/render_pages.py
+npm run install:all     # npm ci for the root and all three workspaces
+npm run verify          # typecheck + test + production build for everything
 ```
 
-The generated HTML gets the base prefix baked into every link, image and
-script tag, and `js/` reads the same prefix from `<body data-base="...">` for
-anything it builds at runtime.
-
-## URLs
-
-| Path | What it is |
-|------|------------|
-| `/` | English home |
-| `/hi/` | Hindi home |
-| `/en/agra-to-delhi-taxi/` ↔ `/hi/agra-se-delhi-taxi/` | Dedicated route pages |
-| `/en/vehicles/ertiga/` | Vehicle landing |
-| `/en/packages/agra-sightseeing/` | Package landing |
-| `/en/services/` `/en/routes/` `/en/fleet/` … | Hub pages |
-| `/book.html` | 5-step booking app (not indexed) |
-
-Call and WhatsApp are the primary CTAs. A sticky lead bar sits on route pages (and on every marketing page on mobile). Fares are identical in both languages.
-
-Rebuild after editing `scripts/catalog.py`, `scripts/i18n.py` or `scripts/render_pages.py`:
+Run a single application:
 
 ```bash
-python3 scripts/render_pages.py
+npm run customer:dev    # customer site   http://localhost:5173
+npm run admin:dev       # admin panel     http://localhost:5174
+npm run backend:dev     # API             http://localhost:4000
 ```
+
+## Command contract
+
+These root scripts are the stable interface used by CI and by every host. They
+are the only commands that need to be memorised:
+
+| Command | What it does |
+|---|---|
+| `npm run install:all` | `npm ci` for the root, `react/`, `admin/` and `backend/` (lockfile-enforced) |
+| `npm run typecheck` | TypeScript check for all three applications |
+| `npm run customer:typecheck` · `admin:typecheck` · `backend:typecheck` | TypeScript check for one application |
+| `npm test` | Deterministic backend suite (excludes live-credential DB checks) |
+| `npm run backend:test` | Full backend suite, including the DB connectivity checks that need `backend/.env` |
+| `npm run build:all` | Production build for all three applications |
+| `npm run verify` | Typecheck + tests + build in one shot — the local equivalent of CI |
+| `npm run healthcheck` | Dependency-free uptime check of the API, customer site and admin site (`HEALTHCHECK_URLS` overrides the targets; see `docs/DEPLOYMENT.md` §6) |
+| `npm run deploy:customer` · `deploy:admin` | Build and publish a frontend to Cloudflare Pages |
+| `npm run backend:start` | Run the compiled API (`backend/dist/server.js`) |
+
+[`.github/workflows/quality.yml`](./.github/workflows/quality.yml) runs exactly
+these commands, plus deploy guards: build-artifact presence, no server-side
+secrets in frontend bundles, per-file Cloudflare asset budget (<25 MiB), and an
+admin SPA deep-link fallback check.
+
+## Environment variables
+
+| File | Scope | Notes |
+|---|---|---|
+| [`.env.example`](./.env.example) | Customer + admin frontends | `VITE_API_BASE_URL` is reserved for the API integration phase — no frontend code reads it yet. `VITE_REACT_MIGRATION_ENABLED` is the migration gate. Only `VITE_*` values may ever be set as Pages variables; everything here is public in the bundle. |
+| [`backend/.env.example`](./backend/.env.example) | API only | Copied to `backend/.env` for local work. `DATABASE_URL`, Supabase, Razorpay, webhook, WhatsApp and email secrets live **only** here (or in the Render dashboard), never in a Pages variable. |
+
+`backend/src/config/env.ts` validates the whole server environment with Zod at
+boot and refuses to start a production process with missing or insecure values:
+it requires `DATABASE_URL` and the Supabase credentials, rejects
+`ALLOW_TEST_AUTH=true`, rejects non-HTTPS CORS origins, and requires the Razorpay
+secret and webhook secret whenever a Razorpay key id is present.
+
+## Repository layout
+
+```
+react/          customer site (src/, public/assets, scripts/prerender.ts, dist output)
+admin/          operations desk (src/, public/, dist output)
+backend/        API (src/, migrations/, tests/, Dockerfile, dist output)
+docs/           DEPLOYMENT.md, PAYMENT_SYSTEM.md, admin/ and backend/ specifications
+assets/         brand and photography masters (mirrored into react/public/assets)
+design-guide/   approved Dark Navy + Golden design system
+scratch/        throwaway QA scripts
+```
+
+The customer site is a **bilingual pre-rendered SSG** (`/en/…` and `/hi/…` with
+hreflang): `npm run customer:build` runs `tsc`, `vite build` and
+`react/scripts/prerender.ts`, which writes fully-formed HTML for every marketing,
+route, vehicle, package and hub page, plus `404.html`, `robots.txt` and
+`sitemap.xml`. Fares are identical in both languages; `/book.html` is the
+client-side booking flow and is `noindex`.
+
+The build only ever writes inside each application's own `outDir`
+(`react/dist`, `admin/dist`, `backend/dist`). Generated `sitemap.xml` /
+`robots.txt` are mirrored into `react/public/` so they stay versioned with the
+source; nothing is written to the repository root.
 
 ## Backend API
-
-The production Node.js service lives in [`backend/`](./backend/). It owns server-authoritative fares, draft bookings, provider payments, admin dispatch, catalog, and reviews. PostgreSQL is the ledger; the browser is never trusted for amounts or payment success.
 
 ```bash
 cd backend
@@ -75,68 +98,48 @@ npm test
 npm run dev
 ```
 
-The API listens on `http://localhost:4000` (`GET /health`, `POST /api/v1/fares/calculate`, `POST /api/v1/bookings/draft`). See `backend/README.md` and [`docs/backend/BACKEND_ARCHITECTURE_PLAN.md`](./docs/backend/BACKEND_ARCHITECTURE_PLAN.md).
+`GET /health` is the liveness probe, `GET /ready` the readiness probe (reports
+whether it is backed by PostgreSQL or the in-memory store). See
+[`backend/README.md`](./backend/README.md) and
+[`docs/backend/BACKEND_ARCHITECTURE_PLAN.md`](./docs/backend/BACKEND_ARCHITECTURE_PLAN.md).
 
-## React migration preview
+PostgreSQL is the ledger; the browser is never trusted for amounts or payment
+success. Production runs from [`backend/Dockerfile`](./backend/Dockerfile)
+(multi-stage, pruned production dependencies, non-root user) and the Render
+blueprint [`render.yaml`](./render.yaml). DevDependencies never reach the runtime
+image, and [`backend/.dockerignore`](./backend/.dockerignore) keeps `.env` files
+and caches out of the build context.
 
-The responsive React platform is being migrated beside the current static site.
-It is not production cutover yet. Start its development server with:
-
-```bash
-npm install
-VITE_REACT_MIGRATION_ENABLED=true npm run react:dev
-```
-
-The migration gate defaults to enabled for local development and can be
-explicitly disabled in a production build until cutover is approved:
-
-```bash
-VITE_REACT_MIGRATION_ENABLED=false npm run react:build
-```
-
-To test the production build locally against GitHub Pages repository
-subpath, set the base explicitly:
+## Deploying
 
 ```bash
-VITE_BASE_PATH=/ArenaAI npm run react:build
-npm run react:preview
+# API first
+render.yaml → Render service (or VPS Docker + Cloudflare Tunnel)
+
+# then the frontends, pointed at the live API hostname
+npm run deploy:customer   # react/dist   → Cloudflare Pages
+npm run deploy:admin      # admin/dist   → Cloudflare Pages
 ```
 
-Production output is written to `dist/react/`; the legacy static pages remain
-outside that output until the migration is approved for cutover.
-
-## Admin panel (operations desk)
-
-The internal admin frontend lives in [`admin/`](./admin/) — a standalone
-Vite + React app on the **21st.dev** Vercel light design system with Saffron
-Gold brand accents, motion.dev animations and custom SVG analytics charts.
-Full spec in [`ADMIN_DESIGN.md`](./docs/admin/ADMIN_DESIGN.md) (requirements:
-[`ADMIN_PRD.md`](./docs/admin/ADMIN_PRD.md), [`ADMIN_TRD.md`](./docs/admin/ADMIN_TRD.md)).
-
-```bash
-npm install --prefix admin
-npm run admin:dev     # http://localhost:5174
-```
-
-Demo sign-in issues a `test-<role>` JWT principal (TRD §2.1) — pick a role to
-experience the RBAC permission matrix.
-
-## Speed notes
-
-- No framework. Booking JS loads only on `book.html`.
-- Hero WebP is ~50KB (budget ≤ 220KB), preloaded with responsive
-  `imagesrcset` so phones fetch the 960px crop, not the 1920px file.
-- Below-fold images are lazy-loaded responsive WebP (`-480`/`-768`
-  derivatives + `srcset`/`sizes`, `decoding="async"`); every `<img>` emits
-  `width`/`height` **measured from the real file at build time** (CLS = 0).
-- Off-screen sections skip layout/paint (`content-visibility: auto`).
-- Fonts: one Google Fonts request, `display=swap`. Hindi pages add Noto Devanagari.
+Deployment order, DNS, Pages build settings, the admin SPA `_redirects`
+fallback, and the verification curls are documented in
+[`docs/DEPLOYMENT.md`](./docs/DEPLOYMENT.md).
 
 ## Replacing the photography
 
-Overwrite the file at the same path (e.g. `assets/fleet/sedan.webp`,
-`assets/hero/hero-highway.webp`) with your real WebP photo — any size is
-fine — then run `python3 scripts/render_pages.py`. The build measures the
-new image, fixes every `width`/`height`, and regenerates the responsive
-derivatives automatically (needs ImageMagick;
-`./scripts/make_image_derivatives.sh --force` forces a redo).
+Drop the replacement WebP at the same path under
+[`react/public/assets/`](./react/public/assets/) (for example
+`react/public/assets/fleet/innova.webp`) and rebuild the customer site. Keep the
+`-480` / `-768` responsive derivatives in the same folder: the pre-renderer emits
+`srcset`/`sizes` against those names, and `<img>` `width`/`height` come from the
+asset itself, so a like-for-like replacement keeps Cumulative Layout Shift at
+zero.
+
+## History
+
+The original static HTML/CSS/JS site (Python SSG generator, `book.html` app,
+GitHub Pages hosting) was retired when the React platform moved into `react/`.
+Documents from that era remain under `docs/` for reference
+(`02_PROJECT_CONTEXT.md`, `03_PHASE_PLAN.md`, `04_PROGRESS_TRACKER.md`, `PRD.md`
+and friends); wherever they disagree with this file or `docs/DEPLOYMENT.md`, the
+monorepo commands here win.

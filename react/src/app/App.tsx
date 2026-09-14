@@ -197,14 +197,14 @@ export function getSeo(pathname: string, section: string, language: "en" | "hi",
       return {
         title: "हमारी गाड़ियाँ व टैक्सी फ्लीट | SK Baghel Tour & Travels",
         description: "सेडान, अर्टिगा, इनोवा क्रिस्टा, टेम्पो ट्रैवलर व अर्बनिया लग्जरी वैन। पारदर्शी प्रति किमी दरें व स्टेशन/एयरपोर्ट ट्रांसफर।",
-        ogImage: "/assets/fleet/innova-hero.webp",
+        ogImage: "/assets/fleet/innova.webp",
         keywords: ["आगरा कैब फ्लीट", "डिजायर टैक्सी", "अर्टिगा बुकिंग", "इनोवा क्रिस्टा आगरा", "टेम्पो ट्रैवलर"],
       };
     }
     return {
       title: "Our Fleet — Sedan, Ertiga, Innova Crysta & Tempo Traveller | SK Baghel",
       description: "Explore our sanitized, chauffeur-driven Agra cab fleet: Dzire sedan, Ertiga MPV, Innova Crysta, Tempo Traveller & Urbania van. Transparent per-km rates & flat transfers.",
-      ogImage: "/assets/fleet/innova-hero.webp",
+      ogImage: "/assets/fleet/innova.webp",
       keywords: ["Agra cab fleet", "Dzire taxi Agra", "Ertiga rental", "Innova Crysta Agra", "Tempo Traveller", "Force Urbania"],
     };
   }

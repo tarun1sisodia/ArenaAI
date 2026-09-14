@@ -18,7 +18,6 @@ import { fileURLToPath } from "node:url";
 const __filename = fileURLToPath(import.meta.url);
 const scriptsDir = dirname(__filename);
 const reactRoot = join(scriptsDir, "..");
-const repoRoot = join(reactRoot, "..");
 
 export const CANONICAL_DOMAIN = "https://skbagheltravels.in";
 
@@ -254,13 +253,14 @@ export async function generateSitemapAndRobots(): Promise<{
   const sitemapXml = generateSitemapXml(entries);
   const robotsTxt = generateRobotsTxt();
 
-  // Target destinations
+  // Target destinations — the build only ever writes inside this application.
+  // `dist` is the deployable Cloudflare Pages output; `public` keeps the
+  // tracked source copy in sync for Vite's publicDir copy step. Writing to the
+  // repository root or to a root `dist/` was legacy static-site behaviour and
+  // made every build dirty tracked files outside the app.
   const destinations = [
     join(reactRoot, "dist"),
     join(reactRoot, "public"),
-    join(repoRoot, "dist", "react"),
-    join(repoRoot, "dist"),
-    repoRoot,
   ];
 
   for (const destDir of destinations) {
