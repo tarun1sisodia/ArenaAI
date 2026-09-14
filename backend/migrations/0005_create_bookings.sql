@@ -28,8 +28,6 @@ CREATE TABLE IF NOT EXISTS bookings (
     fare_snapshot JSONB NOT NULL DEFAULT '{}'::jsonb,
     status booking_status_enum NOT NULL DEFAULT 'pending_payment',
     version INT NOT NULL DEFAULT 1,
-    assigned_driver_id UUID REFERENCES drivers(id) ON DELETE SET NULL,
-    assigned_vehicle_id VARCHAR(50) REFERENCES vehicles(id) ON DELETE SET NULL,
     special_notes TEXT,
     package_id VARCHAR(80),
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),

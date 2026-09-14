@@ -15,15 +15,13 @@ import { registerRawBody } from "./middlewares/rawBody.js";
 import { registerRequestId } from "./middlewares/requestId.js";
 import { createAdminController } from "./modules/admin/admin.controller.js";
 import { registerAdminRoutes } from "./modules/admin/admin.routes.js";
+import { createAdminService } from "./modules/admin/admin.service.js";
 import { createBookingController } from "./modules/bookings/booking.controller.js";
 import { registerBookingRoutes } from "./modules/bookings/booking.routes.js";
 import { createBookingService } from "./modules/bookings/booking.service.js";
 import { createCatalogController } from "./modules/catalog/catalog.controller.js";
 import { registerCatalogRoutes } from "./modules/catalog/catalog.routes.js";
 import { createCatalogService } from "./modules/catalog/catalog.service.js";
-import { createDispatchController } from "./modules/dispatch/dispatch.controller.js";
-import { registerDispatchRoutes } from "./modules/dispatch/dispatch.routes.js";
-import { createDispatchService } from "./modules/dispatch/dispatch.service.js";
 import { createFareController } from "./modules/fares/fare.controller.js";
 import { registerFareRoutes } from "./modules/fares/fare.routes.js";
 import { createFareService } from "./modules/fares/fare.service.js";
@@ -129,12 +127,11 @@ export async function buildApp(options: AppOptions): Promise<BuiltApp> {
     messaging,
     email,
     paymentTemplate: env.WHATSAPP_TEMPLATE_PAYMENT,
-    driverTemplate: env.WHATSAPP_TEMPLATE_DRIVER,
   });
   const fareService = createFareService(env.FARE_RULES_VERSION);
   const bookingService = createBookingService({ db, clock, fareVersion: env.FARE_RULES_VERSION });
   const paymentService = createPaymentService({ db, clock, env, providers, notifications });
-  const dispatchService = createDispatchService({ db, clock, notifications });
+  const adminService = createAdminService({ db, clock });
   const catalogService = createCatalogService({ db, clock });
   const reviewService = createReviewService({ db, clock });
   const locationService = createLocationService({ db, clock, geocoding });
@@ -150,11 +147,10 @@ export async function buildApp(options: AppOptions): Promise<BuiltApp> {
   await registerLocationRoutes(app, createLocationController(locationService));
   await registerBookingRoutes(app, createBookingController(bookingService));
   await registerPaymentRoutes(app, createPaymentController(paymentService));
-  await registerDispatchRoutes(app, createDispatchController(dispatchService, paymentService));
   await registerCatalogRoutes(app, createCatalogController(catalogService));
   await registerReviewRoutes(app, createReviewController(reviewService));
   await registerInquiryRoutes(app, createInquiryController(inquiryService));
-  await registerAdminRoutes(app, createAdminController(db));
+  await registerAdminRoutes(app, createAdminController(adminService, paymentService));
 
   return { app, db };
 }

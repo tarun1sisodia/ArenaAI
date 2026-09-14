@@ -28,7 +28,6 @@ export const BOOKING_STATUSES = [
   "draft",
   "pending_payment",
   "paid_confirmed",
-  "driver_assigned",
   "in_transit",
   "completed",
   "cancelled",
@@ -85,9 +84,6 @@ export const VERIFICATION_STATUSES = [
 ] as const;
 export type VerificationStatus = (typeof VERIFICATION_STATUSES)[number];
 
-export const DRIVER_STATUSES = ["available", "on_trip", "off_duty"] as const;
-export type DriverStatus = (typeof DRIVER_STATUSES)[number];
-
 export type FareBreakdown = {
   baseFare: number;
   nightAllowance: number;
@@ -139,8 +135,6 @@ export type BookingRecord = {
   fareSnapshot: FareBreakdown;
   status: BookingStatus;
   version: number;
-  assignedDriverId: string | null;
-  assignedVehicleId: string | null;
   specialNotes: string | null;
   packageId: string | null;
   createdAt: string;
@@ -183,30 +177,6 @@ export type RefundRecord = {
   reason: string;
   status: "pending" | "processed" | "failed";
   idempotencyKey: string;
-  createdAt: string;
-};
-
-export type DriverRecord = {
-  id: string;
-  fullName: string;
-  phone: string;
-  licenseNumber: string;
-  policeVerified: boolean;
-  assignedVehicleId: string | null;
-  currentStatus: DriverStatus;
-  rating: number;
-  createdAt: string;
-};
-
-export type VehicleRecord = {
-  id: string;
-  tier: VehicleTier;
-  name: string;
-  plateNumber: string;
-  seatingCapacity: number;
-  luggageCapacity: number;
-  perKmRate: number;
-  isActive: boolean;
   createdAt: string;
 };
 

@@ -4,9 +4,8 @@ import { AppError } from "./errors.js";
 const ALLOWED: Record<BookingStatus, readonly BookingStatus[]> = {
   draft: ["pending_payment", "cancelled"],
   pending_payment: ["paid_confirmed", "cancelled"],
-  paid_confirmed: ["driver_assigned", "refunded", "cancelled"],
-  driver_assigned: ["in_transit", "completed", "refunded"],
-  in_transit: ["completed"],
+  paid_confirmed: ["in_transit", "completed", "refunded", "cancelled"],
+  in_transit: ["completed", "refunded"],
   completed: [],
   cancelled: [],
   refunded: [],
@@ -28,6 +27,3 @@ export function assertTransition(from: BookingStatus, to: BookingStatus): void {
   }
 }
 
-export function isPaidEnoughForAssignment(status: BookingStatus): boolean {
-  return status === "paid_confirmed";
-}

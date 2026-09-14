@@ -38,7 +38,6 @@ const EnvSchema = z.object({
   WHATSAPP_TOKEN: z.string().optional().default(""),
   WHATSAPP_PHONE_NUMBER_ID: z.string().optional().default(""),
   WHATSAPP_TEMPLATE_PAYMENT: z.string().default("skb_payment_confirmed"),
-  WHATSAPP_TEMPLATE_DRIVER: z.string().default("skb_driver_assigned"),
   RESEND_API_KEY: z.string().optional().default(""),
   EMAIL_FROM: z.string().default("bookings@skbagheltravels.in"),
 

@@ -5,7 +5,7 @@ import { AppError, Errors } from "../../shared/errors.js";
 import { newGuestAccessToken, newId, newTicketId } from "../../shared/ids.js";
 import { last4, maskEmail, maskPhone, phonesMatch } from "../../shared/privacy.js";
 import { assertTransition } from "../../shared/stateMachine.js";
-import type { AuthUser, BookingRecord, DriverRecord } from "../../types/domain.js";
+import type { AuthUser, BookingRecord } from "../../types/domain.js";
 import { calculateFare } from "../fares/fare.engine.js";
 import type { CreateDraftBookingRequest } from "./booking.schema.js";
 
@@ -73,8 +73,6 @@ export function createBookingService(deps: {
         fareSnapshot: fare,
         status: "pending_payment",
         version: 1,
-        assignedDriverId: null,
-        assignedVehicleId: null,
         specialNotes: input.specialNotes ?? null,
         packageId: input.packageId ?? null,
         createdAt: now,
@@ -105,11 +103,7 @@ export function createBookingService(deps: {
         throw Errors.unauthorized("Booking token or matching phone is required.");
       }
 
-      const driver = booking.assignedDriverId
-        ? await deps.db.drivers.getById(booking.assignedDriverId)
-        : null;
-      const revealDriver = Boolean(isAdmin || tokenOk);
-      return projectBooking(booking, driver, { unmask: Boolean(isAdmin), revealDriver });
+      return projectBooking(booking, { unmask: Boolean(isAdmin) });
     },
 
     async transition(bookingId: string, to: BookingRecord["status"]): Promise<BookingRecord> {
@@ -131,8 +125,7 @@ export function createBookingService(deps: {
 
 export function projectBooking(
   booking: BookingRecord,
-  driver: DriverRecord | null,
-  options: { unmask: boolean; revealDriver: boolean },
+  options: { unmask: boolean },
 ) {
   return {
     id: booking.id,
@@ -156,15 +149,6 @@ export function projectBooking(
       : null,
     phoneLast4: last4(booking.customerPhone),
     fare: booking.fareSnapshot,
-    assignedDriver: driver && options.revealDriver
-      ? {
-          id: driver.id,
-          fullName: driver.fullName,
-          phone: driver.phone,
-          rating: driver.rating,
-          policeVerified: driver.policeVerified,
-        }
-      : null,
     version: booking.version,
     createdAt: booking.createdAt,
     updatedAt: booking.updatedAt,

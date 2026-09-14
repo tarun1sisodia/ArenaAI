@@ -236,7 +236,7 @@ export function createPaymentService(deps: {
 
       const booking = await deps.db.bookings.getById(input.bookingId);
       if (!booking) throw Errors.notFound("BOOKING_NOT_FOUND", "Booking not found.");
-      if (!["paid_confirmed", "driver_assigned"].includes(booking.status)) {
+      if (booking.status !== "paid_confirmed") {
         throw Errors.conflict("REFUND_NOT_ELIGIBLE", "Booking is not eligible for refund.");
       }
       const payments = await deps.db.payments.listByBookingId(booking.id);

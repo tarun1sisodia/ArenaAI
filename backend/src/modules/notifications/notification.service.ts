@@ -2,7 +2,7 @@ import type { Repositories } from "../../db/types.js";
 import type { Clock } from "../../shared/clock.js";
 import { toIso } from "../../shared/clock.js";
 import { newId } from "../../shared/ids.js";
-import type { BookingRecord, DriverRecord } from "../../types/domain.js";
+import type { BookingRecord } from "../../types/domain.js";
 import type { EmailProvider, MessagingProvider } from "../../providers/MessagingProvider.js";
 
 export function createNotificationService(deps: {
@@ -11,7 +11,6 @@ export function createNotificationService(deps: {
   messaging: MessagingProvider;
   email: EmailProvider;
   paymentTemplate: string;
-  driverTemplate: string;
 }) {
   return {
     async queuePaymentConfirmed(booking: BookingRecord): Promise<void> {
@@ -34,25 +33,10 @@ export function createNotificationService(deps: {
           payload: {
             to: booking.customerEmail,
             subject: `Booking ${booking.ticketId} confirmed`,
-            text: `Your advance for ${booking.ticketId} is confirmed. Remaining ₹${booking.balanceAmount} is payable to the driver.`,
+            text: `Your advance for ${booking.ticketId} is confirmed. Remaining ₹${booking.balanceAmount} is payable at the start of your trip.`,
           },
         });
       }
-      await processQueued(deps);
-    },
-
-    async queueDriverAssigned(booking: BookingRecord, driver: DriverRecord): Promise<void> {
-      await enqueue(deps, {
-        booking,
-        channel: "whatsapp",
-        templateKey: deps.driverTemplate,
-        dedupeKey: `whatsapp:driver:${booking.id}:${driver.id}`,
-        payload: {
-          ticketId: booking.ticketId,
-          driverName: driver.fullName,
-          driverPhone: driver.phone,
-        },
-      });
       await processQueued(deps);
     },
   };

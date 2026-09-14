@@ -9,4 +9,14 @@ export async function registerAdminRoutes(
     config: { rateLimit: { max: 30, timeWindow: "1 minute" } },
     handler: controller.auditLogs,
   });
+
+  app.get("/api/v1/ops/admin/bookings", {
+    config: { rateLimit: { max: 60, timeWindow: "1 minute" } },
+    handler: controller.listBookings,
+  });
+
+  app.post("/api/v1/ops/admin/refunds", {
+    config: { rateLimit: { max: 10, timeWindow: "1 minute" } },
+    handler: controller.refund,
+  });
 }

@@ -6,6 +6,12 @@ import { loadEnv } from "../src/config/env.js";
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 
+try {
+  process.loadEnvFile?.(path.join(root, ".env"));
+} catch {
+  console.warn("No .env file found");
+}
+
 async function main(): Promise<void> {
   const env = loadEnv();
   if (!env.DATABASE_URL) {

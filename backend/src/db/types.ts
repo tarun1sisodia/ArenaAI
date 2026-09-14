@@ -4,26 +4,22 @@ import type {
   BookingStatus,
   CatalogItemRecord,
   CatalogMediaRecord,
-  DriverRecord,
   InquiryRecord,
   LocationSuggestion,
   NotificationJobRecord,
   PaymentRecord,
-
   ProfileRecord,
   PromoCodeRecord,
   RefundRecord,
   ReviewRecord,
   ReviewStatus,
   UserRole,
-  VehicleRecord,
   WebhookEventRecord,
 } from "../types/domain.js";
 
 export type BookingListFilter = {
   status?: BookingStatus;
   ticketId?: string;
-  driverId?: string;
   from?: string;
   to?: string;
   page?: number;
@@ -68,20 +64,6 @@ export type Repositories = {
     create(record: RefundRecord): Promise<RefundRecord>;
     getByIdempotencyKey(key: string): Promise<RefundRecord | null>;
     listByBookingId(bookingId: string): Promise<RefundRecord[]>;
-  };
-
-  drivers: {
-    create(record: DriverRecord): Promise<DriverRecord>;
-    update(record: DriverRecord): Promise<DriverRecord>;
-    getById(id: string): Promise<DriverRecord | null>;
-    list(): Promise<DriverRecord[]>;
-  };
-
-  vehicles: {
-    getById(id: string): Promise<VehicleRecord | null>;
-    list(): Promise<VehicleRecord[]>;
-    create(record: VehicleRecord): Promise<VehicleRecord>;
-    update(record: VehicleRecord): Promise<VehicleRecord>;
   };
 
   profiles: {

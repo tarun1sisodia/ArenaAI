@@ -17,13 +17,12 @@ describe("booking state machine", () => {
   it("allows the documented happy path", () => {
     expect(canTransition("draft", "pending_payment")).toBe(true);
     expect(canTransition("pending_payment", "paid_confirmed")).toBe(true);
-    expect(canTransition("paid_confirmed", "driver_assigned")).toBe(true);
-    expect(canTransition("driver_assigned", "in_transit")).toBe(true);
+    expect(canTransition("paid_confirmed", "in_transit")).toBe(true);
     expect(canTransition("in_transit", "completed")).toBe(true);
   });
 
   it("rejects skipping payment confirmation", () => {
-    expect(canTransition("pending_payment", "driver_assigned")).toBe(false);
+    expect(canTransition("pending_payment", "in_transit")).toBe(false);
     expect(() => assertTransition("pending_payment", "completed")).toThrow(/Cannot transition booking/);
   });
 });

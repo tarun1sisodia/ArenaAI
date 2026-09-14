@@ -12,11 +12,11 @@
 |---|---|---|
 | Architecture | Complete | Dual-database strategy and phased rollout are documented |
 | Project scaffold | Complete | `backend/` Fastify + TypeScript strict service with health, CI, Docker |
-| Supabase schema | Implemented | Versioned SQL migrations, RLS, local auth stub, in-memory test store |
-| Fare engine | Complete | Pure engine ported from commercial/frontend rules with unit tests |
+| Supabase schema | Implemented | Migrations 0001-0011 applied on live Supabase; drivers & vehicles dropped |
+| Fare engine | Complete | Pure engine ported with unit tests; customer vehicle tiers preserved |
 | Booking flow | Complete | Draft booking, `AGR-YYYYMMDD-XXXX`, immutable fare snapshot, masked retrieval |
 | Razorpay integration | Implemented (sandbox) | Provider-neutral checkout, HMAC webhooks, idempotency, amount/currency checks |
-| Dispatch operations | Implemented | Admin-only assignment after payment, WhatsApp notify, refunds, audit log |
+| Admin operations | Implemented | Booking listing, filters, refunds, audit log (purged driver/vehicle fleet models) |
 | Catalog / reviews | Implemented | Draft/publish/archive, moderated reviews, unpublished content hidden |
 | MongoDB optional workloads | Deferred | Location cache and raw webhooks live in PostgreSQL/memory for Phase 1 |
 | Notifications | Implemented | Queued WhatsApp/email with dedupe; no-op adapters when credentials absent |
@@ -24,8 +24,8 @@
 
 ## Current Milestone
 
-**Milestone:** Backend vertical slices for fare → draft → checkout → webhook → assignment.  
-**Completion target:** Local tests pass without live Supabase/Razorpay credentials.
+**Milestone:** Clean booking & fare calculation backend without drivers/vehicles management.  
+**Completion target:** Verified on live Supabase & MongoDB; all 6 test suites (31 tests) passing; 0 lint/build errors.
 
 ## Completed
 
@@ -41,10 +41,14 @@
 - [x] Implement booking draft and ticket generation.
 - [x] Implement Razorpay test-mode order and webhook flows (HMAC adapters + contract tests).
 - [x] Add contract tests for routes and state transitions.
+- [x] Provision live Supabase instance, applied all 10 SQL migrations, and seeded catalog.
+- [x] Applied migration `0011_drop_vehicles_and_drivers.sql` to live Supabase DB; dropped tables `drivers` & `vehicles`.
+- [x] Purged all driver and physical vehicle models, repositories, and state transitions from backend codebase.
+- [x] Dissolved `dispatch/` module into `admin/` module (`GET /api/v1/ops/admin/bookings` and `POST /api/v1/ops/admin/refunds`).
+- [x] Verified full build, typecheck, lint, and test suite pass (31/31 tests passing).
 
 ## Next Actions
 
-- [ ] Provision staging Supabase and apply migrations.
 - [ ] Run Razorpay/PayPal sandbox drills against a public HTTPS webhook.
 - [ ] Review remaining critical items in [BUGS.md](BUGS.md) with staging evidence.
 - [ ] Deploy Mumbai-region API host and production webhook endpoints after sandbox sign-off.
@@ -55,6 +59,9 @@
 |---|---|---|
 | 2026-09-13 | Created the documentation baseline from the master architecture plan | Manus AI |
 | 2026-09-14 | Implemented `backend/` service: fare engine, bookings, payments, dispatch, catalog, reviews, tests | Arena Agent |
+| 2026-09-14 | Connected live Supabase PostgreSQL & MongoDB Atlas, applied all 10 migrations, and seeded base data | Antigravity AI |
+| 2026-09-14 | Purged drivers & vehicles from database and backend codebase per client instructions; 100% test pass | Antigravity AI |
+
 
 ## References
 

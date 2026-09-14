@@ -1,6 +1,16 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import pg from "pg";
 import { loadEnv } from "../src/config/env.js";
-import { DEFAULT_PROMO, PACKAGES, VEHICLES, toVehicleTier } from "../src/modules/fares/fare.catalogue.js";
+import { DEFAULT_PROMO, PACKAGES } from "../src/modules/fares/fare.catalogue.js";
+
+const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
+
+try {
+  process.loadEnvFile?.(path.join(root, ".env"));
+} catch {
+  console.warn("No ENV file found");
+}
 
 async function main(): Promise<void> {
   const env = loadEnv();
@@ -10,22 +20,6 @@ async function main(): Promise<void> {
   const client = new pg.Client({ connectionString: env.DATABASE_URL });
   await client.connect();
   try {
-    for (const vehicle of VEHICLES) {
-      await client.query(
-        `insert into vehicles (id, tier, name, plate_number, seating_capacity, luggage_capacity, per_km_rate, is_active)
-         values ($1,$2,$3,$4,$5,$6,$7,true)
-         on conflict (id) do nothing`,
-        [
-          vehicle.id,
-          toVehicleTier(vehicle.id),
-          vehicle.name,
-          `UP80-${vehicle.id.slice(0, 3).toUpperCase()}-01`,
-          vehicle.seats,
-          vehicle.bags,
-          vehicle.perKm,
-        ],
-      );
-    }
     await client.query(
       `insert into promo_codes (id, code, discount_amount, min_total, description, is_active)
        values (gen_random_uuid(), $1, $2, $3, $4, true)
