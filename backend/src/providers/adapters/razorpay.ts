@@ -18,7 +18,7 @@ type RazorpayOptions = {
 };
 
 export function createRazorpayAdapter(options: RazorpayOptions): PaymentProvider {
-  if (!options.keySecret || options.keyId.startsWith("rzp_test_local")) {
+  if (!options.keySecret || options.keyId.startsWith("rzp_test_local") || !options.keyId) {
     return createHmacPaymentAdapter({
       name: "razorpay",
       webhookSecret: options.webhookSecret || options.keySecret || "whsec_razorpay_test",
@@ -27,10 +27,17 @@ export function createRazorpayAdapter(options: RazorpayOptions): PaymentProvider
     });
   }
 
+  if (!options.webhookSecret) {
+    throw new Error("Razorpay webhook secret is required");
+  }
+
   const fetchImpl = options.fetchImpl ?? fetch;
   return {
     name: "razorpay",
     async createCheckout(command: CreateCheckoutCommand): Promise<CheckoutResult> {
+      if (!Number.isFinite(command.amountMinor) || command.amountMinor <= 0) {
+        throw new Error("Invalid amountMinor for Razorpay");
+      }
       const auth = Buffer.from(`${options.keyId}:${options.keySecret}`).toString("base64");
       const response = await fetchImpl("https://api.razorpay.com/v1/orders", {
         method: "POST",
@@ -50,9 +57,13 @@ export function createRazorpayAdapter(options: RazorpayOptions): PaymentProvider
         }),
       });
       if (!response.ok) {
-        throw new Error(`Razorpay order failed: ${response.status}`);
+        const text = await response.text().catch(() => "");
+        throw new Error(`Razorpay order failed: ${response.status} ${text.slice(0, 200)}`);
       }
       const body = (await response.json()) as { id: string; amount: number; currency: string };
+      if (!body.id || !Number.isFinite(body.amount)) {
+        throw new Error("Invalid Razorpay order response");
+      }
       const expires = new Date(Date.now() + 30 * 60 * 1000);
       return {
         provider: "razorpay",
@@ -66,13 +77,30 @@ export function createRazorpayAdapter(options: RazorpayOptions): PaymentProvider
       };
     },
     verifyWebhook(rawBody, headers) {
-      const signature = String(headers["x-razorpay-signature"] ?? headers["X-Razorpay-Signature"] ?? "");
+      const signature = String(headers["x-razorpay-signature"] ?? headers["X-Razorpay-Signature"] ?? headers["x-razorpay-signature".toLowerCase()] ?? "");
+      if (!signature) {
+        // Try case-insensitive lookup
+        for (const [k, v] of Object.entries(headers)) {
+          if (k.toLowerCase() === "x-razorpay-signature") {
+            const sig = Array.isArray(v) ? v[0] : v;
+            if (sig) return verifyHmacSha256Hex(options.webhookSecret, rawBody, String(sig));
+          }
+        }
+        return false;
+      }
       return verifyHmacSha256Hex(options.webhookSecret, rawBody, signature);
     },
     parseEvent(rawBody) {
-      const payload = JSON.parse(rawBody.toString("utf8")) as RazorpayWebhook;
+      let payload: RazorpayWebhook;
+      try {
+        payload = JSON.parse(rawBody.toString("utf8")) as RazorpayWebhook;
+      } catch {
+        throw new Error("Invalid Razorpay webhook JSON");
+      }
       const entity = payload.payload?.payment?.entity ?? payload.payload?.order?.entity;
+      if (!entity) throw new Error("Missing entity in Razorpay webhook");
       const amount = Number(entity?.amount ?? 0);
+      if (!Number.isFinite(amount) || amount < 0) throw new Error("Invalid amount in Razorpay webhook");
       const currency = String(entity?.currency ?? "INR") as Currency;
       const status = mapRazorpayStatus(payload.event, entity?.status);
       return {
@@ -91,6 +119,7 @@ export function createRazorpayAdapter(options: RazorpayOptions): PaymentProvider
       };
     },
     async refund(command: RefundCommand) {
+      if (!command.providerPaymentId) throw new Error("providerPaymentId required");
       const auth = Buffer.from(`${options.keyId}:${options.keySecret}`).toString("base64");
       const response = await fetchImpl(`https://api.razorpay.com/v1/payments/${command.providerPaymentId}/refund`, {
         method: "POST",
@@ -102,9 +131,11 @@ export function createRazorpayAdapter(options: RazorpayOptions): PaymentProvider
         body: JSON.stringify({ amount: command.amountMinor, notes: { reason: command.reason } }),
       });
       if (!response.ok) {
-        throw new Error(`Razorpay refund failed: ${response.status}`);
+        const text = await response.text().catch(() => "");
+        throw new Error(`Razorpay refund failed: ${response.status} ${text.slice(0, 200)}`);
       }
       const body = (await response.json()) as { id: string; status: string };
+      if (!body.id) throw new Error("Invalid Razorpay refund response");
       return {
         providerRefundId: body.id,
         status: body.status === "processed" ? "processed" : "pending",

@@ -131,7 +131,8 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
     async transaction(fn) {
       const client = await pool.connect();
       try {
-        await client.query("begin");
+        // Use REPEATABLE READ to prevent phantom reads for payment and assignment flows
+        await client.query("begin isolation level repeatable read");
         const bound = createBound(client);
         const transactional: Repositories = {
           healthCheck: async () => true,
@@ -183,22 +184,33 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
           return mapBooking(rows[0]!);
         },
         async update(record: BookingRecord) {
+          // Optimistic locking: ensure version increments by 1, prevent lost updates
           const rows = await query(
             client,
             `update bookings set
               status=$2, version=$3, assigned_driver_id=$4, assigned_vehicle_id=$5,
               special_notes=$6, updated_at=$7
-              where id=$1 returning *`,
+              where id=$1 and version=$3-1 returning *`,
             [
               record.id, record.status, record.version, record.assignedDriverId,
               record.assignedVehicleId, record.specialNotes, record.updatedAt,
             ],
           );
-          if (!rows[0]) throw new Error("booking update failed");
+          if (!rows[0]) {
+            // Try to get current version to give better error
+            const current = await query(client, "select version from bookings where id=$1", [record.id]);
+            if (current[0]) {
+              throw new Error(`booking version conflict: expected ${num(current[0].version) + 1} got ${record.version}`);
+            }
+            throw new Error("booking update failed: not found");
+          }
           return mapBooking(rows[0]);
         },
         async getById(id: string) {
-          const rows = await query(client, "select * from bookings where id=$1", [id]);
+          // Use FOR UPDATE when inside transaction to lock row
+          const isTx = (client as PoolClient).query !== undefined && (client as any).release === undefined ? false : true;
+          const sql = isTx ? "select * from bookings where id=$1 for update" : "select * from bookings where id=$1";
+          const rows = await query(client, sql, [id]);
           return rows[0] ? mapBooking(rows[0]) : null;
         },
         async getByTicketId(ticketId: string) {
@@ -223,6 +235,14 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
           if (filter.driverId) {
             params.push(filter.driverId);
             clauses.push(`assigned_driver_id=$${params.length}`);
+          }
+          if (filter.from) {
+            params.push(filter.from);
+            clauses.push(`pickup_datetime >= $${params.length}`);
+          }
+          if (filter.to) {
+            params.push(filter.to);
+            clauses.push(`pickup_datetime <= $${params.length}`);
           }
           const where = clauses.length ? `where ${clauses.join(" and ")}` : "";
           const countRows = await query(client, `select count(*)::int as total from bookings ${where}`, params);
@@ -272,6 +292,7 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
               record.verifiedAt, record.updatedAt,
             ],
           );
+          if (!rows[0]) throw new Error("payment update failed");
           return mapPayment(rows[0]!);
         },
         async getById(id: string) {
@@ -287,13 +308,13 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
           return rows[0] ? mapPayment(rows[0]) : null;
         },
         async listByBookingId(bookingId: string) {
-          const rows = await query(client, "select * from payments where booking_id=$1", [bookingId]);
+          const rows = await query(client, "select * from payments where booking_id=$1 order by created_at desc", [bookingId]);
           return rows.map(mapPayment);
         },
         async getOpenByBookingId(bookingId: string) {
           const rows = await query(
             client,
-            "select * from payments where booking_id=$1 and status='pending' order by created_at desc limit 1",
+            "select * from payments where booking_id=$1 and status='pending' order by created_at desc limit 1 for update",
             [bookingId],
           );
           return rows[0] ? mapPayment(rows[0]) : null;
@@ -330,7 +351,7 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
           };
         },
         async listByBookingId(bookingId: string) {
-          const rows = await query(client, "select * from refunds where booking_id=$1", [bookingId]);
+          const rows = await query(client, "select * from refunds where booking_id=$1 order by created_at desc", [bookingId]);
           return rows.map((row) => ({
             id: String(row.id),
             paymentId: String(row.payment_id),
@@ -405,7 +426,7 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
           return mapVehicle(row);
         },
         async list() {
-          const rows = await query(client, "select * from vehicles order by name");
+          const rows = await query(client, "select * from vehicles where is_active=true order by name");
           return rows.map(mapVehicle);
         },
         async create(record: VehicleRecord) {
@@ -488,6 +509,10 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
           if (filter.status) {
             params.push(filter.status);
             clauses.push(`status=$${params.length}`);
+          }
+          if (filter.q) {
+            params.push(`%${filter.q}%`);
+            clauses.push(`(title ilike $${params.length} or slug ilike $${params.length})`);
           }
           const where = clauses.length ? `where ${clauses.join(" and ")}` : "";
           const rows = await query(client, `select * from catalog_items ${where} order by updated_at desc`, params);
@@ -687,7 +712,7 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
           return rows[0] ? mapNotification(rows[0]) : null;
         },
         async listQueued() {
-          const rows = await query(client, "select * from notification_jobs where status='queued'");
+          const rows = await query(client, "select * from notification_jobs where status='queued' and attempt_count < 3");
           return rows.map(mapNotification);
         },
       },

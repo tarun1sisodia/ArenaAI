@@ -15,12 +15,27 @@ const SECRET_KEYS = [
   "customerEmail",
   "razorpay_signature",
   "guestAccessToken",
+  "guest_access_token",
+  "idempotencyKey",
+  "idempotency_key",
+  "providerOrderId",
+  "providerPaymentId",
+  "x-razorpay-signature",
+  "paypal-transmission-sig",
+  "x-card-signature",
 ];
 
 function redactPaths(): string[] {
-  const paths = ["req.headers.authorization", "req.headers.cookie"];
+  const paths = [
+    "req.headers.authorization",
+    "req.headers.cookie",
+    "req.headers[\"x-razorpay-signature\"]",
+    "req.headers[\"paypal-transmission-sig\"]",
+    "req.headers[\"x-card-signature\"]",
+    "req.headers[\"x-booking-token\"]",
+  ];
   for (const key of SECRET_KEYS) {
-    paths.push(key, `*.${key}`, `*.*.${key}`);
+    paths.push(key, `*.${key}`, `*.*.${key}`, `*.*.*.${key}`, `body.${key}`, `payload.${key}`);
   }
   return paths;
 }
@@ -31,6 +46,7 @@ export function createLogger(env: Env): Logger {
     redact: {
       paths: redactPaths(),
       censor: "[redacted]",
+      remove: false,
     },
     transport:
       env.NODE_ENV === "development" && env.LOG_LEVEL !== "silent"
