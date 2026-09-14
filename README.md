@@ -72,7 +72,7 @@ npm test
 npm run dev
 ```
 
-The API listens on `http://localhost:4000` (`GET /health`, `POST /api/v1/fares/calculate`, `POST /api/v1/bookings/draft`). See `backend/README.md` and `BACKEND_ARCHITECTURE_PLAN.md`.
+The API listens on `http://localhost:4000` (`GET /health`, `POST /api/v1/fares/calculate`, `POST /api/v1/bookings/draft`). See `backend/README.md` and [`docs/backend/BACKEND_ARCHITECTURE_PLAN.md`](./docs/backend/BACKEND_ARCHITECTURE_PLAN.md).
 
 ## React migration preview
 
@@ -91,7 +91,7 @@ explicitly disabled in a production build until cutover is approved:
 VITE_REACT_MIGRATION_ENABLED=false npm run react:build
 ```
 
-The React build defaults to the custom-domain root. To test a project-site
+To test the production build locally against GitHub Pages repository
 subpath, set the base explicitly:
 
 ```bash
@@ -107,8 +107,8 @@ outside that output until the migration is approved for cutover.
 The internal admin frontend lives in [`admin/`](./admin/) — a standalone
 Vite + React app on the **21st.dev** Vercel light design system with Saffron
 Gold brand accents, motion.dev animations and custom SVG analytics charts.
-Full spec in [`ADMIN_DESIGN.md`](./ADMIN_DESIGN.md) (requirements:
-`ADMIN_PRD.md`, `ADMIN_TRD.md`).
+Full spec in [`ADMIN_DESIGN.md`](./docs/admin/ADMIN_DESIGN.md) (requirements:
+[`ADMIN_PRD.md`](./docs/admin/ADMIN_PRD.md), [`ADMIN_TRD.md`](./docs/admin/ADMIN_TRD.md)).
 
 ```bash
 npm install --prefix admin
