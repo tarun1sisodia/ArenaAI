@@ -20,12 +20,12 @@ Every issue should record its impact, owner, reproduction or detection method, m
 
 | ID | Severity | Area | Risk or bug | Mitigation | Status |
 |---|---|---|---|---|---|
-| BUG-001 | Critical | Payments | Client-submitted totals could be trusted accidentally | Recalculate every fare on the server and create Razorpay orders from the persisted amount | Open until integration test passes |
-| BUG-002 | Critical | Webhooks | Duplicate Razorpay deliveries could trigger duplicate confirmation or fulfillment | Store provider event IDs and use an idempotency key with an atomic state transition | Open until replay test passes |
-| BUG-003 | High | Payments | A success redirect could be treated as proof of payment | Treat a verified webhook as authoritative; use redirect only to trigger status polling | Open |
-| BUG-004 | High | Privacy | Public booking responses could expose customer phone or email | Mask personal data and require ticket token or phone verification | Open |
-| BUG-005 | High | Secrets | API keys or service-role credentials could enter logs or source control | Environment-only secrets, secret scanning, and redaction middleware | Open |
-| BUG-006 | High | Booking | Concurrent requests could create duplicate tickets or reservations | Use database uniqueness constraints and transactional insertion | Open |
+| BUG-001 | Critical | Payments | Client-submitted totals could be trusted accidentally | Recalculate every fare on the server and create Razorpay orders from the persisted amount | Closed in backend tests — client amounts are stripped and checkout uses persisted advance |
+| BUG-002 | Critical | Webhooks | Duplicate Razorpay deliveries could trigger duplicate confirmation or fulfillment | Store provider event IDs and use an idempotency key with an atomic state transition | Closed in backend tests — duplicate webhook returns 200 without side effects |
+| BUG-003 | High | Payments | A success redirect could be treated as proof of payment | Treat a verified webhook as authoritative; use redirect only to trigger status polling | Closed in code — only signed provider reconciliation sets paid_confirmed |
+| BUG-004 | High | Privacy | Public booking responses could expose customer phone or email | Mask personal data and require ticket token or phone verification | Closed in backend tests — token/phone required and phone masked |
+| BUG-005 | High | Secrets | API keys or service-role credentials could enter logs or source control | Environment-only secrets, secret scanning, and redaction middleware | In progress — env-only secrets and pino redaction; staging secret scan still required |
+| BUG-006 | High | Booking | Concurrent requests could create duplicate tickets or reservations | Use database uniqueness constraints and transactional insertion | Closed in schema/code — unique ticket_id plus retry allocation |
 | BUG-007 | Medium | Location | LocationIQ outages could block fare estimation | Add bounded timeout, cache reads, clear fallback messaging, and provider monitoring | Open |
 | BUG-008 | Medium | Scope | Unrequested driver-app or live-tracking code could increase complexity and privacy risk | Reject driver app, GPS telemetry, WebSockets, and live tracking from implementation | Closed by scope decision |
 | BUG-009 | Medium | Dispatch | A driver could be assigned to overlapping trips | Validate time windows and driver status inside a transaction | Open |
