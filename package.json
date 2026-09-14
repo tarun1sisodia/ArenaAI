@@ -10,12 +10,12 @@
     "preview": "npm --prefix react run preview",
     "deploy": "wrangler deploy",
     "react:dev": "npm --prefix react run dev",
-    "react:build": "npm --prefix react run build",
+    "react:build": "npm --prefix react ci && npm --prefix react run build",
     "react:preview": "npm --prefix react run preview",
     "admin:dev": "npm --prefix admin run dev",
-    "admin:build": "npm --prefix admin run build",
+    "admin:build": "npm --prefix admin ci && npm --prefix admin run build",
     "admin:preview": "npm --prefix admin run preview",
-    "admin:typecheck": "npm --prefix admin run typecheck",
+    "admin:typecheck": "npm --prefix admin ci && npm --prefix admin run typecheck",
     "backend:dev": "npm --prefix backend run dev",
     "backend:test": "npm --prefix backend test",
     "backend:typecheck": "npm --prefix backend run typecheck"
@@ -25,6 +25,7 @@
     "react-dom": "^19.1.1"
   },
   "devDependencies": {
+    "@types/node": "^22.20.2",
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
     "@vitejs/plugin-react": "^5.0.2",
