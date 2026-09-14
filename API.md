@@ -13,9 +13,9 @@ All request and response bodies use JSON unless an endpoint explicitly accepts a
 | Authentication | Supabase JWT for authenticated users; role checks for operations routes |
 | Validation | Zod schemas at the request boundary |
 | Errors | Stable machine-readable `code`, human-readable `message`, and optional `details` |
-| Idempotency | Required for payment creation, provider checkout creation, webhook processing, and manual assignment |
+| Idempotency | Required for payment creation, provider checkout creation, webhook processing, and admin refunds |
 | Payment providers | Provider-neutral payment intent; Razorpay for India and PayPal or international card checkout for foreign customers |
-| Assignment | No customer driver options; admin manually assigns a driver after payment and sends details through WhatsApp |
+| Desk fulfillment | Boutique tour desk model; driver coordination handled via phone outside software without in-app fleet dispatch |
 | Rate limits | Public fare and booking routes: 60 requests/minute/IP; inquiries: 5 requests/minute/IP |
 | Privacy | Mask customer phone and email in public responses |
 
@@ -36,10 +36,9 @@ All request and response bodies use JSON unless an endpoint explicitly accepts a
 
 | Method | Endpoint | Purpose | Required role |
 |---|---|---|---|
-| `GET` | `/ops/admin/bookings` | Filter bookings by status, date, driver, and ticket | Admin or dispatcher |
-| `PATCH` | `/ops/admin/bookings/:id/assign` | Manually assign a driver and optional vehicle after payment | Admin or dispatcher |
-| `POST` | `/ops/admin/bookings/:id/notify-driver` | Send approved driver details to the customer through WhatsApp | Admin or dispatcher |
-| `POST` | `/ops/admin/refunds` | Initiate an authorized Razorpay refund | Super admin |
+| `GET` | `/ops/admin/bookings` | Filter bookings by status, ticketId, and pagination | Dispatcher, finance, or super admin |
+| `GET` | `/ops/admin/audit-logs` | Review system audit trail | Super admin |
+| `POST` | `/ops/admin/refunds` | Initiate an authorized payment refund | Super admin |
 
 ## Public Catalog, Gallery, and Review Routes
 

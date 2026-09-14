@@ -1,11 +1,10 @@
-import { DEFAULT_PROMO, PACKAGES, VEHICLES, toVehicleTier } from "../modules/fares/fare.catalogue.js";
+import { DEFAULT_PROMO, PACKAGES } from "../modules/fares/fare.catalogue.js";
 import { newId } from "../shared/ids.js";
 import type {
   AuditLogRecord,
   BookingRecord,
   CatalogItemRecord,
   CatalogMediaRecord,
-  DriverRecord,
   InquiryRecord,
   LocationSuggestion,
   NotificationJobRecord,
@@ -15,7 +14,6 @@ import type {
   PromoCodeRecord,
   RefundRecord,
   ReviewRecord,
-  VehicleRecord,
   WebhookEventRecord,
 } from "../types/domain.js";
 import type { BookingListFilter, CatalogListFilter, Repositories, ReviewListFilter } from "./types.js";
@@ -32,8 +30,6 @@ export function createMemoryRepositories(nowIso = new Date().toISOString()): Rep
   const paymentsByOrder = new Map<string, string>();
   const refunds = new Map<string, RefundRecord>();
   const refundsByIdempotency = new Map<string, string>();
-  const drivers = new Map<string, DriverRecord>();
-  const vehicles = new Map<string, VehicleRecord>();
   const profiles = new Map<string, ProfileRecord>();
   const catalog = new Map<string, CatalogItemRecord>();
   const catalogBySlug = new Map<string, string>();
@@ -66,47 +62,6 @@ export function createMemoryRepositories(nowIso = new Date().toISOString()): Rep
   }
 
   function seedReferenceData(createdAt: string): void {
-    for (const vehicle of VEHICLES) {
-      const record: VehicleRecord = {
-        id: vehicle.id,
-        tier: toVehicleTier(vehicle.id),
-        name: vehicle.name,
-        plateNumber: `UP80-${vehicle.id.slice(0, 3).toUpperCase()}-01`,
-        seatingCapacity: vehicle.seats,
-        luggageCapacity: vehicle.bags,
-        perKmRate: vehicle.perKm,
-        isActive: true,
-        createdAt,
-      };
-      vehicles.set(record.id, record);
-    }
-
-    const sampleDrivers: DriverRecord[] = [
-      {
-        id: "11111111-1111-4111-8111-111111111111",
-        fullName: "Ramesh Kumar",
-        phone: "+919876500001",
-        licenseNumber: "UP80-2020-0001",
-        policeVerified: true,
-        assignedVehicleId: "sedan",
-        currentStatus: "available",
-        rating: 4.9,
-        createdAt,
-      },
-      {
-        id: "22222222-2222-4222-8222-222222222222",
-        fullName: "Sanjay Singh",
-        phone: "+919876500002",
-        licenseNumber: "UP80-2021-0002",
-        policeVerified: true,
-        assignedVehicleId: "innova",
-        currentStatus: "available",
-        rating: 4.8,
-        createdAt,
-      },
-    ];
-    for (const driver of sampleDrivers) drivers.set(driver.id, driver);
-
     promos.set(DEFAULT_PROMO.code, {
       id: newId(),
       code: DEFAULT_PROMO.code,
@@ -182,7 +137,6 @@ export function createMemoryRepositories(nowIso = new Date().toISOString()): Rep
         let items = [...bookings.values()];
         if (filter.status) items = items.filter((item) => item.status === filter.status);
         if (filter.ticketId) items = items.filter((item) => item.ticketId === filter.ticketId);
-        if (filter.driverId) items = items.filter((item) => item.assignedDriverId === filter.driverId);
         if (filter.from) items = items.filter((item) => item.pickupDatetime >= filter.from!);
         if (filter.to) items = items.filter((item) => item.pickupDatetime <= filter.to!);
         items.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
@@ -246,40 +200,6 @@ export function createMemoryRepositories(nowIso = new Date().toISOString()): Rep
       },
       async listByBookingId(bookingId) {
         return [...refunds.values()].filter((item) => item.bookingId === bookingId).map(clone);
-      },
-    },
-    drivers: {
-      async create(record) {
-        drivers.set(record.id, clone(record));
-        return clone(record);
-      },
-      async update(record) {
-        drivers.set(record.id, clone(record));
-        return clone(record);
-      },
-      async getById(id) {
-        const found = drivers.get(id);
-        return found ? clone(found) : null;
-      },
-      async list() {
-        return [...drivers.values()].map(clone);
-      },
-    },
-    vehicles: {
-      async getById(id) {
-        const found = vehicles.get(id);
-        return found ? clone(found) : null;
-      },
-      async list() {
-        return [...vehicles.values()].map(clone);
-      },
-      async create(record) {
-        vehicles.set(record.id, clone(record));
-        return clone(record);
-      },
-      async update(record) {
-        vehicles.set(record.id, clone(record));
-        return clone(record);
       },
     },
     profiles: {

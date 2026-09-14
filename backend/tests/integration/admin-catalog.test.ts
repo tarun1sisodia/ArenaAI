@@ -18,6 +18,7 @@ async function paidBooking(app: Awaited<ReturnType<typeof createTestApp>>["app"]
   const payload = {
     eventId: randomUUID(),
     providerOrderId: checkout.providerOrderId,
+    providerPaymentId: `pay_${randomUUID().slice(0, 8)}`,
     amountMinor: checkout.amountMinor,
     currency: "INR",
     status: "captured",
@@ -36,51 +37,56 @@ async function paidBooking(app: Awaited<ReturnType<typeof createTestApp>>["app"]
   return { draft, bookingId: booking.json().data.id as string, token: draft.guestAccessToken };
 }
 
-describe("dispatch and catalog", () => {
-  it("assigns a driver only after payment and requires admin role", async () => {
+describe("admin operations and catalog", () => {
+  it("allows authorized staff to list bookings and super_admin to refund", async () => {
     const { app } = await createTestApp();
     const { bookingId, draft, token } = await paidBooking(app);
 
     const unauth = await app.inject({
-      method: "PATCH",
-      url: `/api/v1/ops/admin/bookings/${bookingId}/assign`,
-      payload: { driverId: "11111111-1111-4111-8111-111111111111" },
+      method: "GET",
+      url: "/api/v1/ops/admin/bookings",
     });
     expect(unauth.statusCode).toBe(401);
 
-    const assign = await app.inject({
-      method: "PATCH",
-      url: `/api/v1/ops/admin/bookings/${bookingId}/assign`,
+    const listRes = await app.inject({
+      method: "GET",
+      url: "/api/v1/ops/admin/bookings?status=paid_confirmed",
       headers: { authorization: "Bearer test-dispatcher" },
-      payload: { driverId: "11111111-1111-4111-8111-111111111111", note: "Taj pickup" },
     });
-    expect(assign.statusCode).toBe(200);
-    expect(assign.json().data.status).toBe("driver_assigned");
+    expect(listRes.statusCode).toBe(200);
+    expect(listRes.json().data.bookings.length).toBeGreaterThan(0);
+    expect(listRes.json().data.bookings[0].id).toBe(bookingId);
 
-    const conflict = await app.inject({
-      method: "PATCH",
-      url: `/api/v1/ops/admin/bookings/${bookingId}/assign`,
+    const forbiddenRefund = await app.inject({
+      method: "POST",
+      url: "/api/v1/ops/admin/refunds",
       headers: { authorization: "Bearer test-dispatcher" },
       payload: {
-        driverId: "22222222-2222-4222-8222-222222222222",
-        expectedVersion: 1,
+        bookingId,
+        reason: "Customer cancelled",
+        idempotencyKey: randomUUID(),
       },
     });
-    expect(conflict.statusCode).toBe(409);
-    expect(conflict.json().error.code).toBe("ASSIGNMENT_CONFLICT");
+    expect(forbiddenRefund.statusCode).toBe(403);
 
-    await app.inject({
+    const refundRes = await app.inject({
       method: "POST",
-      url: `/api/v1/ops/admin/bookings/${bookingId}/notify-driver`,
-      headers: { authorization: "Bearer test-dispatcher" },
+      url: "/api/v1/ops/admin/refunds",
+      headers: { authorization: "Bearer test-super_admin" },
+      payload: {
+        bookingId,
+        reason: "Customer requested cancellation before trip",
+        idempotencyKey: randomUUID(),
+      },
     });
+    expect(refundRes.statusCode).toBe(201);
+    expect(refundRes.json().data.status).toBe("processed");
 
     const voucher = await app.inject({
       method: "GET",
       url: `/api/v1/bookings/${draft.ticketId}?token=${token}`,
     });
-    expect(voucher.json().data.assignedDriver.fullName).toBe("Ramesh Kumar");
-    expect(voucher.json().data.assignedDriver.phone).toContain("98765");
+    expect(voucher.json().data.status).toBe("refunded");
     await app.close();
   });
 

@@ -10,12 +10,24 @@ export const CalculateFareSchema = z
     destinationName: z.string().trim().min(2).max(120),
     pickupDatetime: IsoDatetimeSchema,
     returnDatetime: IsoDatetimeSchema.optional(),
-    distanceKm: z.number().positive().max(5000),
-    promoCode: z.string().trim().max(30).optional(),
+    distanceKm: z.number().positive().max(5000).finite(),
+    promoCode: z
+      .string()
+      .trim()
+      .max(30)
+      .regex(/^[A-Za-z0-9_-]+$/, "Invalid promo code format")
+      .optional(),
     packageId: z.string().trim().max(80).optional(),
     localPackageKey: z.enum(["8hr-80km", "12hr-120km", "airport-transfer"]).optional(),
   })
-  .strict();
+  .strict()
+  .refine((data) => {
+    if (!data.returnDatetime) return true;
+    return new Date(data.returnDatetime).getTime() >= new Date(data.pickupDatetime).getTime();
+  }, {
+    message: "Return must be after pickup",
+    path: ["returnDatetime"],
+  });
 
 export type CalculateFareRequest = z.infer<typeof CalculateFareSchema>;
 
@@ -25,7 +37,7 @@ export const FareResponseSchema = z.object({
   driverAllowance: z.number().nonnegative(),
   discountAmount: z.number().nonnegative(),
   totalFare: z.number().positive(),
-  advanceAmount: z.number().min(500),
+  advanceAmount: z.number().min(1),
   balanceAmount: z.number().nonnegative(),
   currency: z.literal("INR"),
   fareVersion: z.string(),

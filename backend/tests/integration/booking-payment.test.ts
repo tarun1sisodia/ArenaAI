@@ -104,11 +104,9 @@ describe("booking + payment vertical slice", () => {
     const booking = bookingRes.json().data as {
       status: string;
       customerPhone: string;
-      assignedDriver: unknown;
     };
     expect(booking.status).toBe("paid_confirmed");
     expect(booking.customerPhone).toContain("*");
-    expect(booking.assignedDriver).toBeNull();
 
     await app.close();
   });

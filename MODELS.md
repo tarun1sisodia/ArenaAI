@@ -6,13 +6,13 @@
 
 ## Persistence Strategy
 
-Supabase PostgreSQL is the system of record for identity, bookings, money, fleet, driver contact details, catalog content, fares, reviews, gallery metadata, admin roles, and audit records. MongoDB Atlas is optional and reserved for explicitly approved cache, provider-event, or retention-managed documents.
+Supabase PostgreSQL is the system of record for identity, bookings, money, catalog content, fares, reviews, inquiries, admin roles, and audit records. Physical fleet inventories and driver tables have been permanently purged per client mandate. MongoDB Atlas is optional and reserved for explicitly approved cache, provider-event, or retention-managed documents.
 
 | Store | Owns | Consistency and retention |
 |---|---|---|
-| Supabase PostgreSQL | Profiles, vehicles, drivers, bookings, payments, refunds | ACID transactions and durable financial history |
+| Supabase PostgreSQL | Profiles, bookings, payments, refunds, catalog, reviews, inquiries, audit logs | ACID transactions and durable financial history |
 | Supabase Auth | User identity and sessions | Managed authentication lifecycle |
-| Supabase Storage | Driver documents, inspections, and invoices | Object retention governed by bucket policy |
+| Supabase Storage | Tour gallery images, brand assets, and customer invoices | Object retention governed by bucket policy |
 | MongoDB Atlas | Optional LocationIQ cache, raw provider payloads, and analytics events | TTL indexes where applicable |
 
 ## PostgreSQL Entities
@@ -20,24 +20,22 @@ Supabase PostgreSQL is the system of record for identity, bookings, money, fleet
 | Entity | Primary identifier | Key constraints |
 |---|---|---|
 | `profiles` | `id` from `auth.users` | Unique phone and email; role enum |
-| `vehicles` | Vehicle ID | Unique plate; vehicle tier and capacity required |
-| `drivers` | UUID | Unique phone and license; optional assigned vehicle |
-| `bookings` | UUID plus unique `ticket_id` | Fare snapshot, trip type, status, timestamps |
+| `bookings` | UUID plus unique `ticket_id` | Immutable fare snapshot, trip type, status, timestamps (no driver/vehicle columns) |
 | `payments` | UUID | Provider, order/session/payment IDs, currency, minor-unit amount, status, and idempotency key |
 | `refunds` | UUID | Provider refund ID, payment reference, amount, reason |
 | `catalog_items` | UUID | Ride, tour, or package content with draft/published/archive state |
 | `catalog_item_media` | UUID | Supabase Storage asset metadata, order, caption, and moderation state |
 | `reviews` | UUID | Customer review, booking link, verification state, and moderation decision |
+| `inquiries` | UUID | Website lead capture with status tracking |
 | `fare_rules` | UUID | Versioned fare configuration with effective dates |
 | `promo_codes` | UUID | Bounded discount rules, validity, and usage limits |
-| `device_registrations` | UUID | Optional web-push token relationship to a customer |
 | `admin_audit_logs` | UUID | Append-only record of administrative mutations |
 
 ## Booking Model
 
-A booking stores the customer and trip snapshot required to fulfill and audit the journey. It includes origin, destination, addresses, pickup and return times, distance, vehicle tier, customer contact fields, fare components, advance and balance amounts, status, driver assignment, and notes.
+A booking stores the customer and trip snapshot required to fulfill and audit the journey. It includes origin, destination, addresses, pickup and return times, distance, vehicle tier, customer contact fields, fare components, advance and balance amounts, status, and notes.
 
-The booking must preserve the calculated fare at creation time. It must not recompute a historical total when pricing configuration changes.
+The booking must preserve the calculated fare at creation time. It must not recompute a historical total when pricing configuration changes. Fleet allocation and driver dispatch are intentionally handled outside software by desk phone coordination.
 
 ## Payment Model
 

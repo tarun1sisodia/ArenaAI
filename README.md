@@ -102,6 +102,22 @@ npm run react:preview
 Production output is written to `dist/react/`; the legacy static pages remain
 outside that output until the migration is approved for cutover.
 
+## Admin panel (operations desk)
+
+The internal admin frontend lives in [`admin/`](./admin/) — a standalone
+Vite + React app on the **21st.dev** Vercel light design system with Saffron
+Gold brand accents, motion.dev animations and custom SVG analytics charts.
+Full spec in [`ADMIN_DESIGN.md`](./ADMIN_DESIGN.md) (requirements:
+`ADMIN_PRD.md`, `ADMIN_TRD.md`).
+
+```bash
+npm install --prefix admin
+npm run admin:dev     # http://localhost:5174
+```
+
+Demo sign-in issues a `test-<role>` JWT principal (TRD §2.1) — pick a role to
+experience the RBAC permission matrix.
+
 ## Speed notes
 
 - No framework. Booking JS loads only on `book.html`.

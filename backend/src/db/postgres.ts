@@ -4,7 +4,6 @@ import type {
   BookingRecord,
   CatalogItemRecord,
   CatalogMediaRecord,
-  DriverRecord,
   InquiryRecord,
   LocationSuggestion,
   NotificationJobRecord,
@@ -13,7 +12,6 @@ import type {
   PromoCodeRecord,
   RefundRecord,
   ReviewRecord,
-  VehicleRecord,
   WebhookEventRecord,
 } from "../types/domain.js";
 import type { Repositories } from "./types.js";
@@ -74,8 +72,6 @@ function mapBooking(row: Record<string, unknown>): BookingRecord {
     },
     status: row.status as BookingRecord["status"],
     version: num(row.version),
-    assignedDriverId: row.assigned_driver_id ? String(row.assigned_driver_id) : null,
-    assignedVehicleId: row.assigned_vehicle_id ? String(row.assigned_vehicle_id) : null,
     specialNotes: row.special_notes ? String(row.special_notes) : null,
     packageId: row.package_id ? String(row.package_id) : null,
     createdAt: new Date(String(row.created_at)).toISOString(),
@@ -131,7 +127,8 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
     async transaction(fn) {
       const client = await pool.connect();
       try {
-        await client.query("begin");
+        // Use REPEATABLE READ to prevent phantom reads for payment and assignment flows
+        await client.query("begin isolation level repeatable read");
         const bound = createBound(client);
         const transactional: Repositories = {
           healthCheck: async () => true,
@@ -163,10 +160,9 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
               return_datetime, flight_train_number, distance_km, customer_name, customer_phone,
               customer_email, base_fare, night_allowance, driver_allowance, discount_amount,
               promo_code, total_fare, advance_amount, balance_amount, fare_rules_version,
-              fare_snapshot, status, version, assigned_driver_id, assigned_vehicle_id,
-              special_notes, package_id, created_at, updated_at
+              fare_snapshot, status, version, special_notes, package_id, created_at, updated_at
             ) values (
-              $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27::jsonb,$28,$29,$30,$31,$32,$33,$34,$35
+              $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27::jsonb,$28,$29,$30,$31,$32,$33
             ) returning *`,
             [
               record.id, record.ticketId, record.userId, record.guestAccessToken, record.tripType,
@@ -176,29 +172,37 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
               record.baseFare, record.nightAllowance, record.driverAllowance, record.discountAmount,
               record.promoCode, record.totalFare, record.advanceAmount, record.balanceAmount,
               record.fareRulesVersion, JSON.stringify(record.fareSnapshot), record.status, record.version,
-              record.assignedDriverId, record.assignedVehicleId, record.specialNotes, record.packageId,
-              record.createdAt, record.updatedAt,
+              record.specialNotes, record.packageId, record.createdAt, record.updatedAt,
             ],
           );
           return mapBooking(rows[0]!);
         },
         async update(record: BookingRecord) {
+          // Optimistic locking: ensure version increments by 1, prevent lost updates
           const rows = await query(
             client,
             `update bookings set
-              status=$2, version=$3, assigned_driver_id=$4, assigned_vehicle_id=$5,
-              special_notes=$6, updated_at=$7
-              where id=$1 returning *`,
+              status=$2, version=$3, special_notes=$4, updated_at=$5
+              where id=$1 and version=$3-1 returning *`,
             [
-              record.id, record.status, record.version, record.assignedDriverId,
-              record.assignedVehicleId, record.specialNotes, record.updatedAt,
+              record.id, record.status, record.version, record.specialNotes, record.updatedAt,
             ],
           );
-          if (!rows[0]) throw new Error("booking update failed");
+          if (!rows[0]) {
+            // Try to get current version to give better error
+            const current = await query(client, "select version from bookings where id=$1", [record.id]);
+            if (current[0]) {
+              throw new Error(`booking version conflict: expected ${num(current[0].version) + 1} got ${record.version}`);
+            }
+            throw new Error("booking update failed: not found");
+          }
           return mapBooking(rows[0]);
         },
         async getById(id: string) {
-          const rows = await query(client, "select * from bookings where id=$1", [id]);
+          // Use FOR UPDATE when inside transaction to lock row
+          const isTx = "release" in client && typeof (client as { release?: unknown }).release === "function";
+          const sql = isTx ? "select * from bookings where id=$1 for update" : "select * from bookings where id=$1";
+          const rows = await query(client, sql, [id]);
           return rows[0] ? mapBooking(rows[0]) : null;
         },
         async getByTicketId(ticketId: string) {
@@ -220,9 +224,13 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
             params.push(filter.ticketId);
             clauses.push(`ticket_id=$${params.length}`);
           }
-          if (filter.driverId) {
-            params.push(filter.driverId);
-            clauses.push(`assigned_driver_id=$${params.length}`);
+          if (filter.from) {
+            params.push(filter.from);
+            clauses.push(`pickup_datetime >= $${params.length}`);
+          }
+          if (filter.to) {
+            params.push(filter.to);
+            clauses.push(`pickup_datetime <= $${params.length}`);
           }
           const where = clauses.length ? `where ${clauses.join(" and ")}` : "";
           const countRows = await query(client, `select count(*)::int as total from bookings ${where}`, params);
@@ -272,6 +280,7 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
               record.verifiedAt, record.updatedAt,
             ],
           );
+          if (!rows[0]) throw new Error("payment update failed");
           return mapPayment(rows[0]!);
         },
         async getById(id: string) {
@@ -287,13 +296,13 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
           return rows[0] ? mapPayment(rows[0]) : null;
         },
         async listByBookingId(bookingId: string) {
-          const rows = await query(client, "select * from payments where booking_id=$1", [bookingId]);
+          const rows = await query(client, "select * from payments where booking_id=$1 order by created_at desc", [bookingId]);
           return rows.map(mapPayment);
         },
         async getOpenByBookingId(bookingId: string) {
           const rows = await query(
             client,
-            "select * from payments where booking_id=$1 and status='pending' order by created_at desc limit 1",
+            "select * from payments where booking_id=$1 and status='pending' order by created_at desc limit 1 for update",
             [bookingId],
           );
           return rows[0] ? mapPayment(rows[0]) : null;
@@ -330,7 +339,7 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
           };
         },
         async listByBookingId(bookingId: string) {
-          const rows = await query(client, "select * from refunds where booking_id=$1", [bookingId]);
+          const rows = await query(client, "select * from refunds where booking_id=$1 order by created_at desc", [bookingId]);
           return rows.map((row) => ({
             id: String(row.id),
             paymentId: String(row.payment_id),
@@ -345,90 +354,7 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
           }));
         },
       },
-      drivers: {
-        async create(record: DriverRecord) {
-          await query(
-            client,
-            `insert into drivers (id, full_name, phone, license_number, police_verified, assigned_vehicle_id, current_status, rating, created_at)
-             values ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
-            [
-              record.id, record.fullName, record.phone, record.licenseNumber, record.policeVerified,
-              record.assignedVehicleId, record.currentStatus, record.rating, record.createdAt,
-            ],
-          );
-          return record;
-        },
-        async update(record: DriverRecord) {
-          await query(
-            client,
-            `update drivers set full_name=$2, phone=$3, current_status=$4, assigned_vehicle_id=$5, rating=$6 where id=$1`,
-            [record.id, record.fullName, record.phone, record.currentStatus, record.assignedVehicleId, record.rating],
-          );
-          return record;
-        },
-        async getById(id: string) {
-          const rows = await query(client, "select * from drivers where id=$1", [id]);
-          const row = rows[0];
-          if (!row) return null;
-          return {
-            id: String(row.id),
-            fullName: String(row.full_name),
-            phone: String(row.phone),
-            licenseNumber: String(row.license_number),
-            policeVerified: Boolean(row.police_verified),
-            assignedVehicleId: row.assigned_vehicle_id ? String(row.assigned_vehicle_id) : null,
-            currentStatus: row.current_status as DriverRecord["currentStatus"],
-            rating: num(row.rating),
-            createdAt: new Date(String(row.created_at)).toISOString(),
-          };
-        },
-        async list() {
-          const rows = await query(client, "select * from drivers order by created_at");
-          return rows.map((row) => ({
-            id: String(row.id),
-            fullName: String(row.full_name),
-            phone: String(row.phone),
-            licenseNumber: String(row.license_number),
-            policeVerified: Boolean(row.police_verified),
-            assignedVehicleId: row.assigned_vehicle_id ? String(row.assigned_vehicle_id) : null,
-            currentStatus: row.current_status as DriverRecord["currentStatus"],
-            rating: num(row.rating),
-            createdAt: new Date(String(row.created_at)).toISOString(),
-          }));
-        },
-      },
-      vehicles: {
-        async getById(id: string) {
-          const rows = await query(client, "select * from vehicles where id=$1", [id]);
-          const row = rows[0];
-          if (!row) return null;
-          return mapVehicle(row);
-        },
-        async list() {
-          const rows = await query(client, "select * from vehicles order by name");
-          return rows.map(mapVehicle);
-        },
-        async create(record: VehicleRecord) {
-          await query(
-            client,
-            `insert into vehicles (id, tier, name, plate_number, seating_capacity, luggage_capacity, per_km_rate, is_active, created_at)
-             values ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
-            [
-              record.id, record.tier, record.name, record.plateNumber, record.seatingCapacity,
-              record.luggageCapacity, record.perKmRate, record.isActive, record.createdAt,
-            ],
-          );
-          return record;
-        },
-        async update(record: VehicleRecord) {
-          await query(
-            client,
-            `update vehicles set name=$2, plate_number=$3, is_active=$4, per_km_rate=$5 where id=$1`,
-            [record.id, record.name, record.plateNumber, record.isActive, record.perKmRate],
-          );
-          return record;
-        },
-      },
+
       profiles: {
         async getById(id: string) {
           const rows = await query(client, "select * from profiles where id=$1", [id]);
@@ -488,6 +414,10 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
           if (filter.status) {
             params.push(filter.status);
             clauses.push(`status=$${params.length}`);
+          }
+          if (filter.q) {
+            params.push(`%${filter.q}%`);
+            clauses.push(`(title ilike $${params.length} or slug ilike $${params.length})`);
           }
           const where = clauses.length ? `where ${clauses.join(" and ")}` : "";
           const rows = await query(client, `select * from catalog_items ${where} order by updated_at desc`, params);
@@ -687,7 +617,7 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
           return rows[0] ? mapNotification(rows[0]) : null;
         },
         async listQueued() {
-          const rows = await query(client, "select * from notification_jobs where status='queued'");
+          const rows = await query(client, "select * from notification_jobs where status='queued' and attempt_count < 3");
           return rows.map(mapNotification);
         },
       },
@@ -739,19 +669,7 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
   return repos;
 }
 
-function mapVehicle(row: Record<string, unknown>): VehicleRecord {
-  return {
-    id: String(row.id),
-    tier: row.tier as VehicleRecord["tier"],
-    name: String(row.name),
-    plateNumber: String(row.plate_number),
-    seatingCapacity: num(row.seating_capacity),
-    luggageCapacity: num(row.luggage_capacity),
-    perKmRate: num(row.per_km_rate),
-    isActive: Boolean(row.is_active),
-    createdAt: new Date(String(row.created_at)).toISOString(),
-  };
-}
+
 
 function mapProfile(row: Record<string, unknown>): ProfileRecord {
   return {

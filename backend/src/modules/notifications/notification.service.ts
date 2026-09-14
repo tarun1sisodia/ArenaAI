@@ -2,8 +2,10 @@ import type { Repositories } from "../../db/types.js";
 import type { Clock } from "../../shared/clock.js";
 import { toIso } from "../../shared/clock.js";
 import { newId } from "../../shared/ids.js";
-import type { BookingRecord, DriverRecord } from "../../types/domain.js";
+import type { BookingRecord } from "../../types/domain.js";
 import type { EmailProvider, MessagingProvider } from "../../providers/MessagingProvider.js";
+
+const MAX_ATTEMPTS = 3;
 
 export function createNotificationService(deps: {
   db: Repositories;
@@ -11,7 +13,6 @@ export function createNotificationService(deps: {
   messaging: MessagingProvider;
   email: EmailProvider;
   paymentTemplate: string;
-  driverTemplate: string;
 }) {
   return {
     async queuePaymentConfirmed(booking: BookingRecord): Promise<void> {
@@ -26,6 +27,8 @@ export function createNotificationService(deps: {
         },
       });
       if (booking.customerEmail) {
+        // Validate email before queuing
+        if (!booking.customerEmail.includes("@")) return;
         await enqueue(deps, {
           booking,
           channel: "email",
@@ -34,25 +37,10 @@ export function createNotificationService(deps: {
           payload: {
             to: booking.customerEmail,
             subject: `Booking ${booking.ticketId} confirmed`,
-            text: `Your advance for ${booking.ticketId} is confirmed. Remaining ₹${booking.balanceAmount} is payable to the driver.`,
+            text: `Your advance for ${booking.ticketId} is confirmed. Remaining ₹${booking.balanceAmount} is payable at the start of your trip.`,
           },
         });
       }
-      await processQueued(deps);
-    },
-
-    async queueDriverAssigned(booking: BookingRecord, driver: DriverRecord): Promise<void> {
-      await enqueue(deps, {
-        booking,
-        channel: "whatsapp",
-        templateKey: deps.driverTemplate,
-        dedupeKey: `whatsapp:driver:${booking.id}:${driver.id}`,
-        payload: {
-          ticketId: booking.ticketId,
-          driverName: driver.fullName,
-          driverPhone: driver.phone,
-        },
-      });
       await processQueued(deps);
     },
   };
@@ -98,12 +86,23 @@ async function processQueued(deps: {
 }): Promise<void> {
   const jobs = await deps.db.notifications.listQueued();
   for (const job of jobs) {
+    if (job.attemptCount >= MAX_ATTEMPTS) {
+      const now = toIso(deps.clock.now());
+      await deps.db.notifications.update({
+        ...job,
+        status: "failed",
+        lastError: `Max attempts ${MAX_ATTEMPTS} reached`,
+        updatedAt: now,
+      });
+      continue;
+    }
     const now = toIso(deps.clock.now());
     try {
       if (job.channel === "whatsapp") {
         const booking = await deps.db.bookings.getById(job.bookingId);
+        if (!booking?.customerPhone) throw new Error("Missing customer phone");
         const result = await deps.messaging.send({
-          to: booking?.customerPhone ?? "",
+          to: booking.customerPhone,
           templateKey: job.templateKey,
           variables: Object.fromEntries(
             Object.entries(job.payload).map(([key, value]) => [key, String(value)]),
@@ -118,6 +117,7 @@ async function processQueued(deps: {
         });
       } else {
         const to = String(job.payload.to ?? "");
+        if (!to || !to.includes("@")) throw new Error("Invalid email recipient");
         const result = await deps.email.send({
           to,
           subject: String(job.payload.subject ?? "SK Baghel Tour & Travels"),
@@ -132,11 +132,12 @@ async function processQueued(deps: {
         });
       }
     } catch (error) {
+      const isLastAttempt = job.attemptCount + 1 >= MAX_ATTEMPTS;
       await deps.db.notifications.update({
         ...job,
-        status: "failed",
+        status: isLastAttempt ? "failed" : "queued",
         attemptCount: job.attemptCount + 1,
-        lastError: error instanceof Error ? error.message : "unknown",
+        lastError: error instanceof Error ? error.message.slice(0, 500) : "unknown",
         updatedAt: now,
       });
     }

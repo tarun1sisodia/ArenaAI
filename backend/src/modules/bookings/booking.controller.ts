@@ -39,7 +39,7 @@ export function createBookingController(service: ReturnType<typeof createBooking
       const data = await service.getVerifiedBooking({
         ticketId: params.ticketId,
         token: query.token ?? headerToken,
-        phone: query.phone ?? query.phoneLast4,
+        phone: query.phone,
         actor: request.user ?? null,
       });
       return sendSuccess(reply, data);

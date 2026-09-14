@@ -8,7 +8,7 @@ EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 DO $$ BEGIN
     CREATE TYPE booking_status_enum AS ENUM (
-        'draft', 'pending_payment', 'paid_confirmed', 'driver_assigned',
+        'draft', 'pending_payment', 'paid_confirmed',
         'in_transit', 'completed', 'cancelled', 'refunded'
     );
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
