@@ -14,6 +14,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint src tests scripts --max-warnings=0",
     "test": "vitest run",
+    "test:ci": "vitest run --exclude tests/integration/db-connection.test.ts",
     "test:unit": "vitest run tests/unit",
     "test:integration": "vitest run tests/integration",
     "test:contract": "vitest run tests/contract",

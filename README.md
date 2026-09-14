@@ -28,6 +28,9 @@ URLs are root-relative, so when it is hosted under a subpath (e.g. GitHub
 Pages project site `https://<user>.github.io/ArenaAI/`) they must be prefixed
 with that subpath. The build script handles this automatically:
 
+The production monorepo deployment topology for the React customer site, admin
+panel, and Node.js API is documented in [`docs/DEPLOYMENT.md`](./docs/DEPLOYMENT.md).
+
 ```bash
 # GitHub Pages project site (default — uses /ArenaAI)
 python3 scripts/render_pages.py
