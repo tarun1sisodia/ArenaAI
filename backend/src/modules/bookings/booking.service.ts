@@ -2,8 +2,8 @@ import type { Clock } from "../../shared/clock.js";
 import { toIso } from "../../shared/clock.js";
 import type { Repositories } from "../../db/types.js";
 import { AppError, Errors } from "../../shared/errors.js";
-import { newGuestAccessToken, newId, newTicketId } from "../../shared/ids.js";
-import { last4, maskEmail, maskPhone, phonesMatch } from "../../shared/privacy.js";
+import { newGuestAccessToken, newId, newTicketId, timingSafeEqualString } from "../../shared/ids.js";
+import { last4, maskEmail, maskPhone, phonesMatch, sanitizeText } from "../../shared/privacy.js";
 import { assertTransition } from "../../shared/stateMachine.js";
 import type { AuthUser, BookingRecord } from "../../types/domain.js";
 import { calculateFare } from "../fares/fare.engine.js";
@@ -19,6 +19,24 @@ export function createBookingService(deps: {
       booking: BookingRecord;
       guestAccessToken: string;
     }> {
+      // Server-authoritative fare calculation - client totals are ignored
+      // Validate promo against DB if present
+      let promoLookup: ((code: string) => { discount: number; minTotal: number; desc: string; isActive?: boolean; validFrom?: string | null; validTo?: string | null; maxRedemptions?: number | null; redemptionCount?: number } | null) | undefined;
+      if (input.promoCode) {
+        const promo = await deps.db.promos.getByCode(input.promoCode);
+        if (promo) {
+          promoLookup = () => ({
+            discount: promo.discountAmount,
+            minTotal: promo.minTotal,
+            desc: promo.description,
+            isActive: promo.isActive,
+            validFrom: promo.validFrom,
+            validTo: promo.validTo,
+            maxRedemptions: promo.maxRedemptions,
+            redemptionCount: promo.redemptionCount,
+          });
+        }
+      }
       const fare = calculateFare({
         tripType: input.tripType,
         vehicleTier: input.vehicleTier,
@@ -32,6 +50,42 @@ export function createBookingService(deps: {
         localPackageKey: input.localPackageKey,
         fareVersion: deps.fareVersion,
       });
+      // Re-evaluate promo with DB lookup if available
+      if (promoLookup && input.promoCode) {
+        const { applyPromo } = await import("../fares/fare.engine.js");
+        const subtotal = fare.baseFare + fare.nightAllowance + fare.driverAllowance;
+        const promoEval = applyPromo(input.promoCode, subtotal, promoLookup);
+        if (!promoEval.valid) {
+          // If promo invalid per DB (expired, limit reached), override fare to show invalid
+          fare.promoValid = false;
+          fare.discountAmount = 0;
+          const { advanceOf } = await import("../../shared/money.js");
+          fare.totalFare = subtotal;
+          fare.advanceAmount = advanceOf(fare.totalFare);
+          fare.balanceAmount = fare.totalFare - fare.advanceAmount;
+        }
+      }
+
+      // Check for duplicate booking attempt: same phone + same pickup time within 5 min window
+      // Prevents accidental double-click / retry creating duplicate tickets
+      const recent = await deps.db.bookings.list({
+        page: 1,
+        pageSize: 20,
+      });
+      const fiveMinAgo = new Date(deps.clock.now().getTime() - 5 * 60 * 1000).toISOString();
+      const duplicate = recent.items.find(
+        (b) =>
+          b.customerPhone === input.customerPhone &&
+          b.originName === input.originName &&
+          b.destinationName === input.destinationName &&
+          b.pickupDatetime === new Date(input.pickupDatetime).toISOString() &&
+          b.createdAt >= fiveMinAgo,
+      );
+      if (duplicate) {
+        throw Errors.conflict("DUPLICATE_BOOKING", "A similar booking was just created. Please check your bookings.", {
+          ticketId: duplicate.ticketId,
+        });
+      }
 
       const now = toIso(deps.clock.now());
       let ticketId = newTicketId(deps.clock);
@@ -43,6 +97,12 @@ export function createBookingService(deps: {
         throw Errors.conflict("TICKET_GENERATION_FAILED", "Could not allocate a unique ticket ID.");
       }
 
+      // Sanitize free-text fields
+      const customerName = sanitizeText(input.customerName, 80);
+      const pickupAddress = sanitizeText(input.pickupAddress, 300);
+      const dropAddress = input.dropAddress ? sanitizeText(input.dropAddress, 300) : null;
+      const specialNotes = input.specialNotes ? sanitizeText(input.specialNotes, 500) : null;
+
       const record: BookingRecord = {
         id: newId(),
         ticketId,
@@ -50,17 +110,17 @@ export function createBookingService(deps: {
         guestAccessToken: newGuestAccessToken(),
         tripType: input.tripType,
         vehicleTier: input.vehicleTier,
-        originName: input.originName,
-        destinationName: input.destinationName,
-        pickupAddress: input.pickupAddress,
-        dropAddress: input.dropAddress ?? null,
+        originName: input.originName.trim(),
+        destinationName: input.destinationName.trim(),
+        pickupAddress,
+        dropAddress,
         pickupDatetime: new Date(input.pickupDatetime).toISOString(),
         returnDatetime: input.returnDatetime ? new Date(input.returnDatetime).toISOString() : null,
-        flightTrainNumber: input.flightTrainNumber ?? null,
+        flightTrainNumber: input.flightTrainNumber?.trim() ?? null,
         distanceKm: fare.distanceKm,
-        customerName: input.customerName,
+        customerName,
         customerPhone: input.customerPhone,
-        customerEmail: input.customerEmail ?? null,
+        customerEmail: input.customerEmail?.toLowerCase().trim() ?? null,
         baseFare: fare.baseFare,
         nightAllowance: fare.nightAllowance,
         driverAllowance: fare.driverAllowance,
@@ -73,7 +133,7 @@ export function createBookingService(deps: {
         fareSnapshot: fare,
         status: "pending_payment",
         version: 1,
-        specialNotes: input.specialNotes ?? null,
+        specialNotes,
         packageId: input.packageId ?? null,
         createdAt: now,
         updatedAt: now,
@@ -97,8 +157,18 @@ export function createBookingService(deps: {
       const isAdmin =
         input.actor &&
         ["dispatcher", "finance_operator", "super_admin"].includes(input.actor.role);
-      const tokenOk = Boolean(input.token && input.token === booking.guestAccessToken);
+
+      // Secure token comparison using timing-safe equal
+      const tokenOk = Boolean(
+        input.token &&
+          input.token.length >= 16 &&
+          booking.guestAccessToken.length === input.token.length &&
+          timingSafeEqualString(booking.guestAccessToken, input.token),
+      );
+
+      // Phone verification requires exact match, no suffix matching
       const phoneOk = Boolean(input.phone && phonesMatch(booking.customerPhone, input.phone));
+
       if (!isAdmin && !tokenOk && !phoneOk) {
         throw Errors.unauthorized("Booking token or matching phone is required.");
       }
@@ -127,6 +197,14 @@ export function projectBooking(
   booking: BookingRecord,
   options: { unmask: boolean },
 ) {
+  // Mask PII by default, unmask only for authorized admin
+  const customerPhone = options.unmask ? booking.customerPhone : maskPhone(booking.customerPhone);
+  const customerEmail = booking.customerEmail
+    ? options.unmask
+      ? booking.customerEmail
+      : maskEmail(booking.customerEmail)
+    : null;
+
   return {
     id: booking.id,
     ticketId: booking.ticketId,
@@ -141,14 +219,11 @@ export function projectBooking(
     returnDatetime: booking.returnDatetime,
     distanceKm: booking.distanceKm,
     customerName: booking.customerName,
-    customerPhone: options.unmask ? booking.customerPhone : maskPhone(booking.customerPhone),
-    customerEmail: booking.customerEmail
-      ? options.unmask
-        ? booking.customerEmail
-        : maskEmail(booking.customerEmail)
-      : null,
+    customerPhone,
+    customerEmail,
     phoneLast4: last4(booking.customerPhone),
     fare: booking.fareSnapshot,
+
     version: booking.version,
     createdAt: booking.createdAt,
     updatedAt: booking.updatedAt,
@@ -158,5 +233,9 @@ export function projectBooking(
 export function assertBookingPayable(booking: BookingRecord): void {
   if (booking.status !== "pending_payment" && booking.status !== "draft") {
     throw new AppError("BOOKING_NOT_PAYABLE", "This booking cannot accept a new checkout.", 409);
+  }
+  // Additional check: pickup must not be in past
+  if (new Date(booking.pickupDatetime).getTime() < Date.now() - 60 * 60 * 1000) {
+    throw new AppError("BOOKING_EXPIRED", "This booking's pickup time has passed.", 410);
   }
 }

@@ -31,7 +31,7 @@ describe("API contract", () => {
         vehicleTier: "sedan",
         originName: "Agra",
         destinationName: "Delhi",
-        pickupDatetime: "2026-10-01T08:00:00+05:30",
+        pickupDatetime: new Date(Date.now() + 17 * 24 * 60 * 60 * 1000).toISOString(),
         distanceKm: 230,
       },
     });
@@ -43,14 +43,20 @@ describe("API contract", () => {
     await app.close();
   });
 
-  it("requires booking verification on voucher reads", async () => {
+  it("requires booking verification on voucher reads and rejects last4 bypass", async () => {
     const { app } = await createTestApp();
     const draft = await app.inject({ method: "POST", url: "/api/v1/bookings/draft", payload: sampleDraft });
+    expect(draft.statusCode).toBe(201);
     const ticketId = draft.json().data.ticketId as string;
     const denied = await app.inject({ method: "GET", url: `/api/v1/bookings/${ticketId}` });
     expect(denied.statusCode).toBe(401);
-    const phone = await app.inject({ method: "GET", url: `/api/v1/bookings/${ticketId}?phone=3221` });
+    // Last4 should now be rejected for security
+    const last4Attempt = await app.inject({ method: "GET", url: `/api/v1/bookings/${ticketId}?phone=3221` });
+    expect(last4Attempt.statusCode).toBe(400);
+    // Full phone should succeed but with masked data
+    const phone = await app.inject({ method: "GET", url: `/api/v1/bookings/${ticketId}?phone=9876543221` });
     expect(phone.statusCode).toBe(200);
+    expect(phone.json().data.customerPhone).toContain("*");
     await app.close();
   });
 
@@ -75,6 +81,28 @@ describe("API contract", () => {
     const res = await app.inject({ method: "GET", url: "/api/v1/locations/autocomplete?q=agra" });
     expect(res.statusCode).toBe(200);
     expect(res.json().data.suggestions.length).toBeGreaterThan(0);
+    await app.close();
+  });
+
+  it("rejects past pickup datetimes", async () => {
+    const { app } = await createTestApp();
+    const past = await app.inject({
+      method: "POST",
+      url: "/api/v1/bookings/draft",
+      payload: { ...sampleDraft, pickupDatetime: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString() },
+    });
+    expect(past.statusCode).toBe(400);
+    await app.close();
+  });
+
+  it("rejects XSS in special notes", async () => {
+    const { app } = await createTestApp();
+    const xss = await app.inject({
+      method: "POST",
+      url: "/api/v1/bookings/draft",
+      payload: { ...sampleDraft, specialNotes: "<script>alert(1)</script>" },
+    });
+    expect(xss.statusCode).toBe(400);
     await app.close();
   });
 });

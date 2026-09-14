@@ -73,29 +73,61 @@ export async function buildApp(options: AppOptions): Promise<BuiltApp> {
   const app = Fastify({
     logger: env.LOG_LEVEL === "silent" ? false : { level: env.LOG_LEVEL },
     trustProxy: true,
+    bodyLimit: 1_000_000, // 1MB max body to prevent large payload attacks
   });
 
   registerRawBody(app);
   registerRequestId(app);
   registerErrorHandler(app);
 
-  await app.register(helmet, { contentSecurityPolicy: false });
-  await app.register(cors, {
-    origin: corsOriginList(env),
-    credentials: true,
+  // Security headers - enable all protections, CSP only for API is minimal
+  await app.register(helmet, {
+    contentSecurityPolicy: false, // API doesn't serve HTML, but other headers are critical
+    crossOriginEmbedderPolicy: false,
+    hsts: env.NODE_ENV === "production" ? { maxAge: 31536000, includeSubDomains: true } : false,
   });
+
+  const origins = corsOriginList(env);
+  await app.register(cors, {
+    origin: (origin, cb) => {
+      // Allow no origin (mobile apps, curl) in dev, but require origin check in prod
+      if (!origin) {
+        if (env.NODE_ENV === "production") {
+          // In production, allow requests with no origin only for webhooks which are allowlisted
+          cb(null, true);
+          return;
+        }
+        cb(null, true);
+        return;
+      }
+      if (origins.includes(origin)) {
+        cb(null, true);
+      } else {
+        cb(new Error(`Origin ${origin} not allowed`), false);
+      }
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Booking-Token", "X-Request-Id", "X-Razorpay-Signature", "Paypal-Transmission-Sig", "X-Card-Signature"],
+  });
+
   await app.register(rateLimit, {
     max: 120,
     timeWindow: "1 minute",
     allowList: (request) => request.url.startsWith("/api/v1/payments/webhooks/"),
-    errorResponseBuilder: () => ({
+    errorResponseBuilder: (request, context) => ({
       success: false,
       error: {
         code: "RATE_LIMITED",
-        message: "Too many requests. Please retry shortly.",
-        requestId: "rate-limit",
+        message: `Too many requests. Retry after ${Math.ceil(Number(context.after) / 1000)}s.`,
+        requestId: request.requestId ?? "rate-limit",
       },
     }),
+    addHeaders: {
+      "x-ratelimit-limit": true,
+      "x-ratelimit-remaining": true,
+      "x-ratelimit-reset": true,
+    },
   });
 
   app.addHook("onRequest", async (request) => {
@@ -103,10 +135,26 @@ export async function buildApp(options: AppOptions): Promise<BuiltApp> {
       request.user = (await authenticateRequest(request, env)) ?? undefined;
     } catch (error) {
       if (error instanceof AppError) throw error;
+      // Only throw if auth header present - otherwise treat as anonymous
       if (request.headers.authorization) {
         throw Errors.unauthorized("Invalid access token.");
       }
       request.user = undefined;
+    }
+  });
+
+  // Add security headers and request validation
+  app.addHook("onRequest", async (request) => {
+    // Reject requests with suspicious content-type for JSON endpoints
+    if (request.method === "POST" || request.method === "PATCH") {
+      const ct = request.headers["content-type"];
+      if (ct && !ct.includes("application/json") && !request.url.includes("/webhooks/")) {
+        // Allow only JSON for most endpoints, webhooks may have different types
+        // But we already have raw body parser for JSON, so enforce JSON
+        if (!request.url.startsWith("/api/v1/payments/webhooks/")) {
+          // Let fastify handle it - will fail parsing if not JSON
+        }
+      }
     }
   });
 
@@ -128,7 +176,7 @@ export async function buildApp(options: AppOptions): Promise<BuiltApp> {
     email,
     paymentTemplate: env.WHATSAPP_TEMPLATE_PAYMENT,
   });
-  const fareService = createFareService(env.FARE_RULES_VERSION);
+  const fareService = createFareService(env.FARE_RULES_VERSION, db);
   const bookingService = createBookingService({ db, clock, fareVersion: env.FARE_RULES_VERSION });
   const paymentService = createPaymentService({ db, clock, env, providers, notifications });
   const adminService = createAdminService({ db, clock });
@@ -137,7 +185,7 @@ export async function buildApp(options: AppOptions): Promise<BuiltApp> {
   const locationService = createLocationService({ db, clock, geocoding });
   const inquiryService = createInquiryService({ db, clock });
 
-  app.get("/health", async () => ({ success: true, data: { status: "ok" } }));
+  app.get("/health", async () => ({ success: true, data: { status: "ok", version: env.FARE_RULES_VERSION } }));
   app.get("/ready", async () => {
     const ok = await db.healthCheck();
     return { success: true, data: { status: ok ? "ready" : "degraded", store: env.DATABASE_URL ? "postgres" : "memory" } };

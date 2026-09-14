@@ -5,12 +5,12 @@ import { CURRENCIES, PAYMENT_PROVIDERS } from "../../types/domain.js";
 export const CreatePaymentCheckoutSchema = z
   .object({
     ticketId: z.string().regex(TICKET_ID_PATTERN),
-    guestAccessToken: z.string().min(16),
+    guestAccessToken: z.string().min(16).max(128),
     idempotencyKey: z.string().uuid(),
     provider: z.enum(PAYMENT_PROVIDERS).default("razorpay"),
     currency: z.enum(CURRENCIES).default("INR"),
-    returnUrl: z.string().url().optional(),
-    cancelUrl: z.string().url().optional(),
+    returnUrl: z.string().url().max(500).optional(),
+    cancelUrl: z.string().url().max(500).optional(),
   })
   .strip();
 
@@ -25,5 +25,5 @@ export const WebhookProviderParamSchema = z.object({
 });
 
 export const PaymentAccessSchema = z.object({
-  token: z.string().min(16).optional(),
+  token: z.string().min(16).max(128).optional(),
 });

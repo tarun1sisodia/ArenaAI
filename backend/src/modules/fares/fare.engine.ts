@@ -22,23 +22,53 @@ import {
 import type { FareEngineInput, FareEngineResult, PromoEvaluation } from "./fare.types.js";
 
 export function isNightPickup(pickupDatetime: string): boolean {
-  const hour = hourInIst(pickupDatetime);
-  return hour >= OUTSTATION_RULES.nightStartHour || hour < OUTSTATION_RULES.nightEndHour;
+  try {
+    const hour = hourInIst(pickupDatetime);
+    // Night window: 22:00-05:00 IST (spec)
+    return hour >= OUTSTATION_RULES.nightStartHour || hour < OUTSTATION_RULES.nightEndHour;
+  } catch {
+    // If datetime invalid, don't apply night allowance but don't crash
+    return false;
+  }
 }
 
 export function applyPromo(
   code: string | undefined,
   total: number,
-  lookup?: (code: string) => { discount: number; minTotal: number; desc: string } | null,
+  lookup?: (code: string) => { discount: number; minTotal: number; desc: string; isActive?: boolean; validFrom?: string | null; validTo?: string | null; maxRedemptions?: number | null; redemptionCount?: number } | null,
 ): PromoEvaluation {
   if (!code) return { valid: false, discount: 0, code: null };
   const clean = code.trim().toUpperCase();
+  if (!/^[A-Z0-9_-]{3,30}$/.test(clean)) {
+    return { valid: false, discount: 0, code: clean };
+  }
   const fromDb = lookup?.(clean);
+  if (fromDb) {
+    // Validate active, expiry, redemption limits
+    if (fromDb.isActive === false) return { valid: false, discount: 0, code: clean };
+    const now = Date.now();
+    if (fromDb.validFrom && new Date(fromDb.validFrom).getTime() > now) {
+      return { valid: false, discount: 0, code: clean };
+    }
+    if (fromDb.validTo && new Date(fromDb.validTo).getTime() < now) {
+      return { valid: false, discount: 0, code: clean };
+    }
+    if (fromDb.maxRedemptions !== null && fromDb.maxRedemptions !== undefined) {
+      if ((fromDb.redemptionCount ?? 0) >= fromDb.maxRedemptions) {
+        return { valid: false, discount: 0, code: clean };
+      }
+    }
+    if (total < fromDb.minTotal) {
+      return { valid: false, discount: 0, code: clean };
+    }
+    const discount = Math.min(fromDb.discount, total);
+    return { valid: true, discount, code: clean, description: fromDb.desc };
+  }
+
   const rule =
-    fromDb ??
-    (clean === DEFAULT_PROMO.code
+    clean === DEFAULT_PROMO.code
       ? { discount: DEFAULT_PROMO.discount, minTotal: DEFAULT_PROMO.minTotal, desc: DEFAULT_PROMO.desc }
-      : null);
+      : null;
   if (rule && total >= rule.minTotal) {
     const discount = Math.min(rule.discount, total);
     return { valid: true, discount, code: clean, description: rule.desc };
@@ -135,16 +165,31 @@ function packageByIdOrSlug(id?: string): (typeof PACKAGES)[number] | undefined {
 
 /**
  * Pure fare engine. No I/O. Client totals are ignored because they never enter this function.
+ * Edge cases handled:
+ * - distance <=0 throws
+ * - return before pickup throws
+ * - NaN/Infinity distance throws
+ * - Night allowance correctly applied for 22-5 IST
+ * - 300km/day minimum for multi-day outstation
+ * - Tempo/Urbania 300km minimum outside corridors
+ * - Promo validation with expiry and redemption limits when lookup provided
  */
 export function calculateFare(input: FareEngineInput): FareEngineResult {
-  if (input.distanceKm <= 0) {
-    throw new AppError("VALIDATION_ERROR", "Distance must be positive.", 400);
+  if (!Number.isFinite(input.distanceKm) || input.distanceKm <= 0) {
+    throw new AppError("VALIDATION_ERROR", "Distance must be a positive finite number.", 400);
+  }
+  if (input.distanceKm > 5000) {
+    throw new AppError("VALIDATION_ERROR", "Distance exceeds maximum allowed (5000 km).", 400);
   }
   if (input.returnDatetime) {
     const start = Date.parse(input.pickupDatetime);
     const end = Date.parse(input.returnDatetime);
     if (Number.isNaN(start) || Number.isNaN(end) || end < start) {
       throw new AppError("INVALID_TRIP_DATES", "Return datetime must be at or after pickup datetime.", 400);
+    }
+    const diffDays = (end - start) / (24 * 60 * 60 * 1000);
+    if (diffDays > 30) {
+      throw new AppError("INVALID_TRIP_DATES", "Return cannot be more than 30 days after pickup.", 400);
     }
   }
 
@@ -316,14 +361,16 @@ function finalize(args: {
   const promo = applyPromo(args.promoCode, subtotal);
   const totalFare = Math.max(1, subtotal - promo.discount);
   const advanceAmount = advanceOf(totalFare);
+  // Ensure advance never exceeds total and respects minimum
+  const finalAdvance = Math.min(totalFare, Math.max(advanceAmount, totalFare < 500 ? totalFare : 500));
   return {
     baseFare: args.baseFare,
     nightAllowance,
     driverAllowance: args.driverAllowance,
     discountAmount: promo.discount,
     totalFare,
-    advanceAmount,
-    balanceAmount: totalFare - advanceAmount,
+    advanceAmount: finalAdvance,
+    balanceAmount: totalFare - finalAdvance,
     currency: "INR",
     fareVersion: args.fareVersion,
     label: args.label,
@@ -345,4 +392,5 @@ export function ignoreClientMoney(body: Record<string, unknown>): void {
   delete body.baseFare;
   delete body.amount;
   delete body.advance;
+  delete body.amountMinor;
 }

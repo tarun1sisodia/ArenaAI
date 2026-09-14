@@ -29,7 +29,11 @@ export function hourInIst(isoDatetime: string): number {
     hour: "2-digit",
     hourCycle: "h23",
   }).formatToParts(date).find((part) => part.type === "hour")?.value;
-  return Number(hour ?? "0");
+  const parsed = Number(hour ?? "0");
+  if (Number.isNaN(parsed) || parsed < 0 || parsed > 23) {
+    throw new Error("Invalid hour extracted");
+  }
+  return parsed;
 }
 
 export function calendarDaysInclusiveIst(startIso: string, endIso?: string): number {
@@ -38,12 +42,17 @@ export function calendarDaysInclusiveIst(startIso: string, endIso?: string): num
   const end = ymdParts(endIso);
   const startUtc = Date.UTC(start.year, start.month - 1, start.day);
   const endUtc = Date.UTC(end.year, end.month - 1, end.day);
+  if (Number.isNaN(startUtc) || Number.isNaN(endUtc)) return 1;
   const diff = Math.floor((endUtc - startUtc) / 86_400_000);
-  return Math.max(1, diff + 1);
+  return Math.max(1, Math.min(diff + 1, 31)); // cap at 31 days max for safety
 }
 
 function ymdParts(iso: string): { year: number; month: number; day: number } {
-  const formatted = formatIstYmd(new Date(iso));
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) {
+    return { year: 1970, month: 1, day: 1 };
+  }
+  const formatted = formatIstYmd(date);
   const [year, month, day] = formatted.split("-").map(Number);
   return { year: year ?? 1970, month: month ?? 1, day: day ?? 1 };
 }

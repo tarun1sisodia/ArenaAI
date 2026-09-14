@@ -9,7 +9,14 @@ describe("privacy", () => {
   it("masks phone and email", () => {
     expect(maskPhone("+919876543221")).toMatch(/\*\*/);
     expect(maskEmail("sam@gmail.com")).toBe("s****@gmail.com");
-    expect(phonesMatch("+919876543221", "3221")).toBe(true);
+    // Secure matching: exact match only, no last4 bypass
+    expect(phonesMatch("+919876543221", "+919876543221")).toBe(true);
+    expect(phonesMatch("9876543221", "9876543221")).toBe(true);
+    // Normalization: with and without country code should match if same number
+    expect(phonesMatch("+919876543221", "9876543221")).toBe(true);
+    // Partial matching (last4) must fail for security
+    expect(phonesMatch("+919876543221", "3221")).toBe(false);
+    expect(phonesMatch("+919876543221", "43221")).toBe(false);
   });
 });
 
@@ -34,6 +41,12 @@ describe("hmac", () => {
     expect(verifyHmacSha256Hex("whsec_razorpay_test", body, signature)).toBe(true);
     expect(verifyHmacSha256Hex("whsec_razorpay_test", body, "deadbeef")).toBe(false);
   });
+
+  it("rejects empty secret or signature", () => {
+    const body = Buffer.from('{"id":"evt_1"}');
+    expect(verifyHmacSha256Hex("", body, "abc")).toBe(false);
+    expect(verifyHmacSha256Hex("secret", body, "")).toBe(false);
+  });
 });
 
 describe("ids and money", () => {
@@ -44,5 +57,14 @@ describe("ids and money", () => {
 
   it("converts rupees to integer paise", () => {
     expect(rupeesToPaise(1400)).toBe(140000);
+  });
+
+  it("validates advance calculation edge cases", async () => {
+    const { advanceOf } = await import("../../src/shared/money.js");
+    expect(advanceOf(1000)).toBe(500); // min 500
+    expect(advanceOf(400)).toBe(400); // if total <500, advance = total
+    expect(advanceOf(10000)).toBe(2800); // 28% rounded to 100
+    expect(() => advanceOf(0)).toThrow();
+    expect(() => advanceOf(NaN)).toThrow();
   });
 });
