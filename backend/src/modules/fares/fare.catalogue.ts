@@ -1,0 +1,239 @@
+import type { InternalVehicleId, VehicleTier } from "../../types/domain.js";
+
+export type FareByVehicle = Record<InternalVehicleId, number>;
+
+export type VehicleSpec = {
+  id: InternalVehicleId;
+  tier: VehicleTier;
+  name: string;
+  seats: number;
+  bags: number;
+  perKm: number;
+};
+
+export type RouteFare = {
+  id: string;
+  from: string;
+  to: string;
+  km: number;
+  duration: string;
+  kind: "one-way" | "local";
+  localLabel?: string;
+  fares: FareByVehicle;
+};
+
+export type TourPackageFare = {
+  id: string;
+  slug: string;
+  name: string;
+  duration: string;
+  from: number;
+};
+
+export const FARE_RULES_VERSION_DEFAULT = "2026-09-13";
+
+export const OUTSTATION_RULES = {
+  minKmPerDay: 300,
+  nightAllowanceCab: 300,
+  nightAllowanceTempo: 500,
+  nightStartHour: 20,
+  nightEndHour: 6,
+  sameDayRoundMultiplier: 1.85,
+} as const;
+
+export const VEHICLES: readonly VehicleSpec[] = [
+  { id: "sedan", tier: "sedan", name: "Sedan", seats: 4, bags: 2, perKm: 10 },
+  { id: "ertiga", tier: "ertiga", name: "Ertiga", seats: 6, bags: 3, perKm: 14 },
+  { id: "innova", tier: "innova-crysta", name: "Innova Crysta", seats: 6, bags: 4, perKm: 18 },
+  { id: "tempo", tier: "tempo-traveller", name: "Tempo Traveller", seats: 12, bags: 8, perKm: 25 },
+  { id: "urbania", tier: "urbania", name: "Force Urbania", seats: 16, bags: 10, perKm: 34 },
+];
+
+export const PACKAGE_UPGRADES: Record<InternalVehicleId, number> = {
+  sedan: 0,
+  ertiga: 800,
+  innova: 1800,
+  tempo: 3500,
+  urbania: 5500,
+};
+
+export const LOCAL_PACKAGES: Record<
+  "8hr-80km" | "12hr-120km" | "airport-transfer",
+  { key: string; label: string; duration: string; km: number; fares: FareByVehicle }
+> = {
+  "8hr-80km": {
+    key: "8hr-80km",
+    label: "Agra Sightseeing (8 Hours / 80 KM)",
+    duration: "8 hrs / 80 km",
+    km: 80,
+    fares: { sedan: 1900, ertiga: 2600, innova: 2850, tempo: 5500, urbania: 7500 },
+  },
+  "12hr-120km": {
+    key: "12hr-120km",
+    label: "Agra Extended Tour (12 Hours / 120 KM)",
+    duration: "12 hrs / 120 km",
+    km: 120,
+    fares: { sedan: 2200, ertiga: 2950, innova: 3100, tempo: 6500, urbania: 8500 },
+  },
+  "airport-transfer": {
+    key: "airport-transfer",
+    label: "Airport / Station Pickup & Drop",
+    duration: "Point to Point",
+    km: 40,
+    fares: { sedan: 800, ertiga: 900, innova: 1100, tempo: 2200, urbania: 3500 },
+  },
+};
+
+export const AIRPORT_TRANSFERS: Record<string, { name: string; km: number; fares: FareByVehicle }> = {
+  "agra-station": {
+    name: "Agra Cantt / Fort Railway Station Transfer",
+    km: 20,
+    fares: { sedan: 800, ertiga: 900, innova: 1100, tempo: 2200, urbania: 3500 },
+  },
+  "agra-airport": {
+    name: "Agra Kheria Airport (AGR) Transfer",
+    km: 20,
+    fares: { sedan: 900, ertiga: 1050, innova: 1250, tempo: 2400, urbania: 3800 },
+  },
+  "delhi-airport": {
+    name: "Delhi IGI Airport (DEL) Direct Transfer",
+    km: 225,
+    fares: { sedan: 3499, ertiga: 4499, innova: 6499, tempo: 8500, urbania: 11500 },
+  },
+};
+
+export const ROUTES: readonly RouteFare[] = [
+  { id: "agra-delhi", from: "agra", to: "delhi", km: 230, duration: "3h 30m", kind: "one-way", fares: { sedan: 3499, ertiga: 4499, innova: 6499, tempo: 9500, urbania: 14000 } },
+  { id: "delhi-agra", from: "delhi", to: "agra", km: 230, duration: "3h 30m", kind: "one-way", fares: { sedan: 3499, ertiga: 4499, innova: 6499, tempo: 9500, urbania: 14000 } },
+  { id: "agra-jaipur", from: "agra", to: "jaipur", km: 240, duration: "4h 30m", kind: "one-way", fares: { sedan: 3499, ertiga: 4999, innova: 6999, tempo: 11000, urbania: 16000 } },
+  { id: "agra-mathura", from: "agra", to: "mathura", km: 55, duration: "1h 15m", kind: "one-way", fares: { sedan: 2200, ertiga: 2800, innova: 3800, tempo: 5500, urbania: 8000 } },
+  { id: "agra-gwalior", from: "agra", to: "gwalior", km: 120, duration: "2h 30m", kind: "one-way", fares: { sedan: 3000, ertiga: 3800, innova: 5500, tempo: 7500, urbania: 11000 } },
+  { id: "delhi-jaipur", from: "delhi", to: "jaipur", km: 270, duration: "5h", kind: "one-way", fares: { sedan: 5000, ertiga: 6200, innova: 8800, tempo: 12000, urbania: 17500 } },
+  { id: "agra-lucknow", from: "agra", to: "lucknow", km: 335, duration: "6h", kind: "one-way", fares: { sedan: 7000, ertiga: 8500, innova: 12000, tempo: 16000, urbania: 22000 } },
+  { id: "agra-noida", from: "agra", to: "noida", km: 190, duration: "3h", kind: "one-way", fares: { sedan: 3999, ertiga: 4999, innova: 6999, tempo: 8500, urbania: 11500 } },
+  { id: "agra-gurgaon", from: "agra", to: "gurgaon", km: 215, duration: "3h 45m", kind: "one-way", fares: { sedan: 4999, ertiga: 5499, innova: 6550, tempo: 8900, urbania: 11900 } },
+  { id: "agra-ayodhya", from: "agra", to: "ayodhya", km: 470, duration: "7h", kind: "one-way", fares: { sedan: 9999, ertiga: 11999, innova: 13999, tempo: 17500, urbania: 23000 } },
+  {
+    id: "agra-local",
+    from: "agra",
+    to: "agra",
+    km: 80,
+    duration: "8h",
+    kind: "local",
+    localLabel: "Agra sightseeing (8h / 80km)",
+    fares: { sedan: 1900, ertiga: 2600, innova: 2850, tempo: 5500, urbania: 7500 },
+  },
+];
+
+export const PACKAGES: readonly TourPackageFare[] = [
+  { id: "agra-day", slug: "agra-sightseeing", name: "Same Day Agra Taj Mahal Tour", duration: "1 day", from: 3499 },
+  { id: "taj-sunrise", slug: "taj-mahal-sunrise-tour", name: "Taj Mahal Sunrise Tour", duration: "1 day", from: 12999 },
+  { id: "mathura-vrindavan", slug: "mathura-vrindavan", name: "Mathura & Vrindavan Darshan", duration: "1 day", from: 4200 },
+  { id: "gatimaan-express", slug: "gatimaan-express-agra-tour", name: "Same Day Agra by Gatimaan Train", duration: "1 day", from: 14999 },
+  { id: "agra-fort-day", slug: "agra-unhurried", name: "Agra Overnight Experience", duration: "2 days / 1 night", from: 7800 },
+  { id: "golden-triangle", slug: "golden-triangle", name: "Golden Triangle Tour", duration: "3 days / 2 nights", from: 18500 },
+];
+
+export const DEFAULT_PROMO = {
+  code: "ASTTCAR500OFF",
+  discount: 500,
+  minTotal: 2000,
+  desc: "Flat ₹500 OFF on car bookings",
+} as const;
+
+export const DIST_MAP: Record<string, number> = {
+  agra: 0,
+  delhi: 210,
+  jaipur: 240,
+  mathura: 58,
+  vrindavan: 64,
+  gwalior: 120,
+  lucknow: 335,
+  ayodhya: 470,
+  varanasi: 600,
+  prayagraj: 480,
+  haridwar: 370,
+  rishikesh: 390,
+  dehradun: 420,
+  chandigarh: 450,
+  shimla: 580,
+  manali: 750,
+  "fatehpur-sikri": 40,
+  bharatpur: 56,
+  noida: 190,
+  gurgaon: 210,
+  gurugram: 210,
+  amritsar: 680,
+  udaipur: 640,
+  jodhpur: 570,
+  ajmer: 380,
+  nainital: 340,
+  corbett: 380,
+  dholpur: 55,
+  alwar: 160,
+};
+
+export const CURATED_PLACES: readonly { id: string; name: string; city: string; state: string }[] = [
+  { id: "agra", name: "Agra", city: "Agra", state: "Uttar Pradesh" },
+  { id: "delhi", name: "Delhi", city: "Delhi", state: "Delhi" },
+  { id: "jaipur", name: "Jaipur", city: "Jaipur", state: "Rajasthan" },
+  { id: "mathura", name: "Mathura", city: "Mathura", state: "Uttar Pradesh" },
+  { id: "vrindavan", name: "Vrindavan", city: "Vrindavan", state: "Uttar Pradesh" },
+  { id: "gwalior", name: "Gwalior", city: "Gwalior", state: "Madhya Pradesh" },
+  { id: "lucknow", name: "Lucknow", city: "Lucknow", state: "Uttar Pradesh" },
+  { id: "noida", name: "Noida", city: "Noida", state: "Uttar Pradesh" },
+  { id: "gurgaon", name: "Gurugram", city: "Gurugram", state: "Haryana" },
+  { id: "taj-mahal", name: "Taj Mahal East Gate", city: "Agra", state: "Uttar Pradesh" },
+  { id: "agra-cantt", name: "Agra Cantt Railway Station", city: "Agra", state: "Uttar Pradesh" },
+  { id: "agra-fort-station", name: "Agra Fort Railway Station", city: "Agra", state: "Uttar Pradesh" },
+  { id: "agra-airport", name: "Agra Airport (Kheria)", city: "Agra", state: "Uttar Pradesh" },
+  { id: "delhi-igi", name: "Delhi IGI Airport", city: "Delhi", state: "Delhi" },
+  { id: "new-delhi-station", name: "New Delhi Railway Station", city: "Delhi", state: "Delhi" },
+];
+
+export function slugifyPlace(value: string): string {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/&/g, " and ")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+export function toInternalVehicleId(tier: VehicleTier): InternalVehicleId {
+  switch (tier) {
+    case "innova-crysta":
+      return "innova";
+    case "tempo-traveller":
+      return "tempo";
+    default:
+      return tier;
+  }
+}
+
+export function toVehicleTier(id: InternalVehicleId): VehicleTier {
+  switch (id) {
+    case "innova":
+      return "innova-crysta";
+    case "tempo":
+      return "tempo-traveller";
+    default:
+      return id;
+  }
+}
+
+export function vehicleSpec(tier: VehicleTier): VehicleSpec {
+  const id = toInternalVehicleId(tier);
+  const found = VEHICLES.find((item) => item.id === id);
+  if (!found) {
+    throw new Error(`Unknown vehicle tier: ${tier}`);
+  }
+  return found;
+}
+
+export function nightAllowanceFor(tier: VehicleTier): number {
+  const id = toInternalVehicleId(tier);
+  return id === "tempo" || id === "urbania"
+    ? OUTSTATION_RULES.nightAllowanceTempo
+    : OUTSTATION_RULES.nightAllowanceCab;
+}

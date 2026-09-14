@@ -11,7 +11,10 @@
     "deploy": "wrangler deploy",
     "react:dev": "npm --prefix react run dev",
     "react:build": "npm --prefix react run build",
-    "react:preview": "npm --prefix react run preview"
+    "react:preview": "npm --prefix react run preview",
+    "backend:dev": "npm --prefix backend run dev",
+    "backend:test": "npm --prefix backend test",
+    "backend:typecheck": "npm --prefix backend run typecheck"
   },
   "dependencies": {
     "react": "^19.1.1",

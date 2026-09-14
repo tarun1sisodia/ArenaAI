@@ -60,6 +60,20 @@ Rebuild after editing `scripts/catalog.py`, `scripts/i18n.py` or `scripts/render
 python3 scripts/render_pages.py
 ```
 
+## Backend API
+
+The production Node.js service lives in [`backend/`](./backend/). It owns server-authoritative fares, draft bookings, provider payments, admin dispatch, catalog, and reviews. PostgreSQL is the ledger; the browser is never trusted for amounts or payment success.
+
+```bash
+cd backend
+cp .env.example .env
+npm install
+npm test
+npm run dev
+```
+
+The API listens on `http://localhost:4000` (`GET /health`, `POST /api/v1/fares/calculate`, `POST /api/v1/bookings/draft`). See `backend/README.md` and `BACKEND_ARCHITECTURE_PLAN.md`.
+
 ## React migration preview
 
 The responsive React platform is being migrated beside the current static site.
