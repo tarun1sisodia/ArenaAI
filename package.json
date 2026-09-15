@@ -29,6 +29,7 @@
     "backend:typecheck": "npm --prefix backend run typecheck",
     "test": "npm --prefix backend run test:ci",
     "healthcheck": "node scripts/healthcheck.mjs",
+    "verify:t1": "node scripts/network/verify-t1-headers.mjs",
     "testsprite:validate": "node scripts/validate-testsprite.mjs",
     "deploy:customer": "npm --prefix react ci && npm run customer:build && npx wrangler pages deploy react/dist --project-name skbagheltravels-customer",
     "deploy:admin": "npm --prefix admin ci && npm run admin:build && npx wrangler pages deploy admin/dist --project-name skbagheltravels-admin"

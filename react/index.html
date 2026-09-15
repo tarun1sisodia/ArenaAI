@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#FAFAFA" />
     <meta name="description" content="SK Baghel Tour & Travels React migration platform." />
+    <!-- H1 (Network & Transport): warm up the location-search API tunnel. useLocationIQ
+         fetches api.locationiq.com during this visit, so preconnect saves a DNS+TCP+TLS
+         handshake on the critical path. Razorpay hosts land with Phase I2 (live checkout)
+         and font hosts land with H7 (font loading) — only preconnect hosts we fetch. -->
+    <link rel="dns-prefetch" href="https://api.locationiq.com" />
+    <link rel="preconnect" href="https://api.locationiq.com" crossorigin />
     <title>SK Baghel Tour & Travels</title>
     <script>window.__skbLoaderStarted = Date.now();</script>
   </head>
