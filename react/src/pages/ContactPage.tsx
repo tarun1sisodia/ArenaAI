@@ -281,7 +281,7 @@ Please share available cabs and upfront fare quote.`;
         "@type": "LocalBusiness",
         "@id": "https://skbagheltravels.in/#localbusiness",
         "name": "SK Baghel Tour & Travels",
-        "image": "https://skbagheltravels.in/assets/destinations/taj-mahal.webp",
+        "image": "https://skbagheltravels.in/assets/packages/taj-dawn.webp",
         "telephone": contact.phone,
         "email": contact.email,
         "priceRange": "₹₹",

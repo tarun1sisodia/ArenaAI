@@ -6,21 +6,22 @@ ArenaAI is a single repository with three independently deployable applications.
 |---|---|---|---|---|---|
 | Customer site | `react/` | Cloudflare Pages | `skbagheltravels.in` | `npm ci && npm run build` | `dist` |
 | Admin panel | `admin/` | Cloudflare Pages | `admin.skbagheltravels.in` | `npm ci && npm run build` | `dist` |
-| Backend API | `backend/` | Render Docker service | `api.skbagheltravels.in` | Dockerfile | Port `4000` |
+| Backend API | `backend/` | Render Docker service (or VPS Docker + Cloudflare Tunnel) | `api.skbagheltravels.in` | Dockerfile | Port `4000` |
 
-`main` is the production branch. `design/homepage` is the integration branch. The normal release path is: feature branch → pull request into `design/homepage` → validation → pull request into `main` → provider auto-deploy from `main`.
+`main` is the production branch. `design/homepage` is the integration branch. The normal release path is: feature branch → pull request into `design/homepage` → validation → pull request into `main` → provider auto-deploy from `main`. No application may be copied into a second repository, and nothing may be deployed from a generated artifact committed to Git.
 
-## 1. Prepare the GitHub repository
+## The local verification contract
 
-1. Confirm the deployment commit is pushed to `design/homepage`.
-2. In GitHub, open **Settings → Branches** and protect `main`. Require pull-request review and passing checks before merging.
-3. Create a pull request from `design/homepage` to `main` after the first deployment configuration review.
-4. The provider configurations below can initially deploy from `design/homepage` for staging. Change each provider to `main` for production.
-
-Run the local release gate from the repository root:
+Every host runs the same command contract as CI, so a green workflow and a green local run mean the same thing. Bootstrap once, then verify:
 
 ```bash
-npm ci
+npm run install:all    # npm ci for the root, react/, admin/ and backend/
+npm run verify         # typecheck (x3) + backend tests + production build (x3)
+```
+
+The individual gates, including the uptime check, can be run in isolation:
+
+```bash
 npm run customer:typecheck
 npm run admin:typecheck
 npm run backend:typecheck
@@ -30,6 +31,41 @@ npm run healthcheck
 ```
 
 `npm test` runs 38 deterministic backend tests. The external PostgreSQL and MongoDB connectivity checks are intentionally excluded because they require live `DATABASE_URL` and `MONGODB_URI`; run `npm run backend:test` when those credentials are available in `backend/.env`.
+
+Build output is confined to `react/dist`, `admin/dist` and `backend/dist`. The only tracked file a build rewrites is `react/public/sitemap.xml` (the versioned mirror of the generated sitemap); nothing is written to the repository root, and `react/scripts/generate-sitemap.ts` must never be pointed back at the monorepo root.
+
+## Continuous integration
+
+`.github/workflows/quality.yml` runs on pushes to `main`, `design/**` and `arena/**`, on pull requests into `main` and `design/homepage`, and on manual dispatch. It uses Node 22 (matching `backend/package.json` `engines`, the Dockerfile and Render) and executes:
+
+1. `npm run install:all` — lockfile-enforced install of all four lockfiles.
+2. The three typecheck commands.
+3. `npm test`.
+4. `npm run build:all`.
+5. Deploy guards:
+   - expected artifacts exist (`react/dist/index.html`, `react/dist/sitemap.xml`, `admin/dist/index.html`, `backend/dist/server.js`);
+   - no server-side secret names (`DATABASE_URL`, `RAZORPAY_KEY_SECRET`, `SUPABASE_SERVICE_ROLE_KEY`, `RESEND_API_KEY`, …) appear anywhere in `react/dist` or `admin/dist`;
+   - no file exceeds Cloudflare's 25 MiB per-asset limit;
+   - `admin/dist/_redirects` shipped, so admin deep links cannot regress into 404s;
+   - the build left tracked sources untouched.
+
+## Cloudflare Pages project names
+
+The authoritative project names are:
+
+- customer → `skbagheltravels-customer`
+- admin → `skbagheltravels-admin`
+
+They appear in four places and must agree everywhere: `--project-name` in `npm run deploy:customer` / `npm run deploy:admin` (root `package.json`), and the `name` field in the root `wrangler.jsonc`, `react/wrangler.jsonc` and `admin/wrangler.jsonc`. A mismatch silently creates a second project instead of updating the live one, so change all of them together or not at all.
+
+If an earlier project already exists under a legacy name (`arenaai`, `skb-admin`, or a Cloudflare *Workers* service wired to this repository), create the project under the standardized name in the dashboard, attach the custom domain to it, verify the deployment, then delete or keep the old one as a rollback target. Do not point DNS at a project whose name disagrees with these files.
+
+## 1. Prepare the GitHub repository
+
+1. Confirm the deployment commit is pushed to `design/homepage`.
+2. In GitHub, open **Settings → Branches** and protect `main`. Require pull-request review and passing checks before merging.
+3. Create a pull request from `design/homepage` to `main` after the first deployment configuration review.
+4. The provider configurations below can initially deploy from `design/homepage` for staging. Change each provider to `main` for production.
 
 ## 2. Deploy the backend API on Render
 
@@ -53,6 +89,10 @@ curl -fsS https://<render-service>.onrender.com/health
 curl -fsS https://<render-service>.onrender.com/ready
 ```
 
+`/health` is liveness (200 while the process runs). `/ready` reports the active store — a `"store": "memory"` response means `DATABASE_URL` is not wired, which must be treated as a failed deploy.
+
+The image is multi-stage: full dependencies build `dist`, a separate stage installs production-only dependencies, and the runtime stage runs as the non-root `skb` user with devDependencies (TypeScript, Vitest, ESLint, tsx) absent. [`backend/.dockerignore`](../backend/.dockerignore) keeps `.env` files, `node_modules`, `dist`, tests and docs out of the build context.
+
 ### Add the API custom domain
 
 1. In Render, open the service's **Settings → Custom Domains → Add Custom Domain**.
@@ -65,11 +105,13 @@ curl -fsS https://api.skbagheltravels.in/health
 curl -fsS https://api.skbagheltravels.in/ready
 ```
 
-The API must allow CORS from `https://skbagheltravels.in`, `https://www.skbagheltravels.in`, and `https://admin.skbagheltravels.in`.
+The API must allow CORS from `https://skbagheltravels.in`, `https://www.skbagheltravels.in`, and `https://admin.skbagheltravels.in` (`CORS_ORIGINS`).
 
 ### Render free-tier wake-up limitation
 
 The monitor below sends a request every five minutes, which reduces idle sleep when the platform honors the requests. It is **not a guarantee** that a Render free service stays awake: scheduled GitHub Actions can be delayed, Render can suspend services, and free-tier policies can change. For guaranteed always-on behavior, use a paid Render instance or deploy the same Docker image to the planned VPS behind Cloudflare Tunnel.
+
+If the final hosting decision is a VPS instead of Render, use the same `backend/Dockerfile` and `backend/docker-compose.yml` as the container contract. Render and VPS are alternatives; do not run two production API instances against the same write path without an explicit migration and traffic plan.
 
 ## 3. Publish the customer site on Cloudflare Pages
 
@@ -80,10 +122,10 @@ The monitor below sends a request every five minutes, which reduces idle sleep w
 5. Set **Root directory** to `/react`.
 6. Set **Build command** to `npm ci && npm run build`.
 7. Set **Build output directory** to `dist`.
-8. Add the production variable `VITE_API_BASE_URL=https://api.skbagheltravels.in` under **Settings → Environment variables → Production**.
+8. Add the production variable `VITE_API_BASE_URL=https://api.skbagheltravels.in` under **Settings → Environment variables → Production**. No frontend code reads it yet — it is reserved so the value is already in place when the API integration phase lands.
 9. Deploy. Cloudflare Pages should show the generated site preview URL.
 10. Add `skbagheltravels.in` and `www.skbagheltravels.in` under **Custom domains**. Cloudflare will create or request the required DNS records.
-11. Confirm the site loads at `https://skbagheltravels.in/`, the Hindi routes load, and the booking flow can reach the API.
+11. Confirm the site loads at `https://skbagheltravels.in/`, the Hindi routes load, and `/en/404/` returns the styled 404.
 
 The same settings are recorded in [`react/cloudflare-pages.toml`](../react/cloudflare-pages.toml). For a manual deployment from a machine with Wrangler authentication:
 
@@ -91,7 +133,9 @@ The same settings are recorded in [`react/cloudflare-pages.toml`](../react/cloud
 npm run deploy:customer
 ```
 
-For SPA deep links, configure a Pages fallback to `index.html` if Cloudflare does not automatically detect the Vite application routes.
+### Routing rule for this app
+
+The customer site is **pre-rendered** by `react/scripts/prerender.ts`: every marketing URL is real HTML **plus a real `404.html`**, and it deploys with `not_found_handling: "404-page"` (root `wrangler.jsonc`, `react/wrangler.jsonc`). Do **not** add a catch-all rewrite to `index.html` here — it would turn genuine 404s into 200s and break crawler semantics.
 
 ## 4. Publish the admin panel on Cloudflare Pages
 
@@ -103,7 +147,7 @@ For SPA deep links, configure a Pages fallback to `index.html` if Cloudflare doe
 6. Add `VITE_API_BASE_URL=https://api.skbagheltravels.in` under the production environment variables.
 7. Deploy and open the generated Pages URL.
 8. Add the custom domain `admin.skbagheltravels.in` under **Custom domains**.
-9. Confirm the admin login route, deep links such as `/bookings`, and API requests work over HTTPS.
+9. Confirm the login route, deep links such as `/bookings`, and API requests work over HTTPS.
 
 The same settings are recorded in [`admin/cloudflare-pages.toml`](../admin/cloudflare-pages.toml). For manual deployment:
 
@@ -112,6 +156,10 @@ npm run deploy:admin
 ```
 
 The current admin login is a frontend demonstration flow. Before production use, connect it to the backend's real authentication and RBAC endpoints and remove any test-auth behavior from the production environment.
+
+### Routing rules for this app
+
+The admin panel is a React Router SPA with a single `index.html`. It ships `admin/public/_redirects` (`/* /index.html 200`, copied to `admin/dist/_redirects`) and sets `not_found_handling: "single-page-application"`. Without both, a hard refresh on `/bookings`, `/finance` or `/audit` returns 404. `admin/public/_headers` also marks the panel `X-Robots-Tag: noindex, nofollow` and sends long-lived cache headers for hashed assets, and `admin/public/robots.txt` disallows crawling outright.
 
 ## 5. DNS and release order
 
@@ -128,7 +176,7 @@ Use this order to avoid deploying frontends that point at an unavailable API:
 HEALTHCHECK_URLS="https://api.skbagheltravels.in/health,https://skbagheltravels.in/,https://admin.skbagheltravels.in/" npm run healthcheck
 ```
 
-The API is the authority for fares, booking state, payments, and admin permissions. Never put database, payment, webhook, or service-role secrets in Cloudflare or Vite variables.
+The API is the authority for fares, booking state, payments, and admin permissions. Never put database, payment, webhook, or service-role secrets in Cloudflare or Vite variables — frontend builds are public static clients.
 
 ## 6. Automated uptime monitoring
 
@@ -148,10 +196,14 @@ Override the targets for staging or a Render preview service:
 HEALTHCHECK_URLS="https://my-api.onrender.com/health,https://staging.example.com/,https://staging-admin.example.com/" npm run healthcheck
 ```
 
-Available options are `HEALTHCHECK_TIMEOUT_MS`, `HEALTHCHECK_ATTEMPTS`, `HEALTHCHECK_URLS`, and `HEALTHCHECK_EXPECTED_STATUS`. The check is intentionally read-only; it does not create bookings, send payments, mutate data, or restart services.
+Available options are `HEALTHCHECK_TIMEOUT_MS`, `HEALTHCHECK_ATTEMPTS`, `HEALTHCHECK_URLS`, and `HEALTHCHECK_EXPECTED_STATUS` (see [`.env.example`](../.env.example)). The check is intentionally read-only; it does not create bookings, send payments, mutate data, or restart services.
 
 ## 7. Vercel preview configuration
 
 [`vercel.json`](../vercel.json) is only a frontend preview fallback. It builds the customer application and publishes `react/dist`. Cloudflare Pages remains the production frontend host. Vercel is not the backend target because the API is a long-running Fastify Docker service.
 
-To preview the admin application on Vercel, set the Vercel project's root directory to `admin`, build command to `npm ci && npm run build`, and output directory to `dist`.
+To preview the admin application on Vercel, set the Vercel project's root directory to `admin`, build command to `npm ci && npm run build`, and output directory to `dist`; do not use the root `vercel.json` for that project.
+
+## 8. Rollback
+
+Cloudflare Pages and Render keep previous deployments. To roll back, redeploy the last known-good artifact from the provider dashboard; never hand-edit a `dist/` tree. `backend/migrations/` is append-only — see [`backend/DATABASE_MIGRATION_ROLLBACK.md`](./backend/DATABASE_MIGRATION_ROLLBACK.md) for the database side of a rollback.

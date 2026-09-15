@@ -1,13 +1,17 @@
 {
   "$schema": "../node_modules/wrangler/config-schema.json",
-  "name": "arenaai",
+  "name": "skbagheltravels-customer",
   "compatibility_date": "2026-09-01",
   "observability": {
     "enabled": true
   },
   "assets": {
+    // Deploy from inside react/ (`npx wrangler pages deploy dist`). The root
+    // wrangler.jsonc points at ./react/dist for repo-root deploys; keep the
+    // `name` in sync with both the root config and the Cloudflare Pages project.
     "directory": "./dist",
     "html_handling": "auto-trailing-slash",
+    // Pre-rendered output includes 404.html: keep real 404 semantics.
     "not_found_handling": "404-page"
   }
 }

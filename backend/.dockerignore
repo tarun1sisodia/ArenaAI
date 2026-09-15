@@ -1,0 +1,45 @@
+# Keep the Docker build context small and secret-free.
+# Dockerfile COPY instructions are explicit, but excluding these paths
+# prevents local .env files, credentials and build output from ever being
+# uploaded to the daemon / remote builder.
+
+# Dependencies (installed inside the image with npm ci)
+node_modules
+node_modules/**
+
+# Build output and caches
+dist
+dist/**
+coverage
+.vitest
+.nyc_output
+*.tsbuildinfo
+
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+
+# Version control, CI, editor state
+.git
+.git/**
+.github
+.github/**
+.agents
+.agents/**
+.vscode
+.idea
+.DS_Store
+
+# Tests, docs and one-off scripts are not part of the runtime image
+tests
+tests/**
+docs
+docs/**
+scripts
+scripts/**
+*.md
+SECURITY_HARDENING.md
+Dockerfile
+docker-compose.yml
+.dockerignore

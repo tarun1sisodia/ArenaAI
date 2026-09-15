@@ -1,0 +1,3 @@
+# Internal operations panel — never crawl or index.
+User-agent: *
+Disallow: /

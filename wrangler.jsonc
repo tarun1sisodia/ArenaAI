@@ -1,13 +1,19 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "arenaai",
+  "name": "skbagheltravels-customer",
   "compatibility_date": "2026-09-01",
   "observability": {
     "enabled": true
   },
   "assets": {
+    // Customer site deploy config from the repository root. The application-owned
+    // config in react/wrangler.jsonc targets ./dist when run from react/.
+    // `name` must match the Cloudflare Pages project used by
+    // `npm run deploy:customer` — see docs/DEPLOYMENT.md.
     "directory": "./react/dist",
     "html_handling": "auto-trailing-slash",
+    // The customer site is pre-rendered and ships a real 404.html, so genuine
+    // 404s stay 404s for crawlers. Do not switch this to an SPA fallback.
     "not_found_handling": "404-page"
   }
 }
