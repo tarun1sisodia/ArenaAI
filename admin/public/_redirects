@@ -1,7 +1,0 @@
-# Cloudflare Pages routing for the admin SPA (React Router / BrowserRouter).
-# The panel is a single-page app: every path must return index.html so that
-# deep links such as /bookings, /finance, /audit survive a hard refresh.
-# Keep this file even though admin/wrangler.jsonc sets
-# not_found_handling = "single-page-application": Pages projects built from
-# the Git integration read _redirects, Wrangler asset deploys read the JSONC.
-/*    /index.html   200
