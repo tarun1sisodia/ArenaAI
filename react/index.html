@@ -5,21 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#FAFAFA" />
     <meta name="description" content="SK Baghel Tour & Travels React migration platform." />
-    <!-- Speculative Pre-connection & DNS Prefetch (HTTP/3 & TLS Handshake Pre-warming) -->
-    <link rel="dns-prefetch" href="https://api.razorpay.com" />
-    <link rel="preconnect" href="https://api.razorpay.com" crossorigin />
-    <link rel="dns-prefetch" href="https://us1.locationiq.com" />
-    <link rel="preconnect" href="https://us1.locationiq.com" crossorigin />
-    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- H1 (Network & Transport): warm up the location-search API tunnel. useLocationIQ
+         fetches api.locationiq.com during this visit, so preconnect saves a DNS+TCP+TLS
+         handshake on the critical path. -->
+    <link rel="dns-prefetch" href="https://api.locationiq.com" />
+    <link rel="preconnect" href="https://api.locationiq.com" crossorigin />
     <!--
-      Brand type system (DESIGN.md): Fraunces display serif, DM Sans UI,
-      DM Mono for eyebrows/codes, Noto Devanagari families for the /hi tree.
-      Previously no font stylesheet was linked at all, so the whole type
-      system silently fell back to system fonts.
+      Brand type system (DESIGN.md): Fraunces display serif, DM Sans UI, DM Mono for
+      eyebrows/codes, and the Noto Devanagari families for the /hi tree. The page only
+      preconnected to the font hosts but never requested a stylesheet, so the entire
+      locked type system silently fell back to system fonts. The two font preconnects
+      below are only worth keeping now that a font stylesheet is actually fetched.
     -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..600&family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..600&family=DM+Mono:wght@400;500&family=Noto+Sans+Devanagari:wght@400..700&family=Noto+Serif+Devanagari:wght@400..700&display=swap"
