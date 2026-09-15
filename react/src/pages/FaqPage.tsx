@@ -341,7 +341,7 @@ export function FaqPage({ language }: FaqPageProps) {
   };
 
   return (
-    <div className="faq-page">
+    <main id="main-content" className="faq-page">
       {/* Inject SEO Schema */}
       <script
         type="application/ld+json"
@@ -676,6 +676,6 @@ export function FaqPage({ language }: FaqPageProps) {
           </div>
         </div>
       </section>
-    </div>
+    </main>
   );
 }

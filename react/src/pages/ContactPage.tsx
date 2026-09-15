@@ -350,7 +350,7 @@ Please share available cabs and upfront fare quote.`;
   };
 
   return (
-    <div className="contact-page">
+    <main id="main-content" className="contact-page">
       {/* Inject SEO Schema */}
       <script
         type="application/ld+json"
@@ -1040,6 +1040,6 @@ Please share available cabs and upfront fare quote.`;
           </div>
         </div>
       </section>
-    </div>
+    </main>
   );
 }

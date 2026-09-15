@@ -5,6 +5,9 @@ import { AppErrorBoundary } from "@/AppErrorBoundary";
 import { assertCatalogueInvariants } from "@/data/parity";
 import "@/styles/tokens.css";
 import "@/styles/global.css";
+// Design-system repair + shared component contract. Must stay last so it can
+// bridge the token aliases and complete the component cascade.
+import "@/styles/ui-kit.css";
 
 const root = document.getElementById("root");
 

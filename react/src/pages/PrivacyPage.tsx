@@ -98,7 +98,7 @@ export function PrivacyPage({ language }: PrivacyPageProps) {
   };
 
   return (
-    <div className="privacy-page">
+    <main id="main-content" className="privacy-page">
       {/* Inject SEO Schema */}
       <script
         type="application/ld+json"
@@ -495,6 +495,6 @@ export function PrivacyPage({ language }: PrivacyPageProps) {
           </div>
         </div>
       </section>
-    </div>
+    </main>
   );
 }

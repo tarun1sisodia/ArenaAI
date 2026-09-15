@@ -1,0 +1,1611 @@
+/* ==========================================================================
+   UI KIT — Design-system repair layer + shared component contract
+   --------------------------------------------------------------------------
+   Loaded after tokens.css + global.css (see src/main.tsx) so that it can both
+   (a) bridge token aliases that the page stylesheets already reference but that
+       were never declared, and
+   (b) define the shared component classes (container, page-hero, cta-banner,
+       faq accordion, icon contract, analytics board) that the page markup uses.
+
+   Nothing here re-themes a locked component: it only completes the cascade for
+   classes that previously resolved to nothing.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. TOKEN BRIDGE
+   global.css references these custom properties in ~180 places but they were
+   never declared, so declarations like `color: var(--text-dim)` and
+   `border-radius: var(--radius-lg)` were dropped by the CSS parser
+   (invalid at computed-value time) — the single biggest cause of pages
+   rendering as "CSS not applied".
+   -------------------------------------------------------------------------- */
+
+:root {
+  /* Typography aliases -> locked brand font stack (LOCK-010) */
+  --font-heading: var(--font-display);
+  --font-sans: var(--font-ui);
+  --font-body: var(--font-ui);
+
+  /* Colour aliases -> locked brand palette (LOCK-010) */
+  --primary: var(--gold);
+  --primary-dark: var(--gold-deep);
+  --gold-dark: var(--gold-deep);
+  --secondary: var(--navy-deep, #0a0a0a);
+  --text-dim: var(--text-soft);
+  --text-muted: var(--text-soft);
+  --text-faint: #a3a3a3;
+
+  /* Surfaces */
+  --bg-card: var(--surface);
+  --surface-alt: var(--bg-alt);
+  --surface-muted: var(--bg-alt);
+  --surface-hover: var(--bg-alt);
+
+  /* State */
+  --error: #c62828;
+  --success: #2e7d32;
+
+  /* Radii (6px base, card 10px per DESIGN.md) */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 18px;
+
+  /* Elevation */
+  --max-w: var(--container);
+  --shadow-card: 0 1px 2px rgba(10, 10, 10, 0.04);
+  --shadow-lift: 0 12px 23px rgba(10, 10, 10, 0.1);
+  --shadow-pop: 0 24px 48px -12px rgba(10, 10, 10, 0.18);
+
+  /* Motion primitives (motion.dev eases) */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+[data-theme="dark"],
+html.dark {
+  --primary: var(--gold);
+  --text-dim: var(--text-soft, #b5afa9);
+  --text-muted: var(--text-soft, #b5afa9);
+  --text-faint: #8c857e;
+  --bg-card: var(--surface, #242220);
+  --surface-alt: var(--bg-alt, #201e1d);
+  --surface-muted: var(--bg-alt, #201e1d);
+  --surface-hover: #2b2826;
+  --shadow-lift: 0 12px 23px rgba(0, 0, 0, 0.55);
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-pop: 0 24px 48px -12px rgba(0, 0, 0, 0.65);
+  --error: #ef5350;
+}
+
+/* --------------------------------------------------------------------------
+   2. LAYOUT PRIMITIVES
+   `.container` is used by every hub page, the header and the footer, yet had
+   no definition at all. Because `main` is already width-constrained we only
+   centre + cap here (no extra horizontal padding => no double gutter).
+   -------------------------------------------------------------------------- */
+
+.container {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+}
+
+/* Pages that previously rendered a bare <div> root (contact, faq, privacy,
+   terms, route & vehicle detail, 404) escaped the `main` shell entirely.
+   These guards keep them inside the layout grid even if a root tag is missed. */
+.contact-page,
+.faq-page,
+.privacy-page,
+.terms-page,
+.route-detail-page,
+.vehicle-detail-page,
+.not-found-page,
+.home-page {
+  width: 100%;
+}
+
+.page-shell {
+  width: min(100% - (var(--gutter) * 2), var(--container));
+  margin-inline: auto;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-center .section-title,
+.text-center .section-blurb {
+  margin-inline: auto;
+}
+
+.section-header {
+  display: grid;
+  gap: 12px;
+  justify-items: start;
+  margin-bottom: 32px;
+}
+
+.section-header.text-center {
+  justify-items: center;
+  max-width: 760px;
+  margin-inline: auto;
+}
+
+.section-blurb {
+  max-width: 680px;
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+}
+
+.section-subtitle,
+.section-lead {
+  max-width: 680px;
+  margin: 0 0 8px;
+  color: var(--text-soft);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+}
+
+.text-center .section-lead,
+.text-center .section-subtitle {
+  margin-inline: auto;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+/* Section modifiers referenced by the locked home sections */
+.home-section.section--paper,
+.section--paper {
+  background: var(--bg);
+}
+
+.home-section.section--paper-alt,
+.section--paper-alt {
+  background: var(--bg-alt);
+}
+
+.home-section.section--navy,
+.section--navy {
+  background: var(--navy-deep, #141211);
+  color: var(--white, #fdfcfb);
+}
+
+/* --------------------------------------------------------------------------
+   3. TYPOGRAPHY REPAIR
+   The global `h1` was clamp(44px, 6vw, 76px) — the home-hero campaign scale —
+   and leaked onto every content page that had no hero-specific override
+   (contact / faq / privacy / terms / route detail rendered 76px body headings).
+   The campaign scale is now scoped to the marketing heroes that were designed
+   for it; content pages get a sane editorial scale.
+   -------------------------------------------------------------------------- */
+
+.page-hero__title,
+h1.page-hero__title {
+  font-size: clamp(1.875rem, 3.4vw, 2.875rem);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+.page-hero__title i {
+  font-style: italic;
+  color: var(--gold-deep);
+}
+
+/* Content-scale h2 inside page bodies (hero + CTA bands keep their own sizing) */
+.cta-banner-title {
+  font-size: clamp(1.5rem, 2.4vw, 2.125rem) !important;
+  line-height: 1.15;
+}
+
+/* The locked home hero keeps the campaign scale */
+.home-hero h1 {
+  font-size: clamp(44px, 6vw, 76px);
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+}
+
+@media (max-width: 640px) {
+  .page-hero__title,
+  h1.page-hero__title {
+    font-size: clamp(1.65rem, 7vw, 2.1rem);
+    line-height: 1.15;
+  }
+
+  .cta-banner-title {
+    font-size: clamp(1.35rem, 6vw, 1.7rem) !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   4. PAGE HERO (contact, faq, privacy, terms, route detail)
+   Markup contract: .page-hero > .container > (breadcrumbs, __badge, __title, __lead)
+   -------------------------------------------------------------------------- */
+
+.page-hero {
+  position: relative;
+  padding: clamp(40px, 5vw, 64px) 0 clamp(32px, 4vw, 48px);
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+
+.page-hero__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 18px;
+  padding: 6px 14px;
+  border: 1px solid var(--gold-border);
+  border-radius: var(--radius-pill);
+  background: var(--gold-soft);
+  color: var(--gold-text, var(--gold-deep));
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.page-hero__lead {
+  max-width: 720px;
+  margin: 18px 0 0;
+  color: var(--text-soft);
+  font-size: 1.0625rem;
+  line-height: 1.7;
+}
+
+[data-theme="dark"] .page-hero,
+html.dark .page-hero {
+  background: var(--bg);
+}
+
+[data-theme="dark"] .page-hero__badge,
+html.dark .page-hero__badge {
+  background: var(--gold-soft);
+  border-color: var(--gold-border);
+  color: var(--gold-light);
+}
+
+/* Live status pulse used in hero badges */
+.live-dot {
+  position: relative;
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  flex: 0 0 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.55);
+  animation: live-dot-pulse 2.4s var(--ease-standard) infinite;
+}
+
+.gold-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  flex: 0 0 6px;
+  border-radius: 50%;
+  background: var(--gold);
+}
+
+@keyframes live-dot-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 7px rgba(34, 197, 94, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   5. BUTTONS
+   The markup uses .button + modifier variants; several modifiers
+   (button-gold, button-secondary, button-block, button--*) were undefined, so
+   those CTAs rendered as unstyled inline text.
+   -------------------------------------------------------------------------- */
+
+.button,
+a.button,
+button.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: var(--touch, 44px);
+  padding: 0 22px;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background: var(--gold);
+  color: #0a0a0a;
+  font-family: var(--font-ui);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform var(--motion-fast, 180ms) var(--ease-standard),
+    background-color var(--motion-fast, 180ms) var(--ease-standard),
+    border-color var(--motion-fast, 180ms) var(--ease-standard),
+    color var(--motion-fast, 180ms) var(--ease-standard),
+    box-shadow var(--motion-fast, 180ms) var(--ease-standard);
+}
+
+.button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lift);
+}
+
+.button:active {
+  transform: translateY(0) scale(0.985);
+}
+
+.button:disabled,
+.button[aria-disabled="true"] {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.button svg {
+  width: 17px;
+  height: 17px;
+  flex: 0 0 17px;
+}
+
+/* Primary (Saffron Gold) — the default .button look */
+.button-primary,
+.button-gold,
+.button--primary,
+.button--gold {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #0a0a0a;
+}
+
+.button-primary:hover,
+.button-gold:hover,
+.button--primary:hover,
+.button--gold:hover {
+  background: var(--gold-light);
+  border-color: var(--gold-light);
+}
+
+/* Outline */
+.button-outline,
+.button--outline,
+.btn-outline {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.button--outline {
+  border-color: var(--border);
+}
+
+.button-outline:hover,
+.button--outline:hover,
+.btn-outline:hover {
+  border-color: var(--gold);
+  background: var(--gold-soft);
+  color: var(--gold-deep);
+}
+
+.button-outline.button-light,
+.btn-outline--light {
+  border-color: rgba(255, 255, 255, 0.32);
+  color: var(--white, #fff);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.button-outline.button-light:hover,
+.btn-outline--light:hover {
+  border-color: var(--gold);
+  background: rgba(229, 160, 68, 0.18);
+  color: var(--white, #fff);
+}
+
+/* Secondary (near-black) */
+.button-secondary {
+  background: var(--navy-deep, #0a0a0a);
+  border-color: var(--navy-deep, #0a0a0a);
+  color: var(--white, #fff);
+}
+
+.button-secondary:hover {
+  background: var(--navy-soft, #262626);
+  border-color: var(--navy-soft, #262626);
+}
+
+[data-theme="dark"] .button-secondary,
+html.dark .button-secondary {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+/* Ghost */
+.button--ghost,
+.button-ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-soft);
+  padding-inline: 14px;
+}
+
+.button--ghost:hover,
+.button-ghost:hover {
+  background: var(--bg-alt);
+  color: var(--text);
+  box-shadow: none;
+}
+
+/* Sizes */
+.button-sm {
+  min-height: 38px;
+  padding: 0 16px;
+  font-size: 0.875rem;
+}
+
+.button-xs {
+  min-height: 32px;
+  padding: 0 12px;
+  font-size: 0.8rem;
+}
+
+.button-block {
+  width: 100%;
+}
+
+[data-theme="dark"] .button-outline,
+html.dark .button-outline {
+  border-color: var(--border);
+  color: var(--text);
+}
+
+/* --------------------------------------------------------------------------
+   6. ICON CONTRACT
+   Inline <svg> children with no width/height fall back to the CSS replaced
+   element default (300×150) — which is what made icon-heavy markup look
+   gigantic. Every icon slot now owns an explicit box.
+   -------------------------------------------------------------------------- */
+
+.icon,
+.icon-call,
+.icon-wa,
+.icon-car,
+.icon-compass {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  line-height: 1;
+  color: currentColor;
+}
+
+.icon svg,
+.icon-call svg,
+.icon-wa svg,
+.icon-car svg,
+.icon-compass svg,
+.cinematic-puck-icon,
+.cinematic-puck svg,
+.cinematic-icons svg,
+.brand-compass-icon svg,
+.icon-action svg,
+.channel-card__icon-wrap svg,
+.contact-toast__icon svg,
+.check-icon svg,
+.faq-accordion-chevron svg,
+.services-card-cta-text svg,
+.stat-icon svg,
+.btn-spinner svg {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  display: block;
+}
+
+.cinematic-puck-icon,
+.cinematic-puck svg {
+  width: 14px;
+  height: 14px;
+}
+
+.icon-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+}
+
+.brand-compass-icon {
+  display: inline-flex;
+  width: 26px;
+  height: 26px;
+}
+
+/* Fallback guard: any bare, unsized SVG inside page content stays sane */
+.page-hero svg,
+.cta-banner-box svg,
+.icon > svg {
+  width: 1em;
+  height: 1em;
+}
+
+/* --------------------------------------------------------------------------
+   7. CTA BANNER (contact / faq / privacy / terms / route detail / 404)
+   Markup contract: .cta-banner-box > (.cta-banner-content, .cta-banner-buttons)
+   -------------------------------------------------------------------------- */
+
+.cta-banner-box {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(24px, 4vw, 48px);
+  margin: clamp(40px, 6vw, 72px) 0;
+  padding: clamp(28px, 4vw, 44px);
+  border: 1px solid var(--gold-border);
+  border-radius: var(--radius-card);
+  background: linear-gradient(135deg, var(--gold-wash) 0%, var(--surface) 62%);
+  overflow: hidden;
+}
+
+.cta-banner-box::after {
+  content: "";
+  position: absolute;
+  inset-block: -40%;
+  inset-inline-end: -12%;
+  width: 320px;
+  background: radial-gradient(circle, rgba(229, 160, 68, 0.22) 0%, rgba(229, 160, 68, 0) 68%);
+  pointer-events: none;
+}
+
+.cta-banner-content {
+  position: relative;
+  display: grid;
+  gap: 10px;
+}
+
+.cta-banner-tag {
+  justify-self: start;
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+  background: var(--gold-soft);
+  border: 1px solid var(--gold-border);
+  color: var(--gold-text, var(--gold-deep));
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.cta-banner-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 500;
+  color: var(--text);
+}
+
+.cta-banner-desc {
+  max-width: 620px;
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.cta-banner-buttons {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.cta-banner-buttons .button {
+  flex: 1 1 180px;
+}
+
+[data-theme="dark"] .cta-banner-box,
+html.dark .cta-banner-box {
+  background: linear-gradient(135deg, rgba(229, 160, 68, 0.14) 0%, var(--surface) 60%);
+  border-color: var(--gold-border);
+}
+
+@media (max-width: 860px) {
+  .cta-banner-box {
+    grid-template-columns: 1fr;
+  }
+
+  .cta-banner-buttons {
+    justify-content: flex-start;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   8. FAQ ACCORDION (contact page)
+   -------------------------------------------------------------------------- */
+
+.faq-accordion-wrap {
+  display: grid;
+  gap: 10px;
+}
+
+.faq-accordion-item {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  overflow: hidden;
+  transition: border-color var(--motion-fast, 180ms) var(--ease-standard),
+    box-shadow var(--motion-fast, 180ms) var(--ease-standard);
+}
+
+.faq-accordion-item:hover {
+  border-color: var(--gold-border);
+}
+
+.faq-accordion-item--open,
+.faq-accordion-item.is-open {
+  border-color: var(--gold-border);
+  box-shadow: 0 6px 20px rgba(229, 160, 68, 0.12);
+}
+
+.faq-accordion-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  min-height: var(--touch, 44px);
+  padding: 18px 20px;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.faq-accordion-trigger:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: -2px;
+}
+
+.faq-accordion-q {
+  flex: 1;
+  line-height: 1.45;
+}
+
+.faq-accordion-chevron {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  flex: 0 0 26px;
+  border-radius: 50%;
+  background: var(--gold-soft);
+  color: var(--gold-deep);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1;
+  transition: transform var(--motion-fast, 180ms) var(--ease-spring),
+    background-color var(--motion-fast, 180ms) var(--ease-standard);
+}
+
+.faq-accordion-item--open .faq-accordion-chevron,
+.faq-accordion-item.is-open .faq-accordion-chevron {
+  background: var(--gold);
+  color: #0a0a0a;
+  transform: rotate(180deg);
+}
+
+.faq-accordion-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--motion-medium, 400ms) var(--ease-standard);
+}
+
+.faq-accordion-item--open .faq-accordion-body,
+.faq-accordion-item.is-open .faq-accordion-body {
+  grid-template-rows: 1fr;
+}
+
+.faq-accordion-body > * {
+  overflow: hidden;
+}
+
+.faq-accordion-body p,
+.faq-accordion-body div {
+  margin: 0;
+  padding: 0 20px 18px;
+  color: var(--text-soft);
+  line-height: 1.7;
+}
+
+[data-theme="dark"] .faq-accordion-item,
+html.dark .faq-accordion-item {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+/* Legacy single-dash aliases — markup and stylesheet disagreed on BEM vs dash */
+.contact-toast__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: #0a0a0a;
+}
+
+.contact-toast__content {
+  display: grid;
+  gap: 2px;
+  flex: 1;
+}
+
+.contact-toast__title {
+  margin: 0;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.contact-toast__desc {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-soft);
+  line-height: 1.5;
+}
+
+.contact-toast__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-soft);
+  cursor: pointer;
+  transition: background-color var(--motion-fast, 180ms) ease;
+}
+
+.contact-toast__close:hover {
+  background: var(--bg-alt);
+  color: var(--text);
+}
+
+.channel-card__content {
+  display: grid;
+  gap: 4px;
+  margin-top: 14px;
+}
+
+.faq-cat-tab__label {
+  white-space: nowrap;
+}
+
+.services-card-cta-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* --------------------------------------------------------------------------
+   9. CARD / DETAIL REPAIRS
+   -------------------------------------------------------------------------- */
+
+.route-card-top,
+.service-deep-card-top {
+  display: grid;
+  gap: 12px;
+}
+
+.route-card-bottom {
+  display: grid;
+  gap: 16px;
+  margin-top: auto;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+
+.rate-pill-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.stat-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+.spec-row {
+  color: var(--text-soft);
+  font-size: 0.9375rem;
+  letter-spacing: 0.01em;
+}
+
+.separator {
+  height: 1px;
+  margin: 20px 0;
+  background: var(--border);
+  border: 0;
+}
+
+/* Package detail inclusion / exclusion boxes */
+.inc-box-included,
+.inc-box-excluded {
+  display: grid;
+  gap: 10px;
+  padding: 20px 22px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+
+.inc-box-included {
+  border-color: rgba(46, 125, 50, 0.28);
+  background: rgba(46, 125, 50, 0.05);
+}
+
+.inc-box-excluded {
+  border-color: rgba(198, 40, 40, 0.24);
+  background: rgba(198, 40, 40, 0.04);
+}
+
+.inclusions-col,
+.exclusions-col {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+}
+
+.veh-card-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--gold-deep);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.veh-card-action:hover {
+  color: var(--gold);
+}
+
+.hero-location-text {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: currentColor;
+}
+
+.office-content {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+}
+
+.pet-banner-content {
+  position: relative;
+  display: grid;
+  gap: 12px;
+  z-index: 1;
+}
+
+.contact-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+/* Vehicle detail hero — the two hero columns never received a definition */
+.veh-hero-media,
+.veh-hero-info {
+  display: grid;
+  gap: 20px;
+  align-content: start;
+  min-width: 0;
+}
+
+.veh-hero-media {
+  position: relative;
+}
+
+.veh-hero-info .veh-title {
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  line-height: 1.12;
+}
+
+/* --------------------------------------------------------------------------
+   10. CHROME REPAIRS (additive only — LOCK-011 structure untouched)
+   -------------------------------------------------------------------------- */
+
+.btn-outline--light {
+  border-color: rgba(255, 255, 255, 0.3);
+  color: var(--white, #fff);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.has-dropdown > a::after {
+  content: "";
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin-inline-start: 7px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+  opacity: 0.55;
+  transition: transform var(--motion-fast, 180ms) var(--ease-standard);
+}
+
+.has-dropdown:hover > a::after,
+.has-dropdown:focus-within > a::after {
+  opacity: 1;
+  transform: translateY(0) rotate(225deg);
+}
+
+.cinematic-puck-icon {
+  color: currentColor;
+}
+
+.roll-label {
+  display: inline-block;
+  will-change: transform;
+}
+
+.footer-brand,
+.footer-col {
+  display: grid;
+  gap: 14px;
+  align-content: start;
+  min-width: 0;
+}
+
+.footer-brand {
+  gap: 18px;
+}
+
+.footer-bottom-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.call-link {
+  color: var(--gold-deep);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.loc-token-form {
+  display: grid;
+  gap: 8px;
+}
+
+/* --------------------------------------------------------------------------
+   11. MIGRATION / ERROR SHELLS
+   (src/App.tsx + AppErrorBoundary fallbacks — these had no CSS at all)
+   -------------------------------------------------------------------------- */
+
+.migration-shell {
+  width: min(100% - 32px, 1140px);
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 24px 0 72px;
+  display: grid;
+  gap: 28px;
+  align-content: start;
+}
+
+.migration-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.migration-card {
+  display: grid;
+  gap: 16px;
+  align-content: start;
+  max-width: 760px;
+  padding: clamp(28px, 4vw, 48px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+}
+
+.migration-card h1 {
+  font-size: clamp(1.9rem, 4vw, 2.9rem);
+  line-height: 1.12;
+}
+
+.migration-card p {
+  color: var(--text-soft);
+  line-height: 1.7;
+}
+
+.migration-card .eyebrow {
+  margin: 0;
+}
+
+.primary-action,
+.secondary-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--touch, 44px);
+  padding: 0 20px;
+  border-radius: var(--radius);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.primary-action {
+  background: var(--gold);
+  color: #0a0a0a;
+}
+
+.secondary-action {
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.error-details {
+  max-height: 260px;
+  overflow: auto;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-alt);
+  color: var(--text-soft);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  white-space: pre-wrap;
+}
+
+/* --------------------------------------------------------------------------
+   12. ANALYTICS BOARD (shared grid contract)
+   A 21st.dev-style metric board: density-led grid, hairline separators, tinted
+   trend chips and animated bars. Motion is applied by <AnalyticsBoard />.
+   -------------------------------------------------------------------------- */
+
+.board {
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+.board__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 20px 22px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(180deg, var(--bg-alt) 0%, var(--surface) 100%);
+}
+
+.board__title {
+  display: grid;
+  gap: 4px;
+}
+
+.board__title h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.board__title p {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 0.82rem;
+}
+
+.board__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.board__cell {
+  position: relative;
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  padding: 20px 22px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  min-width: 0;
+}
+
+.board__cell:last-child {
+  border-right: 0;
+}
+
+.board__label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-soft);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.board__value {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.board__value small {
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-soft);
+  margin-left: 4px;
+}
+
+.board__delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  justify-self: start;
+  padding: 3px 9px;
+  border-radius: var(--radius-pill);
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: rgba(46, 125, 50, 0.12);
+  color: #2e7d32;
+}
+
+.board__delta--down {
+  background: rgba(198, 40, 40, 0.1);
+  color: #c62828;
+}
+
+.board__delta--flat {
+  background: var(--bg-alt);
+  color: var(--text-soft);
+}
+
+.board__spark {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 42px;
+  margin-top: 2px;
+}
+
+.board__spark span {
+  flex: 1;
+  min-width: 4px;
+  border-radius: 3px 3px 0 0;
+  background: linear-gradient(180deg, var(--gold) 0%, var(--gold-border) 100%);
+  transform-origin: bottom;
+}
+
+/* Row of analytics bars (route / fare intelligence) */
+.board__bars {
+  display: grid;
+  gap: 14px;
+  padding: 20px 22px;
+}
+
+.board__bar-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 200px) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+}
+
+.board__bar-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text);
+  min-width: 0;
+}
+
+.board__bar-label span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.board__bar-track {
+  position: relative;
+  height: 10px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-alt);
+  overflow: hidden;
+}
+
+.board__bar-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(90deg, var(--gold-deep) 0%, var(--gold) 100%);
+  transform-origin: left center;
+}
+
+.board__bar-value {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-soft);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.board__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 14px 22px;
+  border-top: 1px solid var(--border);
+  background: var(--bg-alt);
+  color: var(--text-soft);
+  font-size: 0.8rem;
+}
+
+.board__legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.board__legend i {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  margin-inline-end: 6px;
+  border-radius: 3px;
+  background: var(--gold);
+}
+
+.board__legend i.is-muted {
+  background: var(--border);
+}
+
+[data-theme="dark"] .board,
+html.dark .board {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+[data-theme="dark"] .board__head,
+html.dark .board__head {
+  background: linear-gradient(180deg, var(--bg-alt) 0%, var(--surface) 100%);
+}
+
+[data-theme="dark"] .board__delta,
+html.dark .board__delta {
+  background: rgba(46, 125, 50, 0.2);
+  color: #81c784;
+}
+
+[data-theme="dark"] .board__delta--down,
+html.dark .board__delta--down {
+  background: rgba(239, 68, 68, 0.18);
+  color: #ef9a9a;
+}
+
+[data-theme="dark"] .board__delta--flat,
+html.dark .board__delta--flat {
+  background: #2b2826;
+  color: var(--text-soft);
+}
+
+@media (max-width: 720px) {
+  .board__cell {
+    border-right: 0;
+  }
+
+  .board__bar-row {
+    grid-template-columns: 1fr auto;
+  }
+
+  .board__bar-track {
+    grid-column: 1 / -1;
+    order: 3;
+  }
+}
+
+/* Icon chip (icon + tinted tile) */
+.icon-tile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--gold-border);
+  background: var(--gold-soft);
+  color: var(--gold-deep);
+  transition: transform var(--motion-fast, 180ms) var(--ease-spring),
+    background-color var(--motion-fast, 180ms) var(--ease-standard),
+    color var(--motion-fast, 180ms) var(--ease-standard);
+}
+
+.icon-tile--outline {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--text-soft);
+}
+
+.icon-tile--dark {
+  background: var(--navy-deep, #0a0a0a);
+  border-color: transparent;
+  color: var(--gold);
+}
+
+.board__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+[data-theme="dark"] .icon-tile {
+  background: rgba(229, 160, 68, 0.16);
+  color: var(--gold-light);
+}
+
+/* Scroll progress indicator (motion.dev scroll-linked spring) */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  z-index: 1400;
+  background: linear-gradient(90deg, var(--gold-deep) 0%, var(--gold) 60%, var(--gold-light) 100%);
+  transform-origin: 0% 50%;
+  pointer-events: none;
+}
+
+/* Theme-toggle glyphs (LOCK-011 markup uses bare `sun` / `moon` classes) */
+.cinematic-puck .sun,
+.cinematic-puck .moon {
+  width: 14px;
+  height: 14px;
+  display: block;
+}
+
+.cinematic-icons .sun,
+.cinematic-icons .moon {
+  width: 20px;
+  height: 20px;
+}
+
+/* Coverflow badge fragments (LOCK-004 markup) */
+.coverflow-card-badge-kicker {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.coverflow-card-badge-sep {
+  display: inline-block;
+  width: 3px;
+  height: 3px;
+  margin-inline: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.55;
+  vertical-align: middle;
+}
+
+/* Chips that now carry inline SVG icons instead of emoji glyphs */
+.spec-badge,
+.gold-star-badge,
+.model-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  line-height: 1.35;
+}
+
+.spec-icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  background: var(--gold-soft);
+  border: 1px solid var(--gold-border);
+  color: var(--gold-deep);
+}
+
+.bento-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: var(--gold-soft);
+  border: 1px solid var(--gold-border);
+  color: var(--gold-deep);
+}
+
+[data-theme="dark"] .spec-icon-wrap,
+html.dark .spec-icon-wrap,
+[data-theme="dark"] .bento-icon,
+html.dark .bento-icon {
+  background: rgba(229, 160, 68, 0.16);
+  color: var(--gold-light);
+}
+
+/* Analytics sections */
+.routes-analytics-section,
+.fleet-analytics-section,
+.services-analytics-section {
+  border-top: 1px solid var(--border);
+  background: var(--bg-alt);
+}
+
+/* --------------------------------------------------------------------------
+   13. MOTION UTILITIES (motion.dev friendly; CSS-only fallbacks)
+   -------------------------------------------------------------------------- */
+
+.reveal {
+  opacity: 0;
+  transform: translate3d(0, 22px, 0);
+  transition: opacity 620ms var(--ease-standard), transform 620ms var(--ease-out-expo);
+  will-change: opacity, transform;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.no-js .reveal,
+.reveal[data-static="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+.hover-lift {
+  transition: transform var(--motion-fast, 180ms) var(--ease-standard),
+    box-shadow var(--motion-fast, 180ms) var(--ease-standard);
+}
+
+.hover-lift:hover {
+  transform: translate3d(0, -4px, 0);
+  box-shadow: var(--shadow-lift);
+}
+
+/* --------------------------------------------------------------------------
+   14. REDUCED MOTION — hard accessibility gate (ANIMATION_RULES §3)
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .button:hover {
+    transform: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   15. RESPONSIVE GUARDS
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 700px) {
+  .container {
+    max-width: 100%;
+  }
+
+  .page-hero {
+    padding: 32px 0 28px;
+  }
+
+  .cta-banner-box {
+    padding: 24px 20px;
+  }
+
+  .cta-banner-buttons .button {
+    flex: 1 1 100%;
+  }
+
+  .button {
+    padding-inline: 18px;
+  }
+}
+
+/* Overflow safety: nothing inside a page shell may exceed the viewport */
+.page-hero,
+.board,
+.cta-banner-box,
+.faq-accordion-wrap {
+  max-width: 100%;
+}

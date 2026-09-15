@@ -1,5 +1,6 @@
 import { lazy, Suspense } from "react";
 import { ErrorBoundary } from "../components/ErrorBoundary";
+import { ScrollProgress } from "../components/ui/ScrollProgress";
 import { SiteLayout } from "../layouts/SiteLayout";
 import { HomePage } from "../pages/HomePage";
 
@@ -384,8 +385,9 @@ export function App({ pathname: propPathname }: AppProps = {}) {
   } = getSeo(pathname, effectiveSection, language, isBooking);
 
   return (
-    <ErrorBoundary>
-      <SeoHead
+      <ErrorBoundary>
+        <ScrollProgress />
+        <SeoHead
         language={language}
         pathname={pathname}
         title={pageTitle}
@@ -394,46 +396,46 @@ export function App({ pathname: propPathname }: AppProps = {}) {
         keywords={pageKeywords}
         noindex={isBooking || is404}
       />
-      <SiteLayout>
-        <Suspense fallback={null}>
-          {is404 ? (
-            <NotFoundPage language={language} />
-          ) : isBooking ? (
-            <BookingPage />
-          ) : isHome ? (
-            <HomePage language={language} />
-          ) : matchedRoute ? (
-            <RouteDetailPage language={language} route={matchedRoute} />
-          ) : matchedPackage ? (
-            <PackageDetailPage language={language} pkg={matchedPackage} />
-          ) : matchedVehicle ? (
-            <VehicleDetailPage language={language} vehicle={matchedVehicle} />
-          ) : section === "services" ? (
-            <ServicesPage language={language} />
-          ) : section === "routes" ? (
-            <RoutesPage language={language} />
-          ) : section === "packages" ? (
-            <PackagesPage language={language} />
-          ) : section === "fleet" ? (
-            <FleetPage language={language} />
-          ) : section === "about" ? (
-            <AboutPage language={language} />
-          ) : section === "contact" ? (
-            <ContactPage language={language} />
-          ) : section === "faq" ? (
-            <FaqPage language={language} />
-          ) : section === "terms" ? (
-            <TermsPage language={language} />
-          ) : section === "privacy" ? (
-            <PrivacyPage language={language} />
-          ) : isMarketingHub || pathname.startsWith("/en/") || pathname.startsWith("/hi/") ? (
-            <MarketingPage language={language} section={section} />
-          ) : (
-            <NotFoundPage language={language} />
-          )}
-        </Suspense>
-      </SiteLayout>
-    </ErrorBoundary>
+        <SiteLayout>
+          <Suspense fallback={null}>
+            {is404 ? (
+              <NotFoundPage language={language} />
+            ) : isBooking ? (
+              <BookingPage />
+            ) : isHome ? (
+              <HomePage language={language} />
+            ) : matchedRoute ? (
+              <RouteDetailPage language={language} route={matchedRoute} />
+            ) : matchedPackage ? (
+              <PackageDetailPage language={language} pkg={matchedPackage} />
+            ) : matchedVehicle ? (
+              <VehicleDetailPage language={language} vehicle={matchedVehicle} />
+            ) : section === "services" ? (
+              <ServicesPage language={language} />
+            ) : section === "routes" ? (
+              <RoutesPage language={language} />
+            ) : section === "packages" ? (
+              <PackagesPage language={language} />
+            ) : section === "fleet" ? (
+              <FleetPage language={language} />
+            ) : section === "about" ? (
+              <AboutPage language={language} />
+            ) : section === "contact" ? (
+              <ContactPage language={language} />
+            ) : section === "faq" ? (
+              <FaqPage language={language} />
+            ) : section === "terms" ? (
+              <TermsPage language={language} />
+            ) : section === "privacy" ? (
+              <PrivacyPage language={language} />
+            ) : isMarketingHub || pathname.startsWith("/en/") || pathname.startsWith("/hi/") ? (
+              <MarketingPage language={language} section={section} />
+            ) : (
+              <NotFoundPage language={language} />
+            )}
+          </Suspense>
+        </SiteLayout>
+      </ErrorBoundary>
   );
 }
 

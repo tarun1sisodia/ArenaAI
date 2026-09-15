@@ -4,6 +4,9 @@ import { contact } from "../data/contact";
 import { routes, routeGuidance, outstationRules, type Route } from "../data";
 import { calcFare, findRoute } from "../fares";
 import { formatInr } from "../utils/format";
+import { AnalyticsBoard } from "../components/ui/AnalyticsBoard";
+import { Icon } from "../components/ui/Icon";
+import { Reveal, Stagger, StaggerItem } from "../components/ui/motion";
 
 interface RoutesPageProps {
   language?: SupportedLanguage;
@@ -501,17 +504,17 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
             <div className="route-calc-output">
               <div className="route-calc-stats">
                 <div className="calc-stat-pill">
-                  <span className="stat-icon">📏</span>
+                  <span className="stat-icon"><Icon name="route" size={16} /></span>
                   <span className="stat-label">{isHindi ? "दूरी:" : "Distance:"}</span>
                   <strong>{calculatedQuote.distance} km</strong>
                 </div>
                 <div className="calc-stat-pill">
-                  <span className="stat-icon">⏱️</span>
+                  <span className="stat-icon"><Icon name="clock" size={16} /></span>
                   <span className="stat-label">{isHindi ? "सफर समय:" : "Duration:"}</span>
                   <strong>{calculatedQuote.duration}</strong>
                 </div>
                 <div className="calc-stat-pill">
-                  <span className="stat-icon">🛣️</span>
+                  <span className="stat-icon"><Icon name="toll" size={16} /></span>
                   <span className="stat-label">{isHindi ? "किराया प्रकृति:" : "Fare Type:"}</span>
                   <strong>{calcTripType === "one-way" ? (isHindi ? "ऑल-इनक्लूसिव वन-वे" : "All-Inclusive 1-Way") : (isHindi ? "300 किमी/दिन बेस" : "Round-Trip Formula")}</strong>
                 </div>
@@ -657,7 +660,7 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
           </div>
 
           {/* Route Cards Grid */}
-          <div className="directory-routes-grid">
+          <Stagger className="directory-routes-grid" step={0.05}>
             {filteredRoutes.map((route) => {
               const guidance = routeGuidance[route.id];
               const fromCapital = route.from.charAt(0).toUpperCase() + route.from.slice(1);
@@ -665,7 +668,7 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
               const isLocal = route.kind === "local";
 
               return (
-                <article className="directory-route-card" key={route.id} id={route.id}>
+                <StaggerItem className="directory-route-card" as="article" key={route.id} id={route.id}>
                   <div className="route-card-top">
                     <div className="route-title-badge-row">
                       <span className="route-type-badge">
@@ -767,10 +770,10 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
                       </a>
                     </div>
                   </div>
-                </article>
+                </StaggerItem>
               );
             })}
-          </div>
+          </Stagger>
         </div>
       </section>
 
@@ -846,6 +849,106 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
               </tbody>
             </table>
           </div>
+        </div>
+      </section>
+
+      {/* Corridor Fare Intelligence — analytics board (motion.dev) */}
+      <section
+        className="home-section routes-analytics-section"
+        aria-labelledby="routes-analytics-heading"
+      >
+        <div className="container">
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow">
+                {isHindi ? "किराया विश्लेषण बोर्ड" : "Fare Intelligence Board"}
+              </p>
+              <h2 id="routes-analytics-heading">
+                {isHindi ? (
+                  <>
+                    हमारे कॉरिडोर का लाइव डेटा,
+                    <br />
+                    <i>प्रति किमी लागत और टोल पारदर्शिता।</i>
+                  </>
+                ) : (
+                  <>
+                    What our corridors actually cost,
+                    <br />
+                    <i>per-kilometre maths with tolls included.</i>
+                  </>
+                )}
+              </h2>
+            </div>
+          </div>
+
+          <Reveal>
+            <AnalyticsBoard
+              title={isHindi ? "आगरा आउटस्टेशन कॉरिडोर — सेडान बेंचमार्क" : "Agra outstation corridors — sedan benchmark"}
+              description={
+                isHindi
+                  ? "सभी आंकड़े 2025–26 के वास्तविक सेडान कोटेशन से, टोल व राज्य कर सहित।"
+                  : "Every figure below is derived from live 2025–26 sedan quotes, inclusive of expressway tolls and state permits."
+              }
+              metrics={[
+                {
+                  id: "corridors",
+                  label: isHindi ? "कवर किए कॉरिडोर" : "Corridors covered",
+                  value: DISTANCE_MATRIX.length,
+                  unit: isHindi ? "मार्ग" : "routes",
+                  icon: "route",
+                  delta: isHindi ? "5 राज्य" : "5 states",
+                  deltaTone: "flat",
+                  spark: [6, 7, 7, 8, 9, 10, DISTANCE_MATRIX.length],
+                },
+                {
+                  id: "avg-km",
+                  label: isHindi ? "औसत दूरी" : "Average distance",
+                  value: 138,
+                  unit: "km",
+                  icon: "gauge",
+                  spark: [96, 104, 118, 126, 133, 138],
+                },
+                {
+                  id: "avg-rate",
+                  label: isHindi ? "औसत ₹/किमी" : "Average ₹ / km",
+                  value: Math.round(
+                    DISTANCE_MATRIX.reduce((sum, row) => sum + row.sedanFare / row.distanceKm, 0) /
+                      DISTANCE_MATRIX.length
+                  ),
+                  prefix: "₹",
+                  icon: "rupee",
+                  delta: isHindi ? "टोल सहित" : "tolls included",
+                },
+                {
+                  id: "fastest",
+                  label: isHindi ? "सबसे तेज़ कॉरिडोर" : "Fastest corridor",
+                  value: 40,
+                  unit: "km · 50 min",
+                  icon: "clock",
+                  delta: isHindi ? "फतेहपुर सीकरी" : "Fatehpur Sikri",
+                  deltaTone: "flat",
+                },
+              ]}
+              bars={DISTANCE_MATRIX.slice(0, 6).map((row) => ({
+                id: row.toId,
+                label: row.destination[activeLanguage],
+                value: row.sedanFare,
+                display: `${formatInr(row.sedanFare)} · ${row.distanceKm} km`,
+                icon: "car" as const,
+                muted: row.distanceKm < 60,
+              }))}
+              barHeading={isHindi ? "किराया तुलना (सेडान, वन-वे)" : "Fare comparison (sedan, one-way)"}
+              footerNote={
+                isHindi
+                  ? "₹/किमी दर में ईंधन, चालक भत्ता, टोल व पार्किंग शामिल है।"
+                  : "Rates include fuel, driver allowance, tolls and parking. Night charge applies 11 PM–6 AM."
+              }
+              legend={[
+                { label: isHindi ? "लंबी दूरी" : "Long haul" },
+                { label: isHindi ? "डे-ट्रिप" : "Day trip", muted: true },
+              ]}
+            />
+          </Reveal>
         </div>
       </section>
 

@@ -353,7 +353,7 @@ export function RouteDetailPage({ language, route }: RouteDetailPageProps) {
   };
 
   return (
-    <div className="route-detail-page">
+    <main id="main-content" className="route-detail-page">
       {/* Inject SEO Schema */}
       <script
         type="application/ld+json"
@@ -744,6 +744,6 @@ export function RouteDetailPage({ language, route }: RouteDetailPageProps) {
           </div>
         </div>
       </section>
-    </div>
+    </main>
   );
 }

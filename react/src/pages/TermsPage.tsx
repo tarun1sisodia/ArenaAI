@@ -100,7 +100,7 @@ export function TermsPage({ language }: TermsPageProps) {
   };
 
   return (
-    <div className="terms-page">
+    <main id="main-content" className="terms-page">
       {/* Inject SEO Schema */}
       <script
         type="application/ld+json"
@@ -512,6 +512,6 @@ export function TermsPage({ language }: TermsPageProps) {
           </div>
         </div>
       </section>
-    </div>
+    </main>
   );
 }
