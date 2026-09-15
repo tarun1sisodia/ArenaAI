@@ -20,10 +20,10 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
 
       - name: Run uptime check
         run: node scripts/healthcheck.mjs
         env:
-          HEALTHCHECK_TIMEOUT_MS: 10000
+          HEALTHCHECK_TIMEOUT_MS: 10000git
           HEALTHCHECK_ATTEMPTS: 2
