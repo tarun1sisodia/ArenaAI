@@ -87,7 +87,21 @@ A single, reviewable repair layer with 15 sections:
 
 ---
 
-## 5. Follow-ups worth doing next
+## 5. Regression gate
+
+`react/scripts/audit-css.mjs` (wired as `npm run customer:audit:css`, and now part
+of the root `npm run verify` chain) fails the build if either of the two root
+causes reappears:
+
+- a `className` used in `src/**` has no rule in any stylesheet
+- a `var(--token)` is referenced but never declared
+
+Current status: **1148 classes used / 1213 defined / 0 missing · 56 custom
+properties / 0 undefined.**
+
+---
+
+## 6. Follow-ups worth doing next
 
 1. Run the responsive screenshot sweep at 360 / 390 / 768 / 1024 / 1440 px in EN + HI and file any residual overflow.
 2. Replace the remaining typographic emoji in the deep detail pages (route/package/vehicle guides still use a few inline emoji as bullets).

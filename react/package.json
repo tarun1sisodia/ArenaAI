@@ -12,7 +12,9 @@
     "sitemap": "node --experimental-strip-types scripts/generate-sitemap.ts",
     "typecheck": "tsc --noEmit",
     "preview": "vite preview",
-    "react:preview": "vite preview"
+    "react:preview": "vite preview",
+    "audit:css": "node scripts/audit-css.mjs",
+    "audit:css:verbose": "node scripts/audit-css.mjs --verbose"
   },
   "dependencies": {
     "motion": "^12.43.0",
