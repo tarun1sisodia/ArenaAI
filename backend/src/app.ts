@@ -11,6 +11,7 @@ import { createMemoryRepositories } from "./db/memory.js";
 import { authenticateRequest } from "./middlewares/authGuard.js";
 import { AppError, Errors } from "./shared/errors.js";
 import { registerErrorHandler } from "./middlewares/errorHandler.js";
+import { registerNetworkHeaders } from "./middlewares/networkHeaders.js";
 import { registerRawBody } from "./middlewares/rawBody.js";
 import { registerRequestId } from "./middlewares/requestId.js";
 import { createAdminController } from "./modules/admin/admin.controller.js";
@@ -79,6 +80,7 @@ export async function buildApp(options: AppOptions): Promise<BuiltApp> {
   registerRawBody(app);
   registerRequestId(app);
   registerErrorHandler(app);
+  registerNetworkHeaders(app);
 
   // Security headers - enable all protections, CSP only for API is minimal
   await app.register(helmet, {
@@ -185,11 +187,16 @@ export async function buildApp(options: AppOptions): Promise<BuiltApp> {
   const locationService = createLocationService({ db, clock, geocoding });
   const inquiryService = createInquiryService({ db, clock });
 
-  app.get("/health", async () => ({ success: true, data: { status: "ok", version: env.FARE_RULES_VERSION } }));
-  app.get("/ready", async () => {
+  const healthHandler = async () => ({ success: true, data: { status: "ok", version: env.FARE_RULES_VERSION } });
+  const readyHandler = async () => {
     const ok = await db.healthCheck();
     return { success: true, data: { status: ok ? "ready" : "degraded", store: env.DATABASE_URL ? "postgres" : "memory" } };
-  });
+  };
+
+  app.get("/health", healthHandler);
+  app.get("/api/v1/health", healthHandler);
+  app.get("/ready", readyHandler);
+  app.get("/api/v1/ready", readyHandler);
 
   await registerFareRoutes(app, createFareController(fareService));
   await registerLocationRoutes(app, createLocationController(locationService));
