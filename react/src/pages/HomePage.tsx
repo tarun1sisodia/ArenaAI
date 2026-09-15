@@ -11,6 +11,7 @@ import { CoverflowCarousel } from "../components/home/CoverflowCarousel";
 import { BenefitsSection } from "../components/home/BenefitsSection";
 import { ReviewsMarquee } from "../components/home/ReviewsMarquee";
 import { ContactCard } from "../components/home/ContactCard";
+import { NetworkBoard } from "../components/home/NetworkBoard";
 
 export interface HomePageProps {
   language?: SupportedLanguage;
@@ -190,6 +191,9 @@ export function HomePage({ language }: HomePageProps) {
 
       {/* Fleet Showcase Section */}
       <FleetSection language={activeLanguage} />
+
+      {/* Network Intelligence Analytics Board (motion.dev) */}
+      <NetworkBoard language={activeLanguage} />
 
       {/* 3D Coverflow Sightseeing Carousel */}
       <CoverflowCarousel />

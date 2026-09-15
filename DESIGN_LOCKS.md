@@ -97,3 +97,34 @@ If a future phase task (e.g. backend wiring, marketing detail template, internat
 3. **Wait for explicit user approval:**
    - If the user approves: update `DESIGN_LOCKS.md` with the new revision and proceed.
    - If the user declines: preserve the locked design intact and find an alternative non-destructive implementation.
+
+---
+
+## Amendment Log
+
+### 2026-09-15 — Additive CSS completion (no locked design altered)
+
+A frontend repair pass added `react/src/styles/ui-kit.css` and converted six
+bare `<div>` page roots into `<main id="main-content">`. This was **purely
+additive**: 17 undefined CSS custom properties were declared as aliases of the
+locked LOCK-010 tokens, 87 undefined class names received their missing rules
+(`.container`, `.page-hero*`, `.cta-banner-*`, `.faq-accordion-*`,
+`.button-gold/secondary/block`, icon size contracts, …), and the 44–76px
+campaign `h1` scale was **scoped to `.home-hero h1`** instead of applying to
+every page.
+
+Nothing in this pass re-themes, re-lays-out or restructures any locked
+component. Specifically:
+
+- `LOCK-001 … LOCK-009` — markup and class names untouched; only previously
+  undefined helper classes used by their markup (`.container`, `.icon-call`,
+  `.icon-wa`, `.sun`, `.moon`, `.section--paper*`, `.brand-compass-icon`,
+  `.cinematic-puck-icon`, `.roll-label`, `.footer-col`) received definitions.
+- `LOCK-010` — `tokens.css` and `DESIGN.md` were **not modified**. The new
+  alias layer points at the locked values (`--primary: var(--gold)`,
+  `--font-heading: var(--font-display)`, `--text-dim: var(--text-soft)`, …).
+- `LOCK-011` — chrome components were not restructured; the new rules only
+  size the icon spans and footer columns their existing markup already used.
+
+Future edits to locked components still require the unlock protocol above.
+See `react/docs/07_UI_REPAIR_REPORT.md` for the full root-cause analysis.

@@ -27,6 +27,7 @@
 
 import React, { useState, useMemo } from "react";
 import { contact } from "../data/contact";
+import { Icon } from "../components/ui/Icon";
 import { type Vehicle, vehicles, routes } from "../data/catalogue";
 
 interface VehicleDetailPageProps {
@@ -392,7 +393,7 @@ export function VehicleDetailPage({ language, vehicle }: VehicleDetailPageProps)
 
             <div className="specs-bento-grid">
               <div className="spec-card">
-                <div className="spec-icon-wrap">🪑</div>
+                <div className="spec-icon-wrap"><Icon name="users" size={22} /></div>
                 <h3 className="spec-card-title">{isHi ? "सीटिंग व केबिन स्पेस" : "Seating & Ergonomics"}</h3>
                 <p className="spec-card-desc">
                   {isHi
@@ -406,7 +407,7 @@ export function VehicleDetailPage({ language, vehicle }: VehicleDetailPageProps)
               </div>
 
               <div className="spec-card">
-                <div className="spec-icon-wrap">🧳</div>
+                <div className="spec-icon-wrap"><Icon name="luggage" size={22} /></div>
                 <h3 className="spec-card-title">{isHi ? "लगेज व बूट क्षमता" : "Luggage & Storage"}</h3>
                 <p className="spec-card-desc">
                   {isHi
@@ -420,7 +421,7 @@ export function VehicleDetailPage({ language, vehicle }: VehicleDetailPageProps)
               </div>
 
               <div className="spec-card">
-                <div className="spec-icon-wrap">❄️</div>
+                <div className="spec-icon-wrap"><Icon name="snowflake" size={22} /></div>
                 <h3 className="spec-card-title">{isHi ? "क्लाइमेट कंट्रोल व एसी" : "Climate Control & AC"}</h3>
                 <p className="spec-card-desc">
                   {isHi
@@ -434,7 +435,7 @@ export function VehicleDetailPage({ language, vehicle }: VehicleDetailPageProps)
               </div>
 
               <div className="spec-card">
-                <div className="spec-icon-wrap">🛡️</div>
+                <div className="spec-icon-wrap"><Icon name="shield-check" size={22} /></div>
                 <h3 className="spec-card-title">{isHi ? "सुरक्षा व सरकारी परमिट" : "Safety & Permitted Fleet"}</h3>
                 <p className="spec-card-desc">
                   {isHi

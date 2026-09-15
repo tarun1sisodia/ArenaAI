@@ -82,3 +82,25 @@ Before committing any animation change, run:
 2. **Crawl Gate:** `python3 scripts/check_links.py` (must pass 102/102 URLs OK).
 3. **HTML Inspection:** Verify `curl -s http://localhost:4173/` contains all real text in raw HTML.
 4. **Reduced Motion Test:** Emulate `prefers-reduced-motion: reduce` and verify zero jitter or broken layouts.
+
+---
+
+## 6. Amendment — React application (`react/`, 2026-09-15)
+
+The rules above were written for the legacy vanilla-JS site (`js/motion.js`, `<3KB`).
+The customer app is now a React 19 + Vite build with a pre-render (SSG) pass at
+`scripts/prerender.ts`. The animation contract is unchanged in **intent**, and is
+enforced as follows:
+
+| Rule | How it is satisfied in `react/` |
+|---|---|
+| 1. Real HTML in the initial DOM | `motion.tsx` primitives render a plain element until hydration completes (`useHydrated`), so the pre-rendered HTML is never `opacity: 0`. `AnalyticsBoard` always renders the final number server-side. |
+| 2. No content hiding | No `display:none` / `visibility:hidden` entry states; the CSS `.reveal` utility is progressive enhancement only (`[data-static]` escape hatch). |
+| 3. Vanilla-only budget | Amended: the React app uses **motion.dev** (`motion/react`), code-split into its own chunk (`motion-*.js`) so it loads only on pages that animate. `ScrollProgress` stays dependency-free (rAF). |
+| 4. GPU-only | Only `transform` / `opacity` are animated; bar fills use `scaleX`, sparklines `scaleY`. |
+| 5. Viewport-bounded | `whileInView` + `viewport={{ once: true }}`; stagger capped (`Math.min(index, 6)`). |
+| 6. Reduced motion | `useReducedMotion()` short-circuits every primitive, and `ui-kit.css` §14 keeps the global zero-motion fallback. |
+
+Budget guidance for new work: keep per-page motion payloads out of the critical
+chunk, prefer the shared primitives over one-off animations, and never animate
+anything that must stay legible without JavaScript.

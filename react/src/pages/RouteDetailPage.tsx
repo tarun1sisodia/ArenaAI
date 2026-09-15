@@ -12,6 +12,7 @@
  */
 
 import React, { useState } from "react";
+import { Icon } from "../components/ui/Icon";
 import { contact } from "../data/contact";
 import {
   type Route,
@@ -353,7 +354,7 @@ export function RouteDetailPage({ language, route }: RouteDetailPageProps) {
   };
 
   return (
-    <div className="route-detail-page">
+    <main id="main-content" className="route-detail-page">
       {/* Inject SEO Schema */}
       <script
         type="application/ld+json"
@@ -426,7 +427,7 @@ export function RouteDetailPage({ language, route }: RouteDetailPageProps) {
 
             <a href={`tel:${contact.phone}`} className="button button-secondary">
               <span>{isHi ? "कॉल करें: " + contact.phoneDisplay : "Call " + contact.phoneDisplay}</span>
-              <span aria-hidden="true">📞</span>
+              <span aria-hidden="true"><Icon name="phone" size={16} /></span>
             </a>
 
             <a
@@ -440,7 +441,7 @@ export function RouteDetailPage({ language, route }: RouteDetailPageProps) {
               className="button button-outline"
             >
               <span>{isHi ? "व्हाट्सएप कोट" : "WhatsApp Quote"}</span>
-              <span aria-hidden="true">💬</span>
+              <span aria-hidden="true"><Icon name="whatsapp" size={16} /></span>
             </a>
           </div>
         </div>
@@ -724,7 +725,7 @@ export function RouteDetailPage({ language, route }: RouteDetailPageProps) {
 
               <a href={`tel:${contact.phone}`} className="button button-secondary">
                 <span>{isHi ? "कॉल करें: " + contact.phoneDisplay : "Call " + contact.phoneDisplay}</span>
-                <span aria-hidden="true">📞</span>
+                <span aria-hidden="true"><Icon name="phone" size={16} /></span>
               </a>
 
               <a
@@ -738,12 +739,12 @@ export function RouteDetailPage({ language, route }: RouteDetailPageProps) {
                 className="button button-outline"
               >
                 <span>{isHi ? "व्हाट्सएप चैट" : "WhatsApp Desk"}</span>
-                <span aria-hidden="true">💬</span>
+                <span aria-hidden="true"><Icon name="whatsapp" size={16} /></span>
               </a>
             </div>
           </div>
         </div>
       </section>
-    </div>
+    </main>
   );
 }
