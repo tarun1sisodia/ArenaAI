@@ -7,6 +7,7 @@ import { formatInr } from "../utils/format";
 import { AnalyticsBoard } from "../components/ui/AnalyticsBoard";
 import { Icon } from "../components/ui/Icon";
 import { Reveal, Stagger, StaggerItem } from "../components/ui/motion";
+import { Button } from "../components/ui/Button";
 
 interface RoutesPageProps {
   language?: SupportedLanguage;
@@ -382,26 +383,23 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
           </p>
 
           <div className="hero-actions">
-            <a
-              className="button button-primary"
-              href="#route-calculator"
-            >
-              {isHindi ? "किराया कैलकुलेटर देखें ↓" : "Calculate Route Fare ↓"}
-            </a>
-            <a
-              className="button button-outline"
-              href={`tel:${contact.phone}`}
-            >
+            <Button href="#route-calculator">
+              <Icon name="gauge" size={17} />
+              {isHindi ? "किराया कैलकुलेटर देखें" : "Calculate Route Fare"}
+            </Button>
+            <Button variant="outline" href={`tel:${contact.phone}`}>
+              <Icon name="phone" size={17} />
               {isHindi ? `कॉल करें ${contact.phoneDisplay}` : `Call ${contact.phoneDisplay}`}
-            </a>
-            <a
-              className="button button-outline"
+            </Button>
+            <Button
+              variant="outline"
               href={`https://wa.me/${contact.whatsapp}`}
               target="_blank"
               rel="noreferrer"
             >
+              <Icon name="whatsapp" size={17} />
               {isHindi ? "व्हाट्सएप पूछताछ" : "WhatsApp Desk"}
-            </a>
+            </Button>
           </div>
         </div>
       </header>
@@ -699,28 +697,28 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
 
                     {guidance && (
                       <p className="route-highway-tag">
-                        🛣️ <strong>{guidance.highway}</strong>
+                        <Icon name="toll" size={13} /> <strong>{guidance.highway}</strong>
                       </p>
                     )}
 
                     {guidance && (
                       <div className="route-guidance-snippet">
                         <div className="guidance-point">
-                          <span className="point-icon">🌅</span>
+                          <span className="point-icon"><Icon name="sun" size={16} /></span>
                           <p>
                             <strong>{isHindi ? "प्रस्थान सुझाव:" : "Best Departure:"}</strong>{" "}
                             {guidance.departureTip[activeLanguage]}
                           </p>
                         </div>
                         <div className="guidance-point">
-                          <span className="point-icon">☕</span>
+                          <span className="point-icon"><Icon name="clock" size={16} /></span>
                           <p>
                             <strong>{isHindi ? "रेस्ट स्टॉप्स:" : "Rest Stops:"}</strong>{" "}
                             {guidance.restStops[activeLanguage]}
                           </p>
                         </div>
                         <div className="guidance-point">
-                          <span className="point-icon">🧾</span>
+                          <span className="point-icon"><Icon name="check-circle" size={16} /></span>
                           <p>
                             <strong>{isHindi ? "टोल नीति:" : "Toll Policy:"}</strong>{" "}
                             {guidance.tollTaxPolicy[activeLanguage]}
@@ -983,7 +981,7 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
 
           <div className="highway-rules-grid">
             <div className="highway-rule-card">
-              <div className="rule-card-icon">🛣️</div>
+              <div className="rule-card-icon"><Icon name="toll" size={20} /></div>
               <h3>{isHindi ? "यमुना एक्सप्रेसवे टोल नीति" : "Yamuna Expressway Tolls"}</h3>
               <p>
                 {isHindi
@@ -993,7 +991,7 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
             </div>
 
             <div className="highway-rule-card">
-              <div className="rule-card-icon">🏛️</div>
+              <div className="rule-card-icon"><Icon name="shield" size={20} /></div>
               <h3>{isHindi ? "राज्य सीमा कमर्शियल टैक्स" : "Inter-State Border Permits"}</h3>
               <p>
                 {isHindi
@@ -1003,7 +1001,7 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
             </div>
 
             <div className="highway-rule-card">
-              <div className="rule-card-icon">📏</div>
+              <div className="rule-card-icon"><Icon name="gauge" size={20} /></div>
               <h3>{isHindi ? "300 किमी/दिन आउटस्टेशन बेस" : "300 KM/Day Outstation Rule"}</h3>
               <p>
                 {isHindi
@@ -1013,7 +1011,7 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
             </div>
 
             <div className="highway-rule-card">
-              <div className="rule-card-icon">🌙</div>
+              <div className="rule-card-icon"><Icon name="moon" size={20} /></div>
               <h3>{isHindi ? "पारदर्शी नाइट ड्राइविंग अलाउंस" : "Night Driving Allowance"}</h3>
               <p>
                 {isHindi

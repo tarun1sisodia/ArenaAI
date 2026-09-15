@@ -204,6 +204,39 @@ h1.page-hero__title {
   line-height: 1.15;
 }
 
+/* Section titles inside detail pages previously fell through to the 52px
+   marketing-h2 scale because `.section-title` had no rule of its own. */
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 2.6vw, 2.05rem);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin: 0;
+}
+
+.section-eyebrow {
+  display: inline-block;
+  margin-bottom: 10px;
+  color: var(--gold-deep);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* Marketing fallback + booking page heroes */
+.marketing-hero h1,
+.detail-hero h1,
+.booking-heading h1,
+.booking-page h1 {
+  font-size: clamp(1.9rem, 3.6vw, 2.9rem);
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+}
+
 /* The locked home hero keeps the campaign scale */
 .home-hero h1 {
   font-size: clamp(44px, 6vw, 76px);
@@ -1512,6 +1545,38 @@ html.dark .bento-icon {
   color: var(--gold-light);
 }
 
+.rule-card-icon,
+.transparency-icon,
+.point-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold-deep);
+}
+
+.rule-card-icon,
+.transparency-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-md);
+  background: var(--gold-soft);
+  border: 1px solid var(--gold-border);
+}
+
+.point-icon {
+  width: 26px;
+  height: 26px;
+  flex: 0 0 26px;
+}
+
+[data-theme="dark"] .rule-card-icon,
+html.dark .rule-card-icon,
+[data-theme="dark"] .transparency-icon,
+html.dark .transparency-icon {
+  background: rgba(229, 160, 68, 0.16);
+  color: var(--gold-light);
+}
+
 /* Analytics sections */
 .routes-analytics-section,
 .fleet-analytics-section,
@@ -1608,4 +1673,27 @@ html.dark .bento-icon {
 .cta-banner-box,
 .faq-accordion-wrap {
   max-width: 100%;
+}
+
+/* Media + long-word guards (the site had no global image constraint, which is
+   the classic source of horizontal scroll on 360px phones) */
+img,
+video {
+  max-width: 100%;
+}
+
+h1,
+h2,
+h3,
+h4,
+.page-hero__title,
+.section-title {
+  overflow-wrap: break-word;
+}
+
+/* Long bilingual strings must never force a grid track wider than the viewport */
+.board__bar-label,
+.board__value,
+.hero-copy {
+  overflow-wrap: anywhere;
 }

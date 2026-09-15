@@ -17,6 +17,7 @@
  */
 
 import React from "react";
+import { Icon } from "../components/ui/Icon";
 import { contact } from "../data/contact";
 import { cancellationSlabsTour } from "../data";
 
@@ -487,7 +488,7 @@ export function TermsPage({ language }: TermsPageProps) {
             <div className="cta-banner-buttons">
               <a href={`tel:${contact.phone}`} className="button button-gold">
                 <span>{isHi ? "कॉल करें: " + contact.phoneDisplay : "Call " + contact.phoneDisplay}</span>
-                <span aria-hidden="true">📞</span>
+                <span aria-hidden="true"><Icon name="phone" size={16} /></span>
               </a>
 
               <a
@@ -501,7 +502,7 @@ export function TermsPage({ language }: TermsPageProps) {
                 className="button button-outline"
               >
                 <span>{isHi ? "व्हाट्सएप चैट" : "WhatsApp Desk"}</span>
-                <span aria-hidden="true">💬</span>
+                <span aria-hidden="true"><Icon name="whatsapp" size={16} /></span>
               </a>
 
               <a href="/book.html" className="button button-secondary">

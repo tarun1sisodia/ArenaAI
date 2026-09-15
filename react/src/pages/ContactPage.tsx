@@ -15,6 +15,7 @@
  */
 
 import React, { useState } from "react";
+import { Icon } from "../components/ui/Icon";
 import { contact } from "../data/contact";
 
 interface ContactPageProps {
@@ -681,7 +682,7 @@ Please share available cabs and upfront fare quote.`;
                         className="button button-gold button-block"
                       >
                         <span>{isHi ? "व्हाट्सएप पर तुरंत पुष्टि पाएं" : "Continue on WhatsApp for Instant Confirmation"}</span>
-                        <span aria-hidden="true">💬</span>
+                        <span aria-hidden="true"><Icon name="whatsapp" size={16} /></span>
                       </a>
 
                       <button
@@ -1011,7 +1012,7 @@ Please share available cabs and upfront fare quote.`;
                 aria-label="Call SK Baghel Tour & Travels"
               >
                 <span>{isHi ? "कॉल करें: " + contact.phoneDisplay : "Call " + contact.phoneDisplay}</span>
-                <span aria-hidden="true">📞</span>
+                <span aria-hidden="true"><Icon name="phone" size={16} /></span>
               </a>
 
               <a
@@ -1026,7 +1027,7 @@ Please share available cabs and upfront fare quote.`;
                 aria-label="Chat on WhatsApp"
               >
                 <span>{isHi ? "व्हाट्सएप चैट" : "WhatsApp Desk"}</span>
-                <span aria-hidden="true">💬</span>
+                <span aria-hidden="true"><Icon name="whatsapp" size={16} /></span>
               </a>
 
               <a

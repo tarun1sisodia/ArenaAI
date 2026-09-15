@@ -2,6 +2,7 @@ import { useState } from "react";
 import { AnalyticsBoard } from "../components/ui/AnalyticsBoard";
 import { Icon, type IconName } from "../components/ui/Icon";
 import { Reveal, Stagger, StaggerItem } from "../components/ui/motion";
+import { Button } from "../components/ui/Button";
 import type { SupportedLanguage } from "../config";
 import { contact } from "../data/contact";
 import {
@@ -352,22 +353,25 @@ export function ServicesPage({ language }: ServicesPageProps) {
               : "From dawn departures at the Taj Mahal to multi-city Golden Triangle journeys, airport express pickups, and group tempo travel — transparent fares with verified local drivers."}
           </p>
           <div className="hero-actions">
-            <a className="button button-primary" href={`tel:${contact.phone}`}>
+            <Button href={`tel:${contact.phone}`}>
+              <Icon name="phone" size={17} />
               {isHindi
                 ? `कॉल करें ${contact.phoneDisplay}`
                 : `Call ${contact.phoneDisplay}`}
-            </a>
-            <a
-              className="button button-outline"
+            </Button>
+            <Button
+              variant="outline"
               href={`https://wa.me/${contact.whatsapp}`}
               target="_blank"
               rel="noreferrer"
             >
+              <Icon name="whatsapp" size={17} />
               {isHindi ? "व्हाट्सएप सहायता" : "WhatsApp Desk"}
-            </a>
-            <a className="button button-outline" href="/book.html">
-              {isHindi ? "उपलब्धता जांचें ↗" : "Check Availability ↗"}
-            </a>
+            </Button>
+            <Button variant="outline" href="/book.html">
+              <Icon name="arrow-up-right" size={17} />
+              {isHindi ? "उपलब्धता जांचें" : "Check Availability"}
+            </Button>
           </div>
         </div>
       </header>
@@ -699,7 +703,7 @@ export function ServicesPage({ language }: ServicesPageProps) {
 
           <div className="transparency-grid">
             <div className="transparency-card">
-              <div className="transparency-icon">🧾</div>
+              <div className="transparency-icon"><Icon name="info" size={20} /></div>
               <h3>{isHindi ? "ऑल-इनक्लूसिव वन-वे ड्रॉप" : "All-Inclusive One-Way"}</h3>
               <p>
                 {isHindi
@@ -709,7 +713,7 @@ export function ServicesPage({ language }: ServicesPageProps) {
             </div>
 
             <div className="transparency-card">
-              <div className="transparency-icon">📏</div>
+              <div className="transparency-icon"><Icon name="gauge" size={20} /></div>
               <h3>{isHindi ? "300 किमी/दिन का आउटस्टेशन मानक" : "300 KM/Day Outstation Rule"}</h3>
               <p>
                 {isHindi
@@ -719,7 +723,7 @@ export function ServicesPage({ language }: ServicesPageProps) {
             </div>
 
             <div className="transparency-card">
-              <div className="transparency-icon">🌙</div>
+              <div className="transparency-icon"><Icon name="clock" size={20} /></div>
               <h3>{isHindi ? "पारदर्शी नाइट अलाउंस" : "Night Driving Allowance"}</h3>
               <p>
                 {isHindi
@@ -729,7 +733,7 @@ export function ServicesPage({ language }: ServicesPageProps) {
             </div>
 
             <div className="transparency-card">
-              <div className="transparency-icon">🛡️</div>
+              <div className="transparency-icon"><Icon name="shield-check" size={20} /></div>
               <h3>{isHindi ? "24-घंटे में 100% रिफंड" : "24-Hour Free Cancellation"}</h3>
               <p>
                 {cancellationPolicyCab[activeLanguage]}

@@ -5,6 +5,7 @@ import { vehicles, airportTransfers } from "../data";
 import { AnalyticsBoard } from "../components/ui/AnalyticsBoard";
 import { Icon, type IconName } from "../components/ui/Icon";
 import { Reveal, Stagger, StaggerItem } from "../components/ui/motion";
+import { Button } from "../components/ui/Button";
 
 interface FleetPageProps {
   language?: SupportedLanguage;
@@ -216,15 +217,18 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
           </p>
 
           <div className="hero-actions">
-            <a className="button button-primary" href="#fleet-catalogue">
-              {isHindi ? "गाड़ियाँ देखें ↓" : "Explore Fleet Below ↓"}
-            </a>
-            <a className="button button-outline" href="#transfers-matrix">
+            <Button href="#fleet-catalogue">
+              <Icon name="car" size={17} />
+              {isHindi ? "गाड़ियाँ देखें" : "Explore Fleet Below"}
+            </Button>
+            <Button variant="outline" href="#transfers-matrix">
+              <Icon name="map-pin" size={17} />
               {isHindi ? "एयरपोर्ट व स्टेशन दरें" : "Airport & Station Transfers"}
-            </a>
-            <a className="button button-outline" href={`tel:${contact.phone}`}>
+            </Button>
+            <Button variant="outline" href={`tel:${contact.phone}`}>
+              <Icon name="phone" size={17} />
               {contact.phoneDisplay}
-            </a>
+            </Button>
           </div>
         </div>
       </header>
