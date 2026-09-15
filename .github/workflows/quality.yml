@@ -1,62 +1,81 @@
-name: "Frontend Quality, SEO & Cloudflare Deployment Guard"
+name: "Customer App — Quality & Cloudflare Deployment Guard"
 
 on:
   push:
     branches:
       - main
       - "arena/**"
+      - "design/**"
+      - "feat/**"
+      - "fix/**"
   pull_request:
     branches:
       - main
 
 jobs:
   quality-gate:
-    name: "Senior Quality & SEO Audit"
+    name: "TypeCheck · Build · Prerender · Asset Guard"
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
+
+    defaults:
+      run:
+        working-directory: react
 
     steps:
       - name: Checkout Codebase
         uses: actions/checkout@v4
 
-      - name: Setup Python Runtime
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
       - name: Setup Node.js Runtime
         uses: actions/setup-node@v4
         with:
           node-version: "24"
+          cache: "npm"
+          cache-dependency-path: react/package-lock.json
 
-      - name: Execute SSG Static Page Generation
-        run: |
-          python3 scripts/render_pages.py
+      - name: Install Dependencies
+        run: npm ci
 
-      - name: Launch Lightweight Preview Server
-        run: |
-          python3 scripts/serve.py 4173 &
-          sleep 2
+      - name: TypeScript Type Check
+        run: npm run typecheck
 
-      - name: Run Senior Frontend Quality & SEO Auditor
-        run: |
-          python3 scripts/quality_audit.py
+      - name: Vite Production Build + Prerender
+        run: npm run build
+        env:
+          VITE_BASE_PATH: "/"
+          # Prerender runs with --experimental-strip-types; no secrets needed at build time.
 
-      - name: Verify Cloudflare Asset Size Budgets (<25 MiB)
+      - name: Verify dist/ was produced
         run: |
-          echo "Scanning all repository assets for Cloudflare 25 MiB limits..."
-          find . -type f -size +25M -not -path "./.git/*" -not -path "./node_modules/*" | tee oversized_assets.txt
-          if [ -s oversized_assets.txt ]; then
+          if [ ! -d dist ] || [ -z "$(ls -A dist)" ]; then
+            echo "::error::dist/ is missing or empty after build"
+            exit 1
+          fi
+          echo "dist/ contents:"
+          ls -lh dist/
+
+      - name: Verify Cloudflare Asset Size Budgets (<25 MiB per file)
+        run: |
+          echo "Scanning dist/ for files exceeding Cloudflare 25 MiB single-file limit..."
+          find dist -type f -size +25M | tee ../oversized_assets.txt
+          if [ -s ../oversized_assets.txt ]; then
             echo "::error::Found assets exceeding Cloudflare 25 MiB threshold!"
-            cat oversized_assets.txt
+            cat ../oversized_assets.txt
             exit 1
           else
-            echo "All assets strictly within Cloudflare 25 MiB limits."
+            echo "All dist/ assets within Cloudflare 25 MiB limits."
           fi
 
-      - name: Publish Quality Scorecard to GitHub Step Summary
+      - name: Publish Build Summary to GitHub Step Summary
         if: always()
         run: |
-          if [ -f quality_report.md ]; then
-            cat quality_report.md >> $GITHUB_STEP_SUMMARY
+          echo "## Customer App Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -d dist ]; then
+            echo "### dist/ output" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            du -sh dist/ && find dist -type f | sort >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ dist/ not found — build likely failed." >> $GITHUB_STEP_SUMMARY
           fi

@@ -25,5 +25,5 @@ jobs:
       - name: Run uptime check
         run: node scripts/healthcheck.mjs
         env:
-          HEALTHCHECK_TIMEOUT_MS: 10000git
+          HEALTHCHECK_TIMEOUT_MS: 10000
           HEALTHCHECK_ATTEMPTS: 2
