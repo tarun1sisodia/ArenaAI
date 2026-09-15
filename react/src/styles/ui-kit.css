@@ -1580,9 +1580,14 @@ html.dark .transparency-icon {
 /* Analytics sections */
 .routes-analytics-section,
 .fleet-analytics-section,
-.services-analytics-section {
+.services-analytics-section,
+.network-board-section {
   border-top: 1px solid var(--border);
   background: var(--bg-alt);
+}
+
+.network-board-section {
+  scroll-margin-top: calc(var(--header) + 16px);
 }
 
 /* --------------------------------------------------------------------------
