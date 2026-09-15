@@ -61,6 +61,8 @@
 | 2026-09-14 | Implemented `backend/` service: fare engine, bookings, payments, dispatch, catalog, reviews, tests | Arena Agent |
 | 2026-09-14 | Connected live Supabase PostgreSQL & MongoDB Atlas, applied all 10 migrations, and seeded base data | Antigravity AI |
 | 2026-09-14 | Purged drivers & vehicles from database and backend codebase per client instructions; 100% test pass | Antigravity AI |
+| 2026-09-15 | Phase H1: Added HTTP/3 Alt-Svc, Timing-Allow-Origin, Link preload headers, verification suite | Antigravity AI |
+| 2026-09-15 | Phase H2: Applied migration 0012 (partial/covering/trigram indexes), added poolConfig for PgBouncer port 6543, ConcurrencyError optimistic locking & row locks | Antigravity AI |
 
 
 ## References

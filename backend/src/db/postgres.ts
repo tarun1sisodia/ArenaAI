@@ -15,6 +15,8 @@ import type {
   WebhookEventRecord,
 } from "../types/domain.js";
 import type { Repositories } from "./types.js";
+import { createPoolConfig } from "./poolConfig.js";
+import { ConcurrencyError } from "./concurrency.js";
 
 type PoolClient = pg.PoolClient;
 
@@ -108,7 +110,11 @@ function mapPayment(row: Record<string, unknown>): PaymentRecord {
 }
 
 export async function createPostgresRepositories(databaseUrl: string): Promise<Repositories> {
-  const pool = new pg.Pool({ connectionString: databaseUrl, max: 10 });
+  const pool = new pg.Pool(createPoolConfig(databaseUrl));
+
+  pool.on("error", (err) => {
+    console.error("Unexpected error on idle PostgreSQL client:", err);
+  });
 
   async function query<T extends Record<string, unknown>>(
     client: pg.Pool | PoolClient,
@@ -192,7 +198,11 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
             // Try to get current version to give better error
             const current = await query(client, "select version from bookings where id=$1", [record.id]);
             if (current[0]) {
-              throw new Error(`booking version conflict: expected ${num(current[0].version) + 1} got ${record.version}`);
+              const currentVer = num(current[0].version);
+              throw new ConcurrencyError(
+                `booking version conflict: expected ${currentVer + 1} got ${record.version}`,
+                { currentVersion: currentVer, expectedVersion: record.version - 1, entityId: record.id },
+              );
             }
             throw new Error("booking update failed: not found");
           }
@@ -284,7 +294,9 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
           return mapPayment(rows[0]!);
         },
         async getById(id: string) {
-          const rows = await query(client, "select * from payments where id=$1", [id]);
+          const isTx = "release" in client && typeof (client as { release?: unknown }).release === "function";
+          const sql = isTx ? "select * from payments where id=$1 for update" : "select * from payments where id=$1";
+          const rows = await query(client, sql, [id]);
           return rows[0] ? mapPayment(rows[0]) : null;
         },
         async getByIdempotencyKey(key: string) {

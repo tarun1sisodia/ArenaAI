@@ -17,6 +17,7 @@ import type {
   WebhookEventRecord,
 } from "../types/domain.js";
 import type { BookingListFilter, CatalogListFilter, Repositories, ReviewListFilter } from "./types.js";
+import { ConcurrencyError } from "./concurrency.js";
 
 function clone<T>(value: T): T {
   return structuredClone(value);
@@ -116,6 +117,16 @@ export function createMemoryRepositories(nowIso = new Date().toISOString()): Rep
         return clone(record);
       },
       async update(record) {
+        const existing = bookings.get(record.id);
+        if (!existing) {
+          throw new Error("booking update failed: not found");
+        }
+        if (record.version !== existing.version + 1) {
+          throw new ConcurrencyError(
+            `Booking version conflict for ${record.id}: expected ${existing.version + 1}, got ${record.version}`,
+            { currentVersion: existing.version, expectedVersion: record.version - 1, entityId: record.id },
+          );
+        }
         bookings.set(record.id, clone(record));
         bookingsByTicket.set(record.ticketId, record.id);
         return clone(record);
