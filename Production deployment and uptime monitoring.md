@@ -85,10 +85,13 @@ The monitor below sends a request every five minutes, which reduces idle sleep w
    npx wrangler pages deploy dist --project-name skbagheltravels-customer
    ```
    For a Git-connected project Cloudflare runs this automatically after the build step; you do not need to run it manually on every push.
-9. Add the production variable `VITE_API_BASE_URL=https://api.skbagheltravels.in` under **Settings → Environment variables → Production**.
-10. Deploy. Cloudflare Pages should show the generated site preview URL.
-11. Add `skbagheltravels.in` and `www.skbagheltravels.in` under **Custom domains**. Cloudflare will create or request the required DNS records.
-12. Confirm the site loads at `https://skbagheltravels.in/`, the Hindi routes load, and the booking flow can reach the API.
+9. Under **Advanced settings**:
+   - **Non-production branch deploy command:** leave as `npx wrangler versions upload` (Cloudflare's default for preview-branch builds).
+   - **Path:** leave as `/`. This is the route prefix for the Pages worker — `/` means the project handles all paths from root. It is not the same as the Root directory setting above.
+10. Add the production variable `VITE_API_BASE_URL=https://api.skbagheltravels.in` under **Settings → Environment variables → Production**.
+11. Deploy. Cloudflare Pages should show the generated site preview URL.
+12. Add `skbagheltravels.in` and `www.skbagheltravels.in` under **Custom domains**. Cloudflare will create or request the required DNS records.
+13. Confirm the site loads at `https://skbagheltravels.in/`, the Hindi routes load, and the booking flow can reach the API.
 
 The same settings are recorded in [`react/cloudflare-pages.toml`](../react/cloudflare-pages.toml). For a one-off manual deployment from a machine with Wrangler authenticated:
 
@@ -110,10 +113,13 @@ SPA deep-link routing (`react/wrangler.jsonc` → `not_found_handling: "404-page
    npx wrangler pages deploy dist --project-name skbagheltravels-admin
    ```
    For a Git-connected project Cloudflare runs this automatically after the build step.
-7. Add `VITE_API_BASE_URL=https://api.skbagheltravels.in` under the production environment variables.
-8. Deploy and open the generated Pages URL.
-9. Add the custom domain `admin.skbagheltravels.in` under **Custom domains**.
-10. Confirm the admin login route, deep links such as `/bookings`, and API requests work over HTTPS.
+7. Under **Advanced settings**:
+   - **Non-production branch deploy command:** leave as `npx wrangler versions upload` (Cloudflare's default for preview-branch builds).
+   - **Path:** leave as `/`. This is the route prefix the Pages worker handles — `/` means all paths. It is **not** the same as the Root directory; do not change it to `/admin`.
+8. Add `VITE_API_BASE_URL=https://api.skbagheltravels.in` under the production environment variables.
+9. Deploy and open the generated Pages URL.
+10. Add the custom domain `admin.skbagheltravels.in` under **Custom domains**.
+11. Confirm the admin login route, deep links such as `/bookings`, and API requests work over HTTPS.
 
 The same settings are recorded in [`admin/cloudflare-pages.toml`](../admin/cloudflare-pages.toml). For a one-off manual deployment:
 
