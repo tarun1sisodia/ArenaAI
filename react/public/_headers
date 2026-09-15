@@ -1,0 +1,22 @@
+# SK Baghel Tour & Travels — Customer site security & cache headers
+
+# Security headers for all routes
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
+
+# Vite emits content-hashed filenames — safe to cache for 1 year.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# HTML must always revalidate so visitors pick up re-deploys instantly.
+/*.html
+  Cache-Control: no-cache, must-revalidate
+
+# Sitemap and robots.txt — short TTL so search engines get fresh copies.
+/sitemap.xml
+  Cache-Control: public, max-age=3600
+/robots.txt
+  Cache-Control: public, max-age=3600
