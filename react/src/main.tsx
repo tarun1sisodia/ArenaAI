@@ -1,5 +1,5 @@
 import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
+import { createRoot, hydrateRoot } from "react-dom/client";
 import App from "@/app/App";
 import { AppErrorBoundary } from "@/AppErrorBoundary";
 import { assertCatalogueInvariants } from "@/data/parity";
@@ -18,10 +18,16 @@ try {
   console.warn("Catalogue invariant check warning:", e);
 }
 
-createRoot(root).render(
+const appTree = (
   <StrictMode>
     <AppErrorBoundary>
       <App />
     </AppErrorBoundary>
   </StrictMode>
 );
+
+if (root.hasChildNodes()) {
+  hydrateRoot(root, appTree);
+} else {
+  createRoot(root).render(appTree);
+}

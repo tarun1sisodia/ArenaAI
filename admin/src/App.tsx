@@ -1,16 +1,17 @@
-import { useCallback, useEffect, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useState } from "react";
 import { BrowserRouter, Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { LoginPage } from "@/components/login/LoginPage";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { DashboardPage } from "@/pages/DashboardPage";
-import { BookingsPage } from "@/pages/BookingsPage";
-import { FinancePage } from "@/pages/FinancePage";
-import { CatalogPage } from "@/pages/CatalogPage";
-import { ReviewsPage } from "@/pages/ReviewsPage";
-import { InquiriesPage } from "@/pages/InquiriesPage";
-import { FaresPage } from "@/pages/FaresPage";
-import { AuditPage } from "@/pages/AuditPage";
+
+const BookingsPage = lazy(() => import("@/pages/BookingsPage").then((m) => ({ default: m.BookingsPage })));
+const FinancePage = lazy(() => import("@/pages/FinancePage").then((m) => ({ default: m.FinancePage })));
+const CatalogPage = lazy(() => import("@/pages/CatalogPage").then((m) => ({ default: m.CatalogPage })));
+const ReviewsPage = lazy(() => import("@/pages/ReviewsPage").then((m) => ({ default: m.ReviewsPage })));
+const InquiriesPage = lazy(() => import("@/pages/InquiriesPage").then((m) => ({ default: m.InquiriesPage })));
+const FaresPage = lazy(() => import("@/pages/FaresPage").then((m) => ({ default: m.FaresPage })));
+const AuditPage = lazy(() => import("@/pages/AuditPage").then((m) => ({ default: m.AuditPage })));
 import type { AdminRole, AdminUser } from "@/lib/types";
 
 const SESSION_KEY = "skb-admin-session";
@@ -61,19 +62,21 @@ function Root({ user, onLogin, onLogout }: { user: AdminUser | null; onLogin: (r
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <Routes>
-            <Route element={<AdminLayout user={user} onLogout={onLogout} />}>
-              <Route index element={<DashboardPage />} />
-              <Route path="bookings" element={<BookingsPage user={user} />} />
-              <Route path="finance" element={<FinancePage user={user} />} />
-              <Route path="catalog" element={<CatalogPage user={user} />} />
-              <Route path="reviews" element={<ReviewsPage user={user} />} />
-              <Route path="inquiries" element={<InquiriesPage user={user} />} />
-              <Route path="fares" element={<FaresPage user={user} />} />
-              <Route path="audit" element={<AuditPage user={user} />} />
-            </Route>
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
+          <Suspense fallback={<div className="flex h-64 items-center justify-center text-sm text-slate-400">Loading module...</div>}>
+            <Routes>
+              <Route element={<AdminLayout user={user} onLogout={onLogout} />}>
+                <Route index element={<DashboardPage />} />
+                <Route path="bookings" element={<BookingsPage user={user} />} />
+                <Route path="finance" element={<FinancePage user={user} />} />
+                <Route path="catalog" element={<CatalogPage user={user} />} />
+                <Route path="reviews" element={<ReviewsPage user={user} />} />
+                <Route path="inquiries" element={<InquiriesPage user={user} />} />
+                <Route path="fares" element={<FaresPage user={user} />} />
+                <Route path="audit" element={<AuditPage user={user} />} />
+              </Route>
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </Suspense>
         </motion.div>
       )}
     </AnimatePresence>

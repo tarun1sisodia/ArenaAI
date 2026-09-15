@@ -182,7 +182,7 @@ export async function prerender(): Promise<void> {
 
   try {
     // Load dynamic React App & SEO helpers
-    const { default: App, getMarketingPath, getSeo } = await vite.ssrLoadModule("/src/app/App.tsx");
+    const { default: App, getMarketingPath, getSeo } = await vite.ssrLoadModule("/src/app/ServerApp.tsx");
     const {
       CANONICAL_DOMAIN,
       normalizePath,
