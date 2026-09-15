@@ -22,6 +22,7 @@
     "backend:typecheck": "npm --prefix backend run typecheck",
     "test": "npm --prefix backend run test:ci",
     "healthcheck": "node scripts/healthcheck.mjs",
+    "testsprite:validate": "node scripts/validate-testsprite.mjs",
     "deploy:customer": "npm run customer:build && npx wrangler pages deploy react/dist --project-name arenaai",
     "deploy:admin": "npm run admin:build && npx wrangler pages deploy admin/dist --project-name skb-admin"
   },

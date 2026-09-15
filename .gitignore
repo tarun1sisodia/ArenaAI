@@ -10,3 +10,9 @@ dist/
 .env.*
 !.env.example
 *.zip
+
+# TestSprite generates reports, screenshots, and executable test artifacts.
+# Keep the curated inputs under testsprite/ tracked, but not generated output.
+testsprite_tests/
+TestSprite_MCP_Test_Report.*
+testsprite-results/

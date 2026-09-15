@@ -31,6 +31,9 @@ with that subpath. The build script handles this automatically:
 The production monorepo deployment topology for the React customer site, admin
 panel, and Node.js API is documented in [`docs/DEPLOYMENT.md`](./docs/DEPLOYMENT.md).
 
+The TestSprite QA context, synthetic fixtures, and separate customer/admin/API
+test plans are documented in [`testsprite/README.md`](./testsprite/README.md).
+
 ```bash
 # GitHub Pages project site (default — uses /ArenaAI)
 python3 scripts/render_pages.py
