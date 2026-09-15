@@ -1,0 +1,55 @@
+{
+  "meta": {
+    "project": "ArenaAI / SK Baghel Tour & Travels",
+    "version": "1.0",
+    "prepared_by": "ArenaAI engineering",
+    "canonical_customer_domain": "https://skbagheltravels.in",
+    "admin_domain": "https://admin.skbagheltravels.in",
+    "api_domain": "https://api.skbagheltravels.in"
+  },
+  "product_overview": "A bilingual Agra taxi and tour platform consisting of a React customer website, an operations admin panel, and a Fastify API. The customer experience presents routes, vehicles, packages, fares, contact channels, and a five-step booking flow. The API is authoritative for fare calculations, bookings, payments, catalog, inquiries, reviews, and admin operations.",
+  "core_goals": [
+    "Help customers discover Agra taxi, intercity, vehicle, and package services in English and Hindi.",
+    "Make transparent server-authoritative fares and booking information available before commitment.",
+    "Allow customers to contact the travel desk through call, WhatsApp, inquiries, and booking workflows.",
+    "Provide operations staff with role-aware dashboards for bookings, finance, catalog, reviews, inquiries, fares, and audit history.",
+    "Protect booking, payment, admin, webhook, and personally identifiable data from unauthorized access or mutation.",
+    "Keep the customer and admin clients maintainable as static deployments while the API remains the source of truth."
+  ],
+  "key_features": [
+    { "name": "Customer marketing site", "description": "Responsive React pages for home, routes, services, fleet, packages, about, contact, FAQ, privacy, terms, and not-found handling.", "apps": ["customer"] },
+    { "name": "Bilingual navigation", "description": "English and Hindi routes with language-aware content, metadata, canonical links, and hreflang parity.", "apps": ["customer"] },
+    { "name": "Fare discovery", "description": "Route and vehicle selection with one-way/round-trip, passenger capacity, night allowance, package, and promo behavior.", "apps": ["customer", "backend"] },
+    { "name": "Five-step booking", "description": "Search, vehicle selection, customer details, mock payment method, and confirmation ticket flow.", "apps": ["customer", "backend"] },
+    { "name": "Location autocomplete", "description": "Location search backed by static curated places locally and LocationIQ when configured.", "apps": ["customer", "backend"] },
+    { "name": "Admin operations", "description": "Dashboard and role-oriented screens for bookings, finance, catalog, reviews, inquiries, fares, and audit.", "apps": ["admin", "backend"] },
+    { "name": "API security", "description": "CORS, helmet, rate limits, request IDs, schema validation, auth guards, role guards, raw webhook handling, and masked booking data.", "apps": ["backend"] },
+    { "name": "Payments and webhooks", "description": "Checkout creation, idempotency, signed webhook reconciliation, refunds, and provider adapters.", "apps": ["backend"] }
+  ],
+  "user_flow_summary": [
+    "Customer opens the site, switches English/Hindi, browses a route or package, and reaches a fare or contact CTA.",
+    "Customer completes the booking flow with a valid future date, route, vehicle, passenger count, contact details, and mock payment choice.",
+    "Customer receives a ticket identifier and can only retrieve a masked voucher after the required verification.",
+    "Customer sends an inquiry with valid name, phone, message, and optional email or trip interest.",
+    "Admin signs in with an isolated test role, navigates protected screens, and sees only permitted operations.",
+    "Admin reviews bookings, catalog, inquiries, reviews, fare information, finance, and audit records through API-backed flows.",
+    "API clients call health/readiness, fares, locations, bookings, payments, catalog, reviews, inquiries, and admin endpoints with valid and invalid inputs."
+  ],
+  "validation_criteria": [
+    "All happy paths work at desktop and mobile viewport sizes without console errors or failed critical requests.",
+    "Deep links and browser refreshes resolve correctly for customer and admin routes.",
+    "English/Hindi content and fare values remain equivalent where the product contract requires parity.",
+    "Required fields, type boundaries, malformed values, unknown fields, XSS-like input, past dates, over-capacity vehicles, and invalid promo codes are rejected safely.",
+    "Unauthorized and wrong-role requests receive the expected 401/403 behavior and do not leak protected data.",
+    "Booking reads require full verification and return masked personal data.",
+    "Payment and refund operations are idempotent and never mark a booking paid from an unverified browser redirect.",
+    "API responses use the documented success/error envelope and include request IDs for failures.",
+    "Rate limiting, CORS, security headers, payload-size handling, webhook signatures, and secret redaction behave as designed.",
+    "Accessibility covers keyboard navigation, labels, focus states, semantic headings, contrast, reduced motion, and meaningful error announcements."
+  ],
+  "code_summary": {
+    "tech_stack": ["React 19", "TypeScript", "Vite", "React Router", "Fastify 5", "Zod", "Vitest", "PostgreSQL/Supabase", "MongoDB optional", "Cloudflare Pages", "Render Docker"],
+    "project_roots": { "customer": "react/", "admin": "admin/", "backend": "backend/" },
+    "entry_points": { "customer": "react/src/main.tsx", "admin": "admin/src/main.tsx", "backend": "backend/src/server.ts" }
+  }
+}

@@ -1,0 +1,45 @@
+services:
+  - type: web
+    name: skb-baghel-api
+    runtime: docker
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 4000
+      - key: DATABASE_URL
+        sync: false
+      - key: CORS_ORIGINS
+        value: https://skbagheltravels.in,https://www.skbagheltravels.in,https://admin.skbagheltravels.in
+      - key: ALLOW_TEST_AUTH
+        value: "false"
+      - key: API_BASE_URL
+        sync: false
+      - key: FARE_RULES_VERSION
+        value: 2026-09-13
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: SUPABASE_JWT_SECRET
+        sync: false
+      - key: RAZORPAY_KEY_ID
+        sync: false
+      - key: RAZORPAY_KEY_SECRET
+        sync: false
+      - key: RAZORPAY_WEBHOOK_SECRET
+        sync: false
+      - key: LOCATIONIQ_TOKEN
+        sync: false
+      - key: WHATSAPP_TOKEN
+        sync: false
+      - key: WHATSAPP_PHONE_NUMBER_ID
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: EMAIL_FROM
+        value: bookings@skbagheltravels.in

@@ -1,0 +1,40 @@
+{
+  "project": "ArenaAI",
+  "repository": "tarun1sisodia/ArenaAI",
+  "branch": "design/homepage",
+  "tech_stack": ["React 19", "TypeScript", "Vite", "React Router", "Fastify 5", "Zod", "Vitest", "PostgreSQL/Supabase", "Cloudflare Pages", "Render Docker"],
+  "applications": [
+    {
+      "name": "customer",
+      "type": "frontend",
+      "root": "react",
+      "entry": "react/src/main.tsx",
+      "port": 5173,
+      "features": ["marketing pages", "English/Hindi routing", "SEO metadata", "location autocomplete", "fare discovery", "five-step mock booking", "contact/inquiry UI", "responsive/accessibility"],
+      "key_files": ["react/src/app/routes.tsx", "react/src/features/booking/BookingPage.tsx", "react/src/features/booking/fareEngine.ts", "react/src/fares.ts", "react/src/config.ts", "react/src/components/search/LocationCombobox.tsx"]
+    },
+    {
+      "name": "admin",
+      "type": "frontend",
+      "root": "admin",
+      "entry": "admin/src/main.tsx",
+      "port": 5174,
+      "features": ["role selection/demo login", "session persistence", "dashboard", "bookings", "finance", "catalog", "reviews", "inquiries", "fares", "audit", "theme and responsive layout"],
+      "key_files": ["admin/src/App.tsx", "admin/src/components/admin/AdminLayout.tsx", "admin/src/components/admin/Sidebar.tsx", "admin/src/lib/types.ts"]
+    },
+    {
+      "name": "backend",
+      "type": "backend",
+      "root": "backend",
+      "entry": "backend/src/server.ts",
+      "port": 4000,
+      "features": ["health/readiness", "fares", "locations", "bookings", "payments/webhooks", "catalog", "reviews", "inquiries", "admin operations", "CORS", "Helmet", "rate limits", "auth and role guards", "request IDs", "schema validation"],
+      "key_files": ["backend/src/app.ts", "backend/src/modules/fares", "backend/src/modules/bookings", "backend/src/modules/payments", "backend/src/modules/admin", "backend/src/middlewares/authGuard.ts", "backend/src/middlewares/roleGuard.ts", "backend/src/config/env.ts"]
+    }
+  ],
+  "test_strategy": {
+    "frontend": "Run separate Playwright-driven TestSprite plans for customer and admin against their own live ports/URLs.",
+    "backend": "Run a Python/API-driven TestSprite plan against port 4000 using api_context.md and disposable fixture data.",
+    "priority_order": ["health and navigation", "booking/fare core flows", "admin auth and operations", "validation and edge cases", "security/privacy", "responsive/accessibility", "concurrency and performance boundaries"]
+  }
+}

@@ -5,3 +5,14 @@ node_modules/
 .wrangler/
 .pages/
 dist/
+01a08958-2105-7485-8e71-c13b53ceeeba/*
+.env
+.env.*
+!.env.example
+*.zip
+
+# TestSprite generates reports, screenshots, and executable test artifacts.
+# Keep the curated inputs under testsprite/ tracked, but not generated output.
+testsprite_tests/
+TestSprite_MCP_Test_Report.*
+testsprite-results/

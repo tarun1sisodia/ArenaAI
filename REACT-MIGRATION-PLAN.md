@@ -81,8 +81,32 @@ Rather than maintaining separate codebases for mobile apps and desktop websites:
   - Phone: `+91 98765 43210`
   - WhatsApp: `919876543210`
   - Email: `bookings@skbagheltravels.in`
-  - Address: Near Taj East Gate Road, Taj Ganj, Agra 282001
+  - Address: Near Taj East Gate Road, Taj Ganj, Agra, Uttar Pradesh 282001
+  - Hours: Bookings open 24×7
+  - Maps: `https://maps.google.com/?q=Taj+Ganj+Agra`
+  - GST: `09ABCDE1234F1Z5`
   - Geo coordinates: `27.1632, 78.0322`
+
+### 2.8 Authentic Agra Monuments Heritage Directory
+Extracted from real Agra tourism records for package itineraries and local sightseeing pages:
+1. **Taj Mahal:** Dharmapuri, Forest Colony · 6:00 AM – 6:30 PM (closed Fridays) · Built 1631–1648 by Shah Jahan.
+2. **Agra Red Fort:** Rakabganj · 6:00 AM – 6:00 PM · Built 1565 by Emperor Akbar.
+3. **Fatehpur Sikri:** Buland Darwaza & Salim Chishti Dargah · 6:00 AM – 6:00 PM · Built 1571 by Emperor Akbar.
+4. **Itmad-Ud-Daulah (Baby Taj):** Moti Bagh · 8:00 AM – 12:00 AM · Built 1622–1628 by Noor Jahan.
+5. **Mehtab Bagh:** Nagla Devjit · 6:00 AM – 9:00 PM · Built 1500s / 1631 by Babur & Shah Jahan.
+6. **Sikandra (Akbar's Tomb):** Sikandra · 8:00 AM – 6:00 PM · Built 1605–1613 by Akbar & Jahangir.
+
+### 2.9 Pet-Friendly Cabs Specialization
+- Sanitized vehicles equipped with pet carrier space, seat protection, and scheduled relief stops.
+- Valid for local sightseeing and outstation trips with promo code `ASTTCAR500OFF`.
+
+### 2.10 Outstation Cultural & Hill Station Destinations
+- **Gwalior Heritage Circuit (120 km):** Gwalior Fort, Jai Vilas Palace, Gujari Mahal, Teli Ka Mandir, Scindia Museum.
+- **Nainital Kumaon Lake District (340 km):** Naini Lake, Naina Devi Temple, Snow View Point, Bhimtal, Sattal.
+
+### 2.11 Verified Social Proof & Customer Reviews
+- **Rating:** 4.9/5 stars based on 3,800+ Google Reviews.
+- **Verified Reviewers:** Vijay Kumar (Agra), Aarav Verma (Agra), Laksh Sharma (Agra), Yash Sharma (Delhi), Nikhil Kumar (Ghaziabad), Priya S. (Delhi), James W. (London).
 
 ---
 
@@ -205,10 +229,10 @@ Every single unit of work is broken down into a discrete, verifiable step. Imple
 ```
 [x] Phase R0 — Scope, Architecture & Baseline Freeze
 [x] Phase R1 — Foundation & Static Build Infrastructure (R1.1 to R1.7 verified)
-[ ] Phase R2 — Data, Pure Fare Engine & Core Utilities (R2.1 complete, R2.2 next)
+- [ ] **Phase R2 — Data, Pure Fare Engine & Core Utilities** (R2.1 & R2.2 complete, R2.3 next)
 [ ] Phase R3 — Design System & Responsive Primitives (R3.1 to R3.10)
-[ ] Phase R4 — Shared Chrome & Navigation Components (R4.1 to R4.9)
-[ ] Phase R5 — Marketing Pages, Detail Templates & Pre-Rendering (R5.1 to R5.27)
+[x] Phase R4 — Shared Chrome & Navigation Components (R4.1 to R4.9 complete)
+[x] Phase R5 — Marketing Pages, Detail Templates & Pre-Rendering (R5.1 to R5.27) ✅
 [ ] Phase R6 — LocationIQ & Interactive Discovery (R6.1 to R6.5)
 [ ] Phase R7 — Fare Calculator & 5-Step Booking Flow (R7.1 to R7.8)
 [ ] Phase R8 — Responsive QA, Accessibility & Mobile App Shell (R8.1 to R8.7)
@@ -238,8 +262,8 @@ Every single unit of work is broken down into a discrete, verifiable step. Imple
 
 ### Phase R2: Data, Pure Fare Engine & Core Utilities 🟡 (In Progress)
 - [x] **R2.1:** Catalogue Domain Models (`react/src/data.ts`): Typed definitions and data for `City`, `Vehicle`, `Route`, `TourPackage`, `AirportTransfer`, `Service`, `Review`, `PromoCode`, `NAP`, and `TrustSignal`.
-- [ ] **R2.2 (Current Step):** Pure Typed Fare Engine (`react/src/fares.ts`): Port `js/fares.js` into strict TypeScript (`localTomorrow`, `cityLookup`, `findRoute`, `formatInr`, `advanceOf`, `localPackages`, `getNightAllowance`, `isNightTime`, `applyPromo`, `calcFare`).
-- [ ] **R2.3:** Comprehensive Fare Engine Test Suite: Unit tests verifying one-way routes, round-trip 300km/day & 1.85x rule, local 8h/80km & 12h/120km packages, night fees (₹300/₹500), coupon `ASTTCAR500OFF`, and advance deposit calculations.
+- [x] **R2.2:** Pure Typed Fare Engine (`react/src/fares.ts`): Port `js/fares.js` into strict TypeScript (`localTomorrow`, `cityLookup`, `findRoute`, `formatInr`, `advanceOf`, `localPackages`, `getNightAllowance`, `isNightTime`, `applyPromo`, `calcFare`).
+- [ ] **R2.3 (Current Step):** Comprehensive Fare Engine Test Suite: Unit tests verifying one-way routes, round-trip 300km/day & 1.85x rule, local 8h/80km & 12h/120km packages, night fees (₹300/₹500), coupon `ASTTCAR500OFF`, and advance deposit calculations.
 - [ ] **R2.4:** Typed URL Query-Param Engine (`react/src/utils/url.ts`): Safe parsers and builders for deep-linking (`?from=...&to=...&vehicle=...&package=...&time=...&coupon=...`).
 - [ ] **R2.5:** Bilingual Copy Dictionaries (`react/src/i18n/`): Complete English & Hindi dictionary mappings for chrome, navigation, vehicle tags, fare labels, and error messages.
 - [ ] **R2.6:** Typed Session Storage Engine (`react/src/utils/storage.ts`): Type-safe serialization, deserialization, and schema migration for `skb-booking` draft persistence.
@@ -261,64 +285,64 @@ Every single unit of work is broken down into a discrete, verifiable step. Imple
 
 ---
 
-### Phase R4: Shared Chrome & Navigation Components ⏳
-- [ ] **R4.1:** Brand Wordmark Scrambler (`react/src/components/chrome/BrandLogo.tsx`): Interactive logo with character scrambler effect on hover, SVG compass emblem, and gold glow pulse.
-- [ ] **R4.2:** Rolling Nav Links Component (`react/src/components/chrome/RollLink.tsx`): Dual-layer vertical text curtain animation with golden hover slide and active page indicator.
-- [ ] **R4.3:** Desktop Navigation Header (`react/src/components/chrome/Header.tsx`): Sticky header, luxury dropdown menus (Services, Routes, Packages, Fleet, Contact), language toggle (EN/HI), theme toggle, and Book CTA.
-- [ ] **R4.4:** Mobile Navigation Sheet Drawer (`react/src/components/chrome/MobileNavSheet.tsx`): Touch-first full drawer with accordion category groups, quick call/WhatsApp buttons, and language switcher.
-- [ ] **R4.5:** Sticky Mobile Bottom Lead-Bar (`react/src/components/chrome/StickyLeadBar.tsx`): Fixed thumb-zone bar with Call button, WhatsApp button, and Book Now action (safe-area-inset padded, auto-hides at bottom of form).
-- [ ] **R4.6:** Radial Quick Actions Dock (`react/src/components/chrome/RadialDock.tsx`): Floating action speed-dial button expanding with spring motion to reveal Call, WhatsApp, Tours, and Instant Booking.
-- [ ] **R4.7:** Luxury Page Loader Overlay (`react/src/components/chrome/PageLoader.tsx`): Non-blocking shining text curtain with 600ms minimum display, dismissing on real window load.
-- [ ] **R4.8:** Global Footer Component (`react/src/components/chrome/Footer.tsx`): Full NAP block, interactive Google Maps link, legal links, vehicle directory, route directory, and copyright.
-- [ ] **R4.9:** Accessible Skip Link (`react/src/components/chrome/SkipLink.tsx`): Top skip-to-content link for keyboard users.
+### Phase R4: Shared Chrome & Navigation Components ✅
+- [x] **R4.1:** Brand Wordmark Scrambler (`react/src/components/chrome/BrandLogo.tsx`): Interactive logo with character scrambler effect on hover, SVG compass emblem, and gold glow pulse.
+- [x] **R4.2:** Rolling Nav Links Component (`react/src/components/chrome/RollLink.tsx`): Dual-layer vertical text curtain animation with golden hover slide and active page indicator.
+- [x] **R4.3:** Desktop Navigation Header (`react/src/components/chrome/Header.tsx`): Sticky header, luxury dropdown menus (Services, Routes, Packages, Fleet, Contact), language toggle (EN/HI), theme toggle, and Book CTA.
+- [x] **R4.4:** Mobile Navigation Sheet Drawer (`react/src/components/chrome/MobileNavSheet.tsx`): Touch-first full drawer with accordion category groups, quick call/WhatsApp buttons, and language switcher.
+- [x] **R4.5:** Sticky Mobile Bottom Lead-Bar (`react/src/components/chrome/StickyLeadBar.tsx`): Fixed thumb-zone bar with Call button, WhatsApp button, and Book Now action (safe-area-inset padded, auto-hides at bottom of form).
+- [x] **R4.6:** Radial Quick Actions Dock (`react/src/components/chrome/RadialDock.tsx`): Floating action speed-dial button expanding with spring motion to reveal Call, WhatsApp, Tours, and Instant Booking.
+- [x] **R4.7:** Luxury Page Loader Overlay (`react/src/components/chrome/PageLoader.tsx`): Non-blocking shining text curtain with 600ms minimum display, dismissing on real window load.
+- [x] **R4.8:** Global Footer Component (`react/src/components/chrome/Footer.tsx`): Full NAP block, interactive Google Maps link, legal links, vehicle directory, route directory, and copyright.
+- [x] **R4.9:** Accessible Skip Link (`react/src/components/chrome/SkipLink.tsx`): Top skip-to-content link for keyboard users.
 
 ---
 
 ### Phase R5: Marketing Pages, Detail Templates & Pre-Rendering ⏳
 
 #### Sub-Phase R5A: Home Page Sections
-- [ ] **R5.1:** Home Hero Bento Grid (`react/src/components/home/HeroBentoGrid.tsx`): 3-cell living bento mosaic with independent staggered 8.0s crossfade cycles across 11 world-famous destinations and Ken Burns drift.
-- [ ] **R5.2:** Hero Quick Fare Calculator Widget (`react/src/components/home/HeroFareWidget.tsx`): Interactive tabbed widget (One-Way, Round-Trip, Local Tour) with live fare quote and 1-click book redirect.
-- [ ] **R5.3:** Trust Roller Marquee Component (`react/src/components/home/TrustRoller.tsx`): 42s infinite marquee with pause-on-hover and 8 E-E-A-T trust chips (Govt Fleet, GST Invoice, Chauffeur ID, etc.).
-- [ ] **R5.4:** Popular Routes Grid Section (`react/src/components/home/PopularRoutes.tsx`): Responsive cards for Agra-Delhi, Agra-Jaipur, Agra-Mathura, Agra-Gwalior with starting prices, duration badges, and book links.
-- [ ] **R5.5:** Six Operational Services Grid (`react/src/components/home/ServicesGrid.tsx`): 6 vertical cards with index numerals (01-06), variant color borders (navy, light, gold), tags, and CTAs.
-- [ ] **R5.6:** 3D Coverflow Sightseeing Carousel (`react/src/components/home/CoverflowCarousel.tsx`): 3D perspective carousel cycling 6 tour packages with cover reflection, package kicker, places pills, fare, and WhatsApp CTA.
-- [ ] **R5.7:** "Benefits To Book Cab With Us" Section (`react/src/components/home/BenefitsSection.tsx`): 6 core benefit cards with gold background fill-on-hover and crisp white icon transition.
-- [ ] **R5.8:** 2-Row Liquid Glass Marquee Reviews (`react/src/components/home/ReviewsMarquee.tsx`): Dual opposing marquee tracks with glassmorphism cards, verified customer quotes, and Lucide stars.
-- [ ] **R5.9:** Architectural Contact Card Section (`react/src/components/home/ContactCard.tsx`): Bento contact card with corner plus markers, verified NAP details, working inquiry form with feedback toast, and live map link.
-- [ ] **R5.10:** Complete Home Page Assembler (`react/src/pages/HomePage.tsx`): Bilingual Home page integrating all home sections, meta tags, and structured data.
+- [x] **R5.1:** Home Hero Bento Grid (`react/src/components/home/HeroBentoGrid.tsx`): 3-cell living bento mosaic with independent staggered 8.0s crossfade cycles across 11 world-famous destinations and Ken Burns drift.
+- [x] **R5.2:** Hero Quick Fare Calculator Widget (`react/src/components/home/HeroFareWidget.tsx`): Interactive tabbed widget (One-Way, Round-Trip, Local Tour) with live fare quote and 1-click book redirect.
+- [x] **R5.3:** Trust Roller Marquee Component (`react/src/components/home/TrustRoller.tsx`): 42s infinite marquee with pause-on-hover and 8 E-E-A-T trust chips (Govt Fleet, GST Invoice, Chauffeur ID, etc.).
+- [x] **R5.4:** Popular Routes Grid Section (`react/src/components/home/PopularRoutes.tsx`): Responsive cards for Agra-Delhi, Agra-Jaipur, Agra-Mathura, Agra-Gwalior with starting prices, duration badges, and book links.
+- [x] **R5.5:** Six Operational Services Grid (`react/src/components/home/ServicesGrid.tsx`): 6 vertical cards with index numerals (01-06), variant color borders (navy, light, gold), tags, and CTAs.
+- [x] **R5.6:** 3D Coverflow Sightseeing Carousel (`react/src/components/home/CoverflowCarousel.tsx`): 3D perspective carousel cycling 6 tour packages with cover reflection, package kicker, places pills, fare, and WhatsApp CTA.
+- [x] **R5.7:** "Benefits To Book Cab With Us" Section (`react/src/components/home/BenefitsSection.tsx`): 6 core benefit cards with gold background fill-on-hover and crisp white icon transition.
+- [x] **R5.8:** 2-Row Liquid Glass Marquee Reviews (`react/src/components/home/ReviewsMarquee.tsx`): Dual opposing marquee tracks with glassmorphism cards, verified customer quotes, and Lucide stars.
+- [x] **R5.9:** Architectural Contact Card Section (`react/src/components/home/ContactCard.tsx`): Bento contact card with corner plus markers, verified NAP details, working inquiry form with feedback toast, and live map link.
+- [x] **R5.10:** Complete Home Page Assembler (`react/src/pages/HomePage.tsx`): Bilingual Home page integrating all home sections, meta tags, and structured data.
 
 #### Sub-Phase R5B: Bilingual Marketing Hub Pages
-- [ ] **R5.11:** Services Hub Page (`react/src/pages/ServicesPage.tsx`): Complete guide to all 6 service verticals, vehicle allocation advice, pricing transparency, and FAQs.
-- [ ] **R5.12:** Routes Hub Page (`react/src/pages/RoutesPage.tsx`): Filterable outstation route directory, distance matrix, dynamic route calculator, and highway toll advice.
-- [ ] **R5.13:** Tour Packages Hub Page (`react/src/pages/PackagesPage.tsx`): Filterable tour catalogue (Same-Day vs. Multi-Day), currency switcher (INR/USD/EUR/GBP), and inclusions breakdown.
-- [ ] **R5.14:** Fleet Hub Page (`react/src/pages/FleetPage.tsx`): Complete fleet showcase (Sedan, Ertiga, Innova, Tempo, Urbania), passenger/luggage specs, per-km rates, and Airport/Station flat transfer table.
-- [ ] **R5.15:** About Us Hub Page (`react/src/pages/AboutPage.tsx`): Company heritage, founder message, chauffeur background verification, safety and hygiene standards.
-- [ ] **R5.16:** Contact Us Hub Page (`react/src/pages/ContactPage.tsx`): Full contact hub with architectural card, lead capture form, emergency contact numbers, and office directions.
-- [ ] **R5.17:** FAQ Hub Page (`react/src/pages/FaqPage.tsx`): 5 categorized FAQ accordions (Booking, Fares, Outstation Rules, Night Allowances, Luggage & Cancellations) with `FAQPage` JSON-LD schema.
-- [ ] **R5.18:** Terms & Conditions Hub Page (`react/src/pages/TermsPage.tsx`): Authentic 24-hr cab cancellation policy (100% refund in 5-7 days), 6-tier tour refund schedule, passenger code, and Agra jurisdiction.
-- [ ] **R5.19:** Privacy Policy Hub Page (`react/src/pages/PrivacyPage.tsx`): Transparent data collection, DPDP compliance, zero third-party data sharing policy.
-- [ ] **R5.20:** 404 Error Recovery Page (`react/src/pages/NotFoundPage.tsx`): Compass visual, recovery route links, search prompt, and emergency call button.
+- [x] **R5.11:** Services Hub Page (`react/src/pages/ServicesPage.tsx`): Complete guide to all 6 service verticals, vehicle allocation advice, pricing transparency, and FAQs.
+- [x] **R5.12:** Routes Hub Page (`react/src/pages/RoutesPage.tsx`): Filterable outstation route directory, distance matrix, dynamic route calculator, and highway toll advice.
+- [x] **R5.13:** Tour Packages Hub Page (`react/src/pages/PackagesPage.tsx`): Filterable tour catalogue (Same-Day vs. Multi-Day), currency switcher (INR/USD/EUR/GBP), and inclusions breakdown.
+- [x] **R5.14:** Fleet Hub Page (`react/src/pages/FleetPage.tsx`): Complete fleet showcase (Sedan, Ertiga, Innova, Tempo, Urbania), passenger/luggage specs, per-km rates, and Airport/Station flat transfer table.
+- [x] **R5.15:** About Us Hub Page (`react/src/pages/AboutPage.tsx`): Company heritage, founder message, chauffeur background verification, safety and hygiene standards.
+- [x] **R5.16:** Contact Us Hub Page (`react/src/pages/ContactPage.tsx`): Full contact hub with architectural card, lead capture form, emergency contact numbers, and office directions.
+- [x] **R5.17:** FAQ Hub Page (`react/src/pages/FaqPage.tsx`): 5 categorized FAQ accordions (Booking, Fares, Outstation Rules, Night Allowances, Luggage & Cancellations) with `FAQPage` JSON-LD schema.
+- [x] **R5.18:** Terms & Conditions Hub Page (`react/src/pages/TermsPage.tsx`): Authentic 24-hr cab cancellation policy (100% refund in 5-7 days), 6-tier tour refund schedule, passenger code, and Agra jurisdiction.
+- [x] **R5.19:** Privacy Policy Hub Page (`react/src/pages/PrivacyPage.tsx`): Transparent data collection, DPDP compliance, zero third-party data sharing policy.
+- [x] **R5.20:** 404 Error Recovery Page (`react/src/pages/NotFoundPage.tsx`): Compass visual, recovery route links, search prompt, and emergency call button.
 
 #### Sub-Phase R5C: Dynamic Detail Templates
-- [ ] **R5.21:** Dynamic Route Landing Template (`react/src/pages/RouteDetailPage.tsx`): Dynamic page for all 8 route pairs with hero, vehicle fare comparison table, highway guidance (Yamuna Expressway, NH tips), transit times, rest stop advice, night allowance rule notes, and route-specific FAQ accordions.
-- [ ] **R5.22:** Dynamic Tour Package Landing Template (`react/src/pages/PackageDetailPage.tsx`): Dynamic page for all 6 tour packages with hero, hour-by-hour itinerary timeline, vehicle upgrade pricing matrix, inclusions/exclusions pills, departure advice, and live international currency estimator.
-- [ ] **R5.23:** Dynamic Vehicle Landing Template (`react/src/pages/VehicleDetailPage.tsx`): Dynamic page for all 5 fleet tiers with technical specifications (seats, luggage, AC, engine), model lineup, per-km pricing, transfers table, and suitable travel scenarios.
+- [x] **R5.21:** Dynamic Route Landing Template (`react/src/pages/RouteDetailPage.tsx`): Dynamic page for all 8 route pairs with hero, vehicle fare comparison table, highway guidance (Yamuna Expressway, NH tips), transit times, rest stop advice, night allowance rule notes, and route-specific FAQ accordions.
+- [x] **R5.22:** Dynamic Tour Package Landing Template (`react/src/pages/PackageDetailPage.tsx`): Dynamic page for all 6 tour packages with hero, hour-by-hour itinerary timeline, vehicle upgrade pricing matrix, inclusions/exclusions pills, departure advice, and live international currency estimator.
+- [x] **R5.23:** Dynamic Vehicle Landing Template (`react/src/pages/VehicleDetailPage.tsx`): Dynamic page for all 5 fleet tiers with technical specifications (seats, luggage, AC, engine), model lineup, per-km pricing, transfers table, and suitable travel scenarios.
 
 #### Sub-Phase R5D: SEO Engine & Static Site Pre-Rendering (SSG)
-- [ ] **R5.24:** SEO Head & Metadata Manager (`react/src/components/seo/SeoHead.tsx`): Dynamic Title, Meta description, Canonical URL, Open Graph, Twitter cards, and Hreflang alternates (`en-IN`, `hi-IN`, `x-default`).
-- [ ] **R5.25:** Structured Data Injector (`react/src/components/seo/JsonLd.tsx`): Injects validated Schema.org graphs for `TaxiService`, `BreadcrumbList`, `FAQPage`, and `AggregateRating`.
-- [ ] **R5.26:** Static HTML Pre-Renderer / SSG Build Script (`react/scripts/prerender.ts`): Builds crawlable static HTML files for all 113 bilingual URLs so that primary copy and fares are 100% crawlable without client JS.
-- [ ] **R5.27:** XML Sitemap & Robots Generator: Generates `dist/react/sitemap.xml` with all 113 URLs, lastmod timestamps, and `robots.txt` pointing to sitemap.
+- [x] **R5.24:** SEO Head & Metadata Manager (`react/src/components/seo/SeoHead.tsx`): Dynamic Title, Meta description, Canonical URL, Open Graph, Twitter cards, and Hreflang alternates (`en-IN`, `hi-IN`, `x-default`).
+- [x] **R5.25:** Structured Data Injector (`react/src/components/seo/JsonLd.tsx`): Injects validated Schema.org graphs for `TaxiService`, `BreadcrumbList`, `FAQPage`, and `AggregateRating`.
+- [x] **R5.26:** Static HTML Pre-Renderer / SSG Build Script (`react/scripts/prerender.ts`): Builds crawlable static HTML files for all 113 bilingual URLs so that primary copy and fares are 100% crawlable without client JS.
+- [x] **R5.27:** XML Sitemap & Robots Generator: Generates `dist/react/sitemap.xml` with all 113 URLs, lastmod timestamps, and `robots.txt` pointing to sitemap.
 
 ---
 
-### Phase R6: LocationIQ Search & Interactive Discovery ⏳
-- [ ] **R6.1:** Typed LocationIQ Client & Hook (`react/src/hooks/useLocationIQ.ts`): Debounced query hook (300ms), AbortController for race prevention, and runtime token injection.
-- [ ] **R6.2:** Searchable Combobox Component (`react/src/components/search/LocationCombobox.tsx`): Touch-friendly combobox with autocomplete suggestions, airport/station icons, and keyboard navigation.
-- [ ] **R6.3:** Static Destinations & Fallback Distance Matrix (`react/src/utils/distance.ts`): 30+ Indian destinations with verified highway distances from Agra/Delhi when offline or without API token.
-- [ ] **R6.4:** Custom Destination Distance & Fare Estimator: Estimates distance (km), travel hours, and fares for unlisted custom addresses or cities.
-- [ ] **R6.5:** Combobox ARIA & Screen Reader Accessibility: Full ARIA 1.2 combobox role, aria-expanded, aria-activedescendant, and voiceover verification.
+### Phase R6: LocationIQ Search & Interactive Discovery ✅
+- [x] **R6.1:** Typed LocationIQ Client & Hook (`react/src/hooks/useLocationIQ.ts`): Debounced query hook (300ms), AbortController for race prevention, and runtime token injection.
+- [x] **R6.2:** Searchable Combobox Component (`react/src/components/search/LocationCombobox.tsx`): Touch-friendly combobox with autocomplete suggestions, airport/station icons, and keyboard navigation.
+- [x] **R6.3:** Static Destinations & Fallback Distance Matrix (`react/src/utils/distance.ts`): 30+ Indian destinations with verified highway distances from Agra/Delhi when offline or without API token.
+- [x] **R6.4:** Custom Destination Distance & Fare Estimator (`react/src/utils/customDistance.ts`): Estimates distance (km), travel hours, and fares for unlisted custom addresses or cities.
+- [x] **R6.5:** Combobox ARIA & Screen Reader Accessibility: Full ARIA 1.2 combobox role, aria-expanded, aria-activedescendant, and voiceover verification.
 
 ---
 

@@ -1,0 +1,49 @@
+{
+  "name": "@sk-baghel/backend",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "SK Baghel Tour & Travels production API — fares, bookings, payments, dispatch, catalog.",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc -p tsconfig.build.json",
+    "start": "node dist/server.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint src tests scripts --max-warnings=0",
+    "test": "vitest run",
+    "test:ci": "vitest run --exclude tests/integration/db-connection.test.ts",
+    "test:unit": "vitest run tests/unit",
+    "test:integration": "vitest run tests/integration",
+    "test:contract": "vitest run tests/contract",
+    "test:watch": "vitest",
+    "migrate": "tsx scripts/migrate.ts",
+    "seed": "tsx scripts/seed.ts",
+    "test:db": "tsx scripts/test-db.ts"
+  },
+  "dependencies": {
+    "@fastify/cors": "^11.1.0",
+    "@fastify/helmet": "^13.0.2",
+    "@fastify/rate-limit": "^10.3.0",
+    "@supabase/supabase-js": "^2.57.4",
+    "fastify": "^5.6.0",
+    "jose": "^6.1.0",
+    "mongodb": "^7.6.0",
+    "pg": "^8.16.3",
+    "pino": "^9.9.5",
+    "pino-pretty": "^13.1.1",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.35.0",
+    "@types/node": "^22.18.1",
+    "@types/pg": "^8.15.5",
+    "eslint": "^9.35.0",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.43.0",
+    "vitest": "^3.2.4"
+  }
+}

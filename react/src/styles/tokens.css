@@ -1,0 +1,62 @@
+:root {
+  --bg: #ffffff;
+  --bg-alt: #fafafa;
+  --surface: #ffffff;
+  --text: #0a0a0a;
+  --text-soft: #737373;
+  --gold: #e5a044;
+  --gold-light: #f3c36c;
+  --gold-deep: #b27123;
+  --gold-soft: rgba(229, 160, 68, 0.1);
+  --gold-border: rgba(229, 160, 68, 0.26);
+  --gold-wash: #fdf7ed;
+  --border: rgba(0, 0, 0, 0.08);
+  --navy-deep: #0a0a0a;
+  --navy-soft: #262626;
+  --white: #ffffff;
+  --font-display: Fraunces, "Noto Serif Devanagari", Georgia, serif;
+  --font-ui: Geist, Inter, "DM Sans", "Noto Sans Devanagari", sans-serif;
+  --font-mono: "Geist Mono", "DM Mono", monospace;
+  --motion-fast: 180ms;
+  --motion-medium: 400ms;
+  --motion-slow: 1200ms;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --container: 1140px;
+  --gutter: 24px;
+  --header: 78px;
+  --header-mobile: 64px;
+  --touch: 44px;
+  --radius: 6px;
+  --radius-card: 10px;
+  --radius-pill: 999px;
+}
+
+[data-theme="dark"],
+html.dark {
+  --bg: #181615;
+  --bg-alt: #201E1D;
+  --surface: #242220;
+  --card: #242220;
+  --text: #FDFCFB;
+  --text-soft: #B5AFA9;
+  --gold: #E5A044;
+  --gold-deep: #D44E00;
+  --gold-light: #FF8533;
+  --gold-soft: rgba(229, 160, 68, 0.16);
+  --gold-border: rgba(229, 160, 68, 0.35);
+  --gold-wash: rgba(229, 160, 68, 0.15);
+  --gold-text: #FF8533;
+  --border: #3D3936;
+  --navy-deep: #141211;
+  --navy: #181615;
+  --navy-soft: #242220;
+  --navy-tint: #2B2826;
+  --paper: #181615;
+  --paper-lt: #242220;
+  --paper-dk: #201E1D;
+  --white: #FDFCFB;
+  --muted-2: #B5AFA9;
+  --muted-lt: #8C857E;
+  --line: #3D3936;
+}
+

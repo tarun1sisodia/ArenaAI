@@ -11,6 +11,9 @@ export type SiteContact = {
   postalCode: string;
   latitude: number;
   longitude: number;
+  hours: string;
+  mapsUrl: string;
+  gst: string;
 };
 
 export type SiteConfig = {
@@ -31,12 +34,15 @@ export const siteConfig: SiteConfig = {
     phoneDisplay: "+91 98765 43210",
     whatsapp: "919876543210",
     email: "bookings@skbagheltravels.in",
-    address: "Near Taj East Gate Road, Taj Ganj",
+    address: "Near Taj East Gate Road, Taj Ganj, Agra, Uttar Pradesh 282001",
     city: "Agra",
     region: "Uttar Pradesh",
     postalCode: "282001",
     latitude: 27.1632,
     longitude: 78.0322,
+    hours: "Bookings open 24×7",
+    mapsUrl: "https://maps.google.com/?q=Taj+Ganj+Agra",
+    gst: "09ABCDE1234F1Z5",
   },
 };
 
@@ -51,6 +57,13 @@ function readRuntimeToken(): string {
   if (typeof window === "undefined") return "";
 
   try {
+    const params = new URLSearchParams(window.location.search);
+    const paramKey = params.get("locationiq_key")?.trim();
+    if (paramKey) return paramKey;
+
+    const globalKey = (window as unknown as { LOCATIONIQ_ACCESS_TOKEN?: string }).LOCATIONIQ_ACCESS_TOKEN?.trim();
+    if (globalKey) return globalKey;
+
     return (
       window.localStorage.getItem("locationiq_access_token")?.trim() || ""
     );
@@ -61,4 +74,22 @@ function readRuntimeToken(): string {
 
 export function getLocationIqAccessToken(): string {
   return readRuntimeToken();
+}
+
+export function setLocationIqAccessToken(token: string): void {
+  if (typeof window === "undefined") return;
+  try {
+    const trimmed = token.trim();
+    if (trimmed) {
+      window.localStorage.setItem("locationiq_access_token", trimmed);
+    } else {
+      window.localStorage.removeItem("locationiq_access_token");
+    }
+  } catch {
+    // Ignore storage quota / access errors
+  }
+}
+
+export function clearLocationIqAccessToken(): void {
+  setLocationIqAccessToken("");
 }

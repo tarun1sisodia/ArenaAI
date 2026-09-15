@@ -13,7 +13,7 @@ export default defineConfig(({ mode }) => {
   const base = normalizeBase(env.VITE_BASE_PATH || env.SITE_BASE);
 
   return {
-    root: "react",
+    root: fileURLToPath(new URL(".", import.meta.url)),
     base,
     plugins: [react()],
     resolve: {
@@ -25,14 +25,18 @@ export default defineConfig(({ mode }) => {
       host: "0.0.0.0",
       port: 5173,
       strictPort: false,
+      // Preview/sandbox hosts (e.g. *.e2b.app) are not localhost, so Vite's
+      // host allowlist must be opened for the dev server to be reachable.
+      allowedHosts: true,
     },
     preview: {
       host: "0.0.0.0",
       port: 4174,
       strictPort: false,
+      allowedHosts: true,
     },
     build: {
-      outDir: "../dist/react",
+      outDir: "dist",
       emptyOutDir: true,
     },
   };

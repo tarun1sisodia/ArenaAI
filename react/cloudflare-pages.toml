@@ -1,0 +1,12 @@
+# Cloudflare Pages project: skbagheltravels-customer
+# Set the Pages root directory to `react` in the dashboard, then use:
+# Build command: npm ci && npm run build
+# Build output directory: dist
+# API calls should target https://api.skbagheltravels.in via VITE_API_BASE_URL.
+
+[build]
+command = "npm ci && npm run build"
+output_dir = "dist"
+
+[vars]
+VITE_BASE_PATH = "/"

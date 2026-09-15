@@ -1,0 +1,195 @@
+import { useState } from "react";
+import { ArrowRight, Building2, MessageSquare, Phone, Plane, Send, Users } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { PageHeader } from "@/components/admin/PageHeader";
+import { StatusBadge } from "@/components/admin/StatusBadge";
+import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+import { Input } from "@/components/ui/Input";
+import { INQUIRIES } from "@/lib/mock-data";
+import { can, type AdminUser, type Inquiry, type InquiryStatus } from "@/lib/types";
+import { cn, timeAgo } from "@/lib/utils";
+
+const FLOW: InquiryStatus[] = ["new", "contacted", "quoted", "converted", "closed"];
+
+const TYPE_META = {
+  custom_tour: { label: "Custom tour", icon: Plane, tone: "gold" as const },
+  group_charter: { label: "Group charter", icon: Users, tone: "teal" as const },
+  contact: { label: "Contact", icon: MessageSquare, tone: "neutral" as const },
+};
+
+export function InquiriesPage({ user }: { user: AdminUser }) {
+  const reduce = useReducedMotion();
+  const [items, setItems] = useState<Inquiry[]>(INQUIRIES);
+  const [selectedId, setSelectedId] = useState(items[0]?.id ?? "");
+  const [note, setNote] = useState("");
+  const canManage = can(user.role, "inquiries:manage");
+
+  const selected = items.find((i) => i.id === selectedId);
+
+  function advance(id: string) {
+    setItems((prev) =>
+      prev.map((i) => {
+        if (i.id !== id) return i;
+        const idx = FLOW.indexOf(i.status);
+        const next = FLOW[Math.min(FLOW.length - 1, idx + 1)];
+        return { ...i, status: next };
+      })
+    );
+  }
+
+  function addNote(id: string) {
+    const text = note.trim();
+    if (!text) return;
+    setItems((prev) =>
+      prev.map((i) => (i.id === id ? { ...i, notes: [...i.notes, text] } : i))
+    );
+    setNote("");
+  }
+
+  return (
+    <div>
+      <PageHeader
+        eyebrow="Leads"
+        title="Inquiries & Leads"
+        description="Unified inbox for custom tours, group charters and contact forms — track each lead through the desk workflow."
+      />
+
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[380px_1fr]">
+        {/* List */}
+        <div className="space-y-2">
+          {items.map((item, i) => {
+            const TypeIcon = TYPE_META[item.type].icon;
+            return (
+              <motion.button
+                key={item.id}
+                initial={reduce ? { opacity: 1 } : { opacity: 0, x: -12 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.05, duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                onClick={() => setSelectedId(item.id)}
+                className={cn(
+                  "block w-full rounded-md border p-3.5 text-left transition-all duration-200",
+                  selectedId === item.id
+                    ? "border-gold-border bg-gold-wash shadow-card"
+                    : "border-hairline bg-surface hover:border-gold-border hover:bg-surface-2"
+                )}
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className="flex items-center gap-1.5 text-[13px] font-semibold text-ink">
+                    <TypeIcon className="h-3.5 w-3.5 text-gold" />
+                    {item.name}
+                  </span>
+                  <StatusBadge status={item.status} />
+                </div>
+                <p className="mt-1 line-clamp-1 text-[12.5px] text-ink-soft">{item.subject}</p>
+                <p className="mt-1 font-mono text-[10px] uppercase tracking-wide text-ink-faint">
+                  {TYPE_META[item.type].label} · {timeAgo(item.createdAt)}
+                </p>
+              </motion.button>
+            );
+          })}
+        </div>
+
+        {/* Detail */}
+        <AnimatePresence mode="wait">
+          {selected && (
+            <motion.div
+              key={selected.id}
+              initial={reduce ? { opacity: 1 } : { opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={reduce ? { opacity: 0 } : { opacity: 0, y: -8 }}
+              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <Card className="p-5">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <h2 className="font-display text-xl font-medium tracking-tight text-ink">{selected.subject}</h2>
+                    <div className="mt-1.5 flex flex-wrap items-center gap-3 text-[13px] text-ink-soft">
+                      <span className="flex items-center gap-1.5"><Building2 className="h-3.5 w-3.5 text-gold" />{selected.name}</span>
+                      <span className="flex items-center gap-1.5 font-mono text-[12px]"><Phone className="h-3.5 w-3.5 text-gold" />{selected.phone}</span>
+                      <Badge tone={TYPE_META[selected.type].tone}>{TYPE_META[selected.type].label}</Badge>
+                    </div>
+                  </div>
+                  <StatusBadge status={selected.status} />
+                </div>
+
+                <p className="mt-4 rounded-sm border border-hairline bg-bg-alt p-4 text-[13.5px] leading-relaxed text-ink-soft">
+                  {selected.message}
+                </p>
+
+                {/* Workflow */}
+                <div className="mt-5">
+                  <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.16em] text-ink-faint">Workflow</p>
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    {FLOW.map((s, i) => {
+                      const currentIdx = FLOW.indexOf(selected.status);
+                      const done = i < currentIdx;
+                      const current = i === currentIdx;
+                      return (
+                        <span key={s} className="flex items-center gap-1.5">
+                          {i > 0 && <ArrowRight className="h-3 w-3 text-ink-faint" />}
+                          <span
+                            className={cn(
+                              "rounded-pill border px-2.5 py-1 font-mono text-[11px] capitalize transition-colors",
+                              done && "border-transparent bg-success-soft text-success",
+                              current && "border-gold bg-gold-soft text-gold-text",
+                              !done && !current && "border-hairline text-ink-faint"
+                            )}
+                          >
+                            {s}
+                          </span>
+                        </span>
+                      );
+                    })}
+                  </div>
+                  {canManage && selected.status !== "closed" && (
+                    <div className="mt-3">
+                      <Button variant="gold" size="sm" onClick={() => advance(selected.id)}>
+                        Move to {FLOW[Math.min(FLOW.length - 1, FLOW.indexOf(selected.status) + 1)]} <ArrowRight className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Notes */}
+                <div className="mt-5">
+                  <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.16em] text-ink-faint">Operator notes</p>
+                  <ul className="space-y-2">
+                    {selected.notes.map((n, i) => (
+                      <motion.li
+                        key={i}
+                        initial={reduce ? { opacity: 1 } : { opacity: 0, x: -8 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="rounded-sm bg-surface-2 px-3 py-2 text-[13px] text-ink-soft"
+                      >
+                        {n}
+                      </motion.li>
+                    ))}
+                    {selected.notes.length === 0 && (
+                      <li className="text-[12px] italic text-ink-faint">No notes yet.</li>
+                    )}
+                  </ul>
+                  {canManage && (
+                    <div className="mt-3 flex gap-2">
+                      <Input
+                        placeholder="Add a call summary or agreed price…"
+                        value={note}
+                        onChange={(e) => setNote(e.target.value)}
+                        onKeyDown={(e) => e.key === "Enter" && addNote(selected.id)}
+                        className="h-9 text-[13px]"
+                      />
+                      <Button size="sm" variant="secondary" onClick={() => addNote(selected.id)} aria-label="Add note">
+                        <Send className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </Card>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+}

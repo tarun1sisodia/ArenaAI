@@ -1,0 +1,25 @@
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "skbagheltravels-admin",
+  "compatibility_date": "2026-09-01",
+  "observability": {
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 1,
+      "invocation_logs": true,
+      "persist": true
+    },
+    "traces": {
+      "enabled": true,
+      "head_sampling_rate": 1,
+      "persist": true
+    }
+  },
+  "assets": {
+    "directory": "./dist",
+    "html_handling": "auto-trailing-slash",
+    // The admin panel is a React Router SPA with no prerendered 404 page:
+    // fall back to index.html so deep links (/bookings, /finance) resolve.
+    "not_found_handling": "single-page-application"
+  }
+}

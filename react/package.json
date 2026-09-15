@@ -1,0 +1,29 @@
+{
+  "name": "skb-react",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "react:dev": "vite",
+    "build": "tsc --noEmit && vite build && node --experimental-strip-types scripts/prerender.ts",
+    "react:build": "tsc --noEmit && vite build && node --experimental-strip-types scripts/prerender.ts",
+    "prerender": "node --experimental-strip-types scripts/prerender.ts",
+    "sitemap": "node --experimental-strip-types scripts/generate-sitemap.ts",
+    "typecheck": "tsc --noEmit",
+    "preview": "vite preview",
+    "react:preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.2",
+    "@types/react": "^19.1.10",
+    "@types/react-dom": "^19.1.7",
+    "@vitejs/plugin-react": "^5.0.2",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.3"
+  }
+}
