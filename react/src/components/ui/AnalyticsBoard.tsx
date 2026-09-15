@@ -13,10 +13,9 @@
  * bypassed under `prefers-reduced-motion`.
  */
 
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import { Icon, type IconName } from "./Icon";
 import { CountUp, useHydrated } from "./motion";
-import { useReducedMotion } from "motion/react";
 
 export interface BoardMetric {
   id: string;
