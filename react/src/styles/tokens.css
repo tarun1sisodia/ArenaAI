@@ -23,8 +23,8 @@
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --container: 1140px;
   --gutter: 24px;
-  --header: 78px;
-  --header-mobile: 64px;
+  --header: 58px;
+  --header-mobile: 50px;
   --touch: 44px;
   --radius: 6px;
   --radius-card: 10px;

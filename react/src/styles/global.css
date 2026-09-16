@@ -279,15 +279,15 @@ html.dark .site-header.is-scrolled {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
-  min-height: var(--header, 78px);
+  gap: 16px;
+  min-height: var(--header, 58px);
 }
 
 /* Navigation Desktop & Dropdown Menus */
 .nav-desktop {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
 }
 
 .nav-item {
@@ -402,15 +402,16 @@ html.dark .nav-dropdown-inner {
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .lang-switch {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 6px 12px;
-  font-size: 13px;
+  height: 32px;
+  padding: 0 10px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--text-soft);
   text-decoration: none;
@@ -431,13 +432,13 @@ html.dark .nav-dropdown-inner {
 .btn-outline {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
+  gap: 5px;
+  padding: 6px 12px;
   border-radius: var(--radius, 6px);
   border: 1px solid var(--border);
   background: transparent;
   color: var(--text);
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 600;
   text-decoration: none;
   cursor: pointer;
@@ -454,20 +455,20 @@ html.dark .nav-dropdown-inner {
 }
 
 .btn-sm {
-  min-height: 40px;
-  padding: 0 14px;
-  font-size: 13px;
+  min-height: 32px;
+  padding: 0 12px;
+  font-size: 12px;
 }
 
 .btn-primary {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
+  gap: 5px;
+  padding: 6px 14px;
   border-radius: var(--radius, 6px);
   background: var(--gold, #e5a044);
   color: #ffffff;
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 600;
   text-decoration: none;
   cursor: pointer;
@@ -490,16 +491,16 @@ html.dark .nav-dropdown-inner {
   position: relative;
   display: inline-flex;
   align-items: center;
-  width: 68px;
-  height: 36px;
-  padding: 3px;
+  width: 52px;
+  height: 28px;
+  padding: 2px;
   border-radius: 9999px;
-  border: 2px solid rgba(203, 213, 225, 0.7);
+  border: 1.5px solid rgba(203, 213, 225, 0.7);
   background: radial-gradient(ellipse at top left, #ffffff 0%, #f1f5f9 40%, #cbd5e1 100%);
   box-shadow:
-    inset 2px 2px 6px rgba(148, 163, 184, 0.45),
-    inset -2px -2px 6px rgba(255, 255, 255, 0.95),
-    0 2px 6px rgba(0, 0, 0, 0.08);
+    inset 2px 2px 5px rgba(148, 163, 184, 0.45),
+    inset -2px -2px 5px rgba(255, 255, 255, 0.95),
+    0 2px 5px rgba(0, 0, 0, 0.08);
   cursor: pointer;
   outline: none;
   user-select: none;
@@ -515,12 +516,12 @@ html.dark .nav-dropdown-inner {
 
 [data-theme="dark"] .cinematic-theme-toggle,
 html.dark .cinematic-theme-toggle {
-  border: 2px solid rgba(51, 65, 85, 0.7);
+  border: 1.5px solid rgba(51, 65, 85, 0.7);
   background: radial-gradient(ellipse at top left, #1e293b 0%, #0f172a 40%, #020617 100%);
   box-shadow:
-    inset 2px 2px 6px rgba(0, 0, 0, 0.9),
-    inset -2px -2px 6px rgba(71, 85, 105, 0.35),
-    0 2px 8px rgba(0, 0, 0, 0.4);
+    inset 2px 2px 5px rgba(0, 0, 0, 0.9),
+    inset -2px -2px 5px rgba(71, 85, 105, 0.35),
+    0 2px 6px rgba(0, 0, 0, 0.4);
 }
 
 .cinematic-icons {
@@ -529,20 +530,20 @@ html.dark .cinematic-theme-toggle {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 7px;
+  padding: 0 5px;
   pointer-events: none;
   z-index: 1;
 }
 
 .cinematic-icon-sun {
-  width: 14px;
-  height: 14px;
+  width: 11px;
+  height: 11px;
   color: #D97706;
 }
 
 .cinematic-icon-moon {
-  width: 14px;
-  height: 14px;
+  width: 11px;
+  height: 11px;
   color: #64748B;
 }
 
@@ -562,12 +563,12 @@ html.dark .cinematic-icon-moon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 26px;
-  height: 26px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   background: linear-gradient(145deg, #ffffff 0%, #fefefe 50%, #f1f5f9 100%);
   border: 1.5px solid rgba(255, 255, 255, 0.95);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.16);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.16);
   transform: translateX(0);
   transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1),
               background 300ms ease;
@@ -576,15 +577,15 @@ html.dark .cinematic-icon-moon {
 
 [data-theme="dark"] .cinematic-puck,
 html.dark .cinematic-puck {
-  transform: translateX(32px);
+  transform: translateX(24px);
   background: linear-gradient(145deg, #475569 0%, #334155 50%, #1e293b 100%);
   border-color: rgba(148, 163, 184, 0.4);
 }
 
 .nav-toggle {
   display: none;
-  width: 40px;
-  height: 40px;
+  width: 34px;
+  height: 34px;
   align-items: center;
   justify-content: center;
   background: transparent;
@@ -898,7 +899,7 @@ html.dark .sheet-content {
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 11px;
+  gap: 8px;
   text-decoration: none;
   flex: 0 0 auto;
   color: var(--text);
@@ -906,8 +907,8 @@ html.dark .sheet-content {
 }
 
 .brand-mark {
-  width: 32px;
-  height: 32px;
+  width: 26px;
+  height: 26px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -931,14 +932,14 @@ html.dark .sheet-content {
 .brand-copy {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
   line-height: 1;
 }
 
 .brand-copy strong.brand-wordmark {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.12em;
   color: var(--text);
   font-family: var(--font-ui);
   transition: color var(--motion-fast, 180ms) ease;
@@ -952,8 +953,8 @@ html.dark .sheet-content {
 .brand-copy small.brand-subtext {
   color: var(--text-soft);
   font-family: var(--font-mono);
-  font-size: 7.5px;
-  letter-spacing: 0.13em;
+  font-size: 7px;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   font-weight: 500;
 }
@@ -986,7 +987,8 @@ html.dark .sheet-content {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 7px 14px;
+  padding: 5px 10px;
+  font-size: 13.5px;
   border: 1.5px solid transparent;
   border-radius: var(--radius, 6px);
   overflow: hidden;
