@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { Compass, Moon, ShieldCheck, Timer, Users } from "lucide-react";
+import { AlertTriangle, Compass, Moon, ShieldCheck, Timer, Users } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import { PageHeader } from "@/components/admin/PageHeader";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Table, TBody, THead, TD, TH, TRow } from "@/components/ui/Table";
-import { FARE_RULESET } from "@/lib/mock-data";
+import { FARE_RULESET } from "@/lib/fares";
 import { fetchAdminFareRules } from "@/lib/api";
 import { can, type AdminUser, type FareRuleset } from "@/lib/types";
 import { formatINR } from "@/lib/utils";
@@ -14,6 +14,7 @@ export function FaresPage({ user }: { user: AdminUser }) {
   const reduce = useReducedMotion();
   const canRead = can(user.role, "fares:read");
   const [rs, setRs] = useState<FareRuleset>(FARE_RULESET);
+  const [loadWarning, setLoadWarning] = useState<string | null>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -23,8 +24,11 @@ export function FaresPage({ user }: { user: AdminUser }) {
           setRs(data);
         }
       })
-      .catch((err) => {
-        console.warn("[FaresPage] Remote fare rules fetch failed, using local ruleset", err);
+      .catch(() => {
+        if (isMounted) {
+          // Keep the built-in ruleset for display, but tell the user it is not live.
+          setLoadWarning("Could not reach the backend fare engine — showing the built-in ruleset.");
+        }
       });
     return () => {
       isMounted = false;
@@ -56,6 +60,16 @@ export function FaresPage({ user }: { user: AdminUser }) {
           </Badge>
         }
       />
+
+      {loadWarning && (
+        <div
+          className="mb-4 flex items-start gap-2.5 rounded-md border border-gold-border bg-gold-soft px-4 py-3 text-[13px] text-gold-text"
+          role="status"
+        >
+          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+          <span className="leading-snug">{loadWarning}</span>
+        </div>
+      )}
 
       {/* Rule chips */}
       <div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-3">

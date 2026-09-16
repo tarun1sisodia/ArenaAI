@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ArrowRight, Building2, MessageSquare, Phone, Plane, Send, Users } from "lucide-react";
+import { AlertTriangle, ArrowRight, Building2, MessageSquare, Phone, Plane, Send, Users, X } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { PageHeader } from "@/components/admin/PageHeader";
 import { StatusBadge } from "@/components/admin/StatusBadge";
@@ -7,7 +7,6 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Input } from "@/components/ui/Input";
-import { INQUIRIES } from "@/lib/mock-data";
 import { fetchAdminInquiries, updateAdminInquiry } from "@/lib/api";
 import { can, type AdminUser, type Inquiry, type InquiryStatus, type InquiryType } from "@/lib/types";
 import { cn, timeAgo } from "@/lib/utils";
@@ -24,24 +23,30 @@ const TYPE_META: Record<InquiryType, { label: string; icon: typeof Plane; tone: 
 
 export function InquiriesPage({ user }: { user: AdminUser }) {
   const reduce = useReducedMotion();
-  const [items, setItems] = useState<Inquiry[]>(INQUIRIES);
-  const [selectedId, setSelectedId] = useState(items[0]?.id ?? "");
+  const [items, setItems] = useState<Inquiry[]>([]);
+  const [selectedId, setSelectedId] = useState("");
   const [note, setNote] = useState("");
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
   const canManage = can(user.role, "inquiries:manage");
 
   useEffect(() => {
     let isMounted = true;
+    setLoadError(null);
     fetchAdminInquiries()
       .then((data) => {
-        if (isMounted && data && data.length > 0) {
+        if (isMounted) {
           setItems(data);
-          if (!selectedId || !data.some((item) => item.id === selectedId)) {
-            setSelectedId(data[0].id);
-          }
+          setSelectedId((current) =>
+            current && data.some((item) => item.id === current) ? current : (data[0]?.id ?? ""),
+          );
         }
       })
       .catch((err) => {
-        console.warn("[InquiriesPage] Remote inquiries fetch failed, using local fixtures", err);
+        if (isMounted) {
+          setItems([]);
+          setLoadError(err instanceof Error ? err.message : "Could not load inquiries from the backend.");
+        }
       });
     return () => {
       isMounted = false;
@@ -55,31 +60,33 @@ export function InquiriesPage({ user }: { user: AdminUser }) {
     if (!item) return;
     const idx = FLOW.indexOf(item.status);
     const next = FLOW[Math.min(FLOW.length - 1, idx + 1)];
+    setActionError(null);
     try {
       await updateAdminInquiry(id, { status: next });
+      setItems((prev) =>
+        prev.map((i) => {
+          if (i.id !== id) return i;
+          return { ...i, status: next };
+        })
+      );
     } catch (err) {
-      console.warn("[InquiriesPage] Backend inquiry update failed, using local state", err);
+      setActionError(`Could not update this inquiry: ${err instanceof Error ? err.message : "backend error"}`);
     }
-    setItems((prev) =>
-      prev.map((i) => {
-        if (i.id !== id) return i;
-        return { ...i, status: next };
-      })
-    );
   }
 
   async function addNote(id: string) {
     const text = note.trim();
     if (!text) return;
+    setActionError(null);
     try {
       await updateAdminInquiry(id, { note: text });
+      setItems((prev) =>
+        prev.map((i) => (i.id === id ? { ...i, notes: [...i.notes, text] } : i))
+      );
+      setNote("");
     } catch (err) {
-      console.warn("[InquiriesPage] Backend add note failed, using local state", err);
+      setActionError(`Could not save the note: ${err instanceof Error ? err.message : "backend error"}`);
     }
-    setItems((prev) =>
-      prev.map((i) => (i.id === id ? { ...i, notes: [...i.notes, text] } : i))
-    );
-    setNote("");
   }
 
   return (
@@ -93,6 +100,36 @@ export function InquiriesPage({ user }: { user: AdminUser }) {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[380px_1fr]">
         {/* List */}
         <div className="space-y-2">
+          {loadError && (
+            <div
+              className="flex items-start gap-2.5 rounded-md border border-error/20 bg-error-soft px-3.5 py-3 text-[13px] text-error"
+              role="alert"
+            >
+              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+              <span className="leading-snug">{loadError}</span>
+            </div>
+          )}
+          {actionError && (
+            <div
+              className="flex items-start gap-2.5 rounded-md border border-error/20 bg-error-soft px-3.5 py-3 text-[13px] text-error"
+              role="alert"
+            >
+              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+              <span className="flex-1 leading-snug">{actionError}</span>
+              <button onClick={() => setActionError(null)} className="rounded-sm p-0.5 hover:bg-error/10" aria-label="Dismiss">
+                <X className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          )}
+          {!loadError && items.length === 0 && (
+            <Card className="p-8 text-center">
+              <MessageSquare className="mx-auto h-7 w-7 text-ink-faint" />
+              <p className="mt-3 font-display text-base text-ink">No inquiries yet</p>
+              <p className="mt-1 text-[13px] leading-relaxed text-ink-soft">
+                Contact form and tour interest submissions from the customer site land here.
+              </p>
+            </Card>
+          )}
           {items.map((item, i) => {
             const TypeIcon = TYPE_META[item.type].icon;
             return (
@@ -127,6 +164,11 @@ export function InquiriesPage({ user }: { user: AdminUser }) {
 
         {/* Detail */}
         <AnimatePresence mode="wait">
+          {!selected && items.length > 0 && (
+            <Card key="placeholder" className="flex items-center justify-center p-10">
+              <p className="text-sm text-ink-faint">Select an inquiry from the list to view its details.</p>
+            </Card>
+          )}
           {selected && (
             <motion.div
               key={selected.id}

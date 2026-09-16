@@ -2,6 +2,7 @@ import cors from "@fastify/cors";
 import helmet from "@fastify/helmet";
 import rateLimit from "@fastify/rate-limit";
 import Fastify, { type FastifyInstance } from "fastify";
+import { randomBytes } from "node:crypto";
 import { z } from "zod";
 import type { Logger } from "pino";
 import type { Env } from "./config/env.js";
@@ -242,6 +243,13 @@ export async function buildApp(options: AppOptions): Promise<BuiltApp> {
 }
 
 function createPaymentProviders(env: Env): PaymentProviderRegistry {
+  // When a non-Razorpay provider is not configured, give the adapter an
+  // ephemeral per-boot secret: the adapter requires one to construct, but
+  // since nobody knows its value, webhook signatures can never verify —
+  // which is exactly the behavior we want for a disabled provider.
+  const disabledProviderSecret = () =>
+    env.NODE_ENV === "production" ? randomBytes(32).toString("hex") : "dev-unused-provider-secret";
+
   return {
     razorpay: createRazorpayAdapter({
       keyId: env.RAZORPAY_KEY_ID,
@@ -250,19 +258,13 @@ function createPaymentProviders(env: Env): PaymentProviderRegistry {
     }),
     paypal: createHmacPaymentAdapter({
       name: "paypal",
-      webhookSecret: env.PAYPAL_WEBHOOK_SECRET || (() => {
-        if (env.NODE_ENV === "production") throw new Error("PAYPAL_WEBHOOK_SECRET is required in production");
-        return "dev-paypal-webhook-secret";
-      })(),
+      webhookSecret: env.PAYPAL_WEBHOOK_SECRET || disabledProviderSecret(),
       publicKey: env.PAYPAL_CLIENT_ID,
       checkoutBaseUrl: "https://www.paypal.com/checkoutnow",
     }),
     card: createHmacPaymentAdapter({
       name: "card",
-      webhookSecret: env.CARD_WEBHOOK_SECRET || (() => {
-        if (env.NODE_ENV === "production") throw new Error("CARD_WEBHOOK_SECRET is required in production");
-        return "dev-card-webhook-secret";
-      })(),
+      webhookSecret: env.CARD_WEBHOOK_SECRET || disabledProviderSecret(),
       checkoutBaseUrl: env.CARD_CHECKOUT_BASE_URL,
     }),
   };

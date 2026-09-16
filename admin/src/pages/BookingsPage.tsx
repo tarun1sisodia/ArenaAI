@@ -18,7 +18,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Input, Select } from "@/components/ui/Input";
 import { Tabs } from "@/components/ui/Tabs";
 import { Table, TBody, THead, TD, TH, TRow } from "@/components/ui/Table";
-import { BOOKINGS } from "@/lib/mock-data";
+import { AlertTriangle, RotateCw } from "lucide-react";
 import { fetchAdminBookings, transitionAdminBooking } from "@/lib/api";
 import { VEHICLE_LABELS, can, type AdminUser, type Booking, type BookingStatus } from "@/lib/types";
 import { cn, formatDate, formatINR, maskEmail, maskPhone, timeAgo } from "@/lib/utils";
@@ -45,7 +45,10 @@ const TRANSITIONS: Partial<Record<BookingStatus, { to: BookingStatus; label: str
 
 export function BookingsPage({ user }: { user: AdminUser }) {
   const reduce = useReducedMotion();
-  const [bookings, setBookings] = useState<Booking[]>(BOOKINGS);
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("all");
   const [vehicle, setVehicle] = useState("all");
@@ -58,21 +61,25 @@ export function BookingsPage({ user }: { user: AdminUser }) {
 
   useEffect(() => {
     let isMounted = true;
+    setLoadError(null);
     fetchAdminBookings({
       status: status as BookingStatus | "all",
     })
       .then((data) => {
-        if (isMounted && data && data.length > 0) {
+        if (isMounted) {
           setBookings(data);
         }
       })
       .catch((err) => {
-        console.warn("[BookingsPage] Remote bookings fetch failed, using local fixtures", err);
+        if (isMounted) {
+          setBookings([]);
+          setLoadError(err instanceof Error ? err.message : "Could not load bookings from the backend.");
+        }
       });
     return () => {
       isMounted = false;
     };
-  }, [status]);
+  }, [status, reloadKey]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -97,16 +104,15 @@ export function BookingsPage({ user }: { user: AdminUser }) {
   }));
 
   async function transition(b: Booking, to: BookingStatus) {
+    setActionError(null);
     try {
       await transitionAdminBooking(b.id, to, b.version);
       const next = { ...b, status: to, version: b.version + 1 };
       setBookings((prev) => prev.map((item) => (item.id === b.id ? next : item)));
       setSelected(next);
     } catch (err) {
-      console.warn("[BookingsPage] Backend transition failed, updating local state", err);
-      const next = { ...b, status: to, version: b.version + 1 };
-      setBookings((prev) => prev.map((item) => (item.id === b.id ? next : item)));
-      setSelected(next);
+      const message = err instanceof Error ? err.message : "Booking update failed on the backend.";
+      setActionError(`Could not update ${b.ticketId}: ${message}`);
     }
   }
 
@@ -162,6 +168,34 @@ export function BookingsPage({ user }: { user: AdminUser }) {
       </Card>
 
       {/* Table */}
+      {loadError && (
+        <div
+          className="mb-4 flex flex-wrap items-center gap-2.5 rounded-md border border-error/20 bg-error-soft px-4 py-3 text-[13px] text-error"
+          role="alert"
+        >
+          <AlertTriangle className="h-4 w-4 shrink-0" />
+          <span className="flex-1">{loadError}</span>
+          <Button variant="outline" size="sm" onClick={() => setReloadKey((k) => k + 1)}>
+            <RotateCw className="h-3.5 w-3.5" /> Retry
+          </Button>
+        </div>
+      )}
+      {actionError && (
+        <div
+          className="mb-4 flex items-start gap-2.5 rounded-md border border-error/20 bg-error-soft px-4 py-3 text-[13px] text-error"
+          role="alert"
+        >
+          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+          <span className="flex-1">{actionError}</span>
+          <button
+            onClick={() => setActionError(null)}
+            className="rounded-sm p-1 hover:bg-error/10"
+            aria-label="Dismiss"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      )}
       <Card className="overflow-hidden">
         <Table>
           <THead>
@@ -221,7 +255,16 @@ export function BookingsPage({ user }: { user: AdminUser }) {
           </TBody>
         </Table>
         {filtered.length === 0 && (
-          <div className="p-10 text-center text-sm text-ink-soft">No bookings match the current filters.</div>
+          <div className="p-12 text-center">
+            <p className="font-display text-lg text-ink">
+              {bookings.length === 0 && !loadError ? "No bookings yet" : "No bookings match the current filters"}
+            </p>
+            <p className="mx-auto mt-1.5 max-w-sm text-sm leading-relaxed text-ink-soft">
+              {bookings.length === 0 && !loadError
+                ? "Bookings created on the customer site appear here in real time once the backend is connected."
+                : "Try a different search term, status tab or vehicle filter."}
+            </p>
+          </div>
         )}
       </Card>
 

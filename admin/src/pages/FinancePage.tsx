@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Banknote, CheckCircle2, CreditCard, Lock, QrCode, RefreshCw } from "lucide-react";
+import { AlertTriangle, Banknote, CheckCircle2, CreditCard, Lock, QrCode, RefreshCw } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import { PageHeader } from "@/components/admin/PageHeader";
 import { StatCard } from "@/components/admin/StatCard";
@@ -11,7 +11,6 @@ import { Dialog } from "@/components/ui/Dialog";
 import { Input, Label } from "@/components/ui/Input";
 import { Table, TBody, THead, TD, TH, TRow } from "@/components/ui/Table";
 import { RankedBars } from "@/components/charts/Charts";
-import { BOOKINGS, PAYMENTS } from "@/lib/mock-data";
 import { fetchAdminPayments, refundAdminBooking } from "@/lib/api";
 import { can, type AdminUser, type Payment } from "@/lib/types";
 import { cn, formatDateTime, formatINR } from "@/lib/utils";
@@ -28,7 +27,9 @@ export function FinancePage({ user }: { user: AdminUser }) {
   const canRead = can(user.role, "finance:read");
   const canRefund = can(user.role, "finance:refund");
 
-  const [payments, setPayments] = useState<Payment[]>(PAYMENTS);
+  const [payments, setPayments] = useState<Payment[]>([]);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [refundError, setRefundError] = useState<string | null>(null);
   const [refundTarget, setRefundTarget] = useState<Payment | null>(null);
   const [amount, setAmount] = useState(0);
   const [reason, setReason] = useState("");
@@ -37,14 +38,18 @@ export function FinancePage({ user }: { user: AdminUser }) {
 
   useEffect(() => {
     let isMounted = true;
+    setLoadError(null);
     fetchAdminPayments()
       .then((res) => {
-        if (isMounted && res.items.length > 0) {
+        if (isMounted) {
           setPayments(res.items);
         }
       })
       .catch((err) => {
-        console.warn("[FinancePage] Remote payments fetch failed, using local fixtures", err);
+        if (isMounted) {
+          setPayments([]);
+          setLoadError(err instanceof Error ? err.message : "Could not load payments from the backend.");
+        }
       });
     return () => {
       isMounted = false;
@@ -60,35 +65,37 @@ export function FinancePage({ user }: { user: AdminUser }) {
     const acc: Record<string, number> = {};
     for (const p of captured) acc[p.method] = (acc[p.method] ?? 0) + p.amount;
     return Object.entries(acc).map(([method, value]) => ({
-      label: METHOD_META[method as keyof typeof METHOD_META].label,
+      label: METHOD_META[method as keyof typeof METHOD_META]?.label ?? method,
       value,
     }));
   }, [captured]);
 
-  /** Refund eligibility: captured payment + booking in paid_confirmed */
+  /** Refund eligibility: captured payment. The backend enforces the booking state
+   *  (paid_confirmed) and rejects ineligible refunds with a surfaced error. */
   function isEligible(p: Payment) {
-    const b = BOOKINGS.find((x) => x.ticketId === p.bookingTicketId);
-    return b?.status === "paid_confirmed" && p.status === "captured";
+    return p.status === "captured";
   }
 
   function openRefund(p: Payment) {
     setRefundTarget(p);
     setAmount(p.amount);
     setReason("");
+    setRefundError(null);
     setIdemKey(`rfn_${p.bookingTicketId.replace(/-/g, "")}_${Math.floor(Math.random() * 900 + 100)}`);
     setStage("form");
   }
 
   async function executeRefund() {
+    if (!refundTarget) return;
+    setRefundError(null);
     setStage("processing");
-    if (refundTarget) {
-      try {
-        await refundAdminBooking(refundTarget.bookingTicketId, reason || "Staff requested refund", idemKey);
-      } catch (err) {
-        console.warn("[FinancePage] Backend refund call error, proceeding with state update", err);
-      }
+    try {
+      await refundAdminBooking(refundTarget.bookingTicketId, reason || "Staff requested refund", idemKey);
+      setTimeout(() => setStage("done"), 600);
+    } catch (err) {
+      setStage("form");
+      setRefundError(err instanceof Error ? err.message : "Refund failed on the backend. No state was changed.");
     }
-    setTimeout(() => setStage("done"), 1400);
   }
 
   if (!canRead) {
@@ -114,10 +121,20 @@ export function FinancePage({ user }: { user: AdminUser }) {
         description="Gateway-confirmed ledger. Refunds are idempotent, reason-documented and executed only by super_admin."
       />
 
+      {loadError && (
+        <div
+          className="mb-4 flex flex-wrap items-center gap-2.5 rounded-md border border-error/20 bg-error-soft px-4 py-3 text-[13px] text-error"
+          role="alert"
+        >
+          <AlertTriangle className="h-4 w-4 shrink-0" />
+          <span className="flex-1">{loadError}</span>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <StatCard index={0} label="Captured · 30d" value={totalCaptured} format="inr" icon={CreditCard} delta={6.8} deltaLabel="vs last 30d" spark={[82, 96, 88, 110, 124, 118, 131, 126, 142, 150]} />
-        <StatCard index={1} label="Refunded · 30d" value={totalRefunded} format="inr" icon={RefreshCw} delta={-12.5} deltaLabel="vs last 30d" spark={[22, 18, 30, 12, 25, 16, 20, 14, 10, 8]} />
-        <StatCard index={2} label="Open balances" value={19440} format="inr" icon={Banknote} delta={3.1} deltaLabel="at next drop" spark={[12, 15, 13, 18, 16, 19, 17, 20, 18, 19]} />
+        <StatCard index={0} label="Captured · all time" value={totalCaptured} format="inr" icon={CreditCard} />
+        <StatCard index={1} label="Refunded · all time" value={totalRefunded} format="inr" icon={RefreshCw} />
+        <StatCard index={2} label="Payments recorded" value={payments.length} format="number" icon={Banknote} />
       </div>
 
       <div className="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-3">
@@ -127,7 +144,7 @@ export function FinancePage({ user }: { user: AdminUser }) {
               <CardTitle>Payment ledger</CardTitle>
               <CardDescription>Razorpay · PayPal — captured amounts in INR</CardDescription>
             </div>
-            <Badge tone="neutral">{PAYMENTS.length} records</Badge>
+            <Badge tone="neutral">{payments.length} records</Badge>
           </CardHeader>
           <Table>
             <THead>
@@ -142,8 +159,9 @@ export function FinancePage({ user }: { user: AdminUser }) {
               </TRow>
             </THead>
             <TBody>
-              {PAYMENTS.map((p, i) => {
-                const MethodIcon = METHOD_META[p.method].icon;
+              {payments.map((p, i) => {
+                const methodMeta = METHOD_META[p.method as keyof typeof METHOD_META];
+                const MethodIcon = methodMeta?.icon ?? CreditCard;
                 const eligible = isEligible(p);
                 return (
                   <motion.tr
@@ -159,7 +177,7 @@ export function FinancePage({ user }: { user: AdminUser }) {
                     <TD>
                       <span className="flex items-center gap-1.5 text-[13px] text-ink-soft">
                         <MethodIcon className="h-3.5 w-3.5 text-ink-faint" />
-                        {METHOD_META[p.method].label}
+                        {methodMeta?.label ?? p.method}
                       </span>
                     </TD>
                     <TD className="text-right font-mono text-[13px] font-medium">
@@ -179,6 +197,14 @@ export function FinancePage({ user }: { user: AdminUser }) {
               })}
             </TBody>
           </Table>
+          {payments.length === 0 && !loadError && (
+            <div className="p-12 text-center">
+              <p className="font-display text-lg text-ink">No payments yet</p>
+              <p className="mx-auto mt-1.5 max-w-sm text-sm leading-relaxed text-ink-soft">
+                Gateway payments created from customer checkouts appear here once payments are enabled.
+              </p>
+            </div>
+          )}
         </Card>
 
         <div className="space-y-4">
@@ -214,6 +240,15 @@ export function FinancePage({ user }: { user: AdminUser }) {
       >
         {stage === "form" && refundTarget && (
           <div className="space-y-4">
+            {refundError && (
+              <div
+                className="flex items-start gap-2.5 rounded-md border border-error/20 bg-error-soft p-3 text-[13px] text-error"
+                role="alert"
+              >
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                <span className="leading-snug">{refundError}</span>
+              </div>
+            )}
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <Label htmlFor="refund-amount">Amount (₹)</Label>
