@@ -51,7 +51,7 @@ export const CreateDraftBookingSchema = z
       const maxFuture = new Date(now.getTime() + 395 * 24 * 60 * 60 * 1000);
       return date <= maxFuture;
     }, "Return datetime too far in future"),
-    distanceKm: z.number().positive().max(5000).finite(),
+    // distanceKm removed from client schema (SEC-005) — server derives it from originName/destinationName
     customerName: SafeNameSchema,
     customerPhone: z.string().regex(/^\+?[0-9]{10,14}$/, "Valid phone number required"),
     customerEmail: z.string().email().max(255).optional(),

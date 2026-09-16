@@ -105,7 +105,53 @@ export function createMemoryRepositories(nowIso = new Date().toISOString()): Rep
       return true;
     },
     async transaction(fn) {
-      return withLock(() => fn(repos));
+      return withLock(async () => {
+        const snap = {
+          bookings: new Map(bookings),
+          bookingsByTicket: new Map(bookingsByTicket),
+          payments: new Map(payments),
+          paymentsByIdempotency: new Map(paymentsByIdempotency),
+          paymentsByOrder: new Map(paymentsByOrder),
+          refunds: new Map(refunds),
+          refundsByIdempotency: new Map(refundsByIdempotency),
+          profiles: new Map(profiles),
+          catalog: new Map(catalog),
+          catalogBySlug: new Map(catalogBySlug),
+          media: new Map(media),
+          reviews: new Map(reviews),
+          promos: new Map(promos),
+          audit: [...audit],
+          inquiries: [...inquiries],
+          notifications: new Map(notifications),
+          notificationsByDedupe: new Map(notificationsByDedupe),
+          webhookEvents: new Map(webhookEvents),
+          locationCache: new Map(locationCache),
+        };
+        try {
+          return await fn(repos);
+        } catch (err) {
+          bookings.clear(); for (const [k, v] of snap.bookings) bookings.set(k, v);
+          bookingsByTicket.clear(); for (const [k, v] of snap.bookingsByTicket) bookingsByTicket.set(k, v);
+          payments.clear(); for (const [k, v] of snap.payments) payments.set(k, v);
+          paymentsByIdempotency.clear(); for (const [k, v] of snap.paymentsByIdempotency) paymentsByIdempotency.set(k, v);
+          paymentsByOrder.clear(); for (const [k, v] of snap.paymentsByOrder) paymentsByOrder.set(k, v);
+          refunds.clear(); for (const [k, v] of snap.refunds) refunds.set(k, v);
+          refundsByIdempotency.clear(); for (const [k, v] of snap.refundsByIdempotency) refundsByIdempotency.set(k, v);
+          profiles.clear(); for (const [k, v] of snap.profiles) profiles.set(k, v);
+          catalog.clear(); for (const [k, v] of snap.catalog) catalog.set(k, v);
+          catalogBySlug.clear(); for (const [k, v] of snap.catalogBySlug) catalogBySlug.set(k, v);
+          media.clear(); for (const [k, v] of snap.media) media.set(k, v);
+          reviews.clear(); for (const [k, v] of snap.reviews) reviews.set(k, v);
+          promos.clear(); for (const [k, v] of snap.promos) promos.set(k, v);
+          audit.length = 0; audit.push(...snap.audit);
+          inquiries.length = 0; inquiries.push(...snap.inquiries);
+          notifications.clear(); for (const [k, v] of snap.notifications) notifications.set(k, v);
+          notificationsByDedupe.clear(); for (const [k, v] of snap.notificationsByDedupe) notificationsByDedupe.set(k, v);
+          webhookEvents.clear(); for (const [k, v] of snap.webhookEvents) webhookEvents.set(k, v);
+          locationCache.clear(); for (const [k, v] of snap.locationCache) locationCache.set(k, v);
+          throw err;
+        }
+      });
     },
     bookings: {
       async create(record) {
@@ -156,6 +202,16 @@ export function createMemoryRepositories(nowIso = new Date().toISOString()): Rep
         const pageSize = filter.pageSize ?? 20;
         const start = (page - 1) * pageSize;
         return { items: items.slice(start, start + pageSize).map(clone), total };
+      },
+      // SEC-007: targeted phone+time-window query — no global page scan
+      async listByPhone(phone, { from }) {
+        const normalizedPhone = phone.replace(/[^\d]/g, "");
+        return [...bookings.values()]
+          .filter((b) => {
+            const storedPhone = b.customerPhone.replace(/[^\d]/g, "");
+            return storedPhone === normalizedPhone && b.createdAt >= from;
+          })
+          .map(clone);
       },
     },
     payments: {

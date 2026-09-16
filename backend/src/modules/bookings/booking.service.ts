@@ -3,10 +3,10 @@ import { toIso } from "../../shared/clock.js";
 import type { Repositories } from "../../db/types.js";
 import { AppError, Errors } from "../../shared/errors.js";
 import { newGuestAccessToken, newId, newTicketId, timingSafeEqualString } from "../../shared/ids.js";
-import { last4, maskEmail, maskPhone, phonesMatch, sanitizeText } from "../../shared/privacy.js";
+import { maskEmail, maskPhone, phonesMatch, sanitizeText } from "../../shared/privacy.js";
 import { assertTransition } from "../../shared/stateMachine.js";
 import type { AuthUser, BookingRecord } from "../../types/domain.js";
-import { calculateFare } from "../fares/fare.engine.js";
+import { calculateFare, findRoute } from "../fares/fare.engine.js";
 import type { CreateDraftBookingRequest } from "./booking.schema.js";
 
 export function createBookingService(deps: {
@@ -37,6 +37,10 @@ export function createBookingService(deps: {
           });
         }
       }
+      // SEC-005: server derives distance from route catalogue/estimator, ignoring any client-supplied value
+      const serverRoute = findRoute(input.originName, input.destinationName);
+      const serverDistanceKm = serverRoute.km;
+
       const fare = calculateFare({
         tripType: input.tripType,
         vehicleTier: input.vehicleTier,
@@ -44,7 +48,7 @@ export function createBookingService(deps: {
         destinationName: input.destinationName,
         pickupDatetime: input.pickupDatetime,
         returnDatetime: input.returnDatetime,
-        distanceKm: input.distanceKm,
+        distanceKm: serverDistanceKm,
         promoCode: input.promoCode,
         packageId: input.packageId,
         localPackageKey: input.localPackageKey,
@@ -66,20 +70,15 @@ export function createBookingService(deps: {
         }
       }
 
-      // Check for duplicate booking attempt: same phone + same pickup time within 5 min window
-      // Prevents accidental double-click / retry creating duplicate tickets
-      const recent = await deps.db.bookings.list({
-        page: 1,
-        pageSize: 20,
-      });
+      // SEC-007: targeted phone+time-window query — no global page scan
+      // Reliably detects duplicates regardless of overall booking volume
       const fiveMinAgo = new Date(deps.clock.now().getTime() - 5 * 60 * 1000).toISOString();
-      const duplicate = recent.items.find(
+      const recentByPhone = await deps.db.bookings.listByPhone(input.customerPhone, { from: fiveMinAgo });
+      const duplicate = recentByPhone.find(
         (b) =>
-          b.customerPhone === input.customerPhone &&
           b.originName === input.originName &&
           b.destinationName === input.destinationName &&
-          b.pickupDatetime === new Date(input.pickupDatetime).toISOString() &&
-          b.createdAt >= fiveMinAgo,
+          b.pickupDatetime === new Date(input.pickupDatetime).toISOString(),
       );
       if (duplicate) {
         throw Errors.conflict("DUPLICATE_BOOKING", "A similar booking was just created. Please check your bookings.", {
@@ -226,7 +225,7 @@ export function projectBooking(
     customerName: booking.customerName,
     customerPhone,
     customerEmail,
-    phoneLast4: last4(booking.customerPhone),
+    // phoneLast4 removed from public response (SEC-008) — reduces phone enumeration search space
     fare: booking.fareSnapshot,
 
     version: booking.version,

@@ -61,8 +61,10 @@ export function createRazorpayAdapter(options: RazorpayOptions): PaymentProvider
         throw new Error(`Razorpay order failed: ${response.status} ${text.slice(0, 200)}`);
       }
       const body = (await response.json()) as { id: string; amount: number; currency: string };
-      if (!body.id || !Number.isFinite(body.amount)) {
-        throw new Error("Invalid Razorpay order response");
+      if (!body.id || !Number.isFinite(body.amount) || body.amount !== command.amountMinor) {
+        throw new Error(
+          `Invalid Razorpay order response: expected amount ${command.amountMinor}, got ${body?.amount}`,
+        );
       }
       const expires = new Date(Date.now() + 30 * 60 * 1000);
       return {

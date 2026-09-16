@@ -24,4 +24,24 @@ export async function registerAdminRoutes(
     config: { rateLimit: { max: 10, timeWindow: "1 minute" } },
     handler: controller.refund,
   });
+
+  app.get("/api/v1/ops/admin/inquiries", {
+    config: { rateLimit: { max: 60, timeWindow: "1 minute" } },
+    handler: controller.listInquiries,
+  });
+
+  app.patch("/api/v1/ops/admin/inquiries/:id", {
+    config: { rateLimit: { max: 30, timeWindow: "1 minute" } },
+    handler: controller.updateInquiry,
+  });
+
+  app.get("/api/v1/ops/admin/payments", {
+    config: { rateLimit: { max: 60, timeWindow: "1 minute" } },
+    handler: controller.listPayments,
+  });
+
+  app.get("/api/v1/ops/admin/fare-rules", {
+    config: { rateLimit: { max: 60, timeWindow: "1 minute" } },
+    handler: controller.getFareRules,
+  });
 }

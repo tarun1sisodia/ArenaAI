@@ -14,7 +14,7 @@ describe("Network & Transport Protocol Headers (Technique 1)", () => {
     expect(response.headers["alt-svc"]).toBe('h3=":443"; ma=86400');
   });
 
-  it("emits Timing-Allow-Origin header for browser RUM", async () => {
+  it("does not emit Timing-Allow-Origin header to prevent timing oracles (SEC-002)", async () => {
     const { app } = await createTestApp();
 
     const response = await app.inject({
@@ -23,7 +23,7 @@ describe("Network & Transport Protocol Headers (Technique 1)", () => {
     });
 
     expect(response.statusCode).toBe(200);
-    expect(response.headers["timing-allow-origin"]).toBe("*");
+    expect(response.headers["timing-allow-origin"]).toBeUndefined();
   });
 
   it("maintains security and content-type headers alongside network headers", async () => {
@@ -37,6 +37,6 @@ describe("Network & Transport Protocol Headers (Technique 1)", () => {
     expect(response.statusCode).toBe(200);
     expect(response.headers["x-content-type-options"]).toBe("nosniff");
     expect(response.headers["alt-svc"]).toBe('h3=":443"; ma=86400');
-    expect(response.headers["timing-allow-origin"]).toBe("*");
+    expect(response.headers["timing-allow-origin"]).toBeUndefined();
   });
 });

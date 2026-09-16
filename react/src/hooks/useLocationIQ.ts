@@ -14,6 +14,7 @@ import {
   getLocationIqAccessToken,
   setLocationIqAccessToken,
 } from "../config";
+import { getApiBaseUrl } from "../services/api";
 
 /** Raw address object returned by LocationIQ Autocomplete API */
 export interface LocationIQAddress {
@@ -130,10 +131,65 @@ export async function fetchLocationIQSuggestions(
   params: FetchLocationIQParams
 ): Promise<LocationSuggestion[]> {
   const q = params.query.trim();
-  const token = (params.token || getLocationIqAccessToken()).trim();
 
-  // Return empty if query is too short, token is missing, or already aborted
-  if (q.length < 2 || !token || params.signal?.aborted) {
+  // Return empty if query is too short or already aborted
+  if (q.length < 2 || params.signal?.aborted) {
+    return [];
+  }
+
+  // 1. Try secure backend proxy endpoint first (FIND-004) to avoid client token exposure
+  try {
+    const baseUrl = getApiBaseUrl();
+    const endpoint = `${baseUrl}/api/v1/locations/autocomplete?q=${encodeURIComponent(q)}`;
+    const response = await fetch(endpoint, {
+      signal: params.signal,
+      headers: { Accept: "application/json" },
+    });
+
+    if (response.ok) {
+      const resData = (await response.json()) as {
+        success?: boolean;
+        data?: Array<{
+          placeId: string;
+          name: string;
+          displayName: string;
+          city: string;
+          state: string;
+          latitude: number;
+          longitude: number;
+        }>;
+      };
+      const items = Array.isArray(resData?.data) ? resData.data : [];
+      if (items.length > 0) {
+        return items.map((place) => ({
+          id: `location-${place.placeId}`,
+          name: place.name || place.displayName,
+          subtitle: place.displayName || `${place.city || ""}, ${place.state || ""}`.trim(),
+          code: "IQ",
+          isLocationIQ: true,
+          lat: typeof place.latitude === "number" ? place.latitude : undefined,
+          lon: typeof place.longitude === "number" ? place.longitude : undefined,
+          raw: {
+            place_id: place.placeId,
+            lat: String(place.latitude),
+            lon: String(place.longitude),
+            display_name: place.displayName,
+          },
+        }));
+      }
+    }
+  } catch (err: unknown) {
+    if (
+      (err instanceof DOMException && (err.name === "AbortError" || err.code === 20)) ||
+      (err instanceof Error && err.name === "AbortError")
+    ) {
+      return [];
+    }
+    // Fall back to direct LocationIQ query if backend is unreachable
+  }
+
+  const token = (params.token || getLocationIqAccessToken()).trim();
+  if (!token) {
     return [];
   }
 

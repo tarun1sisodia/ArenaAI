@@ -175,4 +175,68 @@ describe("admin operations and catalog", () => {
     expect(after.json().data).toHaveLength(1);
     await app.close();
   });
+
+  it("provides operations desk endpoints for inquiries, payments, and fare rules (FIND-016)", async () => {
+    const { app } = await createTestApp();
+
+    // 1. Check fare rules
+    const fareRulesRes = await app.inject({
+      method: "GET",
+      url: "/api/v1/ops/admin/fare-rules",
+      headers: { authorization: "Bearer test-super_admin" },
+    });
+    expect(fareRulesRes.statusCode).toBe(200);
+    expect(fareRulesRes.json().data.version).toBeDefined();
+    expect(fareRulesRes.json().data.vehicles.length).toBeGreaterThan(0);
+
+    // 2. Submit customer inquiry
+    const inquiryRes = await app.inject({
+      method: "POST",
+      url: "/api/v1/inquiries",
+      payload: {
+        name: "Vikram Malhotra",
+        phone: "+919876543210",
+        email: "vikram@example.com",
+        message: "Need 2 Innova Crysta for 3 days Agra to Jaipur tour.",
+        tripInterest: "Agra to Jaipur",
+      },
+    });
+    expect(inquiryRes.statusCode).toBe(201);
+    const inquiryId = inquiryRes.json().data.id as string;
+
+    // 3. List inquiries as admin
+    const listInquiriesRes = await app.inject({
+      method: "GET",
+      url: "/api/v1/ops/admin/inquiries",
+      headers: { authorization: "Bearer test-super_admin" },
+    });
+    expect(listInquiriesRes.statusCode).toBe(200);
+    expect(listInquiriesRes.json().data.total).toBeGreaterThanOrEqual(1);
+
+    // 4. Update inquiry status and append note
+    const updateInquiryRes = await app.inject({
+      method: "PATCH",
+      url: `/api/v1/ops/admin/inquiries/${inquiryId}`,
+      headers: { authorization: "Bearer test-super_admin" },
+      payload: {
+        status: "contacted",
+        note: "Called customer and sent quote via WhatsApp.",
+      },
+    });
+    expect(updateInquiryRes.statusCode).toBe(200);
+    expect(updateInquiryRes.json().data.status).toBe("contacted");
+    expect(updateInquiryRes.json().data.notes).toContain("Called customer and sent quote via WhatsApp.");
+
+    // 5. Inspect payments list
+    const paymentsRes = await app.inject({
+      method: "GET",
+      url: "/api/v1/ops/admin/payments",
+      headers: { authorization: "Bearer test-super_admin" },
+    });
+    expect(paymentsRes.statusCode).toBe(200);
+    expect(paymentsRes.json().data.total).toBeDefined();
+    expect(paymentsRes.json().data.totalCapturedPaise).toBeDefined();
+
+    await app.close();
+  });
 });

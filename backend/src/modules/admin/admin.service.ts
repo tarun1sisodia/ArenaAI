@@ -1,7 +1,20 @@
 import type { Clock } from "../../shared/clock.js";
-import type { Repositories } from "../../db/types.js";
+import { toIso } from "../../shared/clock.js";
+import { Errors } from "../../shared/errors.js";
+import type { InquiryListFilter, PaymentListFilter, Repositories } from "../../db/types.js";
 import { maskEmail, maskPhone } from "../../shared/privacy.js";
-import type { BookingRecord } from "../../types/domain.js";
+import type { BookingRecord, InquiryStatus } from "../../types/domain.js";
+import {
+  AIRPORT_TRANSFERS,
+  DEFAULT_PROMO,
+  FARE_RULES_VERSION_DEFAULT,
+  LOCAL_PACKAGES,
+  OUTSTATION_RULES,
+  PACKAGE_UPGRADES,
+  PACKAGES,
+  ROUTES,
+  VEHICLES,
+} from "../fares/fare.catalogue.js";
 
 export function createAdminService(deps: { db: Repositories; clock?: Clock }) {
   return {
@@ -39,6 +52,59 @@ export function createAdminService(deps: { db: Repositories; clock?: Clock }) {
 
     async listAuditLogs(limit = 100) {
       return deps.db.audit.list(limit);
+    },
+
+    async listInquiries(filter: InquiryListFilter) {
+      const result = await deps.db.inquiries.list(filter);
+      return {
+        total: result.total,
+        page: filter.page ?? 1,
+        limit: filter.limit ?? 50,
+        items: result.items,
+        inquiries: result.items,
+      };
+    },
+
+    async updateInquiry(id: string, updates: { status?: InquiryStatus; note?: string }) {
+      const inquiry = await deps.db.inquiries.getById(id);
+      if (!inquiry) {
+        throw Errors.notFound("INQUIRY_NOT_FOUND", "Inquiry not found.");
+      }
+      if (updates.status) {
+        inquiry.status = updates.status;
+      }
+      if (updates.note) {
+        inquiry.notes = [...(inquiry.notes ?? []), updates.note];
+      }
+      inquiry.updatedAt = toIso(deps.clock ? deps.clock.now() : new Date());
+      return deps.db.inquiries.update(inquiry);
+    },
+
+    async listPayments(filter: PaymentListFilter) {
+      const result = await deps.db.payments.list(filter);
+      return {
+        total: result.total,
+        totalCapturedPaise: result.totalCapturedPaise,
+        totalRefundedPaise: result.totalRefundedPaise,
+        page: filter.page ?? 1,
+        limit: filter.limit ?? 50,
+        items: result.items,
+        payments: result.items,
+      };
+    },
+
+    async getFareRules() {
+      return {
+        version: FARE_RULES_VERSION_DEFAULT,
+        outstation: OUTSTATION_RULES,
+        vehicles: VEHICLES,
+        packageUpgrades: PACKAGE_UPGRADES,
+        localPackages: LOCAL_PACKAGES,
+        airportTransfers: AIRPORT_TRANSFERS,
+        routes: ROUTES,
+        packages: PACKAGES,
+        defaultPromo: DEFAULT_PROMO,
+      };
     },
   };
 }

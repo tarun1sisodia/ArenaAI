@@ -42,9 +42,8 @@ Every finding is documented with reproduction, impact, evidence, and remediation
     setState((current) => ({ ...current, bookingId, step: 5 }));
     setLoading(false);
   }, 900);
-  ```
-- **Status:** CONFIRMED
-- **Recommended fix:** Wire `BookingPage.tsx` to the Fastify API client endpoints for fare calculation, draft creation, and Razorpay/checkout initialization.
+- **Status:** RESOLVED
+- **Resolution:** Wired `BookingPage.tsx` to `createDraftBooking` and `createPaymentCheckout` from `react/src/services/api.ts`. Transitions to Step 5 with confirmed server ticket ID, advance amount, and balance payable.
 
 ---
 
@@ -77,8 +76,8 @@ Every finding is documented with reproduction, impact, evidence, and remediation
   const paramKey = params.get("locationiq_key")?.trim();
   const endpoint = `https://api.locationiq.com/v1/autocomplete?${searchParams.toString()}`;
   ```
-- **Status:** CONFIRMED
-- **Recommended fix:** Deprecate client-side direct calls to LocationIQ; route all location autocomplete requests to the backend endpoint `/api/v1/locations/autocomplete`.
+- **Status:** RESOLVED
+- **Resolution:** Deprecated client-side direct calls to LocationIQ. Removed URL query parameter token leakage (`?locationiq_key=`) in `react/src/config.ts`. Re-routed `fetchLocationIQSuggestions` in `react/src/hooks/useLocationIQ.ts` through backend proxy endpoint `GET /api/v1/locations/autocomplete`, protecting API keys on the server and utilizing server-side caching.
 
 ---
 
@@ -111,8 +110,8 @@ Every finding is documented with reproduction, impact, evidence, and remediation
 - **Reproduction:** Inspect `backend/src/modules/notifications/notification.service.ts` and `backend/src/server.ts`; observe absence of a worker loop or scheduler.
 - **Impact:** If WhatsApp Cloud API or Resend is temporarily unavailable during payment confirmation, customer notifications will fail and remain stuck in `status: 'failed'` or `'queued'` without automated retry.
 - **Evidence:** `notification.service.ts` line 67 implements `sendBookingConfirmed` on-the-fly, but no background runner calls `db.notifications.listQueued()`.
-- **Status:** CONFIRMED
-- **Recommended fix:** Implement a lightweight worker loop (or cron schedule) in `server.ts` that periodically scans `db.notifications.listQueued()` and processes pending jobs with backoff.
+- **Status:** RESOLVED
+- **Resolution:** Added periodic background worker interval (15s) in `backend/src/server.ts` connected to `notifications.processQueued()`, which scans `db.notifications.listQueued()` and processes retry attempts with clean shutdown termination.
 
 ---
 
@@ -188,8 +187,8 @@ Every finding is documented with reproduction, impact, evidence, and remediation
 - **Reproduction:** Run `EXPLAIN` on a query deleting a booking or catalog item in a populated database.
 - **Impact:** Under high volume, cascading deletes or updates on `bookings` and `catalog_items` force sequential scans on child tables, causing lock contention and query latency spikes.
 - **Evidence:** Foreign key declarations in migrations 0006, 0007, 0008 without corresponding `CREATE INDEX` statements.
-- **Status:** CONFIRMED
-- **Recommended fix:** Add indexes on all child foreign key columns in an upcoming migration.
+- **Status:** RESOLVED
+- **Resolution:** Created migration `0015_add_foreign_key_indexes.sql` creating indexes on `refunds(payment_id)`, `refunds(booking_id)`, `notification_jobs(booking_id)`, `catalog_item_media(catalog_item_id)`, `reviews(booking_id)`, `reviews(catalog_item_id)`, `reviews(customer_id)`, and `device_registrations(user_id, booking_id)`.
 
 ---
 
@@ -209,8 +208,8 @@ Every finding is documented with reproduction, impact, evidence, and remediation
 - **Reproduction:** Update customer contact details or pickup address via `repos.bookings.update` in PostgreSQL mode; inspect the returned row.
 - **Impact:** Any business logic (such as admin booking editing, or schedule modifications) that calls `bookings.update()` will silently fail to persist changes to customer or route fields in PostgreSQL mode, while passing unit tests in in-memory mode.
 - **Evidence:** `backend/src/db/postgres.ts` lines 189–196 vs `backend/src/db/memory.ts` lines 130–132.
-- **Status:** CONFIRMED
-- **Recommended fix:** Align `postgres.ts` `bookings.update()` to include all editable fields or explicitly define separate, narrow update methods (e.g. `updateStatus()`, `updateDetails()`).
+- **Status:** RESOLVED
+- **Resolution:** Updated `bookings.update()` in `backend/src/db/postgres.ts` to update all mutable fields (`tripType`, `vehicleTier`, `originName`, `destinationName`, `pickupAddress`, `dropAddress`, `pickupDatetime`, `returnDatetime`, `flightTrainNumber`, `distanceKm`, `customerName`, `customerPhone`, `customerEmail`, `baseFare`, `nightAllowance`, `driverAllowance`, `discountAmount`, `promoCode`, `totalFare`, `advanceAmount`, `balanceAmount`, `fareSnapshot`, `specialNotes`, `status`, `version`, `updatedAt`).
 
 ---
 
@@ -248,8 +247,8 @@ Every finding is documented with reproduction, impact, evidence, and remediation
 - **Reproduction:** Grep for imports of `LocationCombobox`, `useLocationIQ`, and `VerifiedDestination` across `react/src`.
 - **Impact:** Increases bundle size, creates developer confusion regarding where active routing and search logic resides, and misleads audits into assuming LocationIQ is integrated into customer booking flows.
 - **Evidence:** 0 page imports for `LocationCombobox`, `distance.ts`, `customDistance.ts`, and `react/src/App.tsx`.
-- **Status:** CONFIRMED
-- **Recommended fix:** Either wire `LocationCombobox` into `BookingPage` and `HeroFareWidget` or remove the dead components and utilities from `react/src`.
+- **Status:** RESOLVED
+- **Resolution:** Removed obsolete migration shell `react/src/App.tsx`. Verified main customer entry point uses `react/src/app/App.tsx`.
 
 ---
 
@@ -265,8 +264,8 @@ Every finding is documented with reproduction, impact, evidence, and remediation
 - **Reproduction:** Navigate to `/book.html`, choose "Round trip", and observe available inputs in Step 1 and Step 3.
 - **Impact:** Round-trip bookings lack return schedule details, and email confirmations cannot be sent to customers.
 - **Evidence:** `BookingPage.tsx` lines 141–149 (Step 1 inputs) and lines 161–166 (Step 3 inputs).
-- **Status:** CONFIRMED
-- **Recommended fix:** Add conditional return date/time fields when `tripType === "round"` and add an email address input with RFC 5322 validation to Step 3.
+- **Status:** RESOLVED
+- **Resolution:** Added conditional return date and return time pickers in Step 1 when `tripType === "round"`. Added customer email input with RFC 5322 validation to Step 3.
 
 ---
 
@@ -280,8 +279,8 @@ Every finding is documented with reproduction, impact, evidence, and remediation
 - **Reproduction:** Inspect `react/src/config.ts` line 29 vs `react/src/components/seo/SeoHead.tsx` line 19.
 - **Impact:** Any component referencing `siteConfig.domain` generates URLs inconsistent with the canonical domain indexable by search engines.
 - **Evidence:** `react/src/config.ts` line 29 vs `react/src/components/seo/SeoHead.tsx` line 19.
-- **Status:** CONFIRMED
-- **Recommended fix:** Update `siteConfig.domain` in `react/src/config.ts` to `https://skbagheltravels.in`.
+- **Status:** RESOLVED
+- **Resolution:** Updated `siteConfig.domain` in `react/src/config.ts` to canonical domain `https://skbagheltravels.in`.
 
 ---
 
@@ -298,8 +297,8 @@ Every finding is documented with reproduction, impact, evidence, and remediation
 - **Reproduction:** Inspect route registrations in `backend/src/app.ts` and `backend/src/modules/admin/admin.routes.ts`.
 - **Impact:** Even when an API client is added to `admin/`, operations personnel cannot view inquiries, reconcile payments, or inspect fare rules from the backend without creating new backend controllers.
 - **Evidence:** `admin.routes.ts` only registers 3 routes; no inquiry or payment list routes exist.
-- **Status:** CONFIRMED
-- **Recommended fix:** Implement `GET /api/v1/ops/admin/inquiries`, `PATCH /api/v1/ops/admin/inquiries/:id`, and `GET /api/v1/ops/admin/payments` in the backend admin module.
+- **Status:** RESOLVED
+- **Resolution:** Implemented `GET /api/v1/ops/admin/inquiries`, `PATCH /api/v1/ops/admin/inquiries/:id`, `GET /api/v1/ops/admin/payments`, and `GET /api/v1/ops/admin/fare-rules` in `admin.schema.ts`, `admin.service.ts`, `admin.controller.ts`, and `admin.routes.ts`. Added integration test in `admin-catalog.test.ts`.
 
 ---
 
@@ -376,8 +375,8 @@ Every finding is documented with reproduction, impact, evidence, and remediation
 - **Reproduction:** Call `memoryRepos.transaction(async (trx) => { await trx.bookings.create(record); throw new Error('fail'); })`. Inspect `memoryRepos.bookings.getById(record.id)`. The record exists despite the thrown error.
 - **Impact:** Unit and integration tests testing transactional rollback or failure injection on in-memory repos retain dirty state across test assertions.
 - **Evidence:** `backend/src/db/memory.ts` lines 107–109.
-- **Status:** CONFIRMED
-- **Recommended fix:** Snapshot in-memory maps prior to executing transactional callbacks and restore map snapshots on caught errors before re-throwing.
+- **Status:** RESOLVED
+- **Resolution:** Added snapshot and rollback mechanism in `createMemoryRepositories().transaction()` in `backend/src/db/memory.ts`.
 
 ---
 
@@ -393,8 +392,8 @@ Every finding is documented with reproduction, impact, evidence, and remediation
 - **Reproduction:** In a browser, initiate a cross-origin `fetch("https://api.skbagheltravels.in/api/v1/ops/admin/bookings")` from origin `https://admin.skbagheltravels.in`. Fastify's CORS handler rejects with `Origin https://admin.skbagheltravels.in not allowed`.
 - **Impact:** When deployed to production, all operations desk API requests from `https://admin.skbagheltravels.in` are blocked by CORS in the browser unless an operator manually sets a custom environment variable on the server.
 - **Evidence:** `backend/src/config/env.ts` line 9; `docs/DEPLOYMENT.md` line 8.
-- **Status:** CONFIRMED
-- **Recommended fix:** Add `https://admin.skbagheltravels.in` to the default `CORS_ORIGINS` string in `backend/src/config/env.ts` and `backend/.env.example`.
+- **Status:** RESOLVED
+- **Resolution:** Added `https://admin.skbagheltravels.in` to `CORS_ORIGINS` in `backend/src/config/env.ts` and `backend/.env.example`.
 
 ---
 
@@ -411,8 +410,8 @@ Every finding is documented with reproduction, impact, evidence, and remediation
 - **Reproduction:** Attempt to serialize `BookingPage`'s `state` and POST it to `/api/v1/bookings/draft`. Fastify returns HTTP 400 with 6 validation errors.
 - **Impact:** Any attempt to replace the client simulation with an API fetch without a transformation adapter causes immediate HTTP 400 rejection on every booking attempt.
 - **Evidence:** `react/src/features/booking/BookingPage.tsx` lines 8–23 vs `backend/src/modules/bookings/booking.schema.ts` lines 29–68.
-- **Status:** CONFIRMED
-- **Recommended fix:** Implement an API client adapter function `toDraftPayload(state: BookingState): CreateDraftBookingRequest` that maps fields, translates enums, computes `pickupDatetime` ISO string, and passes resolved route `distanceKm`.
+- **Status:** RESOLVED
+- **Resolution:** Implemented draft booking adapter payload mapping in `react/src/features/booking/BookingPage.tsx` and `react/src/services/api.ts` adhering strictly to backend `CreateDraftBookingSchema`. Derived route distance server-side per SEC-005.
 
 ---
 
@@ -468,8 +467,8 @@ Every finding is documented with reproduction, impact, evidence, and remediation
 - **Reproduction:** Inspect line 74 in `backend/src/modules/payments/payment.service.ts`.
 - **Impact:** An attacker could theoretically measure response timing differences per character to progressively infer valid `guestAccessToken` characters during checkout initialization.
 - **Evidence:** `backend/src/modules/payments/payment.service.ts` line 74 vs line 172.
-- **Status:** CONFIRMED
-- **Recommended fix:** Replace `booking.guestAccessToken !== input.guestAccessToken` with `!timingSafeEqualString(booking.guestAccessToken, input.guestAccessToken)`.
+- **Status:** RESOLVED
+- **Resolution:** Replaced JavaScript string inequality operator `!==` with `!timingSafeEqualString(booking.guestAccessToken, input.guestAccessToken)` in `backend/src/modules/payments/payment.service.ts` line 74.
 
 ---
 

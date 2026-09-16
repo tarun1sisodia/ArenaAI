@@ -24,7 +24,7 @@ export interface CreateDraftBookingPayload {
   dropAddress?: string;
   pickupDatetime: string;
   returnDatetime?: string;
-  distanceKm: number;
+  // distanceKm removed (SEC-005) — server derives from originName/destinationName via fare catalogue
   customerName: string;
   customerPhone: string;
   customerEmail?: string;

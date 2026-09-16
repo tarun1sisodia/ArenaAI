@@ -4,7 +4,16 @@ import { sendSuccess } from "../../middlewares/errorHandler.js";
 import { ADMIN_ROLES, requireRole } from "../../middlewares/roleGuard.js";
 import type { createBookingService } from "../bookings/booking.service.js";
 import type { createPaymentService } from "../payments/payment.service.js";
-import { AdminBookingQuerySchema, BookingIdParamSchema, CreateRefundSchema, TransitionBookingSchema } from "./admin.schema.js";
+import {
+  AdminBookingQuerySchema,
+  AdminInquiryIdParamSchema,
+  AdminInquiryQuerySchema,
+  AdminPaymentQuerySchema,
+  AdminUpdateInquirySchema,
+  BookingIdParamSchema,
+  CreateRefundSchema,
+  TransitionBookingSchema,
+} from "./admin.schema.js";
 import type { createAdminService } from "./admin.service.js";
 
 export function createAdminController(
@@ -45,6 +54,34 @@ export function createAdminController(
         actorId: actor.id,
       });
       return sendSuccess(reply, data, 201);
+    },
+
+    async listInquiries(request: FastifyRequest, reply: FastifyReply) {
+      requireRole(request, ADMIN_ROLES);
+      const query = AdminInquiryQuerySchema.parse(request.query);
+      const data = await service.listInquiries(query);
+      return sendSuccess(reply, data);
+    },
+
+    async updateInquiry(request: FastifyRequest, reply: FastifyReply) {
+      requireRole(request, ADMIN_ROLES);
+      const { id } = AdminInquiryIdParamSchema.parse(request.params);
+      const body = AdminUpdateInquirySchema.parse(request.body);
+      const updated = await service.updateInquiry(id, body);
+      return sendSuccess(reply, updated);
+    },
+
+    async listPayments(request: FastifyRequest, reply: FastifyReply) {
+      requireRole(request, ADMIN_ROLES);
+      const query = AdminPaymentQuerySchema.parse(request.query);
+      const data = await service.listPayments(query);
+      return sendSuccess(reply, data);
+    },
+
+    async getFareRules(request: FastifyRequest, reply: FastifyReply) {
+      requireRole(request, ADMIN_ROLES);
+      const rules = await service.getFareRules();
+      return sendSuccess(reply, rules);
     },
   };
 }

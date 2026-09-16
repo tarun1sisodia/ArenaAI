@@ -14,9 +14,10 @@ import type {
   ReviewRecord,
   WebhookEventRecord,
 } from "../types/domain.js";
-import type { Repositories } from "./types.js";
+import type { InquiryListFilter, PaymentListFilter, Repositories } from "./types.js";
 import { createPoolConfig } from "./poolConfig.js";
 import { ConcurrencyError } from "./concurrency.js";
+import { phonesMatch } from "../shared/privacy.js";
 
 type PoolClient = pg.PoolClient;
 
@@ -109,6 +110,21 @@ function mapPayment(row: Record<string, unknown>): PaymentRecord {
   };
 }
 
+function mapInquiry(row: Record<string, unknown>): InquiryRecord {
+  return {
+    id: String(row.id),
+    name: String(row.name),
+    phone: String(row.phone),
+    email: row.email ? String(row.email) : null,
+    message: String(row.message),
+    tripInterest: row.trip_interest ? String(row.trip_interest) : null,
+    status: (row.status ? String(row.status) : "new") as InquiryRecord["status"],
+    notes: Array.isArray(row.notes) ? (row.notes as string[]) : [],
+    createdAt: new Date(String(row.created_at)).toISOString(),
+    updatedAt: new Date(String(row.updated_at ?? row.created_at)).toISOString(),
+  };
+}
+
 export async function createPostgresRepositories(databaseUrl: string): Promise<Repositories> {
   const pool = new pg.Pool(createPoolConfig(databaseUrl));
 
@@ -185,13 +201,26 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
         },
         async update(record: BookingRecord) {
           // Optimistic locking: ensure version increments by 1, prevent lost updates
+          // FIND-011: update all mutable fields on the record
           const rows = await query(
             client,
             `update bookings set
-              status=$2, version=$3, special_notes=$4, updated_at=$5
-              where id=$1 and version=$3-1 returning *`,
+              trip_type=$2, vehicle_tier=$3, origin_name=$4, destination_name=$5,
+              pickup_address=$6, drop_address=$7, pickup_datetime=$8, return_datetime=$9,
+              flight_train_number=$10, distance_km=$11, customer_name=$12, customer_phone=$13,
+              customer_email=$14, base_fare=$15, night_allowance=$16, driver_allowance=$17,
+              discount_amount=$18, promo_code=$19, total_fare=$20, advance_amount=$21,
+              balance_amount=$22, fare_snapshot=$23::jsonb, status=$24, version=$25,
+              special_notes=$26, updated_at=$27
+              where id=$1 and version=$25-1 returning *`,
             [
-              record.id, record.status, record.version, record.specialNotes, record.updatedAt,
+              record.id, record.tripType, record.vehicleTier, record.originName, record.destinationName,
+              record.pickupAddress, record.dropAddress, record.pickupDatetime, record.returnDatetime,
+              record.flightTrainNumber, record.distanceKm, record.customerName, record.customerPhone,
+              record.customerEmail, record.baseFare, record.nightAllowance, record.driverAllowance,
+              record.discountAmount, record.promoCode, record.totalFare, record.advanceAmount,
+              record.balanceAmount, JSON.stringify(record.fareSnapshot), record.status, record.version,
+              record.specialNotes, record.updatedAt,
             ],
           );
           if (!rows[0]) {
@@ -253,6 +282,17 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
             params,
           );
           return { items: rows.map(mapBooking), total: num(countRows[0]?.total ?? 0) };
+        },
+        async listByPhone(phone: string, options: { from: string }) {
+          const digits = phone.replace(/\D/g, "");
+          const suffix = digits.slice(-10);
+          const rows = await query(
+            client,
+            `select * from bookings where created_at >= $1 and (customer_phone = $2 or customer_phone like $3) order by created_at desc`,
+            [options.from, phone, `%${suffix}`],
+          );
+          const items = rows.map(mapBooking);
+          return items.filter((item) => phonesMatch(item.customerPhone, phone));
         },
       },
       payments: {
@@ -318,6 +358,47 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
             [bookingId],
           );
           return rows[0] ? mapPayment(rows[0]) : null;
+        },
+        async list(filter?: PaymentListFilter) {
+          const clauses: string[] = [];
+          const params: unknown[] = [];
+          if (filter?.bookingId) {
+            params.push(filter.bookingId);
+            clauses.push(`booking_id=$${params.length}`);
+          }
+          if (filter?.status) {
+            params.push(filter.status);
+            clauses.push(`status=$${params.length}`);
+          }
+          if (filter?.provider) {
+            params.push(filter.provider);
+            clauses.push(`provider=$${params.length}`);
+          }
+          const where = clauses.length ? `where ${clauses.join(" and ")}` : "";
+          const aggRows = await query(
+            client,
+            `select
+               count(*)::int as total,
+               coalesce(sum(case when status='captured' then inr_amount_paise else 0 end), 0)::bigint as total_captured,
+               coalesce(sum(case when status='refunded' then inr_amount_paise else 0 end), 0)::bigint as total_refunded
+             from payments ${where}`,
+            params,
+          );
+          const page = filter?.page ?? 1;
+          const pageSize = filter?.limit ?? 50;
+          const offset = (page - 1) * pageSize;
+          const queryParams = [...params, pageSize, offset];
+          const rows = await query(
+            client,
+            `select * from payments ${where} order by created_at desc limit $${queryParams.length - 1} offset $${queryParams.length}`,
+            queryParams,
+          );
+          return {
+            items: rows.map(mapPayment),
+            total: num(aggRows[0]?.total ?? 0),
+            totalCapturedPaise: num(aggRows[0]?.total_captured ?? 0),
+            totalRefundedPaise: num(aggRows[0]?.total_refunded ?? 0),
+          };
         },
       },
       refunds: {
@@ -593,13 +674,62 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
       },
       inquiries: {
         async create(record: InquiryRecord) {
-          await query(
+          const rows = await query(
             client,
-            `insert into inquiries (id, name, phone, email, message, trip_interest, created_at)
-             values ($1,$2,$3,$4,$5,$6,$7)`,
-            [record.id, record.name, record.phone, record.email, record.message, record.tripInterest, record.createdAt],
+            `insert into inquiries (id, name, phone, email, message, trip_interest, status, notes, created_at, updated_at)
+             values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) returning *`,
+            [
+              record.id, record.name, record.phone, record.email, record.message,
+              record.tripInterest, record.status, record.notes, record.createdAt, record.updatedAt,
+            ],
           );
-          return record;
+          return mapInquiry(rows[0]!);
+        },
+        async update(record: InquiryRecord) {
+          const rows = await query(
+            client,
+            `update inquiries set
+               name=$2, phone=$3, email=$4, message=$5, trip_interest=$6,
+               status=$7, notes=$8, updated_at=$9
+             where id=$1 returning *`,
+            [
+              record.id, record.name, record.phone, record.email, record.message,
+              record.tripInterest, record.status, record.notes, record.updatedAt,
+            ],
+          );
+          if (!rows[0]) throw new Error("inquiry update failed: not found");
+          return mapInquiry(rows[0]!);
+        },
+        async getById(id: string) {
+          const rows = await query(client, "select * from inquiries where id=$1", [id]);
+          return rows[0] ? mapInquiry(rows[0]) : null;
+        },
+        async list(filter?: InquiryListFilter) {
+          const clauses: string[] = [];
+          const params: unknown[] = [];
+          if (filter?.status) {
+            params.push(filter.status);
+            clauses.push(`status=$${params.length}`);
+          }
+          if (filter?.q) {
+            params.push(`%${filter.q.toLowerCase()}%`);
+            clauses.push(`(lower(name) like $${params.length} or phone like $${params.length} or lower(coalesce(email, '')) like $${params.length} or lower(coalesce(trip_interest, '')) like $${params.length} or lower(message) like $${params.length})`);
+          }
+          const where = clauses.length ? `where ${clauses.join(" and ")}` : "";
+          const countRows = await query(client, `select count(*)::int as total from inquiries ${where}`, params);
+          const page = filter?.page ?? 1;
+          const limit = filter?.limit ?? 50;
+          const offset = (page - 1) * limit;
+          const queryParams = [...params, limit, offset];
+          const rows = await query(
+            client,
+            `select * from inquiries ${where} order by created_at desc limit $${queryParams.length - 1} offset $${queryParams.length}`,
+            queryParams,
+          );
+          return {
+            items: rows.map(mapInquiry),
+            total: num(countRows[0]?.total ?? 0),
+          };
         },
       },
       notifications: {

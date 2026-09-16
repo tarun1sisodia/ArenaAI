@@ -26,7 +26,7 @@ export type SiteConfig = {
 
 export const siteConfig: SiteConfig = {
   name: "SK Baghel Tour & Travels",
-  domain: "https://agraskbagheltourandtravels.com",
+  domain: "https://skbagheltravels.in",
   defaultLanguage: "en",
   supportedLanguages: ["en", "hi"],
   contact: {
@@ -57,10 +57,6 @@ function readRuntimeToken(): string {
   if (typeof window === "undefined") return "";
 
   try {
-    const params = new URLSearchParams(window.location.search);
-    const paramKey = params.get("locationiq_key")?.trim();
-    if (paramKey) return paramKey;
-
     const globalKey = (window as unknown as { LOCATIONIQ_ACCESS_TOKEN?: string }).LOCATIONIQ_ACCESS_TOKEN?.trim();
     if (globalKey) return globalKey;
 

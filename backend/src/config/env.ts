@@ -79,6 +79,16 @@ export function loadEnv(source: NodeJS.ProcessEnv = process.env): Env {
     if (env.RAZORPAY_KEY_ID && !env.RAZORPAY_WEBHOOK_SECRET) {
       missing.push("RAZORPAY_WEBHOOK_SECRET required when RAZORPAY_KEY_ID is set");
     }
+    // SEC-004: PayPal and Card webhook secrets must be explicit in production (no fallback strings)
+    if (env.PAYPAL_CLIENT_ID && !env.PAYPAL_WEBHOOK_SECRET) {
+      missing.push("PAYPAL_WEBHOOK_SECRET required when PAYPAL_CLIENT_ID is set");
+    }
+    if (!env.PAYPAL_WEBHOOK_SECRET) {
+      missing.push("PAYPAL_WEBHOOK_SECRET required in production");
+    }
+    if (!env.CARD_WEBHOOK_SECRET) {
+      missing.push("CARD_WEBHOOK_SECRET required in production");
+    }
     if (env.ALLOW_TEST_AUTH) missing.push("ALLOW_TEST_AUTH must be false in production");
     // Validate CORS origins are HTTPS in production
     const origins = env.CORS_ORIGINS.split(",").map((s) => s.trim()).filter(Boolean);
@@ -89,6 +99,16 @@ export function loadEnv(source: NodeJS.ProcessEnv = process.env): Env {
     if (missing.length > 0) {
       throw new Error(`Production environment is incomplete: ${missing.join(", ")}`);
     }
+  }
+  // SEC-003 defence-in-depth: catch ALLOW_TEST_AUTH=true on a server that has a real DB URL
+  // (staging/docker accident detection — not restricted to NODE_ENV=production)
+  if (env.ALLOW_TEST_AUTH && env.DATABASE_URL && env.NODE_ENV !== "test") {
+    // Warn loudly — do not throw so tests that set DATABASE_URL for integration can still run
+    // eslint-disable-next-line no-console
+    console.warn(
+      "[SECURITY WARNING] ALLOW_TEST_AUTH=true with a real DATABASE_URL detected. " +
+      "This grants unauthenticated super_admin access. Remove ALLOW_TEST_AUTH from any non-test environment.",
+    );
   }
   // Validate FX rates are sane
   if (env.FX_USD_PER_INR <= 0 || env.FX_USD_PER_INR > 1) {

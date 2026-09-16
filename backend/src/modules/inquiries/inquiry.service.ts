@@ -8,6 +8,7 @@ import type { z } from "zod";
 export function createInquiryService(deps: { db: Repositories; clock: Clock }) {
   return {
     async create(input: z.infer<typeof CreateInquirySchema>) {
+      const nowIso = toIso(deps.clock.now());
       return deps.db.inquiries.create({
         id: newId(),
         name: input.name,
@@ -15,7 +16,10 @@ export function createInquiryService(deps: { db: Repositories; clock: Clock }) {
         email: input.email ?? null,
         message: input.message,
         tripInterest: input.tripInterest ?? null,
-        createdAt: toIso(deps.clock.now()),
+        status: "new",
+        notes: [],
+        createdAt: nowIso,
+        updatedAt: nowIso,
       });
     },
   };

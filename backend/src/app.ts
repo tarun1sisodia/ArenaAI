@@ -64,6 +64,7 @@ export type AppOptions = {
 export type BuiltApp = {
   app: FastifyInstance;
   db: Repositories;
+  notifications: ReturnType<typeof createNotificationService>;
 };
 
 export async function buildApp(options: AppOptions): Promise<BuiltApp> {
@@ -116,7 +117,8 @@ export async function buildApp(options: AppOptions): Promise<BuiltApp> {
   await app.register(rateLimit, {
     max: 120,
     timeWindow: "1 minute",
-    allowList: (request) => request.url.startsWith("/api/v1/payments/webhooks/"),
+    // SEC-001: no global allowList exemption — each route sets its own limit
+    // Webhooks use a per-route config with a generous limit to allow provider retries
     errorResponseBuilder: (request, context) => ({
       success: false,
       error: {
@@ -207,7 +209,7 @@ export async function buildApp(options: AppOptions): Promise<BuiltApp> {
   await registerInquiryRoutes(app, createInquiryController(inquiryService));
   await registerAdminRoutes(app, createAdminController(adminService, paymentService, bookingService));
 
-  return { app, db };
+  return { app, db, notifications };
 }
 
 function createPaymentProviders(env: Env): PaymentProviderRegistry {
@@ -219,13 +221,19 @@ function createPaymentProviders(env: Env): PaymentProviderRegistry {
     }),
     paypal: createHmacPaymentAdapter({
       name: "paypal",
-      webhookSecret: env.PAYPAL_WEBHOOK_SECRET || "whsec_paypal_test",
+      webhookSecret: env.PAYPAL_WEBHOOK_SECRET || (() => {
+        if (env.NODE_ENV === "production") throw new Error("PAYPAL_WEBHOOK_SECRET is required in production");
+        return "dev-paypal-webhook-secret";
+      })(),
       publicKey: env.PAYPAL_CLIENT_ID,
       checkoutBaseUrl: "https://www.paypal.com/checkoutnow",
     }),
     card: createHmacPaymentAdapter({
       name: "card",
-      webhookSecret: env.CARD_WEBHOOK_SECRET || "whsec_card_test",
+      webhookSecret: env.CARD_WEBHOOK_SECRET || (() => {
+        if (env.NODE_ENV === "production") throw new Error("CARD_WEBHOOK_SECRET is required in production");
+        return "dev-card-webhook-secret";
+      })(),
       checkoutBaseUrl: env.CARD_CHECKOUT_BASE_URL,
     }),
   };

@@ -43,6 +43,9 @@ export function createNotificationService(deps: {
       }
       await processQueued(deps);
     },
+    async processQueued(): Promise<void> {
+      return processQueued(deps);
+    },
   };
 }
 

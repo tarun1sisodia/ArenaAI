@@ -72,21 +72,13 @@ export async function loginWithCredentials(
     }
   }
 
-  // Development / Demo environment fallback (TRD §2.1)
-  // Enforces valid email pattern and non-empty password
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
-    throw new Error("Please enter a valid email address.");
-  }
-
-  const adminUser: AdminUser = {
-    id: "00000000-0000-4000-a000-000000000001",
-    role: "super_admin",
-    name: "A. Baghel",
-    email: trimmedEmail,
-    token: "test-super_admin",
-  };
-
-  return adminUser;
+  // Development / Demo environment fallback removed (SEC-006)
+  // The admin panel MUST be configured with real Supabase credentials.
+  // For local development, use Supabase local docker: https://supabase.com/docs/guides/local-development
+  throw new Error(
+    "Supabase is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY " +
+    "to your Supabase project credentials. See docs/DEPLOYMENT.md for setup instructions.",
+  );
 }
 
 export function getStoredSession(): AdminUser | null {

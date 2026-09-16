@@ -3,7 +3,7 @@ import type { Repositories } from "../../db/types.js";
 import type { Clock } from "../../shared/clock.js";
 import { toIso } from "../../shared/clock.js";
 import { AppError, Errors } from "../../shared/errors.js";
-import { newId, sha256Hex } from "../../shared/ids.js";
+import { newId, sha256Hex, timingSafeEqualString } from "../../shared/ids.js";
 import { convertInrPaiseToMinor, rupeesToPaise } from "../../shared/money.js";
 import { assertTransition } from "../../shared/stateMachine.js";
 import type {
@@ -71,7 +71,7 @@ export function createPaymentService(deps: {
       // Use transaction to prevent race conditions on concurrent checkout creation
       return deps.db.transaction(async (trx) => {
         const booking = await trx.bookings.getByTicketId(input.ticketId);
-        if (!booking || booking.guestAccessToken !== input.guestAccessToken) {
+        if (!booking || !timingSafeEqualString(booking.guestAccessToken, input.guestAccessToken)) {
           throw Errors.notFound("BOOKING_NOT_FOUND", "The booking could not be found or verified.");
         }
         assertBookingPayable(booking);
@@ -166,7 +166,6 @@ export function createPaymentService(deps: {
       const booking = await deps.db.bookings.getById(payment.bookingId);
       if (!booking) throw Errors.notFound("BOOKING_NOT_FOUND", "Booking not found for payment.");
       // Timing-safe token comparison
-      const { timingSafeEqualString } = await import("../../shared/ids.js");
       const tokenValid =
         booking.guestAccessToken.length === token.length &&
         timingSafeEqualString(booking.guestAccessToken, token);

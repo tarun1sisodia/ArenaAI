@@ -65,6 +65,8 @@ export type Repositories = {
     getByTicketId(ticketId: string): Promise<BookingRecord | null>;
     ticketExists(ticketId: string): Promise<boolean>;
     list(filter: BookingListFilter): Promise<{ items: BookingRecord[]; total: number }>;
+    /** SEC-007: targeted phone+time-window query for duplicate booking detection */
+    listByPhone(phone: string, options: { from: string }): Promise<BookingRecord[]>;
   };
 
   payments: {
