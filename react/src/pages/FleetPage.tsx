@@ -2,10 +2,6 @@ import { useState, useMemo } from "react";
 import type { SupportedLanguage } from "../config";
 import { contact } from "../data/contact";
 import { vehicles, airportTransfers } from "../data";
-import { AnalyticsBoard } from "../components/ui/AnalyticsBoard";
-import { Icon, type IconName } from "../components/ui/Icon";
-import { Reveal, Stagger, StaggerItem } from "../components/ui/motion";
-import { Button } from "../components/ui/Button";
 
 interface FleetPageProps {
   language?: SupportedLanguage;
@@ -217,18 +213,15 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
           </p>
 
           <div className="hero-actions">
-            <Button href="#fleet-catalogue">
-              <Icon name="car" size={17} />
-              {isHindi ? "गाड़ियाँ देखें" : "Explore Fleet Below"}
-            </Button>
-            <Button variant="outline" href="#transfers-matrix">
-              <Icon name="map-pin" size={17} />
+            <a className="button button-primary" href="#fleet-catalogue">
+              {isHindi ? "गाड़ियाँ देखें ↓" : "Explore Fleet Below ↓"}
+            </a>
+            <a className="button button-outline" href="#transfers-matrix">
               {isHindi ? "एयरपोर्ट व स्टेशन दरें" : "Airport & Station Transfers"}
-            </Button>
-            <Button variant="outline" href={`tel:${contact.phone}`}>
-              <Icon name="phone" size={17} />
+            </a>
+            <a className="button button-outline" href={`tel:${contact.phone}`}>
               {contact.phoneDisplay}
-            </Button>
+            </a>
           </div>
         </div>
       </header>
@@ -296,13 +289,12 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
           </div>
 
           {/* Vehicle Cards Grid */}
-          <Stagger className="fleet-cards-grid" step={0.06}>
+          <div className="fleet-cards-grid">
             {filteredVehicles.map((veh) => {
               const isRecommended = veh.id === "innova";
 
               return (
-                <StaggerItem
-                  as="article"
+                <article
                   className={`fleet-vehicle-card ${isRecommended ? "is-featured" : ""}`}
                   key={veh.id}
                   id={veh.id}
@@ -317,11 +309,11 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                       loading="lazy"
                     />
                     <div className="media-overlay-tags">
-                      <span className="spec-badge"><Icon name="users" size={12} /> {veh.seats}+1 {isHindi ? "सीटें" : "Seats"}</span>
-                      <span className="spec-badge"><Icon name="luggage" size={12} /> {veh.bags} {isHindi ? "बैग" : "Bags"}</span>
-                      <span className="spec-badge"><Icon name="snowflake" size={12} /> Dual AC</span>
+                      <span className="spec-badge">💺 {veh.seats}+1 Seats</span>
+                      <span className="spec-badge">🧳 {veh.bags} Bags</span>
+                      <span className="spec-badge">❄️ Dual AC</span>
                       {isRecommended && (
-                        <span className="gold-star-badge"><Icon name="star" size={11} /> {isHindi ? "हाईवे फेवरेट" : "HIGHWAY FAVORITE"}</span>
+                        <span className="gold-star-badge">★ HIGHWAY FAVORITE</span>
                       )}
                     </div>
                   </div>
@@ -355,7 +347,7 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                       <div className="models-tags-list">
                         {veh.models.map((model, idx) => (
                           <span className="model-chip" key={idx}>
-                            <Icon name="car" size={12} /> {model}
+                            🚗 {model}
                           </span>
                         ))}
                       </div>
@@ -434,73 +426,10 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                       </div>
                     </div>
                   </div>
-                </StaggerItem>
+                </article>
               );
             })}
-          </Stagger>
-        </div>
-      </section>
-
-      {/* Fleet Capability Analytics Board (motion.dev) */}
-      <section className="home-section fleet-analytics-section" aria-label="Fleet capability analytics">
-
-        <div className="container">
-          <div className="section-heading">
-            <div>
-              <p className="eyebrow">
-                {isHindi ? "फ्लीट क्षमता विश्लेषण" : "Fleet Capability Analytics"}
-              </p>
-              <h2>
-                {isHindi ? (
-                  <>
-                    हर गाड़ी की क्षमता,
-                    <br />
-                    <i>सीट, सामान और प्रति किमी दर।</i>
-                  </>
-                ) : (
-                  <>
-                    Capacity, comfort and cost
-                    <br />
-                    <i>compared across the whole fleet.</i>
-                  </>
-                )}
-              </h2>
-            </div>
-            <a className="text-link" href="/book.html">
-              {isHindi ? "उपलब्धता जांचें ↗" : "Check availability ↗"}
-            </a>
           </div>
-
-          <Reveal>
-            <AnalyticsBoard
-              title={isHindi ? "फ्लीट बेंचमार्क — आउटस्टेशन दरें" : "Fleet benchmark — outstation rates"}
-              description={
-                isHindi
-                  ? "सभी दरें प्रति किमी, ईंधन व चालक भत्ता सहित। 300 किमी/दिन न्यूनतम लागू।"
-                  : "Per-kilometre rates including fuel and driver allowance. 300 km/day minimum applies on multi-day trips."
-              }
-              metrics={vehicles.slice(0, 4).map((veh) => ({
-                id: veh.id,
-                label: veh.name,
-                value: veh.perKm,
-                prefix: "₹",
-                unit: "/km",
-                icon: (veh.id === "tempo" || veh.id === "urbania" ? "bus" : "car") as IconName,
-                delta: `${veh.seats} ${isHindi ? "सीटें" : "seats"} · ${veh.bags} ${isHindi ? "बैग" : "bags"}`,
-                deltaTone: "flat",
-                spark: [veh.perKm * 0.7, veh.perKm * 0.8, veh.perKm * 0.85, veh.perKm * 0.95, veh.perKm],
-              }))}
-              footerNote={
-                isHindi
-                  ? "अग्रिम भुगतान UPI/कार्ड से; जीएसटी इनवॉइस सहित।"
-                  : "UPI/card advance accepted. GST invoice issued on every booking."
-              }
-              legend={[
-                { label: isHindi ? "प्रति किमी दर" : "Rate per km" },
-                { label: isHindi ? "सीट व सामान" : "Seats & luggage", muted: true },
-              ]}
-            />
-          </Reveal>
         </div>
       </section>
 
@@ -612,8 +541,8 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
             </div>
           </div>
 
-          <Stagger className="standards-grid" step={0.05}>
-            <StaggerItem className="standard-pillar-card">
+          <div className="standards-grid">
+            <div className="standard-pillar-card">
               <span className="pillar-num">01</span>
               <h3>
                 {isHindi ? "दैनिक सैनिटाइजेशन व एसी क्लीनिंग" : "Daily Sanitization & AC Duct Care"}
@@ -623,9 +552,9 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                   ? "हर ट्रिप के बाद वैक्यूम क्लीनिंग, फ्रेश इंटीरियर, और शक्तिशाली डुअल एसी डक्ट्स की नियमित सर्विसिंग ताकि यात्रा में ताजी हवा मिले।"
                   : "Vacuumed interiors, fresh non-smoking cabin ambiance, and thoroughly serviced AC cooling ducts prior to every highway departure."}
               </p>
-            </StaggerItem>
+            </div>
 
-            <StaggerItem className="standard-pillar-card">
+            <div className="standard-pillar-card">
               <span className="pillar-num">02</span>
               <h3>
                 {isHindi ? "सत्यापित एवं अनुभवी ड्राइवर" : "Verified Professional Chauffeurs"}
@@ -635,9 +564,9 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                   ? "पुलिस सत्यापन, वैध कमर्शियल ड्राइविंग लाइसेंस, और न्यूनतम 7+ वर्षों का एक्सप्रेसवे व पहाड़ी रास्तों का अनुभव।"
                   : "Strict police background checks, verified commercial badges, and minimum 7+ years of Yamuna Expressway and heritage highway experience."}
               </p>
-            </StaggerItem>
+            </div>
 
-            <StaggerItem className="standard-pillar-card">
+            <div className="standard-pillar-card">
               <span className="pillar-num">03</span>
               <h3>
                 {isHindi ? "आरसी व ऑल-इंडिया परमिट" : "Commercial RTO Yellow-Plate Permits"}
@@ -647,9 +576,9 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                   ? "सभी वाहनों में वैध कमर्शियल बीमा, फिटनेस सर्टिफिकेट, ऑल-इंडिया टूरिस्ट परमिट और जीपीएस ट्रैकिंग उपकरण लगे हैं।"
                   : "Every vehicle operates with valid tourist commercial registration, passenger insurance, annual fitness certification, and live GPS tracking."}
               </p>
-            </StaggerItem>
+            </div>
 
-            <StaggerItem className="standard-pillar-card">
+            <div className="standard-pillar-card">
               <span className="pillar-num">04</span>
               <h3>
                 {isHindi ? "24×7 आकस्मिक बैकअप गारंटी" : "24×7 Roadside Replacement Guarantee"}
@@ -659,8 +588,8 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                   ? "आगरा, दिल्ली एनसीआर और जयपुर कॉरिडोर में किसी तकनीकी रुकावट की स्थिति में 30–45 मिनट में वैकल्पिक वाहन का पक्का वादा।"
                   : "In the unlikely event of a tire puncture or mechanical delay, our corridor rescue network dispatches a replacement car within 30–45 minutes."}
               </p>
-            </StaggerItem>
-          </Stagger>
+            </div>
+          </div>
         </div>
       </section>
 

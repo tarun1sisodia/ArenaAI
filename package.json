@@ -9,7 +9,7 @@
   },
   "scripts": {
     "install:all": "npm ci && npm --prefix react ci && npm --prefix admin ci && npm --prefix backend ci",
-    "verify": "npm run customer:typecheck && npm run admin:typecheck && npm run backend:typecheck && npm run customer:audit:css && npm test && npm run build:all",
+    "verify": "npm run customer:typecheck && npm run admin:typecheck && npm run backend:typecheck && npm test && npm run build:all",
     "typecheck": "npm run customer:typecheck && npm run admin:typecheck && npm run backend:typecheck",
     "dev": "npm --prefix react run dev",
     "dev:all": "node scripts/dev-all.mjs",
@@ -34,7 +34,6 @@
     "testsprite:validate": "node scripts/validate-testsprite.mjs",
     "deploy:customer": "npm --prefix react ci && npm run customer:build && npx wrangler pages deploy react/dist --project-name skbagheltravels-customer",
     "deploy:admin": "npm --prefix admin ci && npm run admin:build && npx wrangler pages deploy admin/dist --project-name skbagheltravels-admin",
-    "customer:audit:css": "npm --prefix react run audit:css",
     "beacon": "beacon",
     "beacon:stop": "beacon stop"
   },

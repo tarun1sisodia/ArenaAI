@@ -1,8 +1,4 @@
 import { useState } from "react";
-import { AnalyticsBoard } from "../components/ui/AnalyticsBoard";
-import { Icon, type IconName } from "../components/ui/Icon";
-import { Reveal, Stagger, StaggerItem } from "../components/ui/motion";
-import { Button } from "../components/ui/Button";
 import type { SupportedLanguage } from "../config";
 import { contact } from "../data/contact";
 import {
@@ -353,25 +349,22 @@ export function ServicesPage({ language }: ServicesPageProps) {
               : "From dawn departures at the Taj Mahal to multi-city Golden Triangle journeys, airport express pickups, and group tempo travel — transparent fares with verified local drivers."}
           </p>
           <div className="hero-actions">
-            <Button href={`tel:${contact.phone}`}>
-              <Icon name="phone" size={17} />
+            <a className="button button-primary" href={`tel:${contact.phone}`}>
               {isHindi
                 ? `कॉल करें ${contact.phoneDisplay}`
                 : `Call ${contact.phoneDisplay}`}
-            </Button>
-            <Button
-              variant="outline"
+            </a>
+            <a
+              className="button button-outline"
               href={`https://wa.me/${contact.whatsapp}`}
               target="_blank"
               rel="noreferrer"
             >
-              <Icon name="whatsapp" size={17} />
               {isHindi ? "व्हाट्सएप सहायता" : "WhatsApp Desk"}
-            </Button>
-            <Button variant="outline" href="/book.html">
-              <Icon name="arrow-up-right" size={17} />
-              {isHindi ? "उपलब्धता जांचें" : "Check Availability"}
-            </Button>
+            </a>
+            <a className="button button-outline" href="/book.html">
+              {isHindi ? "उपलब्धता जांचें ↗" : "Check Availability ↗"}
+            </a>
           </div>
         </div>
       </header>
@@ -403,14 +396,13 @@ export function ServicesPage({ language }: ServicesPageProps) {
             </div>
           </div>
 
-          <Stagger className="services-deep-grid" step={0.06}>
+          <div className="services-deep-grid">
             {services.map((service: Service) => {
               const details = SERVICE_DETAILED_INFO[service.id];
               const variantClass = `service-deep-card--${service.variant}`;
 
               return (
-                <StaggerItem
-                  as="article"
+                <article
                   className={`service-deep-card ${variantClass}`}
                   key={service.id}
                   id={service.id}
@@ -474,109 +466,10 @@ export function ServicesPage({ language }: ServicesPageProps) {
                       <span aria-hidden="true"> ↗</span>
                     </a>
                   </div>
-                </StaggerItem>
+                </article>
               );
             })}
-          </Stagger>
-        </div>
-      </section>
-
-      {/* Service Coverage Analytics Board (motion.dev) */}
-      <section
-        className="home-section services-analytics-section"
-        aria-labelledby="services-analytics-heading"
-      >
-        <div className="container">
-          <div className="section-heading">
-            <div>
-              <p className="eyebrow">
-                {isHindi ? "सेवा कवरेज बोर्ड" : "Service Coverage Board"}
-              </p>
-              <h2 id="services-analytics-heading">
-                {isHindi ? (
-                  <>
-                    हमारे संचालन के आंकड़े,
-                    <br />
-                    <i>क्षमता, बेड़ा और राजमार्ग पहुंच।</i>
-                  </>
-                ) : (
-                  <>
-                    Our operating numbers,
-                    <br />
-                    <i>capacity, fleet depth and highway reach.</i>
-                  </>
-                )}
-              </h2>
-            </div>
-            <a className="text-link" href={`${langPrefix}/routes/`}>
-              {isHindi ? "सभी रूट्स देखें ↗" : "Browse all routes ↗"}
-            </a>
           </div>
-
-          <Reveal>
-            <AnalyticsBoard
-              title={isHindi ? "सेवा मिश्रण व बेड़ा क्षमता" : "Service mix & fleet capacity"}
-              description={
-                isHindi
-                  ? "प्रतिदिन संभाली जाने वाली बुकिंग, उपलब्ध वाहन और कवर किए गए कॉरिडोर।"
-                  : "Daily dispatch capacity, available vehicles and covered corridors across the network."
-              }
-              metrics={[
-                {
-                  id: "verticals",
-                  label: isHindi ? "सेवा श्रेणियां" : "Service verticals",
-                  value: services.length,
-                  unit: isHindi ? "सेवाएं" : "verticals",
-                  icon: "sparkle",
-                  delta: isHindi ? "24×7 संचालन" : "24×7 dispatch",
-                  deltaTone: "flat",
-                },
-                {
-                  id: "fleet-size",
-                  label: isHindi ? "बेड़े की श्रेणियां" : "Fleet categories",
-                  value: vehicles.length,
-                  unit: isHindi ? "श्रेणियां" : "classes",
-                  icon: "car",
-                  spark: [3, 3, 4, 4, 5, vehicles.length],
-                },
-                {
-                  id: "seats",
-                  label: isHindi ? "अधिकतम सीट क्षमता" : "Max seat capacity",
-                  value: 26,
-                  unit: isHindi ? "सीटें" : "seats",
-                  icon: "users",
-                  delta: isHindi ? "26 सीटर टेम्पो" : "26-seater Tempo",
-                  deltaTone: "flat",
-                },
-                {
-                  id: "cities",
-                  label: isHindi ? "कवर किए शहर" : "Cities served",
-                  value: 42,
-                  unit: isHindi ? "शहर" : "cities",
-                  icon: "map-pin",
-                  delta: isHindi ? "5 राज्य" : "across 5 states",
-                },
-              ]}
-              bars={ALLOCATION_GUIDE.map((guide, index) => ({
-                id: guide.vehicleId,
-                label: guide.category[activeLanguage],
-                value: 5 - index,
-                display: guide.capacity[activeLanguage],
-                icon: (guide.vehicleId === "tempo" || guide.vehicleId === "urbania" ? "bus" : "car") as IconName,
-                muted: index > 2,
-              }))}
-              barHeading={isHindi ? "वाहन आवंटन मार्गदर्शिका" : "Vehicle allocation guide"}
-              footerNote={
-                isHindi
-                  ? "समूह आकार के अनुसार वाहन आवंटन; टोल व पार्किंग सहित दरें।"
-                  : "Vehicles are assigned by group size. All quoted fares include tolls and monument parking."
-              }
-              legend={[
-                { label: isHindi ? "प्राथमिक" : "Primary allocation" },
-                { label: isHindi ? "वैकल्पिक" : "Alternate", muted: true },
-              ]}
-            />
-          </Reveal>
         </div>
       </section>
 
@@ -646,7 +539,7 @@ export function ServicesPage({ language }: ServicesPageProps) {
       <section className="container pet-banner-container" aria-label="Pet friendly travel">
         <div className="pet-banner">
           <div className="pet-banner-content">
-            <span className="pet-banner-badge"><Icon name="paw" size={14} /> {isHindi ? "पेट फ्रेंडली यात्रा" : "PET FRIENDLY TRAVEL"}</span>
+            <span className="pet-banner-badge">🐾 PET FRIENDLY TRAVEL</span>
             <h2>{petFriendlyService.title[activeLanguage]}</h2>
             <p>{petFriendlyService.blurb[activeLanguage]}</p>
             <div className="pet-coupon-box">
@@ -703,7 +596,7 @@ export function ServicesPage({ language }: ServicesPageProps) {
 
           <div className="transparency-grid">
             <div className="transparency-card">
-              <div className="transparency-icon"><Icon name="info" size={20} /></div>
+              <div className="transparency-icon">🧾</div>
               <h3>{isHindi ? "ऑल-इनक्लूसिव वन-वे ड्रॉप" : "All-Inclusive One-Way"}</h3>
               <p>
                 {isHindi
@@ -713,7 +606,7 @@ export function ServicesPage({ language }: ServicesPageProps) {
             </div>
 
             <div className="transparency-card">
-              <div className="transparency-icon"><Icon name="gauge" size={20} /></div>
+              <div className="transparency-icon">📏</div>
               <h3>{isHindi ? "300 किमी/दिन का आउटस्टेशन मानक" : "300 KM/Day Outstation Rule"}</h3>
               <p>
                 {isHindi
@@ -723,7 +616,7 @@ export function ServicesPage({ language }: ServicesPageProps) {
             </div>
 
             <div className="transparency-card">
-              <div className="transparency-icon"><Icon name="clock" size={20} /></div>
+              <div className="transparency-icon">🌙</div>
               <h3>{isHindi ? "पारदर्शी नाइट अलाउंस" : "Night Driving Allowance"}</h3>
               <p>
                 {isHindi
@@ -733,7 +626,7 @@ export function ServicesPage({ language }: ServicesPageProps) {
             </div>
 
             <div className="transparency-card">
-              <div className="transparency-icon"><Icon name="shield-check" size={20} /></div>
+              <div className="transparency-icon">🛡️</div>
               <h3>{isHindi ? "24-घंटे में 100% रिफंड" : "24-Hour Free Cancellation"}</h3>
               <p>
                 {cancellationPolicyCab[activeLanguage]}
