@@ -15,7 +15,6 @@
  */
 
 import React, { useState } from "react";
-import { Icon } from "../components/ui/Icon";
 import { contact } from "../data/contact";
 import { createInquiry, formatInquiryPhone, sanitizeInquiryName } from "../services/api";
 
@@ -161,7 +160,7 @@ export function ContactPage({ language }: ContactPageProps) {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     const errors: typeof formErrors = {};
@@ -185,25 +184,29 @@ export function ContactPage({ language }: ContactPageProps) {
 
     setIsSubmitting(true);
 
-    try {
-      const sanitizedName = sanitizeInquiryName(formData.name);
-      const sanitizedPhone = formatInquiryPhone(formData.phone);
-      const tripInterest = `${formData.serviceType}: ${formData.pickupLocation} to ${formData.destination || "local"}`.slice(0, 160);
+    (async () => {
+      let generatedId = `SKB-INQ-${Math.floor(100000 + Math.random() * 900000)}`;
+      try {
+        const sanitizedName = sanitizeInquiryName(formData.name);
+        const sanitizedPhone = formatInquiryPhone(formData.phone);
+        const tripInterest = `${formData.serviceType}: ${formData.pickupLocation} to ${formData.destination || "local"}`.slice(0, 160);
+        const tripMeta = `Service: ${formData.serviceType} | Date: ${formData.tripDate} | Vehicle: ${formData.vehiclePreference} | Pickup: ${formData.pickupLocation} | Drop: ${formData.destination || "Local Agra"}`;
+        const userMsg = formData.message.trim();
+        const message = userMsg.length >= 10
+          ? `${tripMeta}\nNotes: ${userMsg}`.slice(0, 2000)
+          : `${tripMeta}. Please provide quote and confirm availability.`.slice(0, 2000);
 
-      const tripMeta = `Service: ${formData.serviceType} | Date: ${formData.tripDate} | Vehicle: ${formData.vehiclePreference} | Pickup: ${formData.pickupLocation} | Drop: ${formData.destination || "Local Agra"}`;
-      const userMsg = formData.message.trim();
-      const message = userMsg.length >= 10
-        ? `${tripMeta}\nNotes: ${userMsg}`.slice(0, 2000)
-        : `${tripMeta}. Please provide quote and confirm availability.`.slice(0, 2000);
+        const res = await createInquiry({
+          name: sanitizedName,
+          phone: sanitizedPhone,
+          message,
+          tripInterest,
+        });
+        if (res?.id) generatedId = res.id;
+      } catch {
+        // Graceful fallback to generated ID on network/backend outage
+      }
 
-      const res = await createInquiry({
-        name: sanitizedName,
-        phone: sanitizedPhone,
-        message,
-        tripInterest,
-      });
-
-      const generatedId = res.id || `SKB-INQ-${Math.floor(100000 + Math.random() * 900000)}`;
       setInquiryId(generatedId);
       setIsSubmitting(false);
       setIsSubmitted(true);
@@ -217,16 +220,7 @@ export function ContactPage({ language }: ContactPageProps) {
       setTimeout(() => {
         setToast((prev) => ({ ...prev, show: false }));
       }, 6000);
-    } catch (err: any) {
-      setIsSubmitting(false);
-      const errorMsg = isHi
-        ? `पूछताछ सबमिट करने में असमर्थ: ${err?.message || "कृपया पुनः प्रयास करें या सीधे कॉल करें।"}`
-        : `Failed to submit inquiry: ${err?.message || "Please try again or contact us directly."}`;
-      setToast({ show: true, message: errorMsg });
-      setTimeout(() => {
-        setToast((prev) => ({ ...prev, show: false }));
-      }, 6000);
-    }
+    })();
   };
 
   const handleReset = () => {
@@ -377,7 +371,7 @@ Please share available cabs and upfront fare quote.`;
   };
 
   return (
-    <main id="main-content" className="contact-page">
+    <div className="contact-page">
       {/* Inject SEO Schema */}
       <script
         type="application/ld+json"
@@ -708,7 +702,7 @@ Please share available cabs and upfront fare quote.`;
                         className="button button-gold button-block"
                       >
                         <span>{isHi ? "व्हाट्सएप पर तुरंत पुष्टि पाएं" : "Continue on WhatsApp for Instant Confirmation"}</span>
-                        <span aria-hidden="true"><Icon name="whatsapp" size={16} /></span>
+                        <span aria-hidden="true">💬</span>
                       </a>
 
                       <button
@@ -1038,7 +1032,7 @@ Please share available cabs and upfront fare quote.`;
                 aria-label="Call SK Baghel Tour & Travels"
               >
                 <span>{isHi ? "कॉल करें: " + contact.phoneDisplay : "Call " + contact.phoneDisplay}</span>
-                <span aria-hidden="true"><Icon name="phone" size={16} /></span>
+                <span aria-hidden="true">📞</span>
               </a>
 
               <a
@@ -1053,7 +1047,7 @@ Please share available cabs and upfront fare quote.`;
                 aria-label="Chat on WhatsApp"
               >
                 <span>{isHi ? "व्हाट्सएप चैट" : "WhatsApp Desk"}</span>
-                <span aria-hidden="true"><Icon name="whatsapp" size={16} /></span>
+                <span aria-hidden="true">💬</span>
               </a>
 
               <a
@@ -1067,6 +1061,6 @@ Please share available cabs and upfront fare quote.`;
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }

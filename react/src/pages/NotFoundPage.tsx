@@ -14,7 +14,6 @@
 import React, { useState, useMemo } from "react";
 import { contact } from "../data/contact";
 import { routes, packages, vehicles } from "../data/catalogue";
-import { Icon } from "../components/ui/Icon";
 
 interface NotFoundPageProps {
   language: "en" | "hi";
@@ -153,7 +152,7 @@ export function NotFoundPage({ language }: NotFoundPageProps) {
   };
 
   return (
-    <main id="main-content" className="not-found-page">
+    <div className="not-found-page">
       {/* Inject SEO Schema */}
       <script
         type="application/ld+json"
@@ -320,7 +319,7 @@ export function NotFoundPage({ language }: NotFoundPageProps) {
             {/* Card 1: Homepage */}
             <a href={`/${language}/`} className="not-found-bento-card">
               <div className="bento-card-header">
-                <span className="bento-icon" aria-hidden="true"><Icon name="compass" size={22} /></span>
+                <span className="bento-icon" aria-hidden="true">🏠</span>
                 <span className="bento-badge">{isHi ? "मुख्य पृष्ठ" : "Home"}</span>
               </div>
               <h3>{isHi ? "आगरा कैब व टैक्सी बुकिंग" : "Agra Cab & Taxi Booking"}</h3>
@@ -338,7 +337,7 @@ export function NotFoundPage({ language }: NotFoundPageProps) {
             {/* Card 2: Outstation Routes */}
             <a href={`/${language}/routes/`} className="not-found-bento-card">
               <div className="bento-card-header">
-                <span className="bento-icon" aria-hidden="true"><Icon name="route" size={22} /></span>
+                <span className="bento-icon" aria-hidden="true">🗺️</span>
                 <span className="bento-badge">{isHi ? "रूट्स" : "Routes"}</span>
               </div>
               <h3>{isHi ? "आउटस्टेशन टैक्सी रूट्स" : "Outstation Taxi Routes"}</h3>
@@ -374,7 +373,7 @@ export function NotFoundPage({ language }: NotFoundPageProps) {
             {/* Card 4: Fleet Directory */}
             <a href={`/${language}/fleet/`} className="not-found-bento-card">
               <div className="bento-card-header">
-                <span className="bento-icon" aria-hidden="true"><Icon name="car" size={22} /></span>
+                <span className="bento-icon" aria-hidden="true">🚘</span>
                 <span className="bento-badge">{isHi ? "फ्लीट" : "Fleet"}</span>
               </div>
               <h3>{isHi ? "सत्यापित वाहन व प्रति किमी दरें" : "Commercial Fleet Directory"}</h3>
@@ -415,7 +414,7 @@ export function NotFoundPage({ language }: NotFoundPageProps) {
             <div className="cta-banner-buttons">
               <a href={`tel:${contact.phone}`} className="button button-gold">
                 <span>{isHi ? "कॉल करें: " + contact.phoneDisplay : "Call " + contact.phoneDisplay}</span>
-                <span aria-hidden="true"><Icon name="phone" size={16} /></span>
+                <span aria-hidden="true">📞</span>
               </a>
 
               <a
@@ -429,7 +428,7 @@ export function NotFoundPage({ language }: NotFoundPageProps) {
                 className="button button-outline"
               >
                 <span>{isHi ? "व्हाट्सएप डेस्क" : "WhatsApp Desk"}</span>
-                <span aria-hidden="true"><Icon name="whatsapp" size={16} /></span>
+                <span aria-hidden="true">💬</span>
               </a>
 
               <a href="/book.html" className="button button-secondary">
@@ -440,6 +439,6 @@ export function NotFoundPage({ language }: NotFoundPageProps) {
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }

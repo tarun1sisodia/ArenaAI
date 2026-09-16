@@ -19,7 +19,6 @@
  */
 
 import React, { useState, useMemo } from "react";
-import { Icon } from "../components/ui/Icon";
 import { contact } from "../data/contact";
 
 interface FaqPageProps {
@@ -342,7 +341,7 @@ export function FaqPage({ language }: FaqPageProps) {
   };
 
   return (
-    <main id="main-content" className="faq-page">
+    <div className="faq-page">
       {/* Inject SEO Schema */}
       <script
         type="application/ld+json"
@@ -594,7 +593,7 @@ export function FaqPage({ language }: FaqPageProps) {
               <p>{isHi ? "तत्काल उत्तर और 15 मिनट में कैब बुकिंग के लिए कॉल करें।" : "Immediate answer and 15-minute emergency dispatch."}</p>
               <a href={`tel:${contact.phone}`} className="button button-outline button-block">
                 <span>{contact.phoneDisplay}</span>
-                <span aria-hidden="true"><Icon name="phone" size={16} /></span>
+                <span aria-hidden="true">📞</span>
               </a>
             </div>
 
@@ -618,7 +617,7 @@ export function FaqPage({ language }: FaqPageProps) {
                 className="button button-gold button-block"
               >
                 <span>{isHi ? "व्हाट्सएप चैट शुरू करें" : "Chat on WhatsApp"}</span>
-                <span aria-hidden="true"><Icon name="whatsapp" size={16} /></span>
+                <span aria-hidden="true">💬</span>
               </a>
             </div>
 
@@ -634,7 +633,7 @@ export function FaqPage({ language }: FaqPageProps) {
               <p>{isHi ? "कॉर्पोरेट बिलिंग और बड़े टूर पैकेजों के लिए ईमेल भेजें।" : "For GST corporate invoices and multi-day group tours."}</p>
               <a href={`mailto:${contact.email}`} className="button button-outline button-block">
                 <span>{contact.email}</span>
-                <span aria-hidden="true"><Icon name="mail" size={16} /></span>
+                <span aria-hidden="true">✉️</span>
               </a>
             </div>
           </div>
@@ -671,12 +670,12 @@ export function FaqPage({ language }: FaqPageProps) {
                 className="button button-outline"
               >
                 <span>{isHi ? "कॉल करें: " + contact.phoneDisplay : "Call " + contact.phoneDisplay}</span>
-                <span aria-hidden="true"><Icon name="phone" size={16} /></span>
+                <span aria-hidden="true">📞</span>
               </a>
             </div>
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }
