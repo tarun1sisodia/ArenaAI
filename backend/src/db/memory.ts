@@ -196,6 +196,34 @@ export function createMemoryRepositories(nowIso = new Date().toISOString()): Rep
         );
         return found ? clone(found) : null;
       },
+      async list(filter) {
+        let list = [...payments.values()];
+        if (filter?.bookingId) list = list.filter((item) => item.bookingId === filter.bookingId);
+        if (filter?.status) list = list.filter((item) => item.status === filter.status);
+        if (filter?.provider) list = list.filter((item) => item.provider === filter.provider);
+
+        list.sort((a, b) => (b.createdAt > a.createdAt ? 1 : -1));
+
+        let totalCapturedPaise = 0;
+        let totalRefundedPaise = 0;
+        for (const p of list) {
+          if (p.status === "captured") totalCapturedPaise += p.inrAmountPaise;
+          if (p.status === "refunded") totalRefundedPaise += p.inrAmountPaise;
+        }
+
+        const total = list.length;
+        const page = filter?.page ?? 1;
+        const pageSize = filter?.limit ?? 50;
+        const start = (page - 1) * pageSize;
+        const items = list.slice(start, start + pageSize).map(clone);
+
+        return {
+          items,
+          total,
+          totalCapturedPaise,
+          totalRefundedPaise,
+        };
+      },
     },
     refunds: {
       async create(record) {
@@ -333,6 +361,43 @@ export function createMemoryRepositories(nowIso = new Date().toISOString()): Rep
       async create(record) {
         inquiries.push(clone(record));
         return clone(record);
+      },
+      async update(record) {
+        const idx = inquiries.findIndex((i) => i.id === record.id);
+        if (idx !== -1) {
+          inquiries[idx] = clone(record);
+        } else {
+          inquiries.push(clone(record));
+        }
+        return clone(record);
+      },
+      async getById(id) {
+        const found = inquiries.find((i) => i.id === id);
+        return found ? clone(found) : null;
+      },
+      async list(filter) {
+        let list = [...inquiries];
+        if (filter?.status) {
+          list = list.filter((i) => i.status === filter.status);
+        }
+        if (filter?.q) {
+          const q = filter.q.toLowerCase();
+          list = list.filter(
+            (i) =>
+              i.name.toLowerCase().includes(q) ||
+              i.phone.includes(q) ||
+              (i.email && i.email.toLowerCase().includes(q)) ||
+              (i.tripInterest && i.tripInterest.toLowerCase().includes(q)) ||
+              i.message.toLowerCase().includes(q),
+          );
+        }
+        list.sort((a, b) => (b.createdAt > a.createdAt ? 1 : -1));
+        const total = list.length;
+        const page = filter?.page ?? 1;
+        const limit = filter?.limit ?? 50;
+        const start = (page - 1) * limit;
+        const items = list.slice(start, start + limit).map(clone);
+        return { items, total };
       },
     },
     notifications: {

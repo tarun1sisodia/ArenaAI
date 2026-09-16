@@ -269,6 +269,17 @@ export type AuditLogRecord = {
   createdAt: string;
 };
 
+export const INQUIRY_STATUSES = [
+  "new",
+  "contacted",
+  "quoted",
+  "converted",
+  "resolved",
+  "closed",
+  "spam",
+] as const;
+export type InquiryStatus = (typeof INQUIRY_STATUSES)[number];
+
 export type InquiryRecord = {
   id: string;
   name: string;
@@ -276,7 +287,10 @@ export type InquiryRecord = {
   email: string | null;
   message: string;
   tripInterest: string | null;
+  status: InquiryStatus;
+  notes: string[];
   createdAt: string;
+  updatedAt: string;
 };
 
 export type NotificationJobRecord = {

@@ -5,9 +5,11 @@ import type {
   CatalogItemRecord,
   CatalogMediaRecord,
   InquiryRecord,
+  InquiryStatus,
   LocationSuggestion,
   NotificationJobRecord,
   PaymentRecord,
+  PaymentStatus,
   ProfileRecord,
   PromoCodeRecord,
   RefundRecord,
@@ -16,6 +18,21 @@ import type {
   UserRole,
   WebhookEventRecord,
 } from "../types/domain.js";
+
+export type InquiryListFilter = {
+  status?: InquiryStatus;
+  q?: string;
+  limit?: number;
+  page?: number;
+};
+
+export type PaymentListFilter = {
+  bookingId?: string;
+  status?: PaymentStatus;
+  provider?: string;
+  limit?: number;
+  page?: number;
+};
 
 export type BookingListFilter = {
   status?: BookingStatus;
@@ -58,6 +75,12 @@ export type Repositories = {
     getByProviderOrderId(providerOrderId: string): Promise<PaymentRecord | null>;
     listByBookingId(bookingId: string): Promise<PaymentRecord[]>;
     getOpenByBookingId(bookingId: string): Promise<PaymentRecord | null>;
+    list(filter?: PaymentListFilter): Promise<{
+      items: PaymentRecord[];
+      total: number;
+      totalCapturedPaise: number;
+      totalRefundedPaise: number;
+    }>;
   };
 
   refunds: {
@@ -109,6 +132,9 @@ export type Repositories = {
 
   inquiries: {
     create(record: InquiryRecord): Promise<InquiryRecord>;
+    update(record: InquiryRecord): Promise<InquiryRecord>;
+    getById(id: string): Promise<InquiryRecord | null>;
+    list(filter?: InquiryListFilter): Promise<{ items: InquiryRecord[]; total: number }>;
   };
 
   notifications: {
