@@ -83,15 +83,14 @@ export function loadEnv(source: NodeJS.ProcessEnv = process.env): Env {
     if (env.RAZORPAY_KEY_ID && !env.RAZORPAY_WEBHOOK_SECRET) {
       missing.push("RAZORPAY_WEBHOOK_SECRET required when RAZORPAY_KEY_ID is set");
     }
-    // SEC-004: PayPal and Card webhook secrets must be explicit in production (no fallback strings)
+    // SEC-004: PayPal and Card webhook secrets are required only when the
+    // provider is actually configured. Unused providers receive an ephemeral
+    // per-boot secret in app.ts, so webhook forgery is still impossible.
     if (env.PAYPAL_CLIENT_ID && !env.PAYPAL_WEBHOOK_SECRET) {
       missing.push("PAYPAL_WEBHOOK_SECRET required when PAYPAL_CLIENT_ID is set");
     }
-    if (!env.PAYPAL_WEBHOOK_SECRET) {
-      missing.push("PAYPAL_WEBHOOK_SECRET required in production");
-    }
-    if (!env.CARD_WEBHOOK_SECRET) {
-      missing.push("CARD_WEBHOOK_SECRET required in production");
+    if (env.CARD_PROVIDER_SECRET && !env.CARD_WEBHOOK_SECRET) {
+      missing.push("CARD_WEBHOOK_SECRET required when CARD_PROVIDER_SECRET is set");
     }
     if (env.ALLOW_TEST_AUTH) missing.push("ALLOW_TEST_AUTH must be false in production");
     // Validate CORS origins are HTTPS in production

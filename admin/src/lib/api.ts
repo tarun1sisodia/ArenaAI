@@ -1,15 +1,21 @@
 /**
  * Admin API Client — connects Admin Operations Desk to Fastify REST API.
- * Adheres to localhost integration: uses env.API_BASE_URL (defaults to http://localhost:4000 on localhost).
+ * Uses env.API_BASE_URL (defaults to http://localhost:4000 on localhost).
  * Uses getAuthHeaders() for Bearer authentication.
- * Provides resilient fallbacks to local fixtures if backend is unreachable.
+ *
+ * No silent fixture fallbacks: every function either returns REAL backend data
+ * (possibly an empty list) or throws. Pages render their own empty/error states.
  */
 import { env } from "./env";
 import { getAuthHeaders } from "./auth";
+import { FARE_RULESET } from "./fares";
 import type {
   AuditEntry,
   Booking,
   BookingStatus,
+  CatalogCategory,
+  CatalogItem,
+  CatalogStatus,
   FareRuleset,
   Inquiry,
   InquiryStatus,
@@ -18,10 +24,33 @@ import type {
   PaymentMethod,
   PaymentProvider,
   PaymentStatus,
+  Review,
+  ReviewStatus,
   TripType,
   VehicleTier,
 } from "./types";
-import { AUDIT, BOOKINGS, FARE_RULESET, INQUIRIES, PAYMENTS } from "./mock-data";
+
+async function apiFetch(path: string, init?: RequestInit): Promise<any> {
+  const res = await fetch(`${env.API_BASE_URL}${path}`, {
+    ...init,
+    headers: {
+      "Content-Type": "application/json",
+      ...getAuthHeaders(),
+      ...(init?.headers ?? {}),
+    },
+  });
+
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const message =
+      json?.error?.message ||
+      (res.status === 401
+        ? "Your session has expired. Please sign in again."
+        : `Request failed (${res.status}). Check that the backend is reachable.`);
+    throw new Error(message);
+  }
+  return json;
+}
 
 export async function fetchAdminBookings(filter?: {
   status?: BookingStatus | "all";
@@ -29,65 +58,45 @@ export async function fetchAdminBookings(filter?: {
   page?: number;
   pageSize?: number;
 }): Promise<Booking[]> {
-  try {
-    const params = new URLSearchParams();
-    if (filter?.status && filter.status !== "all") params.set("status", filter.status);
-    if (filter?.ticketId) params.set("ticketId", filter.ticketId);
-    if (filter?.page) params.set("page", String(filter.page));
-    if (filter?.pageSize) params.set("pageSize", String(filter.pageSize));
+  const params = new URLSearchParams();
+  if (filter?.status && filter.status !== "all") params.set("status", filter.status);
+  if (filter?.ticketId) params.set("ticketId", filter.ticketId);
+  if (filter?.page) params.set("page", String(filter.page));
+  if (filter?.pageSize) params.set("pageSize", String(filter.pageSize));
 
-    const url = `${env.API_BASE_URL}/api/v1/ops/admin/bookings${params.toString() ? `?${params.toString()}` : ""}`;
-    const res = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        ...getAuthHeaders(),
-      },
-    });
+  const json = await apiFetch(`/api/v1/ops/admin/bookings${params.toString() ? `?${params.toString()}` : ""}`);
+  const items = json?.data?.items || json?.data?.bookings || [];
 
-    if (!res.ok) {
-      console.warn(`[Admin API] Remote bookings fetch returned status ${res.status}, using local fixtures.`);
-      return BOOKINGS;
-    }
+  if (!Array.isArray(items)) return [];
 
-    const json = await res.json();
-    const items = json?.data?.items || json?.data?.bookings || [];
-    if (!Array.isArray(items) || items.length === 0) {
-      return BOOKINGS;
-    }
-
-    return items.map((b: any) => ({
-      id: b.id,
-      ticketId: b.ticketId || b.id,
-      customerName: b.customerName || "Customer",
-      customerPhone: b.customerPhone || "",
-      customerEmail: b.customerEmail || "",
-      origin: b.originName || b.origin || "Agra",
-      destination: b.destinationName || b.destination || "Delhi",
-      pickupDateTime: b.pickupDatetime || b.pickupDateTime || new Date().toISOString(),
-      returnDateTime: b.returnDatetime || b.returnDateTime || null,
-      distanceKm: Number(b.distanceKm) || 200,
-      tripType: (b.tripType as TripType) || "one-way",
-      vehicleTier: (b.vehicleTier as VehicleTier) || "sedan",
-      status: (b.status as BookingStatus) || "pending_payment",
-      version: Number(b.version) || 1,
-      notes: b.specialNotes || b.notes || "",
-      createdAt: b.createdAt || new Date().toISOString(),
-      fare: {
-        baseFare: Number(b.totalFare) || 2500,
-        nightAllowance: 0,
-        driverAllowance: 0,
-        tollsTaxes: 0,
-        promoDiscount: 0,
-        totalFare: Number(b.totalFare) || 2500,
-        advancePaid: Number(b.advanceAmount) || 500,
-        balancePayable: Math.max(0, (Number(b.totalFare) || 2500) - (Number(b.advanceAmount) || 500)),
-      },
-    }));
-  } catch (err) {
-    console.warn("[Admin API] Failed to reach backend bookings API, using local fallback.", err);
-    return BOOKINGS;
-  }
+  return items.map((b: any) => ({
+    id: b.id,
+    ticketId: b.ticketId || b.id,
+    customerName: b.customerName || "Customer",
+    customerPhone: b.customerPhone || "",
+    customerEmail: b.customerEmail || "",
+    origin: b.originName || b.origin || "Agra",
+    destination: b.destinationName || b.destination || "Delhi",
+    pickupDateTime: b.pickupDatetime || b.pickupDateTime || new Date().toISOString(),
+    returnDateTime: b.returnDatetime || b.returnDateTime || null,
+    distanceKm: Number(b.distanceKm) || 0,
+    tripType: (b.tripType as TripType) || "one-way",
+    vehicleTier: (b.vehicleTier as VehicleTier) || "sedan",
+    status: (b.status as BookingStatus) || "pending_payment",
+    version: Number(b.version) || 1,
+    notes: b.specialNotes || b.notes || "",
+    createdAt: b.createdAt || new Date().toISOString(),
+    fare: {
+      baseFare: Number(b.baseFare ?? b.totalFare) || 0,
+      nightAllowance: Number(b.nightAllowance) || 0,
+      driverAllowance: Number(b.driverAllowance) || 0,
+      tollsTaxes: 0,
+      promoDiscount: Number(b.discountAmount) || 0,
+      totalFare: Number(b.totalFare) || 0,
+      advancePaid: Number(b.advanceAmount) || 0,
+      balancePayable: Math.max(0, (Number(b.totalFare) || 0) - (Number(b.advanceAmount) || 0)),
+    },
+  }));
 }
 
 export async function transitionAdminBooking(
@@ -95,23 +104,13 @@ export async function transitionAdminBooking(
   to: BookingStatus,
   expectedVersion?: number,
 ): Promise<any> {
-  const url = `${env.API_BASE_URL}/api/v1/ops/admin/bookings/${encodeURIComponent(id)}/transition`;
-  const res = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      ...getAuthHeaders(),
+  const json = await apiFetch(
+    `/api/v1/ops/admin/bookings/${encodeURIComponent(id)}/transition`,
+    {
+      method: "POST",
+      body: JSON.stringify({ to, expectedVersion }),
     },
-    body: JSON.stringify({
-      to,
-      expectedVersion,
-    }),
-  });
-
-  const json = await res.json().catch(() => ({}));
-  if (!res.ok) {
-    throw new Error(json?.error?.message || `Transition failed (${res.status})`);
-  }
+  );
   return json.data;
 }
 
@@ -120,24 +119,10 @@ export async function refundAdminBooking(
   reason: string,
   idempotencyKey: string,
 ): Promise<any> {
-  const url = `${env.API_BASE_URL}/api/v1/ops/admin/refunds`;
-  const res = await fetch(url, {
+  const json = await apiFetch(`/api/v1/ops/admin/refunds`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      ...getAuthHeaders(),
-    },
-    body: JSON.stringify({
-      bookingId,
-      reason,
-      idempotencyKey,
-    }),
+    body: JSON.stringify({ bookingId, reason, idempotencyKey }),
   });
-
-  const json = await res.json().catch(() => ({}));
-  if (!res.ok) {
-    throw new Error(json?.error?.message || `Refund failed (${res.status})`);
-  }
   return json.data;
 }
 
@@ -146,67 +131,37 @@ export async function fetchAdminInquiries(filter?: {
   page?: number;
   limit?: number;
 }): Promise<Inquiry[]> {
-  try {
-    const params = new URLSearchParams();
-    if (filter?.status && filter.status !== "all") params.set("status", filter.status);
-    if (filter?.page) params.set("page", String(filter.page));
-    if (filter?.limit) params.set("limit", String(filter.limit));
+  const params = new URLSearchParams();
+  if (filter?.status && filter.status !== "all") params.set("status", filter.status);
+  if (filter?.page) params.set("page", String(filter.page));
+  if (filter?.limit) params.set("limit", String(filter.limit));
 
-    const url = `${env.API_BASE_URL}/api/v1/ops/admin/inquiries${params.toString() ? `?${params.toString()}` : ""}`;
-    const res = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        ...getAuthHeaders(),
-      },
-    });
+  const json = await apiFetch(`/api/v1/ops/admin/inquiries${params.toString() ? `?${params.toString()}` : ""}`);
+  const items = json?.data?.items || json?.data?.inquiries || [];
 
-    if (!res.ok) {
-      console.warn(`[Admin API] Remote inquiries fetch returned status ${res.status}, using local fixtures.`);
-      return INQUIRIES;
-    }
+  if (!Array.isArray(items)) return [];
 
-    const json = await res.json();
-    const items = json?.data?.items || json?.data?.inquiries || [];
-    if (!Array.isArray(items) || items.length === 0) {
-      return INQUIRIES;
-    }
-
-    return items.map((iq: any) => ({
-      id: iq.id,
-      name: iq.name || "Customer",
-      phone: iq.phone || "",
-      type: (iq.tripInterest as InquiryType) || "contact",
-      subject: iq.tripInterest ? `Interest: ${iq.tripInterest}` : "Customer Inquiry",
-      message: iq.message || "",
-      status: (iq.status as InquiryStatus) || "new",
-      notes: Array.isArray(iq.notes) ? iq.notes : [],
-      createdAt: iq.createdAt || new Date().toISOString(),
-    }));
-  } catch (err) {
-    console.warn("[Admin API] Failed to reach backend inquiries API, using local fallback.", err);
-    return INQUIRIES;
-  }
+  return items.map((iq: any) => ({
+    id: iq.id,
+    name: iq.name || "Customer",
+    phone: iq.phone || "",
+    type: (iq.tripInterest as InquiryType) || "contact",
+    subject: iq.tripInterest ? `Interest: ${iq.tripInterest}` : "Customer Inquiry",
+    message: iq.message || "",
+    status: (iq.status as InquiryStatus) || "new",
+    notes: Array.isArray(iq.notes) ? iq.notes : [],
+    createdAt: iq.createdAt || new Date().toISOString(),
+  }));
 }
 
 export async function updateAdminInquiry(
   id: string,
   updates: { status?: InquiryStatus; note?: string },
 ): Promise<any> {
-  const url = `${env.API_BASE_URL}/api/v1/ops/admin/inquiries/${encodeURIComponent(id)}`;
-  const res = await fetch(url, {
+  const json = await apiFetch(`/api/v1/ops/admin/inquiries/${encodeURIComponent(id)}`, {
     method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-      ...getAuthHeaders(),
-    },
     body: JSON.stringify(updates),
   });
-
-  const json = await res.json().catch(() => ({}));
-  if (!res.ok) {
-    throw new Error(json?.error?.message || `Failed to update inquiry (${res.status})`);
-  }
   return json.data;
 }
 
@@ -214,119 +169,133 @@ export async function fetchAdminPayments(filter?: {
   page?: number;
   limit?: number;
 }): Promise<{ items: Payment[]; totalCaptured: number; totalRefunded: number }> {
-  try {
-    const params = new URLSearchParams();
-    if (filter?.page) params.set("page", String(filter.page));
-    if (filter?.limit) params.set("limit", String(filter.limit));
+  const params = new URLSearchParams();
+  if (filter?.page) params.set("page", String(filter.page));
+  if (filter?.limit) params.set("limit", String(filter.limit));
 
-    const url = `${env.API_BASE_URL}/api/v1/ops/admin/payments${params.toString() ? `?${params.toString()}` : ""}`;
-    const res = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        ...getAuthHeaders(),
-      },
-    });
+  const json = await apiFetch(`/api/v1/ops/admin/payments${params.toString() ? `?${params.toString()}` : ""}`);
+  const items = json?.data?.items || json?.data?.payments || [];
 
-    if (!res.ok) {
-      return {
-        items: PAYMENTS,
-        totalCaptured: PAYMENTS.filter((p) => p.status === "captured").reduce((s, p) => s + p.amount, 0),
-        totalRefunded: PAYMENTS.filter((p) => p.status === "refunded").reduce((s, p) => s + p.amount, 0),
-      };
-    }
+  const mapped: Payment[] = Array.isArray(items)
+    ? items.map((p: any) => ({
+        id: p.id,
+        bookingTicketId: p.bookingTicketId || p.bookingId || "—",
+        provider: (p.provider as PaymentProvider) || "razorpay",
+        method: (p.method as PaymentMethod) || "card",
+        providerPaymentId: p.providerPaymentId || p.id,
+        amount: Math.round(Number(p.amountMinor ?? p.amountPaise ?? 0) / 100),
+        status: (p.status as PaymentStatus) || "captured",
+        capturedAt: p.capturedAt || p.createdAt || new Date().toISOString(),
+      }))
+    : [];
 
-    const json = await res.json();
-    const items = json?.data?.items || json?.data?.payments || [];
-    if (!Array.isArray(items) || items.length === 0) {
-      return {
-        items: PAYMENTS,
-        totalCaptured: PAYMENTS.filter((p) => p.status === "captured").reduce((s, p) => s + p.amount, 0),
-        totalRefunded: PAYMENTS.filter((p) => p.status === "refunded").reduce((s, p) => s + p.amount, 0),
-      };
-    }
-
-    const mapped: Payment[] = items.map((p: any) => ({
-      id: p.id,
-      bookingTicketId: p.bookingTicketId || p.bookingId || "AGR-LIVE-001",
-      provider: (p.provider as PaymentProvider) || "razorpay",
-      method: (p.method as PaymentMethod) || "card",
-      providerPaymentId: p.providerPaymentId || p.id,
-      amount: Math.round((Number(p.amountMinor ?? p.amountPaise ?? 0)) / 100),
-      status: (p.status as PaymentStatus) || "captured",
-      capturedAt: p.capturedAt || p.createdAt || new Date().toISOString(),
-    }));
-
-    return {
-      items: mapped,
-      totalCaptured: Math.round((json?.data?.totalCapturedPaise || 0) / 100),
-      totalRefunded: Math.round((json?.data?.totalRefundedPaise || 0) / 100),
-    };
-  } catch (err) {
-    console.warn("[Admin API] Failed to reach backend payments API, using local fallback.", err);
-    return {
-      items: PAYMENTS,
-      totalCaptured: PAYMENTS.filter((p) => p.status === "captured").reduce((s, p) => s + p.amount, 0),
-      totalRefunded: PAYMENTS.filter((p) => p.status === "refunded").reduce((s, p) => s + p.amount, 0),
-    };
-  }
+  return {
+    items: mapped,
+    totalCaptured: Math.round((json?.data?.totalCapturedPaise || 0) / 100),
+    totalRefunded: Math.round((json?.data?.totalRefundedPaise || 0) / 100),
+  };
 }
 
 export async function fetchAdminFareRules(): Promise<FareRuleset> {
-  try {
-    const url = `${env.API_BASE_URL}/api/v1/ops/admin/fare-rules`;
-    const res = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        ...getAuthHeaders(),
-      },
-    });
-
-    if (!res.ok) return FARE_RULESET;
-    const json = await res.json();
-    if (!json?.data?.version) return FARE_RULESET;
-
-    return {
-      version: json.data.version || FARE_RULESET.version,
-      effectiveFrom: json.data.effectiveFrom || FARE_RULESET.effectiveFrom,
-      nightWindow: json.data.nightWindow || FARE_RULESET.nightWindow,
-      rules: FARE_RULESET.rules,
-      notes: FARE_RULESET.notes,
-    };
-  } catch {
-    return FARE_RULESET;
+  const json = await apiFetch(`/api/v1/ops/admin/fare-rules`);
+  if (!json?.data?.version) {
+    throw new Error("Fare rules response was malformed.");
   }
+
+  return {
+    version: json.data.version || FARE_RULESET.version,
+    effectiveFrom: json.data.effectiveFrom || FARE_RULESET.effectiveFrom,
+    nightWindow: json.data.nightWindow || FARE_RULESET.nightWindow,
+    rules: FARE_RULESET.rules,
+    notes: FARE_RULESET.notes,
+  };
 }
 
 export async function fetchAdminAuditLogs(limit = 100): Promise<AuditEntry[]> {
-  try {
-    const url = `${env.API_BASE_URL}/api/v1/ops/admin/audit-logs?limit=${limit}`;
-    const res = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        ...getAuthHeaders(),
-      },
-    });
+  const json = await apiFetch(`/api/v1/ops/admin/audit-logs?limit=${limit}`);
+  const items = json?.data;
 
-    if (!res.ok) return AUDIT;
-    const json = await res.json();
-    const items = json?.data;
-    if (!Array.isArray(items) || items.length === 0) return AUDIT;
+  if (!Array.isArray(items)) return [];
 
-    return items.map((a: any) => ({
-      id: a.id,
-      action: a.action,
-      actor: a.actor || "Staff",
-      actorRole: a.actorRole || "super_admin",
-      resourceType: a.resourceType || "booking",
-      resourceId: a.resourceId || "",
-      ip: a.ip || "127.0.0.1",
-      detail: a.detail || "",
-      at: a.at || a.createdAt || new Date().toISOString(),
-    }));
-  } catch {
-    return AUDIT;
-  }
+  return items.map((a: any) => ({
+    id: a.id,
+    action: a.action,
+    actor: a.actor || "Staff",
+    actorRole: a.actorRole || "super_admin",
+    resourceType: a.resourceType || "booking",
+    resourceId: a.resourceId || "",
+    ip: a.ip || "—",
+    detail: a.detail || "",
+    at: a.at || a.createdAt || new Date().toISOString(),
+  }));
+}
+
+/* ── Catalog CMS ──────────────────────────────────────────────────────────── */
+
+function mapCatalogItem(c: any): CatalogItem {
+  return {
+    id: c.id,
+    slug: c.slug || "",
+    title: c.title || "Untitled",
+    category: (c.type as CatalogCategory) || "package",
+    summary: c.shortDescription || c.description || "",
+    duration: c.durationText || "",
+    startingPrice: Number(c.startingPriceInr) || 0,
+    status: (c.status as CatalogStatus) || "draft",
+    updatedAt: c.updatedAt || c.createdAt || new Date().toISOString(),
+    places: (c.routeSummary || "")
+      .split(/[,·|]/)
+      .map((s: string) => s.trim())
+      .filter(Boolean),
+  };
+}
+
+export async function fetchAdminCatalog(): Promise<CatalogItem[]> {
+  const json = await apiFetch(`/api/v1/ops/admin/catalog`);
+  const items = json?.data?.items || json?.data || [];
+  return Array.isArray(items) ? items.map(mapCatalogItem) : [];
+}
+
+export async function setCatalogItemStatus(id: string, action: "publish" | "archive"): Promise<CatalogItem> {
+  const json = await apiFetch(`/api/v1/ops/admin/catalog/${encodeURIComponent(id)}/${action}`, {
+    method: "POST",
+    body: JSON.stringify({}),
+  });
+  return mapCatalogItem(json?.data ?? { id });
+}
+
+/* ── Review moderation ────────────────────────────────────────────────────── */
+
+export async function fetchAdminReviews(catalogItems?: { id: string; title: string }[]): Promise<Review[]> {
+  const json = await apiFetch(`/api/v1/ops/admin/reviews`);
+  const items = json?.data?.items || json?.data || [];
+  if (!Array.isArray(items)) return [];
+
+  const titleById = new Map((catalogItems ?? []).map((c) => [c.id, c.title]));
+
+  return items.map((r: any) => ({
+    id: r.id,
+    customerName: r.displayName || "Customer",
+    ticketId: r.bookingId || "—",
+    route: (r.catalogItemId && titleById.get(r.catalogItemId)) || "General",
+    rating: Number(r.rating) || 0,
+    text: r.reviewText || "",
+    status: (r.status as ReviewStatus) || "pending_review",
+    submittedAt: r.createdAt || r.publishedAt || new Date().toISOString(),
+    verifiedBooking:
+      r.verificationStatus === "booking_verified" || r.verificationStatus === "manually_verified",
+  }));
+}
+
+export async function actOnReview(
+  id: string,
+  action: "approve" | "reject" | "publish" | "archive",
+): Promise<{ id: string; status: ReviewStatus }> {
+  const json = await apiFetch(`/api/v1/ops/admin/reviews/${encodeURIComponent(id)}/${action}`, {
+    method: "POST",
+    body: JSON.stringify(
+      action === "reject" ? { reason: "Rejected by staff during moderation." } : {},
+    ),
+  });
+  return { id: json?.data?.id ?? id, status: json?.data?.status ?? "pending_review" };
 }

@@ -1,12 +1,12 @@
-import { useState } from "react";
-import { BadgeCheck, CheckCircle2, Globe, Star, ThumbsDown, XCircle } from "lucide-react";
+import { useEffect, useState } from "react";
+import { AlertTriangle, BadgeCheck, CheckCircle2, Globe, Star, ThumbsDown, XCircle, X } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { PageHeader } from "@/components/admin/PageHeader";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
-import { REVIEWS } from "@/lib/mock-data";
+import { actOnReview, fetchAdminCatalog, fetchAdminReviews } from "@/lib/api";
 import { can, type AdminUser, type Review, type ReviewStatus } from "@/lib/types";
 import { timeAgo } from "@/lib/utils";
 
@@ -25,16 +25,50 @@ function Stars({ n }: { n: number }) {
 
 export function ReviewsPage({ user }: { user: AdminUser }) {
   const reduce = useReducedMotion();
-  const [reviews, setReviews] = useState<Review[]>(REVIEWS);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [filter, setFilter] = useState<ReviewStatus | "all">("pending_review");
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
   const canModerate = can(user.role, "reviews:moderate");
   const canPublish = can(user.role, "reviews:publish");
+
+  useEffect(() => {
+    let isMounted = true;
+    setLoadError(null);
+    // Catalog items are fetched as well to resolve review → tour title.
+    fetchAdminCatalog()
+      .then((catalog) => fetchAdminReviews(catalog.map((c) => ({ id: c.id, title: c.title }))))
+      .then((data) => {
+        if (isMounted) setReviews(data);
+      })
+      .catch((err) => {
+        if (isMounted) {
+          setReviews([]);
+          setLoadError(err instanceof Error ? err.message : "Could not load reviews from the backend.");
+        }
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, [reloadKey]);
 
   const visible = reviews.filter((r) => filter === "all" || r.status === filter);
   const pending = reviews.filter((r) => r.status === "pending_review").length;
 
-  function act(id: string, status: ReviewStatus) {
-    setReviews((prev) => prev.map((r) => (r.id === id ? { ...r, status } : r)));
+  async function act(id: string, status: Extract<ReviewStatus, "approved" | "rejected" | "published" | "archived">) {
+    const actionMap = { approved: "approve", rejected: "reject", published: "publish", archived: "archive" } as const;
+    setActionError(null);
+    setBusyId(id);
+    try {
+      const result = await actOnReview(id, actionMap[status]);
+      setReviews((prev) => prev.map((r) => (r.id === id ? { ...r, status: result.status } : r)));
+    } catch (err) {
+      setActionError(`Could not update the review: ${err instanceof Error ? err.message : "backend error"}`);
+    } finally {
+      setBusyId(null);
+    }
   }
 
   const tabs = [
@@ -67,6 +101,31 @@ export function ReviewsPage({ user }: { user: AdminUser }) {
           </div>
         }
       />
+
+      {loadError && (
+        <div
+          className="mb-4 flex flex-wrap items-center gap-2.5 rounded-md border border-error/20 bg-error-soft px-4 py-3 text-[13px] text-error"
+          role="alert"
+        >
+          <AlertTriangle className="h-4 w-4 shrink-0" />
+          <span className="flex-1">{loadError}</span>
+          <Button variant="outline" size="sm" onClick={() => setReloadKey((k) => k + 1)}>
+            Retry
+          </Button>
+        </div>
+      )}
+      {actionError && (
+        <div
+          className="mb-4 flex items-start gap-2.5 rounded-md border border-error/20 bg-error-soft px-4 py-3 text-[13px] text-error"
+          role="alert"
+        >
+          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+          <span className="flex-1 leading-snug">{actionError}</span>
+          <button onClick={() => setActionError(null)} className="rounded-sm p-0.5 hover:bg-error/10" aria-label="Dismiss">
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <AnimatePresence mode="popLayout">
@@ -119,21 +178,21 @@ export function ReviewsPage({ user }: { user: AdminUser }) {
                   <div className="mt-4 flex flex-wrap gap-2 border-t border-hairline pt-4">
                     {review.status === "pending_review" && (
                       <>
-                        <Button variant="gold" size="sm" onClick={() => act(review.id, "approved")}>
+                        <Button variant="gold" size="sm" disabled={busyId === review.id} onClick={() => act(review.id, "approved")}>
                           <CheckCircle2 className="h-3.5 w-3.5" /> Approve
                         </Button>
-                        <Button variant="outline" size="sm" onClick={() => act(review.id, "rejected")}>
+                        <Button variant="outline" size="sm" disabled={busyId === review.id} onClick={() => act(review.id, "rejected")}>
                           <XCircle className="h-3.5 w-3.5" /> Reject
                         </Button>
                       </>
                     )}
                     {review.status === "approved" && (
-                      <Button variant="gold" size="sm" disabled={!canPublish} title={canPublish ? undefined : "publish requires super_admin"} onClick={() => act(review.id, "published")}>
+                      <Button variant="gold" size="sm" disabled={!canPublish || busyId === review.id} title={canPublish ? undefined : "publish requires super_admin"} onClick={() => act(review.id, "published")}>
                         <Globe className="h-3.5 w-3.5" /> Publish to website
                       </Button>
                     )}
                     {(review.status === "rejected" || review.status === "approved") && (
-                      <Button variant="ghost" size="sm" onClick={() => act(review.id, "archived")}>
+                      <Button variant="ghost" size="sm" disabled={busyId === review.id} onClick={() => act(review.id, "archived")}>
                         <ThumbsDown className="h-3.5 w-3.5" /> Archive
                       </Button>
                     )}
@@ -153,9 +212,13 @@ export function ReviewsPage({ user }: { user: AdminUser }) {
         </AnimatePresence>
       </div>
 
-      {visible.length === 0 && (
-        <Card className="p-10 text-center text-sm text-ink-soft">
-          Nothing in this bucket — the queue is clear.
+      {visible.length === 0 && !loadError && (
+        <Card className="p-10 text-center">
+          <p className="text-sm text-ink-soft">
+            {reviews.length === 0
+              ? "No reviews yet — customer-submitted reviews from the website appear here for moderation."
+              : "Nothing in this bucket — the queue is clear."}
+          </p>
         </Card>
       )}
     </div>

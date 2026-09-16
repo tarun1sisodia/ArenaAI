@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AlertCircle, Eye, EyeOff, ShieldCheck } from "lucide-react";
+import { AlertTriangle, Eye, EyeOff, Loader2, LogIn } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import { Button } from "@/components/ui/Button";
 import { Input, Label } from "@/components/ui/Input";
@@ -9,24 +9,23 @@ import type { AdminUser } from "@/lib/types";
 
 const easeExpo = [0.16, 1, 0.3, 1] as const;
 
-function HeroScene() {
+/** Route constellation: Agra → Delhi → Jaipur. Decorative, aria-hidden. */
+function RouteScene() {
   const reduce = useReducedMotion();
   return (
-    <svg viewBox="0 0 480 560" className="h-full w-full" aria-hidden="true">
+    <svg viewBox="0 0 480 300" className="h-full w-full" aria-hidden="true">
       <defs>
-        <radialGradient id="heroGlow" cx="50%" cy="30%" r="70%">
-          <stop offset="0%" stopColor="var(--gold)" stopOpacity="0.22" />
+        <radialGradient id="loginGlow" cx="50%" cy="35%" r="70%">
+          <stop offset="0%" stopColor="var(--gold)" stopOpacity="0.16" />
           <stop offset="100%" stopColor="var(--gold)" stopOpacity="0" />
         </radialGradient>
       </defs>
-      <rect width="480" height="560" fill="url(#heroGlow)" />
-
-      {/* Constellation route: Agra → Delhi → Jaipur */}
+      <rect width="480" height="300" fill="url(#loginGlow)" />
       {[
-        { x: 90, y: 420, r: 5 },
-        { x: 190, y: 320, r: 4 },
-        { x: 300, y: 360, r: 4 },
-        { x: 390, y: 180, r: 6 },
+        { x: 70, y: 210, r: 5 },
+        { x: 170, y: 130, r: 4 },
+        { x: 290, y: 170, r: 4 },
+        { x: 405, y: 70, r: 6 },
       ].map((p, i) => (
         <motion.circle
           key={i}
@@ -36,42 +35,27 @@ function HeroScene() {
           fill="var(--gold)"
           initial={reduce ? { opacity: 1 } : { opacity: 0, scale: 0 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.8 + i * 0.18, type: "spring", stiffness: 300, damping: 18 }}
+          transition={{ delay: 0.5 + i * 0.16, type: "spring", stiffness: 300, damping: 18 }}
         />
       ))}
       <motion.path
-        d="M90 420 C 130 390, 150 330, 190 320 C 240 308, 260 370, 300 360 C 350 348, 350 220, 390 180"
+        d="M70 210 C 110 185, 130 140, 170 130 C 225 118, 245 175, 290 170 C 345 165, 360 95, 405 70"
         fill="none"
         stroke="var(--gold)"
         strokeWidth="2"
         strokeDasharray="5 6"
         strokeLinecap="round"
+        opacity="0.9"
         initial={reduce ? { pathLength: 1 } : { pathLength: 0 }}
         animate={{ pathLength: 1 }}
-        transition={{ duration: 1.6, ease: easeExpo, delay: 0.4 }}
+        transition={{ duration: 1.5, ease: easeExpo, delay: 0.25 }}
       />
-      {/* Taj dome silhouette */}
-      <g stroke="var(--text)" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.85">
-        <motion.path
-          d="M360 140 C 360 110, 400 110, 400 140 L 404 152 L 356 152 Z"
-          initial={reduce ? { opacity: 0 } : { opacity: 0 }}
-          animate={{ opacity: 0.85 }}
-          transition={{ delay: 2.1, duration: 0.8 }}
-        />
-        <motion.line
-          x1="380" y1="110" x2="380" y2="98"
-          initial={reduce ? { pathLength: 1 } : { pathLength: 0 }}
-          animate={{ pathLength: 1 }}
-          transition={{ delay: 2.3, duration: 0.5 }}
-        />
-      </g>
-      {/* Pulse on final pin */}
-      <circle cx="390" cy="180" r="6" fill="none" stroke="var(--gold)" strokeWidth="1.5">
+      <circle cx="405" cy="70" r="6" fill="none" stroke="var(--gold)" strokeWidth="1.5">
         {!reduce && (
-          <animate attributeName="r" values="6;22" dur="2.4s" repeatCount="indefinite" begin="2.6s" />
+          <animate attributeName="r" values="6;20" dur="2.4s" repeatCount="indefinite" begin="1.4s" />
         )}
         {!reduce && (
-          <animate attributeName="opacity" values="0.7;0" dur="2.4s" repeatCount="indefinite" begin="2.6s" />
+          <animate attributeName="opacity" values="0.7;0" dur="2.4s" repeatCount="indefinite" begin="1.4s" />
         )}
       </circle>
     </svg>
@@ -80,14 +64,18 @@ function HeroScene() {
 
 export function LoginPage({ onLogin }: { onLogin: (user: AdminUser) => void }) {
   const reduce = useReducedMotion();
-  const [email, setEmail] = useState("admin@skbagheltravels.in");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+  const canSubmit = emailValid && password.length >= 6 && !busy;
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    if (!canSubmit) return;
     setError(null);
     setBusy(true);
 
@@ -95,166 +83,175 @@ export function LoginPage({ onLogin }: { onLogin: (user: AdminUser) => void }) {
       const authedUser = await loginWithCredentials(email, password);
       onLogin(authedUser);
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "";
-      if (
-        !msg ||
-        msg.toLowerCase().includes("supabase") ||
-        msg.toLowerCase().includes("failed to fetch") ||
-        msg.toLowerCase().includes("network") ||
-        msg.toLowerCase().includes("vite_") ||
-        msg.toLowerCase().includes("configured") ||
-        msg.toLowerCase().includes("not connected") ||
-        msg.toLowerCase().includes("an error occurred")
-      ) {
-        setError("Backend is not connected.");
-      } else {
-        setError(msg);
-      }
+      setError(err instanceof Error && err.message ? err.message : "Unable to sign in right now. Please try again.");
     } finally {
       setBusy(false);
     }
   }
 
   return (
-    <div className="grid min-h-full lg:grid-cols-[1.1fr_1fr]">
+    <div className="grid min-h-full lg:grid-cols-[1.05fr_1fr]">
       {/* Brand panel */}
-      <div className="relative hidden overflow-hidden bg-night lg:block">
-        <div className="absolute inset-0 p-10">
-          <HeroScene />
-          <motion.div
-            initial={reduce ? { opacity: 1 } : { opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: easeExpo, delay: 0.15 }}
-            className="absolute inset-x-0 bottom-0 p-10"
-          >
-            <div className="flex items-center gap-3">
-              <BrandMark size={40} className="[&_circle]:!stroke-[#E5A044]" />
-              <div>
-                <p className="font-display text-2xl font-medium tracking-tight text-white">
-                  SK Baghel Tour &amp; Travels
-                </p>
-                <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[#737373]">
-                  Agra · Operations Desk
-                </p>
-              </div>
-            </div>
-            <p className="mt-6 max-w-md text-[15px] leading-relaxed text-[#b5afa9]">
-              The internal hub for booking lifecycle, payment reconciliation, catalog
-              publishing, review moderation and audit — built on the{" "}
-              <em className="text-gold-light">21st.dev</em> Vercel light system with the
-              Saffron Gold brand accent.
-            </p>
-          </motion.div>
+      <div className="relative hidden flex-col justify-between overflow-hidden bg-night p-10 lg:flex">
+        <div className="absolute inset-0 opacity-90">
+          <RouteScene />
         </div>
+
+        <motion.div
+          initial={reduce ? { opacity: 1 } : { opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: easeExpo }}
+          className="relative flex items-center gap-3"
+        >
+          <BrandMark size={42} className="[&_circle]:!stroke-[#E5A044]" />
+          <div>
+            <p className="font-display text-xl font-medium tracking-tight text-white">
+              SK Baghel Tour &amp; Travels
+            </p>
+            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[#8c857e]">
+              Agra · Operations Desk
+            </p>
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={reduce ? { opacity: 1 } : { opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55, ease: easeExpo, delay: 0.15 }}
+          className="relative max-w-md"
+        >
+          <p className="font-display text-2xl leading-snug tracking-tight text-white">
+            Run the day&rsquo;s bookings, dispatch and payments from one desk.
+          </p>
+          <p className="mt-3 text-[15px] leading-relaxed text-[#b5afa9]">
+            The internal panel for the SK Baghel fleet — booking lifecycle,
+            payment reconciliation, tour catalog, review moderation and a complete
+            audit trail of every action.
+          </p>
+          <ul className="mt-6 flex flex-wrap gap-2">
+            {["Bookings", "Dispatch", "Payments", "Catalog", "Audit"].map((chip) => (
+              <li
+                key={chip}
+                className="rounded-pill border border-white/12 bg-white/5 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.14em] text-[#d6d0c9]"
+              >
+                {chip}
+              </li>
+            ))}
+          </ul>
+        </motion.div>
+
+        <p className="relative font-mono text-[11px] uppercase tracking-[0.18em] text-[#8c857e]">
+          © {new Date().getFullYear()} SK Baghel Tour &amp; Travels
+        </p>
       </div>
 
       {/* Form panel */}
-      <div className="flex items-center justify-center px-5 py-10">
-        <motion.form
-          onSubmit={submit}
-          initial={reduce ? { opacity: 1 } : { opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55, ease: easeExpo, delay: 0.1 }}
-          className="w-full max-w-sm space-y-6"
-        >
-          <div className="flex items-center gap-3 lg:hidden">
-            <BrandMark size={36} />
-            <div>
-              <p className="font-display text-lg font-semibold text-ink">SK Baghel</p>
-              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint">Admin Desk</p>
-            </div>
-          </div>
-
+      <div className="relative flex flex-col items-center justify-center px-5 py-10 sm:px-10">
+        {/* Mobile brand */}
+        <div className="mb-8 flex items-center gap-3 lg:hidden">
+          <BrandMark size={36} />
           <div>
-            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-gold-text">Staff access</p>
-            <h1 className="mt-1 font-display text-3xl font-medium tracking-tight text-ink">
-              Sign in to the desk
-            </h1>
-            <p className="mt-1.5 text-sm text-ink-soft">
-              Protected operations desk for verified Super Administrators.
+            <p className="font-display text-lg font-semibold text-ink">SK Baghel</p>
+            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint">Operations Desk</p>
+          </div>
+        </div>
+
+        <motion.div
+          initial={reduce ? { opacity: 1 } : { opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: easeExpo, delay: 0.08 }}
+          className="w-full max-w-[400px]"
+        >
+          <h1 className="font-display text-[28px] font-medium tracking-tight text-ink">Sign in</h1>
+          <p className="mt-1.5 text-sm leading-relaxed text-ink-soft">
+            Staff access to the operations desk. Authorized personnel only.
+          </p>
+
+          <form onSubmit={submit} className="mt-7 space-y-5" noValidate>
+            {error && (
+              <motion.div
+                initial={reduce ? { opacity: 1 } : { opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex items-start gap-2.5 rounded-md border border-error/20 bg-error-soft p-3.5 text-[13px] leading-snug text-error"
+                role="alert"
+                aria-live="assertive"
+              >
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+                <span>{error}</span>
+              </motion.div>
+            )}
+
+            <div>
+              <Label htmlFor="email">Work email</Label>
+              <Input
+                id="email"
+                type="email"
+                autoFocus
+                autoComplete="username"
+                inputMode="email"
+                placeholder="you@skbagheltravels.in"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                aria-invalid={Boolean(error && !emailValid)}
+                disabled={busy}
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="password">Password</Label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="current-password"
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  aria-invalid={Boolean(error && password.length < 6)}
+                  disabled={busy}
+                  className="pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-sm p-1 text-ink-faint transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-gold"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+            </div>
+
+            <Button
+              type="submit"
+              variant="gold"
+              size="lg"
+              disabled={!canSubmit}
+              className="w-full"
+            >
+              {busy ? (
+                <>
+                  <Loader2 className="h-4.5 w-4.5 animate-spin" aria-hidden="true" />
+                  Signing in…
+                </>
+              ) : (
+                <>
+                  <LogIn className="h-4.5 w-4.5" aria-hidden="true" />
+                  Sign in
+                </>
+              )}
+            </Button>
+          </form>
+
+          <div className="mt-8 border-t border-hairline pt-5">
+            <p className="text-center text-[12px] leading-relaxed text-ink-faint">
+              Trouble signing in? Contact the super admin to reset your access.
+            </p>
+            <p className="mt-2 text-center font-mono text-[10px] uppercase tracking-[0.16em] text-ink-faint">
+              All sign-in activity is recorded for security
             </p>
           </div>
-
-          {error && (
-            <motion.div
-              initial={{ opacity: 0, y: -6 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex items-start gap-2.5 rounded-sm border border-rose-200 bg-rose-50/80 p-3 text-xs text-rose-800"
-              role="alert"
-            >
-              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-rose-600" />
-              <div className="leading-snug">{error}</div>
-            </motion.div>
-          )}
-
-          <div className="space-y-3">
-            <Label htmlFor="email">Administrator email</Label>
-            <Input
-              id="email"
-              type="email"
-              autoComplete="username"
-              placeholder="admin@skbagheltravels.in"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              disabled={busy}
-            />
-          </div>
-
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="password" className="mb-0">Password</Label>
-            </div>
-            <div className="relative">
-              <Input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                autoComplete="current-password"
-                placeholder="••••••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                disabled={busy}
-                className="pr-10"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword((prev) => !prev)}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-ink-faint transition-colors hover:text-ink focus:outline-none"
-                aria-label={showPassword ? "Hide password" : "Show password"}
-                tabIndex={-1}
-              >
-                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </button>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label>Desk Role</Label>
-            <div className="flex items-center justify-between gap-3 rounded-sm border border-gold/40 bg-gold-soft/50 px-3.5 py-2.5">
-              <span>
-                <span className="block text-sm font-medium text-gold-text">
-                  Super Admin
-                </span>
-                <span className="mt-0.5 block text-[12px] leading-snug text-ink-soft">
-                  Full control — bookings, refunds, catalog, reviews &amp; audit
-                </span>
-              </span>
-              <span className="flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-full border-2 border-gold">
-                <span className="h-2 w-2 rounded-full bg-gold" />
-              </span>
-            </div>
-          </div>
-
-          <Button type="submit" variant="gold" size="lg" shine disabled={busy} className="w-full">
-            <ShieldCheck className="h-4.5 w-4.5" />
-            {busy ? "Authenticating credentials…" : "Enter Operations Desk"}
-          </Button>
-
-          <p className="text-center text-[11px] leading-relaxed text-ink-faint">
-            Secured via Supabase Auth JWKS verification &amp; Fastify RBAC gateway.
-          </p>
-        </motion.form>
+        </motion.div>
       </div>
     </div>
   );

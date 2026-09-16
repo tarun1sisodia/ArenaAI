@@ -11,15 +11,16 @@ export interface StatCardProps {
   value: number;
   format?: "inr" | "number" | "percent";
   icon: LucideIcon;
-  delta: number; // percentage vs last period
-  deltaLabel: string;
-  spark: number[];
+  /** Percentage vs the previous period — omit when no real comparison exists. */
+  delta?: number;
+  deltaLabel?: string;
+  spark?: number[];
   index?: number;
 }
 
 export function StatCard({ label, value, format, icon: Icon, delta, deltaLabel, spark, index = 0 }: StatCardProps) {
   const reduce = useReducedMotion();
-  const up = delta >= 0;
+  const up = (delta ?? 0) >= 0;
 
   return (
     <motion.div
@@ -45,20 +46,22 @@ export function StatCard({ label, value, format, icon: Icon, delta, deltaLabel, 
             <p className="font-display text-3xl font-semibold tracking-tight text-ink">
               <AnimatedCounter value={value} format={format} />
             </p>
-            <p className="mt-1.5 flex items-center gap-1 text-[12px]">
-              <span
-                className={cn(
-                  "inline-flex items-center gap-0.5 rounded-pill px-1.5 py-0.5 font-mono text-[10px] tracking-wide",
-                  up ? "bg-success-soft text-success" : "bg-error-soft text-error"
-                )}
-              >
-                {up ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
-                {Math.abs(delta).toFixed(1)}%
-              </span>
-              <span className="text-ink-faint">{deltaLabel}</span>
-            </p>
+            {typeof delta === "number" && deltaLabel ? (
+              <p className="mt-1.5 flex items-center gap-1 text-[12px]">
+                <span
+                  className={cn(
+                    "inline-flex items-center gap-0.5 rounded-pill px-1.5 py-0.5 font-mono text-[10px] tracking-wide",
+                    up ? "bg-success-soft text-success" : "bg-error-soft text-error"
+                  )}
+                >
+                  {up ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
+                  {Math.abs(delta).toFixed(1)}%
+                </span>
+                <span className="text-ink-faint">{deltaLabel}</span>
+              </p>
+            ) : null}
           </div>
-          <Sparkline points={spark} />
+          {spark ? <Sparkline points={spark} /> : null}
         </div>
       </Card>
     </motion.div>

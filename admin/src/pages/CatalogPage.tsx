@@ -1,11 +1,11 @@
-import { useState } from "react";
-import { Archive, CheckCircle2, Clock, Globe, MapPin, PenSquare } from "lucide-react";
+import { useEffect, useState } from "react";
+import { AlertTriangle, Archive, CheckCircle2, Clock, Globe, MapPin, PenSquare, X } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import { PageHeader } from "@/components/admin/PageHeader";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
-import { CATALOG } from "@/lib/mock-data";
+import { fetchAdminCatalog, setCatalogItemStatus } from "@/lib/api";
 import { can, type AdminUser, type CatalogItem, type CatalogCategory } from "@/lib/types";
 import { cn, formatDate, formatINR } from "@/lib/utils";
 
@@ -19,12 +19,43 @@ const CATEGORY_TONE: Record<CatalogCategory, "neutral" | "teal" | "gold"> = {
 
 export function CatalogPage({ user }: { user: AdminUser }) {
   const reduce = useReducedMotion();
-  const [items, setItems] = useState<CatalogItem[]>(CATALOG);
+  const [items, setItems] = useState<CatalogItem[]>([]);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
   const canEdit = can(user.role, "catalog:edit");
   const canPublish = can(user.role, "catalog:publish");
 
-  function setStatus(id: string, status: CatalogItem["status"]) {
-    setItems((prev) => prev.map((it) => (it.id === id ? { ...it, status } : it)));
+  useEffect(() => {
+    let isMounted = true;
+    setLoadError(null);
+    fetchAdminCatalog()
+      .then((data) => {
+        if (isMounted) setItems(data);
+      })
+      .catch((err) => {
+        if (isMounted) {
+          setItems([]);
+          setLoadError(err instanceof Error ? err.message : "Could not load catalog items from the backend.");
+        }
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, [reloadKey]);
+
+  async function setStatus(id: string, action: "publish" | "archive") {
+    setActionError(null);
+    setBusyId(id);
+    try {
+      const updated = await setCatalogItemStatus(id, action);
+      setItems((prev) => prev.map((it) => (it.id === id ? { ...it, status: updated.status } : it)));
+    } catch (err) {
+      setActionError(`Could not update the item: ${err instanceof Error ? err.message : "backend error"}`);
+    } finally {
+      setBusyId(null);
+    }
   }
 
   const counts = {
@@ -57,6 +88,39 @@ export function CatalogPage({ user }: { user: AdminUser }) {
           </Badge>
         ))}
       </div>
+
+      {loadError && (
+        <div
+          className="mb-4 flex flex-wrap items-center gap-2.5 rounded-md border border-error/20 bg-error-soft px-4 py-3 text-[13px] text-error"
+          role="alert"
+        >
+          <AlertTriangle className="h-4 w-4 shrink-0" />
+          <span className="flex-1">{loadError}</span>
+          <Button variant="outline" size="sm" onClick={() => setReloadKey((k) => k + 1)}>
+            Retry
+          </Button>
+        </div>
+      )}
+      {actionError && (
+        <div
+          className="mb-4 flex items-start gap-2.5 rounded-md border border-error/20 bg-error-soft px-4 py-3 text-[13px] text-error"
+          role="alert"
+        >
+          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+          <span className="flex-1 leading-snug">{actionError}</span>
+          <button onClick={() => setActionError(null)} className="rounded-sm p-0.5 hover:bg-error/10" aria-label="Dismiss">
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      )}
+      {!loadError && items.length === 0 && (
+        <Card className="p-12 text-center">
+          <p className="font-display text-lg text-ink">No catalog items yet</p>
+          <p className="mx-auto mt-1.5 max-w-sm text-sm leading-relaxed text-ink-soft">
+            Items created in the backend CMS appear here. Run the backend seed script to load the standard tour packages.
+          </p>
+        </Card>
+      )}
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
         {items.map((item, i) => (
@@ -126,17 +190,17 @@ export function CatalogPage({ user }: { user: AdminUser }) {
                     </Button>
                   )}
                   {canPublish && item.status === "draft" && (
-                    <Button variant="gold" size="sm" className="flex-1" onClick={() => setStatus(item.id, "published")}>
+                    <Button variant="gold" size="sm" className="flex-1" disabled={busyId === item.id} onClick={() => setStatus(item.id, "publish")}>
                       <CheckCircle2 className="h-3.5 w-3.5" /> Publish
                     </Button>
                   )}
                   {canPublish && item.status === "published" && (
-                    <Button variant="outline" size="sm" className="flex-1" onClick={() => setStatus(item.id, "archived")}>
+                    <Button variant="outline" size="sm" className="flex-1" disabled={busyId === item.id} onClick={() => setStatus(item.id, "archive")}>
                       <Archive className="h-3.5 w-3.5" /> Archive
                     </Button>
                   )}
                   {canPublish && item.status === "archived" && (
-                    <Button variant="outline" size="sm" className="flex-1" onClick={() => setStatus(item.id, "published")}>
+                    <Button variant="outline" size="sm" className="flex-1" disabled={busyId === item.id} onClick={() => setStatus(item.id, "publish")}>
                       <Globe className="h-3.5 w-3.5" /> Restore
                     </Button>
                   )}

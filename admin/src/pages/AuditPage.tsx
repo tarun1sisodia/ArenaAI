@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
-import { Lock } from "lucide-react";
+import { AlertTriangle, Lock } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import { PageHeader } from "@/components/admin/PageHeader";
 import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Table, TBody, THead, TD, TH, TRow } from "@/components/ui/Table";
-import { AUDIT } from "@/lib/mock-data";
 import { fetchAdminAuditLogs } from "@/lib/api";
 import { ROLE_LABELS, can, type AdminUser, type AuditAction, type AuditEntry } from "@/lib/types";
 import { cn, formatDateTime } from "@/lib/utils";
@@ -27,25 +27,31 @@ const ACTION_TONES: Record<AuditAction, "gold" | "success" | "error" | "teal" | 
 
 export function AuditPage({ user }: { user: AdminUser }) {
   const reduce = useReducedMotion();
-  const [logs, setLogs] = useState<AuditEntry[]>(AUDIT);
+  const [logs, setLogs] = useState<AuditEntry[]>([]);
   const [filter, setFilter] = useState<AuditAction | "all">("all");
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
   const canRead = can(user.role, "audit:read");
 
   useEffect(() => {
     let isMounted = true;
+    setLoadError(null);
     fetchAdminAuditLogs()
       .then((data) => {
-        if (isMounted && data.length > 0) {
+        if (isMounted) {
           setLogs(data);
         }
       })
       .catch((err) => {
-        console.warn("[AuditPage] Remote audit logs fetch failed, using local fixtures", err);
+        if (isMounted) {
+          setLogs([]);
+          setLoadError(err instanceof Error ? err.message : "Could not load audit logs from the backend.");
+        }
       });
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [reloadKey]);
 
   const actions = useMemo(() => {
     const set = new Set<AuditAction>();
@@ -82,6 +88,19 @@ export function AuditPage({ user }: { user: AdminUser }) {
         actions={<Badge tone="gold" className="px-3 py-1.5"><Lock className="h-3.5 w-3.5" /> Append-only · hash-chained</Badge>}
       />
 
+      {loadError && (
+        <div
+          className="mb-4 flex flex-wrap items-center gap-2.5 rounded-md border border-error/20 bg-error-soft px-4 py-3 text-[13px] text-error"
+          role="alert"
+        >
+          <AlertTriangle className="h-4 w-4 shrink-0" />
+          <span className="flex-1">{loadError}</span>
+          <Button variant="outline" size="sm" onClick={() => setReloadKey((k) => k + 1)}>
+            Retry
+          </Button>
+        </div>
+      )}
+
       <div className="mb-4 flex flex-wrap gap-1.5">
         <button
           onClick={() => setFilter("all")}
@@ -90,7 +109,7 @@ export function AuditPage({ user }: { user: AdminUser }) {
             filter === "all" ? "border-gold bg-gold-soft text-gold-text" : "border-hairline text-ink-soft hover:border-gold-border"
           )}
         >
-          All · {AUDIT.length}
+          All · {logs.length}
         </button>
         {actions.map((a) => (
           <button
@@ -144,6 +163,14 @@ export function AuditPage({ user }: { user: AdminUser }) {
             ))}
           </TBody>
         </Table>
+        {visible.length === 0 && !loadError && (
+          <div className="p-12 text-center">
+            <p className="font-display text-lg text-ink">No audit entries yet</p>
+            <p className="mx-auto mt-1.5 max-w-sm text-sm leading-relaxed text-ink-soft">
+              Every sensitive action — status changes, refunds, PII unmasking — is recorded here.
+            </p>
+          </div>
+        )}
       </Card>
     </div>
   );
