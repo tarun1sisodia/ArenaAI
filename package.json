@@ -12,6 +12,7 @@
     "verify": "npm run customer:typecheck && npm run admin:typecheck && npm run backend:typecheck && npm run customer:audit:css && npm test && npm run build:all",
     "typecheck": "npm run customer:typecheck && npm run admin:typecheck && npm run backend:typecheck",
     "dev": "npm --prefix react run dev",
+    "dev:all": "node scripts/dev-all.mjs",
     "build": "npm run customer:build",
     "build:all": "npm run customer:build && npm run admin:build && npm run backend:build",
     "customer:dev": "npm --prefix react run dev",

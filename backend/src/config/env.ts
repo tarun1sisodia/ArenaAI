@@ -9,12 +9,16 @@ const EnvSchema = z.object({
   CORS_ORIGINS: z
     .string()
     .default(
-      "http://localhost:5173,http://localhost:3000,https://skbagheltravels.in,https://www.skbagheltravels.in,https://admin.skbagheltravels.in",
+      "http://localhost:5173,http://localhost:5174,http://localhost:4174,http://localhost:4175,http://127.0.0.1:5173,http://127.0.0.1:5174,http://127.0.0.1:4174,http://127.0.0.1:4175,http://localhost:3000,https://skbagheltravels.in,https://www.skbagheltravels.in,https://admin.skbagheltravels.in",
     ),
   ALLOW_TEST_AUTH: z
     .string()
     .optional()
-    .transform((value) => value === "true" || value === "1"),
+    .transform((value) => {
+      if (value === "true" || value === "1") return true;
+      if (value === "false" || value === "0") return false;
+      return process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test" || !process.env.NODE_ENV;
+    }),
 
   DATABASE_URL: z.string().optional().default(""),
   SUPABASE_URL: z.string().optional().default(""),

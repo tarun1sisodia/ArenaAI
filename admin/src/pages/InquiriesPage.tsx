@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowRight, Building2, MessageSquare, Phone, Plane, Send, Users } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { PageHeader } from "@/components/admin/PageHeader";
@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Input } from "@/components/ui/Input";
 import { INQUIRIES } from "@/lib/mock-data";
+import { fetchAdminInquiries, updateAdminInquiry } from "@/lib/api";
 import { can, type AdminUser, type Inquiry, type InquiryStatus } from "@/lib/types";
 import { cn, timeAgo } from "@/lib/utils";
 
@@ -26,22 +27,53 @@ export function InquiriesPage({ user }: { user: AdminUser }) {
   const [note, setNote] = useState("");
   const canManage = can(user.role, "inquiries:manage");
 
+  useEffect(() => {
+    let isMounted = true;
+    fetchAdminInquiries()
+      .then((data) => {
+        if (isMounted && data && data.length > 0) {
+          setItems(data);
+          if (!selectedId || !data.some((item) => item.id === selectedId)) {
+            setSelectedId(data[0].id);
+          }
+        }
+      })
+      .catch((err) => {
+        console.warn("[InquiriesPage] Remote inquiries fetch failed, using local fixtures", err);
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const selected = items.find((i) => i.id === selectedId);
 
-  function advance(id: string) {
+  async function advance(id: string) {
+    const item = items.find((i) => i.id === id);
+    if (!item) return;
+    const idx = FLOW.indexOf(item.status);
+    const next = FLOW[Math.min(FLOW.length - 1, idx + 1)];
+    try {
+      await updateAdminInquiry(id, { status: next });
+    } catch (err) {
+      console.warn("[InquiriesPage] Backend inquiry update failed, using local state", err);
+    }
     setItems((prev) =>
       prev.map((i) => {
         if (i.id !== id) return i;
-        const idx = FLOW.indexOf(i.status);
-        const next = FLOW[Math.min(FLOW.length - 1, idx + 1)];
         return { ...i, status: next };
       })
     );
   }
 
-  function addNote(id: string) {
+  async function addNote(id: string) {
     const text = note.trim();
     if (!text) return;
+    try {
+      await updateAdminInquiry(id, { note: text });
+    } catch (err) {
+      console.warn("[InquiriesPage] Backend add note failed, using local state", err);
+    }
     setItems((prev) =>
       prev.map((i) => (i.id === id ? { ...i, notes: [...i.notes, text] } : i))
     );

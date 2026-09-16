@@ -11,7 +11,7 @@ export const AdminBookingQuerySchema = z.object({
 });
 
 export const BookingIdParamSchema = z.object({
-  id: z.string().uuid(),
+  id: z.string().min(1).max(64),
 });
 
 export const TransitionBookingSchema = z
@@ -23,9 +23,9 @@ export const TransitionBookingSchema = z
 
 export const CreateRefundSchema = z
   .object({
-    bookingId: z.string().uuid(),
+    bookingId: z.string().min(1).max(64),
     reason: z.string().trim().min(5).max(500).refine((v) => !/<script/i.test(v), "Invalid reason content"),
-    idempotencyKey: z.string().uuid(),
+    idempotencyKey: z.string().min(1).max(64),
     amountMinor: z.number().int().positive().optional(),
   })
   .strict();
@@ -38,7 +38,7 @@ export const AdminInquiryQuerySchema = z.object({
 });
 
 export const AdminInquiryIdParamSchema = z.object({
-  id: z.string().uuid(),
+  id: z.string().min(1).max(64),
 });
 
 export const AdminUpdateInquirySchema = z

@@ -6,7 +6,12 @@
 export function getApiBaseUrl(): string {
   const envUrl = import.meta.env.VITE_API_BASE_URL as string | undefined;
   if (envUrl?.trim()) return envUrl.trim().replace(/\/+$/, "");
-  if (typeof window !== "undefined" && window.location.hostname === "localhost") {
+  if (
+    typeof window !== "undefined" &&
+    (window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1" ||
+      window.location.hostname === "0.0.0.0")
+  ) {
     return "http://localhost:4000";
   }
   return "https://api.skbagheltravels.in";

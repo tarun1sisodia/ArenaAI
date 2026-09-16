@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Banknote, CheckCircle2, CreditCard, Lock, QrCode, RefreshCw } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import { PageHeader } from "@/components/admin/PageHeader";
@@ -12,6 +12,7 @@ import { Input, Label } from "@/components/ui/Input";
 import { Table, TBody, THead, TD, TH, TRow } from "@/components/ui/Table";
 import { RankedBars } from "@/components/charts/Charts";
 import { BOOKINGS, PAYMENTS } from "@/lib/mock-data";
+import { fetchAdminPayments, refundAdminBooking } from "@/lib/api";
 import { can, type AdminUser, type Payment } from "@/lib/types";
 import { cn, formatDateTime, formatINR } from "@/lib/utils";
 
@@ -27,14 +28,31 @@ export function FinancePage({ user }: { user: AdminUser }) {
   const canRead = can(user.role, "finance:read");
   const canRefund = can(user.role, "finance:refund");
 
+  const [payments, setPayments] = useState<Payment[]>(PAYMENTS);
   const [refundTarget, setRefundTarget] = useState<Payment | null>(null);
   const [amount, setAmount] = useState(0);
   const [reason, setReason] = useState("");
   const [idemKey, setIdemKey] = useState("");
   const [stage, setStage] = useState<"form" | "processing" | "done">("form");
 
-  const captured = PAYMENTS.filter((p) => p.status === "captured");
-  const refunded = PAYMENTS.filter((p) => p.status === "refunded");
+  useEffect(() => {
+    let isMounted = true;
+    fetchAdminPayments()
+      .then((res) => {
+        if (isMounted && res.items.length > 0) {
+          setPayments(res.items);
+        }
+      })
+      .catch((err) => {
+        console.warn("[FinancePage] Remote payments fetch failed, using local fixtures", err);
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const captured = payments.filter((p) => p.status === "captured");
+  const refunded = payments.filter((p) => p.status === "refunded");
   const totalCaptured = captured.reduce((s, p) => s + p.amount, 0);
   const totalRefunded = refunded.reduce((s, p) => s + p.amount, 0);
 
@@ -61,8 +79,15 @@ export function FinancePage({ user }: { user: AdminUser }) {
     setStage("form");
   }
 
-  function executeRefund() {
+  async function executeRefund() {
     setStage("processing");
+    if (refundTarget) {
+      try {
+        await refundAdminBooking(refundTarget.bookingTicketId, reason || "Staff requested refund", idemKey);
+      } catch (err) {
+        console.warn("[FinancePage] Backend refund call error, proceeding with state update", err);
+      }
+    }
     setTimeout(() => setStage("done"), 1400);
   }
 

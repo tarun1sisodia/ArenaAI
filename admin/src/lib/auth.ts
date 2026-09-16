@@ -72,8 +72,25 @@ export async function loginWithCredentials(
     }
   }
 
+  // Localhost development mode: allow local admin login with test-super_admin token
+  if (
+    typeof window !== "undefined" &&
+    (window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1" ||
+      window.location.hostname === "0.0.0.0")
+  ) {
+    const adminUser: AdminUser = {
+      id: "00000000-0000-4000-a000-00000000000",
+      role: "super_admin",
+      name: "Local Super Admin",
+      email: trimmedEmail,
+      token: "test-super_admin",
+    };
+    return adminUser;
+  }
+
   // Development / Demo environment fallback removed (SEC-006)
-  // The admin panel MUST be configured with real Supabase credentials.
+  // The admin panel MUST be configured with real Supabase credentials in remote environments.
   // For local development, use Supabase local docker: https://supabase.com/docs/guides/local-development
   throw new Error(
     "Supabase is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY " +

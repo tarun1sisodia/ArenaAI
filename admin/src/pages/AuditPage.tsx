@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Lock } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import { PageHeader } from "@/components/admin/PageHeader";
@@ -6,7 +6,8 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Table, TBody, THead, TD, TH, TRow } from "@/components/ui/Table";
 import { AUDIT } from "@/lib/mock-data";
-import { ROLE_LABELS, can, type AdminUser, type AuditAction } from "@/lib/types";
+import { fetchAdminAuditLogs } from "@/lib/api";
+import { ROLE_LABELS, can, type AdminUser, type AuditAction, type AuditEntry } from "@/lib/types";
 import { cn, formatDateTime } from "@/lib/utils";
 
 const ACTION_TONES: Record<AuditAction, "gold" | "success" | "error" | "teal" | "ink" | "neutral"> = {
@@ -26,16 +27,33 @@ const ACTION_TONES: Record<AuditAction, "gold" | "success" | "error" | "teal" | 
 
 export function AuditPage({ user }: { user: AdminUser }) {
   const reduce = useReducedMotion();
+  const [logs, setLogs] = useState<AuditEntry[]>(AUDIT);
   const [filter, setFilter] = useState<AuditAction | "all">("all");
   const canRead = can(user.role, "audit:read");
 
-  const actions = useMemo(() => {
-    const set = new Set<AuditAction>();
-    AUDIT.forEach((a) => set.add(a.action));
-    return [...set];
+  useEffect(() => {
+    let isMounted = true;
+    fetchAdminAuditLogs()
+      .then((data) => {
+        if (isMounted && data.length > 0) {
+          setLogs(data);
+        }
+      })
+      .catch((err) => {
+        console.warn("[AuditPage] Remote audit logs fetch failed, using local fixtures", err);
+      });
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
-  const visible = AUDIT.filter((a) => filter === "all" || a.action === filter).sort(
+  const actions = useMemo(() => {
+    const set = new Set<AuditAction>();
+    logs.forEach((a) => set.add(a.action));
+    return [...set];
+  }, [logs]);
+
+  const visible = logs.filter((a) => filter === "all" || a.action === filter).sort(
     (a, b) => b.at.localeCompare(a.at)
   );
 

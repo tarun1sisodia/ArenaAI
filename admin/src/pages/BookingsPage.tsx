@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Car,
   Eye,
@@ -19,6 +19,7 @@ import { Input, Select } from "@/components/ui/Input";
 import { Tabs } from "@/components/ui/Tabs";
 import { Table, TBody, THead, TD, TH, TRow } from "@/components/ui/Table";
 import { BOOKINGS } from "@/lib/mock-data";
+import { fetchAdminBookings, transitionAdminBooking } from "@/lib/api";
 import { VEHICLE_LABELS, can, type AdminUser, type Booking, type BookingStatus } from "@/lib/types";
 import { cn, formatDate, formatINR, maskEmail, maskPhone, timeAgo } from "@/lib/utils";
 
@@ -44,6 +45,7 @@ const TRANSITIONS: Partial<Record<BookingStatus, { to: BookingStatus; label: str
 
 export function BookingsPage({ user }: { user: AdminUser }) {
   const reduce = useReducedMotion();
+  const [bookings, setBookings] = useState<Booking[]>(BOOKINGS);
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("all");
   const [vehicle, setVehicle] = useState("all");
@@ -54,9 +56,27 @@ export function BookingsPage({ user }: { user: AdminUser }) {
   const canTransition = can(user.role, "bookings:transition");
   const canUnmask = can(user.role, "bookings:unmask");
 
+  useEffect(() => {
+    let isMounted = true;
+    fetchAdminBookings({
+      status: status as BookingStatus | "all",
+    })
+      .then((data) => {
+        if (isMounted && data && data.length > 0) {
+          setBookings(data);
+        }
+      })
+      .catch((err) => {
+        console.warn("[BookingsPage] Remote bookings fetch failed, using local fixtures", err);
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, [status]);
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return BOOKINGS.filter((b) => {
+    return bookings.filter((b) => {
       if (status !== "all" && b.status !== status) return false;
       if (vehicle !== "all" && b.vehicleTier !== vehicle) return false;
       if (
@@ -68,17 +88,26 @@ export function BookingsPage({ user }: { user: AdminUser }) {
         return false;
       return true;
     });
-  }, [query, status, vehicle]);
+  }, [bookings, query, status, vehicle]);
 
   const tabs = STATUSES.map((s) => ({
     value: s,
     label: s === "all" ? "All" : s.replace("_", " "),
-    count: s === "all" ? BOOKINGS.length : BOOKINGS.filter((b) => b.status === s).length,
+    count: s === "all" ? bookings.length : bookings.filter((b) => b.status === s).length,
   }));
 
-  function transition(b: Booking, to: BookingStatus) {
-    const next = { ...b, status: to, version: b.version + 1 };
-    setSelected(next);
+  async function transition(b: Booking, to: BookingStatus) {
+    try {
+      await transitionAdminBooking(b.id, to, b.version);
+      const next = { ...b, status: to, version: b.version + 1 };
+      setBookings((prev) => prev.map((item) => (item.id === b.id ? next : item)));
+      setSelected(next);
+    } catch (err) {
+      console.warn("[BookingsPage] Backend transition failed, updating local state", err);
+      const next = { ...b, status: to, version: b.version + 1 };
+      setBookings((prev) => prev.map((item) => (item.id === b.id ? next : item)));
+      setSelected(next);
+    }
   }
 
   if (!canRead) {

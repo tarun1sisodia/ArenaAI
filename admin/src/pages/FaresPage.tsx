@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Compass, Moon, ShieldCheck, Timer, Users } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import { PageHeader } from "@/components/admin/PageHeader";
@@ -5,13 +6,30 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/Badge";
 import { Table, TBody, THead, TD, TH, TRow } from "@/components/ui/Table";
 import { FARE_RULESET } from "@/lib/mock-data";
-import { can, type AdminUser } from "@/lib/types";
+import { fetchAdminFareRules } from "@/lib/api";
+import { can, type AdminUser, type FareRuleset } from "@/lib/types";
 import { formatINR } from "@/lib/utils";
 
 export function FaresPage({ user }: { user: AdminUser }) {
   const reduce = useReducedMotion();
   const canRead = can(user.role, "fares:read");
-  const rs = FARE_RULESET;
+  const [rs, setRs] = useState<FareRuleset>(FARE_RULESET);
+
+  useEffect(() => {
+    let isMounted = true;
+    fetchAdminFareRules()
+      .then((data) => {
+        if (isMounted && data) {
+          setRs(data);
+        }
+      })
+      .catch((err) => {
+        console.warn("[FaresPage] Remote fare rules fetch failed, using local ruleset", err);
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   if (!canRead) {
     return (
