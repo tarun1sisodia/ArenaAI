@@ -23,7 +23,24 @@ export async function loginWithCredentials(
     throw new Error("Password must be at least 6 characters long.");
   }
 
-  // Production path: Supabase Auth via GoTrue REST API
+  // 1. Verify backend server connectivity
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3500);
+    const healthRes = await fetch(`${env.API_BASE_URL}/api/v1/health`, {
+      method: "GET",
+      signal: controller.signal,
+    }).catch(() => null);
+    clearTimeout(timeoutId);
+
+    if (!healthRes || !healthRes.ok) {
+      throw new Error("Backend is not connected.");
+    }
+  } catch {
+    throw new Error("Backend is not connected.");
+  }
+
+  // 2. Production path: Supabase Auth via GoTrue REST API
   if (env.SUPABASE_URL && env.SUPABASE_ANON_KEY) {
     try {
       const response = await fetch(`${env.SUPABASE_URL}/auth/v1/token?grant_type=password`, {
@@ -44,8 +61,20 @@ export async function loginWithCredentials(
           errData.error_description ||
           errData.message ||
           errData.msg ||
-          "Authentication failed. Please check your credentials.";
-        throw new Error(message);
+          "Invalid email or password. Please check your credentials.";
+
+        const lower = message.toLowerCase();
+        if (
+          lower.includes("invalid login credentials") ||
+          lower.includes("invalid_grant") ||
+          lower.includes("invalid email or password")
+        ) {
+          throw new Error("Invalid email or password. Please check your credentials.");
+        }
+        if (lower.includes("rate limit") || lower.includes("too many")) {
+          throw new Error("Too many failed attempts. Please try again later.");
+        }
+        throw new Error("Backend is not connected.");
       }
 
       const data = await response.json();
@@ -67,12 +96,20 @@ export async function loginWithCredentials(
 
       return adminUser;
     } catch (err) {
-      if (err instanceof Error) throw err;
-      throw new Error("An error occurred during authentication.");
+      if (err instanceof Error) {
+        if (
+          err.message.includes("Invalid email or password") ||
+          err.message.includes("Access denied") ||
+          err.message.includes("Too many failed attempts")
+        ) {
+          throw err;
+        }
+      }
+      throw new Error("Backend is not connected.");
     }
   }
 
-  // Localhost development mode: allow local admin login with test-super_admin token
+  // 3. Localhost development mode: allow local admin login with test-super_admin token
   if (
     typeof window !== "undefined" &&
     (window.location.hostname === "localhost" ||
@@ -89,13 +126,9 @@ export async function loginWithCredentials(
     return adminUser;
   }
 
-  // Development / Demo environment fallback removed (SEC-006)
-  // The admin panel MUST be configured with real Supabase credentials in remote environments.
-  // For local development, use Supabase local docker: https://supabase.com/docs/guides/local-development
-  throw new Error(
-    "Supabase is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY " +
-    "to your Supabase project credentials. See docs/DEPLOYMENT.md for setup instructions.",
-  );
+  // Remote environment without configured auth:
+  // Show only that backend is not connected — never expose technical details about Supabase or env vars.
+  throw new Error("Backend is not connected.");
 }
 
 export function getStoredSession(): AdminUser | null {

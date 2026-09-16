@@ -95,7 +95,21 @@ export function LoginPage({ onLogin }: { onLogin: (user: AdminUser) => void }) {
       const authedUser = await loginWithCredentials(email, password);
       onLogin(authedUser);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Authentication failed. Please try again.");
+      const msg = err instanceof Error ? err.message : "";
+      if (
+        !msg ||
+        msg.toLowerCase().includes("supabase") ||
+        msg.toLowerCase().includes("failed to fetch") ||
+        msg.toLowerCase().includes("network") ||
+        msg.toLowerCase().includes("vite_") ||
+        msg.toLowerCase().includes("configured") ||
+        msg.toLowerCase().includes("not connected") ||
+        msg.toLowerCase().includes("an error occurred")
+      ) {
+        setError("Backend is not connected.");
+      } else {
+        setError(msg);
+      }
     } finally {
       setBusy(false);
     }
