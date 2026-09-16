@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "beacon": {
+      "command": "beacon",
+      "args": [
+        "mcp"
+      ],
+      "timeout": 3600000
+    }
+  }
+}

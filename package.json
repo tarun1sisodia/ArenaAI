@@ -34,7 +34,9 @@
     "testsprite:validate": "node scripts/validate-testsprite.mjs",
     "deploy:customer": "npm --prefix react ci && npm run customer:build && npx wrangler pages deploy react/dist --project-name skbagheltravels-customer",
     "deploy:admin": "npm --prefix admin ci && npm run admin:build && npx wrangler pages deploy admin/dist --project-name skbagheltravels-admin",
-    "customer:audit:css": "npm --prefix react run audit:css"
+    "customer:audit:css": "npm --prefix react run audit:css",
+    "beacon": "beacon",
+    "beacon:stop": "beacon stop"
   },
   "dependencies": {
     "react": "^19.1.1",
