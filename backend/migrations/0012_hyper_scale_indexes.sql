@@ -6,7 +6,7 @@
 --    Dispatch queries bypass 98%+ historical rows, reducing index RAM from ~25MB to <400KB.
 CREATE INDEX IF NOT EXISTS idx_bookings_active_dispatch
 ON bookings (pickup_datetime ASC, id)
-WHERE status IN ('pending_payment', 'paid_confirmed', 'driver_assigned');
+WHERE status IN ('pending_payment', 'paid_confirmed', 'in_transit');
 
 -- 2. Covering index for customer vouchers and guest lookups (Index-Only Scan).
 --    Includes critical lookup columns directly in the leaf pages so Postgres

@@ -105,4 +105,83 @@ describe("API contract", () => {
     expect(xss.statusCode).toBe(400);
     await app.close();
   });
+
+  it("enforces role guards and transitions booking status via admin transition endpoint", async () => {
+    const { app } = await createTestApp();
+    const draftRes = await app.inject({
+      method: "POST",
+      url: "/api/v1/bookings/draft",
+      payload: sampleDraft,
+    });
+    expect(draftRes.statusCode).toBe(201);
+    const bookingId = draftRes.json().data.bookingId as string;
+
+    // 1. Unauthenticated -> 401
+    const unauth = await app.inject({
+      method: "POST",
+      url: `/api/v1/ops/admin/bookings/${bookingId}/transition`,
+      payload: { to: "paid_confirmed" },
+    });
+    expect(unauth.statusCode).toBe(401);
+
+    // 2. Customer role -> 403 Forbidden
+    const forbidden = await app.inject({
+      method: "POST",
+      url: `/api/v1/ops/admin/bookings/${bookingId}/transition`,
+      headers: { authorization: "Bearer test-customer" },
+      payload: { to: "paid_confirmed" },
+    });
+    expect(forbidden.statusCode).toBe(403);
+
+    // 3. Super admin -> 200 OK (pending_payment -> paid_confirmed)
+    const step1 = await app.inject({
+      method: "POST",
+      url: `/api/v1/ops/admin/bookings/${bookingId}/transition`,
+      headers: { authorization: "Bearer test-super_admin" },
+      payload: { to: "paid_confirmed", expectedVersion: 1 },
+    });
+    expect(step1.statusCode).toBe(200);
+    expect(step1.json().data.status).toBe("paid_confirmed");
+    expect(step1.json().data.version).toBe(2);
+
+    // 4. Version mismatch -> 409 Conflict
+    const conflict = await app.inject({
+      method: "POST",
+      url: `/api/v1/ops/admin/bookings/${bookingId}/transition`,
+      headers: { authorization: "Bearer test-super_admin" },
+      payload: { to: "in_transit", expectedVersion: 1 },
+    });
+    expect(conflict.statusCode).toBe(409);
+
+    // 5. Super admin -> in_transit (paid_confirmed -> in_transit)
+    const step2 = await app.inject({
+      method: "POST",
+      url: `/api/v1/ops/admin/bookings/${bookingId}/transition`,
+      headers: { authorization: "Bearer test-super_admin" },
+      payload: { to: "in_transit", expectedVersion: 2 },
+    });
+    expect(step2.statusCode).toBe(200);
+    expect(step2.json().data.status).toBe("in_transit");
+    expect(step2.json().data.version).toBe(3);
+
+    // 6. Invalid transition (in_transit -> pending_payment) -> 400 Bad Request
+    const invalidTransition = await app.inject({
+      method: "POST",
+      url: `/api/v1/ops/admin/bookings/${bookingId}/transition`,
+      headers: { authorization: "Bearer test-super_admin" },
+      payload: { to: "pending_payment" },
+    });
+    expect(invalidTransition.statusCode).toBe(400);
+
+    // 7. Non-existent booking -> 404 Not Found
+    const notFound = await app.inject({
+      method: "POST",
+      url: "/api/v1/ops/admin/bookings/00000000-0000-0000-0000-000000000000/transition",
+      headers: { authorization: "Bearer test-super_admin" },
+      payload: { to: "completed" },
+    });
+    expect(notFound.statusCode).toBe(404);
+
+    await app.close();
+  });
 });

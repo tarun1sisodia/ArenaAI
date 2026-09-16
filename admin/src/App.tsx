@@ -12,28 +12,10 @@ const ReviewsPage = lazy(() => import("@/pages/ReviewsPage").then((m) => ({ defa
 const InquiriesPage = lazy(() => import("@/pages/InquiriesPage").then((m) => ({ default: m.InquiriesPage })));
 const FaresPage = lazy(() => import("@/pages/FaresPage").then((m) => ({ default: m.FaresPage })));
 const AuditPage = lazy(() => import("@/pages/AuditPage").then((m) => ({ default: m.AuditPage })));
-import type { AdminRole, AdminUser } from "@/lib/types";
+import { clearSession, getStoredSession, saveSession } from "@/lib/auth";
+import type { AdminUser } from "@/lib/types";
 
-const SESSION_KEY = "skb-admin-session";
-
-const ROLE_PROFILES: Record<AdminRole, { name: string; email: string }> = {
-  dispatcher: { name: "Priya Sharma", email: "priya@skbagheltravels.in" },
-  content_editor: { name: "Ritika Kapoor", email: "ritika@skbagheltravels.in" },
-  review_moderator: { name: "Ritika Kapoor", email: "ritika@skbagheltravels.in" },
-  finance_operator: { name: "Nitin Baghel", email: "nitin@skbagheltravels.in" },
-  super_admin: { name: "A. Baghel", email: "admin@skbagheltravels.in" },
-};
-
-function loadSession(): AdminUser | null {
-  try {
-    const raw = localStorage.getItem(SESSION_KEY);
-    return raw ? (JSON.parse(raw) as AdminUser) : null;
-  } catch {
-    return null;
-  }
-}
-
-function Root({ user, onLogin, onLogout }: { user: AdminUser | null; onLogin: (r: AdminRole) => void; onLogout: () => void }) {
+function Root({ user, onLogin, onLogout }: { user: AdminUser | null; onLogin: (u: AdminUser) => void; onLogout: () => void }) {
   const reduce = useReducedMotion();
   const navigate = useNavigate();
 
@@ -48,8 +30,8 @@ function Root({ user, onLogin, onLogout }: { user: AdminUser | null; onLogin: (r
           transition={{ duration: 0.3 }}
         >
           <LoginPage
-            onLogin={(role) => {
-              onLogin(role);
+            onLogin={(authedUser) => {
+              onLogin(authedUser);
               navigate("/");
             }}
           />
@@ -84,26 +66,19 @@ function Root({ user, onLogin, onLogout }: { user: AdminUser | null; onLogin: (r
 }
 
 export default function App() {
-  const [user, setUser] = useState<AdminUser | null>(loadSession);
+  const [user, setUser] = useState<AdminUser | null>(getStoredSession);
 
   useEffect(() => {
     document.documentElement.lang = "en-IN";
   }, []);
 
-  const login = useCallback((role: AdminRole) => {
-    const profile = ROLE_PROFILES[role];
-    const u: AdminUser = {
-      id: `usr_${role}`,
-      role,
-      name: profile.name,
-      email: profile.email,
-    };
-    localStorage.setItem(SESSION_KEY, JSON.stringify(u));
-    setUser(u);
+  const login = useCallback((authedUser: AdminUser) => {
+    saveSession(authedUser);
+    setUser(authedUser);
   }, []);
 
   const logout = useCallback(() => {
-    localStorage.removeItem(SESSION_KEY);
+    clearSession();
     setUser(null);
   }, []);
 

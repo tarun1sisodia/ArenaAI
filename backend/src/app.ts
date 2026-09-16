@@ -205,7 +205,7 @@ export async function buildApp(options: AppOptions): Promise<BuiltApp> {
   await registerCatalogRoutes(app, createCatalogController(catalogService));
   await registerReviewRoutes(app, createReviewController(reviewService));
   await registerInquiryRoutes(app, createInquiryController(inquiryService));
-  await registerAdminRoutes(app, createAdminController(adminService, paymentService));
+  await registerAdminRoutes(app, createAdminController(adminService, paymentService, bookingService));
 
   return { app, db };
 }

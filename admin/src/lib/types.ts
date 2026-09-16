@@ -1,15 +1,11 @@
-export type AdminRole =
-  | "dispatcher"
-  | "content_editor"
-  | "review_moderator"
-  | "finance_operator"
-  | "super_admin";
+export type AdminRole = "super_admin";
 
 export interface AdminUser {
   id: string;
   role: AdminRole;
   name: string;
   email: string;
+  token: string;
 }
 
 export type BookingStatus =
@@ -187,26 +183,22 @@ export const VEHICLE_LABELS: Record<VehicleTier, string> = {
 };
 
 export const ROLE_LABELS: Record<AdminRole, string> = {
-  dispatcher: "Dispatcher",
-  content_editor: "Content Editor",
-  review_moderator: "Review Moderator",
-  finance_operator: "Finance Operator",
   super_admin: "Super Admin",
 };
 
 /** Permission matrix from ADMIN_PRD.md §4 */
 export const PERMISSIONS: Record<string, AdminRole[]> = {
-  "bookings:read": ["dispatcher", "finance_operator", "super_admin"],
-  "bookings:transition": ["dispatcher", "super_admin"],
-  "bookings:unmask": ["dispatcher", "super_admin"],
-  "finance:read": ["finance_operator", "super_admin"],
+  "bookings:read": ["super_admin"],
+  "bookings:transition": ["super_admin"],
+  "bookings:unmask": ["super_admin"],
+  "finance:read": ["super_admin"],
   "finance:refund": ["super_admin"],
-  "catalog:edit": ["content_editor", "super_admin"],
+  "catalog:edit": ["super_admin"],
   "catalog:publish": ["super_admin"],
-  "reviews:moderate": ["review_moderator", "super_admin"],
+  "reviews:moderate": ["super_admin"],
   "reviews:publish": ["super_admin"],
-  "inquiries:manage": ["dispatcher", "super_admin"],
-  "fares:read": ["dispatcher", "finance_operator", "super_admin"],
+  "inquiries:manage": ["super_admin"],
+  "fares:read": ["super_admin"],
   "audit:read": ["super_admin"],
 };
 

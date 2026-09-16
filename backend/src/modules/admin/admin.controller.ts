@@ -1,31 +1,41 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import { requireUser } from "../../middlewares/authGuard.js";
 import { sendSuccess } from "../../middlewares/errorHandler.js";
-import { DISPATCH_ROLES, requireRole, SUPER_ADMIN_ROLES } from "../../middlewares/roleGuard.js";
+import { ADMIN_ROLES, requireRole } from "../../middlewares/roleGuard.js";
+import type { createBookingService } from "../bookings/booking.service.js";
 import type { createPaymentService } from "../payments/payment.service.js";
-import { AdminBookingQuerySchema, CreateRefundSchema } from "./admin.schema.js";
+import { AdminBookingQuerySchema, BookingIdParamSchema, CreateRefundSchema, TransitionBookingSchema } from "./admin.schema.js";
 import type { createAdminService } from "./admin.service.js";
 
 export function createAdminController(
   service: ReturnType<typeof createAdminService>,
   payments: ReturnType<typeof createPaymentService>,
+  bookings: ReturnType<typeof createBookingService>,
 ) {
   return {
     async listBookings(request: FastifyRequest, reply: FastifyReply) {
-      requireRole(request, DISPATCH_ROLES);
+      requireRole(request, ADMIN_ROLES);
       const query = AdminBookingQuerySchema.parse(request.query);
       const data = await service.listBookings(query);
       return sendSuccess(reply, data);
     },
 
+    async transitionBooking(request: FastifyRequest, reply: FastifyReply) {
+      requireRole(request, ADMIN_ROLES);
+      const { id } = BookingIdParamSchema.parse(request.params);
+      const body = TransitionBookingSchema.parse(request.body);
+      const updated = await bookings.transition(id, body.to, body.expectedVersion);
+      return sendSuccess(reply, updated);
+    },
+
     async auditLogs(request: FastifyRequest, reply: FastifyReply) {
-      requireRole(request, SUPER_ADMIN_ROLES);
+      requireRole(request, ADMIN_ROLES);
       const logs = await service.listAuditLogs(100);
       return sendSuccess(reply, logs);
     },
 
     async refund(request: FastifyRequest, reply: FastifyReply) {
-      requireRole(request, SUPER_ADMIN_ROLES);
+      requireRole(request, ADMIN_ROLES);
       const actor = requireUser(request);
       const body = CreateRefundSchema.parse(request.body);
       const data = await payments.refund({

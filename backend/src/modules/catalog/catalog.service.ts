@@ -122,11 +122,11 @@ export function createCatalogService(deps: { db: Repositories; clock: Clock }) {
     },
 
     async attachMedia(id: string, input: z.infer<typeof AttachMediaSchema>, actor: AuthUser) {
-      await requireItem(deps.db, id);
+      const item = await requireItem(deps.db, id);
       const now = toIso(deps.clock.now());
       return deps.db.media.create({
         id: newId(),
-        catalogItemId: id,
+        catalogItemId: item.id,
         storagePath: input.storagePath,
         mediaType: input.mediaType,
         altText: input.altText,

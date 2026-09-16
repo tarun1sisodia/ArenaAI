@@ -154,9 +154,7 @@ export function createBookingService(deps: {
         throw Errors.notFound("BOOKING_NOT_FOUND", "The booking could not be found or verified.");
       }
 
-      const isAdmin =
-        input.actor &&
-        ["dispatcher", "finance_operator", "super_admin"].includes(input.actor.role);
+      const isAdmin = Boolean(input.actor && input.actor.role === "super_admin");
 
       // Secure token comparison using timing-safe equal
       const tokenOk = Boolean(
@@ -176,10 +174,17 @@ export function createBookingService(deps: {
       return projectBooking(booking, { unmask: Boolean(isAdmin) });
     },
 
-    async transition(bookingId: string, to: BookingRecord["status"]): Promise<BookingRecord> {
+    async transition(
+      bookingId: string,
+      to: BookingRecord["status"],
+      expectedVersion?: number,
+    ): Promise<BookingRecord> {
       return deps.db.transaction(async (trx) => {
         const booking = await trx.bookings.getById(bookingId);
         if (!booking) throw Errors.notFound("BOOKING_NOT_FOUND", "Booking not found.");
+        if (expectedVersion !== undefined && booking.version !== expectedVersion) {
+          throw Errors.conflict("VERSION_CONFLICT", "Booking was modified concurrently.");
+        }
         assertTransition(booking.status, to);
         const updated: BookingRecord = {
           ...booking,

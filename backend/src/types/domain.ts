@@ -52,10 +52,6 @@ export type Currency = (typeof CURRENCIES)[number];
 
 export const USER_ROLES = [
   "customer",
-  "content_editor",
-  "review_moderator",
-  "dispatcher",
-  "finance_operator",
   "super_admin",
 ] as const;
 export type UserRole = (typeof USER_ROLES)[number];

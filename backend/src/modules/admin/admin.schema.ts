@@ -1,16 +1,9 @@
 import { z } from "zod";
+import { BOOKING_STATUSES } from "../../types/domain.js";
 
 export const AdminBookingQuerySchema = z.object({
   status: z
-    .enum([
-      "draft",
-      "pending_payment",
-      "paid_confirmed",
-      "in_transit",
-      "completed",
-      "cancelled",
-      "refunded",
-    ])
+    .enum(BOOKING_STATUSES)
     .optional(),
   ticketId: z.string().max(30).optional(),
   page: z.coerce.number().int().positive().max(1000).default(1),
@@ -20,6 +13,13 @@ export const AdminBookingQuerySchema = z.object({
 export const BookingIdParamSchema = z.object({
   id: z.string().uuid(),
 });
+
+export const TransitionBookingSchema = z
+  .object({
+    to: z.enum(BOOKING_STATUSES),
+    expectedVersion: z.number().int().nonnegative().optional(),
+  })
+  .strict();
 
 export const CreateRefundSchema = z
   .object({

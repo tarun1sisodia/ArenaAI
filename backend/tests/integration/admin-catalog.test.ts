@@ -51,7 +51,7 @@ describe("admin operations and catalog", () => {
     const listRes = await app.inject({
       method: "GET",
       url: "/api/v1/ops/admin/bookings?status=paid_confirmed",
-      headers: { authorization: "Bearer test-dispatcher" },
+      headers: { authorization: "Bearer test-super_admin" },
     });
     expect(listRes.statusCode).toBe(200);
     expect(listRes.json().data.bookings.length).toBeGreaterThan(0);
@@ -60,7 +60,7 @@ describe("admin operations and catalog", () => {
     const forbiddenRefund = await app.inject({
       method: "POST",
       url: "/api/v1/ops/admin/refunds",
-      headers: { authorization: "Bearer test-dispatcher" },
+      headers: { authorization: "Bearer test-customer" },
       payload: {
         bookingId,
         reason: "Customer cancelled",
@@ -95,7 +95,7 @@ describe("admin operations and catalog", () => {
     const created = await app.inject({
       method: "POST",
       url: "/api/v1/ops/admin/catalog",
-      headers: { authorization: "Bearer test-content_editor" },
+      headers: { authorization: "Bearer test-super_admin" },
       payload: {
         type: "tour",
         slug: "hidden-tour",
@@ -115,7 +115,7 @@ describe("admin operations and catalog", () => {
     const forbiddenPublish = await app.inject({
       method: "POST",
       url: `/api/v1/ops/admin/catalog/${id}/publish`,
-      headers: { authorization: "Bearer test-content_editor" },
+      headers: { authorization: "Bearer test-customer" },
     });
     expect(forbiddenPublish.statusCode).toBe(403);
 
@@ -125,6 +125,22 @@ describe("admin operations and catalog", () => {
       headers: { authorization: "Bearer test-super_admin" },
     });
     expect(published.statusCode).toBe(200);
+
+    // Verify media attachment by slug uses item.id for foreign key (FIND-007)
+    const mediaRes = await app.inject({
+      method: "POST",
+      url: "/api/v1/ops/admin/catalog/hidden-tour/media",
+      headers: { authorization: "Bearer test-super_admin" },
+      payload: {
+        storagePath: "catalog/hidden-tour-hero.webp",
+        mediaType: "image",
+        altText: "Hidden Tour Hero",
+        sortOrder: 1,
+      },
+    });
+    expect(mediaRes.statusCode).toBe(201);
+    expect(mediaRes.json().data.catalogItemId).toBe(id);
+    expect(mediaRes.json().data.catalogItemId).not.toBe("hidden-tour");
 
     const visible = await app.inject({ method: "GET", url: "/api/v1/catalog/hidden-tour" });
     expect(visible.statusCode).toBe(200);
@@ -148,7 +164,7 @@ describe("admin operations and catalog", () => {
     await app.inject({
       method: "POST",
       url: `/api/v1/ops/admin/reviews/${reviewId}/approve`,
-      headers: { authorization: "Bearer test-review_moderator" },
+      headers: { authorization: "Bearer test-super_admin" },
     });
     await app.inject({
       method: "POST",

@@ -17,6 +17,7 @@
 import React, { useState } from "react";
 import { Icon } from "../components/ui/Icon";
 import { contact } from "../data/contact";
+import { createInquiry, formatInquiryPhone, sanitizeInquiryName } from "../services/api";
 
 interface ContactPageProps {
   language: "en" | "hi";
@@ -160,7 +161,7 @@ export function ContactPage({ language }: ContactPageProps) {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const errors: typeof formErrors = {};
@@ -184,9 +185,25 @@ export function ContactPage({ language }: ContactPageProps) {
 
     setIsSubmitting(true);
 
-    // Realistic mock processing delay
-    setTimeout(() => {
-      const generatedId = `SKB-INQ-${Math.floor(100000 + Math.random() * 900000)}`;
+    try {
+      const sanitizedName = sanitizeInquiryName(formData.name);
+      const sanitizedPhone = formatInquiryPhone(formData.phone);
+      const tripInterest = `${formData.serviceType}: ${formData.pickupLocation} to ${formData.destination || "local"}`.slice(0, 160);
+
+      const tripMeta = `Service: ${formData.serviceType} | Date: ${formData.tripDate} | Vehicle: ${formData.vehiclePreference} | Pickup: ${formData.pickupLocation} | Drop: ${formData.destination || "Local Agra"}`;
+      const userMsg = formData.message.trim();
+      const message = userMsg.length >= 10
+        ? `${tripMeta}\nNotes: ${userMsg}`.slice(0, 2000)
+        : `${tripMeta}. Please provide quote and confirm availability.`.slice(0, 2000);
+
+      const res = await createInquiry({
+        name: sanitizedName,
+        phone: sanitizedPhone,
+        message,
+        tripInterest,
+      });
+
+      const generatedId = res.id || `SKB-INQ-${Math.floor(100000 + Math.random() * 900000)}`;
       setInquiryId(generatedId);
       setIsSubmitting(false);
       setIsSubmitted(true);
@@ -200,7 +217,16 @@ export function ContactPage({ language }: ContactPageProps) {
       setTimeout(() => {
         setToast((prev) => ({ ...prev, show: false }));
       }, 6000);
-    }, 650);
+    } catch (err: any) {
+      setIsSubmitting(false);
+      const errorMsg = isHi
+        ? `पूछताछ सबमिट करने में असमर्थ: ${err?.message || "कृपया पुनः प्रयास करें या सीधे कॉल करें।"}`
+        : `Failed to submit inquiry: ${err?.message || "Please try again or contact us directly."}`;
+      setToast({ show: true, message: errorMsg });
+      setTimeout(() => {
+        setToast((prev) => ({ ...prev, show: false }));
+      }, 6000);
+    }
   };
 
   const handleReset = () => {

@@ -6,7 +6,11 @@ const EnvSchema = z.object({
   API_BASE_URL: z.string().default("http://localhost:4000"),
   LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"]).default("info"),
   FARE_RULES_VERSION: z.string().min(1).default("2026-09-13"),
-  CORS_ORIGINS: z.string().default("http://localhost:5173,http://localhost:3000,https://skbagheltravels.in"),
+  CORS_ORIGINS: z
+    .string()
+    .default(
+      "http://localhost:5173,http://localhost:3000,https://skbagheltravels.in,https://www.skbagheltravels.in,https://admin.skbagheltravels.in",
+    ),
   ALLOW_TEST_AUTH: z
     .string()
     .optional()

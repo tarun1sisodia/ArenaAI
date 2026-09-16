@@ -17,6 +17,7 @@
 
 import React, { useState } from "react";
 import { contact } from "../../data/contact";
+import { createInquiry, formatInquiryPhone, sanitizeInquiryName } from "../../services/api";
 
 export function ContactCard() {
   const [formData, setFormData] = useState({
@@ -48,7 +49,7 @@ export function ContactCard() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const newErrors: typeof errors = {};
@@ -69,8 +70,21 @@ export function ContactCard() {
 
     setIsSubmitting(true);
 
-    // Realistic mock network processing
-    setTimeout(() => {
+    try {
+      const sanitizedName = sanitizeInquiryName(formData.name);
+      const sanitizedPhone = formatInquiryPhone(formData.phone);
+      const rawMsg = formData.message.trim();
+      const message = rawMsg.length >= 10
+        ? rawMsg.slice(0, 2000)
+        : `Website inquiry from ${sanitizedName}: ${rawMsg}`.slice(0, 2000);
+
+      await createInquiry({
+        name: sanitizedName,
+        phone: sanitizedPhone,
+        message,
+        tripInterest: "Direct contact inquiry",
+      });
+
       setIsSubmitting(false);
       setIsSubmitted(true);
       const successMsg = `Thank you, ${formData.name.trim()}! Your inquiry has been received. Our 24×7 dispatch desk will contact you at ${formData.phone.trim()} shortly.`;
@@ -83,7 +97,16 @@ export function ContactCard() {
       setTimeout(() => {
         setToast((prev) => ({ ...prev, show: false }));
       }, 5000);
-    }, 600);
+    } catch (err: any) {
+      setIsSubmitting(false);
+      setToast({
+        show: true,
+        message: `Failed to submit inquiry: ${err?.message || "Please call us directly at +91 98765 43210."}`,
+      });
+      setTimeout(() => {
+        setToast((prev) => ({ ...prev, show: false }));
+      }, 5000);
+    }
   };
 
   const handleReset = () => {

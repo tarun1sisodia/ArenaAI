@@ -142,7 +142,7 @@ export function ReviewsPage({ user }: { user: AdminUser }) {
                     )}
                     {!canModerate && (
                       <span className="font-mono text-[11px] uppercase tracking-wide text-ink-faint">
-                        moderation requires review_moderator
+                        moderation requires super_admin
                       </span>
                     )}
                   </div>

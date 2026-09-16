@@ -1,27 +1,11 @@
 import { useState } from "react";
-import { ShieldCheck } from "lucide-react";
+import { AlertCircle, Eye, EyeOff, ShieldCheck } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import { Button } from "@/components/ui/Button";
 import { Input, Label } from "@/components/ui/Input";
 import { BrandMark } from "@/components/admin/BrandMark";
-import { ROLE_LABELS, type AdminRole } from "@/lib/types";
-import { cn } from "@/lib/utils";
-
-const ROLES: AdminRole[] = [
-  "dispatcher",
-  "content_editor",
-  "review_moderator",
-  "finance_operator",
-  "super_admin",
-];
-
-const ROLE_HINTS: Record<AdminRole, string> = {
-  dispatcher: "Bookings, trips, inquiries & PII unmasking",
-  content_editor: "Catalog drafting & itinerary editing",
-  review_moderator: "Review verification, approve & reject",
-  finance_operator: "Payment ledger & refund eligibility",
-  super_admin: "Full control — refunds, publishing, audit",
-};
+import { loginWithCredentials } from "@/lib/auth";
+import type { AdminUser } from "@/lib/types";
 
 const easeExpo = [0.16, 1, 0.3, 1] as const;
 
@@ -94,17 +78,27 @@ function HeroScene() {
   );
 }
 
-export function LoginPage({ onLogin }: { onLogin: (role: AdminRole) => void }) {
+export function LoginPage({ onLogin }: { onLogin: (user: AdminUser) => void }) {
   const reduce = useReducedMotion();
-  const [role, setRole] = useState<AdminRole>("super_admin");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState("admin@skbagheltravels.in");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  function submit(e: React.FormEvent) {
+  async function submit(e: React.FormEvent) {
     e.preventDefault();
+    setError(null);
     setBusy(true);
-    // Mirrors TRD §2.1 dev auth: `Bearer test-<role>` principal
-    setTimeout(() => onLogin(role), 700);
+
+    try {
+      const authedUser = await loginWithCredentials(email, password);
+      onLogin(authedUser);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Authentication failed. Please try again.");
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
@@ -163,67 +157,88 @@ export function LoginPage({ onLogin }: { onLogin: (role: AdminRole) => void }) {
               Sign in to the desk
             </h1>
             <p className="mt-1.5 text-sm text-ink-soft">
-              Role-based access per the operations permission matrix.
+              Protected operations desk for verified Super Administrators.
             </p>
           </div>
 
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex items-start gap-2.5 rounded-sm border border-rose-200 bg-rose-50/80 p-3 text-xs text-rose-800"
+              role="alert"
+            >
+              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-rose-600" />
+              <div className="leading-snug">{error}</div>
+            </motion.div>
+          )}
+
           <div className="space-y-3">
-            <Label htmlFor="email">Work email</Label>
+            <Label htmlFor="email">Administrator email</Label>
             <Input
               id="email"
               type="email"
-              placeholder="you@skbagheltravels.in"
+              autoComplete="username"
+              placeholder="admin@skbagheltravels.in"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              required
+              disabled={busy}
             />
           </div>
 
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="password" className="mb-0">Password</Label>
+            </div>
+            <div className="relative">
+              <Input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                autoComplete="current-password"
+                placeholder="••••••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                disabled={busy}
+                className="pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-ink-faint transition-colors hover:text-ink focus:outline-none"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                tabIndex={-1}
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
+          </div>
+
           <div className="space-y-2">
-            <Label>Sign in as role</Label>
-            <div className="grid grid-cols-1 gap-1.5">
-              {ROLES.map((r, i) => (
-                <motion.button
-                  key={r}
-                  type="button"
-                  onClick={() => setRole(r)}
-                  initial={reduce ? { opacity: 1 } : { opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 + i * 0.05, duration: 0.35, ease: easeExpo }}
-                  whileHover={reduce ? undefined : { x: 3 }}
-                  className={cn(
-                    "flex items-center justify-between gap-3 rounded-sm border px-3.5 py-2.5 text-left transition-colors",
-                    role === r
-                      ? "border-gold bg-gold-soft"
-                      : "border-hairline hover:border-gold-border hover:bg-surface-2"
-                  )}
-                >
-                  <span>
-                    <span className={cn("block text-sm font-medium", role === r ? "text-gold-text" : "text-ink")}>
-                      {ROLE_LABELS[r]}
-                    </span>
-                    <span className="mt-0.5 block text-[12px] leading-snug text-ink-soft">{ROLE_HINTS[r]}</span>
-                  </span>
-                  <span
-                    className={cn(
-                      "flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-full border-2 transition-colors",
-                      role === r ? "border-gold" : "border-hairline-strong"
-                    )}
-                  >
-                    {role === r && <span className="h-2 w-2 rounded-full bg-gold" />}
-                  </span>
-                </motion.button>
-              ))}
+            <Label>Desk Role</Label>
+            <div className="flex items-center justify-between gap-3 rounded-sm border border-gold/40 bg-gold-soft/50 px-3.5 py-2.5">
+              <span>
+                <span className="block text-sm font-medium text-gold-text">
+                  Super Admin
+                </span>
+                <span className="mt-0.5 block text-[12px] leading-snug text-ink-soft">
+                  Full control — bookings, refunds, catalog, reviews &amp; audit
+                </span>
+              </span>
+              <span className="flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-full border-2 border-gold">
+                <span className="h-2 w-2 rounded-full bg-gold" />
+              </span>
             </div>
           </div>
 
           <Button type="submit" variant="gold" size="lg" shine disabled={busy} className="w-full">
             <ShieldCheck className="h-4.5 w-4.5" />
-            {busy ? "Verifying token…" : `Enter as ${ROLE_LABELS[role]}`}
+            {busy ? "Authenticating credentials…" : "Enter Operations Desk"}
           </Button>
 
           <p className="text-center text-[11px] leading-relaxed text-ink-faint">
-            Demo environment — issues a <code className="font-mono">test-{role}</code> JWT
-            principal per the TRD §2.1 development auth flow.
+            Secured via Supabase Auth JWKS verification &amp; Fastify RBAC gateway.
           </p>
         </motion.form>
       </div>
