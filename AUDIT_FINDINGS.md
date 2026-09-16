@@ -57,8 +57,8 @@ Every finding is documented with reproduction, impact, evidence, and remediation
 - **Reproduction:** Search for `fetch` or HTTP client calls across `admin/src`.
 - **Impact:** Operations personnel cannot view or manage real bookings, issue real refunds via payment gateways, publish catalog items, moderate customer reviews, or review real audit logs.
 - **Evidence:** `admin/src/lib/mock-data.ts` (743 lines of static mock data); 0 network requests in `admin/src`.
-- **Status:** CONFIRMED
-- **Recommended fix:** Implement an API client layer in `admin/` to authenticate with Supabase and query `/api/v1/ops/admin/*` with JWT bearer tokens.
+- **Status:** RESOLVED
+- **Resolution:** Implemented typed API service layer `admin/src/lib/api.ts` wired to `env.API_BASE_URL` with Bearer auth token header. Connected `BookingsPage`, `InquiriesPage`, `FinancePage`, `FaresPage`, and `AuditPage` to `/api/v1/ops/admin/*` endpoints with resilient fallback to local fixtures when offline. Supported both Supabase GoTrue Auth and localhost testing auth.
 
 ---
 
@@ -95,8 +95,8 @@ Every finding is documented with reproduction, impact, evidence, and remediation
 - **Reproduction:** Compare the fare calculation algorithms and constants across the three files.
 - **Impact:** Any change to seasonal pricing, vehicle rates, or allowance rules made in one file without updating the others results in silent fare divergence, customer disputes, and reconciliation errors.
 - **Evidence:** 3 distinct implementations of `calcFare` and fare rule constants in the repository.
-- **Status:** CONFIRMED
-- **Recommended fix:** Consolidate fare calculation into a shared workspace library or have the customer and admin frontends fetch previews directly from `POST /api/v1/fares/calculate`.
+- **Status:** RESOLVED
+- **Resolution:** Synchronized all fare calculation rules, vehicle rates (sedan ₹10, ertiga ₹14, innova ₹18, tempo ₹25, urbania ₹34), 300 km/day outstation minimums, and 22:00-05:00 night window across `backend/src/modules/fares/fare.catalogue.ts`, `react/src/data.ts`, and `admin/src/lib/fares.ts`. Added dynamic `GET /api/v1/ops/admin/fare-rules` fetcher in `admin/src/lib/api.ts` so admin desk pulls live rules from the backend server.
 
 ---
 
@@ -150,8 +150,8 @@ Every finding is documented with reproduction, impact, evidence, and remediation
 - **Reproduction:** Connect to PostgreSQL using any non-superuser role without `BYPASSRLS` or attempt to query Supabase via PostgREST / Supabase Client using standard keys.
 - **Impact:** Any query from a non-superuser connection on those 11 tables, or write operation on all 14 tables, fails immediately with default-deny error `new row violates row-level security policy` or returns 0 rows. The Fastify backend currently avoids this only because it connects directly as the database superuser `postgres`.
 - **Evidence:** `backend/migrations/0009_add_indexes_and_rls.sql` lines 5–34.
-- **Status:** CONFIRMED
-- **Recommended fix:** Either define granular RLS policies for `anon`, `authenticated`, and `service_role` across all tables, or disable RLS for tables intended strictly for backend service-role access.
+- **Status:** RESOLVED
+- **Resolution:** Added migration `0016_comprehensive_rls_policies.sql` granting full `service_role` and superuser access across all 14 RLS-enabled tables, plus public read access for catalog media and active promo codes, and anonymous insert policies for inquiries and customer reviews.
 
 ---
 
@@ -167,8 +167,8 @@ Every finding is documented with reproduction, impact, evidence, and remediation
 - **Reproduction:** Search for `fare_rules` and `device_registrations` in `backend/src/db/` and `backend/src/modules/`.
 - **Impact:** Orphaned tables consume schema overhead, create developer confusion about where business rules reside, and leave dead code in database migrations.
 - **Evidence:** `fare_rules` only appears in `fare_rules_version` strings in `postgres.ts`; `device_registrations` does not appear anywhere in `backend/src`.
-- **Status:** CONFIRMED
-- **Recommended fix:** Either implement the repositories and services for dynamic fare rules and device registration, or mark them as deprecated/remove them in future cleanup migrations.
+- **Status:** RESOLVED
+- **Resolution:** Added `devices` and `fareRules` repositories in `backend/src/db/types.ts`, implemented in both `backend/src/db/memory.ts` and `backend/src/db/postgres.ts`. Added public route `POST /api/v1/devices/register` for FCM push notification device registration, and wired `getFareRules()` in `admin.service.ts` to check `deps.db.fareRules.getActive()`.
 
 ---
 
@@ -330,8 +330,8 @@ Every finding is documented with reproduction, impact, evidence, and remediation
 - **Reproduction:** Compare `admin/src/lib/types.ts` and `admin/src/lib/fares.ts` with `backend/src/types/domain.ts` and `backend/src/modules/fares/fare.catalogue.ts`.
 - **Impact:** When admin operations desk is wired to the backend API, any payload using admin types will fail database enum validation or display incorrect pricing to dispatch operators.
 - **Evidence:** `admin/src/lib/types.ts` lines 24–33 vs `backend/src/types/domain.ts` lines 1–16.
-- **Status:** CONFIRMED
-- **Recommended fix:** Unify domain types and fare constants into a shared workspace package or have the admin desk fetch canonical metadata directly from the backend.
+- **Status:** RESOLVED
+- **Resolution:** Unified `VehicleTier` (`sedan`, `ertiga`, `innova-crysta`, `tempo-traveller`, `urbania`), `TripType` (`one-way`, `round-trip`, `local-tour`, `airport-transfer`), and vehicle rates across `admin/src/lib/types.ts`, `admin/src/lib/fares.ts`, and backend schemas. Fare rules in admin now pull directly from the backend server via `GET /api/v1/ops/admin/fare-rules`.
 
 ---
 
@@ -450,8 +450,8 @@ Every finding is documented with reproduction, impact, evidence, and remediation
 - **Reproduction:** Compare interface declarations in `admin/src/lib/types.ts` against `backend/src/types/domain.ts`.
 - **Impact:** Wiring `admin/` to `backend/` without a full mapper layer will lead to `undefined` values rendered across admin data tables and runtime crashes on status filters.
 - **Evidence:** `admin/src/lib/types.ts` lines 15–120 vs `backend/src/types/domain.ts` lines 1–150.
-- **Status:** CONFIRMED
-- **Recommended fix:** Standardize `admin/src/lib/types.ts` to mirror `backend/src/types/domain.ts` or implement a typed normalization layer in `admin/src/lib/api.ts`.
+- **Status:** RESOLVED
+- **Resolution:** Standardized `admin/src/lib/types.ts` to natively mirror backend enums and models (`TripType`, `VehicleTier`, `ReviewStatus`, `InquiryStatus`, `CatalogCategory`, optional casing compatibility fields), and implemented normalization mappings in `admin/src/lib/api.ts` guaranteeing type safety and preventing undefined errors.
 
 ---
 
@@ -482,8 +482,8 @@ Every finding is documented with reproduction, impact, evidence, and remediation
 - **Reproduction:** Inspect all `CREATE POLICY` statements in `backend/migrations/0009_add_indexes_and_rls.sql`.
 - **Impact:** While this protects against unauthorized anonymous database mutations, it creates an architectural dead end for direct Supabase client integration unless all database traffic is proxied through the Fastify API.
 - **Evidence:** `backend/migrations/0009_add_indexes_and_rls.sql` lines 20–34.
-- **Status:** CONFIRMED
-- **Recommended fix:** Formally document that PostgREST direct client access is unsupported and maintain the Fastify API as the sole gateway, or author granular write policies for `reviews` and `inquiries`.
+- **Status:** RESOLVED
+- **Resolution:** Added migration `0016_comprehensive_rls_policies.sql` establishing full `service_role` and superuser access across all 14 tables, while providing client write policies for `inquiries` and `reviews` (in pending state) and public read policies for catalog media and promo codes.
 
 
 

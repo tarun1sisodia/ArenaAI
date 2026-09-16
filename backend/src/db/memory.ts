@@ -16,7 +16,14 @@ import type {
   ReviewRecord,
   WebhookEventRecord,
 } from "../types/domain.js";
-import type { BookingListFilter, CatalogListFilter, Repositories, ReviewListFilter } from "./types.js";
+import type {
+  BookingListFilter,
+  CatalogListFilter,
+  DeviceRegistrationRecord,
+  FareRuleRecord,
+  Repositories,
+  ReviewListFilter,
+} from "./types.js";
 import { ConcurrencyError } from "./concurrency.js";
 
 function clone<T>(value: T): T {
@@ -43,6 +50,8 @@ export function createMemoryRepositories(nowIso = new Date().toISOString()): Rep
   const notificationsByDedupe = new Map<string, string>();
   const webhookEvents = new Map<string, WebhookEventRecord>();
   const locationCache = new Map<string, { suggestions: LocationSuggestion[]; storedAt: string }>();
+  const devices = new Map<string, DeviceRegistrationRecord>();
+  const fareRules = new Map<string, FareRuleRecord>();
   const locks = new Map<string, Promise<void>>();
 
   seedReferenceData(nowIso);
@@ -126,6 +135,8 @@ export function createMemoryRepositories(nowIso = new Date().toISOString()): Rep
           notificationsByDedupe: new Map(notificationsByDedupe),
           webhookEvents: new Map(webhookEvents),
           locationCache: new Map(locationCache),
+          devices: new Map(devices),
+          fareRules: new Map(fareRules),
         };
         try {
           return await fn(repos);
@@ -149,6 +160,8 @@ export function createMemoryRepositories(nowIso = new Date().toISOString()): Rep
           notificationsByDedupe.clear(); for (const [k, v] of snap.notificationsByDedupe) notificationsByDedupe.set(k, v);
           webhookEvents.clear(); for (const [k, v] of snap.webhookEvents) webhookEvents.set(k, v);
           locationCache.clear(); for (const [k, v] of snap.locationCache) locationCache.set(k, v);
+          devices.clear(); for (const [k, v] of snap.devices) devices.set(k, v);
+          fareRules.clear(); for (const [k, v] of snap.fareRules) fareRules.set(k, v);
           throw err;
         }
       });
@@ -494,6 +507,33 @@ export function createMemoryRepositories(nowIso = new Date().toISOString()): Rep
       },
       async set(key, suggestions, storedAt) {
         locationCache.set(key, { suggestions: clone(suggestions), storedAt });
+      },
+    },
+    devices: {
+      async register(record) {
+        devices.set(record.id, clone(record));
+        return clone(record);
+      },
+      async getByDeviceId(deviceId) {
+        for (const reg of devices.values()) {
+          if (reg.deviceId === deviceId) return clone(reg);
+        }
+        return null;
+      },
+      async listByUserId(userId) {
+        return [...devices.values()].filter((d) => d.userId === userId).map(clone);
+      },
+    },
+    fareRules: {
+      async getActive() {
+        for (const rule of fareRules.values()) {
+          if (rule.isActive) return clone(rule);
+        }
+        return null;
+      },
+      async save(record) {
+        fareRules.set(record.id, clone(record));
+        return clone(record);
       },
     },
   };

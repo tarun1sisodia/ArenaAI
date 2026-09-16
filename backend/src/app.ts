@@ -2,15 +2,17 @@ import cors from "@fastify/cors";
 import helmet from "@fastify/helmet";
 import rateLimit from "@fastify/rate-limit";
 import Fastify, { type FastifyInstance } from "fastify";
+import { z } from "zod";
 import type { Logger } from "pino";
 import type { Env } from "./config/env.js";
 import { corsOriginList } from "./config/env.js";
-import { systemClock, type Clock } from "./shared/clock.js";
+import { systemClock, toIso, type Clock } from "./shared/clock.js";
+import { newId } from "./shared/ids.js";
 import type { Repositories } from "./db/types.js";
 import { createMemoryRepositories } from "./db/memory.js";
 import { authenticateRequest } from "./middlewares/authGuard.js";
 import { AppError, Errors } from "./shared/errors.js";
-import { registerErrorHandler } from "./middlewares/errorHandler.js";
+import { registerErrorHandler, sendSuccess } from "./middlewares/errorHandler.js";
 import { registerNetworkHeaders } from "./middlewares/networkHeaders.js";
 import { registerRawBody } from "./middlewares/rawBody.js";
 import { registerRequestId } from "./middlewares/requestId.js";
@@ -208,6 +210,33 @@ export async function buildApp(options: AppOptions): Promise<BuiltApp> {
   await registerReviewRoutes(app, createReviewController(reviewService));
   await registerInquiryRoutes(app, createInquiryController(inquiryService));
   await registerAdminRoutes(app, createAdminController(adminService, paymentService, bookingService));
+
+  app.post("/api/v1/devices/register", {
+    config: { rateLimit: { max: 30, timeWindow: "1 minute" } },
+    handler: async (request, reply) => {
+      const DeviceSchema = z.object({
+        deviceId: z.string().min(1).max(100),
+        platform: z.enum(["android", "ios", "web"]),
+        fcmToken: z.string().min(1).max(500),
+        userId: z.string().uuid().optional(),
+        bookingId: z.string().uuid().optional(),
+      });
+      const body = DeviceSchema.parse(request.body);
+      const now = toIso(clock.now());
+      const record = await db.devices.register({
+        id: newId(),
+        deviceId: body.deviceId,
+        platform: body.platform,
+        fcmToken: body.fcmToken,
+        userId: body.userId || null,
+        bookingId: body.bookingId || null,
+        isActive: true,
+        lastSeenAt: now,
+        createdAt: now,
+      });
+      return sendSuccess(reply, { success: true, deviceId: record.deviceId });
+    },
+  });
 
   return { app, db, notifications };
 }

@@ -6,10 +6,16 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { CATALOG } from "@/lib/mock-data";
-import { can, type AdminUser, type CatalogItem } from "@/lib/types";
+import { can, type AdminUser, type CatalogItem, type CatalogCategory } from "@/lib/types";
 import { cn, formatDate, formatINR } from "@/lib/utils";
 
-const CATEGORY_TONE = { ride: "neutral", tour: "teal", package: "gold" } as const;
+const CATEGORY_TONE: Record<CatalogCategory, "neutral" | "teal" | "gold"> = {
+  ride: "neutral",
+  tour: "teal",
+  package: "gold",
+  route: "teal",
+  vehicle: "neutral",
+};
 
 export function CatalogPage({ user }: { user: AdminUser }) {
   const reduce = useReducedMotion();

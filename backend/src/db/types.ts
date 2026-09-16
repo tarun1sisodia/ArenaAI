@@ -155,4 +155,37 @@ export type Repositories = {
     get(key: string): Promise<{ suggestions: LocationSuggestion[]; storedAt: string } | null>;
     set(key: string, suggestions: LocationSuggestion[], storedAt: string): Promise<void>;
   };
+
+  devices: {
+    register(record: DeviceRegistrationRecord): Promise<DeviceRegistrationRecord>;
+    getByDeviceId(deviceId: string): Promise<DeviceRegistrationRecord | null>;
+    listByUserId(userId: string): Promise<DeviceRegistrationRecord[]>;
+  };
+
+  fareRules: {
+    getActive(): Promise<FareRuleRecord | null>;
+    save(record: FareRuleRecord): Promise<FareRuleRecord>;
+  };
+};
+
+export type DeviceRegistrationRecord = {
+  id: string;
+  userId?: string | null;
+  bookingId?: string | null;
+  deviceId: string;
+  platform: "android" | "ios" | "web";
+  fcmToken: string;
+  isActive: boolean;
+  lastSeenAt: string;
+  createdAt: string;
+};
+
+export type FareRuleRecord = {
+  id: string;
+  version: string;
+  config: unknown;
+  effectiveFrom: string;
+  effectiveTo?: string | null;
+  isActive: boolean;
+  createdAt: string;
 };

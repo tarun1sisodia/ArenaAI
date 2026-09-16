@@ -94,8 +94,9 @@ export function createAdminService(deps: { db: Repositories; clock?: Clock }) {
     },
 
     async getFareRules() {
+      const dbRule = await deps.db.fareRules.getActive();
       return {
-        version: FARE_RULES_VERSION_DEFAULT,
+        version: dbRule?.version || FARE_RULES_VERSION_DEFAULT,
         outstation: OUTSTATION_RULES,
         vehicles: VEHICLES,
         packageUpgrades: PACKAGE_UPGRADES,
@@ -104,6 +105,7 @@ export function createAdminService(deps: { db: Repositories; clock?: Clock }) {
         routes: ROUTES,
         packages: PACKAGES,
         defaultPromo: DEFAULT_PROMO,
+        dynamicConfig: dbRule?.config ?? null,
       };
     },
   };

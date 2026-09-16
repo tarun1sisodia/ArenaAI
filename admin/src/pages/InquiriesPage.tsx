@@ -9,15 +9,17 @@ import { Badge } from "@/components/ui/Badge";
 import { Input } from "@/components/ui/Input";
 import { INQUIRIES } from "@/lib/mock-data";
 import { fetchAdminInquiries, updateAdminInquiry } from "@/lib/api";
-import { can, type AdminUser, type Inquiry, type InquiryStatus } from "@/lib/types";
+import { can, type AdminUser, type Inquiry, type InquiryStatus, type InquiryType } from "@/lib/types";
 import { cn, timeAgo } from "@/lib/utils";
 
 const FLOW: InquiryStatus[] = ["new", "contacted", "quoted", "converted", "closed"];
 
-const TYPE_META = {
-  custom_tour: { label: "Custom tour", icon: Plane, tone: "gold" as const },
-  group_charter: { label: "Group charter", icon: Users, tone: "teal" as const },
-  contact: { label: "Contact", icon: MessageSquare, tone: "neutral" as const },
+const TYPE_META: Record<InquiryType, { label: string; icon: typeof Plane; tone: "gold" | "teal" | "neutral" }> = {
+  custom_tour: { label: "Custom tour", icon: Plane, tone: "gold" },
+  group_charter: { label: "Group charter", icon: Users, tone: "teal" },
+  contact: { label: "Contact", icon: MessageSquare, tone: "neutral" },
+  local_tour: { label: "Local tour", icon: Building2, tone: "teal" },
+  outstation: { label: "Outstation", icon: ArrowRight, tone: "gold" },
 };
 
 export function InquiriesPage({ user }: { user: AdminUser }) {

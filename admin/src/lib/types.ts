@@ -17,12 +17,20 @@ export type BookingStatus =
   | "cancelled"
   | "refunded";
 
-export type TripType = "one-way" | "round-trip" | "local-hourly" | "custom-tour";
+export type TripType =
+  | "one-way"
+  | "round-trip"
+  | "local-tour"
+  | "airport-transfer"
+  | "local-hourly"
+  | "custom-tour";
 
 export type VehicleTier =
   | "sedan"
   | "ertiga"
   | "innova-crysta"
+  | "tempo-traveller"
+  | "urbania"
   | "tempo-traveller-12"
   | "tempo-traveller-17"
   | "coastal-coach-25";
@@ -33,9 +41,12 @@ export interface FareSnapshot {
   driverAllowance: number;
   tollsTaxes: number;
   promoDiscount: number;
+  discountAmount?: number;
   totalFare: number;
   advancePaid: number;
+  advanceAmount?: number;
   balancePayable: number;
+  balanceAmount?: number;
 }
 
 export interface Booking {
@@ -46,21 +57,26 @@ export interface Booking {
   customerEmail: string;
   origin: string;
   destination: string;
+  originName?: string;
+  destinationName?: string;
   pickupDateTime: string;
+  pickupDatetime?: string;
   returnDateTime: string | null;
+  returnDatetime?: string | null;
   distanceKm: number;
   tripType: TripType;
   vehicleTier: VehicleTier;
   status: BookingStatus;
   version: number;
   notes: string;
+  specialNotes?: string;
   createdAt: string;
   fare: FareSnapshot;
 }
 
 export type PaymentMethod = "upi" | "card" | "netbanking" | "paypal";
-export type PaymentProvider = "razorpay" | "paypal";
-export type PaymentStatus = "captured" | "refunded" | "pending" | "failed";
+export type PaymentProvider = "razorpay" | "paypal" | "card";
+export type PaymentStatus = "captured" | "refunded" | "pending" | "failed" | "needs_review";
 
 export interface Payment {
   id: string;
@@ -74,7 +90,7 @@ export interface Payment {
 }
 
 export type CatalogStatus = "draft" | "published" | "archived";
-export type CatalogCategory = "ride" | "tour" | "package";
+export type CatalogCategory = "ride" | "tour" | "package" | "route" | "vehicle";
 
 export interface CatalogItem {
   id: string;
@@ -94,7 +110,9 @@ export type ReviewStatus =
   | "approved"
   | "rejected"
   | "published"
-  | "archived";
+  | "archived"
+  | "pending"
+  | "draft";
 
 export interface Review {
   id: string;
@@ -108,13 +126,21 @@ export interface Review {
   verifiedBooking: boolean;
 }
 
-export type InquiryStatus = "new" | "contacted" | "quoted" | "converted" | "closed";
-export type InquiryType = "custom_tour" | "group_charter" | "contact";
+export type InquiryStatus =
+  | "new"
+  | "contacted"
+  | "quoted"
+  | "converted"
+  | "resolved"
+  | "closed"
+  | "spam";
+export type InquiryType = "custom_tour" | "group_charter" | "contact" | "local_tour" | "outstation";
 
 export interface Inquiry {
   id: string;
   name: string;
   phone: string;
+  email?: string;
   type: InquiryType;
   subject: string;
   message: string;
@@ -177,6 +203,8 @@ export const VEHICLE_LABELS: Record<VehicleTier, string> = {
   sedan: "Sedan",
   ertiga: "Ertiga",
   "innova-crysta": "Innova Crysta",
+  "tempo-traveller": "Tempo Traveller",
+  urbania: "Force Urbania",
   "tempo-traveller-12": "Tempo 12",
   "tempo-traveller-17": "Tempo 17",
   "coastal-coach-25": "Coach 25",

@@ -239,4 +239,21 @@ describe("admin operations and catalog", () => {
 
     await app.close();
   });
+
+  it("registers devices for push notifications (FIND-009)", async () => {
+    const { app } = await createTestApp();
+    const res = await app.inject({
+      method: "POST",
+      url: "/api/v1/devices/register",
+      payload: {
+        deviceId: "device_web_test_123",
+        platform: "web",
+        fcmToken: "fcm_token_sample_abc123",
+      },
+    });
+    expect(res.statusCode).toBe(200);
+    expect(res.json().data.success).toBe(true);
+    expect(res.json().data.deviceId).toBe("device_web_test_123");
+    await app.close();
+  });
 });

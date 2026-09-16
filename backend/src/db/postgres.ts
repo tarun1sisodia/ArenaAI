@@ -14,7 +14,7 @@ import type {
   ReviewRecord,
   WebhookEventRecord,
 } from "../types/domain.js";
-import type { InquiryListFilter, PaymentListFilter, Repositories } from "./types.js";
+import type { DeviceRegistrationRecord, FareRuleRecord, InquiryListFilter, PaymentListFilter, Repositories } from "./types.js";
 import { createPoolConfig } from "./poolConfig.js";
 import { ConcurrencyError } from "./concurrency.js";
 import { phonesMatch } from "../shared/privacy.js";
@@ -803,6 +803,78 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
              on conflict (cache_key) do update set suggestions=excluded.suggestions, stored_at=excluded.stored_at`,
             [key, JSON.stringify(suggestions), storedAt],
           );
+        },
+      },
+      devices: {
+        async register(record: DeviceRegistrationRecord) {
+          await query(
+            client,
+            `insert into device_registrations (id, user_id, booking_id, device_id, platform, fcm_token, is_active, last_seen_at, created_at)
+             values ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+             on conflict (user_id, device_id) do update set fcm_token=excluded.fcm_token, is_active=excluded.is_active, last_seen_at=excluded.last_seen_at`,
+            [
+              record.id, record.userId || null, record.bookingId || null, record.deviceId,
+              record.platform, record.fcmToken, record.isActive, record.lastSeenAt, record.createdAt,
+            ],
+          );
+          return record;
+        },
+        async getByDeviceId(deviceId: string) {
+          const rows = await query(client, "select * from device_registrations where device_id=$1 and is_active=true", [deviceId]);
+          if (!rows[0]) return null;
+          return {
+            id: String(rows[0].id),
+            userId: rows[0].user_id ? String(rows[0].user_id) : null,
+            bookingId: rows[0].booking_id ? String(rows[0].booking_id) : null,
+            deviceId: String(rows[0].device_id),
+            platform: rows[0].platform as DeviceRegistrationRecord["platform"],
+            fcmToken: String(rows[0].fcm_token),
+            isActive: Boolean(rows[0].is_active),
+            lastSeenAt: new Date(String(rows[0].last_seen_at)).toISOString(),
+            createdAt: new Date(String(rows[0].created_at)).toISOString(),
+          };
+        },
+        async listByUserId(userId: string) {
+          const rows = await query(client, "select * from device_registrations where user_id=$1 and is_active=true", [userId]);
+          return rows.map((r) => ({
+            id: String(r.id),
+            userId: r.user_id ? String(r.user_id) : null,
+            bookingId: r.booking_id ? String(r.booking_id) : null,
+            deviceId: String(r.device_id),
+            platform: r.platform as DeviceRegistrationRecord["platform"],
+            fcmToken: String(r.fcm_token),
+            isActive: Boolean(r.is_active),
+            lastSeenAt: new Date(String(r.last_seen_at)).toISOString(),
+            createdAt: new Date(String(r.created_at)).toISOString(),
+          }));
+        },
+      },
+      fareRules: {
+        async getActive() {
+          const rows = await query(client, "select * from fare_rules where is_active=true order by created_at desc limit 1");
+          if (!rows[0]) return null;
+          return {
+            id: String(rows[0].id),
+            version: String(rows[0].version),
+            config: rows[0].config,
+            effectiveFrom: new Date(String(rows[0].effective_from)).toISOString(),
+            effectiveTo: rows[0].effective_to ? new Date(String(rows[0].effective_to)).toISOString() : null,
+            isActive: Boolean(rows[0].is_active),
+            createdAt: new Date(String(rows[0].created_at)).toISOString(),
+          };
+        },
+        async save(record: FareRuleRecord) {
+          await query(
+            client,
+            `insert into fare_rules (id, version, config, effective_from, effective_to, is_active, created_at)
+             values ($1,$2,$3::jsonb,$4,$5,$6,$7)
+             on conflict (version) do update set config=excluded.config, is_active=excluded.is_active`,
+            [
+              record.id, record.version, JSON.stringify(record.config),
+              record.effectiveFrom, record.effectiveTo || null, record.isActive, record.createdAt,
+            ],
+          );
+          return record;
         },
       },
     };
