@@ -14,33 +14,37 @@ It prevents context loss across agent turns and long-term conversations.
 ## Container Tag & Scoping
 - **Container Tag:** `sk_baghel_travels` (isolated from other spaces/projects).
 - **Environment Variable:** `SUPERMEMORY_API_KEY` (loaded from `.env`).
+- **Fast CLI Script:** `./scripts/supermemory.sh` (wraps credentials and tag automatically).
 
-## Common Operations
+## Fast Operations via `./scripts/supermemory.sh`
 
-### 1. Recall / Search Memories
+### 1. Fast Semantic Recall
 Before modifying sensitive components or when checking client pricing/rules:
 ```bash
-SUPERMEMORY_API_KEY="$(grep SUPERMEMORY_API_KEY .env | cut -d= -f2)" \
-npx -y supermemory search --tag sk_baghel_travels "<query>" --threshold 0.3 --json
+./scripts/supermemory.sh search "<query>" [threshold=0.25]
 ```
 
 ### 2. Save Important Milestone or Rule
 When a new phase is completed, or a critical user decision/rule is established:
 ```bash
-SUPERMEMORY_API_KEY="$(grep SUPERMEMORY_API_KEY .env | cut -d= -f2)" \
-npx -y supermemory remember --tag sk_baghel_travels --static "<Fact or Rule content>" --json
+./scripts/supermemory.sh remember "<Fact or Rule content>"
 ```
 
-### 3. Ingest a Context Document
-To sync a project spec into the vector graph:
+### 3. Ingest Context Documents into Graph
+To sync project specs or audit findings into the vector graph:
 ```bash
-SUPERMEMORY_API_KEY="$(grep SUPERMEMORY_API_KEY .env | cut -d= -f2)" \
-npx -y supermemory add --tag sk_baghel_travels <path/to/file.md> --title "<Document Title>"
+./scripts/supermemory.sh add <path/to/file.md> "<Document Title>"
 ```
 
 ### 4. Fetch User/Project Profile
 To view synthesized preferences and constraints:
 ```bash
-SUPERMEMORY_API_KEY="$(grep SUPERMEMORY_API_KEY .env | cut -d= -f2)" \
-npx -y supermemory profile --tag sk_baghel_travels --json
+./scripts/supermemory.sh profile
 ```
+
+## Key Memory Domains (sk_baghel_travels)
+1. **Commercial Fare Rules**: Sedan ₹10/km, Ertiga ₹14/km, Innova ₹18/km, Tempo ₹25/km, Urbania ₹34/km. 300 km/day outstation minimum. 28% advance deposit.
+2. **Security Posture**: SEC-001 through SEC-010 resolved. Zero test auth backdoor, HMAC verified webhooks, timing-safe string comparison, server-derived route distances, PostgreSQL RLS on all 14 tables.
+3. **Architecture & Topology**: Monorepo with React (`:5173`), Admin Desk (`:5174`), Fastify Backend (`:4000`). Verification enforced via `npm run verify` (typechecks, 55 Vitest tests, CSS audit, and 3x builds).
+4. **Operations Desk**: Single Super Admin model, Supabase Auth REST verification, endpoints under `/api/v1/ops/admin/*`.
+
