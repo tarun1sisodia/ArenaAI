@@ -3,6 +3,8 @@ import { Outlet, useLocation } from "react-router-dom";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
+import { fetchAdminAuditLogs } from "@/lib/api";
+import { timeAgo } from "@/lib/utils";
 import type { AdminUser } from "@/lib/types";
 
 const TITLES: Record<string, string> = {
@@ -35,7 +37,31 @@ export function AdminLayout({
     localStorage.setItem("skb-admin-theme", theme);
   }, [theme]);
 
-  const pendingReviews = 3;
+  const [notifications, setNotifications] = useState<
+    Array<{ id: string; text: string; at: string; read: boolean }>
+  >([]);
+
+  useEffect(() => {
+    let isMounted = true;
+    fetchAdminAuditLogs(5)
+      .then((logs) => {
+        if (!isMounted || !Array.isArray(logs)) return;
+        setNotifications(
+          logs.map((log) => ({
+            id: log.id,
+            text: `${log.actor}: ${log.action.replace(/_/g, " ").toLowerCase()} · ${log.resourceType}${log.resourceId ? ` (${log.resourceId})` : ""}`,
+            at: timeAgo(log.at),
+            read: false,
+          }))
+        );
+      })
+      .catch(() => {
+        if (isMounted) setNotifications([]);
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, [location.pathname]);
 
   return (
     <div className="min-h-full">
@@ -51,12 +77,7 @@ export function AdminLayout({
           onMenu={() => setMobileOpen(true)}
           theme={theme}
           onToggleTheme={() => setTheme((t) => (t === "light" ? "dark" : "light"))}
-          notifications={[
-            { id: "n1", text: "AGR-20260914-002 · Jaipur round trip — payment of ₹5,000 captured", at: "09:14 IST", read: false },
-            { id: "n2", text: `Review moderation: ${pendingReviews} submissions waiting in the queue`, at: "08:02 IST", read: false },
-            { id: "n3", text: "New group charter inquiry — 25 pax, Agra to Noida", at: "09:05 IST", read: false },
-            { id: "n4", text: "Refund rfn_dup_0914_01 settled via Razorpay", at: "Yesterday", read: true },
-          ]}
+          notifications={notifications}
         />
         <main className="mx-auto max-w-[1400px] px-4 py-6 md:px-6">
           <AnimatePresence mode="wait">

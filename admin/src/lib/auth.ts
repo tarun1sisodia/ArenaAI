@@ -8,8 +8,7 @@ export interface LoginResult {
 }
 
 /**
- * Authenticates staff credentials against Supabase Auth (production)
- * or deterministic test auth context (local development / testing).
+ * Authenticates staff credentials against Supabase Auth.
  */
 export async function loginWithCredentials(
   email: string,
@@ -109,24 +108,7 @@ export async function loginWithCredentials(
     }
   }
 
-  // 3. Localhost development mode: allow local admin login with test-super_admin token
-  if (
-    typeof window !== "undefined" &&
-    (window.location.hostname === "localhost" ||
-      window.location.hostname === "127.0.0.1" ||
-      window.location.hostname === "0.0.0.0")
-  ) {
-    const adminUser: AdminUser = {
-      id: "00000000-0000-4000-a000-00000000000",
-      role: "super_admin",
-      name: "Local Super Admin",
-      email: trimmedEmail,
-      token: "test-super_admin",
-    };
-    return adminUser;
-  }
-
-  // Remote environment without configured auth:
+  // Authentication service not configured or reachable:
   // Show only that backend is not connected — never expose technical details about Supabase or env vars.
   throw new Error("Backend is not connected.");
 }

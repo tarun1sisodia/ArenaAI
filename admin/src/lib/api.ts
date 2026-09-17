@@ -8,7 +8,6 @@
  */
 import { env } from "./env";
 import { getAuthHeaders } from "./auth";
-import { FARE_RULESET } from "./fares";
 import type {
   AuditEntry,
   Booking,
@@ -198,16 +197,41 @@ export async function fetchAdminPayments(filter?: {
 
 export async function fetchAdminFareRules(): Promise<FareRuleset> {
   const json = await apiFetch(`/api/v1/ops/admin/fare-rules`);
-  if (!json?.data?.version) {
+  const data = json?.data;
+  if (!data || !data.version) {
     throw new Error("Fare rules response was malformed.");
   }
 
+  const outstation = data.outstation || {};
+  const vehicles = Array.isArray(data.vehicles) ? data.vehicles : [];
+
+  const rules = vehicles.map((v: any) => ({
+    vehicleTier: (v.tier || v.id) as VehicleTier,
+    label: `${v.name || v.id} (${v.seats}-seater)`,
+    seats: Number(v.seats) || 4,
+    perKm: Number(v.perKm) || 10,
+    minDailyKm: Number(outstation.minKmPerDay) || 300,
+    nightChargePerHour: Number(v.perKm) >= 25 ? 90 : 50,
+    driverAllowance: Number(v.seats) >= 12 ? (Number(outstation.nightAllowanceTempo) || 500) : (Number(outstation.nightAllowanceCab) || 300),
+  }));
+
+  const startHour = String(outstation.nightStartHour ?? 22).padStart(2, "0");
+  const endHour = String(outstation.nightEndHour ?? 5).padStart(2, "0");
+
   return {
-    version: json.data.version || FARE_RULESET.version,
-    effectiveFrom: json.data.effectiveFrom || FARE_RULESET.effectiveFrom,
-    nightWindow: json.data.nightWindow || FARE_RULESET.nightWindow,
-    rules: FARE_RULESET.rules,
-    notes: FARE_RULESET.notes,
+    version: data.version,
+    effectiveFrom: data.effectiveFrom || data.version,
+    nightWindow: data.nightWindow || `${startHour}:00 – ${endHour}:00 IST`,
+    rules,
+    notes: Array.isArray(data.notes)
+      ? data.notes
+      : [
+          `Outstation trips bill the greater of actual km or the tier minimum daily km (${outstation.minKmPerDay || 300} km/day).`,
+          `Night allowance applies when travel occurs inside the ${startHour}:00–${endHour}:00 IST window.`,
+          `Driver daily allowance is fixed per commercial agreement (₹${outstation.nightAllowanceCab || 300} cab / ₹${outstation.nightAllowanceTempo || 500} tempo).`,
+          "Tolls, parking and state check-gate fees are passed at actuals with receipts.",
+          "Fares are calculated exclusively by the backend fare engine — admin cannot override.",
+        ],
   };
 }
 

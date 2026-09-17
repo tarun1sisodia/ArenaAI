@@ -73,18 +73,24 @@ export function Topbar({
                   Desk notifications
                 </p>
                 <ul className="max-h-72 overflow-y-auto">
-                  {notifications.map((n) => (
-                    <li
-                      key={n.id}
-                      className={cn(
-                        "rounded-sm px-2 py-2 text-[13px] leading-snug transition-colors hover:bg-surface-2",
-                        n.read ? "text-ink-soft" : "bg-gold-soft/50 text-ink"
-                      )}
-                    >
-                      {n.text}
-                      <span className="mt-0.5 block font-mono text-[10px] text-ink-faint">{n.at}</span>
+                  {notifications.length === 0 ? (
+                    <li className="px-2 py-4 text-center text-[12px] text-ink-faint">
+                      No desk notifications
                     </li>
-                  ))}
+                  ) : (
+                    notifications.map((n) => (
+                      <li
+                        key={n.id}
+                        className={cn(
+                          "rounded-sm px-2 py-2 text-[13px] leading-snug transition-colors hover:bg-surface-2",
+                          n.read ? "text-ink-soft" : "bg-gold-soft/50 text-ink"
+                        )}
+                      >
+                        {n.text}
+                        <span className="mt-0.5 block font-mono text-[10px] text-ink-faint">{n.at}</span>
+                      </li>
+                    ))
+                  )}
                 </ul>
               </motion.div>
             </>
