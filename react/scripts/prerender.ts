@@ -102,6 +102,9 @@ const routesToRender: string[] = [
 
   // Booking Funnel & 404 Recovery
   "/book.html",
+  "/book/",
+  "/en/book/",
+  "/hi/book/",
   "/404.html",
   "/en/404/",
   "/hi/404/",
@@ -194,7 +197,7 @@ export async function prerender(): Promise<void> {
     let totalBytes = 0;
 
     for (const route of routesToRender) {
-      const isBooking = route.endsWith("book.html");
+      const isBooking = route.endsWith("book.html") || route.includes("/book");
       const is404 = route.includes("404");
       const { language, section } = getMarketingPath(route);
       const effectiveSection = is404 ? "404" : (route === "/" || route === "/en/" || route === "/hi/") ? "home" : section;

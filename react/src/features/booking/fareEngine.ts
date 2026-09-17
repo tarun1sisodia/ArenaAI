@@ -17,6 +17,7 @@ import {
 export type TripType = "one-way" | "round";
 export type FareRequest = CalcFareParams;
 export type FareResult = FareQuote;
+export type { LocalPackageKey };
 
 export {
   calcFare,

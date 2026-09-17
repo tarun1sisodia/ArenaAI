@@ -1,7 +1,7 @@
 import type { Clock } from "../../shared/clock.js";
 import { toIso } from "../../shared/clock.js";
 import { Errors } from "../../shared/errors.js";
-import type { InquiryListFilter, PaymentListFilter, Repositories } from "../../db/types.js";
+import type { FareRuleRecord, InquiryListFilter, PaymentListFilter, Repositories } from "../../db/types.js";
 import { maskEmail, maskPhone } from "../../shared/privacy.js";
 import type { BookingRecord, InquiryStatus } from "../../types/domain.js";
 import {
@@ -103,18 +103,68 @@ export function createAdminService(deps: { db: Repositories; clock?: Clock }) {
 
     async getFareRules() {
       const dbRule = await deps.db.fareRules.getActive();
+      const cfg = (dbRule?.config as any) || {};
+
+      const mergedVehicles = Array.isArray(cfg.vehicles)
+        ? VEHICLES.map((v) => {
+            const override = cfg.vehicles.find((ov: any) => ov.tier === v.tier || ov.id === v.tier);
+            return override ? { ...v, ...override } : v;
+          })
+        : VEHICLES;
+
+      const mergedOutstation = cfg.outstation
+        ? { ...OUTSTATION_RULES, ...cfg.outstation }
+        : OUTSTATION_RULES;
+
+      const mergedLocalPackages = cfg.localPackages
+        ? { ...LOCAL_PACKAGES, ...cfg.localPackages }
+        : LOCAL_PACKAGES;
+
       return {
         version: dbRule?.version || FARE_RULES_VERSION_DEFAULT,
-        outstation: OUTSTATION_RULES,
-        vehicles: VEHICLES,
+        outstation: mergedOutstation,
+        vehicles: mergedVehicles,
         packageUpgrades: PACKAGE_UPGRADES,
-        localPackages: LOCAL_PACKAGES,
+        localPackages: mergedLocalPackages,
         airportTransfers: AIRPORT_TRANSFERS,
         routes: ROUTES,
         packages: PACKAGES,
         defaultPromo: DEFAULT_PROMO,
         dynamicConfig: dbRule?.config ?? null,
       };
+    },
+
+    async updateFareRules(actor: any, updates: any, _ip?: string) {
+      const now = new Date().toISOString();
+      const versionStr = updates.version || `ruleset-${now.slice(0, 10)}-${Date.now().toString(36)}`;
+      const record: FareRuleRecord = {
+        id: `fr_${Date.now().toString(36)}`,
+        version: versionStr,
+        config: updates,
+        effectiveFrom: updates.effectiveFrom || now,
+        isActive: true,
+        createdAt: now,
+      };
+
+      await deps.db.fareRules.save(record);
+
+      if (deps.db.audit) {
+        await deps.db.audit.append({
+          id: `audit_${Date.now().toString(36)}`,
+          action: "update_fare_rules",
+          actorId: actor?.id || "super_admin",
+          actorRole: (actor?.role as any) || "super_admin",
+          resourceType: "fare_rules",
+          resourceId: versionStr,
+          before: null,
+          after: updates,
+          reason: `Fare rules updated by ${actor?.email || actor?.id || "admin"}`,
+          requestId: `req_${Date.now().toString(36)}`,
+          createdAt: now,
+        });
+      }
+
+      return this.getFareRules();
     },
   };
 }

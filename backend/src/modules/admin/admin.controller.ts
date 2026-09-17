@@ -9,6 +9,7 @@ import {
   AdminInquiryIdParamSchema,
   AdminInquiryQuerySchema,
   AdminPaymentQuerySchema,
+  AdminUpdateFareRulesSchema,
   AdminUpdateInquirySchema,
   BookingIdParamSchema,
   CreateRefundSchema,
@@ -82,6 +83,13 @@ export function createAdminController(
       requireRole(request, ADMIN_ROLES);
       const rules = await service.getFareRules();
       return sendSuccess(reply, rules);
+    },
+
+    async updateFareRules(request: FastifyRequest, reply: FastifyReply) {
+      const actor = requireRole(request, ADMIN_ROLES);
+      const body = AdminUpdateFareRulesSchema.parse(request.body);
+      const rules = await service.updateFareRules(actor, body, request.ip);
+      return sendSuccess(reply, rules, 200);
     },
   };
 }

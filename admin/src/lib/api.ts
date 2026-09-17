@@ -288,6 +288,75 @@ export async function setCatalogItemStatus(id: string, action: "publish" | "arch
   return mapCatalogItem(json?.data ?? { id });
 }
 
+export async function createAdminCatalogItem(payload: {
+  type: CatalogCategory;
+  slug: string;
+  title: string;
+  shortDescription: string;
+  description?: string;
+  durationText: string;
+  routeSummary: string;
+  startingPriceInr: number;
+}): Promise<CatalogItem> {
+  const json = await apiFetch(`/api/v1/ops/admin/catalog`, {
+    method: "POST",
+    body: JSON.stringify({
+      ...payload,
+      description: payload.description || payload.shortDescription,
+    }),
+  });
+  return mapCatalogItem(json?.data ?? {});
+}
+
+export async function updateAdminCatalogItem(
+  id: string,
+  payload: Partial<{
+    type: CatalogCategory;
+    slug: string;
+    title: string;
+    shortDescription: string;
+    description: string;
+    durationText: string;
+    routeSummary: string;
+    startingPriceInr: number;
+    status: CatalogStatus;
+  }>,
+): Promise<CatalogItem> {
+  const json = await apiFetch(`/api/v1/ops/admin/catalog/${encodeURIComponent(id)}`, {
+    method: "PATCH",
+    body: JSON.stringify(payload),
+  });
+  return mapCatalogItem(json?.data ?? { id });
+}
+
+export async function updateAdminFareRules(updates: any): Promise<FareRuleset> {
+  await apiFetch(`/api/v1/ops/admin/fare-rules`, {
+    method: "PUT",
+    body: JSON.stringify(updates),
+  });
+  return fetchAdminFareRules();
+}
+
+export async function createAdminBooking(payload: {
+  customerName: string;
+  customerPhone: string;
+  customerEmail?: string;
+  tripType: "one-way" | "round-trip";
+  vehicleTier: string;
+  originName: string;
+  destinationName: string;
+  pickupAddress: string;
+  dropAddress: string;
+  pickupDatetime: string;
+  specialNotes?: string;
+}): Promise<any> {
+  const json = await apiFetch(`/api/v1/bookings/draft`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+  return json?.data;
+}
+
 /* ── Review moderation ────────────────────────────────────────────────────── */
 
 export async function fetchAdminReviews(catalogItems?: { id: string; title: string }[]): Promise<Review[]> {

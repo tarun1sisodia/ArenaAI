@@ -55,3 +55,33 @@ export const AdminPaymentQuerySchema = z.object({
   page: z.coerce.number().int().positive().max(1000).default(1),
   limit: z.coerce.number().int().positive().max(100).default(50),
 });
+
+export const AdminUpdateFareRulesSchema = z.object({
+  version: z.string().max(50).optional(),
+  effectiveFrom: z.string().max(50).optional(),
+  outstation: z
+    .object({
+      minKmPerDay: z.number().int().positive().optional(),
+      nightAllowanceCab: z.number().int().nonnegative().optional(),
+      nightAllowanceTempo: z.number().int().nonnegative().optional(),
+      nightStartHour: z.number().int().min(0).max(23).optional(),
+      nightEndHour: z.number().int().min(0).max(23).optional(),
+      deadheadKmRate: z.number().int().nonnegative().optional(),
+    })
+    .optional(),
+  vehicles: z
+    .array(
+      z.object({
+        tier: z.string(),
+        name: z.string().optional(),
+        seats: z.number().int().positive().optional(),
+        perKm: z.number().positive(),
+      }),
+    )
+    .optional(),
+  localPackages: z.record(z.any()).optional(),
+  airportTransfers: z.record(z.any()).optional(),
+  notes: z.array(z.string()).optional(),
+  dynamicConfig: z.record(z.any()).optional(),
+});
+

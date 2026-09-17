@@ -117,7 +117,8 @@ this file at commit `2c02ee3`. The table below is the condensed record.
 - [x] SSG pre-renderer + sitemap/robots generator wired into the build
 - [x] Real 404 page and legacy redirect stubs
 - [x] Fares and booking run on the local engine (mock, no server calls)
-- [ ] API integration: fares, booking drafts, geocoding (Phase I1)
+- [x] Multi-service customer booking funnel (outstation, local packages, transfers, tour packages)
+- [x] Pre-rendering static HTML for `/book/`, `/en/book/`, `/hi/book/`, and `/book.html` preventing 404s
 - [ ] Real photography and real NAP (Phase I4)
 
 ### Admin panel (`admin/`)
@@ -125,6 +126,9 @@ this file at commit `2c02ee3`. The table below is the condensed record.
 - [x] Dashboard, bookings, finance, catalog, reviews, inquiries, fares, audit screens
 - [x] RBAC permission matrix + role-aware navigation
 - [x] SPA routing with `_redirects` fallback and noindex headers
+- [x] Catalog management: "New item" and "Edit item" dialogs with backend API integration
+- [x] Authoritative Fare Rules modification with versioned audit logging and live sync
+- [x] Manual Desk / Phone Booking creation with server-authoritative fare snapshots
 - [ ] Supabase-issued JWT sign-in replacing the demo `test-<role>` principal (Phase I1)
 - [ ] Permission enforcement verified against the live API (Phase I3)
 

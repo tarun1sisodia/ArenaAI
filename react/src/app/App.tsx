@@ -338,7 +338,15 @@ export function App({ pathname: propPathname }: AppProps = {}) {
     pathname === "/index.html" ||
     section === "home";
   const isMarketingHub = marketingHubs.includes(section as (typeof marketingHubs)[number]);
-  const isBooking = pathname.endsWith("book.html");
+  const cleanPath = pathname.replace(/\/$/, "");
+  const isBooking =
+    cleanPath.endsWith("book.html") ||
+    section === "book" ||
+    section === "booking" ||
+    cleanPath === "/book" ||
+    cleanPath === "/booking" ||
+    cleanPath === "/en/book" ||
+    cleanPath === "/hi/book";
 
   const matchedRoute = routes.find((item) => {
     const from = item.from === "agra" && item.to === "agra" ? "agra-sightseeing" : `${item.from}-to-${item.to}`;

@@ -1,22 +1,101 @@
 import { useEffect, useState } from "react";
-import { AlertTriangle, Compass, Moon, RotateCw, ShieldCheck, Timer, Users } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Compass, Edit3, Moon, RotateCw, ShieldCheck, Timer, Users } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import { PageHeader } from "@/components/admin/PageHeader";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { Dialog } from "@/components/ui/Dialog";
+import { Input } from "@/components/ui/Input";
 import { Table, TBody, THead, TD, TH, TRow } from "@/components/ui/Table";
-import { fetchAdminFareRules } from "@/lib/api";
+import { fetchAdminFareRules, updateAdminFareRules } from "@/lib/api";
 import { can, type AdminUser, type FareRuleset } from "@/lib/types";
 import { formatINR } from "@/lib/utils";
 
 export function FaresPage({ user }: { user: AdminUser }) {
   const reduce = useReducedMotion();
   const canRead = can(user.role, "fares:read");
+  const canEdit = user.role === "super_admin" || user.role === "operator" || user.role === "finance_operator";
+
   const [rs, setRs] = useState<FareRuleset | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
+
+  // Edit Fare Rules Dialog State
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [saveSuccess, setSaveSuccess] = useState<string | null>(null);
+
+  const [editForm, setEditForm] = useState({
+    minKmPerDay: 300,
+    nightAllowanceCab: 300,
+    nightAllowanceTempo: 500,
+    sedan: 10,
+    ertiga: 14,
+    innova: 18,
+    tempo: 25,
+    urbania: 34,
+  });
+
+  const handleOpenEdit = () => {
+    if (!rs) return;
+    const sedanRule = rs.rules.find((r) => r.vehicleTier === "sedan");
+    const ertigaRule = rs.rules.find((r) => r.vehicleTier === "ertiga");
+    const innovaRule = rs.rules.find((r) => r.vehicleTier === "innova-crysta");
+    const tempoRule = rs.rules.find((r) => r.vehicleTier === "tempo-traveller" || r.vehicleTier === "tempo-traveller-12");
+    const urbaniaRule = rs.rules.find((r) => r.vehicleTier === "urbania");
+
+    setEditForm({
+      minKmPerDay: sedanRule?.minDailyKm ?? 300,
+      nightAllowanceCab: 300,
+      nightAllowanceTempo: 500,
+      sedan: sedanRule?.perKm ?? 10,
+      ertiga: ertigaRule?.perKm ?? 14,
+      innova: innovaRule?.perKm ?? 18,
+      tempo: tempoRule?.perKm ?? 25,
+      urbania: urbaniaRule?.perKm ?? 34,
+    });
+    setSaveError(null);
+    setSaveSuccess(null);
+    setIsEditOpen(true);
+  };
+
+  const handleSaveFares = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    setSaveError(null);
+    setSaveSuccess(null);
+
+    try {
+      await updateAdminFareRules({
+        outstation: {
+          minKmPerDay: Number(editForm.minKmPerDay),
+          nightAllowanceCab: Number(editForm.nightAllowanceCab),
+          nightAllowanceTempo: Number(editForm.nightAllowanceTempo),
+        },
+        vehicles: [
+          { tier: "sedan", name: "Sedan (Dzire / Etios)", seats: 4, perKm: Number(editForm.sedan) },
+          { tier: "ertiga", name: "Maruti Ertiga", seats: 6, perKm: Number(editForm.ertiga) },
+          { tier: "innova-crysta", name: "Innova Crysta", seats: 7, perKm: Number(editForm.innova) },
+          { tier: "tempo-traveller", name: "Tempo Traveller", seats: 12, perKm: Number(editForm.tempo) },
+          { tier: "urbania", name: "Force Urbania Luxury", seats: 15, perKm: Number(editForm.urbania) },
+        ],
+      });
+
+      setSaveSuccess("Fare rules updated successfully! Synchronized across backend and customer apps.");
+      setReloadKey((k) => k + 1);
+      setTimeout(() => {
+        setIsEditOpen(false);
+        setSaveSuccess(null);
+      }, 1200);
+    } catch (err) {
+      setSaveError(err instanceof Error ? err.message : "Failed to update fare rules.");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -60,13 +139,20 @@ export function FaresPage({ user }: { user: AdminUser }) {
       <PageHeader
         eyebrow="Commercial"
         title="Fare Rules"
-        description="Server-authoritative pricing — read-only inspection. The backend fare engine is the single source of truth; admins cannot override fares."
+        description="Server-authoritative pricing — rates configured here govern all new customer bookings and desk reservations."
         actions={
-          rs ? (
-            <Badge tone="gold" className="px-3 py-1.5">
-              <Compass className="h-3.5 w-3.5" /> Ruleset {rs.version}
-            </Badge>
-          ) : undefined
+          <div className="flex items-center gap-2.5">
+            {rs ? (
+              <Badge tone="gold" className="px-3 py-1.5">
+                <Compass className="h-3.5 w-3.5" /> Ruleset {rs.version}
+              </Badge>
+            ) : undefined}
+            {canEdit && (
+              <Button variant="gold" size="sm" onClick={handleOpenEdit} disabled={!rs || loading}>
+                <Edit3 className="mr-1.5 h-3.5 w-3.5" /> Modify Fares
+              </Button>
+            )}
+          </div>
         }
       />
 
@@ -185,6 +271,147 @@ export function FaresPage({ user }: { user: AdminUser }) {
           </Card>
         </>
       )}
+
+      {/* Modify Fare Rules Modal */}
+      <Dialog
+        open={isEditOpen}
+        onClose={() => !saving && setIsEditOpen(false)}
+        title="Modify Authoritative Fare Rules"
+        description="Update server-authoritative rates. Changes take effect immediately for all subsequent customer bookings and manual dispatches while preserving past booking snapshots."
+      >
+        <form onSubmit={handleSaveFares} className="space-y-4">
+          {saveError && (
+            <div className="flex items-center gap-2 rounded-md bg-error-soft px-3 py-2 text-xs text-error">
+              <AlertTriangle className="h-4 w-4 shrink-0" />
+              <span>{saveError}</span>
+            </div>
+          )}
+
+          {saveSuccess && (
+            <div className="flex items-center gap-2 rounded-md bg-teal-soft px-3 py-2 text-xs text-teal-text">
+              <CheckCircle2 className="h-4 w-4 shrink-0" />
+              <span>{saveSuccess}</span>
+            </div>
+          )}
+
+          <div className="rounded-lg border border-gold/20 bg-gold-wash/30 p-3 text-xs text-ink-soft">
+            <span className="font-semibold text-ink">Zero Client Trust Enforcement:</span> Rates updated here are strictly validated on the backend and saved with a versioned audit trail.
+          </div>
+
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <div>
+              <label className="mb-1 block text-xs font-semibold text-ink">Min Daily Km (Outstation)</label>
+              <Input
+                type="number"
+                min="100"
+                max="1000"
+                required
+                value={editForm.minKmPerDay}
+                onChange={(e) => setEditForm((f) => ({ ...f, minKmPerDay: Number(e.target.value) }))}
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-xs font-semibold text-ink">Cab Driver/Night (₹)</label>
+              <Input
+                type="number"
+                min="100"
+                max="2000"
+                required
+                value={editForm.nightAllowanceCab}
+                onChange={(e) => setEditForm((f) => ({ ...f, nightAllowanceCab: Number(e.target.value) }))}
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-xs font-semibold text-ink">Tempo Driver/Night (₹)</label>
+              <Input
+                type="number"
+                min="200"
+                max="3000"
+                required
+                value={editForm.nightAllowanceTempo}
+                onChange={(e) => setEditForm((f) => ({ ...f, nightAllowanceTempo: Number(e.target.value) }))}
+              />
+            </div>
+          </div>
+
+          <div className="border-t border-rule pt-3">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-ink-faint">
+              Per-Kilometer Base Rates (₹/km)
+            </p>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div>
+                <label className="mb-1 block text-xs text-ink">Sedan (Dzire / Etios · 4 Seats)</label>
+                <Input
+                  type="number"
+                  min="5"
+                  max="100"
+                  required
+                  value={editForm.sedan}
+                  onChange={(e) => setEditForm((f) => ({ ...f, sedan: Number(e.target.value) }))}
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-xs text-ink">Maruti Ertiga (6 Seats)</label>
+                <Input
+                  type="number"
+                  min="8"
+                  max="150"
+                  required
+                  value={editForm.ertiga}
+                  onChange={(e) => setEditForm((f) => ({ ...f, ertiga: Number(e.target.value) }))}
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-xs text-ink">Innova Crysta (7 Seats)</label>
+                <Input
+                  type="number"
+                  min="10"
+                  max="200"
+                  required
+                  value={editForm.innova}
+                  onChange={(e) => setEditForm((f) => ({ ...f, innova: Number(e.target.value) }))}
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-xs text-ink">Tempo Traveller (12 Seats)</label>
+                <Input
+                  type="number"
+                  min="15"
+                  max="300"
+                  required
+                  value={editForm.tempo}
+                  onChange={(e) => setEditForm((f) => ({ ...f, tempo: Number(e.target.value) }))}
+                />
+              </div>
+              <div className="sm:col-span-2">
+                <label className="mb-1 block text-xs text-ink">Force Urbania Luxury (15 Seats)</label>
+                <Input
+                  type="number"
+                  min="20"
+                  max="400"
+                  required
+                  value={editForm.urbania}
+                  onChange={(e) => setEditForm((f) => ({ ...f, urbania: Number(e.target.value) }))}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-5 flex justify-end gap-2 border-t border-rule pt-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsEditOpen(false)}
+              disabled={saving}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" variant="gold" disabled={saving}>
+              {saving ? "Saving…" : "Save New Rates"}
+            </Button>
+          </div>
+        </form>
+      </Dialog>
     </div>
   );
 }

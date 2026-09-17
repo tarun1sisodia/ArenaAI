@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   Car,
+  CheckCircle2,
   Eye,
   EyeOff,
   Lock,
   MapPin,
   Phone,
+  Plus,
   Search,
   X,
 } from "lucide-react";
@@ -15,11 +17,12 @@ import { StatusBadge } from "@/components/admin/StatusBadge";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
+import { Dialog } from "@/components/ui/Dialog";
 import { Input, Select } from "@/components/ui/Input";
 import { Tabs } from "@/components/ui/Tabs";
 import { Table, TBody, THead, TD, TH, TRow } from "@/components/ui/Table";
 import { AlertTriangle, RotateCw } from "lucide-react";
-import { fetchAdminBookings, transitionAdminBooking } from "@/lib/api";
+import { createAdminBooking, fetchAdminBookings, transitionAdminBooking } from "@/lib/api";
 import { VEHICLE_LABELS, can, type AdminUser, type Booking, type BookingStatus } from "@/lib/types";
 import { cn, formatDate, formatINR, maskEmail, maskPhone, timeAgo } from "@/lib/utils";
 
@@ -54,6 +57,81 @@ export function BookingsPage({ user }: { user: AdminUser }) {
   const [vehicle, setVehicle] = useState("all");
   const [selected, setSelected] = useState<Booking | null>(null);
   const [unmasked, setUnmasked] = useState(false);
+
+  // New Booking Modal State
+  const tomorrow = new Date(Date.now() + 24 * 3600 * 1000).toISOString().slice(0, 10);
+  const [isNewBookingOpen, setIsNewBookingOpen] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
+  const [createSuccess, setCreateSuccess] = useState<string | null>(null);
+
+  const [newForm, setNewForm] = useState({
+    customerName: "",
+    customerPhone: "",
+    customerEmail: "",
+    tripType: "one-way" as "one-way" | "round-trip",
+    vehicleTier: "sedan",
+    originName: "Agra",
+    destinationName: "Delhi Airport",
+    pickupAddress: "",
+    dropAddress: "",
+    pickupDate: tomorrow,
+    pickupTime: "10:00",
+    specialNotes: "",
+  });
+
+  const handleCreateBooking = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setCreating(true);
+    setCreateError(null);
+    setCreateSuccess(null);
+
+    try {
+      const dt = new Date(`${newForm.pickupDate}T${newForm.pickupTime}:00`);
+      if (isNaN(dt.getTime()) || dt.getTime() < Date.now() + 50 * 60 * 1000) {
+        throw new Error("Pickup datetime must be at least 1 hour in the future.");
+      }
+
+      const res = await createAdminBooking({
+        customerName: newForm.customerName.trim(),
+        customerPhone: newForm.customerPhone.trim(),
+        customerEmail: newForm.customerEmail.trim() || undefined,
+        tripType: newForm.tripType,
+        vehicleTier: newForm.vehicleTier,
+        originName: newForm.originName.trim(),
+        destinationName: newForm.destinationName.trim(),
+        pickupAddress: newForm.pickupAddress.trim(),
+        dropAddress: newForm.dropAddress.trim() || newForm.destinationName.trim(),
+        pickupDatetime: dt.toISOString(),
+        specialNotes: newForm.specialNotes.trim() || undefined,
+      });
+
+      setCreateSuccess(`Manual booking registered! Ticket ID: ${res?.ticketId || "Created"}`);
+      setReloadKey((k) => k + 1);
+      setTimeout(() => {
+        setIsNewBookingOpen(false);
+        setCreateSuccess(null);
+        setNewForm({
+          customerName: "",
+          customerPhone: "",
+          customerEmail: "",
+          tripType: "one-way",
+          vehicleTier: "sedan",
+          originName: "Agra",
+          destinationName: "Delhi Airport",
+          pickupAddress: "",
+          dropAddress: "",
+          pickupDate: tomorrow,
+          pickupTime: "10:00",
+          specialNotes: "",
+        });
+      }, 1500);
+    } catch (err) {
+      setCreateError(err instanceof Error ? err.message : "Failed to create booking.");
+    } finally {
+      setCreating(false);
+    }
+  };
 
   const canRead = can(user.role, "bookings:read");
   const canTransition = can(user.role, "bookings:transition");
@@ -138,6 +216,13 @@ export function BookingsPage({ user }: { user: AdminUser }) {
         eyebrow="Lifecycle"
         title="Booking Operations"
         description="Search by ticket ID (AGR-YYYYMMDD-XXXX), phone or customer name. Status changes use optimistic version locking."
+        actions={
+          canTransition ? (
+            <Button variant="gold" size="sm" onClick={() => setIsNewBookingOpen(true)}>
+              <Plus className="mr-1.5 h-3.5 w-3.5" /> New Booking
+            </Button>
+          ) : undefined
+        }
       />
 
       {/* Toolbar */}
@@ -438,6 +523,176 @@ export function BookingsPage({ user }: { user: AdminUser }) {
           </div>
         )}
       </AnimatePresence>
+
+      {/* New Booking Modal */}
+      <Dialog
+        open={isNewBookingOpen}
+        onClose={() => !creating && setIsNewBookingOpen(false)}
+        title="Create Desk / Phone Booking"
+        description="Register a walk-in, phone, or manual dispatch reservation. Authoritative fares, advance deposit, and ticket ID will be generated by the backend."
+      >
+        <form onSubmit={handleCreateBooking} className="space-y-4">
+          {createError && (
+            <div className="flex items-center gap-2 rounded-md bg-error-soft px-3 py-2 text-xs text-error">
+              <AlertTriangle className="h-4 w-4 shrink-0" />
+              <span>{createError}</span>
+            </div>
+          )}
+
+          {createSuccess && (
+            <div className="flex items-center gap-2 rounded-md bg-teal-soft px-3 py-2 text-xs text-teal-text">
+              <CheckCircle2 className="h-4 w-4 shrink-0" />
+              <span>{createSuccess}</span>
+            </div>
+          )}
+
+          <div className="rounded-lg border border-gold/20 bg-gold-wash/30 p-3 text-xs text-ink-soft">
+            <span className="font-semibold text-ink">Zero Client Trust:</span> The fare engine will compute authoritative distance and fare breakdown automatically based on active fare rules.
+          </div>
+
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div>
+              <label className="mb-1 block text-xs font-semibold text-ink">Customer Full Name *</label>
+              <Input
+                required
+                placeholder="e.g. Ramesh Kumar"
+                value={newForm.customerName}
+                onChange={(e) => setNewForm((f) => ({ ...f, customerName: e.target.value }))}
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-xs font-semibold text-ink">Phone Number (10–14 digits) *</label>
+              <Input
+                required
+                type="tel"
+                placeholder="+919876543210"
+                value={newForm.customerPhone}
+                onChange={(e) => setNewForm((f) => ({ ...f, customerPhone: e.target.value }))}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="mb-1 block text-xs font-semibold text-ink">Customer Email (Optional)</label>
+            <Input
+              type="email"
+              placeholder="customer@example.com"
+              value={newForm.customerEmail}
+              onChange={(e) => setNewForm((f) => ({ ...f, customerEmail: e.target.value }))}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div>
+              <label className="mb-1 block text-xs font-semibold text-ink">Trip Type *</label>
+              <Select
+                value={newForm.tripType}
+                onChange={(e) => setNewForm((f) => ({ ...f, tripType: e.target.value as any }))}
+              >
+                <option value="one-way">One-way Outstation</option>
+                <option value="round-trip">Round-trip Outstation</option>
+              </Select>
+            </div>
+            <div>
+              <label className="mb-1 block text-xs font-semibold text-ink">Vehicle Tier *</label>
+              <Select
+                value={newForm.vehicleTier}
+                onChange={(e) => setNewForm((f) => ({ ...f, vehicleTier: e.target.value }))}
+              >
+                <option value="sedan">Sedan (Dzire / Etios · 4 Seats)</option>
+                <option value="ertiga">Maruti Ertiga (6 Seats)</option>
+                <option value="innova-crysta">Innova Crysta (7 Seats)</option>
+                <option value="tempo-traveller">Tempo Traveller (12 Seats)</option>
+                <option value="urbania">Force Urbania Luxury (15 Seats)</option>
+              </Select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div>
+              <label className="mb-1 block text-xs font-semibold text-ink">Pickup City / Landmark *</label>
+              <Input
+                required
+                placeholder="Agra"
+                value={newForm.originName}
+                onChange={(e) => setNewForm((f) => ({ ...f, originName: e.target.value }))}
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-xs font-semibold text-ink">Destination City / Landmark *</label>
+              <Input
+                required
+                placeholder="Delhi Airport T3"
+                value={newForm.destinationName}
+                onChange={(e) => setNewForm((f) => ({ ...f, destinationName: e.target.value }))}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="mb-1 block text-xs font-semibold text-ink">Pickup Street Address *</label>
+            <Input
+              required
+              placeholder="e.g. Hotel Clarks Shiraz, 54 Taj Road, Agra Cantt"
+              value={newForm.pickupAddress}
+              onChange={(e) => setNewForm((f) => ({ ...f, pickupAddress: e.target.value }))}
+            />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-xs font-semibold text-ink">Drop Street Address (Optional)</label>
+            <Input
+              placeholder="e.g. Terminal 3 Departures, IGI Airport, New Delhi"
+              value={newForm.dropAddress}
+              onChange={(e) => setNewForm((f) => ({ ...f, dropAddress: e.target.value }))}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div>
+              <label className="mb-1 block text-xs font-semibold text-ink">Pickup Date *</label>
+              <Input
+                type="date"
+                required
+                value={newForm.pickupDate}
+                onChange={(e) => setNewForm((f) => ({ ...f, pickupDate: e.target.value }))}
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-xs font-semibold text-ink">Pickup Time *</label>
+              <Input
+                type="time"
+                required
+                value={newForm.pickupTime}
+                onChange={(e) => setNewForm((f) => ({ ...f, pickupTime: e.target.value }))}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="mb-1 block text-xs font-semibold text-ink">Special Instructions / Dispatch Notes</label>
+            <Input
+              placeholder="e.g. English speaking driver requested, child seat required"
+              value={newForm.specialNotes}
+              onChange={(e) => setNewForm((f) => ({ ...f, specialNotes: e.target.value }))}
+            />
+          </div>
+
+          <div className="mt-5 flex justify-end gap-2 border-t border-rule pt-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsNewBookingOpen(false)}
+              disabled={creating}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" variant="gold" disabled={creating}>
+              {creating ? "Creating…" : "Register Booking"}
+            </Button>
+          </div>
+        </form>
+      </Dialog>
     </div>
   );
 }
