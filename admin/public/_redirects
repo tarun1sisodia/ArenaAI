@@ -1,1 +1,5 @@
-/* /index.html 200
+# Cloudflare Workers / Pages SPA routing
+# Native SPA routing is configured via `not_found_handling: "single-page-application"` in wrangler.jsonc
+# and 200.html in dist/ for Cloudflare Pages.
+# Note: `/* /index.html 200` must NOT be defined here; Cloudflare's deployment validator flags it as an
+# infinite loop [code: 100324] when html_handling is active (auto-trailing-slash or default).

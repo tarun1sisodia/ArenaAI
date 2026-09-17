@@ -55,7 +55,7 @@ Each app workflow runs:
    - expected artifacts exist (`react/dist/index.html`, `admin/dist/index.html`, `backend/dist/server.js`);
    - no server-side secret names (`DATABASE_URL`, `RAZORPAY_KEY_SECRET`, `SUPABASE_SERVICE_ROLE_KEY`, `RESEND_API_KEY`, …) appear in `react/dist` or `admin/dist`;
    - no file exceeds Cloudflare's 25 MiB per-asset limit;
-   - `admin/dist/_redirects` shipped, so admin deep links cannot regress into 404s.
+   - `admin/dist/_redirects` and `admin/dist/200.html` shipped, with `not_found_handling: "single-page-application"` active in `admin/wrangler.jsonc`, so admin deep links cannot regress into 404s.
 
 ## Cloudflare Pages project names
 
@@ -177,7 +177,7 @@ The current admin login is a frontend demonstration flow. Before production use,
 
 ### Routing rules for this app
 
-The admin panel is a React Router SPA with a single `index.html`. It ships `admin/public/_redirects` (`/* /index.html 200`, copied to `admin/dist/_redirects`) and sets `not_found_handling: "single-page-application"`. Without both, a hard refresh on `/bookings`, `/finance` or `/audit` returns 404. `admin/public/_headers` also marks the panel `X-Robots-Tag: noindex, nofollow` and sends long-lived cache headers for hashed assets, and `admin/public/robots.txt` disallows crawling outright.
+The admin panel is a React Router SPA with a single `index.html`. It handles SPA routing natively via `not_found_handling: "single-page-application"` in `admin/wrangler.jsonc` and ships `admin/dist/200.html` for Cloudflare Pages fallback. `admin/public/_redirects` is maintained without the legacy `/* /index.html 200` rewrite rule, which Cloudflare's deployment validator rejects with an infinite loop error (`[code: 100324]`) under `html_handling`. `admin/public/_headers` also marks the panel `X-Robots-Tag: noindex, nofollow` and sends long-lived cache headers for hashed assets, and `admin/public/robots.txt` disallows crawling outright.
 
 ## 5. DNS and release order
 
