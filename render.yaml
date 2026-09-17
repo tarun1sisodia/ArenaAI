@@ -6,6 +6,12 @@ services:
     dockerfilePath: ./Dockerfile
     healthCheckPath: /health
     autoDeploy: true
+    # Only trigger a new Render deploy when backend code or this file changes.
+    # Changes to react/ or admin/ will not cause a backend redeploy.
+    buildFilter:
+      paths:
+        - backend/**
+        - render.yaml
     envVars:
       - key: NODE_ENV
         value: production

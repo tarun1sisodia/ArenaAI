@@ -36,18 +36,26 @@ Build output is confined to `react/dist`, `admin/dist` and `backend/dist`. The o
 
 ## Continuous integration
 
-`.github/workflows/quality.yml` runs on pushes to `main`, `design/**` and `arena/**`, on pull requests into `main` and `design/homepage`, and on manual dispatch. It uses Node 22 (matching `backend/package.json` `engines`, the Dockerfile and Render) and executes:
+CI uses **three path-scoped workflows** so only the affected app rebuilds on each push:
 
-1. `npm run install:all` — lockfile-enforced install of all four lockfiles.
-2. The three typecheck commands.
-3. `npm test`.
-4. `npm run build:all`.
-5. Deploy guards:
-   - expected artifacts exist (`react/dist/index.html`, `react/dist/sitemap.xml`, `admin/dist/index.html`, `backend/dist/server.js`);
-   - no server-side secret names (`DATABASE_URL`, `RAZORPAY_KEY_SECRET`, `SUPABASE_SERVICE_ROLE_KEY`, `RESEND_API_KEY`, …) appear anywhere in `react/dist` or `admin/dist`;
+| Workflow | File | Triggers when… |
+|---|---|---|
+| Customer Site | `.github/workflows/ci-customer.yml` | `react/**`, root `package.json` |
+| Admin Panel | `.github/workflows/ci-admin.yml` | `admin/**`, root `package.json` |
+| Backend API | `.github/workflows/ci-backend.yml` | `backend/**`, `render.yaml` |
+| Monorepo Root | `.github/workflows/quality.yml` | `scripts/**`, root `package.json`, workflow files |
+
+All four run on pushes to `main`, `design/**`, `arena/**`, `feat/**`, `fix/**` and on PRs into `main`, filtered to their respective paths.
+
+Each app workflow runs:
+1. `npm ci` — lockfile-enforced install.
+2. TypeScript typecheck.
+3. Production build.
+4. Deploy guards:
+   - expected artifacts exist (`react/dist/index.html`, `admin/dist/index.html`, `backend/dist/server.js`);
+   - no server-side secret names (`DATABASE_URL`, `RAZORPAY_KEY_SECRET`, `SUPABASE_SERVICE_ROLE_KEY`, `RESEND_API_KEY`, …) appear in `react/dist` or `admin/dist`;
    - no file exceeds Cloudflare's 25 MiB per-asset limit;
-   - `admin/dist/_redirects` shipped, so admin deep links cannot regress into 404s;
-   - the build left tracked sources untouched.
+   - `admin/dist/_redirects` shipped, so admin deep links cannot regress into 404s.
 
 ## Cloudflare Pages project names
 
@@ -122,8 +130,13 @@ If the final hosting decision is a VPS instead of Render, use the same `backend/
 5. Set **Root directory** to `/react`.
 6. Set **Build command** to `npm ci && npm run build`.
 7. Set **Build output directory** to `dist`.
-8. Add the production variable `VITE_API_BASE_URL=https://api.skbagheltravels.in` under **Settings → Environment variables → Production**. No frontend code reads it yet — it is reserved so the value is already in place when the API integration phase lands.
-9. Deploy. Cloudflare Pages should show the generated site preview URL.
+8. Add the production variable `VITE_API_BASE_URL=https://api.skbagheltravels.in` under **Settings → Environment variables → Production**.
+9. Under **Settings → Build & deployments → Ignored build command**, enter:
+   ```
+   git diff --quiet HEAD^ HEAD -- react/
+   ```
+   Cloudflare will skip the build entirely when no `react/` files changed (exit 0 = skip, exit 1 = build).
+10. Deploy. Cloudflare Pages should show the generated site preview URL.
 10. Add `skbagheltravels.in` and `www.skbagheltravels.in` under **Custom domains**. Cloudflare will create or request the required DNS records.
 11. Confirm the site loads at `https://skbagheltravels.in/`, the Hindi routes load, and `/en/404/` returns the styled 404.
 
@@ -145,7 +158,12 @@ The customer site is **pre-rendered** by `react/scripts/prerender.ts`: every mar
 4. Set **Build command** to `npm ci && npm run build`.
 5. Set **Build output directory** to `dist`.
 6. Add `VITE_API_BASE_URL=https://api.skbagheltravels.in` under the production environment variables.
-7. Deploy and open the generated Pages URL.
+7. Under **Settings → Build & deployments → Ignored build command**, enter:
+   ```
+   git diff --quiet HEAD^ HEAD -- admin/
+   ```
+   Cloudflare will skip the admin build when no `admin/` files changed.
+8. Deploy and open the generated Pages URL.
 8. Add the custom domain `admin.skbagheltravels.in` under **Custom domains**.
 9. Confirm the login route, deep links such as `/bookings`, and API requests work over HTTPS.
 

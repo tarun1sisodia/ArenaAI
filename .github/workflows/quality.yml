@@ -1,4 +1,13 @@
-name: "Customer App — Quality & Cloudflare Deployment Guard"
+# This workflow is now SUPERSEDED by the three focused workflows:
+#   ci-customer.yml  — triggers on react/**
+#   ci-admin.yml     — triggers on admin/**
+#   ci-backend.yml   — triggers on backend/** + render.yaml
+#
+# This file is kept only to catch changes to shared root-level files
+# (root package.json, scripts/, .github/) that affect all three apps.
+# Individual app quality gates live in the app-specific workflows above.
+
+name: "Monorepo Root — Shared Scripts & Config Guard"
 
 on:
   push:
@@ -8,19 +17,31 @@ on:
       - "design/**"
       - "feat/**"
       - "fix/**"
+    paths:
+      - "scripts/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/**"
+      - "AGENTS.md"
+      - "DESIGN_LOCKS.md"
+      - "ANIMATION_RULES.md"
   pull_request:
     branches:
       - main
+    paths:
+      - "scripts/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/**"
+
+permissions:
+  contents: read
 
 jobs:
-  quality-gate:
-    name: "TypeCheck · Build · Prerender · Asset Guard"
+  root-check:
+    name: "Root Scripts · Healthcheck Script Lint"
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    defaults:
-      run:
-        working-directory: react
+    timeout-minutes: 5
 
     steps:
       - name: Checkout Codebase
@@ -31,51 +52,16 @@ jobs:
         with:
           node-version: "24"
           cache: "npm"
-          cache-dependency-path: react/package-lock.json
+          cache-dependency-path: package-lock.json
 
-      - name: Install Dependencies
+      - name: Install Root Dependencies
         run: npm ci
 
-      - name: TypeScript Type Check
-        run: npm run typecheck
+      - name: Verify healthcheck script is runnable
+        run: node --check scripts/healthcheck.mjs
 
-      - name: Vite Production Build + Prerender
-        run: npm run build
-        env:
-          VITE_BASE_PATH: "/"
-          # Prerender runs with --experimental-strip-types; no secrets needed at build time.
-
-      - name: Verify dist/ was produced
-        run: |
-          if [ ! -d dist ] || [ -z "$(ls -A dist)" ]; then
-            echo "::error::dist/ is missing or empty after build"
-            exit 1
-          fi
-          echo "dist/ contents:"
-          ls -lh dist/
-
-      - name: Verify Cloudflare Asset Size Budgets (<25 MiB per file)
-        run: |
-          echo "Scanning dist/ for files exceeding Cloudflare 25 MiB single-file limit..."
-          find dist -type f -size +25M | tee ../oversized_assets.txt
-          if [ -s ../oversized_assets.txt ]; then
-            echo "::error::Found assets exceeding Cloudflare 25 MiB threshold!"
-            cat ../oversized_assets.txt
-            exit 1
-          else
-            echo "All dist/ assets within Cloudflare 25 MiB limits."
-          fi
-
-      - name: Publish Build Summary to GitHub Step Summary
+      - name: Publish Summary
         if: always()
         run: |
-          echo "## Customer App Build Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          if [ -d dist ]; then
-            echo "### dist/ output" >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            du -sh dist/ && find dist -type f | sort >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-          else
-            echo "⚠️ dist/ not found — build likely failed." >> $GITHUB_STEP_SUMMARY
-          fi
+          echo "## Monorepo Root Check" >> $GITHUB_STEP_SUMMARY
+          echo "Root scripts validated. Individual app CI runs in app-specific workflows." >> $GITHUB_STEP_SUMMARY
