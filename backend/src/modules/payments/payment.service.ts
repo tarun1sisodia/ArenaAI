@@ -360,7 +360,9 @@ export function createPaymentService(deps: {
         const insideExisting = await trx.refunds.getByIdempotencyKey(input.idempotencyKey);
         if (insideExisting) return insideExisting;
 
-        const booking = await trx.bookings.getById(input.bookingId);
+        const booking =
+          (await trx.bookings.getById(input.bookingId)) ??
+          (await trx.bookings.getByTicketId(input.bookingId));
         if (!booking) throw Errors.notFound("BOOKING_NOT_FOUND", "Booking not found.");
         if (booking.status !== "paid_confirmed") {
           throw Errors.conflict("REFUND_NOT_ELIGIBLE", "Booking is not eligible for refund.");

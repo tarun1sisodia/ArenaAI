@@ -1,5 +1,20 @@
-import { DEFAULT_PROMO, PACKAGES } from "../modules/fares/fare.catalogue.js";
-import { newId } from "../shared/ids.js";
+import {
+  SEED_AUDIT_LOGS,
+  SEED_BOOKINGS,
+  SEED_CATALOG_ITEMS,
+  SEED_CATALOG_MEDIA,
+  SEED_DEVICES,
+  SEED_FARE_RULES,
+  SEED_INQUIRIES,
+  SEED_LOCATION_CACHE,
+  SEED_NOTIFICATION_JOBS,
+  SEED_PAYMENTS,
+  SEED_PROFILES,
+  SEED_PROMO_CODES,
+  SEED_REFUNDS,
+  SEED_REVIEWS,
+  SEED_WEBHOOKS,
+} from "./seedData.js";
 import type {
   AuditLogRecord,
   BookingRecord,
@@ -71,41 +86,57 @@ export function createMemoryRepositories(nowIso = new Date().toISOString()): Rep
     }
   }
 
-  function seedReferenceData(createdAt: string): void {
-    promos.set(DEFAULT_PROMO.code, {
-      id: newId(),
-      code: DEFAULT_PROMO.code,
-      discountAmount: DEFAULT_PROMO.discount,
-      minTotal: DEFAULT_PROMO.minTotal,
-      description: DEFAULT_PROMO.desc,
-      isActive: true,
-      maxRedemptions: null,
-      redemptionCount: 0,
-      validFrom: null,
-      validTo: null,
-    });
-
-    for (const pack of PACKAGES) {
-      const item: CatalogItemRecord = {
-        id: pack.id,
-        type: "package",
-        slug: pack.slug,
-        title: pack.name,
-        shortDescription: pack.name,
-        description: pack.name,
-        status: "published",
-        durationText: pack.duration,
-        routeSummary: pack.name,
-        startingPriceInr: pack.from,
-        version: 1,
-        createdBy: null,
-        updatedBy: null,
-        publishedAt: createdAt,
-        createdAt,
-        updatedAt: createdAt,
-      };
-      catalog.set(item.id, item);
-      catalogBySlug.set(item.slug, item.id);
+  function seedReferenceData(_createdAt: string): void {
+    for (const pr of SEED_PROFILES) {
+      profiles.set(pr.id, clone(pr));
+    }
+    for (const fr of SEED_FARE_RULES) {
+      fareRules.set(fr.id, clone(fr));
+    }
+    for (const pm of SEED_PROMO_CODES) {
+      promos.set(pm.code, clone(pm));
+    }
+    for (const it of SEED_CATALOG_ITEMS) {
+      catalog.set(it.id, clone(it));
+      catalogBySlug.set(it.slug, it.id);
+    }
+    for (const m of SEED_CATALOG_MEDIA) {
+      media.set(m.id, clone(m));
+    }
+    for (const b of SEED_BOOKINGS) {
+      bookings.set(b.id, clone(b));
+      bookingsByTicket.set(b.ticketId, b.id);
+    }
+    for (const p of SEED_PAYMENTS) {
+      payments.set(p.id, clone(p));
+      paymentsByIdempotency.set(p.idempotencyKey, p.id);
+      paymentsByOrder.set(p.providerOrderId, p.id);
+    }
+    for (const r of SEED_REFUNDS) {
+      refunds.set(r.id, clone(r));
+      refundsByIdempotency.set(r.idempotencyKey, r.id);
+    }
+    for (const rv of SEED_REVIEWS) {
+      reviews.set(rv.id, clone(rv));
+    }
+    for (const inq of SEED_INQUIRIES) {
+      inquiries.push(clone(inq));
+    }
+    for (const aud of SEED_AUDIT_LOGS) {
+      audit.push(clone(aud));
+    }
+    for (const n of SEED_NOTIFICATION_JOBS) {
+      notifications.set(n.id, clone(n));
+      notificationsByDedupe.set(n.dedupeKey, n.id);
+    }
+    for (const d of SEED_DEVICES) {
+      devices.set(d.id, clone(d));
+    }
+    for (const w of SEED_WEBHOOKS) {
+      webhookEvents.set(w.eventId, clone(w));
+    }
+    for (const lc of SEED_LOCATION_CACHE) {
+      locationCache.set(lc.key, { suggestions: clone(lc.suggestions), storedAt: lc.storedAt });
     }
   }
 
