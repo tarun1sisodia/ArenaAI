@@ -23,7 +23,7 @@ The Admin Panel integrates directly with the Fastify 5 + TypeScript backend serv
 │                                                                         │
 │   ┌───────────────────────────┐       ┌─────────────────────────────┐   │
 │   │    authenticateRequest    │ ----> │         requireRole         │   │
-│   │  (Supabase JWT Verification)│     │ (dispatcher, super_admin..) │   │
+│   │  (Supabase JWT Verification)│     │ (customer, super_admin..) │   │
 │   └───────────────────────────┘       └─────────────────────────────┘   │
 │                                                                         │
 │   ┌─────────────────────────────────────────────────────────────────┐   │

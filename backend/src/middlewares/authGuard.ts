@@ -1,4 +1,4 @@
-import { createRemoteJWKSet, jwtVerify } from "jose";
+import { createRemoteJWKSet, jwtVerify, decodeProtectedHeader } from "jose";
 import type { FastifyRequest } from "fastify";
 import type { Env } from "../config/env.js";
 import { Errors } from "../shared/errors.js";
@@ -34,20 +34,41 @@ export async function authenticateRequest(request: FastifyRequest, env: Env): Pr
   }
 
   try {
-    if (env.SUPABASE_JWT_SECRET) {
+    let headerAlg: string | undefined;
+    try {
+      headerAlg = decodeProtectedHeader(token).alg;
+    } catch {
+      // Invalid header structure
+      throw Errors.unauthorized("Malformed access token.");
+    }
+
+    const isSymmetric = headerAlg?.startsWith("HS");
+
+    // 1. If symmetric (HS256) and secret is provided, verify with secret
+    if (isSymmetric && env.SUPABASE_JWT_SECRET) {
       const secret = new TextEncoder().encode(env.SUPABASE_JWT_SECRET);
       const { payload } = await jwtVerify(token, secret);
       return principalFromPayload(payload as unknown as Record<string, unknown>);
     }
 
+    // 2. If asymmetric (ES256/RS256) or no symmetric secret, verify against Supabase JWKS
     if (env.SUPABASE_URL) {
-      const jwks = createRemoteJWKSet(new URL(`${env.SUPABASE_URL}/auth/v1/.well-known/jwks.json`));
+      const normalizedUrl = env.SUPABASE_URL.replace(/\/+$/, "");
+      const jwks = createRemoteJWKSet(new URL(`${normalizedUrl}/auth/v1/.well-known/jwks.json`));
       const { payload } = await jwtVerify(token, jwks, {
-        issuer: `${env.SUPABASE_URL}/auth/v1`,
+        issuer: [`${normalizedUrl}/auth/v1`, normalizedUrl, "supabase"],
       });
       return principalFromPayload(payload as unknown as Record<string, unknown>);
     }
-  } catch {
+
+    // 3. Fallback to secret if JWKS is not configured
+    if (env.SUPABASE_JWT_SECRET) {
+      const secret = new TextEncoder().encode(env.SUPABASE_JWT_SECRET);
+      const { payload } = await jwtVerify(token, secret);
+      return principalFromPayload(payload as unknown as Record<string, unknown>);
+    }
+  } catch (err) {
+    console.warn("[AUTH] Token verification failed:", err);
     throw Errors.unauthorized("Invalid or expired access token.");
   }
 
