@@ -198,7 +198,7 @@ The API is the authority for fares, booking state, payments, and admin permissio
 
 ## 6. Automated uptime monitoring
 
-[`scripts/healthcheck.mjs`](../scripts/healthcheck.mjs) performs dependency-free HTTP checks against the API health endpoint, customer site, and admin site. It retries each endpoint once by default, accepts normal redirects for static sites, prints a result for every URL, and exits with code `1` if any service fails.
+[`scripts/healthcheck.mjs`](../scripts/healthcheck.mjs) performs dependency-free HTTP checks against the API health endpoint, customer site, and admin site. By default it targets provider-hosted live URLs (`https://skb-baghel-api.onrender.com/health`, `https://skbagheltravels-customer.pages.dev/`, `https://skbagheltravels-admin.pages.dev/`). It retries each endpoint once by default, accepts normal redirects for static sites, prints a result for every URL, and exits with code `1` if any service fails.
 
 The repository includes [`.github/workflows/uptime.yml`](../.github/workflows/uptime.yml), which runs every five minutes and can also be started manually from **GitHub → Actions → Production uptime → Run workflow**. GitHub Actions scheduled runs are best-effort and may be delayed. A failed check appears as a failed workflow run and can be connected to GitHub notifications or an external incident integration.
 
@@ -206,6 +206,12 @@ Run it locally:
 
 ```bash
 npm run healthcheck
+```
+
+To monitor custom domains instead of provider-hosted URLs, override:
+
+```bash
+HEALTHCHECK_URLS="https://api.skbagheltravels.in/health,https://skbagheltravels.in/,https://admin.skbagheltravels.in/" npm run healthcheck
 ```
 
 Override the targets for staging or a Render preview service:
