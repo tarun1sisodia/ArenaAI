@@ -142,14 +142,14 @@ export function Header({
               <span>{contact.phoneDisplay}</span>
             </a>
 
-            {/* WhatsApp Concierge - Light, vibrant luxury terracotta with crisp white text */}
+            {/* WhatsApp Concierge - Luxury black button with real WhatsApp icon */}
             <a
               href={`https://wa.me/${contact.whatsapp}?text=Hello%20SK%20Baghel%20Travels,%20I%20would%20like%20to%20inquire%20about%20a%20booking.`}
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden sm:inline-flex items-center gap-1.5 bg-primary hover:bg-primary-container text-white px-3.5 py-1.5 rounded-md text-xs font-semibold shadow-xs transition-all active:scale-[0.98]"
+              className="hidden sm:inline-flex items-center gap-1.5 bg-black hover:bg-neutral-900 text-white px-3.5 py-1.5 rounded-md text-xs font-semibold shadow-xs transition-all active:scale-[0.98] border border-white/15"
             >
-              <WhatsAppIcon className="w-[15px] h-[15px] text-white shrink-0" />
+              <WhatsAppIcon className="w-[15px] h-[15px] shrink-0" />
               <span className="text-white font-medium">WhatsApp Concierge</span>
             </a>
 

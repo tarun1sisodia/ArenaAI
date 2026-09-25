@@ -224,9 +224,6 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
 
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-space-md mb-space-lg">
             <div className="max-w-3xl">
-              <span className="px-2.5 py-0.5 rounded-full bg-primary/10 text-primary font-label-caps text-[9.5px] uppercase tracking-wider font-bold">
-                Commercial Luxury Fleet
-              </span>
               <h1 className="font-headline-hero text-headline-hero-mobile sm:text-headline-lg lg:text-headline-hero text-ink-charcoal leading-tight tracking-tight mt-1.5">
                 Clean, modern vehicles. Verified drivers.{" "}
                 <span className="text-terracotta-sandstone italic block sm:inline">
@@ -234,8 +231,7 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                 </span>
               </h1>
               <p className="font-body-lg text-body-md sm:text-body-lg text-on-surface-variant mt-space-sm leading-relaxed">
-                Explore our clean, government-registered commercial fleet in Agra. From fuel-efficient sedans
-                for the Yamuna Expressway to spacious Innova Crystas and Force Urbanias for families and group travel.
+                Explore our clean,
                 Zero hidden charges, 100% AC performance guaranteed.
               </p>
             </div>

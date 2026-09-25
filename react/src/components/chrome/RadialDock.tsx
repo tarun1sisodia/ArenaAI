@@ -94,7 +94,7 @@ export function RadialDock({ currentPath, className = "" }: RadialDockProps) {
       >
         <span className="icon">
           <span className="icon icon-wa" aria-hidden="true">
-            <WhatsAppIcon className="w-[18px] h-[18px] fill-current" />
+            <WhatsAppIcon className="w-[18px] h-[18px] shrink-0" />
           </span>
         </span>
       </a>

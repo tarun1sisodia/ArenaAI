@@ -336,21 +336,7 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
                 Private, doorstep-pickup itineraries covering the Taj Mahal, sacred Braj temples, imperial Mughal ruins, and the Golden Triangle. Complete fare transparency, verified English &amp; Hindi-speaking commercial chauffeurs, and zero commission-shop traps.
               </p>
             </div>
-            <div className="lg:col-span-4 flex flex-col justify-end">
-              <div className="bg-surface-container-lowest p-3.5 sm:p-4 rounded-xl shadow-xs border border-border-warm flex flex-col gap-2">
-                <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-primary text-[24px]">shield</span>
-                  <div>
-                    <div className="font-title-md text-xs sm:text-[13px] text-on-surface font-semibold">Guaranteed Service Standard</div>
-                    <div className="font-body-sm text-[10px] text-on-surface-variant">Regulated by Uttar Pradesh Tourism guidelines</div>
-                  </div>
-                </div>
-                <div className="pt-2 flex items-center justify-between font-label-caps text-[9px] text-on-surface-variant border-t border-border-warm/60">
-                  <span>AGRA CANTT • AIRPORT TRANSFERS</span>
-                  <span className="text-success-jade font-bold">24×7 DISPATCH</span>
-                </div>
-              </div>
-            </div>
+            
           </div>
 
           {/* Trust Ribbon Mosaic (Compact -20%) */}

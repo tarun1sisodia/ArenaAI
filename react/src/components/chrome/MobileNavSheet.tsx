@@ -115,9 +115,9 @@ export function MobileNavSheet({
               href={`https://wa.me/${contact.whatsapp}?text=Hello%20SK%20Baghel%20Travels`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center gap-1.5 py-2.5 rounded-lg bg-ink-charcoal text-ivory-surface font-label-lg text-label-lg hover:bg-ink-slate transition-colors"
+              className="flex items-center justify-center gap-1.5 py-2.5 rounded-lg bg-black text-white font-label-lg text-label-lg hover:bg-neutral-900 transition-colors shadow-sm border border-white/10 active:scale-[0.98]"
             >
-              <WhatsAppIcon className="w-[18px] h-[18px] text-gold-accent shrink-0" />
+              <WhatsAppIcon className="w-[18px] h-[18px] shrink-0" />
               <span>WhatsApp</span>
             </a>
           </div>

@@ -166,9 +166,6 @@ export function ServicesPage({ language = "en" }: ServicesPageProps) {
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-end">
             <div className="lg:col-span-8 flex flex-col">
-              <span className="px-3 py-1 rounded-full bg-primary/10 text-primary font-label-caps text-[11px] uppercase tracking-wider font-bold w-max mb-3">
-                Taxi &amp; Tour Services
-              </span>
               <h1 className="font-headline-hero text-headline-hero text-ink-charcoal tracking-tight max-w-3xl leading-[1.1]">
                 Every journey in North India,{" "}
                 <span className="italic font-normal text-terracotta-sandstone">thoughtfully chauffeured.</span>
@@ -176,7 +173,7 @@ export function ServicesPage({ language = "en" }: ServicesPageProps) {
             </div>
             <div className="lg:col-span-4 flex flex-col pb-1">
               <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-space-lg">
-                From fast one-way expressway drops to multi-day Golden Triangle tours, our fleet delivers
+                From fast one-way expressway drops to multi-day tours, our fleet delivers
                 transparent billing, courteous drivers, and round-the-clock local support.
               </p>
               <div className="flex items-center gap-space-sm">
@@ -186,15 +183,6 @@ export function ServicesPage({ language = "en" }: ServicesPageProps) {
                 >
                   <span>Book Cab Online</span>
                   <span className="material-symbols-outlined text-[15px]">arrow_forward</span>
-                </a>
-                <a
-                  className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 bg-ink-charcoal hover:bg-ink-slate text-ivory-surface font-label-lg text-xs rounded-lg transition-colors font-semibold"
-                  href="https://wa.me/919876543210"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <span className="material-symbols-outlined text-gold-accent text-[16px]">chat</span>
-                  <span>WhatsApp</span>
                 </a>
               </div>
             </div>

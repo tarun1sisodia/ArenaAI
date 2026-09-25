@@ -4892,7 +4892,7 @@ html.dark .lead-bar {
 }
 
 .about .social.dribbble .icon:hover {
-  background-color: #25D366;
+  background-color: #000000;
   color: #ffffff;
 }
 
@@ -11743,14 +11743,14 @@ html.dark .page-loader__bar-fill {
 }
 
 .button-whatsapp {
-  background: #25D366;
+  background: #000000;
   color: #FFFFFF !important;
-  border: 1px solid #20BD5A;
+  border: 1px solid rgba(255, 255, 255, 0.15);
   font-weight: 600;
 }
 
 .button-whatsapp:hover {
-  background: #20BD5A;
+  background: #171717;
   color: #FFFFFF !important;
 }
 
