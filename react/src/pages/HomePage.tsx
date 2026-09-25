@@ -6,6 +6,7 @@ import { ReviewsMarquee } from "../components/home/ReviewsMarquee";
 import { WhatsAppIcon } from "../components/icons";
 import { SmoothScrollHero } from "@/components/ui/smooth-scroll-hero";
 import { InitialLoader } from "@/components/ui/InitialLoader";
+import { AppleHelloEnglishEffect } from "@/components/ui/apple-hello-effect";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ChevronDown, Sparkles } from "lucide-react";
 
@@ -155,6 +156,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
           finalClipPercentage={75}
         >
           <div className="text-center px-4 max-w-2xl flex flex-col items-center">
+            <AppleHelloEnglishEffect className="h-10 sm:h-12 text-gold-accent drop-shadow-lg mb-2" speed={1.2} />
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-gold-accent/20 border border-gold-accent/40 text-gold-accent font-label-caps text-[10px] uppercase tracking-widest mb-3 backdrop-blur-md">
               <Sparkles className="w-3.5 h-3.5" />
               <span>Agra Taxi &amp; Cab Service</span>
@@ -203,6 +205,12 @@ export function HomePage({ language = "en" }: HomePageProps) {
           <div className="relative z-10 max-w-[1280px] mx-auto px-margin-mobile lg:px-margin grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             {/* Left — headline + two CTAs only (hero stack discipline: 3 elements max) */}
             <div className="lg:col-span-6 flex flex-col items-start gap-space-md">
+              <div className="flex items-center gap-3">
+                <AppleHelloEnglishEffect className="h-8 sm:h-10 text-terracotta-sunlit drop-shadow-md" speed={1.2} />
+                <span className="px-2.5 py-0.5 rounded-full bg-gold-accent/15 border border-gold-accent/30 text-gold-accent font-label-caps text-[9px] uppercase tracking-widest font-semibold backdrop-blur-sm">
+                  Welcome to Agra
+                </span>
+              </div>
               <h1 className="font-headline-hero text-headline-hero font-normal leading-[1.15]">
                 Agra to anywhere, <br />
                 <span className="italic text-terracotta-sunlit">in first-class comfort.</span>

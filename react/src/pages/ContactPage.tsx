@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import type { SupportedLanguage } from "../config";
 import { contact } from "../data/contact";
+import { AppleHelloEnglishEffect } from "@/components/ui/apple-hello-effect";
 
 export interface ContactPageProps {
   language?: SupportedLanguage;
@@ -80,9 +81,12 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
           </nav>
 
           <div className="max-w-4xl">
-            <span className="px-3 py-1 rounded-full bg-primary/10 text-primary font-label-caps text-[11px] uppercase tracking-wider font-bold inline-block mb-3">
-              Taj Ganj Central Dispatch
-            </span>
+            <div className="flex items-center gap-3 mb-2">
+              <AppleHelloEnglishEffect className="h-8 sm:h-9 text-primary drop-shadow-xs" speed={1.2} />
+              <span className="px-3 py-1 rounded-full bg-primary/10 text-primary font-label-caps text-[11px] uppercase tracking-wider font-bold inline-block">
+                Taj Ganj Central Dispatch
+              </span>
+            </div>
             <h1 className="font-headline-hero text-ink-charcoal text-headline-hero tracking-tight leading-tight mb-3">
               Your chauffeur is stationed. We&apos;re a ring away.
             </h1>

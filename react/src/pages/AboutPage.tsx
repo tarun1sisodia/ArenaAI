@@ -1,5 +1,6 @@
 import React from "react";
 import { contact } from "../data/contact";
+import { AppleHelloEnglishEffect } from "@/components/ui/apple-hello-effect";
 
 interface AboutPageProps {
   language?: "en" | "hi";
@@ -31,10 +32,13 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-center">
             {/* Text Column */}
             <div className="lg:col-span-7 flex flex-col gap-space-md">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary-fixed text-primary text-label-caps font-label-caps uppercase tracking-widest w-fit">
-                <span className="material-symbols-outlined text-[14px]">verified</span>
-                Heritage Chauffeur Ethics Since 2009
-              </span>
+              <div className="flex items-center gap-3">
+                <AppleHelloEnglishEffect className="h-8 sm:h-9 text-terracotta-sandstone drop-shadow-xs" speed={1.2} />
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary-fixed text-primary text-label-caps font-label-caps uppercase tracking-widest w-fit">
+                  <span className="material-symbols-outlined text-[14px]">verified</span>
+                  Heritage Chauffeur Ethics Since 2009
+                </span>
+              </div>
               <h1 className="font-headline-hero text-headline-hero text-ink-charcoal tracking-tight font-serif">
                 Chauffeured Transit as an Art Form.{" "}
                 <span className="italic text-terracotta-sandstone">Never an Anonymous Ride.</span>
