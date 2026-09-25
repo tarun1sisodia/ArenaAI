@@ -8,6 +8,7 @@ export { RadialDock } from "./chrome/RadialDock";
 export { PageLoader } from "./chrome/PageLoader";
 export { Footer } from "./chrome/Footer";
 export { SkipLink } from "./chrome/SkipLink";
+export { WhatsAppIcon } from "./icons/WhatsAppIcon";
 
 export function LoadingIndicator({ label = "Loading" }: { label?: string }) {
   return (

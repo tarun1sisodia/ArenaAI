@@ -377,7 +377,7 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                         Outstation Rate
                       </span>
                       <div className="flex items-baseline justify-center gap-0.5 mt-0.5">
-                        <span className="font-price-display text-xl text-terracotta-sandstone font-bold">
+                        <span className="font-price-display text-base sm:text-lg text-terracotta-sandstone font-bold">
                           ₹{veh.rates.outstationPerKm}
                         </span>
                         <span className="font-body-sm text-[9.5px] text-on-surface-variant font-medium">/ km</span>

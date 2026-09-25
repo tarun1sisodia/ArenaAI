@@ -1,6 +1,7 @@
 import { BrandLogo } from "./BrandLogo";
 import { contact } from "../../data/contact";
 import { prefetchDocument } from "../../app/prefetch";
+import { WhatsAppIcon } from "../icons/WhatsAppIcon";
 
 export interface FooterProps {
   currentPath?: string;
@@ -60,7 +61,7 @@ export function Footer({ className = "" }: FooterProps) {
                   <span>{contact.phoneDisplay}</span>
                 </a>
                 <a href={`https://wa.me/${contact.whatsapp}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-on-surface hover:text-primary transition-colors">
-                  <span className="material-symbols-outlined text-gold-accent text-[18px]">chat</span>
+                  <WhatsAppIcon className="w-[18px] h-[18px] text-gold-accent shrink-0" />
                   <span>WhatsApp Support</span>
                 </a>
                 <a

@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { BrandLogo } from "./BrandLogo";
 import { contact } from "../../data/contact";
 import { prefetchDocument } from "../../app/prefetch";
+import { WhatsAppIcon } from "../icons/WhatsAppIcon";
 
 export interface MobileNavSheetProps {
   isOpen: boolean;
@@ -116,7 +117,7 @@ export function MobileNavSheet({
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-1.5 py-2.5 rounded-lg bg-ink-charcoal text-ivory-surface font-label-lg text-label-lg hover:bg-ink-slate transition-colors"
             >
-              <span className="material-symbols-outlined text-gold-accent text-[18px]">chat</span>
+              <WhatsAppIcon className="w-[18px] h-[18px] text-gold-accent shrink-0" />
               <span>WhatsApp</span>
             </a>
           </div>

@@ -1,25 +1,16 @@
 /**
- * ReviewsMarquee — 2-Row Liquid Glass Marquee Reviews (Phase R5.8)
- *
- * Architecture & Features:
- * - Dual opposing continuous marquee tracks:
- *   - Row 1: Scrolls left (outstation drops, local sightseeing, Taj sunrise)
- *   - Row 2: Scrolls right (pilgrimages, corporate travel, photography expeditions)
- * - Pause-on-hover interaction on both tracks
- * - Liquid glassmorphism cards (backdrop blur, subtle border highlight, ambient elevation)
- * - 5 gold Lucide SVG stars and verified customer badge
- * - Graceful avatar initials fallback on network error
- * - Responsive edge-fade gradient masks
- * - Strict prefers-reduced-motion fallback with horizontal scroll support
- * - Clean White + Solar Dusk dark mode adaptation
+ * ReviewsMarquee — Dual-Track Infinite Marquee Reviews Showcase
+ * 
+ * Conforms to FRONTEND_RULES.md (Mughal Terracotta & Sandstone Design Tokens)
+ * - Dual opposing smooth marquee tracks (Row 1 left, Row 2 right)
+ * - Pause on hover interaction
+ * - Edge gradient fade masks for seamless visual transition
+ * - Verified traveler badges & 5-star gold ratings
+ * - Pure Tailwind CSS & theme tokens, 100% accessible
  */
 
-import React, { useState } from "react";
+import React from "react";
 import { reviews, type Review } from "../../data/catalogue";
-
-interface ReviewCardProps {
-  review: Review;
-}
 
 function getInitials(name: string): string {
   const parts = name.trim().split(/\s+/);
@@ -27,72 +18,64 @@ function getInitials(name: string): string {
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 
+interface ReviewCardProps {
+  review: Review;
+}
+
 function ReviewCard({ review }: ReviewCardProps) {
-  const [imgLoaded, setImgLoaded] = useState(false);
-  const [imgFailed, setImgFailed] = useState(false);
   const initials = getInitials(review.name);
 
   return (
-    <article className="liquid-review-card" role="article">
-      <div className="liquid-review-header">
-        <div className="liquid-review-avatar-wrapper">
-          <div className="liquid-review-avatar-fallback" aria-hidden="true">
-            {initials}
-          </div>
-          {review.avatar && !imgFailed && (
-            <img
-              className={`liquid-review-avatar ${imgLoaded ? "is-loaded" : ""}`}
-              src={review.avatar}
-              alt={review.name}
-              width={44}
-              height={44}
-              loading="lazy"
-              onLoad={() => setImgLoaded(true)}
-              onError={() => setImgFailed(true)}
-            />
-          )}
-        </div>
-        <div className="liquid-review-meta">
-          <span className="liquid-review-name">{review.name}</span>
-          <span className="liquid-review-role">
-            {review.role || review.place}
-          </span>
-        </div>
-      </div>
-
-      <p className="liquid-review-content">&ldquo;{review.quote}&rdquo;</p>
-
-      <div className="liquid-review-footer">
-        <div
-          className="liquid-review-stars"
-          aria-label={`${review.rating} out of 5 stars`}
-        >
-          {[...Array(5)].map((_, i) => (
-            <svg
-              key={i}
-              className="liquid-review-star"
-              viewBox="0 0 24 24"
+    <article
+      className="w-[310px] sm:w-[350px] shrink-0 bg-surface-container-lowest p-3.5 sm:p-4 rounded-xl shadow-xs hover:shadow-md transition-all border border-border-warm/60 flex flex-col justify-between select-none"
+      role="article"
+    >
+      <div>
+        <div className="flex items-center justify-between mb-2.5">
+          <div className="flex items-center gap-2.5">
+            <div
+              className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs shrink-0"
               aria-hidden="true"
             >
-              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-            </svg>
+              {initials}
+            </div>
+            <div>
+              <h4 className="font-title-md text-[13px] font-bold text-on-surface leading-tight">
+                {review.name}
+              </h4>
+              <span className="font-label-caps text-[9px] text-on-surface-variant block mt-0.5">
+                {review.role || review.place}
+              </span>
+            </div>
+          </div>
+          <span className="px-2 py-0.5 rounded-full bg-success-jade/10 text-success-jade font-label-caps text-[8.5px] uppercase font-bold flex items-center gap-0.5 shrink-0">
+            <span className="material-symbols-outlined text-[11px]">verified</span>
+            Verified
+          </span>
+        </div>
+
+        <p className="font-body-md text-[11.5px] italic text-on-surface-variant leading-relaxed line-clamp-3">
+          &ldquo;{review.quote}&rdquo;
+        </p>
+      </div>
+
+      <div className="flex items-center justify-between mt-3 pt-2 border-t border-border-warm/40">
+        <div
+          className="flex text-gold-accent gap-0.5"
+          aria-label={`${review.rating} out of 5 stars`}
+        >
+          {Array.from({ length: 5 }).map((_, i) => (
+            <span
+              key={i}
+              className="material-symbols-outlined text-[14px]"
+              aria-hidden="true"
+            >
+              star
+            </span>
           ))}
         </div>
-        <span className="liquid-review-badge">
-          <svg
-            width="12"
-            height="12"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-          >
-            <polyline points="20 6 9 17 4 12" />
-          </svg>
-          Verified
+        <span className="font-label-caps text-[8.5px] text-on-surface-variant/80 font-medium">
+          {review.place}
         </span>
       </div>
     </article>
@@ -100,62 +83,91 @@ function ReviewCard({ review }: ReviewCardProps) {
 }
 
 export function ReviewsMarquee() {
-  // Split the 10 reviews evenly across 2 rows (5 per row)
   const row1 = reviews.slice(0, 5);
   const row2 = reviews.slice(5, 10);
 
   return (
     <section
-      className="home-section section--paper-alt reviews-marquee-section"
-      id="reviews-section"
-      aria-labelledby="reviews-heading"
+      className="w-full py-space-2xl sm:py-space-3xl bg-surface-container-low overflow-hidden relative"
+      aria-label="Verified Customer Reviews"
+      id="reviews"
     >
-      <div className="container reviews-heading-container">
-        <p className="eyebrow">Verified Traveler Reviews</p>
-        <h2 id="reviews-heading">
-          380+ trips.
-          <br />
+      {/* Edge gradient fade masks */}
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-16 sm:w-32 bg-gradient-to-r from-surface-container-low to-transparent z-10" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-16 sm:w-32 bg-gradient-to-l from-surface-container-low to-transparent z-10" />
+
+      <div className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin mb-space-lg text-center">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-accent/15 text-gold-accent font-label-caps text-[10px] mb-2 font-bold">
+          <span className="material-symbols-outlined text-[15px]">hotel_class</span>
+          VERIFIED TRAVELER REVIEWS
+        </div>
+        <h2 className="font-headline-lg text-headline-lg text-on-surface tracking-tight">
+          3,800+ Expeditions. <br className="hidden sm:inline" />
+          <span className="italic text-terracotta-sandstone">Quiet Confidence.</span>
         </h2>
-        <p className="reviews-lead">
-          Real reviews from tourists, pilgrims, and business travelers across
-          Agra, Delhi, Jaipur, and Mathura.
-        </p>
-        <div className="reviews-summary-pill" aria-label="Rating summary">
-          <span className="summary-star" aria-hidden="true">★</span>
-          <span className="summary-score">4.9 / 5</span>
-          <span className="summary-sep">·</span>
-          <span className="summary-trips">3,800+ Verified Journeys</span>
+        <div className="flex items-center justify-center gap-2 mt-2">
+          <div className="flex text-gold-accent" aria-hidden="true">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <span key={i} className="material-symbols-outlined text-[18px]">
+                star
+              </span>
+            ))}
+          </div>
+          <span className="font-title-md text-sm text-on-surface font-bold">4.9 / 5</span>
+          <span className="text-on-surface-variant text-xs font-medium">
+            · Over 3,800 Verified Journeys
+          </span>
         </div>
       </div>
 
-      <div
-        className="reviews-marquee-container"
-        aria-label="Customer reviews dual marquee"
-      >
+      {/* Marquee Tracks Container */}
+      <div className="flex flex-col gap-3 sm:gap-4 w-full">
         {/* Row 1 — Scrolls Left */}
-        <div className="reviews-marquee-row reviews-marquee-row--left">
-          <div className="reviews-marquee-track">
+        <div className="flex overflow-hidden group">
+          <div className="flex gap-3 sm:gap-4 animate-marquee group-hover:[animation-play-state:paused]">
             {row1.map((rev, idx) => (
-              <ReviewCard key={`r1-${idx}`} review={rev} />
+              <ReviewCard key={`r1-a-${idx}`} review={rev} />
+            ))}
+            {row1.map((rev, idx) => (
+              <ReviewCard key={`r1-b-${idx}`} review={rev} />
             ))}
           </div>
-          <div className="reviews-marquee-track" aria-hidden="true">
+          <div
+            className="flex gap-3 sm:gap-4 animate-marquee group-hover:[animation-play-state:paused]"
+            aria-hidden="true"
+          >
             {row1.map((rev, idx) => (
-              <ReviewCard key={`r1-dup-${idx}`} review={rev} />
+              <ReviewCard key={`r1-c-${idx}`} review={rev} />
+            ))}
+            {row1.map((rev, idx) => (
+              <ReviewCard key={`r1-d-${idx}`} review={rev} />
             ))}
           </div>
         </div>
 
         {/* Row 2 — Scrolls Right */}
-        <div className="reviews-marquee-row reviews-marquee-row--right">
-          <div className="reviews-marquee-track">
+        <div className="flex overflow-hidden group">
+          <div
+            className="flex gap-3 sm:gap-4 animate-marquee group-hover:[animation-play-state:paused]"
+            style={{ animationDirection: "reverse" }}
+          >
             {row2.map((rev, idx) => (
-              <ReviewCard key={`r2-${idx}`} review={rev} />
+              <ReviewCard key={`r2-a-${idx}`} review={rev} />
+            ))}
+            {row2.map((rev, idx) => (
+              <ReviewCard key={`r2-b-${idx}`} review={rev} />
             ))}
           </div>
-          <div className="reviews-marquee-track" aria-hidden="true">
+          <div
+            className="flex gap-3 sm:gap-4 animate-marquee group-hover:[animation-play-state:paused]"
+            style={{ animationDirection: "reverse" }}
+            aria-hidden="true"
+          >
             {row2.map((rev, idx) => (
-              <ReviewCard key={`r2-dup-${idx}`} review={rev} />
+              <ReviewCard key={`r2-c-${idx}`} review={rev} />
+            ))}
+            {row2.map((rev, idx) => (
+              <ReviewCard key={`r2-d-${idx}`} review={rev} />
             ))}
           </div>
         </div>

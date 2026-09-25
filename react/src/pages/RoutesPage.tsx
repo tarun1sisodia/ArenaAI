@@ -223,9 +223,6 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-end mb-space-xl">
             <div className="lg:col-span-8">
-              <span className="px-3 py-1 rounded-full bg-primary/10 text-primary font-label-caps text-[11px] uppercase tracking-wider font-bold block w-max mb-3">
-                Intercity Outstation Corridors
-              </span>
               <h1 className="font-headline-hero text-headline-hero text-ink-charcoal tracking-tight max-w-3xl">
                 Point-to-point intercity cabs.{" "}
                 <span className="italic font-normal text-terracotta-sandstone">Zero hidden return fares.</span>
@@ -340,7 +337,7 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
                     </span>
                   </div>
 
-                  <h3 className="font-headline-sm text-base sm:text-lg text-on-surface font-semibold mb-1.5">{route.name}</h3>
+                  <h3 className="font-headline-md text-sm sm:text-base text-on-surface font-bold mb-1.5">{route.name}</h3>
 
                   <div className="flex items-center gap-3 font-body-sm text-[10.5px] text-on-surface-variant mb-2 flex-wrap">
                     <span className="flex items-center gap-1 font-medium">

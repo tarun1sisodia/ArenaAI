@@ -35,6 +35,7 @@
 | `LOCK-N03` | **4-Step Booking & Billing Engine** | `LOCKED` | `react/src/features/booking/` | Step 1 Vehicle Tier selection, Step 2 Schedule & Pickup details, Step 3 Add-on Upgrades & summary, Step 4 Billing Form, and Voucher Confirmation. 28% advance token calculation with 72% balance on drop-off. | 2026-09-25 |
 | `LOCK-N04` | **Ultra-Luxury Chrome Suite** | `LOCKED` | `react/src/components/chrome/` | Glassmorphic sticky header (`bg-surface/90 backdrop-blur-xl`), phone + WhatsApp concierge CTAs, mobile navigation drawer, and 4-column luxury footer with 28% advance guarantee trust seals. | 2026-09-25 |
 | `LOCK-N05` | **Fare Engine Invariants** | `LOCKED` | `react/src/features/booking/fareEngine.ts`<br>`react/src/fares.ts` | 300 km/day minimum outstation billing, toll inclusions, 28% advance deposit calculation, zero tourist trap guarantee. | 2026-09-25 |
+| `LOCK-N06` | **Dual Infinite Reviews Marquee** | `LOCKED` | `react/src/components/home/ReviewsMarquee.tsx` | Two-row opposing infinite marquee roller in Mughal Terracotta tokens. Row 1 scrolls left, Row 2 reverses right. Pause-on-hover, edge-gradient masks, verified badge pills, gold 5-star Material Symbols. Data from `reviews` catalogue. All class names use `font-*` and `text-*` design tokens only. | 2026-09-25 |
 
 ---
 

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { contact } from "../../data/contact";
+import { WhatsAppIcon } from "../icons/WhatsAppIcon";
 
 export interface StickyLeadBarProps {
   currentPath?: string;
@@ -55,7 +56,7 @@ export function StickyLeadBar({ currentPath }: StickyLeadBarProps) {
         rel="noopener noreferrer"
         aria-label="WhatsApp Concierge"
       >
-        <span className="material-symbols-outlined text-gold-accent text-[18px]">chat</span>
+        <WhatsAppIcon className="w-[18px] h-[18px] text-gold-accent shrink-0" />
         <span className="mt-0.5">WhatsApp</span>
       </a>
 

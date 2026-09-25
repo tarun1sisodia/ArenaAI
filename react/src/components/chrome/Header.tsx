@@ -3,6 +3,7 @@ import { BrandLogo } from "./BrandLogo";
 import { MobileNavSheet } from "./MobileNavSheet";
 import { contact } from "../../data/contact";
 import { prefetchDocument } from "../../app/prefetch";
+import { WhatsAppIcon } from "../icons/WhatsAppIcon";
 
 export interface HeaderProps {
   currentPath?: string;
@@ -39,14 +40,35 @@ export function Header({
     }
   }, [onToggleMobileNav]);
 
+  const isHomePage =
+    activePath === "/" || activePath === "/en/" || activePath === "/index.html";
+
+  const [heroScrolledPast, setHeroScrolledPast] = useState(() => {
+    if (!isHomePage) return true;
+    if (typeof window !== "undefined") {
+      return sessionStorage.getItem("skb_hero_shown") === "true";
+    }
+    return false;
+  });
+
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
+      const heroAlreadyShown =
+        typeof window !== "undefined" &&
+        sessionStorage.getItem("skb_hero_shown") === "true";
+
+      if (isHomePage && !heroAlreadyShown) {
+        // Show navigation bar only when the whole hero image has been scrolled past
+        setHeroScrolledPast(window.scrollY >= 1050);
+      } else {
+        setHeroScrolledPast(true);
+      }
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [isHomePage]);
 
   const navLinks = [
     { label: "Home", href: "/" },
@@ -69,7 +91,11 @@ export function Header({
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 w-full z-50 transition-all duration-300 ${
+        className={`fixed top-0 left-0 right-0 w-full z-50 transition-all duration-500 ease-out transform ${
+          heroScrolledPast
+            ? "translate-y-0 opacity-100 pointer-events-auto"
+            : "-translate-y-full opacity-0 pointer-events-none"
+        } ${
           isScrolled
             ? "bg-surface/95 backdrop-blur-xl shadow-[0_1px_12px_rgba(159,60,22,0.08)] border-b border-border-warm/60"
             : "bg-surface/90 backdrop-blur-md border-b border-border-warm/30 shadow-[0_1px_8px_rgba(0,0,0,0.03)]"
@@ -94,7 +120,7 @@ export function Header({
                   aria-current={active ? "page" : undefined}
                   className={`px-2.5 py-1 text-xs font-semibold transition-colors rounded-md ${
                     active
-                      ? "bg-primary-container text-on-primary-container shadow-xs"
+                      ? "bg-primary text-white shadow-xs"
                       : "text-on-surface-variant hover:text-on-surface hover:bg-sandstone-wash"
                   }`}
                 >
@@ -109,22 +135,22 @@ export function Header({
             {/* Phone Call CTA */}
             <a
               href={`tel:${contact.phone}`}
-              className="hidden lg:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-container hover:bg-surface-container-high transition-colors text-xs text-on-surface font-semibold"
+              className="hidden lg:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-sandstone-wash hover:bg-surface-container-high transition-colors text-xs text-primary font-bold border border-primary/20"
               aria-label={`Call ${contact.phoneDisplay}`}
             >
               <span className="material-symbols-outlined text-primary text-[15px]">call</span>
               <span>{contact.phoneDisplay}</span>
             </a>
 
-            {/* WhatsApp Concierge */}
+            {/* WhatsApp Concierge - Light, vibrant luxury terracotta with crisp white text */}
             <a
               href={`https://wa.me/${contact.whatsapp}?text=Hello%20SK%20Baghel%20Travels,%20I%20would%20like%20to%20inquire%20about%20a%20booking.`}
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden sm:inline-flex items-center gap-1.5 bg-ink-charcoal text-ivory-surface px-3 py-1 rounded-md text-xs hover:bg-ink-slate hover:text-on-primary transition-colors shadow-xs font-semibold"
+              className="hidden sm:inline-flex items-center gap-1.5 bg-primary hover:bg-primary-container text-white px-3.5 py-1.5 rounded-md text-xs font-semibold shadow-xs transition-all active:scale-[0.98]"
             >
-              <span className="material-symbols-outlined text-[15px] text-gold-accent">chat</span>
-              <span>WhatsApp Concierge</span>
+              <WhatsAppIcon className="w-[15px] h-[15px] text-white shrink-0" />
+              <span className="text-white font-medium">WhatsApp Concierge</span>
             </a>
 
             {/* Mobile Hamburger Menu Button */}
@@ -133,7 +159,7 @@ export function Header({
               onClick={toggleMobileNav}
               aria-label={isMobileNavOpen ? "Close menu" : "Open menu"}
               aria-expanded={isMobileNavOpen}
-              className="xl:hidden p-1 rounded-md text-on-surface hover:bg-sandstone-wash transition-colors flex items-center justify-center"
+              className="xl:hidden p-1.5 rounded-md text-on-surface hover:bg-sandstone-wash transition-colors flex items-center justify-center border border-border-warm/50"
             >
               <span className="material-symbols-outlined text-[20px]">
                 {isMobileNavOpen ? "close" : "menu"}

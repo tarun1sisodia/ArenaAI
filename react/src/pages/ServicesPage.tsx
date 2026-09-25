@@ -252,7 +252,7 @@ export function ServicesPage({ language = "en" }: ServicesPageProps) {
                 <div className="absolute bottom-2.5 left-2.5 right-2.5 p-2 sm:p-2.5 bg-surface-container-lowest/95 backdrop-blur-md rounded-lg shadow-xs border border-border-warm/40">
                   <div className="flex items-center justify-between text-on-surface">
                     <span className="font-label-caps text-[9px] text-primary uppercase font-bold">Starting Tariff</span>
-                    <span className="font-price-display text-xl text-primary font-bold">{s.startingFare}</span>
+                    <span className="font-price-display text-base sm:text-lg text-primary font-bold">{s.startingFare}</span>
                   </div>
                   <p className="font-body-sm text-[9.5px] text-on-surface-variant mt-0.5">{s.fareDetail}</p>
                 </div>
