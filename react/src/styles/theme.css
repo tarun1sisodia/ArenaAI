@@ -87,48 +87,48 @@
   --font-label-lg: "Plus Jakarta Sans", sans-serif;
   --font-label-caps: "Plus Jakarta Sans", sans-serif;
 
-  /* Scaled-down Font size & line height tokens (70% scale) */
-  --text-headline-hero: 28px;
-  --text-headline-hero--line-height: 34px;
-  --text-headline-hero-mobile: 20px;
-  --text-headline-hero-mobile--line-height: 25px;
-  --text-headline-lg: 20px;
-  --text-headline-lg--line-height: 26px;
-  --text-headline-lg-mobile: 16px;
-  --text-headline-lg-mobile--line-height: 22px;
-  --text-headline-md: 15px;
-  --text-headline-md--line-height: 21px;
-  --text-headline-sm: 13px;
-  --text-headline-sm--line-height: 18px;
-  --text-price-display: 22px;
-  --text-price-display--line-height: 26px;
-  --text-title-lg: 15px;
-  --text-title-lg--line-height: 21px;
-  --text-title-md: 13.5px;
-  --text-title-md--line-height: 19px;
-  --text-body-lg: 14.5px;
-  --text-body-lg--line-height: 22px;
-  --text-body-md: 13px;
-  --text-body-md--line-height: 20px;
-  --text-body-sm: 11.5px;
-  --text-body-sm--line-height: 17px;
-  --text-label-lg: 12px;
-  --text-label-lg--line-height: 17px;
-  --text-label-caps: 10px;
-  --text-label-caps--line-height: 14px;
+  /* Scaled-up Head Text (+50%) & Scaled-down Body/Cards (-20%) */
+  --text-headline-hero: 42px;
+  --text-headline-hero--line-height: 50px;
+  --text-headline-hero-mobile: 30px;
+  --text-headline-hero-mobile--line-height: 36px;
+  --text-headline-lg: 30px;
+  --text-headline-lg--line-height: 38px;
+  --text-headline-lg-mobile: 24px;
+  --text-headline-lg-mobile--line-height: 30px;
+  --text-headline-md: 12px;
+  --text-headline-md--line-height: 17px;
+  --text-headline-sm: 11px;
+  --text-headline-sm--line-height: 15px;
+  --text-price-display: 20px;
+  --text-price-display--line-height: 24px;
+  --text-title-lg: 12.5px;
+  --text-title-lg--line-height: 17px;
+  --text-title-md: 11px;
+  --text-title-md--line-height: 15px;
+  --text-body-lg: 12px;
+  --text-body-lg--line-height: 18px;
+  --text-body-md: 10.5px;
+  --text-body-md--line-height: 16px;
+  --text-body-sm: 9.5px;
+  --text-body-sm--line-height: 14px;
+  --text-label-lg: 10px;
+  --text-label-lg--line-height: 14px;
+  --text-label-caps: 8px;
+  --text-label-caps--line-height: 11px;
 
-  /* Tightened Spacing Tokens (-25% to -35% gap reduction) */
-  --spacing-space-xs: 0.25rem;
-  --spacing-space-sm: 0.375rem;
-  --spacing-space-md: 0.625rem;
-  --spacing-space-lg: 1rem;
-  --spacing-space-xl: 1.5rem;
-  --spacing-space-2xl: 2rem;
-  --spacing-space-3xl: 3rem;
-  --spacing-gutter: 1rem;
-  --spacing-gutter-mobile: 0.75rem;
-  --spacing-margin: 1.75rem;
-  --spacing-margin-mobile: 1rem;
+  /* Tightened Spacing Tokens (-20% reduction) */
+  --spacing-space-xs: 0.2rem;
+  --spacing-space-sm: 0.3rem;
+  --spacing-space-md: 0.5rem;
+  --spacing-space-lg: 0.8rem;
+  --spacing-space-xl: 1.2rem;
+  --spacing-space-2xl: 1.6rem;
+  --spacing-space-3xl: 2.4rem;
+  --spacing-gutter: 0.8rem;
+  --spacing-gutter-mobile: 0.6rem;
+  --spacing-margin: 1.4rem;
+  --spacing-margin-mobile: 0.8rem;
 }
 
 /* Infinite Marquee Roller Animation */

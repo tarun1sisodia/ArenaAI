@@ -163,33 +163,30 @@ export function HomePage({ language = "en" }: HomePageProps) {
                 <button
                   type="button"
                   onClick={() => setTripType("oneway")}
-                  className={`py-1.5 rounded-md transition-all font-semibold text-[10.5px] tracking-wider ${
-                    tripType === "oneway"
+                  className={`py-1.5 rounded-md transition-all font-semibold text-[10.5px] tracking-wider ${tripType === "oneway"
                       ? "bg-ink-charcoal text-ivory-surface shadow-sm"
                       : "text-on-surface-variant hover:text-on-surface"
-                  }`}
+                    }`}
                 >
                   ONE WAY
                 </button>
                 <button
                   type="button"
                   onClick={() => setTripType("round")}
-                  className={`py-1.5 rounded-md transition-all font-semibold text-[10.5px] tracking-wider ${
-                    tripType === "round"
+                  className={`py-1.5 rounded-md transition-all font-semibold text-[10.5px] tracking-wider ${tripType === "round"
                       ? "bg-ink-charcoal text-ivory-surface shadow-sm"
                       : "text-on-surface-variant hover:text-on-surface"
-                  }`}
+                    }`}
                 >
                   ROUND TRIP
                 </button>
                 <button
                   type="button"
                   onClick={() => setTripType("local")}
-                  className={`py-1.5 rounded-md transition-all font-semibold text-[10.5px] tracking-wider ${
-                    tripType === "local"
+                  className={`py-1.5 rounded-md transition-all font-semibold text-[10.5px] tracking-wider ${tripType === "local"
                       ? "bg-ink-charcoal text-ivory-surface shadow-sm"
                       : "text-on-surface-variant hover:text-on-surface"
-                  }`}
+                    }`}
                 >
                   LOCAL TAXI
                 </button>
@@ -243,11 +240,10 @@ export function HomePage({ language = "en" }: HomePageProps) {
                   <button
                     type="button"
                     onClick={() => setSelectedVehicle("sedan")}
-                    className={`flex flex-col items-center justify-center p-1.5 rounded-lg transition-all border ${
-                      selectedVehicle === "sedan"
+                    className={`flex flex-col items-center justify-center p-1.5 rounded-lg transition-all border ${selectedVehicle === "sedan"
                         ? "bg-sandstone-wash border-primary text-primary font-bold shadow-sm"
                         : "bg-surface-container-low border-transparent text-on-surface hover:bg-surface-container"
-                    }`}
+                      }`}
                   >
                     <span className="material-symbols-outlined text-[18px]">directions_car</span>
                     <span className="font-title-md text-[10.5px] mt-0.5">Sedan</span>
@@ -255,11 +251,10 @@ export function HomePage({ language = "en" }: HomePageProps) {
                   <button
                     type="button"
                     onClick={() => setSelectedVehicle("ertiga")}
-                    className={`flex flex-col items-center justify-center p-1.5 rounded-lg transition-all border ${
-                      selectedVehicle === "ertiga"
+                    className={`flex flex-col items-center justify-center p-1.5 rounded-lg transition-all border ${selectedVehicle === "ertiga"
                         ? "bg-sandstone-wash border-primary text-primary font-bold shadow-sm"
                         : "bg-surface-container-low border-transparent text-on-surface hover:bg-surface-container"
-                    }`}
+                      }`}
                   >
                     <span className="material-symbols-outlined text-[18px]">directions_car</span>
                     <span className="font-title-md text-[10.5px] mt-0.5">Ertiga</span>
@@ -267,11 +262,10 @@ export function HomePage({ language = "en" }: HomePageProps) {
                   <button
                     type="button"
                     onClick={() => setSelectedVehicle("innova")}
-                    className={`flex flex-col items-center justify-center p-1.5 rounded-lg transition-all border ${
-                      selectedVehicle === "innova"
+                    className={`flex flex-col items-center justify-center p-1.5 rounded-lg transition-all border ${selectedVehicle === "innova"
                         ? "bg-sandstone-wash border-primary text-primary font-bold shadow-sm"
                         : "bg-surface-container-low border-transparent text-on-surface hover:bg-surface-container"
-                    }`}
+                      }`}
                   >
                     <span className="material-symbols-outlined text-[18px]">airport_shuttle</span>
                     <span className="font-title-md text-[10.5px] mt-0.5">Crysta</span>
@@ -279,11 +273,10 @@ export function HomePage({ language = "en" }: HomePageProps) {
                   <button
                     type="button"
                     onClick={() => setSelectedVehicle("tempo")}
-                    className={`flex flex-col items-center justify-center p-1.5 rounded-lg transition-all border ${
-                      selectedVehicle === "tempo"
+                    className={`flex flex-col items-center justify-center p-1.5 rounded-lg transition-all border ${selectedVehicle === "tempo"
                         ? "bg-sandstone-wash border-primary text-primary font-bold shadow-sm"
                         : "bg-surface-container-low border-transparent text-on-surface hover:bg-surface-container"
-                    }`}
+                      }`}
                   >
                     <span className="material-symbols-outlined text-[18px]">rv_hookup</span>
                     <span className="font-title-md text-[10.5px] mt-0.5">Tempo</span>
@@ -291,11 +284,10 @@ export function HomePage({ language = "en" }: HomePageProps) {
                   <button
                     type="button"
                     onClick={() => setSelectedVehicle("urbania")}
-                    className={`flex flex-col items-center justify-center p-1.5 rounded-lg transition-all border ${
-                      selectedVehicle === "urbania"
+                    className={`flex flex-col items-center justify-center p-1.5 rounded-lg transition-all border ${selectedVehicle === "urbania"
                         ? "bg-sandstone-wash border-primary text-primary font-bold shadow-sm"
                         : "bg-surface-container-low border-transparent text-on-surface hover:bg-surface-container"
-                    }`}
+                      }`}
                   >
                     <span className="material-symbols-outlined text-[18px]">directions_bus</span>
                     <span className="font-title-md text-[10.5px] mt-0.5">Urbania</span>
@@ -392,36 +384,36 @@ export function HomePage({ language = "en" }: HomePageProps) {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-md">
           {/* Agra -> Delhi */}
-          <div className="bg-surface-container-lowest rounded-xl p-3.5 sm:p-4 flex flex-col justify-between shadow-sm hover:shadow-md transition-all group border border-border-warm/40">
+          <div className="bg-surface-container-lowest rounded-xl p-2.5 sm:p-3 flex flex-col justify-between shadow-sm hover:shadow-md transition-all group border border-border-warm/40">
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="px-2 py-0.5 rounded bg-sandstone-wash text-primary font-label-caps text-[9.5px] uppercase font-bold">
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="px-2 py-0.5 rounded bg-sandstone-wash text-primary font-label-caps text-[8.5px] uppercase font-bold">
                   Most Popular
                 </span>
-                <span className="material-symbols-outlined text-on-surface-variant text-[18px]">flight</span>
+                <span className="material-symbols-outlined text-on-surface-variant text-[16px]">flight</span>
               </div>
-              <h3 className="font-title-md text-[15px] font-bold text-on-surface group-hover:text-primary transition-colors">
+              <h3 className="font-title-md text-[13px] font-bold text-on-surface group-hover:text-primary transition-colors">
                 Agra → Delhi
               </h3>
-              <div className="flex items-center gap-2.5 font-body-sm text-[11.5px] text-on-surface-variant mt-1 mb-2">
+              <div className="flex items-center gap-2 font-body-sm text-[10px] text-on-surface-variant mt-0.5 mb-1.5">
                 <span className="flex items-center gap-1">
-                  <span className="material-symbols-outlined text-[13px]">pin_drop</span>230 km
+                  <span className="material-symbols-outlined text-[12px]">pin_drop</span>230 km
                 </span>
                 <span className="flex items-center gap-1">
-                  <span className="material-symbols-outlined text-[13px]">schedule</span>3h 30m
+                  <span className="material-symbols-outlined text-[12px]">schedule</span>3h 30m
                 </span>
               </div>
-              <p className="font-body-sm text-[12px] text-on-surface-variant mb-3 leading-normal">
+              <p className="font-body-sm text-[10.5px] text-on-surface-variant mb-2.5 leading-normal">
                 Yamuna Expressway toll included. Direct drop to Delhi IGI Airport Terminal 1, 2 &amp; 3.
               </p>
             </div>
-            <div className="pt-2 flex items-baseline justify-between border-t border-border-warm/40">
+            <div className="pt-1.5 flex items-baseline justify-between border-t border-border-warm/40">
               <div>
-                <span className="font-label-caps text-[9.5px] text-on-surface-variant block uppercase">Sedan from</span>
-                <span className="font-price-display text-xl font-bold text-primary">₹3,499</span>
+                <span className="font-label-caps text-[8.5px] text-on-surface-variant block uppercase">Sedan from</span>
+                <span className="font-price-display text-lg font-bold text-primary">₹3,499</span>
               </div>
               <a
-                className="px-3 py-1.5 rounded-lg bg-ink-charcoal hover:bg-primary text-ivory-surface text-xs font-semibold transition-colors"
+                className="px-2.5 py-1 rounded-md bg-ink-charcoal hover:bg-primary text-ivory-surface text-[11px] font-semibold transition-colors"
                 href="/book?from=Agra&to=Delhi"
               >
                 Book ↗
@@ -430,36 +422,36 @@ export function HomePage({ language = "en" }: HomePageProps) {
           </div>
 
           {/* Agra -> Jaipur */}
-          <div className="bg-surface-container-lowest rounded-xl p-3.5 sm:p-4 flex flex-col justify-between shadow-sm hover:shadow-md transition-all group border border-border-warm/40">
+          <div className="bg-surface-container-lowest rounded-xl p-2.5 sm:p-3 flex flex-col justify-between shadow-sm hover:shadow-md transition-all group border border-border-warm/40">
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="px-2 py-0.5 rounded bg-sandstone-wash text-primary font-label-caps text-[9.5px] uppercase font-bold">
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="px-2 py-0.5 rounded bg-sandstone-wash text-primary font-label-caps text-[8.5px] uppercase font-bold">
                   Golden Triangle
                 </span>
-                <span className="material-symbols-outlined text-on-surface-variant text-[18px]">castle</span>
+                <span className="material-symbols-outlined text-on-surface-variant text-[16px]">castle</span>
               </div>
-              <h3 className="font-title-md text-[15px] font-bold text-on-surface group-hover:text-primary transition-colors">
+              <h3 className="font-title-md text-[13px] font-bold text-on-surface group-hover:text-primary transition-colors">
                 Agra → Jaipur
               </h3>
-              <div className="flex items-center gap-2.5 font-body-sm text-[11.5px] text-on-surface-variant mt-1 mb-2">
+              <div className="flex items-center gap-2 font-body-sm text-[10px] text-on-surface-variant mt-0.5 mb-1.5">
                 <span className="flex items-center gap-1">
-                  <span className="material-symbols-outlined text-[13px]">pin_drop</span>240 km
+                  <span className="material-symbols-outlined text-[12px]">pin_drop</span>240 km
                 </span>
                 <span className="flex items-center gap-1">
-                  <span className="material-symbols-outlined text-[13px]">schedule</span>4h 30m
+                  <span className="material-symbols-outlined text-[12px]">schedule</span>4h 30m
                 </span>
               </div>
-              <p className="font-body-sm text-[12px] text-on-surface-variant mb-3 leading-normal">
+              <p className="font-body-sm text-[10.5px] text-on-surface-variant mb-2.5 leading-normal">
                 Via NH-21. Optional stopover at Fatehpur Sikri heritage palace en route.
               </p>
             </div>
-            <div className="pt-2 flex items-baseline justify-between border-t border-border-warm/40">
+            <div className="pt-1.5 flex items-baseline justify-between border-t border-border-warm/40">
               <div>
-                <span className="font-label-caps text-[9.5px] text-on-surface-variant block uppercase">Sedan from</span>
-                <span className="font-price-display text-xl font-bold text-primary">₹3,499</span>
+                <span className="font-label-caps text-[8.5px] text-on-surface-variant block uppercase">Sedan from</span>
+                <span className="font-price-display text-lg font-bold text-primary">₹3,499</span>
               </div>
               <a
-                className="px-3 py-1.5 rounded-lg bg-ink-charcoal hover:bg-primary text-ivory-surface text-xs font-semibold transition-colors"
+                className="px-2.5 py-1 rounded-md bg-ink-charcoal hover:bg-primary text-ivory-surface text-[11px] font-semibold transition-colors"
                 href="/book?from=Agra&to=Jaipur"
               >
                 Book ↗
@@ -468,36 +460,36 @@ export function HomePage({ language = "en" }: HomePageProps) {
           </div>
 
           {/* Agra -> Mathura */}
-          <div className="bg-surface-container-lowest rounded-xl p-3.5 sm:p-4 flex flex-col justify-between shadow-sm hover:shadow-md transition-all group border border-border-warm/40">
+          <div className="bg-surface-container-lowest rounded-xl p-2.5 sm:p-3 flex flex-col justify-between shadow-sm hover:shadow-md transition-all group border border-border-warm/40">
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="px-2 py-0.5 rounded bg-sandstone-wash text-primary font-label-caps text-[9.5px] uppercase font-bold">
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="px-2 py-0.5 rounded bg-sandstone-wash text-primary font-label-caps text-[8.5px] uppercase font-bold">
                   Pilgrimage
                 </span>
-                <span className="material-symbols-outlined text-on-surface-variant text-[18px]">temple_hindu</span>
+                <span className="material-symbols-outlined text-on-surface-variant text-[16px]">temple_hindu</span>
               </div>
-              <h3 className="font-title-md text-[15px] font-bold text-on-surface group-hover:text-primary transition-colors">
+              <h3 className="font-title-md text-[13px] font-bold text-on-surface group-hover:text-primary transition-colors">
                 Agra → Mathura
               </h3>
-              <div className="flex items-center gap-2.5 font-body-sm text-[11.5px] text-on-surface-variant mt-1 mb-2">
+              <div className="flex items-center gap-2 font-body-sm text-[10px] text-on-surface-variant mt-0.5 mb-1.5">
                 <span className="flex items-center gap-1">
-                  <span className="material-symbols-outlined text-[13px]">pin_drop</span>55 km
+                  <span className="material-symbols-outlined text-[12px]">pin_drop</span>55 km
                 </span>
                 <span className="flex items-center gap-1">
-                  <span className="material-symbols-outlined text-[13px]">schedule</span>1h 15m
+                  <span className="material-symbols-outlined text-[12px]">schedule</span>1h 15m
                 </span>
               </div>
-              <p className="font-body-sm text-[12px] text-on-surface-variant mb-3 leading-normal">
+              <p className="font-body-sm text-[10.5px] text-on-surface-variant mb-2.5 leading-normal">
                 Coordinated around temple darshan. Banke Bihari &amp; Prem Mandir visit.
               </p>
             </div>
-            <div className="pt-2 flex items-baseline justify-between border-t border-border-warm/40">
+            <div className="pt-1.5 flex items-baseline justify-between border-t border-border-warm/40">
               <div>
-                <span className="font-label-caps text-[9.5px] text-on-surface-variant block uppercase">Sedan from</span>
-                <span className="font-price-display text-xl font-bold text-primary">₹2,200</span>
+                <span className="font-label-caps text-[8.5px] text-on-surface-variant block uppercase">Sedan from</span>
+                <span className="font-price-display text-lg font-bold text-primary">₹2,200</span>
               </div>
               <a
-                className="px-3 py-1.5 rounded-lg bg-ink-charcoal hover:bg-primary text-ivory-surface text-xs font-semibold transition-colors"
+                className="px-2.5 py-1 rounded-md bg-ink-charcoal hover:bg-primary text-ivory-surface text-[11px] font-semibold transition-colors"
                 href="/book?from=Agra&to=Mathura"
               >
                 Book ↗
@@ -506,36 +498,36 @@ export function HomePage({ language = "en" }: HomePageProps) {
           </div>
 
           {/* Agra -> Gwalior */}
-          <div className="bg-surface-container-lowest rounded-xl p-3.5 sm:p-4 flex flex-col justify-between shadow-sm hover:shadow-md transition-all group border border-border-warm/40">
+          <div className="bg-surface-container-lowest rounded-xl p-2.5 sm:p-3 flex flex-col justify-between shadow-sm hover:shadow-md transition-all group border border-border-warm/40">
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="px-2 py-0.5 rounded bg-sandstone-wash text-primary font-label-caps text-[9.5px] uppercase font-bold">
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="px-2 py-0.5 rounded bg-sandstone-wash text-primary font-label-caps text-[8.5px] uppercase font-bold">
                   Day Trip
                 </span>
-                <span className="material-symbols-outlined text-on-surface-variant text-[18px]">fort</span>
+                <span className="material-symbols-outlined text-on-surface-variant text-[16px]">fort</span>
               </div>
-              <h3 className="font-title-md text-[15px] font-bold text-on-surface group-hover:text-primary transition-colors">
+              <h3 className="font-title-md text-[13px] font-bold text-on-surface group-hover:text-primary transition-colors">
                 Agra → Gwalior
               </h3>
-              <div className="flex items-center gap-2.5 font-body-sm text-[11.5px] text-on-surface-variant mt-1 mb-2">
+              <div className="flex items-center gap-2 font-body-sm text-[10px] text-on-surface-variant mt-0.5 mb-1.5">
                 <span className="flex items-center gap-1">
-                  <span className="material-symbols-outlined text-[13px]">pin_drop</span>120 km
+                  <span className="material-symbols-outlined text-[12px]">pin_drop</span>120 km
                 </span>
                 <span className="flex items-center gap-1">
-                  <span className="material-symbols-outlined text-[13px]">schedule</span>2h 30m
+                  <span className="material-symbols-outlined text-[12px]">schedule</span>2h 30m
                 </span>
               </div>
-              <p className="font-body-sm text-[12px] text-on-surface-variant mb-3 leading-normal">
+              <p className="font-body-sm text-[10.5px] text-on-surface-variant mb-2.5 leading-normal">
                 Via NH-44. Gwalior Fort &amp; Jai Vilas Palace drop with interstate permit included.
               </p>
             </div>
-            <div className="pt-2 flex items-baseline justify-between border-t border-border-warm/40">
+            <div className="pt-1.5 flex items-baseline justify-between border-t border-border-warm/40">
               <div>
-                <span className="font-label-caps text-[9.5px] text-on-surface-variant block uppercase">Sedan from</span>
-                <span className="font-price-display text-xl font-bold text-primary">₹3,000</span>
+                <span className="font-label-caps text-[8.5px] text-on-surface-variant block uppercase">Sedan from</span>
+                <span className="font-price-display text-lg font-bold text-primary">₹3,000</span>
               </div>
               <a
-                className="px-3 py-1.5 rounded-lg bg-ink-charcoal hover:bg-primary text-ivory-surface text-xs font-semibold transition-colors"
+                className="px-2.5 py-1 rounded-md bg-ink-charcoal hover:bg-primary text-ivory-surface text-[11px] font-semibold transition-colors"
                 href="/book?from=Agra&to=Gwalior"
               >
                 Book ↗
@@ -569,145 +561,145 @@ export function HomePage({ language = "en" }: HomePageProps) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-space-md">
             {/* 01: One-Way Outstation Drop */}
-            <div className="bg-surface-container-lowest p-4 sm:p-5 rounded-xl shadow-sm hover:shadow-md transition-all flex flex-col justify-between border border-border-warm/40">
+            <div className="bg-surface-container-lowest p-2.5 sm:p-3 rounded-xl shadow-sm hover:shadow-md transition-all flex flex-col justify-between border border-border-warm/40">
               <div>
-                <div className="flex items-center justify-between mb-3">
-                  <span className="font-price-display text-xl font-bold text-primary">01</span>
-                  <span className="material-symbols-outlined text-primary text-[24px]">directions_car</span>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-price-display text-lg font-bold text-primary">01</span>
+                  <span className="material-symbols-outlined text-primary text-[20px]">directions_car</span>
                 </div>
-                <h3 className="font-title-md text-[15px] font-bold text-on-surface mb-1.5">One-Way Outstation Drop</h3>
-                <p className="font-body-sm text-[12px] text-on-surface-variant mb-3 leading-normal">
+                <h3 className="font-title-md text-[13px] font-bold text-on-surface mb-1">One-Way Outstation Drop</h3>
+                <p className="font-body-sm text-[10.5px] text-on-surface-variant mb-2.5 leading-normal">
                   Point-to-point intercity drops on expressways. Guaranteed fixed fares with zero return journey charges.
                 </p>
               </div>
               <div>
-                <div className="flex flex-wrap gap-1.5 mb-3">
-                  <span className="px-2 py-0.5 rounded bg-surface-container text-on-surface font-label-caps text-[9.5px]">DELHI ₹3,499</span>
-                  <span className="px-2 py-0.5 rounded bg-surface-container text-on-surface font-label-caps text-[9.5px]">JAIPUR ₹3,499</span>
+                <div className="flex flex-wrap gap-1 mb-2.5">
+                  <span className="px-1.5 py-0.5 rounded bg-surface-container text-on-surface font-label-caps text-[8.5px]">DELHI ₹3,499</span>
+                  <span className="px-1.5 py-0.5 rounded bg-surface-container text-on-surface font-label-caps text-[8.5px]">JAIPUR ₹3,499</span>
                 </div>
-                <a className="inline-flex items-center gap-1 font-label-lg text-xs text-primary hover:underline font-semibold" href="/routes">
+                <a className="inline-flex items-center gap-1 font-label-lg text-[11px] text-primary hover:underline font-semibold" href="/routes">
                   <span>View all routes</span>
-                  <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
+                  <span className="material-symbols-outlined text-[13px]">arrow_forward</span>
                 </a>
               </div>
             </div>
 
             {/* 02: Outstation Round-Trip */}
-            <div className="bg-surface-container-lowest p-4 sm:p-5 rounded-xl shadow-sm hover:shadow-md transition-all flex flex-col justify-between border border-border-warm/40">
+            <div className="bg-surface-container-lowest p-2.5 sm:p-3 rounded-xl shadow-sm hover:shadow-md transition-all flex flex-col justify-between border border-border-warm/40">
               <div>
-                <div className="flex items-center justify-between mb-3">
-                  <span className="font-price-display text-xl font-bold text-primary">02</span>
-                  <span className="material-symbols-outlined text-primary text-[24px]">sync_alt</span>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-price-display text-lg font-bold text-primary">02</span>
+                  <span className="material-symbols-outlined text-primary text-[20px]">sync_alt</span>
                 </div>
-                <h3 className="font-title-md text-[15px] font-bold text-on-surface mb-1.5">Outstation Round-Trip</h3>
-                <p className="font-body-sm text-[12px] text-on-surface-variant mb-3 leading-normal">
+                <h3 className="font-title-md text-[13px] font-bold text-on-surface mb-1">Outstation Round-Trip</h3>
+                <p className="font-body-sm text-[10.5px] text-on-surface-variant mb-2.5 leading-normal">
                   Multi-day travel with verified drivers. Transparent 300 km/day billing in clean, comfortable cabs.
                 </p>
               </div>
               <div>
-                <div className="flex flex-wrap gap-1.5 mb-3">
-                  <span className="px-2 py-0.5 rounded bg-surface-container text-on-surface font-label-caps text-[9.5px]">MIN 300 KM/DAY</span>
-                  <span className="px-2 py-0.5 rounded bg-surface-container text-on-surface font-label-caps text-[9.5px]">ALL INDIA PERMIT</span>
+                <div className="flex flex-wrap gap-1 mb-2.5">
+                  <span className="px-1.5 py-0.5 rounded bg-surface-container text-on-surface font-label-caps text-[8.5px]">MIN 300 KM/DAY</span>
+                  <span className="px-1.5 py-0.5 rounded bg-surface-container text-on-surface font-label-caps text-[8.5px]">ALL INDIA PERMIT</span>
                 </div>
-                <a className="inline-flex items-center gap-1 font-label-lg text-xs text-primary hover:underline font-semibold" href="/book">
+                <a className="inline-flex items-center gap-1 font-label-lg text-[11px] text-primary hover:underline font-semibold" href="/book">
                   <span>Calculate round-trip</span>
-                  <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
+                  <span className="material-symbols-outlined text-[13px]">arrow_forward</span>
                 </a>
               </div>
             </div>
 
             {/* 03: Local Sightseeing */}
-            <div className="bg-surface-container-lowest p-4 sm:p-5 rounded-xl shadow-sm hover:shadow-md transition-all flex flex-col justify-between border border-border-warm/40">
+            <div className="bg-surface-container-lowest p-2.5 sm:p-3 rounded-xl shadow-sm hover:shadow-md transition-all flex flex-col justify-between border border-border-warm/40">
               <div>
-                <div className="flex items-center justify-between mb-3">
-                  <span className="font-price-display text-xl font-bold text-primary">03</span>
-                  <span className="material-symbols-outlined text-primary text-[24px]">account_balance</span>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-price-display text-lg font-bold text-primary">03</span>
+                  <span className="material-symbols-outlined text-primary text-[20px]">account_balance</span>
                 </div>
-                <h3 className="font-title-md text-[15px] font-bold text-on-surface mb-1.5">Local Sightseeing &amp; City Tours</h3>
-                <p className="font-body-sm text-[12px] text-on-surface-variant mb-3 leading-normal">
+                <h3 className="font-title-md text-[13px] font-bold text-on-surface mb-1">Local Sightseeing &amp; City Tours</h3>
+                <p className="font-body-sm text-[10.5px] text-on-surface-variant mb-2.5 leading-normal">
                   Flexible 8h / 80km or 12h / 120km tours covering Taj Mahal, Agra Fort, and Mehtab Bagh at your own pace.
                 </p>
               </div>
               <div>
-                <div className="flex flex-wrap gap-1.5 mb-3">
-                  <span className="px-2 py-0.5 rounded bg-surface-container text-on-surface font-label-caps text-[9.5px]">8H/80KM ₹1,900</span>
-                  <span className="px-2 py-0.5 rounded bg-surface-container text-on-surface font-label-caps text-[9.5px]">12H/120KM ₹2,200</span>
+                <div className="flex flex-wrap gap-1 mb-2.5">
+                  <span className="px-1.5 py-0.5 rounded bg-surface-container text-on-surface font-label-caps text-[8.5px]">8H/80KM ₹1,900</span>
+                  <span className="px-1.5 py-0.5 rounded bg-surface-container text-on-surface font-label-caps text-[8.5px]">12H/120KM ₹2,200</span>
                 </div>
-                <a className="inline-flex items-center gap-1 font-label-lg text-xs text-primary hover:underline font-semibold" href="/packages">
+                <a className="inline-flex items-center gap-1 font-label-lg text-[11px] text-primary hover:underline font-semibold" href="/packages">
                   <span>Explore city tours</span>
-                  <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
+                  <span className="material-symbols-outlined text-[13px]">arrow_forward</span>
                 </a>
               </div>
             </div>
 
             {/* 04: Transfers */}
-            <div className="bg-surface-container-lowest p-4 sm:p-5 rounded-xl shadow-sm hover:shadow-md transition-all flex flex-col justify-between border border-border-warm/40">
+            <div className="bg-surface-container-lowest p-2.5 sm:p-3 rounded-xl shadow-sm hover:shadow-md transition-all flex flex-col justify-between border border-border-warm/40">
               <div>
-                <div className="flex items-center justify-between mb-3">
-                  <span className="font-price-display text-xl font-bold text-primary">04</span>
-                  <span className="material-symbols-outlined text-primary text-[24px]">flight_takeoff</span>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-price-display text-lg font-bold text-primary">04</span>
+                  <span className="material-symbols-outlined text-primary text-[20px]">flight_takeoff</span>
                 </div>
-                <h3 className="font-title-md text-[15px] font-bold text-on-surface mb-1.5">Airport &amp; Station Transfers</h3>
-                <p className="font-body-sm text-[12px] text-on-surface-variant mb-3 leading-normal">
+                <h3 className="font-title-md text-[13px] font-bold text-on-surface mb-1">Airport &amp; Station Transfers</h3>
+                <p className="font-body-sm text-[10.5px] text-on-surface-variant mb-2.5 leading-normal">
                   Punctual pickups for Delhi IGI Airport, Agra Cantt, and Gatimaan Express arrivals with signboard welcome.
                 </p>
               </div>
               <div>
-                <div className="flex flex-wrap gap-1.5 mb-3">
-                  <span className="px-2 py-0.5 rounded bg-surface-container text-on-surface font-label-caps text-[9.5px]">AGRA CANTT ₹800</span>
-                  <span className="px-2 py-0.5 rounded bg-surface-container text-on-surface font-label-caps text-[9.5px]">DELHI IGI ₹3,499</span>
+                <div className="flex flex-wrap gap-1 mb-2.5">
+                  <span className="px-1.5 py-0.5 rounded bg-surface-container text-on-surface font-label-caps text-[8.5px]">AGRA CANTT ₹800</span>
+                  <span className="px-1.5 py-0.5 rounded bg-surface-container text-on-surface font-label-caps text-[8.5px]">DELHI IGI ₹3,499</span>
                 </div>
-                <a className="inline-flex items-center gap-1 font-label-lg text-xs text-primary hover:underline font-semibold" href="/book">
+                <a className="inline-flex items-center gap-1 font-label-lg text-[11px] text-primary hover:underline font-semibold" href="/book">
                   <span>Book a transfer</span>
-                  <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
+                  <span className="material-symbols-outlined text-[13px]">arrow_forward</span>
                 </a>
               </div>
             </div>
 
             {/* 05: Tempo & Urbania */}
-            <div className="bg-surface-container-lowest p-4 sm:p-5 rounded-xl shadow-sm hover:shadow-md transition-all flex flex-col justify-between border border-border-warm/40">
+            <div className="bg-surface-container-lowest p-2.5 sm:p-3 rounded-xl shadow-sm hover:shadow-md transition-all flex flex-col justify-between border border-border-warm/40">
               <div>
-                <div className="flex items-center justify-between mb-3">
-                  <span className="font-price-display text-xl font-bold text-primary">05</span>
-                  <span className="material-symbols-outlined text-primary text-[24px]">airport_shuttle</span>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-price-display text-lg font-bold text-primary">05</span>
+                  <span className="material-symbols-outlined text-primary text-[20px]">airport_shuttle</span>
                 </div>
-                <h3 className="font-title-md text-[15px] font-bold text-on-surface mb-1.5">Tempo Traveller &amp; Urbania</h3>
-                <p className="font-body-sm text-[12px] text-on-surface-variant mb-3 leading-normal">
+                <h3 className="font-title-md text-[13px] font-bold text-on-surface mb-1">Tempo Traveller &amp; Urbania</h3>
+                <p className="font-body-sm text-[10.5px] text-on-surface-variant mb-2.5 leading-normal">
                   Spacious group travel from 9 to 26 seats with pushback seating, individual AC vents, and large luggage space.
                 </p>
               </div>
               <div>
-                <div className="flex flex-wrap gap-1.5 mb-3">
-                  <span className="px-2 py-0.5 rounded bg-surface-container text-on-surface font-label-caps text-[9.5px]">9–26 SEATER</span>
-                  <span className="px-2 py-0.5 rounded bg-surface-container text-on-surface font-label-caps text-[9.5px]">LUXURY URBANIA</span>
+                <div className="flex flex-wrap gap-1 mb-2.5">
+                  <span className="px-1.5 py-0.5 rounded bg-surface-container text-on-surface font-label-caps text-[8.5px]">9–26 SEATER</span>
+                  <span className="px-1.5 py-0.5 rounded bg-surface-container text-on-surface font-label-caps text-[8.5px]">LUXURY URBANIA</span>
                 </div>
-                <a className="inline-flex items-center gap-1 font-label-lg text-xs text-primary hover:underline font-semibold" href="/fleet">
+                <a className="inline-flex items-center gap-1 font-label-lg text-[11px] text-primary hover:underline font-semibold" href="/fleet">
                   <span>Explore group fleet</span>
-                  <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
+                  <span className="material-symbols-outlined text-[13px]">arrow_forward</span>
                 </a>
               </div>
             </div>
 
             {/* 06: Curated Tour Packages */}
-            <div className="bg-surface-container-lowest p-4 sm:p-5 rounded-xl shadow-sm hover:shadow-md transition-all flex flex-col justify-between border border-border-warm/40">
+            <div className="bg-surface-container-lowest p-2.5 sm:p-3 rounded-xl shadow-sm hover:shadow-md transition-all flex flex-col justify-between border border-border-warm/40">
               <div>
-                <div className="flex items-center justify-between mb-3">
-                  <span className="font-price-display text-xl font-bold text-primary">06</span>
-                  <span className="material-symbols-outlined text-primary text-[24px]">wb_twilight</span>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-price-display text-lg font-bold text-primary">06</span>
+                  <span className="material-symbols-outlined text-primary text-[20px]">wb_twilight</span>
                 </div>
-                <h3 className="font-title-md text-[15px] font-bold text-on-surface mb-1.5">Sightseeing Tour Packages</h3>
-                <p className="font-body-sm text-[12px] text-on-surface-variant mb-3 leading-normal">
+                <h3 className="font-title-md text-[13px] font-bold text-on-surface mb-1">Sightseeing Tour Packages</h3>
+                <p className="font-body-sm text-[10.5px] text-on-surface-variant mb-2.5 leading-normal">
                   Single-day and multi-day packages including Taj Sunrise, Mathura-Vrindavan, and the Golden Triangle.
                 </p>
               </div>
               <div>
-                <div className="flex flex-wrap gap-1.5 mb-3">
-                  <span className="px-2 py-0.5 rounded bg-surface-container text-on-surface font-label-caps text-[9.5px]">SAME DAY ₹3,499</span>
-                  <span className="px-2 py-0.5 rounded bg-surface-container text-on-surface font-label-caps text-[9.5px]">TRIANGLE ₹18,500</span>
+                <div className="flex flex-wrap gap-1 mb-2.5">
+                  <span className="px-1.5 py-0.5 rounded bg-surface-container text-on-surface font-label-caps text-[8.5px]">SAME DAY ₹3,499</span>
+                  <span className="px-1.5 py-0.5 rounded bg-surface-container text-on-surface font-label-caps text-[8.5px]">TRIANGLE ₹18,500</span>
                 </div>
-                <a className="inline-flex items-center gap-1 font-label-lg text-xs text-primary hover:underline font-semibold" href="/packages">
+                <a className="inline-flex items-center gap-1 font-label-lg text-[11px] text-primary hover:underline font-semibold" href="/packages">
                   <span>View all packages</span>
-                  <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
+                  <span className="material-symbols-outlined text-[13px]">arrow_forward</span>
                 </a>
               </div>
             </div>
@@ -741,23 +733,23 @@ export function HomePage({ language = "en" }: HomePageProps) {
         {/* Fleet Cards Mosaic */}
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-space-md">
           {/* Sedan */}
-          <div className="bg-surface-container-lowest rounded-xl p-3.5 sm:p-4 shadow-sm border border-border-warm/40 flex flex-col justify-between group transition-all duration-300 hover:ring-2 hover:ring-primary hover:border-transparent hover:shadow-xl hover:-translate-y-1.5 cursor-pointer">
+          <div className="bg-surface-container-lowest rounded-xl p-2 sm:p-2.5 shadow-sm border border-border-warm/40 flex flex-col justify-between group transition-all duration-300 hover:ring-2 hover:ring-primary hover:border-transparent hover:shadow-xl hover:-translate-y-1.5 cursor-pointer">
             <div>
-              <div className="h-28 w-full rounded-lg mb-2.5 bg-surface-container-low overflow-hidden relative">
+              <div className="h-24 w-full rounded-lg mb-2 bg-surface-container-low overflow-hidden relative">
                 <img
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDtlpHyMEhQIkaWh-siDUWpvafWXLxtakmQnE3648Tz_fpFPqz3fclfXfL8vy2KSvlfvgNo6E6bBL87D1O1mNnTtnQI7pAPVo1lBjhMJyGHvzs7qVIIXZ2_s8qinUgznt8ZIoCYC7Ayc3QD1n36bl6SecXNPBKx1M65cSoi4R0xiQ4TFDVIxwVItPu_XvVGE2uZ6uo9DMIHDVXgQc1h2SyLWNR7obR2Lr2TpkGxcCVZXT3lRiaY4ZVqA"
                   alt="Sedan tourist car"
                 />
-                <span className="absolute top-2 left-2 px-2 py-0.5 rounded bg-ink-charcoal group-hover:bg-primary transition-colors text-ivory-surface font-label-caps text-[9px] uppercase font-semibold">
+                <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded bg-ink-charcoal group-hover:bg-primary transition-colors text-ivory-surface font-label-caps text-[8px] uppercase font-semibold">
                   01 / Sedan
                 </span>
               </div>
-              <h3 className="font-title-md text-[14px] text-on-surface font-bold">Dzire / Etios</h3>
-              <p className="font-body-sm text-[11.5px] text-on-surface-variant mt-0.5 mb-2 leading-tight">
+              <h3 className="font-title-md text-[12px] text-on-surface font-bold">Dzire / Etios</h3>
+              <p className="font-body-sm text-[10px] text-on-surface-variant mt-0.5 mb-1.5 leading-tight">
                 Ideal for couples &amp; expressway sprints.
               </p>
-              <div className="space-y-1 font-body-sm text-[11px] text-on-surface-variant border-t border-border-warm/40 pt-2 mb-2.5">
+              <div className="space-y-0.5 font-body-sm text-[9.5px] text-on-surface-variant border-t border-border-warm/40 pt-1.5 mb-2">
                 <div className="flex items-center justify-between">
                   <span>Seating:</span>
                   <span className="font-medium text-on-surface">4+1 Passengers</span>
@@ -773,11 +765,11 @@ export function HomePage({ language = "en" }: HomePageProps) {
               </div>
             </div>
             <div>
-              <div className="font-price-display text-xl text-on-surface mb-2 font-bold">
-                ₹3,499 <span className="font-label-caps text-[9px] text-on-surface-variant font-normal">Delhi drop</span>
+              <div className="font-price-display text-base text-on-surface mb-1.5 font-bold">
+                ₹3,499 <span className="font-label-caps text-[8px] text-on-surface-variant font-normal">Delhi drop</span>
               </div>
               <a
-                className="w-full block py-2 text-center rounded-lg bg-sandstone-wash text-primary group-hover:bg-primary group-hover:text-white font-label-lg text-xs transition-colors font-semibold"
+                className="w-full block py-1.5 text-center rounded-md bg-sandstone-wash text-primary group-hover:bg-primary group-hover:text-white font-label-lg text-[11px] transition-colors font-semibold"
                 href="/book?vehicle=sedan"
               >
                 Choose Sedan
@@ -786,23 +778,23 @@ export function HomePage({ language = "en" }: HomePageProps) {
           </div>
 
           {/* Ertiga */}
-          <div className="bg-surface-container-lowest rounded-xl p-3.5 sm:p-4 shadow-sm border border-border-warm/40 flex flex-col justify-between group transition-all duration-300 hover:ring-2 hover:ring-primary hover:border-transparent hover:shadow-xl hover:-translate-y-1.5 cursor-pointer">
+          <div className="bg-surface-container-lowest rounded-xl p-2 sm:p-2.5 shadow-sm border border-border-warm/40 flex flex-col justify-between group transition-all duration-300 hover:ring-2 hover:ring-primary hover:border-transparent hover:shadow-xl hover:-translate-y-1.5 cursor-pointer">
             <div>
-              <div className="h-28 w-full rounded-lg mb-2.5 bg-surface-container-low overflow-hidden relative">
+              <div className="h-24 w-full rounded-lg mb-2 bg-surface-container-low overflow-hidden relative">
                 <img
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhesay-ZLwlBtJ5ZxS_nHnmMWuLbYNhiTR_8-G0L93loc2JyYU38ra9_RnBzFYWW2VUkeB9EnuTm-a32VY1IqlUhT4nkGNkZNOGHaB80TLQrV-5viSEoaD9FSVqWtNLixnASZGTpeWs63Nv6x9due5VYDOo8MVPRk-0Avm26iQSVtPCRSdClQao_kvMc-jaqORcpO_6imYVUOwIdJwbqA11svh59eIGx8EgGvPvGljuPa7ScbwZiFy-w"
                   alt="Maruti Ertiga MPV"
                 />
-                <span className="absolute top-2 left-2 px-2 py-0.5 rounded bg-ink-charcoal group-hover:bg-primary transition-colors text-ivory-surface font-label-caps text-[9px] uppercase font-semibold">
+                <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded bg-ink-charcoal group-hover:bg-primary transition-colors text-ivory-surface font-label-caps text-[8px] uppercase font-semibold">
                   02 / MPV
                 </span>
               </div>
-              <h3 className="font-title-md text-[14px] text-on-surface font-bold">Maruti Ertiga</h3>
-              <p className="font-body-sm text-[11.5px] text-on-surface-variant mt-0.5 mb-2 leading-tight">
+              <h3 className="font-title-md text-[12px] text-on-surface font-bold">Maruti Ertiga</h3>
+              <p className="font-body-sm text-[10px] text-on-surface-variant mt-0.5 mb-1.5 leading-tight">
                 Spacious economy MPV for small families.
               </p>
-              <div className="space-y-1 font-body-sm text-[11px] text-on-surface-variant border-t border-border-warm/40 pt-2 mb-2.5">
+              <div className="space-y-0.5 font-body-sm text-[9.5px] text-on-surface-variant border-t border-border-warm/40 pt-1.5 mb-2">
                 <div className="flex items-center justify-between">
                   <span>Seating:</span>
                   <span className="font-medium text-on-surface">6+1 Passengers</span>
@@ -818,11 +810,11 @@ export function HomePage({ language = "en" }: HomePageProps) {
               </div>
             </div>
             <div>
-              <div className="font-price-display text-xl text-on-surface mb-2 font-bold">
-                ₹4,800 <span className="font-label-caps text-[9px] text-on-surface-variant font-normal">Delhi drop</span>
+              <div className="font-price-display text-base text-on-surface mb-1.5 font-bold">
+                ₹4,800 <span className="font-label-caps text-[8px] text-on-surface-variant font-normal">Delhi drop</span>
               </div>
               <a
-                className="w-full block py-2 text-center rounded-lg bg-sandstone-wash text-primary group-hover:bg-primary group-hover:text-white font-label-lg text-xs transition-colors font-semibold"
+                className="w-full block py-1.5 text-center rounded-md bg-sandstone-wash text-primary group-hover:bg-primary group-hover:text-white font-label-lg text-[11px] transition-colors font-semibold"
                 href="/book?vehicle=ertiga"
               >
                 Choose Ertiga
@@ -831,23 +823,23 @@ export function HomePage({ language = "en" }: HomePageProps) {
           </div>
 
           {/* Innova Crysta */}
-          <div className="bg-surface-container-lowest rounded-xl p-3.5 sm:p-4 shadow-sm border border-border-warm/40 flex flex-col justify-between group transition-all duration-300 hover:ring-2 hover:ring-primary hover:border-transparent hover:shadow-xl hover:-translate-y-1.5 cursor-pointer">
+          <div className="bg-surface-container-lowest rounded-xl p-2 sm:p-2.5 shadow-sm border border-border-warm/40 flex flex-col justify-between group transition-all duration-300 hover:ring-2 hover:ring-primary hover:border-transparent hover:shadow-xl hover:-translate-y-1.5 cursor-pointer">
             <div>
-              <div className="h-28 w-full rounded-lg mb-2.5 bg-surface-container-low overflow-hidden relative">
+              <div className="h-24 w-full rounded-lg mb-2 bg-surface-container-low overflow-hidden relative">
                 <img
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   src="https://lh3.googleusercontent.com/aida-public/AB6AXuCF3eDfcGr4R6CkrjMTNZxdC2HZoUjDprlMBBmp-43c8tc_7gD7QQ3ep6HQmju0Ih0j-VoflOA5Ir-p5czU5jDcnHPtbHrDeCAqZSmLfI9nsoFav-HUfJY3BAHuG2JPoSKlfh00Suyh6kFmuKtkXZbUCSnVDMhVCgEF864ewhoWwk8FfOJA_PEVu-riAnO_-aRUUQzBAtwTExczUJFmqOHxugrwQIWYeZeafE112-PSmuyUHzR5VUOv5Q"
                   alt="Innova Crysta Luxury Cab"
                 />
-                <span className="absolute top-2 left-2 px-2 py-0.5 rounded bg-ink-charcoal group-hover:bg-primary transition-colors text-ivory-surface font-label-caps text-[9px] uppercase font-semibold">
+                <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded bg-ink-charcoal group-hover:bg-primary transition-colors text-ivory-surface font-label-caps text-[8px] uppercase font-semibold">
                   03 / Crysta
                 </span>
               </div>
-              <h3 className="font-title-md text-[14px] text-on-surface font-bold">Innova Crysta</h3>
-              <p className="font-body-sm text-[11.5px] text-on-surface-variant mt-0.5 mb-2 leading-tight">
+              <h3 className="font-title-md text-[12px] text-on-surface font-bold">Innova Crysta</h3>
+              <p className="font-body-sm text-[10px] text-on-surface-variant mt-0.5 mb-1.5 leading-tight">
                 The outstation gold standard with captain seats.
               </p>
-              <div className="space-y-1 font-body-sm text-[11px] text-on-surface-variant border-t border-border-warm/40 pt-2 mb-2.5">
+              <div className="space-y-0.5 font-body-sm text-[9.5px] text-on-surface-variant border-t border-border-warm/40 pt-1.5 mb-2">
                 <div className="flex items-center justify-between">
                   <span>Seating:</span>
                   <span className="font-medium text-on-surface">6+1 Captain</span>
@@ -863,11 +855,11 @@ export function HomePage({ language = "en" }: HomePageProps) {
               </div>
             </div>
             <div>
-              <div className="font-price-display text-xl text-on-surface mb-2 font-bold">
-                ₹6,499 <span className="font-label-caps text-[9px] text-on-surface-variant font-normal">Delhi drop</span>
+              <div className="font-price-display text-base text-on-surface mb-1.5 font-bold">
+                ₹6,499 <span className="font-label-caps text-[8px] text-on-surface-variant font-normal">Delhi drop</span>
               </div>
               <a
-                className="w-full block py-2 text-center rounded-lg bg-sandstone-wash text-primary group-hover:bg-primary group-hover:text-white font-label-lg text-xs transition-colors font-semibold"
+                className="w-full block py-1.5 text-center rounded-md bg-sandstone-wash text-primary group-hover:bg-primary group-hover:text-white font-label-lg text-[11px] transition-colors font-semibold"
                 href="/book?vehicle=innova"
               >
                 Choose Crysta
@@ -876,23 +868,23 @@ export function HomePage({ language = "en" }: HomePageProps) {
           </div>
 
           {/* Tempo Traveller */}
-          <div className="bg-surface-container-lowest rounded-xl p-3.5 sm:p-4 shadow-sm border border-border-warm/40 flex flex-col justify-between group transition-all duration-300 hover:ring-2 hover:ring-primary hover:border-transparent hover:shadow-xl hover:-translate-y-1.5 cursor-pointer">
+          <div className="bg-surface-container-lowest rounded-xl p-2 sm:p-2.5 shadow-sm border border-border-warm/40 flex flex-col justify-between group transition-all duration-300 hover:ring-2 hover:ring-primary hover:border-transparent hover:shadow-xl hover:-translate-y-1.5 cursor-pointer">
             <div>
-              <div className="h-28 w-full rounded-lg mb-2.5 bg-surface-container-low overflow-hidden relative">
+              <div className="h-24 w-full rounded-lg mb-2 bg-surface-container-low overflow-hidden relative">
                 <img
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtim6k1xZ-oNG2CqsGD4G34wTroprBPYyPJ9w7UYnqlD3AJi1jQBwG4iez5kq2R7JnA5jrbU71f63NA4Fg_9ivUh1cG2YmwcFEHjP8uB8yCO_rR0jqQtih9RtLuHMblGb62Vkg7AmFKA2kJO3duZSuqnhbnsr2yPOs-zIhv8qU0SlxpBYkAneSec38qdvXX221BLjsfOswvxgP68jLhUTwIPkQ9BZgyAVkuWywbAZJbcXZVSeMcPR58g"
                   alt="Tempo Traveller Group Van"
                 />
-                <span className="absolute top-2 left-2 px-2 py-0.5 rounded bg-ink-charcoal group-hover:bg-primary transition-colors text-ivory-surface font-label-caps text-[9px] uppercase font-semibold">
+                <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded bg-ink-charcoal group-hover:bg-primary transition-colors text-ivory-surface font-label-caps text-[8px] uppercase font-semibold">
                   04 / Group
                 </span>
               </div>
-              <h3 className="font-title-md text-[14px] text-on-surface font-bold">Tempo Traveller</h3>
-              <p className="font-body-sm text-[11.5px] text-on-surface-variant mt-0.5 mb-2 leading-tight">
+              <h3 className="font-title-md text-[12px] text-on-surface font-bold">Tempo Traveller</h3>
+              <p className="font-body-sm text-[10px] text-on-surface-variant mt-0.5 mb-1.5 leading-tight">
                 Reclining seats, rear AC &amp; baggage bay.
               </p>
-              <div className="space-y-1 font-body-sm text-[11px] text-on-surface-variant border-t border-border-warm/40 pt-2 mb-2.5">
+              <div className="space-y-0.5 font-body-sm text-[9.5px] text-on-surface-variant border-t border-border-warm/40 pt-1.5 mb-2">
                 <div className="flex items-center justify-between">
                   <span>Seating:</span>
                   <span className="font-medium text-on-surface">12–17 Seater</span>
@@ -908,11 +900,11 @@ export function HomePage({ language = "en" }: HomePageProps) {
               </div>
             </div>
             <div>
-              <div className="font-price-display text-xl text-on-surface mb-2 font-bold">
-                ₹9,500 <span className="font-label-caps text-[9px] text-on-surface-variant font-normal">Starting</span>
+              <div className="font-price-display text-base text-on-surface mb-1.5 font-bold">
+                ₹9,500 <span className="font-label-caps text-[8px] text-on-surface-variant font-normal">Starting</span>
               </div>
               <a
-                className="w-full block py-2 text-center rounded-lg bg-sandstone-wash text-primary group-hover:bg-primary group-hover:text-white font-label-lg text-xs transition-colors font-semibold"
+                className="w-full block py-1.5 text-center rounded-md bg-sandstone-wash text-primary group-hover:bg-primary group-hover:text-white font-label-lg text-[11px] transition-colors font-semibold"
                 href="/book?vehicle=tempo"
               >
                 Choose Tempo
@@ -921,23 +913,23 @@ export function HomePage({ language = "en" }: HomePageProps) {
           </div>
 
           {/* Force Urbania */}
-          <div className="bg-surface-container-lowest rounded-xl p-3.5 sm:p-4 shadow-sm border border-border-warm/40 flex flex-col justify-between group transition-all duration-300 hover:ring-2 hover:ring-primary hover:border-transparent hover:shadow-xl hover:-translate-y-1.5 cursor-pointer">
+          <div className="bg-surface-container-lowest rounded-xl p-2 sm:p-2.5 shadow-sm border border-border-warm/40 flex flex-col justify-between group transition-all duration-300 hover:ring-2 hover:ring-primary hover:border-transparent hover:shadow-xl hover:-translate-y-1.5 cursor-pointer">
             <div>
-              <div className="h-28 w-full rounded-lg mb-2.5 bg-surface-container-low overflow-hidden relative">
+              <div className="h-24 w-full rounded-lg mb-2 bg-surface-container-low overflow-hidden relative">
                 <img
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdR9ZGfEatK4fikITqlV-5YeoJBg58LlBbVg3bINsK4p3p94b0zZowjut7sHOfzG76_UwHnf8DSibSs8nFsOwlyYfZxr0Am8uXSUZDFWlP5gBNAbGaZwm04A-RAXFJmCGkHrC5ozEC8HtDyJxH8X87rz1fagIHja_tL6PuQ-HUAjHu_bL1Ba_yVq9wUlM3rRpelaYNjGly7ZXvmprg37BIu2CuP8q2Yp_Py0lH3imXVkBikdrFugYBnQ"
                   alt="Force Urbania Luxury Van"
                 />
-                <span className="absolute top-2 left-2 px-2 py-0.5 rounded bg-ink-charcoal group-hover:bg-primary transition-colors text-ivory-surface font-label-caps text-[9px] uppercase font-semibold">
+                <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded bg-ink-charcoal group-hover:bg-primary transition-colors text-ivory-surface font-label-caps text-[8px] uppercase font-semibold">
                   05 / VIP
                 </span>
               </div>
-              <h3 className="font-title-md text-[14px] text-on-surface font-bold">Force Urbania</h3>
-              <p className="font-body-sm text-[11.5px] text-on-surface-variant mt-0.5 mb-2 leading-tight">
+              <h3 className="font-title-md text-[12px] text-on-surface font-bold">Force Urbania</h3>
+              <p className="font-body-sm text-[10px] text-on-surface-variant mt-0.5 mb-1.5 leading-tight">
                 Boutique VIP cabin, individual reading lights &amp; USB.
               </p>
-              <div className="space-y-1 font-body-sm text-[11px] text-on-surface-variant border-t border-border-warm/40 pt-2 mb-2.5">
+              <div className="space-y-0.5 font-body-sm text-[9.5px] text-on-surface-variant border-t border-border-warm/40 pt-1.5 mb-2">
                 <div className="flex items-center justify-between">
                   <span>Seating:</span>
                   <span className="font-medium text-on-surface">10–13 Luxury</span>
@@ -953,11 +945,11 @@ export function HomePage({ language = "en" }: HomePageProps) {
               </div>
             </div>
             <div>
-              <div className="font-price-display text-xl text-on-surface mb-2 font-bold">
-                ₹12,500 <span className="font-label-caps text-[9px] text-on-surface-variant font-normal">Starting</span>
+              <div className="font-price-display text-base text-on-surface mb-1.5 font-bold">
+                ₹12,500 <span className="font-label-caps text-[8px] text-on-surface-variant font-normal">Starting</span>
               </div>
               <a
-                className="w-full block py-2 text-center rounded-lg bg-sandstone-wash text-primary group-hover:bg-primary group-hover:text-white font-label-lg text-xs transition-colors font-semibold"
+                className="w-full block py-1.5 text-center rounded-md bg-sandstone-wash text-primary group-hover:bg-primary group-hover:text-white font-label-lg text-[11px] transition-colors font-semibold"
                 href="/book?vehicle=urbania"
               >
                 Choose Urbania
@@ -992,48 +984,48 @@ export function HomePage({ language = "en" }: HomePageProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-space-md">
             {/* Package 1: Same Day Agra */}
             <div className="bg-surface-container-lowest rounded-xl overflow-hidden flex flex-col justify-between group shadow-sm hover:shadow-md transition-all border border-border-warm/40">
-              <div className="relative h-36 sm:h-40 w-full overflow-hidden">
+              <div className="relative h-28 sm:h-32 w-full overflow-hidden">
                 <img
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   src="https://lh3.googleusercontent.com/aida-public/AB6AXuCFhG9SwH6I507dQuN34sU4ztKi3I66cmDMi8b2wQ9-mgznrz6OBZW9nRuYxUlrqmon_CvVUHDheRh9SL1uEan5slXPh1a6-8-V8ImuIJekxYh9TMlwzphg1crfgHAAdFmn_IvAyGACdBKhKDCs-cLtchmJIMuiwT_QuVr6njYzGc_Q9ULbq5FL0YmYy2Oh65CgOwQjvFhvpu4L0J26qByHJmdd3URyQv2dEdNa3x5KdEX-mPUzW233fw"
                   alt="Same Day Agra Taj Mahal Tour"
                 />
-                <span className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded bg-ink-midnight/80 backdrop-blur-sm text-tertiary-fixed font-label-caps text-[9.5px] uppercase font-bold">
+                <span className="absolute top-2 left-2 px-1.5 py-0.5 rounded bg-ink-midnight/80 backdrop-blur-sm text-tertiary-fixed font-label-caps text-[8.5px] uppercase font-bold">
                   SAME DAY
                 </span>
-                <div className="absolute bottom-2.5 right-2.5 px-2 py-0.5 rounded bg-terracotta-sandstone text-white font-price-display text-base font-bold">
+                <div className="absolute bottom-2 right-2 px-2 py-0.5 rounded bg-terracotta-sandstone text-white font-price-display text-sm font-bold">
                   ₹3,499
                 </div>
               </div>
-              <div className="p-3.5 sm:p-4 flex-1 flex flex-col justify-between">
+              <div className="p-2.5 sm:p-3 flex-1 flex flex-col justify-between">
                 <div>
-                  <h3 className="font-title-md text-[15px] font-bold text-on-surface mb-1 group-hover:text-primary transition-colors">
+                  <h3 className="font-title-md text-[13px] font-bold text-on-surface mb-0.5 group-hover:text-primary transition-colors">
                     Same Day Agra Taj Mahal Tour
                   </h3>
-                  <p className="font-body-sm text-[12px] text-on-surface-variant mb-2 leading-normal">
+                  <p className="font-body-sm text-[10.5px] text-on-surface-variant mb-1.5 leading-normal">
                     One-day private guided tour covering all iconic Mughal monuments with hotel pickup.
                   </p>
-                  <ul className="space-y-1 font-body-sm text-[11.5px] text-on-surface-variant mb-3">
-                    <li className="flex items-center gap-1.5">
+                  <ul className="space-y-0.5 font-body-sm text-[9.5px] text-on-surface-variant mb-2">
+                    <li className="flex items-center gap-1">
                       <span className="w-1.5 h-1.5 rounded-full bg-gold-accent shrink-0" />
                       Taj Mahal &amp; Agra Fort visit
                     </li>
-                    <li className="flex items-center gap-1.5">
+                    <li className="flex items-center gap-1">
                       <span className="w-1.5 h-1.5 rounded-full bg-gold-accent shrink-0" />
                       Itimad-ud-Daulah (Baby Taj)
                     </li>
-                    <li className="flex items-center gap-1.5">
+                    <li className="flex items-center gap-1">
                       <span className="w-1.5 h-1.5 rounded-full bg-gold-accent shrink-0" />
                       Mehtab Bagh sunset viewpoint
                     </li>
                   </ul>
                 </div>
-                <div className="pt-2 flex items-center justify-between border-t border-border-warm/40">
-                  <span className="font-label-caps text-[9.5px] text-on-surface-variant uppercase font-semibold">
+                <div className="pt-1.5 flex items-center justify-between border-t border-border-warm/40">
+                  <span className="font-label-caps text-[8.5px] text-on-surface-variant uppercase font-semibold">
                     Starting Fare
                   </span>
                   <a
-                    className="px-3 py-1.5 rounded-md bg-terracotta-sandstone hover:bg-terracotta-sunlit text-white font-label-lg text-xs transition-colors font-semibold"
+                    className="px-2.5 py-1 rounded-md bg-terracotta-sandstone hover:bg-terracotta-sunlit text-white font-label-lg text-[11px] transition-colors font-semibold"
                     href="/packages/agra-sightseeing"
                   >
                     View Tour ↗
@@ -1044,46 +1036,46 @@ export function HomePage({ language = "en" }: HomePageProps) {
 
             {/* Package 2: Taj Sunrise */}
             <div className="bg-surface-container-lowest rounded-xl overflow-hidden flex flex-col justify-between group shadow-sm hover:shadow-md transition-all border border-border-warm/40">
-              <div className="relative h-36 sm:h-40 w-full overflow-hidden">
+              <div className="relative h-28 sm:h-32 w-full overflow-hidden">
                 <img
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxTJ0Lw2g0E-2f7Njva0bk9tnu2uxD4fDQEnjl9HfXhIsZPXpREe6IH64YxcrkLTU9LA-Sq18VOKNINmCXcE1SqhLJ0FRlDY7PcP8mXPJGqImX8UX6ulEV1tfIi-EaTk44xK2SVpNfowCr9XWRL4DoGWaRLWcuc9yzCK9WgY9T9q6I7XUpPjl8Suc6hiJQtpkLga47lMN99jxmLDggAJ-a-DA6OJ6dZ-ji_iNWU1c4dm5DVgEpmyTxBQ"
                   alt="Taj Mahal Sunrise Tour"
                 />
-                <span className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded bg-ink-midnight/80 backdrop-blur-sm text-gold-accent font-label-caps text-[9.5px] uppercase font-bold">
+                <span className="absolute top-2 left-2 px-1.5 py-0.5 rounded bg-ink-midnight/80 backdrop-blur-sm text-gold-accent font-label-caps text-[8.5px] uppercase font-bold">
                   DAWN SPECIAL
                 </span>
-                <div className="absolute bottom-2.5 right-2.5 px-2 py-0.5 rounded bg-terracotta-sandstone text-white font-price-display text-base font-bold">
+                <div className="absolute bottom-2 right-2 px-2 py-0.5 rounded bg-terracotta-sandstone text-white font-price-display text-sm font-bold">
                   ₹5,200
                 </div>
               </div>
-              <div className="p-3.5 sm:p-4 flex-1 flex flex-col justify-between">
+              <div className="p-2.5 sm:p-3 flex-1 flex flex-col justify-between">
                 <div>
-                  <h3 className="font-title-md text-[15px] font-bold text-on-surface mb-1 group-hover:text-primary transition-colors">
+                  <h3 className="font-title-md text-[13px] font-bold text-on-surface mb-0.5 group-hover:text-primary transition-colors">
                     Taj Mahal Sunrise Guided Tour
                   </h3>
-                  <p className="font-body-sm text-[12px] text-on-surface-variant mb-2 leading-normal">
+                  <p className="font-body-sm text-[10.5px] text-on-surface-variant mb-1.5 leading-normal">
                     Beat the crowds and heat. Experience the monument of love as morning light hits white marble.
                   </p>
-                  <ul className="space-y-1 font-body-sm text-[11.5px] text-on-surface-variant mb-3">
-                    <li className="flex items-center gap-1.5">
+                  <ul className="space-y-0.5 font-body-sm text-[9.5px] text-on-surface-variant mb-2">
+                    <li className="flex items-center gap-1">
                       <span className="w-1.5 h-1.5 rounded-full bg-gold-accent shrink-0" />
                       Taj Mahal early morning dawn entry
                     </li>
-                    <li className="flex items-center gap-1.5">
+                    <li className="flex items-center gap-1">
                       <span className="w-1.5 h-1.5 rounded-full bg-gold-accent shrink-0" />
                       Agra Fort royal palace chambers
                     </li>
-                    <li className="flex items-center gap-1.5">
+                    <li className="flex items-center gap-1">
                       <span className="w-1.5 h-1.5 rounded-full bg-gold-accent shrink-0" />
                       Licensed monument guide option
                     </li>
                   </ul>
                 </div>
-                <div className="pt-2 flex items-center justify-between border-t border-border-warm/40">
-                  <span className="font-label-caps text-[9.5px] text-on-surface-variant uppercase font-semibold">VIP Dawn Package</span>
+                <div className="pt-1.5 flex items-center justify-between border-t border-border-warm/40">
+                  <span className="font-label-caps text-[8.5px] text-on-surface-variant uppercase font-semibold">VIP Dawn Package</span>
                   <a
-                    className="px-3 py-1.5 rounded-md bg-terracotta-sandstone hover:bg-terracotta-sunlit text-white font-label-lg text-xs transition-colors font-semibold"
+                    className="px-2.5 py-1 rounded-md bg-terracotta-sandstone hover:bg-terracotta-sunlit text-white font-label-lg text-[11px] transition-colors font-semibold"
                     href="/packages/taj-mahal-sunrise-tour"
                   >
                     View Tour ↗
@@ -1094,46 +1086,46 @@ export function HomePage({ language = "en" }: HomePageProps) {
 
             {/* Package 3: Mathura-Vrindavan */}
             <div className="bg-surface-container-lowest rounded-xl overflow-hidden flex flex-col justify-between group shadow-sm hover:shadow-md transition-all border border-border-warm/40">
-              <div className="relative h-36 sm:h-40 w-full overflow-hidden">
+              <div className="relative h-28 sm:h-32 w-full overflow-hidden">
                 <img
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   src="https://lh3.googleusercontent.com/aida-public/AB6AXuBWn_np3YTwZ3dHJXWWaNmOYnGK1EVc0QOQHv15SFtKbGuB9q4FGRB2nZMtjPCVCVd-YWzfB53bYpDbPE7ln2sNi_CX1qb54jetI4Ygnuvy902WKeKQiNDsxrvf_u0bx6cNCBTK5lK1ZC6a8TG6_rZOuWT1-hszrhb8F_sTmie0J3CbmI7a192IdUb1RDlnk8TI0t5khOuhP_RUokajdQ2qc_Xw3GjJx99Sai5se6qYz9Lrt7-3cQCLsw"
                   alt="Mathura & Vrindavan Darshan"
                 />
-                <span className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded bg-ink-midnight/80 backdrop-blur-sm text-tertiary-fixed font-label-caps text-[9.5px] uppercase font-bold">
+                <span className="absolute top-2 left-2 px-1.5 py-0.5 rounded bg-ink-midnight/80 backdrop-blur-sm text-tertiary-fixed font-label-caps text-[8.5px] uppercase font-bold">
                   PILGRIMAGE
                 </span>
-                <div className="absolute bottom-2.5 right-2.5 px-2 py-0.5 rounded bg-terracotta-sandstone text-white font-price-display text-base font-bold">
+                <div className="absolute bottom-2 right-2 px-2 py-0.5 rounded bg-terracotta-sandstone text-white font-price-display text-sm font-bold">
                   ₹4,200
                 </div>
               </div>
-              <div className="p-3.5 sm:p-4 flex-1 flex flex-col justify-between">
+              <div className="p-2.5 sm:p-3 flex-1 flex flex-col justify-between">
                 <div>
-                  <h3 className="font-title-md text-[15px] font-bold text-on-surface mb-1 group-hover:text-primary transition-colors">
+                  <h3 className="font-title-md text-[13px] font-bold text-on-surface mb-0.5 group-hover:text-primary transition-colors">
                     Mathura &amp; Vrindavan Darshan
                   </h3>
-                  <p className="font-body-sm text-[12px] text-on-surface-variant mb-2 leading-normal">
+                  <p className="font-body-sm text-[10.5px] text-on-surface-variant mb-1.5 leading-normal">
                     Comfortable holy circuit tailored around temple prayer timings and evening aarti.
                   </p>
-                  <ul className="space-y-1 font-body-sm text-[11.5px] text-on-surface-variant mb-3">
-                    <li className="flex items-center gap-1.5">
+                  <ul className="space-y-0.5 font-body-sm text-[9.5px] text-on-surface-variant mb-2">
+                    <li className="flex items-center gap-1">
                       <span className="w-1.5 h-1.5 rounded-full bg-gold-accent shrink-0" />
                       Krishna Janmabhoomi &amp; Dwarkadhish
                     </li>
-                    <li className="flex items-center gap-1.5">
+                    <li className="flex items-center gap-1">
                       <span className="w-1.5 h-1.5 rounded-full bg-gold-accent shrink-0" />
                       Banke Bihari &amp; Prem Mandir
                     </li>
-                    <li className="flex items-center gap-1.5">
+                    <li className="flex items-center gap-1">
                       <span className="w-1.5 h-1.5 rounded-full bg-gold-accent shrink-0" />
                       Zero night waiting surcharges
                     </li>
                   </ul>
                 </div>
-                <div className="pt-2 flex items-center justify-between border-t border-border-warm/40">
-                  <span className="font-label-caps text-[9.5px] text-on-surface-variant uppercase font-semibold">Full Day Circuit</span>
+                <div className="pt-1.5 flex items-center justify-between border-t border-border-warm/40">
+                  <span className="font-label-caps text-[8.5px] text-on-surface-variant uppercase font-semibold">Full Day Circuit</span>
                   <a
-                    className="px-3 py-1.5 rounded-md bg-terracotta-sandstone hover:bg-terracotta-sunlit text-white font-label-lg text-xs transition-colors font-semibold"
+                    className="px-2.5 py-1 rounded-md bg-terracotta-sandstone hover:bg-terracotta-sunlit text-white font-label-lg text-[11px] transition-colors font-semibold"
                     href="/packages/mathura-vrindavan"
                   >
                     View Tour ↗
@@ -1159,92 +1151,92 @@ export function HomePage({ language = "en" }: HomePageProps) {
 
         {/* 6 Benefit Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-space-md mb-space-xl">
-          <div className="bg-surface-container-lowest p-3.5 sm:p-4 rounded-xl shadow-sm hover:shadow-md transition-all border border-border-warm/40">
-            <div className="flex items-center justify-between mb-2.5">
-              <div className="w-9 h-9 rounded-lg bg-sandstone-wash flex items-center justify-center text-primary">
-                <span className="material-symbols-outlined text-[20px]">touch_app</span>
+          <div className="bg-surface-container-lowest p-2.5 sm:p-3 rounded-xl shadow-sm hover:shadow-md transition-all border border-border-warm/40">
+            <div className="flex items-center justify-between mb-2">
+              <div className="w-7 h-7 rounded-lg bg-sandstone-wash flex items-center justify-center text-primary">
+                <span className="material-symbols-outlined text-[16px]">touch_app</span>
               </div>
-              <span className="px-2 py-0.5 rounded bg-surface-container font-label-caps text-[9.5px] text-on-surface-variant uppercase font-bold">
+              <span className="px-1.5 py-0.5 rounded bg-surface-container font-label-caps text-[8.5px] text-on-surface-variant uppercase font-bold">
                 Instant Confirm
               </span>
             </div>
-            <h3 className="font-title-md text-[14px] text-on-surface mb-1 font-bold">Easy Booking</h3>
-            <p className="font-body-sm text-[12px] text-on-surface-variant leading-normal">
+            <h3 className="font-title-md text-[12px] text-on-surface mb-0.5 font-bold">Easy Booking</h3>
+            <p className="font-body-sm text-[10px] text-on-surface-variant leading-normal">
               Book your cab in under 2 minutes with a simple checkout. Instant confirmation via Call &amp; WhatsApp.
             </p>
           </div>
 
-          <div className="bg-surface-container-lowest p-3.5 sm:p-4 rounded-xl shadow-sm hover:shadow-md transition-all border border-border-warm/40">
-            <div className="flex items-center justify-between mb-2.5">
-              <div className="w-9 h-9 rounded-lg bg-sandstone-wash flex items-center justify-center text-primary">
-                <span className="material-symbols-outlined text-[20px]">garage</span>
+          <div className="bg-surface-container-lowest p-2.5 sm:p-3 rounded-xl shadow-sm hover:shadow-md transition-all border border-border-warm/40">
+            <div className="flex items-center justify-between mb-2">
+              <div className="w-7 h-7 rounded-lg bg-sandstone-wash flex items-center justify-center text-primary">
+                <span className="material-symbols-outlined text-[16px]">garage</span>
               </div>
-              <span className="px-2 py-0.5 rounded bg-surface-container font-label-caps text-[9.5px] text-on-surface-variant uppercase font-bold">
+              <span className="px-1.5 py-0.5 rounded bg-surface-container font-label-caps text-[8.5px] text-on-surface-variant uppercase font-bold">
                 Sedan to 26-Seater
               </span>
             </div>
-            <h3 className="font-title-md text-[14px] text-on-surface mb-1 font-bold">Wide Vehicle Choice</h3>
-            <p className="font-body-sm text-[12px] text-on-surface-variant leading-normal">
+            <h3 className="font-title-md text-[12px] text-on-surface mb-0.5 font-bold">Wide Vehicle Choice</h3>
+            <p className="font-body-sm text-[10px] text-on-surface-variant leading-normal">
               Choose from clean Sedans, Ertiga, Innova Crysta, 9–26 seater Tempo Travellers, and Force Urbania.
             </p>
           </div>
 
-          <div className="bg-surface-container-lowest p-3.5 sm:p-4 rounded-xl shadow-sm hover:shadow-md transition-all border border-border-warm/40">
-            <div className="flex items-center justify-between mb-2.5">
-              <div className="w-9 h-9 rounded-lg bg-sandstone-wash flex items-center justify-center text-primary">
-                <span className="material-symbols-outlined text-[20px]">price_check</span>
+          <div className="bg-surface-container-lowest p-2.5 sm:p-3 rounded-xl shadow-sm hover:shadow-md transition-all border border-border-warm/40">
+            <div className="flex items-center justify-between mb-2">
+              <div className="w-7 h-7 rounded-lg bg-sandstone-wash flex items-center justify-center text-primary">
+                <span className="material-symbols-outlined text-[16px]">price_check</span>
               </div>
-              <span className="px-2 py-0.5 rounded bg-surface-container font-label-caps text-[9.5px] text-on-surface-variant uppercase font-bold">
+              <span className="px-1.5 py-0.5 rounded bg-surface-container font-label-caps text-[8.5px] text-on-surface-variant uppercase font-bold">
                 Zero Hidden Fees
               </span>
             </div>
-            <h3 className="font-title-md text-[14px] text-on-surface mb-1 font-bold">Fixed &amp; Honest Rates</h3>
-            <p className="font-body-sm text-[12px] text-on-surface-variant leading-normal">
+            <h3 className="font-title-md text-[12px] text-on-surface mb-0.5 font-bold">Fixed &amp; Honest Rates</h3>
+            <p className="font-body-sm text-[10px] text-on-surface-variant leading-normal">
               Transparent per-km billing, expressway tolls included upfront, and zero surprise driver surcharges.
             </p>
           </div>
 
-          <div className="bg-surface-container-lowest p-3.5 sm:p-4 rounded-xl shadow-sm hover:shadow-md transition-all border border-border-warm/40">
-            <div className="flex items-center justify-between mb-2.5">
-              <div className="w-9 h-9 rounded-lg bg-sandstone-wash flex items-center justify-center text-primary">
-                <span className="material-symbols-outlined text-[20px]">schedule</span>
+          <div className="bg-surface-container-lowest p-2.5 sm:p-3 rounded-xl shadow-sm hover:shadow-md transition-all border border-border-warm/40">
+            <div className="flex items-center justify-between mb-2">
+              <div className="w-7 h-7 rounded-lg bg-sandstone-wash flex items-center justify-center text-primary">
+                <span className="material-symbols-outlined text-[16px]">schedule</span>
               </div>
-              <span className="px-2 py-0.5 rounded bg-surface-container font-label-caps text-[9.5px] text-on-surface-variant uppercase font-bold">
+              <span className="px-1.5 py-0.5 rounded bg-surface-container font-label-caps text-[8.5px] text-on-surface-variant uppercase font-bold">
                 100% Punctual
               </span>
             </div>
-            <h3 className="font-title-md text-[14px] text-on-surface mb-1 font-bold">Always On Time</h3>
-            <p className="font-body-sm text-[12px] text-on-surface-variant leading-normal">
+            <h3 className="font-title-md text-[12px] text-on-surface mb-0.5 font-bold">Always On Time</h3>
+            <p className="font-body-sm text-[10px] text-on-surface-variant leading-normal">
               Punctual doorstep pickups, flight delay tracking for airport arrivals, and knowledgeable drivers.
             </p>
           </div>
 
-          <div className="bg-surface-container-lowest p-3.5 sm:p-4 rounded-xl shadow-sm hover:shadow-md transition-all border border-border-warm/40">
-            <div className="flex items-center justify-between mb-2.5">
-              <div className="w-9 h-9 rounded-lg bg-sandstone-wash flex items-center justify-center text-primary">
-                <span className="material-symbols-outlined text-[20px]">support_agent</span>
+          <div className="bg-surface-container-lowest p-2.5 sm:p-3 rounded-xl shadow-sm hover:shadow-md transition-all border border-border-warm/40">
+            <div className="flex items-center justify-between mb-2">
+              <div className="w-7 h-7 rounded-lg bg-sandstone-wash flex items-center justify-center text-primary">
+                <span className="material-symbols-outlined text-[16px]">support_agent</span>
               </div>
-              <span className="px-2 py-0.5 rounded bg-surface-container font-label-caps text-[9.5px] text-on-surface-variant uppercase font-bold">
+              <span className="px-1.5 py-0.5 rounded bg-surface-container font-label-caps text-[8.5px] text-on-surface-variant uppercase font-bold">
                 Live Support 24×7
               </span>
             </div>
-            <h3 className="font-title-md text-[14px] text-on-surface mb-1 font-bold">24×7 Local Support</h3>
-            <p className="font-body-sm text-[12px] text-on-surface-variant leading-normal">
+            <h3 className="font-title-md text-[12px] text-on-surface mb-0.5 font-bold">24×7 Local Support</h3>
+            <p className="font-body-sm text-[10px] text-on-surface-variant leading-normal">
               Direct phone and WhatsApp support from our local Agra dispatch office whenever you need help.
             </p>
           </div>
 
-          <div className="bg-surface-container-lowest p-3.5 sm:p-4 rounded-xl shadow-sm hover:shadow-md transition-all border border-border-warm/40">
-            <div className="flex items-center justify-between mb-2.5">
-              <div className="w-9 h-9 rounded-lg bg-sandstone-wash flex items-center justify-center text-primary">
-                <span className="material-symbols-outlined text-[20px]">policy</span>
+          <div className="bg-surface-container-lowest p-2.5 sm:p-3 rounded-xl shadow-sm hover:shadow-md transition-all border border-border-warm/40">
+            <div className="flex items-center justify-between mb-2">
+              <div className="w-7 h-7 rounded-lg bg-sandstone-wash flex items-center justify-center text-primary">
+                <span className="material-symbols-outlined text-[16px]">policy</span>
               </div>
-              <span className="px-2 py-0.5 rounded bg-surface-container font-label-caps text-[9.5px] text-on-surface-variant uppercase font-bold">
+              <span className="px-1.5 py-0.5 rounded bg-surface-container font-label-caps text-[8.5px] text-on-surface-variant uppercase font-bold">
                 Police Verified
               </span>
             </div>
-            <h3 className="font-title-md text-[14px] text-on-surface mb-1 font-bold">Verified Drivers</h3>
-            <p className="font-body-sm text-[12px] text-on-surface-variant leading-normal">
+            <h3 className="font-title-md text-[12px] text-on-surface mb-0.5 font-bold">Verified Drivers</h3>
+            <p className="font-body-sm text-[10px] text-on-surface-variant leading-normal">
               Every driver carries valid commercial documents, police verification, and adheres to courteous guest conduct.
             </p>
           </div>
