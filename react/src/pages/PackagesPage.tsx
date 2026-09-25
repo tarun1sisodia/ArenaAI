@@ -337,15 +337,15 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
               </p>
             </div>
             <div className="lg:col-span-4 flex flex-col justify-end">
-              <div className="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm border border-border-warm flex flex-col gap-space-sm">
-                <div className="flex items-center gap-space-sm">
-                  <span className="material-symbols-outlined text-primary text-[28px]">shield</span>
+              <div className="bg-surface-container-lowest p-3.5 sm:p-4 rounded-xl shadow-xs border border-border-warm flex flex-col gap-2">
+                <div className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-primary text-[24px]">shield</span>
                   <div>
-                    <div className="font-title-md text-title-md text-on-surface font-semibold">Guaranteed Service Standard</div>
-                    <div className="font-body-sm text-body-sm text-on-surface-variant">Regulated by Uttar Pradesh Tourism guidelines</div>
+                    <div className="font-title-md text-xs sm:text-[13px] text-on-surface font-semibold">Guaranteed Service Standard</div>
+                    <div className="font-body-sm text-[10px] text-on-surface-variant">Regulated by Uttar Pradesh Tourism guidelines</div>
                   </div>
                 </div>
-                <div className="pt-space-xs flex items-center justify-between font-label-caps text-label-caps text-on-surface-variant border-t border-border-warm/60">
+                <div className="pt-2 flex items-center justify-between font-label-caps text-[9px] text-on-surface-variant border-t border-border-warm/60">
                   <span>AGRA CANTT • AIRPORT TRANSFERS</span>
                   <span className="text-success-jade font-bold">24×7 DISPATCH</span>
                 </div>
@@ -353,49 +353,49 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
             </div>
           </div>
 
-          {/* Trust Ribbon Mosaic */}
-          <div className="mt-space-xl grid grid-cols-2 md:grid-cols-4 gap-space-md pt-space-md">
-            <div className="bg-surface-container-lowest p-space-md rounded-xl flex items-center gap-space-sm shadow-sm border border-border-warm/60">
-              <span className="material-symbols-outlined text-primary text-[24px]">explore</span>
+          {/* Trust Ribbon Mosaic (Compact -20%) */}
+          <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3 pt-3">
+            <div className="bg-surface-container-lowest p-2.5 sm:p-3 rounded-lg flex items-center gap-2 shadow-xs border border-border-warm/60">
+              <span className="material-symbols-outlined text-primary text-[20px]">explore</span>
               <div>
-                <div className="font-title-sm font-bold text-ink-charcoal">6 Signature Packages</div>
-                <div className="font-body-sm text-body-sm text-on-surface-variant">Same-Day to Multi-Day</div>
+                <div className="font-title-sm text-xs font-bold text-ink-charcoal">6 Signature Packages</div>
+                <div className="font-body-sm text-[9.5px] text-on-surface-variant">Same-Day to Multi-Day</div>
               </div>
             </div>
-            <div className="bg-surface-container-lowest p-space-md rounded-xl flex items-center gap-space-sm shadow-sm border border-border-warm/60">
-              <span className="material-symbols-outlined text-success-jade text-[24px]">verified_user</span>
+            <div className="bg-surface-container-lowest p-2.5 sm:p-3 rounded-lg flex items-center gap-2 shadow-xs border border-border-warm/60">
+              <span className="material-symbols-outlined text-success-jade text-[20px]">verified_user</span>
               <div>
-                <div className="font-title-sm font-bold text-ink-charcoal">0% Shopping Traps</div>
-                <div className="font-body-sm text-body-sm text-on-surface-variant">Direct monuments only</div>
+                <div className="font-title-sm text-xs font-bold text-ink-charcoal">0% Shopping Traps</div>
+                <div className="font-body-sm text-[9.5px] text-on-surface-variant">Direct monuments only</div>
               </div>
             </div>
-            <div className="bg-surface-container-lowest p-space-md rounded-xl flex items-center gap-space-sm shadow-sm border border-border-warm/60">
-              <span className="material-symbols-outlined text-primary text-[24px]">badge</span>
+            <div className="bg-surface-container-lowest p-2.5 sm:p-3 rounded-lg flex items-center gap-2 shadow-xs border border-border-warm/60">
+              <span className="material-symbols-outlined text-primary text-[20px]">badge</span>
               <div>
-                <div className="font-title-sm font-bold text-ink-charcoal">Govt-Approved Guides</div>
-                <div className="font-body-sm text-body-sm text-on-surface-variant">Licensed ASI historians</div>
+                <div className="font-title-sm text-xs font-bold text-ink-charcoal">Govt-Approved Guides</div>
+                <div className="font-body-sm text-[9.5px] text-on-surface-variant">Licensed ASI historians</div>
               </div>
             </div>
-            <div className="bg-surface-container-lowest p-space-md rounded-xl flex items-center gap-space-sm shadow-sm border border-border-warm/60">
-              <span className="material-symbols-outlined text-primary text-[24px]">directions_car</span>
+            <div className="bg-surface-container-lowest p-2.5 sm:p-3 rounded-lg flex items-center gap-2 shadow-xs border border-border-warm/60">
+              <span className="material-symbols-outlined text-primary text-[20px]">directions_car</span>
               <div>
-                <div className="font-title-sm font-bold text-ink-charcoal">Doorstep Pickup</div>
-                <div className="font-body-sm text-body-sm text-on-surface-variant">Hotel &amp; Cantt Station</div>
+                <div className="font-title-sm text-xs font-bold text-ink-charcoal">Doorstep Pickup</div>
+                <div className="font-body-sm text-[9.5px] text-on-surface-variant">Hotel &amp; Cantt Station</div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* FILTER & TAB NAVIGATION BAR */}
-      <section className="bg-surface-container py-space-md border-b border-border-warm/60 sticky top-20 z-30 backdrop-blur-md bg-surface-container/95">
+      {/* FILTER & TAB NAVIGATION BAR (Compact -20%) */}
+      <section className="bg-surface-container py-3 border-b border-border-warm/60 sticky top-20 z-30 backdrop-blur-md bg-surface-container/95">
         <div className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin flex flex-wrap items-center justify-between gap-space-md">
           {/* Filter Segmented Tabs */}
-          <div className="inline-flex flex-wrap items-center gap-1.5 p-1.5 bg-surface-container-high rounded-xl">
+          <div className="inline-flex flex-wrap items-center gap-1.5 p-1 bg-surface-container-high rounded-xl">
             <button
-              className={`px-space-md py-space-xs rounded-lg font-label-lg text-label-lg transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-xs transition-all ${
                 activeCategory === "all"
-                  ? "bg-ink-charcoal text-ivory-surface shadow-sm font-semibold"
+                  ? "bg-ink-charcoal text-ivory-surface shadow-xs font-semibold"
                   : "text-on-surface hover:bg-surface-container-lowest"
               }`}
               onClick={() => setActiveCategory("all")}
@@ -404,9 +404,9 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
               All Packages ({packages.length})
             </button>
             <button
-              className={`px-space-md py-space-xs rounded-lg font-label-lg text-label-lg transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-xs transition-all ${
                 activeCategory === "sightseeing"
-                  ? "bg-ink-charcoal text-ivory-surface shadow-sm font-semibold"
+                  ? "bg-ink-charcoal text-ivory-surface shadow-xs font-semibold"
                   : "text-on-surface hover:bg-surface-container-lowest"
               }`}
               onClick={() => setActiveCategory("sightseeing")}
@@ -415,9 +415,9 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
               Taj &amp; Agra Sightseeing
             </button>
             <button
-              className={`px-space-md py-space-xs rounded-lg font-label-lg text-label-lg transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-xs transition-all ${
                 activeCategory === "dawn"
-                  ? "bg-ink-charcoal text-ivory-surface shadow-sm font-semibold"
+                  ? "bg-ink-charcoal text-ivory-surface shadow-xs font-semibold"
                   : "text-on-surface hover:bg-surface-container-lowest"
               }`}
               onClick={() => setActiveCategory("dawn")}
@@ -426,9 +426,9 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
               Dawn &amp; Fast-Track
             </button>
             <button
-              className={`px-space-md py-space-xs rounded-lg font-label-lg text-label-lg transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-xs transition-all ${
                 activeCategory === "pilgrimage"
-                  ? "bg-ink-charcoal text-ivory-surface shadow-sm font-semibold"
+                  ? "bg-ink-charcoal text-ivory-surface shadow-xs font-semibold"
                   : "text-on-surface hover:bg-surface-container-lowest"
               }`}
               onClick={() => setActiveCategory("pilgrimage")}
@@ -437,9 +437,9 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
               Pilgrimage Circuits
             </button>
             <button
-              className={`px-space-md py-space-xs rounded-lg font-label-lg text-label-lg transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-xs transition-all ${
                 activeCategory === "multiday"
-                  ? "bg-ink-charcoal text-ivory-surface shadow-sm font-semibold"
+                  ? "bg-ink-charcoal text-ivory-surface shadow-xs font-semibold"
                   : "text-on-surface hover:bg-surface-container-lowest"
               }`}
               onClick={() => setActiveCategory("multiday")}
@@ -450,31 +450,31 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
           </div>
 
           {/* Quick Assistance Anchor */}
-          <div className="flex items-center gap-space-sm text-on-surface-variant font-body-sm text-body-sm">
-            <span className="material-symbols-outlined text-primary text-[18px]">support_agent</span>
+          <div className="flex items-center gap-2 text-on-surface-variant text-xs">
+            <span className="material-symbols-outlined text-primary text-[16px]">support_agent</span>
             <span>Need a tailored route?</span>
-            <a className="text-primary font-bold hover:underline font-label-lg text-label-lg" href="#custom-quote">
+            <a className="text-primary font-bold hover:underline text-xs" href="#custom-quote">
               Custom Itinerary Desk ↓
             </a>
           </div>
         </div>
       </section>
 
-      {/* CURATED PACKAGES CATALOG GRID */}
-      <section className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin py-space-2xl w-full">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-space-md mb-space-xl">
+      {/* CURATED PACKAGES CATALOG GRID (Compact -20%) */}
+      <section className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin py-8 sm:py-10 w-full">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-space-md mb-6">
           <div>
-            <span className="font-label-caps text-label-caps text-primary uppercase font-bold tracking-widest">
+            <span className="font-label-caps text-[9.5px] text-primary uppercase font-bold tracking-widest">
               Handpicked Itineraries
             </span>
             <h2 className="font-headline-lg text-headline-lg text-ink-charcoal mt-1">Curated North India Tours</h2>
           </div>
-          <p className="font-body-sm text-body-sm text-on-surface-variant max-w-md">
+          <p className="font-body-sm text-[10.5px] text-on-surface-variant max-w-md">
             All vehicles strictly private, sanitized with commercial yellow-plate tourist permits. Guaranteed on-time dispatch from Taj Ganj, Agra.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-space-lg">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
           {filteredPackages.map((item) => {
             const { pkg } = item;
             const packageDetailUrl = `/en/packages/${pkg.slug}`;
@@ -486,50 +486,50 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
             return (
               <article
                 key={pkg.id}
-                className="flex flex-col bg-surface-container-lowest rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border border-border-warm"
+                className="flex flex-col bg-surface-container-lowest rounded-xl shadow-xs hover:shadow-md transition-all duration-300 overflow-hidden border border-border-warm"
               >
-                <div className="relative h-56 bg-surface-container overflow-hidden group">
+                <div className="relative h-44 sm:h-48 bg-surface-container overflow-hidden group">
                   <img
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     alt={pkg.name}
                     src={pkg.image}
                   />
-                  <div className="absolute top-3 left-3 flex gap-2 flex-wrap">
-                    <span className={`px-2.5 py-0.5 rounded text-label-caps uppercase tracking-wider shadow-sm ${item.badgeClass}`}>
+                  <div className="absolute top-2.5 left-2.5 flex gap-1.5 flex-wrap">
+                    <span className={`px-2 py-0.5 rounded text-[8.5px] font-label-caps uppercase tracking-wider shadow-xs font-bold ${item.badgeClass}`}>
                       {item.badgeTag}
                     </span>
-                    <span className="px-2.5 py-0.5 rounded bg-ink-charcoal/90 text-ivory-surface text-label-caps uppercase tracking-wider backdrop-blur-sm">
+                    <span className="px-2 py-0.5 rounded bg-ink-charcoal/90 text-ivory-surface text-[8.5px] font-label-caps uppercase tracking-wider backdrop-blur-sm font-semibold">
                       {pkg.kicker}
                     </span>
                   </div>
-                  <div className="absolute bottom-3 right-3 px-2.5 py-0.5 rounded bg-surface-container-lowest/90 backdrop-blur-sm text-ink-charcoal text-label-caps font-semibold flex items-center gap-1 shadow-sm">
-                    <span className="material-symbols-outlined text-[14px]">{item.durationIcon}</span>
+                  <div className="absolute bottom-2.5 right-2.5 px-2 py-0.5 rounded bg-surface-container-lowest/90 backdrop-blur-sm text-ink-charcoal text-[8.5px] font-label-caps font-semibold flex items-center gap-1 shadow-xs">
+                    <span className="material-symbols-outlined text-[13px]">{item.durationIcon}</span>
                     <span>{item.durationBadge}</span>
                   </div>
                 </div>
 
-                <div className="p-space-lg flex-1 flex flex-col justify-between gap-space-md">
-                  <div className="flex flex-col gap-space-xs">
+                <div className="p-3.5 sm:p-4 flex-1 flex flex-col justify-between gap-3">
+                  <div className="flex flex-col gap-1">
                     <a href={packageDetailUrl} className="group">
-                      <h3 className="font-headline-sm text-headline-sm text-ink-charcoal leading-snug group-hover:text-primary transition-colors">
+                      <h3 className="font-headline-sm text-base sm:text-[17px] text-ink-charcoal font-bold leading-snug group-hover:text-primary transition-colors">
                         {pkg.name}
                       </h3>
                     </a>
-                    <p className="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">
+                    <p className="font-body-sm text-[10.5px] text-on-surface-variant line-clamp-2 leading-relaxed">
                       {pkg.blurb}
                     </p>
                   </div>
 
                   {/* Key Monument Stops pills */}
-                  <div className="flex flex-col gap-space-xs pt-space-xs">
-                    <span className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">
+                  <div className="flex flex-col gap-1 pt-0.5">
+                    <span className="font-label-caps text-[8.5px] text-on-surface-variant uppercase tracking-wider font-semibold">
                       Key Monument Stops
                     </span>
-                    <div className="flex flex-wrap gap-1.5">
+                    <div className="flex flex-wrap gap-1">
                       {item.stops.map((stop, sIdx) => (
                         <span
                           key={sIdx}
-                          className="px-2 py-0.5 bg-sandstone-wash rounded font-label-caps text-label-caps text-on-surface"
+                          className="px-1.5 py-0.5 bg-sandstone-wash rounded font-label-caps text-[8.5px] text-on-surface font-medium"
                         >
                           {stop}
                         </span>
@@ -538,42 +538,42 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
                   </div>
 
                   {/* Inclusions List */}
-                  <div className="space-y-1 text-on-surface-variant font-body-sm text-body-sm pt-space-xs">
+                  <div className="space-y-1 text-on-surface-variant font-body-sm text-[10px] pt-0.5">
                     {item.inclusions.map((inc, iIdx) => (
-                      <div key={iIdx} className="flex items-center gap-2">
-                        <span className="material-symbols-outlined text-primary text-[16px] shrink-0">check_circle</span>
+                      <div key={iIdx} className="flex items-center gap-1.5">
+                        <span className="material-symbols-outlined text-primary text-[14px] shrink-0">check_circle</span>
                         <span className="truncate">{inc}</span>
                       </div>
                     ))}
                   </div>
 
                   {/* Pricing & CTAs */}
-                  <div className="pt-space-md mt-auto flex flex-col gap-space-sm bg-surface-container-low p-space-md rounded-xl border border-border-warm/60">
+                  <div className="pt-2 mt-auto flex flex-col gap-2 bg-surface-container-low p-2.5 sm:p-3 rounded-lg border border-border-warm/60">
                     <div className="flex items-baseline justify-between">
                       <div>
-                        <span className="font-body-sm text-body-sm text-on-surface-variant block">Sedan Starting</span>
-                        <span className="font-price-display text-price-display text-primary leading-none font-bold">
+                        <span className="font-body-sm text-[9.5px] text-on-surface-variant block">Sedan Starting</span>
+                        <span className="font-price-display text-lg text-primary leading-none font-bold">
                           ₹{pkg.from.toLocaleString("en-IN")}
                         </span>
-                        <span className="font-body-sm text-body-sm text-on-surface-variant"> / group</span>
+                        <span className="font-body-sm text-[9.5px] text-on-surface-variant"> / group</span>
                       </div>
-                      <div className="text-right font-label-caps text-label-caps text-on-surface-variant space-y-0.5">
+                      <div className="text-right font-label-caps text-[8.5px] text-on-surface-variant space-y-0.5">
                         {item.vehiclePrices.map((vp, vIdx) => (
                           <div key={vIdx}>{vp.label}: {vp.price}</div>
                         ))}
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-space-xs pt-1">
+                    <div className="grid grid-cols-2 gap-1.5 pt-0.5">
                       <a
-                        className="inline-flex items-center justify-center gap-1 px-3 py-2.5 rounded-lg bg-ink-charcoal text-ivory-surface font-label-lg text-label-lg hover:bg-ink-slate transition-colors"
+                        className="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-lg bg-ink-charcoal text-ivory-surface text-xs font-semibold hover:bg-ink-slate transition-colors"
                         href={whatsappPackageUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        <span className="material-symbols-outlined text-gold-accent text-[18px]">chat</span> WhatsApp
+                        <span className="material-symbols-outlined text-gold-accent text-[16px]">chat</span> WhatsApp
                       </a>
                       <a
-                        className="inline-flex items-center justify-center gap-1 px-3 py-2.5 rounded-lg bg-primary text-on-primary font-label-lg text-label-lg hover:bg-primary-container transition-colors shadow-sm"
+                        className="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-lg bg-primary text-on-primary text-xs font-semibold hover:bg-primary-container transition-colors shadow-xs"
                         href={packageDetailUrl}
                       >
                         <span>View Details</span> →
@@ -587,31 +587,31 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
         </div>
       </section>
 
-      {/* PACKAGE COMPARISON & FLEET DECISION MATRIX */}
-      <section className="bg-surface-container-low py-space-3xl border-t border-b border-border-warm/60">
+      {/* PACKAGE COMPARISON & FLEET DECISION MATRIX (Compact -20%) */}
+      <section className="bg-surface-container-low py-8 sm:py-10 border-t border-b border-border-warm/60">
         <div className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin">
-          <div className="text-center max-w-3xl mx-auto mb-space-xl">
-            <span className="font-label-caps text-label-caps text-primary uppercase font-bold tracking-widest">
+          <div className="text-center max-w-3xl mx-auto mb-6">
+            <span className="font-label-caps text-[9.5px] text-primary uppercase font-bold tracking-widest">
               Executive Comparison
             </span>
             <h2 className="font-headline-lg text-headline-lg text-ink-charcoal mt-1">
               Package &amp; Fleet Decision Matrix
             </h2>
-            <p className="font-body-md text-body-md text-on-surface-variant mt-2">
+            <p className="font-body-md text-xs text-on-surface-variant mt-1.5">
               Compare durations, monument highlights, recommended vehicle choices, and fixed honest pricing side-by-side.
             </p>
           </div>
           {/* Matrix Table Container */}
-          <div className="overflow-x-auto bg-surface-container-lowest rounded-xl shadow-sm border border-border-warm">
-            <table className="w-full text-left font-body-sm text-body-sm text-on-surface">
-              <thead className="bg-surface-container font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider border-b border-border-warm">
+          <div className="overflow-x-auto bg-surface-container-lowest rounded-xl shadow-xs border border-border-warm">
+            <table className="w-full text-left font-body-sm text-xs text-on-surface">
+              <thead className="bg-surface-container font-label-caps text-[9px] text-on-surface-variant uppercase tracking-wider border-b border-border-warm">
                 <tr>
-                  <th className="py-space-md px-space-md">Tour Circuit</th>
-                  <th className="py-space-md px-space-md">Duration</th>
-                  <th className="py-space-md px-space-md">Key Monuments Covered</th>
-                  <th className="py-space-md px-space-md">Starting Fare</th>
-                  <th className="py-space-md px-space-md">Best Suited For</th>
-                  <th className="py-space-md px-space-md">Recommended Fleet</th>
+                  <th className="py-2.5 px-3">Tour Circuit</th>
+                  <th className="py-2.5 px-3">Duration</th>
+                  <th className="py-2.5 px-3">Key Monuments Covered</th>
+                  <th className="py-2.5 px-3">Starting Fare</th>
+                  <th className="py-2.5 px-3">Best Suited For</th>
+                  <th className="py-2.5 px-3">Recommended Fleet</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border-warm/50">
@@ -627,20 +627,20 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
                         idx % 2 === 1 ? "bg-sandstone-wash/20" : ""
                       }`}
                     >
-                      <td className="py-space-md px-space-md font-semibold text-ink-charcoal">
+                      <td className="py-2.5 px-3 font-semibold text-ink-charcoal">
                         <a href={`/en/packages/${pkg.slug}`} className="hover:text-primary transition-colors">
                           {pkg.name}
                         </a>
                       </td>
-                      <td className="py-space-md px-space-md text-on-surface-variant">{pkg.duration}</td>
-                      <td className="py-space-md px-space-md">{pkg.places.join(", ")}</td>
-                      <td className="py-space-md px-space-md font-bold text-primary">₹{pkg.from.toLocaleString("en-IN")}</td>
-                      <td className="py-space-md px-space-md">
-                        <span className="px-2 py-0.5 rounded bg-sandstone-wash text-ink-charcoal font-label-caps text-label-caps">
+                      <td className="py-2.5 px-3 text-on-surface-variant">{pkg.duration}</td>
+                      <td className="py-2.5 px-3 text-[10.5px]">{pkg.places.join(", ")}</td>
+                      <td className="py-2.5 px-3 font-bold text-primary">₹{pkg.from.toLocaleString("en-IN")}</td>
+                      <td className="py-2.5 px-3">
+                        <span className="px-2 py-0.5 rounded bg-sandstone-wash text-ink-charcoal font-label-caps text-[8.5px]">
                           {meta.suitedFor}
                         </span>
                       </td>
-                      <td className="py-space-md px-space-md text-secondary">{meta.recommendedFleet}</td>
+                      <td className="py-2.5 px-3 text-secondary text-[10.5px]">{meta.recommendedFleet}</td>
                     </tr>
                   );
                 })}
@@ -650,113 +650,113 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
         </div>
       </section>
 
-      {/* THE HONEST HERITAGE CHARTER */}
-      <section className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin py-space-3xl w-full">
-        <div className="flex flex-col gap-space-xs text-center max-w-2xl mx-auto mb-space-2xl">
-          <div className="inline-flex items-center justify-center gap-1 text-primary font-label-caps text-label-caps uppercase font-bold tracking-widest">
-            <span className="material-symbols-outlined text-[16px]">verified</span> 100% Transparent Chauffeur Ethics
+      {/* THE HONEST HERITAGE CHARTER (Compact -20%) */}
+      <section className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin py-8 sm:py-10 w-full">
+        <div className="flex flex-col gap-1 text-center max-w-2xl mx-auto mb-6">
+          <div className="inline-flex items-center justify-center gap-1 text-primary font-label-caps text-[9.5px] uppercase font-bold tracking-widest">
+            <span className="material-symbols-outlined text-[15px]">verified</span> 100% Transparent Chauffeur Ethics
           </div>
           <h2 className="font-headline-lg text-headline-lg text-ink-charcoal">The Honest Heritage Charter</h2>
-          <p className="font-body-md text-body-md text-on-surface-variant">
+          <p className="font-body-md text-xs text-on-surface-variant">
             No unexpected baggage surcharges, no hidden highway entry cess, and an absolute zero tolerance policy toward unwanted tourist emporium detours.
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-space-xl">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
           {/* Included Column */}
-          <div className="bg-surface-container-lowest p-space-xl rounded-xl shadow-sm border border-border-warm flex flex-col gap-space-lg">
-            <div className="flex items-center gap-space-sm">
-              <div className="w-10 h-10 rounded-full bg-success-jade/10 text-success-jade flex items-center justify-center">
-                <span className="material-symbols-outlined text-[24px]">task_alt</span>
+          <div className="bg-surface-container-lowest p-4 sm:p-5 rounded-xl shadow-xs border border-border-warm flex flex-col gap-3">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-success-jade/10 text-success-jade flex items-center justify-center shrink-0">
+                <span className="material-symbols-outlined text-[18px]">task_alt</span>
               </div>
               <div>
-                <h3 className="font-title-lg text-title-lg text-ink-charcoal font-semibold">Always Included in Your Quote</h3>
-                <p className="font-body-sm text-body-sm text-on-surface-variant">Full contractual transparency backed by GST invoice</p>
+                <h3 className="font-title-lg text-sm sm:text-base text-ink-charcoal font-semibold">Always Included in Your Quote</h3>
+                <p className="font-body-sm text-[10px] text-on-surface-variant">Full contractual transparency backed by GST invoice</p>
               </div>
             </div>
-            <ul className="flex flex-col gap-space-md font-body-md text-body-md text-on-surface">
-              <li className="flex items-start gap-space-sm">
-                <span className="material-symbols-outlined text-success-jade shrink-0 text-[20px] mt-0.5">check_circle</span>
+            <ul className="flex flex-col gap-2.5 font-body-md text-xs text-on-surface">
+              <li className="flex items-start gap-2">
+                <span className="material-symbols-outlined text-success-jade shrink-0 text-[16px] mt-0.5">check_circle</span>
                 <div>
                   <strong className="font-semibold text-ink-charcoal">Clean Commercial AC Vehicle:</strong>
-                  <p className="text-on-surface-variant font-body-sm text-body-sm">Deeply sanitized interior, functional climate control, ample boot luggage space.</p>
+                  <p className="text-on-surface-variant text-[10.5px]">Deeply sanitized interior, functional climate control, ample boot luggage space.</p>
                 </div>
               </li>
-              <li className="flex items-start gap-space-sm">
-                <span className="material-symbols-outlined text-success-jade shrink-0 text-[20px] mt-0.5">check_circle</span>
+              <li className="flex items-start gap-2">
+                <span className="material-symbols-outlined text-success-jade shrink-0 text-[16px] mt-0.5">check_circle</span>
                 <div>
                   <strong className="font-semibold text-ink-charcoal">Police-Verified Professional Chauffeur:</strong>
-                  <p className="text-on-surface-variant font-body-sm text-body-sm">Uniformed, non-smoking, courteous, and thoroughly route-trained on Yamuna &amp; Braj corridors.</p>
+                  <p className="text-on-surface-variant text-[10.5px]">Uniformed, non-smoking, courteous, and thoroughly route-trained on Yamuna &amp; Braj corridors.</p>
                 </div>
               </li>
-              <li className="flex items-start gap-space-sm">
-                <span className="material-symbols-outlined text-success-jade shrink-0 text-[20px] mt-0.5">check_circle</span>
+              <li className="flex items-start gap-2">
+                <span className="material-symbols-outlined text-success-jade shrink-0 text-[16px] mt-0.5">check_circle</span>
                 <div>
                   <strong className="font-semibold text-ink-charcoal">All Tolls, Fuel &amp; Parking Included:</strong>
-                  <p className="text-on-surface-variant font-body-sm text-body-sm">No demanding loose cash at monument parking stands or highway expressway booths.</p>
+                  <p className="text-on-surface-variant text-[10.5px]">No demanding loose cash at monument parking stands or highway expressway booths.</p>
                 </div>
               </li>
-              <li className="flex items-start gap-space-sm">
-                <span className="material-symbols-outlined text-success-jade shrink-0 text-[20px] mt-0.5">check_circle</span>
+              <li className="flex items-start gap-2">
+                <span className="material-symbols-outlined text-success-jade shrink-0 text-[16px] mt-0.5">check_circle</span>
                 <div>
                   <strong className="font-semibold text-ink-charcoal">Interstate Border Passenger Taxes:</strong>
-                  <p className="text-on-surface-variant font-body-sm text-body-sm">Pre-paid UP, Rajasthan, and Delhi commercial tourist entry permits.</p>
+                  <p className="text-on-surface-variant text-[10.5px]">Pre-paid UP, Rajasthan, and Delhi commercial tourist entry permits.</p>
                 </div>
               </li>
-              <li className="flex items-start gap-space-sm">
-                <span className="material-symbols-outlined text-success-jade shrink-0 text-[20px] mt-0.5">check_circle</span>
+              <li className="flex items-start gap-2">
+                <span className="material-symbols-outlined text-success-jade shrink-0 text-[16px] mt-0.5">check_circle</span>
                 <div>
                   <strong className="font-semibold text-ink-charcoal">Complimentary Hydration:</strong>
-                  <p className="text-on-surface-variant font-body-sm text-body-sm">Sealed chilled mineral water bottles and route tissue packs in every car.</p>
+                  <p className="text-on-surface-variant text-[10.5px]">Sealed chilled mineral water bottles and route tissue packs in every car.</p>
                 </div>
               </li>
             </ul>
           </div>
 
           {/* Excluded / Transparent Clarifications Column */}
-          <div className="bg-surface-container-lowest p-space-xl rounded-xl shadow-sm border border-border-warm flex flex-col gap-space-lg">
-            <div className="flex items-center gap-space-sm">
-              <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center">
-                <span className="material-symbols-outlined text-[24px]">receipt_long</span>
+          <div className="bg-surface-container-lowest p-4 sm:p-5 rounded-xl shadow-xs border border-border-warm flex flex-col gap-3">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                <span className="material-symbols-outlined text-[18px]">receipt_long</span>
               </div>
               <div>
-                <h3 className="font-title-lg text-title-lg text-ink-charcoal font-semibold">Transparent Exclusions</h3>
-                <p className="font-body-sm text-body-sm text-on-surface-variant">Pay direct or book separately with zero markup</p>
+                <h3 className="font-title-lg text-sm sm:text-base text-ink-charcoal font-semibold">Transparent Exclusions</h3>
+                <p className="font-body-sm text-[10px] text-on-surface-variant">Pay direct or book separately with zero markup</p>
               </div>
             </div>
-            <ul className="flex flex-col gap-space-md font-body-md text-body-md text-on-surface">
-              <li className="flex items-start gap-space-sm">
-                <span className="material-symbols-outlined text-primary shrink-0 text-[20px] mt-0.5">info</span>
+            <ul className="flex flex-col gap-2.5 font-body-md text-xs text-on-surface">
+              <li className="flex items-start gap-2">
+                <span className="material-symbols-outlined text-primary shrink-0 text-[16px] mt-0.5">info</span>
                 <div>
                   <strong className="font-semibold text-ink-charcoal">ASI Monument Entrance Tickets:</strong>
-                  <p className="text-on-surface-variant font-body-sm text-body-sm">Payable directly via the Archaeological Survey of India QR portal or ticket counter (e.g., Taj Mahal ₹50 Indian / ₹1,100 Foreigner).</p>
+                  <p className="text-on-surface-variant text-[10.5px]">Payable directly via the Archaeological Survey of India QR portal or ticket counter (e.g., Taj Mahal ₹50 Indian / ₹1,100 Foreigner).</p>
                 </div>
               </li>
-              <li className="flex items-start gap-space-sm">
-                <span className="material-symbols-outlined text-primary shrink-0 text-[20px] mt-0.5">info</span>
+              <li className="flex items-start gap-2">
+                <span className="material-symbols-outlined text-primary shrink-0 text-[16px] mt-0.5">info</span>
                 <div>
                   <strong className="font-semibold text-ink-charcoal">ASI Licensed Guide Fees (Optional):</strong>
-                  <p className="text-on-surface-variant font-body-sm text-body-sm">Govt-approved multilingual guides can be arranged upon request at fixed official tariffs (approx ₹1,200–₹1,800).</p>
+                  <p className="text-on-surface-variant text-[10.5px]">Govt-approved multilingual guides can be arranged upon request at fixed official tariffs (approx ₹1,200–₹1,800).</p>
                 </div>
               </li>
-              <li className="flex items-start gap-space-sm">
-                <span className="material-symbols-outlined text-primary shrink-0 text-[20px] mt-0.5">info</span>
+              <li className="flex items-start gap-2">
+                <span className="material-symbols-outlined text-primary shrink-0 text-[16px] mt-0.5">info</span>
                 <div>
                   <strong className="font-semibold text-ink-charcoal">Personal Dining &amp; Hotel Stays:</strong>
-                  <p className="text-on-surface-variant font-body-sm text-body-sm">Lunches, dinners, and accommodation are traveler's choice unless booking all-inclusive packages.</p>
+                  <p className="text-on-surface-variant text-[10.5px]">Lunches, dinners, and accommodation are traveler's choice unless booking all-inclusive packages.</p>
                 </div>
               </li>
-              <li className="flex items-start gap-space-sm">
-                <span className="material-symbols-outlined text-primary shrink-0 text-[20px] mt-0.5">info</span>
+              <li className="flex items-start gap-2">
+                <span className="material-symbols-outlined text-primary shrink-0 text-[16px] mt-0.5">info</span>
                 <div>
                   <strong className="font-semibold text-ink-charcoal">Driver Night Allowance past 10:00 PM:</strong>
-                  <p className="text-on-surface-variant font-body-sm text-body-sm">A nominal ₹300 night charge applies strictly if tours extend past 10:00 PM for late-night highway transits.</p>
+                  <p className="text-on-surface-variant text-[10.5px]">A nominal ₹300 night charge applies strictly if tours extend past 10:00 PM for late-night highway transits.</p>
                 </div>
               </li>
             </ul>
             {/* Zero Commission Callout Banner */}
-            <div className="mt-auto p-space-md rounded-xl bg-sandstone-wash flex items-center gap-space-sm border border-border-warm">
-              <span className="material-symbols-outlined text-primary text-[24px] shrink-0">article_shortcut</span>
-              <p className="font-body-sm text-body-sm text-on-surface font-medium">
+            <div className="mt-auto p-2.5 rounded-lg bg-sandstone-wash flex items-center gap-2 border border-border-warm">
+              <span className="material-symbols-outlined text-primary text-[20px] shrink-0">article_shortcut</span>
+              <p className="font-body-sm text-[10px] text-on-surface font-medium">
                 <span className="font-bold text-primary">Strict Zero-Commission Shopping Promise:</span> Our chauffeurs never divert you to overpriced marble emporiums or craft bazaars unless you specifically request an artisan visit.
               </p>
             </div>
@@ -764,57 +764,57 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
         </div>
       </section>
 
-      {/* HOW IT WORKS (SIMPLE 3-STEP BOOKING) */}
-      <section className="bg-surface-container py-space-3xl border-t border-b border-border-warm/60">
+      {/* HOW IT WORKS (SIMPLE 3-STEP BOOKING - Compact -20%) */}
+      <section className="bg-surface-container py-8 sm:py-10 border-t border-b border-border-warm/60">
         <div className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin">
-          <div className="text-center max-w-2xl mx-auto mb-space-2xl">
-            <span className="font-label-caps text-label-caps text-primary uppercase font-bold tracking-widest">
+          <div className="text-center max-w-2xl mx-auto mb-6">
+            <span className="font-label-caps text-[9.5px] text-primary uppercase font-bold tracking-widest">
               Frictionless Process
             </span>
             <h2 className="font-headline-lg text-headline-lg text-ink-charcoal mt-1">Reserve in Three Simple Steps</h2>
-            <p className="font-body-md text-body-md text-on-surface-variant mt-2">
+            <p className="font-body-md text-xs text-on-surface-variant mt-1.5">
               From enquiry to chauffeur doorstep arrival in Agra or Delhi within hours.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-space-lg">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
             {/* Step 1 */}
-            <div className="bg-surface-container-lowest p-space-xl rounded-xl shadow-sm border border-border-warm flex flex-col gap-space-md">
-              <div className="w-12 h-12 rounded-full bg-sandstone-wash text-primary flex items-center justify-center font-headline-sm text-headline-sm font-bold">
+            <div className="bg-surface-container-lowest p-3.5 sm:p-4.5 rounded-xl shadow-xs border border-border-warm flex flex-col gap-2.5">
+              <div className="w-8 h-8 rounded-full bg-sandstone-wash text-primary flex items-center justify-center font-headline-sm text-sm font-bold">
                 01
               </div>
-              <h3 className="font-title-lg text-title-lg text-ink-charcoal font-semibold">Choose Circuit &amp; Vehicle</h3>
-              <p className="font-body-sm text-body-sm text-on-surface-variant">
+              <h3 className="font-title-lg text-sm sm:text-base text-ink-charcoal font-semibold">Choose Circuit &amp; Vehicle</h3>
+              <p className="font-body-sm text-[10.5px] text-on-surface-variant">
                 Select your favored heritage itinerary, vehicle class (Dzire, Ertiga, Crysta, or Tempo), and travel date via our online engine or direct WhatsApp.
               </p>
-              <div className="font-label-caps text-label-caps text-primary mt-auto flex items-center gap-1 font-bold">
+              <div className="font-label-caps text-[9.5px] text-primary mt-auto flex items-center gap-1 font-bold">
                 <span>INSTANT QUOTE RESPONSE</span> →
               </div>
             </div>
             {/* Step 2 */}
-            <div className="bg-surface-container-lowest p-space-xl rounded-xl shadow-sm border border-border-warm flex flex-col gap-space-md">
-              <div className="w-12 h-12 rounded-full bg-sandstone-wash text-primary flex items-center justify-center font-headline-sm text-headline-sm font-bold">
+            <div className="bg-surface-container-lowest p-3.5 sm:p-4.5 rounded-xl shadow-xs border border-border-warm flex flex-col gap-2.5">
+              <div className="w-8 h-8 rounded-full bg-sandstone-wash text-primary flex items-center justify-center font-headline-sm text-sm font-bold">
                 02
               </div>
-              <h3 className="font-title-lg text-title-lg text-ink-charcoal font-semibold">28% Advance Deposit</h3>
-              <p className="font-body-sm text-body-sm text-on-surface-variant">
+              <h3 className="font-title-lg text-sm sm:text-base text-ink-charcoal font-semibold">28% Advance Deposit</h3>
+              <p className="font-body-sm text-[10.5px] text-on-surface-variant">
                 Secure vehicle custody via UPI, Google Pay, or direct Bank Transfer. An instant booking voucher with full operator details and GST invoice is dispatched.
               </p>
-              <div className="font-label-caps text-label-caps text-success-jade mt-auto flex items-center gap-1 font-bold">
-                <span className="material-symbols-outlined text-[16px]">lock</span>
+              <div className="font-label-caps text-[9.5px] text-success-jade mt-auto flex items-center gap-1 font-bold">
+                <span className="material-symbols-outlined text-[14px]">lock</span>
                 <span>SECURE ALLOCATION GUARANTEE</span>
               </div>
             </div>
             {/* Step 3 */}
-            <div className="bg-surface-container-lowest p-space-xl rounded-xl shadow-sm border border-border-warm flex flex-col gap-space-md">
-              <div className="w-12 h-12 rounded-full bg-sandstone-wash text-primary flex items-center justify-center font-headline-sm text-headline-sm font-bold">
+            <div className="bg-surface-container-lowest p-3.5 sm:p-4.5 rounded-xl shadow-xs border border-border-warm flex flex-col gap-2.5">
+              <div className="w-8 h-8 rounded-full bg-sandstone-wash text-primary flex items-center justify-center font-headline-sm text-sm font-bold">
                 03
               </div>
-              <h3 className="font-title-lg text-title-lg text-ink-charcoal font-semibold">Doorstep Chauffeur Arrival</h3>
-              <p className="font-body-sm text-body-sm text-on-surface-variant">
+              <h3 className="font-title-lg text-sm sm:text-base text-ink-charcoal font-semibold">Doorstep Chauffeur Arrival</h3>
+              <p className="font-body-sm text-[10.5px] text-on-surface-variant">
                 Receive chauffeur contact and cab registration number 2 hours prior to start. Chauffeur arrives at your hotel porch or station platform with your name placard.
               </p>
-              <div className="font-label-caps text-label-caps text-primary mt-auto flex items-center gap-1 font-bold">
-                <span className="material-symbols-outlined text-[16px]">done_all</span>
+              <div className="font-label-caps text-[9.5px] text-primary mt-auto flex items-center gap-1 font-bold">
+                <span className="material-symbols-outlined text-[14px]">done_all</span>
                 <span>BALANCE PAID AT TRIP END</span>
               </div>
             </div>
@@ -822,37 +822,37 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
         </div>
       </section>
 
-      {/* FREQUENTLY ASKED QUESTIONS */}
-      <section className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin py-space-3xl w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-xl">
-          <div className="lg:col-span-4 flex flex-col gap-space-md">
-            <span className="font-label-caps text-label-caps text-primary uppercase font-bold tracking-widest">
+      {/* FREQUENTLY ASKED QUESTIONS (Compact -20%) */}
+      <section className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin py-8 sm:py-10 w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8">
+          <div className="lg:col-span-4 flex flex-col gap-3">
+            <span className="font-label-caps text-[9.5px] text-primary uppercase font-bold tracking-widest">
               Concierge Answers
             </span>
             <h2 className="font-headline-lg text-headline-lg text-ink-charcoal">Frequently Asked Questions</h2>
-            <p className="font-body-md text-body-md text-on-surface-variant">
+            <p className="font-body-md text-xs text-on-surface-variant">
               Everything you need to know about monument timings, multilingual guides, luggage capacities, and cancellation policies.
             </p>
-            <div className="p-space-lg bg-sandstone-wash rounded-xl mt-space-md flex flex-col gap-space-xs border border-border-warm">
-              <span className="font-label-caps text-label-caps text-primary font-bold">UNSURE ABOUT FRIDAY TAJ CLOSING?</span>
-              <p className="font-body-sm text-body-sm text-on-surface">
+            <div className="p-3 bg-sandstone-wash rounded-xl mt-2 flex flex-col gap-1 border border-border-warm">
+              <span className="font-label-caps text-[9px] text-primary font-bold">UNSURE ABOUT FRIDAY TAJ CLOSING?</span>
+              <p className="font-body-sm text-[10px] text-on-surface">
                 Please note: The Taj Mahal is closed every Friday for general visitors. Our Friday itineraries swap to Agra Fort, Fatehpur Sikri, and Mathura.
               </p>
             </div>
           </div>
-          <div className="lg:col-span-8 flex flex-col gap-space-sm" id="package-faq-accordion">
+          <div className="lg:col-span-8 flex flex-col gap-2" id="package-faq-accordion">
             {PACKAGES_FAQS.map((faq, fIdx) => (
               <details
                 key={fIdx}
-                className="group bg-surface-container-lowest rounded-xl p-space-md shadow-sm border border-border-warm open:shadow-md transition-all"
+                className="group bg-surface-container-lowest rounded-xl p-3 sm:p-3.5 shadow-2xs border border-border-warm open:shadow-xs transition-all"
               >
-                <summary className="flex items-center justify-between cursor-pointer list-none font-title-md text-title-md text-ink-charcoal font-semibold select-none">
+                <summary className="flex items-center justify-between cursor-pointer list-none font-title-md text-xs sm:text-[13px] text-ink-charcoal font-semibold select-none">
                   <span>{faq.q}</span>
-                  <span className="material-symbols-outlined text-primary group-open:rotate-180 transition-transform text-[22px]">
+                  <span className="material-symbols-outlined text-primary group-open:rotate-180 transition-transform text-[18px]">
                     expand_more
                   </span>
                 </summary>
-                <div className="pt-space-sm font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                <div className="pt-2 font-body-md text-[10.5px] text-on-surface-variant leading-relaxed">
                   {faq.a}
                 </div>
               </details>

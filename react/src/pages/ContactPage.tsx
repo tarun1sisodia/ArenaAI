@@ -137,127 +137,127 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
-          {/* Card 1: Immediate Call Dispatch */}
-          <div className="bg-surface-container-lowest border border-border-warm rounded-xl p-6 sm:p-7 flex flex-col justify-between shadow-xs hover:shadow-md transition-shadow relative overflow-hidden">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5 items-stretch">
+          {/* Card 1: Immediate Call Dispatch (Compact -20%) */}
+          <div className="bg-surface-container-lowest border border-border-warm rounded-xl p-3.5 sm:p-4.5 flex flex-col justify-between shadow-xs hover:shadow-sm transition-shadow relative overflow-hidden">
             <div className="absolute top-0 right-0">
-              <span className="bg-terracotta-sandstone text-white font-label-caps text-[10px] px-3 py-1 rounded-bl uppercase tracking-wider font-semibold">
+              <span className="bg-terracotta-sandstone text-white font-label-caps text-[9px] px-2.5 py-0.5 rounded-bl uppercase tracking-wider font-semibold">
                 Average Pick-up: 2 Rings
               </span>
             </div>
             <div>
-              <div className="w-12 h-12 rounded-full bg-sandstone-wash flex items-center justify-center text-terracotta-sandstone mb-4 mt-2">
-                <span className="material-symbols-outlined text-2xl">phone_in_talk</span>
+              <div className="w-9 h-9 rounded-full bg-sandstone-wash flex items-center justify-center text-terracotta-sandstone mb-3 mt-1">
+                <span className="material-symbols-outlined text-lg">phone_in_talk</span>
               </div>
-              <h3 className="font-headline-sm text-ink-charcoal text-xl mb-1 font-semibold">Immediate Call Dispatch (24×7)</h3>
-              <p className="font-title-lg text-terracotta-sandstone mb-3 font-bold text-lg">+91 98765 43210</p>
-              <p className="text-on-surface-variant font-body-sm leading-relaxed mb-6">
+              <h3 className="font-headline-sm text-ink-charcoal text-base mb-1 font-semibold">Immediate Call Dispatch (24×7)</h3>
+              <p className="font-title-lg text-terracotta-sandstone mb-2 font-bold text-sm sm:text-base">+91 98765 43210</p>
+              <p className="text-on-surface-variant font-body-sm leading-relaxed mb-4 text-[10.5px]">
                 Immediate taxi allocation, late-night expressway emergencies, 3:00 AM airport pickups, and instant driver
                 assignment.
               </p>
             </div>
             <a
-              className="w-full inline-flex items-center justify-center gap-2 bg-terracotta-sandstone hover:bg-primary text-white font-label-lg py-3 px-4 rounded-lg transition-colors text-center text-sm font-semibold shadow-xs"
+              className="w-full inline-flex items-center justify-center gap-1.5 bg-terracotta-sandstone hover:bg-primary text-white font-label-lg py-2 px-3 rounded-lg transition-colors text-center text-xs font-semibold shadow-xs"
               href="tel:+919876543210"
             >
-              <span className="material-symbols-outlined text-lg">call</span>
+              <span className="material-symbols-outlined text-[16px]">call</span>
               <span>Call Dispatch Now</span>
             </a>
           </div>
 
-          {/* Card 2: WhatsApp Concierge Desk */}
-          <div className="bg-surface-container-lowest border border-border-warm rounded-xl p-6 sm:p-7 flex flex-col justify-between shadow-xs hover:shadow-md transition-shadow relative overflow-hidden">
+          {/* Card 2: WhatsApp Concierge Desk (Compact -20%) */}
+          <div className="bg-surface-container-lowest border border-border-warm rounded-xl p-3.5 sm:p-4.5 flex flex-col justify-between shadow-xs hover:shadow-sm transition-shadow relative overflow-hidden">
             <div className="absolute top-0 right-0">
-              <span className="bg-success-jade text-white font-label-caps text-[10px] px-3 py-1 rounded-bl uppercase tracking-wider font-semibold">
+              <span className="bg-success-jade text-white font-label-caps text-[9px] px-2.5 py-0.5 rounded-bl uppercase tracking-wider font-semibold">
                 Typical Reply: &lt; 5 mins
               </span>
             </div>
             <div>
-              <div className="w-12 h-12 rounded-full bg-[#E8F3EE] flex items-center justify-center text-success-jade mb-4 mt-2">
-                <span className="material-symbols-outlined text-2xl">chat</span>
+              <div className="w-9 h-9 rounded-full bg-[#E8F3EE] flex items-center justify-center text-success-jade mb-3 mt-1">
+                <span className="material-symbols-outlined text-lg">chat</span>
               </div>
-              <h3 className="font-headline-sm text-ink-charcoal text-xl mb-1 font-semibold">
+              <h3 className="font-headline-sm text-ink-charcoal text-base mb-1 font-semibold">
                 WhatsApp Concierge Desk (Fastest)
               </h3>
-              <p className="font-title-lg text-ink-charcoal mb-3 font-bold text-lg">+91 98765 43210</p>
-              <p className="text-on-surface-variant font-body-sm leading-relaxed mb-6">
+              <p className="font-title-lg text-ink-charcoal mb-2 font-bold text-sm sm:text-base">+91 98765 43210</p>
+              <p className="text-on-surface-variant font-body-sm leading-relaxed mb-4 text-[10.5px]">
                 Send itinerary details, receive vehicle photos, driver credentials, live location tracking, and instant quote
                 cards with UPI advance links.
               </p>
             </div>
             <a
-              className="w-full inline-flex items-center justify-center gap-2 bg-success-jade hover:bg-[#23533e] text-white font-label-lg py-3 px-4 rounded-lg transition-colors text-center text-sm font-semibold shadow-xs"
+              className="w-full inline-flex items-center justify-center gap-1.5 bg-success-jade hover:bg-[#23533e] text-white font-label-lg py-2 px-3 rounded-lg transition-colors text-center text-xs font-semibold shadow-xs"
               href="https://wa.me/919876543210"
               target="_blank"
               rel="noreferrer"
             >
-              <span className="material-symbols-outlined text-lg">chat</span>
+              <span className="material-symbols-outlined text-[16px]">chat</span>
               <span>Chat on WhatsApp ↗</span>
             </a>
           </div>
 
-          {/* Card 3: Corporate & Tour Desk */}
-          <div className="bg-surface-container-lowest border border-border-warm rounded-xl p-6 sm:p-7 flex flex-col justify-between shadow-xs hover:shadow-md transition-shadow relative overflow-hidden">
+          {/* Card 3: Corporate & Tour Desk (Compact -20%) */}
+          <div className="bg-surface-container-lowest border border-border-warm rounded-xl p-3.5 sm:p-4.5 flex flex-col justify-between shadow-xs hover:shadow-sm transition-shadow relative overflow-hidden">
             <div className="absolute top-0 right-0">
-              <span className="bg-secondary text-white font-label-caps text-[10px] px-3 py-1 rounded-bl uppercase tracking-wider font-semibold">
+              <span className="bg-secondary text-white font-label-caps text-[9px] px-2.5 py-0.5 rounded-bl uppercase tracking-wider font-semibold">
                 Corporate Rates &amp; GST
               </span>
             </div>
             <div>
-              <div className="w-12 h-12 rounded-full bg-sandstone-wash flex items-center justify-center text-terracotta-sandstone mb-4 mt-2">
-                <span className="material-symbols-outlined text-2xl">business_center</span>
+              <div className="w-9 h-9 rounded-full bg-sandstone-wash flex items-center justify-center text-terracotta-sandstone mb-3 mt-1">
+                <span className="material-symbols-outlined text-lg">business_center</span>
               </div>
-              <h3 className="font-headline-sm text-ink-charcoal text-xl mb-1 font-semibold">Corporate &amp; Tour Desk</h3>
-              <p className="font-title-md text-ink-charcoal mb-0.5 font-semibold text-sm break-all">
+              <h3 className="font-headline-sm text-ink-charcoal text-base mb-1 font-semibold">Corporate &amp; Tour Desk</h3>
+              <p className="font-title-md text-ink-charcoal mb-0.5 font-semibold text-xs break-all">
                 bookings@skbagheltravels.in
               </p>
-              <p className="text-on-surface-variant font-body-sm mb-3 text-xs break-all">dispatch@skbagheltravels.in</p>
-              <p className="text-on-surface-variant font-body-sm leading-relaxed mb-6">
+              <p className="text-on-surface-variant font-body-sm mb-2 text-[10px] break-all">dispatch@skbagheltravels.in</p>
+              <p className="text-on-surface-variant font-body-sm leading-relaxed mb-4 text-[10.5px]">
                 Multi-day Golden Triangle itineraries, wedding group transit in Tempo Travellers/Urbania, and B2B GST tax
                 invoices.
               </p>
             </div>
             <a
-              className="w-full inline-flex items-center justify-center gap-2 bg-surface-container-high hover:bg-surface-container-highest text-ink-charcoal font-label-lg py-3 px-4 rounded-lg transition-colors border border-outline-variant text-center text-sm font-semibold"
+              className="w-full inline-flex items-center justify-center gap-1.5 bg-surface-container-high hover:bg-surface-container-highest text-ink-charcoal font-label-lg py-2 px-3 rounded-lg transition-colors border border-outline-variant text-center text-xs font-semibold"
               href="mailto:bookings@skbagheltravels.in"
             >
-              <span className="material-symbols-outlined text-lg">mail</span>
+              <span className="material-symbols-outlined text-[16px]">mail</span>
               <span>Email Itinerary</span>
             </a>
           </div>
         </div>
 
         {/* 3. TWO-COLUMN LAYOUT: INQUIRY FORM + GARAGE DETAILS */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start pt-6">
-          {/* Left Column (7 cols): Booking / Quote Form */}
-          <div className="lg:col-span-7 bg-surface-container-lowest border border-border-warm rounded-xl p-6 sm:p-8 shadow-xs">
-            <div className="border-b border-border-warm pb-5 mb-6">
-              <div className="flex items-center gap-2 text-terracotta-sandstone text-xs font-bold uppercase tracking-wider font-label-caps mb-1.5">
-                <span className="material-symbols-outlined text-base">speed</span>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start pt-4">
+          {/* Left Column (7 cols): Booking / Quote Form (Compact -20%) */}
+          <div className="lg:col-span-7 bg-surface-container-lowest border border-border-warm rounded-xl p-4 sm:p-5 lg:p-6 shadow-xs">
+            <div className="border-b border-border-warm pb-4 mb-4">
+              <div className="flex items-center gap-1.5 text-terracotta-sandstone text-[10px] font-bold uppercase tracking-wider font-label-caps mb-1">
+                <span className="material-symbols-outlined text-sm">speed</span>
                 <span>15-Minute Guaranteed Confirmation</span>
               </div>
               <h2 className="font-headline-lg text-headline-lg text-ink-charcoal">
                 Send Itinerary or Request Direct Quote
               </h2>
-              <p className="text-on-surface-variant font-body-sm mt-1 text-sm">
+              <p className="text-on-surface-variant font-body-sm mt-1 text-[11px]">
                 Receive customized rates with zero hidden charges within 15 minutes directly on WhatsApp or Call.
               </p>
             </div>
 
             {submitted && (
-              <div className="mb-6 p-4 rounded-lg bg-success-jade/10 border border-success-jade/30 text-success-jade flex items-center gap-3">
-                <span className="material-symbols-outlined text-2xl">check_circle</span>
+              <div className="mb-4 p-3 rounded-lg bg-success-jade/10 border border-success-jade/30 text-success-jade flex items-center gap-2.5">
+                <span className="material-symbols-outlined text-xl">check_circle</span>
                 <div>
-                  <h4 className="font-bold text-sm">Inquiry Dispatched to Taj Ganj Control Desk!</h4>
-                  <p className="text-xs mt-0.5">Connecting you with our concierge on WhatsApp shortly...</p>
+                  <h4 className="font-bold text-xs">Inquiry Dispatched to Taj Ganj Control Desk!</h4>
+                  <p className="text-[10px] mt-0.5">Connecting you with our concierge on WhatsApp shortly...</p>
                 </div>
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <form onSubmit={handleSubmit} className="space-y-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-label-lg text-ink-charcoal text-xs mb-1.5 uppercase tracking-wider font-bold">
+                  <label className="block font-label-lg text-ink-charcoal text-[10px] mb-1 uppercase tracking-wider font-bold">
                     Full Name *
                   </label>
                   <input
@@ -266,15 +266,15 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     placeholder="e.g. Vikram Malhotra"
-                    className="w-full rounded-lg border border-border-warm bg-surface-bright px-3.5 py-2.5 text-sm text-ink-charcoal focus:border-terracotta-sandstone focus:outline-none"
+                    className="w-full rounded-lg border border-border-warm bg-surface-bright px-3 py-2 text-xs text-ink-charcoal focus:border-terracotta-sandstone focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block font-label-lg text-ink-charcoal text-xs mb-1.5 uppercase tracking-wider font-bold">
+                  <label className="block font-label-lg text-ink-charcoal text-[10px] mb-1 uppercase tracking-wider font-bold">
                     WhatsApp Number *
                   </label>
                   <div className="flex">
-                    <span className="inline-flex items-center px-3 border border-r-0 border-border-warm bg-sandstone-wash text-ink-charcoal text-xs font-semibold rounded-l-lg">
+                    <span className="inline-flex items-center px-2.5 border border-r-0 border-border-warm bg-sandstone-wash text-ink-charcoal text-[10px] font-semibold rounded-l-lg">
                       +91
                     </span>
                     <input
@@ -283,35 +283,35 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                       placeholder="98765 43210"
-                      className="w-full rounded-r-lg border border-border-warm bg-surface-bright px-3.5 py-2.5 text-sm text-ink-charcoal focus:border-terracotta-sandstone focus:outline-none"
+                      className="w-full rounded-r-lg border border-border-warm bg-surface-bright px-3 py-2 text-xs text-ink-charcoal focus:border-terracotta-sandstone focus:outline-none"
                     />
                   </div>
                 </div>
               </div>
 
               <div>
-                <label className="block font-label-lg text-ink-charcoal text-xs mb-1.5 uppercase tracking-wider font-bold">
+                <label className="block font-label-lg text-ink-charcoal text-[10px] mb-1 uppercase tracking-wider font-bold">
                   Email Address{" "}
-                  <span className="text-secondary text-xs normal-case font-normal">(For GST Tax Receipt &amp; Voucher)</span>
+                  <span className="text-secondary text-[10px] normal-case font-normal">(For GST Tax Receipt &amp; Voucher)</span>
                 </label>
                 <input
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   placeholder="name@company.com"
-                  className="w-full rounded-lg border border-border-warm bg-surface-bright px-3.5 py-2.5 text-sm text-ink-charcoal focus:border-terracotta-sandstone focus:outline-none"
+                  className="w-full rounded-lg border border-border-warm bg-surface-bright px-3 py-2 text-xs text-ink-charcoal focus:border-terracotta-sandstone focus:outline-none"
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-label-lg text-ink-charcoal text-xs mb-1.5 uppercase tracking-wider font-bold">
+                  <label className="block font-label-lg text-ink-charcoal text-[10px] mb-1 uppercase tracking-wider font-bold">
                     Service Category *
                   </label>
                   <select
                     value={formData.serviceType}
                     onChange={(e) => setFormData({ ...formData, serviceType: e.target.value })}
-                    className="w-full rounded-lg border border-border-warm bg-surface-bright px-3.5 py-2.5 text-sm text-ink-charcoal focus:border-terracotta-sandstone focus:outline-none cursor-pointer"
+                    className="w-full rounded-lg border border-border-warm bg-surface-bright px-3 py-2 text-xs text-ink-charcoal focus:border-terracotta-sandstone focus:outline-none cursor-pointer"
                   >
                     <option value="outstation-oneway">One-Way Outstation Drop (Delhi/Jaipur/Lucknow)</option>
                     <option value="roundtrip">Multi-Day Round Trip (Rajasthan / Golden Triangle)</option>
@@ -321,13 +321,13 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
                   </select>
                 </div>
                 <div>
-                  <label className="block font-label-lg text-ink-charcoal text-xs mb-1.5 uppercase tracking-wider font-bold">
+                  <label className="block font-label-lg text-ink-charcoal text-[10px] mb-1 uppercase tracking-wider font-bold">
                     Preferred Vehicle *
                   </label>
                   <select
                     value={formData.vehiclePreference}
                     onChange={(e) => setFormData({ ...formData, vehiclePreference: e.target.value })}
-                    className="w-full rounded-lg border border-border-warm bg-surface-bright px-3.5 py-2.5 text-sm text-ink-charcoal focus:border-terracotta-sandstone focus:outline-none cursor-pointer"
+                    className="w-full rounded-lg border border-border-warm bg-surface-bright px-3 py-2 text-xs text-ink-charcoal focus:border-terracotta-sandstone focus:outline-none cursor-pointer"
                   >
                     <option value="sedan">Sedan (Dzire / Etios) - 4 Pax</option>
                     <option value="ertiga">Ertiga MPV (6+1 Seater AC) - 5-6 Pax</option>
@@ -338,9 +338,9 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-label-lg text-ink-charcoal text-xs mb-1.5 uppercase tracking-wider font-bold">
+                  <label className="block font-label-lg text-ink-charcoal text-[10px] mb-1 uppercase tracking-wider font-bold">
                     Pickup Date *
                   </label>
                   <input
@@ -348,11 +348,11 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
                     required
                     value={formData.tripDate}
                     onChange={(e) => setFormData({ ...formData, tripDate: e.target.value })}
-                    className="w-full rounded-lg border border-border-warm bg-surface-bright px-3.5 py-2.5 text-sm text-ink-charcoal focus:border-terracotta-sandstone focus:outline-none"
+                    className="w-full rounded-lg border border-border-warm bg-surface-bright px-3 py-2 text-xs text-ink-charcoal focus:border-terracotta-sandstone focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block font-label-lg text-ink-charcoal text-xs mb-1.5 uppercase tracking-wider font-bold">
+                  <label className="block font-label-lg text-ink-charcoal text-[10px] mb-1 uppercase tracking-wider font-bold">
                     Pickup Time *
                   </label>
                   <input
@@ -360,13 +360,13 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
                     required
                     value={formData.tripTime}
                     onChange={(e) => setFormData({ ...formData, tripTime: e.target.value })}
-                    className="w-full rounded-lg border border-border-warm bg-surface-bright px-3.5 py-2.5 text-sm text-ink-charcoal focus:border-terracotta-sandstone focus:outline-none"
+                    className="w-full rounded-lg border border-border-warm bg-surface-bright px-3 py-2 text-xs text-ink-charcoal focus:border-terracotta-sandstone focus:outline-none"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block font-label-lg text-ink-charcoal text-xs mb-1.5 uppercase tracking-wider font-bold">
+                <label className="block font-label-lg text-ink-charcoal text-[10px] mb-1 uppercase tracking-wider font-bold">
                   Pickup Location in Agra or NCR *
                 </label>
                 <input
@@ -375,64 +375,64 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
                   value={formData.pickupLocation}
                   onChange={(e) => setFormData({ ...formData, pickupLocation: e.target.value })}
                   placeholder="e.g. Hotel Clarks Shiraz / Agra Cantt (AGC) / Delhi IGI Airport T3"
-                  className="w-full rounded-lg border border-border-warm bg-surface-bright px-3.5 py-2.5 text-sm text-ink-charcoal focus:border-terracotta-sandstone focus:outline-none"
+                  className="w-full rounded-lg border border-border-warm bg-surface-bright px-3 py-2 text-xs text-ink-charcoal focus:border-terracotta-sandstone focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="block font-label-lg text-ink-charcoal text-xs mb-1.5 uppercase tracking-wider font-bold">
+                <label className="block font-label-lg text-ink-charcoal text-[10px] mb-1 uppercase tracking-wider font-bold">
                   Destination / Itinerary Details
                 </label>
                 <textarea
-                  rows={3}
+                  rows={2}
                   value={formData.notes}
                   onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                   placeholder="e.g. Arriving by Gatimaan Express at 9:50 AM, need Taj Mahal + Agra Fort + Fatehpur Sikri drop at hotel."
-                  className="w-full rounded-lg border border-border-warm bg-surface-bright px-3.5 py-2.5 text-sm text-ink-charcoal focus:border-terracotta-sandstone focus:outline-none resize-none"
+                  className="w-full rounded-lg border border-border-warm bg-surface-bright px-3 py-2 text-xs text-ink-charcoal focus:border-terracotta-sandstone focus:outline-none resize-none"
                 />
               </div>
 
-              <div className="flex items-center gap-2 pt-1">
+              <div className="flex items-center gap-2 pt-0.5">
                 <input
                   type="checkbox"
                   id="gst-invoice"
                   checked={formData.gstRequired}
                   onChange={(e) => setFormData({ ...formData, gstRequired: e.target.checked })}
-                  className="rounded border-border-warm text-terracotta-sandstone focus:ring-terracotta-sandstone size-4"
+                  className="rounded border-border-warm text-terracotta-sandstone focus:ring-terracotta-sandstone size-3.5"
                 />
-                <label htmlFor="gst-invoice" className="text-xs text-on-surface font-medium select-none cursor-pointer">
+                <label htmlFor="gst-invoice" className="text-[10.5px] text-on-surface font-medium select-none cursor-pointer">
                   I require an official GST tax invoice for corporate / personal expense filing
                 </label>
               </div>
 
               <button
                 type="submit"
-                className="w-full py-3.5 px-6 rounded-lg bg-terracotta-sandstone hover:bg-primary text-white font-label-lg text-sm font-semibold transition-all shadow-md flex items-center justify-center gap-2 mt-4"
+                className="w-full py-2.5 px-4 rounded-lg bg-terracotta-sandstone hover:bg-primary text-white font-label-lg text-xs font-semibold transition-all shadow-xs flex items-center justify-center gap-1.5 mt-3"
               >
                 <span>Request Guaranteed Quote (15-Min Response)</span>
-                <span className="material-symbols-outlined text-[18px]">send</span>
+                <span className="material-symbols-outlined text-[16px]">send</span>
               </button>
             </form>
           </div>
 
-          {/* Right Column (5 cols): Garage & Express Corridors */}
-          <div className="lg:col-span-5 space-y-6">
+          {/* Right Column (5 cols): Garage & Express Corridors (Compact -20%) */}
+          <div className="lg:col-span-5 space-y-4">
             {/* Physical Garage Box */}
-            <div className="bg-surface-container-lowest border border-border-warm rounded-xl p-6 shadow-xs">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-full bg-sandstone-wash flex items-center justify-center text-primary">
-                  <span className="material-symbols-outlined text-[20px]">storefront</span>
+            <div className="bg-surface-container-lowest border border-border-warm rounded-xl p-4 sm:p-4.5 shadow-xs">
+              <div className="flex items-center gap-2.5 mb-3">
+                <div className="w-8 h-8 rounded-full bg-sandstone-wash flex items-center justify-center text-primary">
+                  <span className="material-symbols-outlined text-[18px]">storefront</span>
                 </div>
                 <div>
-                  <h4 className="font-title-md text-ink-charcoal font-bold">Taj Ganj Operational Hub</h4>
-                  <span className="font-label-caps text-[10px] text-on-surface-variant uppercase">Headquarters &amp; Garage</span>
+                  <h4 className="font-title-md text-xs text-ink-charcoal font-bold">Taj Ganj Operational Hub</h4>
+                  <span className="font-label-caps text-[9px] text-on-surface-variant uppercase">Headquarters &amp; Garage</span>
                 </div>
               </div>
-              <p className="text-xs text-on-surface-variant leading-relaxed mb-4">
+              <p className="text-[10.5px] text-on-surface-variant leading-relaxed mb-3">
                 Near Taj East Gate Road, Taj Ganj, Agra, Uttar Pradesh 282001. Operating 24 hours daily with round-the-clock vehicle
                 sanitization bays and relief driver quarters.
               </p>
-              <div className="space-y-2 text-xs border-t border-border-warm/60 pt-3">
+              <div className="space-y-1.5 text-[10.5px] border-t border-border-warm/60 pt-2.5">
                 <div className="flex justify-between">
                   <span className="text-on-surface-variant">Agra Cantt Railway Station:</span>
                   <span className="font-semibold text-ink-charcoal">12 mins (4.8 km)</span>
@@ -449,18 +449,18 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
             </div>
 
             {/* Quick Distance Benchmark */}
-            <div className="bg-sandstone-wash/40 border border-border-warm/70 rounded-xl p-6">
-              <h4 className="font-headline-sm text-ink-charcoal text-lg font-semibold mb-3">Popular Distance Benchmark</h4>
-              <div className="space-y-2.5 text-xs text-on-surface-variant">
-                <div className="flex items-center justify-between pb-2 border-b border-border-warm/40">
+            <div className="bg-sandstone-wash/40 border border-border-warm/70 rounded-xl p-4 sm:p-4.5">
+              <h4 className="font-headline-sm text-ink-charcoal text-sm font-semibold mb-2">Popular Distance Benchmark</h4>
+              <div className="space-y-2 text-[10.5px] text-on-surface-variant">
+                <div className="flex items-center justify-between pb-1.5 border-b border-border-warm/40">
                   <span className="font-medium text-ink-charcoal">Agra → Delhi IGI T3</span>
                   <span className="text-primary font-bold">230 km · 3h 30m</span>
                 </div>
-                <div className="flex items-center justify-between pb-2 border-b border-border-warm/40">
+                <div className="flex items-center justify-between pb-1.5 border-b border-border-warm/40">
                   <span className="font-medium text-ink-charcoal">Agra → Jaipur Pink City</span>
                   <span className="text-primary font-bold">240 km · 4h 30m</span>
                 </div>
-                <div className="flex items-center justify-between pb-2 border-b border-border-warm/40">
+                <div className="flex items-center justify-between pb-1.5 border-b border-border-warm/40">
                   <span className="font-medium text-ink-charcoal">Agra → Mathura Vrindavan</span>
                   <span className="text-primary font-bold">55 km · 1h 15m</span>
                 </div>
@@ -473,17 +473,17 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
           </div>
         </div>
 
-        {/* 4. DISPATCH FAQS */}
-        <div className="max-w-4xl mx-auto pt-8">
-          <div className="text-center mb-8">
-            <span className="font-label-caps text-label-caps text-primary uppercase tracking-widest font-bold block mb-1">
+        {/* 4. DISPATCH FAQS (Compact -20%) */}
+        <div className="max-w-4xl mx-auto pt-6">
+          <div className="text-center mb-6">
+            <span className="font-label-caps text-[9.5px] text-primary uppercase tracking-widest font-bold block mb-1">
               Dispatch Questions
             </span>
             <h2 className="font-headline-lg text-headline-sm sm:text-headline-lg text-ink-charcoal font-semibold">
               Frequently Asked Dispatch Questions
             </h2>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-2.5">
             {FAQ_ITEMS.map((faq, index) => {
               const isOpen = openFaq === index;
               return (
@@ -491,15 +491,15 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
                   <button
                     type="button"
                     onClick={() => setOpenFaq(isOpen ? null : index)}
-                    className="w-full text-left p-space-md flex items-center justify-between gap-4 hover:bg-sandstone-wash/20 transition-colors"
+                    className="w-full text-left p-3 sm:p-3.5 flex items-center justify-between gap-3 hover:bg-sandstone-wash/20 transition-colors"
                   >
-                    <span className="font-title-md text-sm sm:text-base font-semibold text-ink-charcoal">{faq.q}</span>
-                    <span className="material-symbols-outlined text-primary text-[20px] shrink-0">
+                    <span className="font-title-md text-xs sm:text-[13px] font-semibold text-ink-charcoal">{faq.q}</span>
+                    <span className="material-symbols-outlined text-primary text-[18px] shrink-0">
                       {isOpen ? "expand_less" : "expand_more"}
                     </span>
                   </button>
                   {isOpen && (
-                    <div className="p-space-md pt-0 text-on-surface-variant font-body-sm leading-relaxed border-t border-border-warm/40 mt-1">
+                    <div className="p-3 sm:p-3.5 pt-0 text-on-surface-variant font-body-sm text-[10.5px] leading-relaxed border-t border-border-warm/40 mt-1">
                       {faq.a}
                     </div>
                   )}

@@ -193,14 +193,14 @@ export function FaqPage({ language = "en" }: FaqPageProps) {
         </div>
       </section>
 
-      {/* 2. ACCORDION LIST */}
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
-        <div className="space-y-3">
+      {/* 2. ACCORDION LIST (Compact -20%) */}
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10">
+        <div className="space-y-2.5">
           {filteredFaqs.length === 0 ? (
-            <div className="text-center py-12 bg-surface-container-lowest rounded-xl border border-border-warm/60">
-              <span className="material-symbols-outlined text-4xl text-on-surface-variant mb-2">search_off</span>
-              <h3 className="font-headline-sm text-lg font-semibold text-ink-charcoal">No questions matched your search</h3>
-              <p className="text-sm text-on-surface-variant mt-1">Try another keyword or chat with our 24x7 desk on WhatsApp.</p>
+            <div className="text-center py-8 bg-surface-container-lowest rounded-xl border border-border-warm/60">
+              <span className="material-symbols-outlined text-3xl text-on-surface-variant mb-1.5">search_off</span>
+              <h3 className="font-headline-sm text-base font-semibold text-ink-charcoal">No questions matched your search</h3>
+              <p className="text-xs text-on-surface-variant mt-0.5">Try another keyword or chat with our 24x7 desk on WhatsApp.</p>
             </div>
           ) : (
             filteredFaqs.map((faq) => {
@@ -210,15 +210,15 @@ export function FaqPage({ language = "en" }: FaqPageProps) {
                   <button
                     type="button"
                     onClick={() => toggleItem(faq.id)}
-                    className="w-full text-left p-space-md sm:p-5 flex items-center justify-between gap-4 hover:bg-sandstone-wash/20 transition-colors"
+                    className="w-full text-left p-3 sm:p-3.5 flex items-center justify-between gap-3 hover:bg-sandstone-wash/20 transition-colors"
                   >
-                    <span className="font-title-md text-sm sm:text-base font-semibold text-ink-charcoal">{faq.q}</span>
-                    <span className="material-symbols-outlined text-primary text-[22px] shrink-0">
+                    <span className="font-title-md text-xs sm:text-[13px] font-semibold text-ink-charcoal">{faq.q}</span>
+                    <span className="material-symbols-outlined text-primary text-[18px] shrink-0">
                       {isOpen ? "expand_less" : "expand_more"}
                     </span>
                   </button>
                   {isOpen && (
-                    <div className="p-space-md sm:p-5 pt-0 text-on-surface-variant font-body-sm leading-relaxed border-t border-border-warm/40 mt-1">
+                    <div className="p-3 sm:p-3.5 pt-0 text-on-surface-variant font-body-sm text-[10.5px] leading-relaxed border-t border-border-warm/40 mt-1">
                       {faq.a}
                     </div>
                   )}
@@ -228,49 +228,49 @@ export function FaqPage({ language = "en" }: FaqPageProps) {
           )}
         </div>
 
-        {/* 3. STILL HAVE QUESTIONS? BENTO STRIP */}
-        <div className="mt-16 pt-12 border-t border-border-warm/60">
-          <div className="text-center max-w-xl mx-auto mb-8">
-            <h3 className="font-headline-md text-2xl font-semibold text-ink-charcoal">Still have a question?</h3>
-            <p className="text-sm text-on-surface-variant mt-1">
+        {/* 3. STILL HAVE QUESTIONS? BENTO STRIP (Compact -20%) */}
+        <div className="mt-10 pt-8 border-t border-border-warm/60">
+          <div className="text-center max-w-xl mx-auto mb-6">
+            <h3 className="font-headline-lg text-headline-lg font-semibold text-ink-charcoal">Still have a question?</h3>
+            <p className="text-xs text-on-surface-variant mt-1">
               Our Taj Ganj control desk is manned 24 hours a day, 7 days a week.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <a
               href="tel:+919876543210"
-              className="p-5 rounded-xl bg-surface-container-lowest border border-border-warm/70 hover:border-primary transition-all flex flex-col items-center text-center shadow-xs"
+              className="p-3.5 rounded-xl bg-surface-container-lowest border border-border-warm/70 hover:border-primary transition-all flex flex-col items-center text-center shadow-xs"
             >
-              <div className="w-10 h-10 rounded-full bg-sandstone-wash flex items-center justify-center text-primary mb-3">
-                <span className="material-symbols-outlined text-xl">phone_in_talk</span>
+              <div className="w-8 h-8 rounded-full bg-sandstone-wash flex items-center justify-center text-primary mb-2">
+                <span className="material-symbols-outlined text-lg">phone_in_talk</span>
               </div>
-              <h4 className="font-title-md text-sm font-bold text-ink-charcoal">Call 24×7 Desk</h4>
-              <p className="text-xs text-primary font-bold mt-1">+91 98765 43210</p>
+              <h4 className="font-title-md text-xs font-bold text-ink-charcoal">Call 24×7 Desk</h4>
+              <p className="text-[10.5px] text-primary font-bold mt-0.5">+91 98765 43210</p>
             </a>
 
             <a
               href="https://wa.me/919876543210"
               target="_blank"
               rel="noreferrer"
-              className="p-5 rounded-xl bg-surface-container-lowest border border-border-warm/70 hover:border-primary transition-all flex flex-col items-center text-center shadow-xs"
+              className="p-3.5 rounded-xl bg-surface-container-lowest border border-border-warm/70 hover:border-primary transition-all flex flex-col items-center text-center shadow-xs"
             >
-              <div className="w-10 h-10 rounded-full bg-[#E8F3EE] flex items-center justify-center text-success-jade mb-3">
-                <span className="material-symbols-outlined text-xl">chat</span>
+              <div className="w-8 h-8 rounded-full bg-[#E8F3EE] flex items-center justify-center text-success-jade mb-2">
+                <span className="material-symbols-outlined text-lg">chat</span>
               </div>
-              <h4 className="font-title-md text-sm font-bold text-ink-charcoal">WhatsApp Concierge</h4>
-              <p className="text-xs text-success-jade font-bold mt-1">Instant Response</p>
+              <h4 className="font-title-md text-xs font-bold text-ink-charcoal">WhatsApp Concierge</h4>
+              <p className="text-[10.5px] text-success-jade font-bold mt-0.5">Instant Response</p>
             </a>
 
             <a
               href="mailto:bookings@skbagheltravels.in"
-              className="p-5 rounded-xl bg-surface-container-lowest border border-border-warm/70 hover:border-primary transition-all flex flex-col items-center text-center shadow-xs"
+              className="p-3.5 rounded-xl bg-surface-container-lowest border border-border-warm/70 hover:border-primary transition-all flex flex-col items-center text-center shadow-xs"
             >
-              <div className="w-10 h-10 rounded-full bg-sandstone-wash flex items-center justify-center text-primary mb-3">
-                <span className="material-symbols-outlined text-xl">mail</span>
+              <div className="w-8 h-8 rounded-full bg-sandstone-wash flex items-center justify-center text-primary mb-2">
+                <span className="material-symbols-outlined text-lg">mail</span>
               </div>
-              <h4 className="font-title-md text-sm font-bold text-ink-charcoal">Email Support</h4>
-              <p className="text-xs text-on-surface-variant font-medium mt-1 truncate max-w-full">
+              <h4 className="font-title-md text-xs font-bold text-ink-charcoal">Email Support</h4>
+              <p className="text-[10px] text-on-surface-variant font-medium mt-0.5 truncate max-w-full">
                 bookings@skbagheltravels.in
               </p>
             </a>

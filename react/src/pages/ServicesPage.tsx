@@ -179,21 +179,21 @@ export function ServicesPage({ language = "en" }: ServicesPageProps) {
                 From fast one-way expressway drops to multi-day Golden Triangle tours, our fleet delivers
                 transparent billing, courteous drivers, and round-the-clock local support.
               </p>
-              <div className="flex items-center gap-space-md">
+              <div className="flex items-center gap-space-sm">
                 <a
-                  className="inline-flex items-center justify-center gap-space-xs px-space-lg py-3 bg-primary hover:bg-primary-container text-on-primary font-label-lg text-label-lg rounded-lg transition-colors shadow-sm font-semibold"
+                  className="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-primary hover:bg-primary-container text-on-primary font-label-lg text-xs rounded-lg transition-colors shadow-xs font-semibold"
                   href="/book"
                 >
                   <span>Book Cab Online</span>
-                  <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+                  <span className="material-symbols-outlined text-[15px]">arrow_forward</span>
                 </a>
                 <a
-                  className="inline-flex items-center justify-center gap-space-xs px-space-md py-3 bg-ink-charcoal hover:bg-ink-slate text-ivory-surface font-label-lg text-label-lg rounded-lg transition-colors font-semibold"
+                  className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 bg-ink-charcoal hover:bg-ink-slate text-ivory-surface font-label-lg text-xs rounded-lg transition-colors font-semibold"
                   href="https://wa.me/919876543210"
                   target="_blank"
                   rel="noreferrer"
                 >
-                  <span className="material-symbols-outlined text-gold-accent text-[18px]">chat</span>
+                  <span className="material-symbols-outlined text-gold-accent text-[16px]">chat</span>
                   <span>WhatsApp</span>
                 </a>
               </div>
@@ -201,15 +201,15 @@ export function ServicesPage({ language = "en" }: ServicesPageProps) {
           </div>
 
           {/* Quick Directory Jump Strip */}
-          <div className="mt-space-2xl pt-space-lg">
-            <p className="font-label-caps text-xs text-on-surface-variant uppercase mb-space-sm tracking-wider font-bold">
+          <div className="mt-space-lg pt-space-md">
+            <p className="font-label-caps text-[9.5px] text-on-surface-variant uppercase mb-space-xs tracking-wider font-bold">
               Quick Directory Jump
             </p>
-            <div className="flex items-center gap-space-xs overflow-x-auto pb-space-sm">
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-space-xs">
               {SERVICES_MODULES.map((s) => (
                 <a
                   key={s.id}
-                  className="whitespace-nowrap px-space-md py-space-xs rounded-full bg-surface-container hover:bg-surface-container-high text-ink-charcoal font-label-caps text-xs transition-all font-bold"
+                  className="whitespace-nowrap px-3 py-1 rounded-full bg-surface-container hover:bg-surface-container-high text-ink-charcoal font-label-caps text-[9.5px] transition-all font-bold"
                   href={`#${s.id}`}
                 >
                   {s.number} {s.name.split(":")[0]}
@@ -220,16 +220,16 @@ export function ServicesPage({ language = "en" }: ServicesPageProps) {
         </div>
       </section>
 
-      {/* 2. THE 6 DETAILED SERVICE MODULES */}
-      <section className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin py-space-3xl flex flex-col gap-space-3xl">
+      {/* 2. THE 6 DETAILED SERVICE MODULES (Compact -20%) */}
+      <section className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin py-8 sm:py-space-xl flex flex-col gap-6 sm:gap-space-xl">
         <div className="flex flex-col items-center text-center max-w-2xl mx-auto">
-          <span className="font-label-caps text-label-caps text-primary uppercase tracking-widest mb-space-xs font-bold">
+          <span className="font-label-caps text-[9.5px] text-primary uppercase tracking-widest mb-1 font-bold">
             Concierge Transit Portfolio
           </span>
           <h2 className="font-headline-lg text-headline-lg text-ink-charcoal font-semibold">
             Handcrafted transportation designed for modern voyagers.
           </h2>
-          <p className="font-body-md text-body-md text-on-surface-variant mt-space-sm">
+          <p className="font-body-md text-body-md text-on-surface-variant mt-1.5 leading-relaxed">
             Every service is backed by our Taj Ganj dispatch operations, strict vehicle cleanliness inspections, and honest
             per-kilometer billing.
           </p>
@@ -239,42 +239,42 @@ export function ServicesPage({ language = "en" }: ServicesPageProps) {
           <div
             key={s.id}
             id={s.id}
-            className="scroll-mt-28 bg-surface-container-lowest rounded-xl shadow-md overflow-hidden border border-border-warm/70"
+            className="scroll-mt-24 bg-surface-container-lowest rounded-xl shadow-xs overflow-hidden border border-border-warm/70"
           >
             <div className="grid grid-cols-1 lg:grid-cols-12">
-              <div className="lg:col-span-5 relative min-h-[300px] lg:min-h-[460px] bg-sandstone-wash overflow-hidden">
+              <div className="lg:col-span-5 relative min-h-[190px] lg:min-h-[260px] bg-sandstone-wash overflow-hidden">
                 <img
-                  className="w-full h-full object-cover min-h-[300px] lg:min-h-[460px]"
+                  className="w-full h-full object-cover min-h-[190px] lg:min-h-[260px]"
                   src={s.image}
                   alt={s.name}
                   loading="lazy"
                 />
-                <div className="absolute bottom-space-md left-space-md right-space-md p-space-md bg-surface-container-lowest/95 backdrop-blur-md rounded-lg shadow-sm border border-border-warm/40">
+                <div className="absolute bottom-2.5 left-2.5 right-2.5 p-2 sm:p-2.5 bg-surface-container-lowest/95 backdrop-blur-md rounded-lg shadow-xs border border-border-warm/40">
                   <div className="flex items-center justify-between text-on-surface">
-                    <span className="font-label-caps text-[10px] text-primary uppercase font-bold">Starting Tariff</span>
-                    <span className="font-price-display text-2xl text-primary font-bold">{s.startingFare}</span>
+                    <span className="font-label-caps text-[9px] text-primary uppercase font-bold">Starting Tariff</span>
+                    <span className="font-price-display text-xl text-primary font-bold">{s.startingFare}</span>
                   </div>
-                  <p className="font-body-sm text-xs text-on-surface-variant mt-0.5">{s.fareDetail}</p>
+                  <p className="font-body-sm text-[9.5px] text-on-surface-variant mt-0.5">{s.fareDetail}</p>
                 </div>
               </div>
 
-              <div className="lg:col-span-7 p-space-xl lg:p-space-2xl flex flex-col justify-between">
+              <div className="lg:col-span-7 p-3.5 sm:p-4.5 lg:p-5 flex flex-col justify-between">
                 <div>
-                  <div className="flex items-center gap-space-sm mb-space-xs">
+                  <div className="flex items-center gap-2 mb-1">
                     <span className="font-price-display text-headline-sm text-primary font-bold">{s.number}</span>
-                    <span className="font-label-caps text-[11px] text-terracotta-sandstone uppercase font-bold tracking-wider">
+                    <span className="font-label-caps text-[9.5px] text-terracotta-sandstone uppercase font-bold tracking-wider">
                       {s.subtitle}
                     </span>
                   </div>
-                  <h3 className="font-headline-md text-headline-md text-ink-charcoal mb-space-md font-semibold">{s.name}</h3>
-                  <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-space-lg">
+                  <h3 className="font-headline-md text-xl sm:text-2xl text-ink-charcoal mb-2 font-semibold">{s.name}</h3>
+                  <p className="font-body-sm text-[10.5px] sm:text-[11px] text-on-surface-variant leading-relaxed mb-3">
                     {s.description}
                   </p>
 
-                  <div className="space-y-2 mb-space-lg border-y border-border-warm/50 py-space-md">
+                  <div className="space-y-1.5 mb-3 border-y border-border-warm/50 py-2">
                     {s.highlights.map((item) => (
-                      <div key={item} className="flex items-start gap-2 text-on-surface font-body-sm text-sm">
-                        <span className="material-symbols-outlined text-success-jade text-[18px] shrink-0 mt-0.5">
+                      <div key={item} className="flex items-start gap-1.5 text-on-surface font-body-sm text-[10.5px]">
+                        <span className="material-symbols-outlined text-success-jade text-[15px] shrink-0 mt-0.5">
                           check_circle
                         </span>
                         <span>{item}</span>
@@ -282,7 +282,7 @@ export function ServicesPage({ language = "en" }: ServicesPageProps) {
                     ))}
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-space-sm mb-space-md text-xs text-on-surface-variant">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3 text-[10px] text-on-surface-variant">
                     <div>
                       <strong className="block text-ink-charcoal mb-0.5">Fleet Options:</strong>
                       {s.vehicleTypes}
@@ -294,16 +294,16 @@ export function ServicesPage({ language = "en" }: ServicesPageProps) {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 pt-space-md border-t border-border-warm/50">
+                <div className="flex items-center gap-2.5 pt-2.5 border-t border-border-warm/50">
                   <a
-                    className="px-5 py-2.5 rounded-lg bg-primary hover:bg-primary-container text-white font-label-lg text-sm font-semibold transition-all shadow-sm flex items-center gap-1.5"
+                    className="px-4 py-2 rounded-lg bg-primary hover:bg-primary-container text-white font-label-lg text-xs font-semibold transition-all shadow-xs flex items-center gap-1.5"
                     href={s.bookingUrl}
                   >
                     <span>Reserve Service</span>
-                    <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+                    <span className="material-symbols-outlined text-[15px]">arrow_forward</span>
                   </a>
                   <a
-                    className="px-4 py-2.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-lg text-sm font-semibold transition-colors"
+                    className="px-3.5 py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-lg text-xs font-semibold transition-colors"
                     href={`https://wa.me/919876543210?text=Inquiry%20for%20${encodeURIComponent(s.name)}`}
                     target="_blank"
                     rel="noreferrer"
@@ -317,68 +317,68 @@ export function ServicesPage({ language = "en" }: ServicesPageProps) {
         ))}
       </section>
 
-      {/* 3. WHY CHOOSE US (4 ASSURANCES) */}
-      <section className="w-full bg-surface-container-low py-space-3xl border-t border-border-warm/60">
+      {/* 3. WHY CHOOSE US (4 ASSURANCES) (Compact -20%) */}
+      <section className="w-full bg-surface-container-low py-8 sm:py-space-xl border-t border-border-warm/60">
         <div className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin">
-          <div className="text-center max-w-2xl mx-auto mb-space-xl">
-            <span className="font-label-caps text-label-caps text-primary uppercase tracking-widest font-bold block mb-1">
+          <div className="text-center max-w-2xl mx-auto mb-6 sm:mb-space-lg">
+            <span className="font-label-caps text-[9.5px] text-primary uppercase tracking-widest font-bold block mb-1">
               The 4 Uncompromising Standards
             </span>
             <h2 className="font-headline-lg text-headline-lg text-on-surface font-semibold">
               Why Discerning Travelers Choose SK Baghel
             </h2>
-            <p className="font-body-md text-on-surface-variant mt-2">
+            <p className="font-body-md text-on-surface-variant mt-1.5 leading-relaxed">
               Over two decades serving Agra and North India with zero complaints and unmatched reliability.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-lg">
-            <div className="p-space-lg rounded-xl bg-surface-container-lowest border border-border-warm/50 shadow-sm flex flex-col justify-between">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            <div className="p-3 sm:p-3.5 rounded-xl bg-surface-container-lowest border border-border-warm/50 shadow-xs flex flex-col justify-between">
               <div>
-                <div className="w-12 h-12 rounded-lg bg-sandstone-wash flex items-center justify-center text-primary mb-space-md">
-                  <span className="material-symbols-outlined text-[28px]">timer</span>
+                <div className="w-8 h-8 rounded-lg bg-sandstone-wash flex items-center justify-center text-primary mb-2.5">
+                  <span className="material-symbols-outlined text-[20px]">timer</span>
                 </div>
-                <h3 className="font-title-lg text-title-lg text-on-surface font-bold mb-2">Punctuality Guarantee</h3>
-                <p className="font-body-sm text-xs text-on-surface-variant leading-relaxed">
+                <h3 className="font-title-md text-xs sm:text-[13px] text-on-surface font-bold mb-1">Punctuality Guarantee</h3>
+                <p className="font-body-sm text-[9.5px] sm:text-[10px] text-on-surface-variant leading-relaxed">
                   Chauffeurs arrive at your pickup location 15 minutes before the scheduled rendezvous. If any delay occurs, our
                   standby backup fleet in Taj Ganj deploys immediately.
                 </p>
               </div>
             </div>
 
-            <div className="p-space-lg rounded-xl bg-surface-container-lowest border border-border-warm/50 shadow-sm flex flex-col justify-between">
+            <div className="p-3 sm:p-3.5 rounded-xl bg-surface-container-lowest border border-border-warm/50 shadow-xs flex flex-col justify-between">
               <div>
-                <div className="w-12 h-12 rounded-lg bg-sandstone-wash flex items-center justify-center text-primary mb-space-md">
-                  <span className="material-symbols-outlined text-[28px]">payments</span>
+                <div className="w-8 h-8 rounded-lg bg-sandstone-wash flex items-center justify-center text-primary mb-2.5">
+                  <span className="material-symbols-outlined text-[20px]">payments</span>
                 </div>
-                <h3 className="font-title-lg text-title-lg text-on-surface font-bold mb-2">Upfront Inclusive Pricing</h3>
-                <p className="font-body-sm text-xs text-on-surface-variant leading-relaxed">
+                <h3 className="font-title-md text-xs sm:text-[13px] text-on-surface font-bold mb-1">Upfront Inclusive Pricing</h3>
+                <p className="font-body-sm text-[9.5px] sm:text-[10px] text-on-surface-variant leading-relaxed">
                   Every quoted fare itemizes GST, toll clearances, and fuel. What you agree upon is exactly what you pay—with zero
                   hidden roadside extras or tourist surcharges.
                 </p>
               </div>
             </div>
 
-            <div className="p-space-lg rounded-xl bg-surface-container-lowest border border-border-warm/50 shadow-sm flex flex-col justify-between">
+            <div className="p-3 sm:p-3.5 rounded-xl bg-surface-container-lowest border border-border-warm/50 shadow-xs flex flex-col justify-between">
               <div>
-                <div className="w-12 h-12 rounded-lg bg-sandstone-wash flex items-center justify-center text-primary mb-space-md">
-                  <span className="material-symbols-outlined text-[28px]">badge</span>
+                <div className="w-8 h-8 rounded-lg bg-sandstone-wash flex items-center justify-center text-primary mb-2.5">
+                  <span className="material-symbols-outlined text-[20px]">badge</span>
                 </div>
-                <h3 className="font-title-lg text-title-lg text-on-surface font-bold mb-2">Police-Verified Drivers</h3>
-                <p className="font-body-sm text-xs text-on-surface-variant leading-relaxed">
+                <h3 className="font-title-md text-xs sm:text-[13px] text-on-surface font-bold mb-1">Police-Verified Drivers</h3>
+                <p className="font-body-sm text-[9.5px] sm:text-[10px] text-on-surface-variant leading-relaxed">
                   Every chauffeur holds an active commercial badge, police background verification certificate, and follows our
                   strict guest etiquette code for families and solo women travelers.
                 </p>
               </div>
             </div>
 
-            <div className="p-space-lg rounded-xl bg-surface-container-lowest border border-border-warm/50 shadow-sm flex flex-col justify-between">
+            <div className="p-3 sm:p-3.5 rounded-xl bg-surface-container-lowest border border-border-warm/50 shadow-xs flex flex-col justify-between">
               <div>
-                <div className="w-12 h-12 rounded-lg bg-sandstone-wash flex items-center justify-center text-primary mb-space-md">
-                  <span className="material-symbols-outlined text-[28px]">sanitizer</span>
+                <div className="w-8 h-8 rounded-lg bg-sandstone-wash flex items-center justify-center text-primary mb-2.5">
+                  <span className="material-symbols-outlined text-[20px]">sanitizer</span>
                 </div>
-                <h3 className="font-title-lg text-title-lg text-on-surface font-bold mb-2">Spotless Vehicles</h3>
-                <p className="font-body-sm text-xs text-on-surface-variant leading-relaxed">
+                <h3 className="font-title-md text-xs sm:text-[13px] text-on-surface font-bold mb-1">Spotless Vehicles</h3>
+                <p className="font-body-sm text-[9.5px] sm:text-[10px] text-on-surface-variant leading-relaxed">
                   Each cab undergoes vacuum sanitization, high-performance AC checks, and is stocked with sealed mineral water bottles
                   and device charging cables before dispatch.
                 </p>
