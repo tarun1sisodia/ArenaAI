@@ -49,9 +49,21 @@ build leaves `git status` clean; all CI guard commands pass locally; admin deep 
 resolve through the SPA fallback; `docs/DEPLOYMENT.md` describes exactly what the
 configs do.
 
+## Phase M — HTML UI to React Migration ⏭ CURRENT ACTIVE PHASE
+
+**Goal:** Replicate the ultra-luxury HTML designs from `react/new_design/` into `react/` while preserving existing business logic (`fareEngine.ts`, `LocationIQ`, `src/data.ts`). Detailed plan in `react/docs/MIGRATION_PLAN.md`.
+
+- [x] **M0: Master Architecture & Planning** — Create `react/docs/MIGRATION_PLAN.md`, update phase plan, progress tracker, and design lock registry.
+- [x] **M1: Tailwind CSS & Design Token System Setup** — Install `@tailwindcss/vite` & `tailwindcss`, configure design tokens in `theme.css`, load `EB Garamond` & `Plus Jakarta Sans` Google Fonts and `Material Symbols Outlined` in `index.html`.
+- [x] **M2: Global Chrome & Responsive Layout** — Rebuild luxury `Header.tsx` (with mobile drawer) and `Footer.tsx` (4-column layout with 28% advance guarantee).
+- [x] **M3: Universal Dynamic Tour Package Template & Catalogue** — Build universal dynamic `PackageDetailPage.tsx` based on `taj_mahal_sunrise_guided_tour.html` accepting `TourPackage` props, and `PackagesPage.tsx`.
+- [ ] **M4: Streamlined 2-Step Universal Booking & Billing Engine** — Build Step 1 (choose car tier) and universal Step 2 (booking/billing form for all packages & routes) with confirmation voucher screen and 28% advance calculation.
+- [ ] **M5: Core Marketing Pages & Route Hubs** — Rebuild `HomePage.tsx` (`home.html`), `FleetPage.tsx` (`fleet.html`), `RoutesPage.tsx` (`routes.html`), `ServicesPage.tsx` (`services.html`), and support/legal pages.
+- [ ] **M6: Verification, Pre-rendering & Build Quality** — Update `prerender.ts`, verify `npm --prefix react run typecheck`, `npm --prefix react run build`, and monorepo `npm run verify`.
+
 ---
 
-## Phase I1 — Frontend ↔ API integration ⏭ next
+## Phase I1 — Frontend ↔ API integration (queued after Phase M)
 
 **Goal:** the deployed frontends talk to `https://api.skbagheltravels.in` instead of
 the in-repo catalogue.

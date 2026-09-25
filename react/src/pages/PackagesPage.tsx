@@ -1,176 +1,221 @@
 import { useState, useMemo } from "react";
 import type { SupportedLanguage } from "../config";
 import { contact } from "../data/contact";
-import { packages, cancellationSlabsTour, type TourPackage } from "../data";
+import { packages, type TourPackage } from "../data";
 
 interface PackagesPageProps {
   language?: SupportedLanguage;
 }
 
-type CurrencyCode = "INR" | "USD" | "EUR" | "GBP";
+type PackageFilterCategory = "all" | "sightseeing" | "dawn" | "pilgrimage" | "multiday";
 
-interface CurrencyConfig {
-  code: CurrencyCode;
-  symbol: string;
-  rate: number; // multiplier from INR
-  label: string;
+interface PackageCardData {
+  pkg: TourPackage;
+  categories: PackageFilterCategory[];
+  badgeTag: string;
+  badgeClass: string;
+  durationBadge: string;
+  durationIcon: string;
+  stops: string[];
+  inclusions: string[];
+  vehiclePrices: { label: string; price: string }[];
 }
 
-const CURRENCIES: Record<CurrencyCode, CurrencyConfig> = {
-  INR: { code: "INR", symbol: "₹", rate: 1, label: "INR (₹)" },
-  USD: { code: "USD", symbol: "$", rate: 0.012, label: "USD ($)" },
-  EUR: { code: "EUR", symbol: "€", rate: 0.011, label: "EUR (€)" },
-  GBP: { code: "GBP", symbol: "£", rate: 0.0095, label: "GBP (£)" },
+const PACKAGE_METADATA: Record<string, {
+  categories: PackageFilterCategory[];
+  badgeTag: string;
+  badgeClass: string;
+  durationBadge: string;
+  durationIcon: string;
+  stops: string[];
+  inclusions: string[];
+  vehiclePrices: { label: string; price: string }[];
+  suitedFor: string;
+  recommendedFleet: string;
+}> = {
+  "agra-day": {
+    categories: ["sightseeing"],
+    badgeTag: "MOST POPULAR",
+    badgeClass: "bg-primary text-on-primary",
+    durationBadge: "8–10 Hours",
+    durationIcon: "schedule",
+    stops: ["Taj Mahal (Dawn/Morning)", "Agra Fort Diwan-i-Khas", "Baby Taj (Itimad-ud-Daulah)", "Mehtab Bagh Sunset"],
+    inclusions: [
+      "Hotel or Agra Cantt Railway Station pickup & drop",
+      "All fuel, commercial toll parking receipts included",
+      "Dedicated AC chauffeur & chilled bottled water",
+    ],
+    vehiclePrices: [
+      { label: "Ertiga", price: "₹4,499" },
+      { label: "Innova", price: "₹6,499" },
+      { label: "Tempo", price: "₹9,500" },
+    ],
+    suitedFor: "First-Time Visitors",
+    recommendedFleet: "Sedan Dzire / Ertiga",
+  },
+  "taj-sunrise": {
+    categories: ["dawn", "sightseeing"],
+    badgeTag: "DAWN SPECIAL",
+    badgeClass: "bg-gold-accent text-ink-charcoal font-bold",
+    durationBadge: "5:00 AM Departure",
+    durationIcon: "alarm",
+    stops: ["5:15 AM Gate Queue Priority", "Taj First Light Glow", "Mehtab Bagh Morning View", "Heritage Breakfast Halt"],
+    inclusions: [
+      "VIP Dawn priority chauffeur timing & hotel pickup",
+      "Skip-the-line guidance & prime photo vantage access",
+      "Chilled towels, hydration kit & umbrella on board",
+    ],
+    vehiclePrices: [
+      { label: "Sedan", price: "₹12,999" },
+      { label: "Innova Crysta", price: "₹15,500" },
+      { label: "Urbania Van", price: "₹22,000" },
+    ],
+    suitedFor: "Couples & Photographers",
+    recommendedFleet: "Innova Crysta VIP",
+  },
+  "mathura-vrindavan": {
+    categories: ["pilgrimage"],
+    badgeTag: "PILGRIMAGE",
+    badgeClass: "bg-terracotta-sandstone text-on-primary",
+    durationBadge: "55 KM Corridor",
+    durationIcon: "map",
+    stops: ["Krishna Janmabhoomi", "Dwarkadhish Mathura", "Banke Bihari Temple", "Prem Mandir Light Show"],
+    inclusions: [
+      "Aarti schedule synchronized so you never encounter closed gates",
+      "Designated drop points nearest to temple e-rickshaw links",
+      "Agra round-trip transit with UP state permit paid",
+    ],
+    vehiclePrices: [
+      { label: "Ertiga", price: "₹5,500" },
+      { label: "Innova", price: "₹7,500" },
+      { label: "Tempo", price: "₹11,500" },
+    ],
+    suitedFor: "Families & Pilgrims",
+    recommendedFleet: "Ertiga / Innova / Tempo",
+  },
+  "gatimaan-express": {
+    categories: ["dawn", "sightseeing"],
+    badgeTag: "FAST-TRACK",
+    badgeClass: "bg-primary text-on-primary",
+    durationBadge: "12h Total Tour",
+    durationIcon: "train",
+    stops: ["Nizamuddin Train Reception", "Agra Cantt Nameboard Meet", "Taj Mahal & Red Fort", "5-Star Buffet & Return"],
+    inclusions: [
+      "Agra Cantt platform greeting with guest nameboard",
+      "Full-day dedicated executive sedan or Innova in Agra",
+      "Assisted drop back to Gatimaan Express 5:50 PM return",
+    ],
+    vehiclePrices: [
+      { label: "Executive Sedan", price: "₹14,999" },
+      { label: "Innova Crysta", price: "₹17,999" },
+    ],
+    suitedFor: "Business & Delhi Expats",
+    recommendedFleet: "Train + Executive Cab",
+  },
+  "agra-fort-day": {
+    categories: ["sightseeing", "multiday"],
+    badgeTag: "2 DAYS / 1 NIGHT",
+    badgeClass: "bg-terracotta-sandstone text-on-primary",
+    durationBadge: "2 Full Days",
+    durationIcon: "hotel",
+    stops: ["Day 1: Fort + Artisan Lane", "Sunset Yamuna Point", "Day 2: Taj Dawn & Sikandra", "Fatehpur Sikri Capital"],
+    inclusions: [
+      "48-hour continuous vehicle custody for your family",
+      "Excursion to Emperor Akbar's Tomb & Fatehpur Sikri",
+      "Driver night allowance & parking fully settled",
+    ],
+    vehiclePrices: [
+      { label: "Innova Crysta", price: "₹11,500" },
+      { label: "Tempo Traveller", price: "₹16,500" },
+    ],
+    suitedFor: "Unhurried Elders",
+    recommendedFleet: "Innova Crysta",
+  },
+  "golden-triangle": {
+    categories: ["multiday"],
+    badgeTag: "ICONIC CIRCUIT",
+    badgeClass: "bg-ink-charcoal text-gold-accent font-bold",
+    durationBadge: "3 Imperial Cities",
+    durationIcon: "route",
+    stops: ["Delhi India Gate & Qutub", "Agra Taj Mahal Sunrise", "Chand Baori Stepwell", "Jaipur Amber Fort & Hawa"],
+    inclusions: [
+      "All 3 interstate border permits (UP, RJ, Delhi NCT)",
+      "Dedicated long-range highway chauffeur with night halt",
+      "Flexible Delhi airport or Jaipur airport conclusion",
+    ],
+    vehiclePrices: [
+      { label: "Innova Crysta", price: "₹24,000" },
+      { label: "Tempo Traveller", price: "₹36,000" },
+    ],
+    suitedFor: "International Voyagers",
+    recommendedFleet: "Innova / Tempo Traveller",
+  },
 };
 
-function formatPrice(amountInr: number, currency: CurrencyConfig): string {
-  if (currency.code === "INR") {
-    return `₹${amountInr.toLocaleString("en-IN")}`;
-  }
-  const converted = Math.round(amountInr * currency.rate);
-  return `${currency.symbol}${converted.toLocaleString("en-US")}`;
-}
-
-// Stylized Vector Car SVG Icons matching MakeMyTrip aesthetics
-function SedanIcon() {
-  return (
-    <svg width="44" height="24" viewBox="0 0 44 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <path d="M4 16C4 16 6 9 12 8C16 7 24 7 29 8C33 9 37 13 39 16C41 18 42 19 42 20C42 21 41 21.5 39 21.5H5C3 21.5 2 20.5 2 19C2 17.5 4 16 4 16Z" fill="#2D3E50" opacity="0.85"/>
-      <path d="M12 9L15 14H28L27 9H12Z" fill="#A4C2DC"/>
-      <circle cx="10" cy="20" r="3.5" fill="#181615" stroke="#E5A044" strokeWidth="1.5"/>
-      <circle cx="33" cy="20" r="3.5" fill="#181615" stroke="#E5A044" strokeWidth="1.5"/>
-    </svg>
-  );
-}
-
-function MpvIcon() {
-  return (
-    <svg width="44" height="24" viewBox="0 0 44 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <path d="M3 16C3 16 5 7 11 6C16 5 28 5 32 6C36 7 39 12 40 16C41 18 42 19.5 42 20.5C42 21.5 41 22 39 22H5C3 22 2 21 2 19.5C2 18 3 16 3 16Z" fill="#1E2B37" opacity="0.88"/>
-      <path d="M11 7L13 13H31L29 7H11Z" fill="#90B7D7"/>
-      <circle cx="9" cy="20.5" r="3.5" fill="#181615" stroke="#E5A044" strokeWidth="1.5"/>
-      <circle cx="34" cy="20.5" r="3.5" fill="#181615" stroke="#E5A044" strokeWidth="1.5"/>
-    </svg>
-  );
-}
-
-function SuvIcon() {
-  return (
-    <svg width="44" height="24" viewBox="0 0 44 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <path d="M3 15C3 15 5 6 10 5.5C15 5 29 5 33 5.5C37 6 40 11 41 15C42 17 42.5 19 42.5 20C42.5 21.5 41.5 22 39 22H5C3 22 2 21 2 19.5C2 17.5 3 15 3 15Z" fill="#121416" opacity="0.9"/>
-      <path d="M10 6.5L12 13H33L31 6.5H10Z" fill="#7FA9CE"/>
-      <circle cx="9" cy="20" r="3.8" fill="#181615" stroke="#E5A044" strokeWidth="1.5"/>
-      <circle cx="34" cy="20" r="3.8" fill="#181615" stroke="#E5A044" strokeWidth="1.5"/>
-    </svg>
-  );
-}
-
-function VanIcon() {
-  return (
-    <svg width="46" height="24" viewBox="0 0 46 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <rect x="2" y="5" width="41" height="15" rx="3" fill="#201E1D" opacity="0.88"/>
-      <rect x="6" y="8" width="8" height="6" rx="1" fill="#A4C2DC"/>
-      <rect x="17" y="8" width="10" height="6" rx="1" fill="#A4C2DC"/>
-      <rect x="30" y="8" width="10" height="6" rx="1" fill="#A4C2DC"/>
-      <circle cx="10" cy="20" r="3.5" fill="#181615" stroke="#E5A044" strokeWidth="1.5"/>
-      <circle cx="36" cy="20" r="3.5" fill="#181615" stroke="#E5A044" strokeWidth="1.5"/>
-    </svg>
-  );
-}
-
-interface PackageFaq {
-  q: { en: string; hi: string };
-  a: { en: string; hi: string };
-}
-
-const PACKAGE_FAQS: PackageFaq[] = [
+const PACKAGES_FAQS = [
   {
-    q: {
-      en: "Are monument entry tickets included in the package price?",
-      hi: "क्या पैकेज के किराए में स्मारकों के प्रवेश टिकट शामिल हैं?",
-    },
-    a: {
-      en: "Monument entry tickets (e.g. Taj Mahal ₹50 Indian / ₹1,100 Foreigner) are not bundled into the base transportation packages to give travelers complete booking flexibility. However, your chauffeur and licensed guide will assist you with seamless, queue-free official ASI online ticket booking on the day of travel.",
-      hi: "स्मारकों के प्रवेश टिकट (जैसे ताज महल ₹50 भारतीय / ₹1,100 विदेशी) आधार पैकेज में शामिल नहीं हैं ताकि यात्रियों को टिकट चयन की पूर्ण स्वतंत्रता रहे। आपके ड्राइवर और अधिकृत गाइड आपको यात्रा के दिन भारतीय पुरातत्व सर्वेक्षण (ASI) के आधिकारिक पोर्टल से बिना लाइन के ऑनलाइन टिकट खरीदने में पूर्ण सहायता करते हैं।",
-    },
+    q: "Are monument entry tickets included in the package price?",
+    a: "Monument tickets are intentionally excluded to give you full financial transparency and avoid exorbitant intermediary markups. Indian citizens pay ₹50, SAARC tourists pay ₹540, and foreign tourists pay ₹1,100 at the Taj Mahal. Your chauffeur will guide you directly to the electronic ASI contactless kiosk or assist you with booking online via the official ASI portal on your phone.",
   },
   {
-    q: {
-      en: "What is the cancellation and refund policy for tour packages?",
-      hi: "टूर पैकेजों के लिए रद्दीकरण और रिफंड की क्या नीति है?",
-    },
-    a: {
-      en: "For private day cab tours, 100% full refund is provided if cancelled 24 hours prior to departure. For multi-day packages (such as Golden Triangle 3D/2N or Agra Overnight), we follow a tiered schedule: 100% refund for 15+ days notice, 80% for 7–14 days, 50% for 2–6 days, and 0% within 48 hours. All approved refunds are credited back to the original payment source within 5–7 business days.",
-      hi: "प्राइवेट डे टूर के लिए 24 घंटे पहले रद्दीकरण पर 100% पूरा रिफंड मिलता है। मल्टी-डे पैकेजों (जैसे 3-दिवसीय गोल्डन ट्रायंगल या आगरा ओवरनाइट) के लिए: 15+ दिन पहले 100%, 7–14 दिन पहले 80%, 2–6 दिन पहले 50%, और 48 घंटे के भीतर 0% रिफंड देय होता है। सभी रिफंड 5–7 कार्यदिवसों में आपके खाते में आ जाते हैं।",
-    },
+    q: "Can we customize monument stops or spend extra time at the Taj Mahal?",
+    a: "Yes, absolutely. Because all our tours are 100% private charters, you set the tempo. If you want to spend 3 hours immersed in the Taj Mahal's marble gardens and skip a minor monument, or make a lunch stopover at a particular culinary spot in Agra, your chauffeur will happily accommodate your preferences without extra charges within the daily duration.",
   },
   {
-    q: {
-      en: "Can we customize or modify the tour itinerary stopovers?",
-      hi: "क्या हम टूर के दर्शनीय स्थलों और समय सारणी में बदलाव कर सकते हैं?",
-    },
-    a: {
-      en: "Yes, 100%! All our tour packages are 100% private and chauffeured. You have complete freedom to pace your day, stop for sunrise photography at Mehtab Bagh, explore local Agra petha confectioners, or add en route halts at Fatehpur Sikri or Vrindavan without any rigid bus schedules.",
-      hi: "हाँ, शत-प्रतिशत! हमारे सभी टूर पैकेज पूरी तरह प्राइवेट होते हैं। आप अपनी सुविधा अनुसार समय बिता सकते हैं, मेहताब बाग में फोटोग्राफी के लिए रुक सकते हैं, आगरा के मशहूर पेठा बाज़ार जा सकते हैं, या फतेहपुर सीकरी व वृंदावन में इच्छानुसार स्टॉप ले सकते हैं।",
-    },
+    q: "Do you provide English, Spanish, German, or French-speaking tour guides?",
+    a: "Yes. We coordinate with Ministry of Tourism certified and licensed Archaeological Survey of India (ASI) guides who speak fluent English, French, Spanish, German, Italian, or Russian. The guide fee is fixed at government-mandated tariffs and can be added directly to your itinerary upon reservation.",
   },
   {
-    q: {
-      en: "Are your tour guides officially licensed by the Ministry of Tourism?",
-      hi: "क्या आपके टूर गाइड पर्यटन मंत्रालय द्वारा अधिकृत और प्रमाणित हैं?",
-    },
-    a: {
-      en: "Yes. When you request a guided excursion, we connect you only with approved, badge-holding guides certified by the Ministry of Tourism, Government of India. They speak English, Hindi, Spanish, French, and German, and strictly avoid tourist souvenir commission traps.",
-      hi: "हाँ। यदि आप गाइड सेवा चुनते हैं, तो हम केवल भारत सरकार के पर्यटन मंत्रालय द्वारा अधिकृत और बैज-धारक गाइड ही उपलब्ध कराते हैं। वे हिंदी, अंग्रेजी और विदेशी भाषाओं के जानकार हैं तथा किसी भी प्रकार की कमीशन दुकानों से दूर प्रामाणिक इतिहास बताते हैं।",
-    },
+    q: "What happens if our train (e.g. Gatimaan Express) or flight is delayed?",
+    a: "We track train numbers (such as 12050 Gatimaan Express or 12002 Shatabdi) and flight arrivals in real-time. If your train or flight is delayed, your assigned chauffeur remains stationed at the arrival terminal with zero waiting penalty for up to 90 minutes.",
   },
   {
-    q: {
-      en: "Where can our group be picked up for the tour?",
-      hi: "टूर के लिए हमारी पिकअप कहाँ से की जा सकती है?",
-    },
-    a: {
-      en: "We provide doorstep pickup across Delhi NCR (any hotel, residence, or IGI Airport Terminal 3) as well as any Agra hotel, Agra Cantt Railway Station (for Gatimaan Express / Shatabdi passengers), or Mathura junction.",
-      hi: "हम दिल्ली एनसीआर के किसी भी होटल, निवास या आईजीआई एयरपोर्ट टर्मिनल 3 से, अथवा आगरा के किसी भी होटल, आगरा कैंट रेलवे स्टेशन (गतिमान एक्सप्रेस / शताब्दी यात्रियों हेतु) से सुविधाजनक डोरस्टेप पिकअप प्रदान करते हैं।",
-    },
-  },
-  {
-    q: {
-      en: "Which vehicle is best suited for our family or traveling group?",
-      hi: "हमारे परिवार या समूह के लिए कौन सी गाड़ी सबसे उपयुक्त रहेगी?",
-    },
-    a: {
-      en: "For solo travelers or couples, our air-conditioned Dzire/Etios Sedan is ideal. For families with children (4–6 pax), the Maruti Ertiga or luxury Toyota Innova Crysta provides unmatched highway comfort and luggage room. For wedding groups and extended families (9–26 pax), our Force Tempo Travellers and Urbania luxury vans offer reclining seats and dedicated luggage bays.",
-      hi: "दंपति या 2-3 यात्रियों के लिए एसी सेडान (डिजायर / इटिओस) उत्तम है। 4 से 6 सदस्यों वाले परिवारों के लिए मारुति अर्टिगा या टोयोटा इनोवा क्रिस्टा सर्वोत्तम आराम देती है। 9 से 26 सदस्यों के बड़े ग्रुप व परिवारों के लिए हमारे 12 से 26 सीटर टेम्पो ट्रैवलर व अर्बनिया लग्जरी वैन सर्वोत्तम हैं।",
-    },
+    q: "Can elderly passengers or wheelchair users be accommodated comfortably?",
+    a: "Yes, our fleet includes comfortable high-seating vehicles like the Innova Crysta and Force Urbania that offer easy ingress and egress. We can arrange collapsible wheelchair storage in the trunk and coordinate golf-cart battery shuttle transit between monument gates and monument entries where walking distances are extensive.",
   },
 ];
 
 export function PackagesPage({ language = "en" }: PackagesPageProps) {
-  const isHindi = language === "hi";
-  const activeLanguage = isHindi ? "hi" : "en";
-  const langPrefix = isHindi ? "/hi" : "/en";
-
   // Category Filter State
-  const [filter, setFilter] = useState<"all" | "same-day" | "multi-day" | "devotional">("all");
+  const [activeCategory, setActiveCategory] = useState<PackageFilterCategory>("all");
 
-  // Currency Converter State
-  const [selectedCurrency, setSelectedCurrency] = useState<CurrencyCode>("INR");
-  const currency = CURRENCIES[selectedCurrency];
-
-  // FAQ Accordion State
-  const [openFaq, setOpenFaq] = useState<number | null>(0);
+  // Enrich packages with metadata
+  const enrichedPackages = useMemo<PackageCardData[]>(() => {
+    return packages.map((pkg) => {
+      const meta = PACKAGE_METADATA[pkg.id] || {
+        categories: ["sightseeing"],
+        badgeTag: "CURATED TOUR",
+        badgeClass: "bg-primary text-on-primary",
+        durationBadge: pkg.duration,
+        durationIcon: "schedule",
+        stops: [...pkg.places],
+        inclusions: [...pkg.includes].slice(0, 3),
+        vehiclePrices: [
+          { label: "Ertiga", price: `₹${Math.round((pkg.from * 1.25) / 100) * 100}` },
+          { label: "Innova", price: `₹${Math.round((pkg.from * 1.8) / 100) * 100}` },
+        ],
+        suitedFor: "Sightseeing Travelers",
+        recommendedFleet: "Sedan / Innova",
+      };
+      return {
+        pkg,
+        categories: meta.categories,
+        badgeTag: meta.badgeTag,
+        badgeClass: meta.badgeClass,
+        durationBadge: meta.durationBadge,
+        durationIcon: meta.durationIcon,
+        stops: meta.stops,
+        inclusions: meta.inclusions,
+        vehiclePrices: meta.vehiclePrices,
+      };
+    });
+  }, []);
 
   // Filtered packages
   const filteredPackages = useMemo(() => {
-    return packages.filter((pkg) => {
-      if (filter === "all") return true;
-      if (filter === "same-day") return pkg.duration.includes("1 day");
-      if (filter === "multi-day") return pkg.duration.includes("day") && !pkg.duration.includes("1 day");
-      if (filter === "devotional") return pkg.id.includes("mathura") || pkg.id.includes("sunrise");
-      return true;
-    });
-  }, [filter]);
+    if (activeCategory === "all") return enrichedPackages;
+    return enrichedPackages.filter((item) => item.categories.includes(activeCategory));
+  }, [enrichedPackages, activeCategory]);
 
   // Structured Data (Schema.org)
   const structuredData = {
@@ -201,14 +246,14 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
           {
             "@type": "ListItem",
             position: 1,
-            name: isHindi ? "होम" : "Home",
-            item: `https://skbagheltravels.in${langPrefix}/`,
+            name: "Home",
+            item: "https://skbagheltravels.in/en/",
           },
           {
             "@type": "ListItem",
             position: 2,
-            name: isHindi ? "टूर पैकेज" : "Tour Packages",
-            item: `https://skbagheltravels.in${langPrefix}/packages/`,
+            name: "Packages",
+            item: "https://skbagheltravels.in/en/packages/",
           },
         ],
       },
@@ -235,12 +280,12 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
       })),
       {
         "@type": "FAQPage",
-        mainEntity: PACKAGE_FAQS.map((faq) => ({
+        mainEntity: PACKAGES_FAQS.map((faq) => ({
           "@type": "Question",
-          name: faq.q[activeLanguage],
+          name: faq.q,
           acceptedAnswer: {
             "@type": "Answer",
-            text: faq.a[activeLanguage],
+            text: faq.a,
           },
         })),
       },
@@ -248,507 +293,675 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
   };
 
   return (
-    <main id="main-content" className="packages-hub-page">
+    <div className="flex flex-col w-full bg-surface">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
 
-      {/* Hero Header with Currency Selector */}
-      <header className="packages-hub-hero">
-        <div className="container">
-          <div className="hero-top-bar">
-            <p className="eyebrow">
-              {isHindi
-                ? "प्रामाणिक हेरिटेज व दर्शनीय यात्रा • एस के बघेल"
-                : "HERITAGE & PRIVATE CIRCUITS • SK BAGHEL"}
-            </p>
-
-            {/* International Currency Switcher */}
-            <div className="currency-selector" role="group" aria-label="Select Currency">
-              <span className="currency-label">{isHindi ? "मुद्रा:" : "Currency:"}</span>
-              {(Object.keys(CURRENCIES) as CurrencyCode[]).map((code) => (
-                <button
-                  type="button"
-                  key={code}
-                  className={`currency-pill ${selectedCurrency === code ? "is-active" : ""}`}
-                  onClick={() => setSelectedCurrency(code)}
-                >
-                  {CURRENCIES[code].label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <h1>
-            {isHindi ? (
-              <>
-                आगरा एवं उत्तर भारत के प्रसिद्ध,
-                <br />
-                <i>निजी टूर पैकेज व सटीक यात्रा योजना।</i>
-              </>
-            ) : (
-              <>
-                Curated private tours & circuits,
-                <br />
-                <i>crafted for unforgettable memories.</i>
-              </>
-            )}
-          </h1>
-          <p className="hero-copy">
-            {isHindi
-              ? "ताजमहल सूर्योदय दर्शन से लेकर 3-दिवसीय गोल्डन ट्रायंगल तक — समर्पित एसी वाहन, टोल व पार्किंग सहित पारदर्शी मूल्य, और अनुभवी स्थानीय ड्राइवरों के साथ आरामदेह सफर।"
-              : "From dawn departures at the Taj Mahal to seamless Golden Triangle heritage circuits and sacred Mathura-Vrindavan pilgrimages — private AC chauffeur travel with all highway tolls, parking, and taxes included."}
-          </p>
-
-          <div className="hero-actions">
-            <a className="button button-primary" href="#package-catalogue">
-              {isHindi ? "सभी पैकेज देखें ↓" : "Explore Tour Catalogue ↓"}
-            </a>
-            <a className="button button-outline" href={`tel:${contact.phone}`}>
-              {isHindi ? `कॉल करें ${contact.phoneDisplay}` : `Call ${contact.phoneDisplay}`}
-            </a>
-            <a
-              className="button button-outline"
-              href={`https://wa.me/${contact.whatsapp}`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {isHindi ? "व्हाट्सएप पूछताछ" : "WhatsApp Desk"}
-            </a>
-          </div>
+      {/* TOP ARCHITECTURAL HERO INTRO */}
+      <section className="relative bg-surface-container-low overflow-hidden border-b border-border-warm/60">
+        {/* Subtle architectural lattice watermark */}
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none flex items-center justify-center">
+          <svg className="w-full h-full text-on-surface" preserveAspectRatio="none" viewBox="0 0 100 100">
+            <pattern height="20" id="mughal-lattice-hero" patternUnits="userSpaceOnUse" width="20">
+              <path d="M 0 10 L 10 0 L 20 10 L 10 20 Z" fill="none" stroke="currentColor" strokeWidth="0.75"></path>
+              <circle cx="10" cy="10" fill="currentColor" r="1.5"></circle>
+            </pattern>
+            <rect fill="url(#mughal-lattice-hero)" height="100%" width="100%"></rect>
+          </svg>
         </div>
-      </header>
 
-      {/* Filterable Tour Package Catalogue */}
-      <section
-        id="package-catalogue"
-        className="home-section packages-catalogue-section"
-        aria-labelledby="packages-catalogue-heading"
-      >
-        <div className="container">
-          <div className="section-heading">
-            <div>
-              <p className="eyebrow">
-                {isHindi ? "टूर पैकेज सूची" : "Curated Tour Directory"}
+        <div className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin pt-space-xl pb-space-2xl relative z-10">
+          {/* Breadcrumb Bar */}
+          <nav className="flex items-center gap-space-xs text-on-surface-variant font-body-sm text-body-sm mb-space-lg" aria-label="Breadcrumb">
+            <a className="hover:text-primary transition-colors" href="/en/">Home</a>
+            <span className="material-symbols-outlined text-[14px]">chevron_right</span>
+            <span className="text-primary font-semibold">Packages &amp; Curated Tours</span>
+          </nav>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-end">
+            <div className="lg:col-span-8 flex flex-col gap-space-md">
+              <div className="inline-flex items-center gap-space-xs px-space-sm py-1 rounded bg-sandstone-wash w-fit">
+                <span className="w-2 h-2 rounded-full bg-primary inline-block"></span>
+                <span className="font-label-caps text-label-caps uppercase tracking-wider text-terracotta-sandstone font-semibold">
+                  Official North India Heritage Desk
+                </span>
+              </div>
+              <h1 className="font-headline-hero text-headline-hero text-ink-charcoal leading-[1.12]">
+                Handcrafted North India journeys. <br className="hidden sm:inline" />
+                <span className="italic font-normal text-terracotta-sandstone">Thoughtfully chauffeured.</span>
+              </h1>
+              <p className="font-body-lg text-body-lg text-on-surface-variant max-w-2xl leading-relaxed">
+                Private, doorstep-pickup itineraries covering the Taj Mahal, sacred Braj temples, imperial Mughal ruins, and the Golden Triangle. Complete fare transparency, verified English &amp; Hindi-speaking commercial chauffeurs, and zero commission-shop traps.
               </p>
-              <h2 id="packages-catalogue-heading">
-                {isHindi ? (
-                  <>
-                    हर प्रकार के सफर के लिए,
-                    <br />
-                    <i>सुव्यवस्थित निजी टूर पैकेज।</i>
-                  </>
-                ) : (
-                  <>
-                    Tailored for every schedule,
-                    <br />
-                    <i>private chauffeured excursions.</i>
-                  </>
-                )}
-              </h2>
+            </div>
+            <div className="lg:col-span-4 flex flex-col justify-end">
+              <div className="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm border border-border-warm flex flex-col gap-space-sm">
+                <div className="flex items-center gap-space-sm">
+                  <span className="material-symbols-outlined text-primary text-[28px]">shield</span>
+                  <div>
+                    <div className="font-title-md text-title-md text-on-surface font-semibold">Mughal Hospitality Standard</div>
+                    <div className="font-body-sm text-body-sm text-on-surface-variant">Regulated by Uttar Pradesh Tourism guidelines</div>
+                  </div>
+                </div>
+                <div className="pt-space-xs flex items-center justify-between font-label-caps text-label-caps text-on-surface-variant border-t border-border-warm/60">
+                  <span>AGRA CANTT • AIRPORT TRANSFERS</span>
+                  <span className="text-success-jade font-bold">24×7 DISPATCH</span>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Filter Tabs */}
-          <div className="package-filter-tabs" role="tablist" aria-label="Tour Categories">
-            <button
-              type="button"
-              className={`filter-tab-btn ${filter === "all" ? "is-active" : ""}`}
-              onClick={() => setFilter("all")}
-            >
-              {isHindi ? "सभी टूर (All Packages)" : "All Packages (6)"}
-            </button>
-            <button
-              type="button"
-              className={`filter-tab-btn ${filter === "same-day" ? "is-active" : ""}`}
-              onClick={() => setFilter("same-day")}
-            >
-              {isHindi ? "सैम डे दर्शन (1 Day)" : "Same-Day Tours (4)"}
-            </button>
-            <button
-              type="button"
-              className={`filter-tab-btn ${filter === "multi-day" ? "is-active" : ""}`}
-              onClick={() => setFilter("multi-day")}
-            >
-              {isHindi ? "मल्टी-डे सर्किट (2–3 Days)" : "Multi-Day Circuits (2)"}
-            </button>
-            <button
-              type="button"
-              className={`filter-tab-btn ${filter === "devotional" ? "is-active" : ""}`}
-              onClick={() => setFilter("devotional")}
-            >
-              {isHindi ? "धार्मिक व भोर दर्शन" : "Devotional & Sunrise"}
-            </button>
-          </div>
-
-          {/* Tour Package Cards Grid */}
-          <div className="packages-grid">
-            {filteredPackages.map((pkg) => {
-              const basePriceFormatted = formatPrice(pkg.from, currency);
-
-              return (
-                <article className="package-card" key={pkg.id} id={pkg.id}>
-                  {/* Photo & Duration Badge */}
-                  <div className="package-card-media">
-                    <img
-                      src={pkg.image}
-                      alt={pkg.name}
-                      width="600"
-                      height="380"
-                      loading="lazy"
-                    />
-                    <div className="media-overlay-strip">
-                      <span className="duration-pill">⏱️ {pkg.duration}</span>
-                      <span className="kicker-pill">{pkg.kicker}</span>
-                    </div>
-                  </div>
-
-                  <div className="package-card-body">
-                    {/* Places Pills */}
-                    <div className="package-places-row">
-                      {pkg.places.map((place, idx) => (
-                        <span className="place-tag" key={idx}>
-                          📍 {place}
-                        </span>
-                      ))}
-                    </div>
-
-                    <h3 className="package-title">{pkg.name}</h3>
-                    <p className="package-blurb">{pkg.blurb}</p>
-
-                    {/* Inclusions & Exclusions Summary */}
-                    <div className="inclusions-box">
-                      <div className="inclusions-col">
-                        <span className="box-label">
-                          {isHindi ? "शामिल सुविधाएं (Included):" : "Key Inclusions:"}
-                        </span>
-                        <ul className="inclusions-list">
-                          {pkg.includes.slice(0, 3).map((item, idx) => (
-                            <li key={idx}>
-                              <span className="check-icon">✓</span> {item}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                      <div className="exclusions-col">
-                        <span className="box-label">
-                          {isHindi ? "शामिल नहीं (Excluded):" : "Exclusions:"}
-                        </span>
-                        <ul className="exclusions-list">
-                          {pkg.excludes.map((item, idx) => (
-                            <li key={idx}>
-                              <span className="cross-icon">✕</span> {item}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-
-                    {/* MakeMyTrip-Style Vehicle Option Boxes */}
-                    <div className="vehicle-boxes-section">
-                      <p className="vehicle-boxes-label">
-                        {isHindi
-                          ? "उपलब्ध गाड़ियाँ व शुरुआती किराये (Select Vehicle):"
-                          : "Available Cabs & Transparent Fares:"}
-                      </p>
-
-                      <div className="vehicle-boxes-grid">
-                        {/* Sedan Box */}
-                        <div className="car-selection-box">
-                          <div className="car-box-left">
-                            <SedanIcon />
-                            <span className="fuel-pill fuel-cng">CNG/Petrol</span>
-                          </div>
-                          <div className="car-box-mid">
-                            <strong className="car-name">Sedan (Dzire / Etios)</strong>
-                            <span className="car-specs">AC · 4+1 Seats · 2 Bags</span>
-                          </div>
-                          <div className="car-box-right">
-                            <span className="car-price">
-                              {formatPrice(pkg.from, currency)}
-                            </span>
-                            <a
-                              className="button button-outline button-xs"
-                              href={`/book.html?package=${pkg.id}&vehicle=sedan`}
-                            >
-                              {isHindi ? "चुनें ↗" : "Select ↗"}
-                            </a>
-                          </div>
-                        </div>
-
-                        {/* Ertiga Box */}
-                        <div className="car-selection-box">
-                          <div className="car-box-left">
-                            <MpvIcon />
-                            <span className="fuel-pill fuel-diesel">Diesel/CNG</span>
-                          </div>
-                          <div className="car-box-mid">
-                            <strong className="car-name">Maruti Ertiga (MPV)</strong>
-                            <span className="car-specs">AC · 6+1 Seats · 3 Bags</span>
-                          </div>
-                          <div className="car-box-right">
-                            <span className="car-price">
-                              {formatPrice(Math.round(pkg.from * 1.25), currency)}
-                            </span>
-                            <a
-                              className="button button-outline button-xs"
-                              href={`/book.html?package=${pkg.id}&vehicle=ertiga`}
-                            >
-                              {isHindi ? "चुनें ↗" : "Select ↗"}
-                            </a>
-                          </div>
-                        </div>
-
-                        {/* Innova Crysta Box */}
-                        <div className="car-selection-box is-recommended">
-                          <div className="car-box-left">
-                            <SuvIcon />
-                            <span className="fuel-pill fuel-diesel">Diesel Luxury</span>
-                          </div>
-                          <div className="car-box-mid">
-                            <strong className="car-name">Toyota Innova Crysta</strong>
-                            <span className="car-specs">AC · 6+1 Seats · 4 Bags · High Comfort</span>
-                          </div>
-                          <div className="car-box-right">
-                            <span className="car-price">
-                              {formatPrice(Math.round(pkg.from * 1.5), currency)}
-                            </span>
-                            <a
-                              className="button button-primary button-xs"
-                              href={`/book.html?package=${pkg.id}&vehicle=innova`}
-                            >
-                              {isHindi ? "चुनें ↗" : "Select ↗"}
-                            </a>
-                          </div>
-                        </div>
-
-                        {/* Tempo Traveller Box */}
-                        <div className="car-selection-box">
-                          <div className="car-box-left">
-                            <VanIcon />
-                            <span className="fuel-pill fuel-diesel">Group Van</span>
-                          </div>
-                          <div className="car-box-mid">
-                            <strong className="car-name">Tempo Traveller (12–26)</strong>
-                            <span className="car-specs">AC · 12–26 Seats · Luggage Boot</span>
-                          </div>
-                          <div className="car-box-right">
-                            <span className="car-price">
-                              {formatPrice(Math.round(pkg.from * 2.1), currency)}
-                            </span>
-                            <a
-                              className="button button-outline button-xs"
-                              href={`/book.html?package=${pkg.id}&vehicle=tempo`}
-                            >
-                              {isHindi ? "चुनें ↗" : "Select ↗"}
-                            </a>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Bottom Action Strip */}
-                    <div className="package-card-footer">
-                      <div className="pricing-summary">
-                        <span className="summary-label">
-                          {isHindi ? "शुरुआती पैकेज किराया:" : "Starting Package Rate:"}
-                        </span>
-                        <strong className="summary-val">{basePriceFormatted}</strong>
-                        <small className="summary-tax">
-                          {isHindi ? "टोल व ड्राइवर शुल्क सहित" : "All Tolls & Chauffeur Included"}
-                        </small>
-                      </div>
-
-                      <div className="footer-actions">
-                        <a
-                          className="button button-primary"
-                          href={`/book.html?package=${pkg.id}`}
-                        >
-                          {isHindi ? "टूर बुक करें ↗" : "Book Tour ↗"}
-                        </a>
-                        <a
-                          className="button button-outline"
-                          href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
-                            `Hi SK Baghel Travels, I am inquiring about the ${pkg.name} (${pkg.duration}).`
-                          )}`}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          {isHindi ? "व्हाट्सएप" : "WhatsApp"}
-                        </a>
-                        <a
-                          className="button button-outline"
-                          href={`${langPrefix}/packages/${pkg.slug}/`}
-                        >
-                          {isHindi ? "विस्तृत विवरण" : "Details"}
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </article>
-              );
-            })}
+          {/* Trust Ribbon Mosaic */}
+          <div className="mt-space-xl grid grid-cols-2 md:grid-cols-4 gap-space-md pt-space-md">
+            <div className="bg-surface-container-lowest p-space-md rounded-xl flex items-center gap-space-sm shadow-sm border border-border-warm/60">
+              <span className="material-symbols-outlined text-primary text-[24px]">explore</span>
+              <div>
+                <div className="font-title-sm font-bold text-ink-charcoal">6 Signature Packages</div>
+                <div className="font-body-sm text-body-sm text-on-surface-variant">Same-Day to Multi-Day</div>
+              </div>
+            </div>
+            <div className="bg-surface-container-lowest p-space-md rounded-xl flex items-center gap-space-sm shadow-sm border border-border-warm/60">
+              <span className="material-symbols-outlined text-success-jade text-[24px]">verified_user</span>
+              <div>
+                <div className="font-title-sm font-bold text-ink-charcoal">0% Shopping Traps</div>
+                <div className="font-body-sm text-body-sm text-on-surface-variant">Direct monuments only</div>
+              </div>
+            </div>
+            <div className="bg-surface-container-lowest p-space-md rounded-xl flex items-center gap-space-sm shadow-sm border border-border-warm/60">
+              <span className="material-symbols-outlined text-primary text-[24px]">badge</span>
+              <div>
+                <div className="font-title-sm font-bold text-ink-charcoal">Govt-Approved Guides</div>
+                <div className="font-body-sm text-body-sm text-on-surface-variant">Licensed ASI historians</div>
+              </div>
+            </div>
+            <div className="bg-surface-container-lowest p-space-md rounded-xl flex items-center gap-space-sm shadow-sm border border-border-warm/60">
+              <span className="material-symbols-outlined text-primary text-[24px]">directions_car</span>
+              <div>
+                <div className="font-title-sm font-bold text-ink-charcoal">Doorstep Pickup</div>
+                <div className="font-body-sm text-body-sm text-on-surface-variant">Hotel &amp; Cantt Station</div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Tour Cancellation & Refund Transparency */}
-      <section
-        className="home-section cancellation-transparency-section"
-        aria-labelledby="cancellation-heading"
-      >
-        <div className="container">
-          <div className="section-heading">
-            <div>
-              <p className="eyebrow">
-                {isHindi ? "रिफंड व रद्दीकरण नीति" : "Transparent Tour Refund Policy"}
-              </p>
-              <h2 id="cancellation-heading">
-                {isHindi ? (
-                  <>
-                    शून्य अनिश्चितता,
-                    <br />
-                    <i>100% स्पष्ट 6-चरणीय रिफंड तालिका।</i>
-                  </>
-                ) : (
-                  <>
-                    Clear commercial cancellation terms,
-                    <br />
-                    <i>tiered multi-day tour refund schedule.</i>
-                  </>
-                )}
-              </h2>
-            </div>
+      {/* FILTER & TAB NAVIGATION BAR */}
+      <section className="bg-surface-container py-space-md border-b border-border-warm/60 sticky top-20 z-30 backdrop-blur-md bg-surface-container/95">
+        <div className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin flex flex-wrap items-center justify-between gap-space-md">
+          {/* Filter Segmented Tabs */}
+          <div className="inline-flex flex-wrap items-center gap-1.5 p-1.5 bg-surface-container-high rounded-xl">
+            <button
+              className={`px-space-md py-space-xs rounded-lg font-label-lg text-label-lg transition-all ${
+                activeCategory === "all"
+                  ? "bg-ink-charcoal text-ivory-surface shadow-sm font-semibold"
+                  : "text-on-surface hover:bg-surface-container-lowest"
+              }`}
+              onClick={() => setActiveCategory("all")}
+              type="button"
+            >
+              All Packages ({packages.length})
+            </button>
+            <button
+              className={`px-space-md py-space-xs rounded-lg font-label-lg text-label-lg transition-all ${
+                activeCategory === "sightseeing"
+                  ? "bg-ink-charcoal text-ivory-surface shadow-sm font-semibold"
+                  : "text-on-surface hover:bg-surface-container-lowest"
+              }`}
+              onClick={() => setActiveCategory("sightseeing")}
+              type="button"
+            >
+              Taj &amp; Agra Sightseeing
+            </button>
+            <button
+              className={`px-space-md py-space-xs rounded-lg font-label-lg text-label-lg transition-all ${
+                activeCategory === "dawn"
+                  ? "bg-ink-charcoal text-ivory-surface shadow-sm font-semibold"
+                  : "text-on-surface hover:bg-surface-container-lowest"
+              }`}
+              onClick={() => setActiveCategory("dawn")}
+              type="button"
+            >
+              Dawn &amp; Fast-Track
+            </button>
+            <button
+              className={`px-space-md py-space-xs rounded-lg font-label-lg text-label-lg transition-all ${
+                activeCategory === "pilgrimage"
+                  ? "bg-ink-charcoal text-ivory-surface shadow-sm font-semibold"
+                  : "text-on-surface hover:bg-surface-container-lowest"
+              }`}
+              onClick={() => setActiveCategory("pilgrimage")}
+              type="button"
+            >
+              Pilgrimage Circuits
+            </button>
+            <button
+              className={`px-space-md py-space-xs rounded-lg font-label-lg text-label-lg transition-all ${
+                activeCategory === "multiday"
+                  ? "bg-ink-charcoal text-ivory-surface shadow-sm font-semibold"
+                  : "text-on-surface hover:bg-surface-container-lowest"
+              }`}
+              onClick={() => setActiveCategory("multiday")}
+              type="button"
+            >
+              Multi-Day Golden Triangle
+            </button>
           </div>
 
-          <div className="cancellation-table-card">
-            <table className="cancellation-table">
-              <thead>
+          {/* Quick Assistance Anchor */}
+          <div className="flex items-center gap-space-sm text-on-surface-variant font-body-sm text-body-sm">
+            <span className="material-symbols-outlined text-primary text-[18px]">support_agent</span>
+            <span>Need a tailored route?</span>
+            <a className="text-primary font-bold hover:underline font-label-lg text-label-lg" href="#custom-quote">
+              Custom Itinerary Desk ↓
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* CURATED PACKAGES CATALOG GRID */}
+      <section className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin py-space-2xl w-full">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-space-md mb-space-xl">
+          <div>
+            <span className="font-label-caps text-label-caps text-primary uppercase font-bold tracking-widest">
+              Handpicked Itineraries
+            </span>
+            <h2 className="font-headline-lg text-headline-lg text-ink-charcoal mt-1">Curated North India Tours</h2>
+          </div>
+          <p className="font-body-sm text-body-sm text-on-surface-variant max-w-md">
+            All vehicles strictly private, sanitized with commercial yellow-plate tourist permits. Guaranteed on-time dispatch from Taj Ganj, Agra.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-space-lg">
+          {filteredPackages.map((item) => {
+            const { pkg } = item;
+            const packageDetailUrl = `/en/packages/${pkg.slug}`;
+            const bookStep1Url = `/book.html?package=${encodeURIComponent(pkg.slug)}&step=1`;
+            const whatsappPackageUrl = `https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
+              `Hello SK Baghel Travels, I am interested in the ${pkg.name}.`
+            )}`;
+
+            return (
+              <article
+                key={pkg.id}
+                className="flex flex-col bg-surface-container-lowest rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border border-border-warm"
+              >
+                <div className="relative h-56 bg-surface-container overflow-hidden group">
+                  <img
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    alt={pkg.name}
+                    src={pkg.image}
+                  />
+                  <div className="absolute top-3 left-3 flex gap-2 flex-wrap">
+                    <span className={`px-2.5 py-0.5 rounded text-label-caps uppercase tracking-wider shadow-sm ${item.badgeClass}`}>
+                      {item.badgeTag}
+                    </span>
+                    <span className="px-2.5 py-0.5 rounded bg-ink-charcoal/90 text-ivory-surface text-label-caps uppercase tracking-wider backdrop-blur-sm">
+                      {pkg.kicker}
+                    </span>
+                  </div>
+                  <div className="absolute bottom-3 right-3 px-2.5 py-0.5 rounded bg-surface-container-lowest/90 backdrop-blur-sm text-ink-charcoal text-label-caps font-semibold flex items-center gap-1 shadow-sm">
+                    <span className="material-symbols-outlined text-[14px]">{item.durationIcon}</span>
+                    <span>{item.durationBadge}</span>
+                  </div>
+                </div>
+
+                <div className="p-space-lg flex-1 flex flex-col justify-between gap-space-md">
+                  <div className="flex flex-col gap-space-xs">
+                    <a href={packageDetailUrl} className="group">
+                      <h3 className="font-headline-sm text-headline-sm text-ink-charcoal leading-snug group-hover:text-primary transition-colors">
+                        {pkg.name}
+                      </h3>
+                    </a>
+                    <p className="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">
+                      {pkg.blurb}
+                    </p>
+                  </div>
+
+                  {/* Key Monument Stops pills */}
+                  <div className="flex flex-col gap-space-xs pt-space-xs">
+                    <span className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">
+                      Key Monument Stops
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {item.stops.map((stop, sIdx) => (
+                        <span
+                          key={sIdx}
+                          className="px-2 py-0.5 bg-sandstone-wash rounded font-label-caps text-label-caps text-on-surface"
+                        >
+                          {stop}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Inclusions List */}
+                  <div className="space-y-1 text-on-surface-variant font-body-sm text-body-sm pt-space-xs">
+                    {item.inclusions.map((inc, iIdx) => (
+                      <div key={iIdx} className="flex items-center gap-2">
+                        <span className="material-symbols-outlined text-primary text-[16px] shrink-0">check_circle</span>
+                        <span className="truncate">{inc}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Pricing & CTAs */}
+                  <div className="pt-space-md mt-auto flex flex-col gap-space-sm bg-surface-container-low p-space-md rounded-xl border border-border-warm/60">
+                    <div className="flex items-baseline justify-between">
+                      <div>
+                        <span className="font-body-sm text-body-sm text-on-surface-variant block">Sedan Starting</span>
+                        <span className="font-price-display text-price-display text-primary leading-none font-bold">
+                          ₹{pkg.from.toLocaleString("en-IN")}
+                        </span>
+                        <span className="font-body-sm text-body-sm text-on-surface-variant"> / group</span>
+                      </div>
+                      <div className="text-right font-label-caps text-label-caps text-on-surface-variant space-y-0.5">
+                        {item.vehiclePrices.map((vp, vIdx) => (
+                          <div key={vIdx}>{vp.label}: {vp.price}</div>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-space-xs pt-1">
+                      <a
+                        className="inline-flex items-center justify-center gap-1 px-3 py-2.5 rounded-lg bg-ink-charcoal text-ivory-surface font-label-lg text-label-lg hover:bg-ink-slate transition-colors"
+                        href={whatsappPackageUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <span className="material-symbols-outlined text-gold-accent text-[18px]">chat</span> WhatsApp
+                      </a>
+                      <a
+                        className="inline-flex items-center justify-center gap-1 px-3 py-2.5 rounded-lg bg-primary text-on-primary font-label-lg text-label-lg hover:bg-primary-container transition-colors shadow-sm"
+                        href={packageDetailUrl}
+                      >
+                        <span>View Details</span> →
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* PACKAGE COMPARISON & FLEET DECISION MATRIX */}
+      <section className="bg-surface-container-low py-space-3xl border-t border-b border-border-warm/60">
+        <div className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin">
+          <div className="text-center max-w-3xl mx-auto mb-space-xl">
+            <span className="font-label-caps text-label-caps text-primary uppercase font-bold tracking-widest">
+              Executive Comparison
+            </span>
+            <h2 className="font-headline-lg text-headline-lg text-ink-charcoal mt-1">
+              Package &amp; Fleet Decision Matrix
+            </h2>
+            <p className="font-body-md text-body-md text-on-surface-variant mt-2">
+              Compare durations, monument highlights, recommended vehicle choices, and fixed honest pricing side-by-side.
+            </p>
+          </div>
+          {/* Matrix Table Container */}
+          <div className="overflow-x-auto bg-surface-container-lowest rounded-xl shadow-sm border border-border-warm">
+            <table className="w-full text-left font-body-sm text-body-sm text-on-surface">
+              <thead className="bg-surface-container font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider border-b border-border-warm">
                 <tr>
-                  <th scope="col">{isHindi ? "रद्दीकरण की पूर्व सूचना" : "Notice Prior to Departure"}</th>
-                  <th scope="col">{isHindi ? "रिफंड प्रतिशत" : "Refund Percentage"}</th>
-                  <th scope="col">{isHindi ? "कटौती शुल्क" : "Deduction"}</th>
-                  <th scope="col">{isHindi ? "रिफंड समय सीमा" : "Credited Timeline"}</th>
+                  <th className="py-space-md px-space-md">Tour Circuit</th>
+                  <th className="py-space-md px-space-md">Duration</th>
+                  <th className="py-space-md px-space-md">Key Monuments Covered</th>
+                  <th className="py-space-md px-space-md">Starting Fare</th>
+                  <th className="py-space-md px-space-md">Best Suited For</th>
+                  <th className="py-space-md px-space-md">Recommended Fleet</th>
                 </tr>
               </thead>
-              <tbody>
-                {cancellationSlabsTour.map((tier, idx) => (
-                  <tr key={idx}>
-                    <td>
-                      <strong>{tier.days}</strong>
-                    </td>
-                    <td>
-                      <span className="refund-badge">{tier.refund} Refund</span>
-                    </td>
-                    <td>{tier.fee}</td>
-                    <td>{isHindi ? "5–7 कार्यदिवस में" : "5–7 Business Days"}</td>
-                  </tr>
-                ))}
+              <tbody className="divide-y divide-border-warm/50">
+                {packages.map((pkg, idx) => {
+                  const meta = PACKAGE_METADATA[pkg.id] || {
+                    suitedFor: "Sightseeing Travelers",
+                    recommendedFleet: "Sedan / Innova",
+                  };
+                  return (
+                    <tr
+                      key={pkg.id}
+                      className={`hover:bg-sandstone-wash/40 transition-colors ${
+                        idx % 2 === 1 ? "bg-sandstone-wash/20" : ""
+                      }`}
+                    >
+                      <td className="py-space-md px-space-md font-semibold text-ink-charcoal">
+                        <a href={`/en/packages/${pkg.slug}`} className="hover:text-primary transition-colors">
+                          {pkg.name}
+                        </a>
+                      </td>
+                      <td className="py-space-md px-space-md text-on-surface-variant">{pkg.duration}</td>
+                      <td className="py-space-md px-space-md">{pkg.places.join(", ")}</td>
+                      <td className="py-space-md px-space-md font-bold text-primary">₹{pkg.from.toLocaleString("en-IN")}</td>
+                      <td className="py-space-md px-space-md">
+                        <span className="px-2 py-0.5 rounded bg-sandstone-wash text-ink-charcoal font-label-caps text-label-caps">
+                          {meta.suitedFor}
+                        </span>
+                      </td>
+                      <td className="py-space-md px-space-md text-secondary">{meta.recommendedFleet}</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
         </div>
       </section>
 
-      {/* Packages FAQ Accordion */}
-      <section
-        className="home-section packages-faq-section"
-        aria-labelledby="packages-faq-heading"
-      >
-        <div className="container">
-          <div className="section-heading">
-            <div>
-              <p className="eyebrow">
-                {isHindi ? "टूर पैकेज एफएक्यू" : "Tour FAQs"}
-              </p>
-              <h2 id="packages-faq-heading">
-                {isHindi ? (
-                  <>
-                    टूर और यात्रा से जुड़े जरूरी सवाल,
-                    <br />
-                    <i>बुकिंग से पहले सीधे जवाब।</i>
-                  </>
-                ) : (
-                  <>
-                    Frequently asked tour questions,
-                    <br />
-                    <i>honest answers before you reserve.</i>
-                  </>
-                )}
-              </h2>
-            </div>
+      {/* THE HONEST HERITAGE CHARTER */}
+      <section className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin py-space-3xl w-full">
+        <div className="flex flex-col gap-space-xs text-center max-w-2xl mx-auto mb-space-2xl">
+          <div className="inline-flex items-center justify-center gap-1 text-primary font-label-caps text-label-caps uppercase font-bold tracking-widest">
+            <span className="material-symbols-outlined text-[16px]">verified</span> 100% Transparent Chauffeur Ethics
           </div>
-
-          <div className="packages-faq-accordion">
-            {PACKAGE_FAQS.map((item, index) => {
-              const isOpen = openFaq === index;
-              return (
-                <div
-                  className={`packages-faq-item ${isOpen ? "is-open" : ""}`}
-                  key={index}
-                >
-                  <button
-                    type="button"
-                    className="packages-faq-question"
-                    onClick={() => setOpenFaq(isOpen ? null : index)}
-                    aria-expanded={isOpen}
-                    aria-controls={`packages-faq-answer-${index}`}
-                  >
-                    <span>{item.q[activeLanguage]}</span>
-                    <span className="faq-toggle-icon" aria-hidden="true">
-                      {isOpen ? "−" : "+"}
-                    </span>
-                  </button>
-                  {isOpen && (
-                    <div
-                      className="packages-faq-answer"
-                      id={`packages-faq-answer-${index}`}
-                    >
-                      <p>{item.a[activeLanguage]}</p>
-                    </div>
-                  )}
+          <h2 className="font-headline-lg text-headline-lg text-ink-charcoal">The Honest Heritage Charter</h2>
+          <p className="font-body-md text-body-md text-on-surface-variant">
+            No unexpected baggage surcharges, no hidden highway entry cess, and an absolute zero tolerance policy toward unwanted tourist emporium detours.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-space-xl">
+          {/* Included Column */}
+          <div className="bg-surface-container-lowest p-space-xl rounded-xl shadow-sm border border-border-warm flex flex-col gap-space-lg">
+            <div className="flex items-center gap-space-sm">
+              <div className="w-10 h-10 rounded-full bg-success-jade/10 text-success-jade flex items-center justify-center">
+                <span className="material-symbols-outlined text-[24px]">task_alt</span>
+              </div>
+              <div>
+                <h3 className="font-title-lg text-title-lg text-ink-charcoal font-semibold">Always Included in Your Quote</h3>
+                <p className="font-body-sm text-body-sm text-on-surface-variant">Full contractual transparency backed by GST invoice</p>
+              </div>
+            </div>
+            <ul className="flex flex-col gap-space-md font-body-md text-body-md text-on-surface">
+              <li className="flex items-start gap-space-sm">
+                <span className="material-symbols-outlined text-success-jade shrink-0 text-[20px] mt-0.5">check_circle</span>
+                <div>
+                  <strong className="font-semibold text-ink-charcoal">Clean Commercial AC Vehicle:</strong>
+                  <p className="text-on-surface-variant font-body-sm text-body-sm">Deeply sanitized interior, functional climate control, ample boot luggage space.</p>
                 </div>
-              );
-            })}
+              </li>
+              <li className="flex items-start gap-space-sm">
+                <span className="material-symbols-outlined text-success-jade shrink-0 text-[20px] mt-0.5">check_circle</span>
+                <div>
+                  <strong className="font-semibold text-ink-charcoal">Police-Verified Professional Chauffeur:</strong>
+                  <p className="text-on-surface-variant font-body-sm text-body-sm">Uniformed, non-smoking, courteous, and thoroughly route-trained on Yamuna &amp; Braj corridors.</p>
+                </div>
+              </li>
+              <li className="flex items-start gap-space-sm">
+                <span className="material-symbols-outlined text-success-jade shrink-0 text-[20px] mt-0.5">check_circle</span>
+                <div>
+                  <strong className="font-semibold text-ink-charcoal">All Tolls, Fuel &amp; Parking Included:</strong>
+                  <p className="text-on-surface-variant font-body-sm text-body-sm">No demanding loose cash at monument parking stands or highway expressway booths.</p>
+                </div>
+              </li>
+              <li className="flex items-start gap-space-sm">
+                <span className="material-symbols-outlined text-success-jade shrink-0 text-[20px] mt-0.5">check_circle</span>
+                <div>
+                  <strong className="font-semibold text-ink-charcoal">Interstate Border Passenger Taxes:</strong>
+                  <p className="text-on-surface-variant font-body-sm text-body-sm">Pre-paid UP, Rajasthan, and Delhi commercial tourist entry permits.</p>
+                </div>
+              </li>
+              <li className="flex items-start gap-space-sm">
+                <span className="material-symbols-outlined text-success-jade shrink-0 text-[20px] mt-0.5">check_circle</span>
+                <div>
+                  <strong className="font-semibold text-ink-charcoal">Complimentary Hydration:</strong>
+                  <p className="text-on-surface-variant font-body-sm text-body-sm">Sealed chilled mineral water bottles and route tissue packs in every car.</p>
+                </div>
+              </li>
+            </ul>
           </div>
-        </div>
-      </section>
 
-      {/* Bottom 24x7 Custom Tour Dispatch Desk */}
-      <section className="container packages-cta-container">
-        <div className="packages-cta-card">
-          <div className="packages-cta-content">
-            <span className="packages-cta-badge">24×7 BESPOKE TOUR DESK</span>
-            <h2>
-              {isHindi
-                ? "क्या आपकी कोई विशेष यात्रा योजना या पारिवारिक समूह है?"
-                : "Looking for a bespoke circuit or custom family tour?"}
-            </h2>
-            <p>
-              {isHindi
-                ? "ताजगंज, आगरा स्थित हमारे स्थानीय कार्यालय से सीधे बात करें। राजस्थान, मध्य प्रदेश और उत्तर भारत के निजी दौरों के लिए त्वरित कोटेशन और मनपसंद वाहन प्राप्त करें।"
-                : "Speak directly with our local tour coordination desk in Taj Ganj, Agra. Tailored multi-day itineraries, vetted heritage guides, and transparent group quotes."}
-            </p>
-            <div className="packages-cta-buttons">
-              <a className="button button-primary" href="/book.html">
-                {isHindi ? "ऑनलाइन बुक करें ↗" : "Book Online ↗"}
-              </a>
-              <a
-                className="button button-outline"
-                href={`https://wa.me/${contact.whatsapp}`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                {isHindi ? "व्हाट्सएप संपर्क" : "WhatsApp Us"}
-              </a>
-              <a className="button button-outline" href={`tel:${contact.phone}`}>
-                {contact.phoneDisplay}
-              </a>
+          {/* Excluded / Transparent Clarifications Column */}
+          <div className="bg-surface-container-lowest p-space-xl rounded-xl shadow-sm border border-border-warm flex flex-col gap-space-lg">
+            <div className="flex items-center gap-space-sm">
+              <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center">
+                <span className="material-symbols-outlined text-[24px]">receipt_long</span>
+              </div>
+              <div>
+                <h3 className="font-title-lg text-title-lg text-ink-charcoal font-semibold">Transparent Exclusions</h3>
+                <p className="font-body-sm text-body-sm text-on-surface-variant">Pay direct or book separately with zero markup</p>
+              </div>
+            </div>
+            <ul className="flex flex-col gap-space-md font-body-md text-body-md text-on-surface">
+              <li className="flex items-start gap-space-sm">
+                <span className="material-symbols-outlined text-primary shrink-0 text-[20px] mt-0.5">info</span>
+                <div>
+                  <strong className="font-semibold text-ink-charcoal">ASI Monument Entrance Tickets:</strong>
+                  <p className="text-on-surface-variant font-body-sm text-body-sm">Payable directly via the Archaeological Survey of India QR portal or ticket counter (e.g., Taj Mahal ₹50 Indian / ₹1,100 Foreigner).</p>
+                </div>
+              </li>
+              <li className="flex items-start gap-space-sm">
+                <span className="material-symbols-outlined text-primary shrink-0 text-[20px] mt-0.5">info</span>
+                <div>
+                  <strong className="font-semibold text-ink-charcoal">ASI Licensed Guide Fees (Optional):</strong>
+                  <p className="text-on-surface-variant font-body-sm text-body-sm">Govt-approved multilingual guides can be arranged upon request at fixed official tariffs (approx ₹1,200–₹1,800).</p>
+                </div>
+              </li>
+              <li className="flex items-start gap-space-sm">
+                <span className="material-symbols-outlined text-primary shrink-0 text-[20px] mt-0.5">info</span>
+                <div>
+                  <strong className="font-semibold text-ink-charcoal">Personal Dining &amp; Hotel Stays:</strong>
+                  <p className="text-on-surface-variant font-body-sm text-body-sm">Lunches, dinners, and accommodation are traveler's choice unless booking all-inclusive packages.</p>
+                </div>
+              </li>
+              <li className="flex items-start gap-space-sm">
+                <span className="material-symbols-outlined text-primary shrink-0 text-[20px] mt-0.5">info</span>
+                <div>
+                  <strong className="font-semibold text-ink-charcoal">Driver Night Allowance past 10:00 PM:</strong>
+                  <p className="text-on-surface-variant font-body-sm text-body-sm">A nominal ₹300 night charge applies strictly if tours extend past 10:00 PM for late-night highway transits.</p>
+                </div>
+              </li>
+            </ul>
+            {/* Zero Commission Callout Banner */}
+            <div className="mt-auto p-space-md rounded-xl bg-sandstone-wash flex items-center gap-space-sm border border-border-warm">
+              <span className="material-symbols-outlined text-primary text-[24px] shrink-0">article_shortcut</span>
+              <p className="font-body-sm text-body-sm text-on-surface font-medium">
+                <span className="font-bold text-primary">Strict Zero-Commission Shopping Promise:</span> Our chauffeurs never divert you to overpriced marble emporiums or craft bazaars unless you specifically request an artisan visit.
+              </p>
             </div>
           </div>
         </div>
       </section>
-    </main>
+
+      {/* HOW IT WORKS (SIMPLE 3-STEP BOOKING) */}
+      <section className="bg-surface-container py-space-3xl border-t border-b border-border-warm/60">
+        <div className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin">
+          <div className="text-center max-w-2xl mx-auto mb-space-2xl">
+            <span className="font-label-caps text-label-caps text-primary uppercase font-bold tracking-widest">
+              Frictionless Process
+            </span>
+            <h2 className="font-headline-lg text-headline-lg text-ink-charcoal mt-1">Reserve in Three Simple Steps</h2>
+            <p className="font-body-md text-body-md text-on-surface-variant mt-2">
+              From enquiry to chauffeur doorstep arrival in Agra or Delhi within hours.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-space-lg">
+            {/* Step 1 */}
+            <div className="bg-surface-container-lowest p-space-xl rounded-xl shadow-sm border border-border-warm flex flex-col gap-space-md">
+              <div className="w-12 h-12 rounded-full bg-sandstone-wash text-primary flex items-center justify-center font-headline-sm text-headline-sm font-bold">
+                01
+              </div>
+              <h3 className="font-title-lg text-title-lg text-ink-charcoal font-semibold">Choose Circuit &amp; Vehicle</h3>
+              <p className="font-body-sm text-body-sm text-on-surface-variant">
+                Select your favored heritage itinerary, vehicle class (Dzire, Ertiga, Crysta, or Tempo), and travel date via our online engine or direct WhatsApp.
+              </p>
+              <div className="font-label-caps text-label-caps text-primary mt-auto flex items-center gap-1 font-bold">
+                <span>INSTANT QUOTE RESPONSE</span> →
+              </div>
+            </div>
+            {/* Step 2 */}
+            <div className="bg-surface-container-lowest p-space-xl rounded-xl shadow-sm border border-border-warm flex flex-col gap-space-md">
+              <div className="w-12 h-12 rounded-full bg-sandstone-wash text-primary flex items-center justify-center font-headline-sm text-headline-sm font-bold">
+                02
+              </div>
+              <h3 className="font-title-lg text-title-lg text-ink-charcoal font-semibold">28% Advance Deposit</h3>
+              <p className="font-body-sm text-body-sm text-on-surface-variant">
+                Secure vehicle custody via UPI, Google Pay, or direct Bank Transfer. An instant booking voucher with full operator details and GST invoice is dispatched.
+              </p>
+              <div className="font-label-caps text-label-caps text-success-jade mt-auto flex items-center gap-1 font-bold">
+                <span className="material-symbols-outlined text-[16px]">lock</span>
+                <span>SECURE ALLOCATION GUARANTEE</span>
+              </div>
+            </div>
+            {/* Step 3 */}
+            <div className="bg-surface-container-lowest p-space-xl rounded-xl shadow-sm border border-border-warm flex flex-col gap-space-md">
+              <div className="w-12 h-12 rounded-full bg-sandstone-wash text-primary flex items-center justify-center font-headline-sm text-headline-sm font-bold">
+                03
+              </div>
+              <h3 className="font-title-lg text-title-lg text-ink-charcoal font-semibold">Doorstep Chauffeur Arrival</h3>
+              <p className="font-body-sm text-body-sm text-on-surface-variant">
+                Receive chauffeur contact and cab registration number 2 hours prior to start. Chauffeur arrives at your hotel porch or station platform with your name placard.
+              </p>
+              <div className="font-label-caps text-label-caps text-primary mt-auto flex items-center gap-1 font-bold">
+                <span className="material-symbols-outlined text-[16px]">done_all</span>
+                <span>BALANCE PAID AT TRIP END</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FREQUENTLY ASKED QUESTIONS */}
+      <section className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin py-space-3xl w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-xl">
+          <div className="lg:col-span-4 flex flex-col gap-space-md">
+            <span className="font-label-caps text-label-caps text-primary uppercase font-bold tracking-widest">
+              Concierge Answers
+            </span>
+            <h2 className="font-headline-lg text-headline-lg text-ink-charcoal">Frequently Asked Questions</h2>
+            <p className="font-body-md text-body-md text-on-surface-variant">
+              Everything you need to know about monument timings, multilingual guides, luggage capacities, and cancellation policies.
+            </p>
+            <div className="p-space-lg bg-sandstone-wash rounded-xl mt-space-md flex flex-col gap-space-xs border border-border-warm">
+              <span className="font-label-caps text-label-caps text-primary font-bold">UNSURE ABOUT FRIDAY TAJ CLOSING?</span>
+              <p className="font-body-sm text-body-sm text-on-surface">
+                Please note: The Taj Mahal is closed every Friday for general visitors. Our Friday itineraries swap to Agra Fort, Fatehpur Sikri, and Mathura.
+              </p>
+            </div>
+          </div>
+          <div className="lg:col-span-8 flex flex-col gap-space-sm" id="package-faq-accordion">
+            {PACKAGES_FAQS.map((faq, fIdx) => (
+              <details
+                key={fIdx}
+                className="group bg-surface-container-lowest rounded-xl p-space-md shadow-sm border border-border-warm open:shadow-md transition-all"
+              >
+                <summary className="flex items-center justify-between cursor-pointer list-none font-title-md text-title-md text-ink-charcoal font-semibold select-none">
+                  <span>{faq.q}</span>
+                  <span className="material-symbols-outlined text-primary group-open:rotate-180 transition-transform text-[22px]">
+                    expand_more
+                  </span>
+                </summary>
+                <div className="pt-space-sm font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                  {faq.a}
+                </div>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* DIRECT DISPATCH & CUSTOM ITINERARY INQUIRY DESK */}
+      <section className="bg-ink-charcoal text-ivory-surface py-space-3xl relative overflow-hidden" id="custom-quote">
+        <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-primary/20 blur-3xl pointer-events-none"></div>
+        <div className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-2xl items-center">
+            {/* Left Column Info */}
+            <div className="lg:col-span-7 flex flex-col gap-space-md">
+              <div className="inline-flex items-center gap-space-xs px-space-sm py-1 rounded bg-ink-slate text-gold-accent w-fit font-label-caps text-label-caps uppercase tracking-widest">
+                <span className="material-symbols-outlined text-[16px]">headset_mic</span>
+                <span>24×7 Custom Tour Concierge Desk</span>
+              </div>
+              <h2 className="font-headline-hero text-headline-hero text-ivory-surface leading-tight">
+                Need a bespoke multi-city itinerary or group expedition?
+              </h2>
+              <p className="font-body-lg text-body-lg text-secondary-container max-w-xl leading-relaxed">
+                From multi-day royal wedding transit to multi-week Rajasthan heritage loops, our Agra dispatch desk crafts personalized turn-by-turn routes with vetted commercial tourist coaches.
+              </p>
+              {/* Trust Badges Row */}
+              <div className="flex flex-wrap items-center gap-space-md pt-space-xs text-secondary-container font-label-caps text-label-caps">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-ink-slate/60 border border-warm/10">
+                  <span className="material-symbols-outlined text-gold-accent text-[18px]">bolt</span>
+                  <span>15-Minute Response</span>
+                </div>
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-ink-slate/60 border border-warm/10">
+                  <span className="material-symbols-outlined text-gold-accent text-[18px]">directions_car</span>
+                  <span>Tailored Fleet Dispatch</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column Dedicated Luxury Concierge Box */}
+            <div className="lg:col-span-5">
+              <div className="bg-ink-slate/80 p-space-xl rounded-xl border border-warm/10 shadow-xl flex flex-col gap-space-md backdrop-blur-sm">
+                <div className="flex items-center justify-between border-b border-warm/10 pb-space-sm">
+                  <div>
+                    <span className="font-label-caps text-label-caps text-gold-accent uppercase tracking-wider block">
+                      Direct Chauffeur Dispatch
+                    </span>
+                    <h3 className="font-title-lg text-title-lg text-ivory-surface font-semibold">
+                      Connect With Our Supervisor
+                    </h3>
+                  </div>
+                  <span className="material-symbols-outlined text-primary text-[28px]">support_agent</span>
+                </div>
+                {/* Contact Channels */}
+                <div className="flex flex-col gap-space-sm">
+                  {/* Call Card */}
+                  <a
+                    className="flex items-center justify-between p-space-md rounded-lg bg-terracotta-sandstone hover:bg-terracotta-sunlit text-ivory-surface transition-colors shadow-sm group"
+                    href={`tel:${contact.phone}`}
+                  >
+                    <div className="flex items-center gap-space-sm">
+                      <div className="w-10 h-10 rounded-full bg-ink-charcoal/20 flex items-center justify-center shrink-0">
+                        <span className="material-symbols-outlined text-[20px]">call</span>
+                      </div>
+                      <div className="flex flex-col text-left">
+                        <span className="font-label-lg text-label-lg font-bold">Call {contact.phoneDisplay}</span>
+                        <span className="font-body-sm text-body-sm opacity-90">Immediate 24×7 Call Dispatch</span>
+                      </div>
+                    </div>
+                    <span className="material-symbols-outlined text-[20px] transition-transform group-hover:translate-x-1">
+                      arrow_forward
+                    </span>
+                  </a>
+                  {/* WhatsApp Card */}
+                  <a
+                    className="flex items-center justify-between p-space-md rounded-lg bg-ink-charcoal hover:bg-ink-charcoal/90 text-ivory-surface transition-colors border border-warm/10 group"
+                    href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
+                      "Hello SK Baghel Travels, I would like a custom tour quote."
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <div className="flex items-center gap-space-sm">
+                      <div className="w-10 h-10 rounded-full bg-gold-accent/20 flex items-center justify-center shrink-0">
+                        <span className="material-symbols-outlined text-gold-accent text-[20px]">chat</span>
+                      </div>
+                      <div className="flex flex-col text-left">
+                        <span className="font-label-lg text-label-lg font-bold">WhatsApp Direct Quote</span>
+                        <span className="font-body-sm text-body-sm text-secondary-container">
+                          Route estimates &amp; vehicle photos in 15 mins
+                        </span>
+                      </div>
+                    </div>
+                    <span className="material-symbols-outlined text-gold-accent text-[20px] transition-transform group-hover:translate-x-1">
+                      open_in_new
+                    </span>
+                  </a>
+                </div>
+                {/* Operating Assurance Badge */}
+                <div className="pt-space-xs flex items-center justify-center gap-1.5 text-center font-label-caps text-label-caps text-secondary-container border-t border-warm/10">
+                  <span className="w-2 h-2 rounded-full bg-success-jade"></span>
+                  <span>Available 24 hours · Taj Ganj Agra Headquarters</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
   );
 }
+
+export default PackagesPage;

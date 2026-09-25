@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { contact } from "../../data/contact";
-import { prefetchDocument } from "../../app/prefetch";
 
 export interface StickyLeadBarProps {
   currentPath?: string;
@@ -12,7 +11,6 @@ export function StickyLeadBar({ currentPath }: StickyLeadBarProps) {
     currentPath ||
     (typeof window !== "undefined" ? window.location.pathname : "/");
   const isBookingPage = path.includes("book");
-  const isHindi = path.startsWith("/hi");
 
   // Auto-hide when near the bottom of page to prevent collision with footer
   useEffect(() => {
@@ -22,7 +20,7 @@ export function StickyLeadBar({ currentPath }: StickyLeadBarProps) {
       const scrollHeight = document.documentElement.scrollHeight;
       const scrollTop = window.scrollY;
       const clientHeight = window.innerHeight;
-      const nearBottom = scrollHeight - (scrollTop + clientHeight) < 120;
+      const nearBottom = scrollHeight - (scrollTop + clientHeight) < 140;
 
       setIsVisible(!nearBottom);
     };
@@ -37,64 +35,37 @@ export function StickyLeadBar({ currentPath }: StickyLeadBarProps) {
 
   return (
     <aside
-      className="lead-bar"
+      className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-surface-container-lowest/95 backdrop-blur-md shadow-[0_-4px_16px_rgba(0,0,0,0.08)] border-t border-border-warm px-margin-mobile py-2 flex items-center justify-between gap-space-xs"
       aria-label="Quick contact and booking bar"
       data-nosnippet
     >
       <a
-        className="lead-bar-btn lead-call"
+        className="flex-1 flex flex-col items-center justify-center py-1.5 rounded-lg bg-surface-container text-on-surface font-label-caps text-[11px] font-semibold hover:bg-surface-container-high transition-colors"
         href={`tel:${contact.phone}`}
         aria-label={`Call ${contact.phoneDisplay}`}
       >
-        <span className="icon icon-call" aria-hidden="true">
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            width="16"
-            height="16"
-          >
-            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-          </svg>
-        </span>
-        <span>{isHindi ? "कॉल करें" : "Call"}</span>
+        <span className="material-symbols-outlined text-primary text-[18px]">call</span>
+        <span className="mt-0.5">Call Desk</span>
       </a>
 
       <a
-        className="lead-bar-btn lead-wa"
-        href={`https://wa.me/${contact.whatsapp}`}
+        className="flex-1 flex flex-col items-center justify-center py-1.5 rounded-lg bg-ink-charcoal text-ivory-surface font-label-caps text-[11px] font-semibold hover:bg-ink-slate transition-colors"
+        href={`https://wa.me/${contact.whatsapp}?text=Hello%20SK%20Baghel%20Travels`}
         target="_blank"
-        rel="noreferrer"
-        aria-label="WhatsApp Dispatch"
+        rel="noopener noreferrer"
+        aria-label="WhatsApp Concierge"
       >
-        <span className="icon icon-wa" aria-hidden="true">
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            width="16"
-            height="16"
-          >
-            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
-          </svg>
-        </span>
-        <span>{isHindi ? "व्हाट्सएप" : "WhatsApp"}</span>
+        <span className="material-symbols-outlined text-gold-accent text-[18px]">chat</span>
+        <span className="mt-0.5">WhatsApp</span>
       </a>
 
       <a
-        className="lead-bar-btn lead-book"
+        className="flex-1 flex flex-col items-center justify-center py-1.5 rounded-lg bg-primary text-on-primary font-label-caps text-[11px] font-semibold hover:bg-primary-container transition-colors shadow-xs"
         href="/book.html"
-        onMouseEnter={() => prefetchDocument("/book.html")}
-        aria-label="Instant cab booking"
+        aria-label="Book Cab or Tour"
       >
-        <span>{isHindi ? "बुक करें" : "Book"}</span>
-        <span aria-hidden="true">↗</span>
+        <span className="material-symbols-outlined text-on-primary text-[18px]">calendar_month</span>
+        <span className="mt-0.5">Book Now</span>
       </a>
     </aside>
   );

@@ -83,57 +83,32 @@ export function getSitemapEntries(): SitemapEntry[] {
       priority: 1.0,
       changefreq: "daily",
       enPath: "/",
-      hiPath: "/hi/",
     },
     {
       path: "/en/",
       priority: 0.9,
       changefreq: "daily",
       enPath: "/",
-      hiPath: "/hi/",
-    },
-    {
-      path: "/hi/",
-      priority: 1.0,
-      changefreq: "daily",
-      enPath: "/",
-      hiPath: "/hi/",
     },
   ];
 
-  // 2. Hubs (English & Hindi)
+  // 2. Hubs (English)
   for (const hub of hubSlugs) {
     entries.push({
       path: `/en/${hub}/`,
       priority: 0.9,
       changefreq: "weekly",
       enPath: `/en/${hub}/`,
-      hiPath: `/hi/${hub}/`,
-    });
-    entries.push({
-      path: `/hi/${hub}/`,
-      priority: 0.9,
-      changefreq: "weekly",
-      enPath: `/en/${hub}/`,
-      hiPath: `/hi/${hub}/`,
     });
   }
 
-  // 3. Vehicles (English & Hindi)
+  // 3. Vehicles (English)
   for (const veh of vehicleSlugs) {
     entries.push({
       path: `/en/vehicles/${veh}/`,
       priority: 0.85,
       changefreq: "weekly",
       enPath: `/en/vehicles/${veh}/`,
-      hiPath: `/hi/vehicles/${veh}/`,
-    });
-    entries.push({
-      path: `/hi/vehicles/${veh}/`,
-      priority: 0.85,
-      changefreq: "weekly",
-      enPath: `/en/vehicles/${veh}/`,
-      hiPath: `/hi/vehicles/${veh}/`,
     });
   }
 
@@ -144,60 +119,26 @@ export function getSitemapEntries(): SitemapEntry[] {
       priority: 0.75,
       changefreq: "monthly",
       enPath: `/en/vehicles/${alias}/`,
-      hiPath: `/hi/vehicles/${alias}/`,
-    });
-    entries.push({
-      path: `/hi/vehicles/${alias}/`,
-      priority: 0.75,
-      changefreq: "monthly",
-      enPath: `/en/vehicles/${alias}/`,
-      hiPath: `/hi/vehicles/${alias}/`,
     });
   }
 
-  // 5. Packages (English & Hindi)
+  // 5. Packages (English)
   for (const pkg of packageSlugs) {
     entries.push({
       path: `/en/packages/${pkg}/`,
       priority: 0.85,
       changefreq: "weekly",
       enPath: `/en/packages/${pkg}/`,
-      hiPath: `/hi/packages/${pkg}/`,
-    });
-    entries.push({
-      path: `/hi/packages/${pkg}/`,
-      priority: 0.85,
-      changefreq: "weekly",
-      enPath: `/en/packages/${pkg}/`,
-      hiPath: `/hi/packages/${pkg}/`,
     });
   }
 
-  // 6. Routes (English, Hindi transliterated, and Hindi English-slug)
+  // 6. Routes (English)
   for (const pair of routePairs) {
-    // English route
     entries.push({
       path: `/en/${pair.en}/`,
       priority: 0.85,
       changefreq: "weekly",
       enPath: `/en/${pair.en}/`,
-      hiPath: `/hi/${pair.hi}/`,
-    });
-    // Hindi transliterated route
-    entries.push({
-      path: `/hi/${pair.hi}/`,
-      priority: 0.85,
-      changefreq: "weekly",
-      enPath: `/en/${pair.en}/`,
-      hiPath: `/hi/${pair.hi}/`,
-    });
-    // Hindi route with English slug
-    entries.push({
-      path: `/hi/${pair.en}/`,
-      priority: 0.8,
-      changefreq: "weekly",
-      enPath: `/en/${pair.en}/`,
-      hiPath: `/hi/${pair.hi}/`,
     });
   }
 
@@ -210,7 +151,6 @@ export function generateSitemapXml(entries: SitemapEntry[], lastmodDate?: string
   const xmlUrls = entries.map((entry) => {
     const loc = `${CANONICAL_DOMAIN}${entry.path}`;
     const enUrl = entry.enPath ? `${CANONICAL_DOMAIN}${entry.enPath}` : loc;
-    const hiUrl = entry.hiPath ? `${CANONICAL_DOMAIN}${entry.hiPath}` : loc;
 
     return `  <url>
     <loc>${loc}</loc>
@@ -218,7 +158,6 @@ export function generateSitemapXml(entries: SitemapEntry[], lastmodDate?: string
     <changefreq>${entry.changefreq}</changefreq>
     <priority>${entry.priority.toFixed(2)}</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="${enUrl}" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="${hiUrl}" />
     <xhtml:link rel="alternate" hreflang="x-default" href="${enUrl}" />
   </url>`;
   }).join("\n");

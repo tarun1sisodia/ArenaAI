@@ -26,7 +26,7 @@ export function getMarketingPath(pathname: string) {
   const segments = pathname.split("/").filter(Boolean);
   const localizedSegments = segments[0] === "en" || segments[0] === "hi" ? segments.slice(1) : segments;
   const lastSegment = localizedSegments.at(-1)?.replace(/\.html$/, "") ?? "home";
-  return { language: segments[0] === "hi" ? "hi" as const : "en" as const, section: lastSegment };
+  return { language: "en" as const, section: lastSegment };
 }
 
 export interface SeoMetadata {
@@ -331,8 +331,6 @@ export function App({ pathname: propPathname }: AppProps = {}) {
   const { language, section } = getMarketingPath(pathname);
   const isHome =
     pathname === "/" ||
-    pathname === "/hi/" ||
-    pathname === "/hi" ||
     pathname === "/en/" ||
     pathname === "/en" ||
     pathname === "/index.html" ||
@@ -345,13 +343,11 @@ export function App({ pathname: propPathname }: AppProps = {}) {
     section === "booking" ||
     cleanPath === "/book" ||
     cleanPath === "/booking" ||
-    cleanPath === "/en/book" ||
-    cleanPath === "/hi/book";
+    cleanPath === "/en/book";
 
   const matchedRoute = routes.find((item) => {
     const from = item.from === "agra" && item.to === "agra" ? "agra-sightseeing" : `${item.from}-to-${item.to}`;
-    const hindiFrom = item.from === "agra" && item.to === "agra" ? "agra-darshan" : `${item.from}-se-${item.to}`;
-    return pathname.includes(`${from}-taxi`) || pathname.includes(`${hindiFrom}-taxi`);
+    return pathname.includes(`${from}-taxi`);
   });
 
   const matchedPackage = pathname.includes("/packages/") && packages.find((item) => {
@@ -434,7 +430,7 @@ export function App({ pathname: propPathname }: AppProps = {}) {
             <TermsPage language={language} />
           ) : section === "privacy" ? (
             <PrivacyPage language={language} />
-          ) : isMarketingHub || pathname.startsWith("/en/") || pathname.startsWith("/hi/") ? (
+          ) : isMarketingHub || pathname.startsWith("/en/") ? (
             <MarketingPage language={language} section={section} />
           ) : (
             <NotFoundPage language={language} />

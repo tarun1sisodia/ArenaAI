@@ -12,30 +12,11 @@ this file at commit `2c02ee3`. The table below is the condensed record.
 
 ## Current State
 
-- **Current Phase:** Phase D1 — Deployment standardization — **complete (2026-09-14)**
-- **Current Step:** none active. Next up: Phase I1.1 — typed API client in `react/src/`
-  reading `VITE_API_BASE_URL` (see `03_PHASE_PLAN.md`)
-- **Last updated:** 2026-09-14
-- **Summary:** repaired the three-app monorepo so the documented deployment contract
-  is true. CI now runs the real root contract (`install:all` → 3× typecheck →
-  `npm test` → `build:all`) on Node 22 plus deploy guards (artifacts present, no
-  server-side secret names in frontend bundles, <25 MiB Cloudflare asset budget,
-  admin SPA fallback shipped, builds leave tracked sources untouched). The admin
-  panel got its SPA routing (`public/_redirects`, `_headers`, `robots.txt`,
-  `not_found_handling: single-page-application`) so `/bookings`, `/finance` and
-  `/audit` survive a hard refresh. `react/scripts/generate-sitemap.ts` no longer
-  writes to the repository root, and the stale root `sitemap.xml` / `robots.txt`
-  were removed. The backend image now installs production-only dependencies and has
-  a `.dockerignore`. The two broken production asset references (fleet `og:image`,
-  contact `LocalBusiness` schema image) were repointed to existing files. Cloudflare
-  project names are standardized on `skbagheltravels-customer` and
-  `skbagheltravels-admin` across the root deploy scripts and all `wrangler.jsonc`
-  files. `README.md`, `AGENTS.md`, `docs/DEPLOYMENT.md`, this pack and `PRD.md` were
-  rewritten to the monorepo reality.
-- **Verified:** `npm run install:all` + `npm run verify` green (3 typechecks, 38
-  backend tests, 3 production builds); a full build leaves `git status` clean;
-  asset audit reports 0 missing references in source and pre-rendered output; the
-  workflow YAML parses and every guard command passes locally.
+- **Current Phase:** Phase M — HTML UI to React Migration — **active**
+- **Current Step:** Step M3 complete (Universal Dynamic Tour Package Template & Catalogue). Next up: Step M4 — Streamlined 2-Step Universal Booking & Billing Engine.
+- **Last updated:** 2026-09-25
+- **Summary:** Rebuilt `PackageDetailPage.tsx` dynamically driven by `pkg: TourPackage` props matching `taj_mahal_sunrise_guided_tour.html` with two-column architectural core, 4 chapters (Imperial Experience, Clear Transparent Accounting, Essential Visitor Guidelines, Hour-by-Hour Curated Itinerary), sticky reservation dock with starting fare and 28% advance deposit calculation, expressway corridor stats, customer reviews mosaic, and FAQ accordion. Rebuilt `PackagesPage.tsx` matching `packages.html` with architectural hero, filter segmented tabs, curated packages catalog grid, package & fleet decision matrix, Honest Heritage Charter, and 24x7 custom tour concierge desk.
+- **Verified:** `npm --prefix react run typecheck` passed (0 errors), `npm --prefix react run build` pre-rendered 37 static pages + sitemap (32 URLs), and monorepo `npm run verify` passed cleanly (3 typechecks, 55 backend unit tests, 3 builds).
 - **Deployment monitoring (delivered with the integration branch):**
   `scripts/healthcheck.mjs` performs dependency-free checks of the API `/health`,
   the customer site and the admin site, wired to `.github/workflows/uptime.yml`
@@ -103,6 +84,8 @@ this file at commit `2c02ee3`. The table below is the condensed record.
 | 2026-09-13 | Backend | Fare engine, draft bookings, Razorpay/HMAC payment adapters, admin dispatch, catalog, reviews, inquiries, notifications, migrations, 38-test deterministic suite |
 | 2026-09-14 | Deployment monitoring | `scripts/healthcheck.mjs`, `.github/workflows/uptime.yml` (5-minute schedule), `npm run healthcheck`, step-by-step Render + Cloudflare Pages deploy guide in `docs/DEPLOYMENT.md` |
 | 2026-09-14 | Phase D1 | Deployment standardization: CI contract + guards, admin SPA routing, build-hygiene fix, Docker hardening, Pages project naming, doc pack rewritten (this file included) |
+| 2026-09-25 | Phase M (M0–M2) | Master migration plan (`react/docs/MIGRATION_PLAN.md`), Tailwind CSS v4 setup, design tokens (`theme.css`), brand logo, luxury header with mobile nav sheet, footer with 28% advance guarantee, English-only mandate refactor |
+| 2026-09-25 | Phase M (M3) | Universal dynamic tour package template (`PackageDetailPage.tsx`) powered by `TourPackage` props (`taj_mahal_sunrise_guided_tour.html`), curated package catalogue (`PackagesPage.tsx` from `packages.html`) with interactive category tabs and decision matrix |
 
 ---
 
@@ -120,6 +103,16 @@ this file at commit `2c02ee3`. The table below is the condensed record.
 - [x] Multi-service customer booking funnel (outstation, local packages, transfers, tour packages)
 - [x] Pre-rendering static HTML for `/book/`, `/en/book/`, `/hi/book/`, and `/book.html` preventing 404s
 - [ ] Real photography and real NAP (Phase I4)
+
+### Phase M — HTML UI to React Migration (`react/`)
+
+- [x] **M0: Master Architecture & Planning** — `react/docs/MIGRATION_PLAN.md` created with dynamic package detail template architecture and token definitions.
+- [x] **M1: Tailwind CSS & Design Token System Setup** — `@tailwindcss/vite` configuration, `@/styles/theme.css` tokens, Google Fonts (`EB Garamond`, `Plus Jakarta Sans`) & Material Symbols Outlined.
+- [x] **M2: Global Chrome & Responsive Layout** — New luxury `Header.tsx` (with mobile nav drawer) and `Footer.tsx` (4-column layout with 28% advance guarantee).
+- [x] **M3: Universal Dynamic Tour Package Template & Catalogue** — Rebuild `PackageDetailPage.tsx` dynamically driven by `TourPackage` props (`taj_mahal_sunrise_guided_tour.html`), and `PackagesPage.tsx`.
+- [ ] **M4: Streamlined 2-Step Universal Booking & Billing Engine** — Step 1 (choose car tier: `step_1_taj_mahal_sunrise_guided_tour.html`), Step 2 (universal booking/billing form for all packages & routes: `step_2_booking_form_for_all.html`), and confirmation voucher (`book_confirmed.html`) wired to `fareEngine.ts`.
+- [ ] **M5: Core Marketing Pages & Route Hubs** — `HomePage.tsx` (`home.html`), `FleetPage.tsx` (`fleet.html`), `RoutesPage.tsx` (`routes.html`), `ServicesPage.tsx` (`services.html`), and support/legal pages.
+- [ ] **M6: Verification, SSR Pre-Rendering & Build Quality** — Update `prerender.ts`, typecheck, build validation.
 
 ### Admin panel (`admin/`)
 

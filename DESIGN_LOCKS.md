@@ -24,21 +24,35 @@
 
 ---
 
-## Active Locks Registry
+## Active Locks Registry (New Luxury Design System — 2026-09-25)
+
+> **Migration Notice (2026-09-25):** The client explicitly authorized retiring the legacy v1 static designs (LOCK-001 through LOCK-011) to be replaced with the ultra-luxury HTML designs from `react/new_design/`. The new system is governed by `LOCK-N01` through `LOCK-N05`.
 
 | Lock ID | Component / Pattern | Status | Primary Files & Selectors | Key Locked Characteristics | Locked Date |
 |---|---|---|---|---|---|
-| `LOCK-001` | **Benefits Section** | `LOCKED` | `react/src/components/home/BenefitsSection.tsx`<br>`.benefits-section`, `.benefits-card`, `.benefits-icon-wrap` | 6 core benefit cards (Easy Booking, Multiple Fleets, Lowest Fares, Exciting Offers with coupon `ASTTCAR500OFF`, On-Time Service, 24×7 Support). Micro-interaction: -4px card lift, 1.12x/4° scale-rotate, solid Saffron Gold background fill on icon wrapper with crisp white SVG icon transition. Responsive 3→2→1 column collapse. | 2026-09-11 |
-| `LOCK-002` | **Architectural Bento Contact Card** | `LOCKED` | `react/src/components/home/ContactCard.tsx`<br>`.contact-card`, `.corner-plus`, `.contact-tile`, `.contact-toast` | 2-column bento architectural card (1.3fr left / 1fr right). 4 corner plus crosses rotating 90° on card hover (`matrix(0, 1, -1, 0, 0, 0)`). 5 verified NAP tiles (Call `+91 98765 43210`, WhatsApp desk, Email, Google Maps live location `Taj Ganj Agra`, 24×7 dispatch). Working inquiry form with `.input-error` shake animation, 600ms simulated processing, auto-dismiss feedback toast, and in-card success state with direct WhatsApp link. | 2026-09-11 |
-| `LOCK-003` | **2-Row Liquid Glass Reviews Marquee** | `LOCKED` | `react/src/components/home/ReviewsMarquee.tsx`<br>`.reviews-marquee-section`, `.liquid-review-card`, `.liquid-marquee-track` | Dual opposing continuous marquee tracks (Row 1 left 52s, Row 2 right 56s) with pause-on-hover. 10 verified customer testimonials, 5 gold Lucide stars, verified traveler checkmark badges, layered avatar wrapper with monogram fallback and smooth image fade-in, edge-fade gradient masks, and prefers-reduced-motion horizontal scroll fallback. | 2026-09-11 |
-| `LOCK-004` | **3D Coverflow Sightseeing Carousel** | `LOCKED` | `react/src/components/home/CoverflowCarousel.tsx`<br>`.section--coverflow`, `.coverflow-card`, `.coverflow-stage-column` | 3D perspective carousel cycling 6 tour packages with cover reflection gradient, package kicker, places pills, live fare tag, arrow navigation, 6 pagination dots, keyboard navigation, and synchronized left details column with direct WhatsApp inquiry. | 2026-09-10 |
-| `LOCK-005` | **Six Operational Services Grid** | `LOCKED` | `react/src/components/home/ServicesGrid.tsx`<br>`.services-grid-section`, `.services-card`, `.services-card-index` | 6 vertical service cards with index numerals (01–06), category icons, brand sparkle mark, Fraunces display headings, feature descriptions, live feature/pricing pill tags, dedicated CTAs with arrow hover interactions, and variant color top-borders (navy, light, gold). | 2026-09-10 |
-| `LOCK-006` | **Popular Outstation Routes Grid** | `LOCKED` | `react/src/components/home/PopularRoutes.tsx`<br>`.pop-routes-section`, `.pop-route-card`, `.pop-route-badges` | 4-card responsive grid (Agra→Delhi, Agra→Jaipur, Agra→Mathura, Agra→Gwalior). Emoji icon, gold tag badge, display-font route name with gold arrow, 3 stat pills (km/duration/highway), highlight text, sedan starting price + Book ↗ CTA with query pre-fill into `/book.html`. | 2026-09-10 |
-| `LOCK-007` | **Trust Roller Marquee** | `LOCKED` | `react/src/components/home/TrustRoller.tsx`<br>`.trust-roller`, `.trust-chip`, `.trust-roller-track` | 42s infinite GPU-only `translateX` marquee with 8 E-E-A-T trust chips (Govt Fleet, Verified Drivers, GST Invoice, 4.9/5 Rating, 15+ Yrs, 24x7 Support, Transparent Pricing, Chauffeur ID). Edge-fade via CSS mask, pause-on-hover, prefers-reduced-motion collapse to wrapping flex. | 2026-09-10 |
-| `LOCK-008` | **Home Hero Bento Grid & Fare Widget** | `LOCKED` | `react/src/components/home/HeroBentoGrid.tsx`<br>`react/src/components/home/HeroFareWidget.tsx`<br>`.home-hero`, `.hero-fare-widget` | 3-cell living bento mosaic (Main Stage, Top Perspective, Bottom Perspective) cycling 12 destinations with independent staggered 8.0s crossfade cycles, Ken Burns micro-drift, location badge, and tabbed quick fare widget (One-Way, Round-Trip, Local Tour) with live fare engine quotes and vehicle selectors. | 2026-09-10 |
-| `LOCK-009` | **Luxury Fleet Showcase Section** | `LOCKED` | `react/src/components/home/FleetSection.tsx`<br>`.fleet-section`, `.vehicle-card`, `.vehicle-photo` | 3 flagship vehicles (Sedan 01/05, Innova Crysta 03/05, Tempo Traveller 04/05) with responsive WebP image `srcset`, photo overlay tags, spec pills, starting rates, and direct vehicle booking links. | 2026-09-11 |
-| `LOCK-010` | **Brand Design System & Color Tokens** | `LOCKED` | `react/src/styles/tokens.css`<br>`DESIGN.md` | **Clean White Palette:** Pure White `#FFFFFF` canvas, Warm Surface `#F8F9FA`, Crisp White `#FFFFFF` cards, Saffron Gold `#E5A044` (primary accent), Warm Gold `#D9943B` (deep accent), Soft Gold `#F5E6CC`. **Solar Dusk Dark Mode:** Deep Charcoal `#181615` canvas, `#201E1D` alternate, `#242220` card surface, `#3D3936` borders, `#FDFCFB` text. **Typography:** Fraunces display serif (`--font-display`), DM Sans clean sans (`--font-sans`), DM Mono code numerals (`--font-mono`). | 2026-09-10 |
-| `LOCK-011` | **Global Chrome Suite** | `LOCKED` | `react/src/components/chrome/` | `BrandLogo.tsx` (SVG compass emblem with 30ms character scramble), `RollLink.tsx` (dual-layer golden curtain text roll), `Header.tsx` (sticky scroll detection & dropdowns), `ThemeToggle.tsx` (3D tactile toggle), `MobileNavSheet.tsx` (drawer), `StickyLeadBar.tsx` (mobile thumb bar), `RadialDock.tsx` (radial speed dial), `PageLoader.tsx` (shining text curtain 600ms buffer), `Footer.tsx` (4-column luxury footer), `SkipLink.tsx` (accessible skip to content). | 2026-09-10 |
+| `LOCK-N01` | **Mughal Terracotta Design Tokens** | `LOCKED` | `react/src/styles/theme.css`<br>`react/src/styles/tokens.css` | Hex palette: Primary `#9F3C16`, Sandstone `#C85A32`, Sunlit Saffron `#D97746`, Obsidian `#0F131A`, Soft Black `#181D27`, Ivory Surface `#FDF8F5`, Gold `#D99A3E`, Jade `#2D6A4F`. Fonts: `EB Garamond` display, `Plus Jakarta Sans` body/UI, Google `Material Symbols Outlined`. | 2026-09-25 |
+| `LOCK-N02` | **Universal Tour Package Template** | `LOCKED` | `react/src/pages/PackageDetailPage.tsx` | Universal dynamic template based on `taj_mahal_sunrise_guided_tour.html` taking `pkg: TourPackage` props. 4 structured chapters: 01. Experience Overview, 02. Package Accounting (Inclusions/Exclusions), 03. Monument Protocols & Guidelines, 04. Hour-by-Hour Timeline. Sticky reservation dock with starting rates and 28% deposit. | 2026-09-25 |
+| `LOCK-N03` | **4-Step Booking & Billing Engine** | `LOCKED` | `react/src/features/booking/` | Step 1 Vehicle Tier selection, Step 2 Schedule & Pickup details, Step 3 Add-on Upgrades & summary, Step 4 Billing Form, and Voucher Confirmation. 28% advance token calculation with 72% balance on drop-off. | 2026-09-25 |
+| `LOCK-N04` | **Ultra-Luxury Chrome Suite** | `LOCKED` | `react/src/components/chrome/` | Glassmorphic sticky header (`bg-surface/90 backdrop-blur-xl`), phone + WhatsApp concierge CTAs, mobile navigation drawer, and 4-column luxury footer with 28% advance guarantee trust seals. | 2026-09-25 |
+| `LOCK-N05` | **Fare Engine Invariants** | `LOCKED` | `react/src/features/booking/fareEngine.ts`<br>`react/src/fares.ts` | 300 km/day minimum outstation billing, toll inclusions, 28% advance deposit calculation, zero tourist trap guarantee. | 2026-09-25 |
+
+---
+
+## Retired Legacy Locks (Superseded by New Design System)
+
+| Legacy Lock ID | Previous Component | Status | Superseded By | Reason |
+|---|---|---|---|---|
+| `LOCK-001` | Benefits Section | `SUPERSEDED` | `services.html` & `services_why_choose_us.html` | User authorized full UI replacement with new luxury HTML design. |
+| `LOCK-002` | Architectural Bento Contact Card | `SUPERSEDED` | `contact-us.html` | Replaced by new luxury contact design. |
+| `LOCK-003` | 2-Row Liquid Glass Reviews Marquee | `SUPERSEDED` | `home.html` reviews section | Replaced by new luxury reviews showcase. |
+| `LOCK-004` | 3D Coverflow Sightseeing Carousel | `SUPERSEDED` | `home.html` tour showcase & `packages.html` | Replaced by new luxury tour packages grid. |
+| `LOCK-005` | Six Operational Services Grid | `SUPERSEDED` | `services.html` & `home.html` | Replaced by new 6-vertical services showcase. |
+| `LOCK-006` | Popular Outstation Routes Grid | `SUPERSEDED` | `home.html` & `routes.html` | Replaced by new route fare matrix. |
+| `LOCK-007` | Trust Roller Marquee | `SUPERSEDED` | `home.html` trust badges | Replaced by new trust badges and concierge seals. |
+| `LOCK-008` | Home Hero Bento Grid & Fare Widget | `SUPERSEDED` | `home.html` Hero Expedition Dock | Replaced by Mughal Dawn Hero Expedition Dock. |
+| `LOCK-009` | Luxury Fleet Showcase Section | `SUPERSEDED` | `fleet.html` showroom | Replaced by new showroom cards. |
+| `LOCK-010` | Brand Design System & Color Tokens | `SUPERSEDED` | `LOCK-N01` (Terracotta & Sandstone system) | Replaced by new brand tokens. |
+| `LOCK-011` | Global Chrome Suite | `SUPERSEDED` | `LOCK-N04` (New Luxury Chrome Suite) | Replaced by new header & footer. |
 
 ---
 

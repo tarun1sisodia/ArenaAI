@@ -1,320 +1,146 @@
 import { useState, useMemo } from "react";
 import type { SupportedLanguage } from "../config";
 import { contact } from "../data/contact";
-import { type TourPackage, cancellationSlabsTour } from "../data";
+import { type TourPackage } from "../data";
 
 interface PackageDetailPageProps {
   language?: SupportedLanguage;
   pkg: TourPackage;
 }
 
-type CurrencyCode = "INR" | "USD" | "EUR" | "GBP";
-
-interface CurrencyConfig {
-  code: CurrencyCode;
-  symbol: string;
-  rate: number; // multiplier from INR
-  label: string;
-}
-
-const CURRENCIES: Record<CurrencyCode, CurrencyConfig> = {
-  INR: { code: "INR", symbol: "₹", rate: 1, label: "INR (₹)" },
-  USD: { code: "USD", symbol: "$", rate: 0.012, label: "USD ($)" },
-  EUR: { code: "EUR", symbol: "€", rate: 0.011, label: "EUR (€)" },
-  GBP: { code: "GBP", symbol: "£", rate: 0.0095, label: "GBP (£)" },
-};
-
-function formatPrice(amountInr: number, currency: CurrencyConfig): string {
-  if (currency.code === "INR") {
-    return `₹${amountInr.toLocaleString("en-IN")}`;
-  }
-  const converted = Math.round(amountInr * currency.rate);
-  return `${currency.symbol}${converted.toLocaleString("en-US")}`;
-}
-
-// Vector car SVG icons matching MakeMyTrip styling
-function SedanVector() {
-  return (
-    <svg width="46" height="24" viewBox="0 0 44 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <path d="M4 16C4 16 6 9 12 8C16 7 24 7 29 8C33 9 37 13 39 16C41 18 42 19 42 20C42 21 41 21.5 39 21.5H5C3 21.5 2 20.5 2 19C2 17.5 4 16 4 16Z" fill="#1E2B37" opacity="0.88"/>
-      <path d="M12 9L15 14H28L27 9H12Z" fill="#90B7D7"/>
-      <circle cx="10" cy="20" r="3.5" fill="#181615" stroke="#E5A044" strokeWidth="1.5"/>
-      <circle cx="33" cy="20" r="3.5" fill="#181615" stroke="#E5A044" strokeWidth="1.5"/>
-    </svg>
-  );
-}
-
-function MpvVector() {
-  return (
-    <svg width="46" height="24" viewBox="0 0 44 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <path d="M3 16C3 16 5 7 11 6C16 5 28 5 32 6C36 7 39 12 40 16C41 18 42 19.5 42 20.5C42 21.5 41 22 39 22H5C3 22 2 21 2 19.5C2 18 3 16 3 16Z" fill="#1E2B37" opacity="0.88"/>
-      <path d="M11 7L13 13H31L29 7H11Z" fill="#90B7D7"/>
-      <circle cx="9" cy="20.5" r="3.5" fill="#181615" stroke="#E5A044" strokeWidth="1.5"/>
-      <circle cx="34" cy="20.5" r="3.5" fill="#181615" stroke="#E5A044" strokeWidth="1.5"/>
-    </svg>
-  );
-}
-
-function SuvVector() {
-  return (
-    <svg width="46" height="24" viewBox="0 0 44 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <path d="M3 15C3 15 5 6 10 5.5C15 5 29 5 33 5.5C37 6 40 11 41 15C42 17 42.5 19 42.5 20C42.5 21.5 41.5 22 39 22H5C3 22 2 21 2 19.5C2 17.5 3 15 3 15Z" fill="#121416" opacity="0.9"/>
-      <path d="M10 6.5L12 13H33L31 6.5H10Z" fill="#7FA9CE"/>
-      <circle cx="9" cy="20" r="3.8" fill="#181615" stroke="#E5A044" strokeWidth="1.5"/>
-      <circle cx="34" cy="20" r="3.8" fill="#181615" stroke="#E5A044" strokeWidth="1.5"/>
-    </svg>
-  );
-}
-
-function VanVector() {
-  return (
-    <svg width="48" height="24" viewBox="0 0 46 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <rect x="2" y="5" width="41" height="15" rx="3" fill="#201E1D" opacity="0.88"/>
-      <rect x="6" y="8" width="8" height="6" rx="1" fill="#A4C2DC"/>
-      <rect x="17" y="8" width="10" height="6" rx="1" fill="#A4C2DC"/>
-      <rect x="30" y="8" width="10" height="6" rx="1" fill="#A4C2DC"/>
-      <circle cx="10" cy="20" r="3.5" fill="#181615" stroke="#E5A044" strokeWidth="1.5"/>
-      <circle cx="36" cy="20" r="3.5" fill="#181615" stroke="#E5A044" strokeWidth="1.5"/>
-    </svg>
-  );
-}
-
 interface ItineraryItem {
   time: string;
-  title: { en: string; hi: string };
-  desc: { en: string; hi: string };
+  title: string;
+  desc: string;
 }
 
-// Fallback high-detail timelines for packages that don't have explicit timeline in data.ts
+// Rich fallback itineraries for signature packages
 const PACKAGE_DEFAULT_TIMELINES: Record<string, ItineraryItem[]> = {
   "taj-sunrise": [
-    { time: "02:30 AM", title: { en: "Doorstep Pickup from Delhi NCR / Hotel", hi: "दिल्ली एनसीआर अथवा होटल से प्रस्थान" }, desc: { en: "Chauffeur arrives at your doorstep for a smooth, chilled night drive via Yamuna Expressway.", hi: "ड्राइवर समय पर आपके निवास पर पहुंचता है और यमुना एक्सप्रेसवे से शांत प्रस्थान।" } },
-    { time: "05:30 AM", title: { en: "Arrival in Agra & Meet ASI Guide", hi: "आगरा आगमन व अधिकृत गाइड से मिलन" }, desc: { en: "Quick freshen up and meet your approved government heritage guide near the Taj Mahal East Gate.", hi: "आगरा पहुंचकर कुछ देर विश्राम और ताजमहल पूर्वी द्वार पर सरकारी गाइड से भेंट।" } },
-    { time: "06:00 AM", title: { en: "Taj Mahal Sunrise Exploration", hi: "ताजमहल सूर्योदय दर्शन" }, desc: { en: "Witness the pristine white marble bathed in golden dawn light before the public crowd arrives.", hi: "भीड़ जुटने से पहले सुबह की सुनहरी धूप में संगमरमर के ताज का अद्वितीय दृश्य।" } },
-    { time: "09:30 AM", title: { en: "Luxury Buffet Breakfast", hi: "शानदार बुफे नाश्ता" }, desc: { en: "Relaxed breakfast at a verified multi-cuisine restaurant in Taj Ganj.", hi: "ताजगंज के स्वच्छ व प्रतिष्ठित रेस्टोरेंट में भरपेट नाश्ता।" } },
-    { time: "11:00 AM", title: { en: "Agra Fort Royal Courtyards", hi: "आगरा किला भ्रमण" }, desc: { en: "Explore Jahangiri Mahal, Diwan-i-Khas, and Shah Jahan's historic prison with Taj views.", hi: "मुगल बादशाहों के दीवान-ए-खास, शीश महल और जहांगीरी महल का ऐतिहासिक दर्शन।" } },
-    { time: "01:30 PM", title: { en: "Lunch & Marble Inlay Atelier", hi: "दोपहर का भोजन व स्थानीय शिल्प" }, desc: { en: "Discover the age-old Pietra Dura marble inlay craft practiced by descendants of Taj artisans.", hi: "स्वादिष्ट भोजन और ताजमहल के कारीगरों की वंश परंपरा वाले संगमरमर शिल्प का अवलोकन।" } },
-    { time: "04:30 PM", title: { en: "Mehtab Bagh Sunset & Drop", hi: "मेहताब बाग से ताज का सूर्यास्त व वापसी" }, desc: { en: "Catch sunset reflections across the Yamuna River before smooth return drive back.", hi: "यमुना नदी के उस पार से ताज का सूर्यास्त दर्शन और सुरक्षित वापसी।" } },
+    { time: "02:30 AM", title: "Doorstep Pickup from Delhi NCR / Hotel", desc: "Chauffeur arrives at your doorstep for a smooth, air-conditioned night drive via Yamuna Expressway." },
+    { time: "05:30 AM", title: "Arrival in Agra & Meet ASI Guide", desc: "Quick freshen up and meet your approved government heritage guide near the Taj Mahal East Gate." },
+    { time: "06:00 AM", title: "Taj Mahal Sunrise Exploration", desc: "Witness the pristine white marble bathed in golden dawn light before the public crowds arrive." },
+    { time: "09:30 AM", title: "5-Star Royal Palace Buffet Breakfast", desc: "Relaxed lavish breakfast buffet at Courtyard by Marriott or ITC Mughal in Agra." },
+    { time: "11:00 AM", title: "Agra Fort Royal Courtyards", desc: "Explore Jahangiri Mahal, Diwan-i-Khas, and Shah Jahan's historic prison with direct Taj views." },
+    { time: "01:30 PM", title: "Lunch & Marble Inlay Atelier", desc: "Discover the age-old Pietra Dura marble inlay craft practiced by descendants of original Taj artisans." },
+    { time: "04:30 PM", title: "Mehtab Bagh Sunset & Return Drive", desc: "Catch sunset reflections across the Yamuna River before a smooth expressway return drive back to Delhi NCR." },
+  ],
+  "agra-day": [
+    { time: "06:00 AM", title: "Doorstep Hotel / Residence Pickup", desc: "Your dedicated commercial chauffeur arrives in a sanitized, chilled vehicle across Delhi NCR or Agra." },
+    { time: "09:30 AM", title: "Taj Mahal Guided Heritage Excursion", desc: "Enter via express electronic gate with your licensed ASI guide for in-depth architectural narrative." },
+    { time: "01:00 PM", title: "Authentic Mughlai Culinary Lunch", desc: "Enjoy a relaxed dining pause at a verified fine-dining multi-cuisine restaurant in Taj Ganj." },
+    { time: "02:30 PM", title: "Agra Fort & Tomb of I'timād-ud-Daulah", desc: "Explore Akbar's majestic sandstone citadel and the delicate marble jewel-box Baby Taj." },
+    { time: "05:30 PM", title: "Mehtab Bagh Sunset & Drop-Off", desc: "Capture sunset reflections across the Yamuna before comfortable drop at hotel or railway station." },
   ],
   "mathura-vrindavan": [
-    { time: "07:00 AM", title: { en: "Doorstep Pickup from Agra / Delhi", hi: "आगरा अथवा दिल्ली से पिकअप" }, desc: { en: "Chauffeur greets you in a sanitized AC cab and departs for holy Braj Bhoomi.", hi: "पवित्र ब्रजभूमि यात्रा के लिए वातानुकूलित कार से समय पर प्रस्थान।" } },
-    { time: "08:30 AM", title: { en: "Shri Krishna Janmabhoomi Mathura", hi: "श्री कृष्ण जन्मभूमि दर्शन, मथुरा" }, desc: { en: "Visit the sacred birthplace of Lord Krishna, the ancient prison cell and sanctum sanctorum.", hi: "भगवान श्रीकृष्ण के पावन जन्म स्थान, प्राचीन गर्भगृह और मुख्य मंदिर में दर्शन।" } },
-    { time: "11:00 AM", title: { en: "Dwarkadhish Temple & Yamuna Ghat", hi: "द्वारकाधीश मंदिर व विश्राम घाट" }, desc: { en: "Visit the historic Dwarkadhish temple followed by sacred Yamuna Aarti steps at Vishram Ghat.", hi: "विश्राम घाट पर पवित्र यमुना दर्शन और प्राचीन श्री द्वारकाधीश मंदिर में हाजिरी।" } },
-    { time: "01:00 PM", title: { en: "Traditional Braj Bhojan Lunch", hi: "पारंपरिक ब्रज थाली भोजन" }, desc: { en: "Enjoy authentic satvik vegetarian lunch with famous Mathura pedas.", hi: "मथुरा के प्रसिद्ध पेड़े और शुद्ध सात्विक ब्रज भोजन का आनंद।" } },
-    { time: "02:30 PM", title: { en: "Banke Bihari Ji Mandir, Vrindavan", hi: "श्री बांके बिहारी मंदिर, वृंदावन" }, desc: { en: "Chauffeur guides you safely through Vrindavan alleys to witness Thakur Ji's mesmerizing darshan.", hi: "वृंदावन की पावन कुंज गलियों से होकर ठाकुर श्री बांके बिहारी जी के दर्शन।" } },
-    { time: "05:00 PM", title: { en: "ISKCON Krishna Balaram Temple", hi: "इस्कॉन कृष्ण बलराम मंदिर" }, desc: { en: "Immerse in joyful evening kirtan and serene temple architecture.", hi: "इस्कॉन मंदिर में भव्य संध्या आरती व मधुर संकीर्तन का आनंद।" } },
-    { time: "06:30 PM", title: { en: "Prem Mandir Musical Light Show", hi: "प्रेम मंदिर लाइट व फव्वारा शो" }, desc: { en: "Behold the grand white Italian marble temple illuminate in majestic colored lighting.", hi: "शाम को प्रेम मंदिर की मनमोहक रंग-बिरंगी रोशनी और फव्वारा शो का दर्शन।" } },
-    { time: "08:00 PM", title: { en: "Return Journey to Agra / Delhi", hi: "सुरक्षित वापसी प्रस्थान" }, desc: { en: "Relax in your AC cab on the Yamuna Expressway back to your hotel.", hi: "आरामदायक कार में यमुना एक्सप्रेसवे से सुरक्षित वापसी।" } },
+    { time: "07:00 AM", title: "Doorstep Pickup from Agra or Delhi NCR", desc: "Chauffeur greets you in a sanitized AC cab and departs for the sacred Braj corridor." },
+    { time: "08:30 AM", title: "Shri Krishna Janmabhoomi Mathura", desc: "Visit the sacred birthplace of Lord Krishna, the ancient prison sanctum, and Keshavdev temple." },
+    { time: "11:00 AM", title: "Dwarkadhish Temple & Vishram Ghat", desc: "Experience historic temple darshan followed by sacred Yamuna Aarti steps at Vishram Ghat." },
+    { time: "01:00 PM", title: "Traditional Satvik Braj Bhojan", desc: "Enjoy authentic satvik vegetarian lunch with famous Mathura khoya pedas." },
+    { time: "02:30 PM", title: "Banke Bihari Ji Mandir, Vrindavan", desc: "Chauffeur navigates you smoothly through Vrindavan to witness Thakur Ji's mesmerizing darshan." },
+    { time: "05:00 PM", title: "ISKCON Krishna Balaram Temple", desc: "Immerse in joyful evening kirtan and peaceful marble temple corridors." },
+    { time: "06:30 PM", title: "Prem Mandir Musical Light Show", desc: "Behold the magnificent white Italian marble temple illuminated in majestic evening lighting." },
+    { time: "08:00 PM", title: "Smooth Expressway Return Journey", desc: "Relax in your AC vehicle on the Yamuna Expressway back to your hotel or residence." },
   ],
   "gatimaan-express": [
-    { time: "07:00 AM", title: { en: "Delhi Hotel Pickup to Nizamuddin Station", hi: "दिल्ली होटल से हज़रत निज़ामुद्दीन स्टेशन पिकअप" }, desc: { en: "Private cab transfers you directly to Hazrat Nizamuddin Station for comfortable boarding.", hi: "हज़रत निज़ामुद्दीन स्टेशन पर गतिमान एक्सप्रेस में सवार होने के लिए प्राइवेट कैब।" } },
-    { time: "08:10 AM", title: { en: "Gatimaan Express High-Speed Departure", hi: "गतिमान एक्सप्रेस से द्रुतगामी यात्रा" }, desc: { en: "Train 12050 departs at 160 km/h. Enjoy warm complimentary breakfast served at your seat.", hi: "भारत की सबसे तेज़ ट्रेनों में से एक, ऑन-बोर्ड स्वादिष्ट नाश्ते के साथ 100 मिनट का सफर।" } },
-    { time: "09:50 AM", title: { en: "Arrival at Agra Cantt & Chauffeur Greeting", hi: "आगरा कैंट स्टेशन पर ड्राइवर द्वारा स्वागत" }, desc: { en: "Your dedicated chauffeur and ASI-licensed guide receive you right at the platform exit.", hi: "आगरा कैंट रेलवे स्टेशन पर निजी एसी कार व गाइड द्वारा नेमबोर्ड के साथ स्वागत।" } },
-    { time: "10:30 AM", title: { en: "Taj Mahal Priority Guided Tour", hi: "ताजमहल वीआईपी व विस्तृत भ्रमण" }, desc: { en: "Enter through priority channels and marvel at the world's greatest monument of love.", hi: "अनुभवी सरकारी गाइड के साथ ताज की अद्भुत वास्तुकला और इतिहास का जीवंत अनुभव।" } },
-    { time: "01:30 PM", title: { en: "5-Star Luxury Buffet Lunch", hi: "पंचसितारा होटल में बुफे लंच" }, desc: { en: "Multi-cuisine gourmet lunch at an authorized 5-star hotel in Agra.", hi: "आगरा के प्रतिष्ठित 5-स्टार होटल में स्वादिष्ट बहु-व्यंजन लंच।" } },
-    { time: "03:00 PM", title: { en: "Agra Fort Mughal Citadel", hi: "आगरा किला शाही महल दर्शन" }, desc: { en: "Walk through the royal apartments where Akbar, Jahangir, and Shah Jahan ruled India.", hi: "मुगल सल्तनत की राजधानी रहे विशाल लाल किले के दीवान-ए-आम व महलों का भ्रमण।" } },
-    { time: "05:00 PM", title: { en: "Transfer to Agra Cantt Station", hi: "आगरा कैंट स्टेशन के लिए विदाई" }, desc: { en: "Chauffeur assists with luggage and boards you on Train 12049 Gatimaan Express.", hi: "शाम की वापसी ट्रेन 12049 गतिमान एक्सप्रेस के लिए स्टेशन पर समय से ड्रॉप।" } },
-    { time: "07:30 PM", title: { en: "Arrival in Delhi & Hotel Drop", hi: "दिल्ली आगमन व होटल सुरक्षित ड्रॉप" }, desc: { en: "Meet your Delhi cab at Nizamuddin Station and arrive back at your hotel safely.", hi: "निज़ामुद्दीन स्टेशन पर कार से आपके दिल्ली होटल तक सुरक्षित प्रस्थान।" } },
+    { time: "07:00 AM", title: "Delhi Hotel Pickup to Nizamuddin Station", desc: "Private cab transfers you directly to Hazrat Nizamuddin Station for comfortable boarding." },
+    { time: "08:10 AM", title: "Gatimaan Express High-Speed Transit", desc: "Train 12050 departs at 160 km/h. Enjoy warm complimentary breakfast served at your seat." },
+    { time: "09:50 AM", title: "Agra Cantt Platform Chauffeur Greeting", desc: "Your dedicated chauffeur and ASI-licensed guide receive you right at the platform exit." },
+    { time: "10:30 AM", title: "Taj Mahal Priority Guided Tour", desc: "Enter through priority channels and marvel at the world's greatest monument of love." },
+    { time: "01:30 PM", title: "5-Star Luxury Buffet Lunch", desc: "Multi-cuisine gourmet lunch at an authorized 5-star hotel in Agra." },
+    { time: "03:00 PM", title: "Agra Fort Mughal Citadel", desc: "Walk through royal apartments where Akbar, Jahangir, and Shah Jahan ruled the Mughal empire." },
+    { time: "05:00 PM", title: "Transfer to Agra Cantt Station", desc: "Chauffeur assists with luggage and boards you on Train 12049 Gatimaan Express." },
+    { time: "07:30 PM", title: "Arrival in Delhi & Hotel Drop", desc: "Meet your Delhi chauffeur at Nizamuddin Station and arrive back at your hotel safely." },
   ],
   "agra-unhurried": [
-    { time: "Day 1 - 09:00 AM", title: { en: "Doorstep Pickup & Hotel Check-in", hi: "पिकअप व होटल चेक-इन" }, desc: { en: "Chauffeur picks you up and assists with your hotel check-in in Agra.", hi: "आगरा में होटल आगमन और कमरों में आरामदायक विश्राम।" } },
-    { time: "Day 1 - 11:30 AM", title: { en: "Agra Fort & Itimad-ud-Daulah (Baby Taj)", hi: "आगरा किला व एत्मादुद्दौला मकबरा" }, desc: { en: "Unrushed exploration of Agra Fort and the exquisite precursor to the Taj Mahal.", hi: "आगरा के लाल किले और संगमरमर के नक्काशीदार बेबी ताज का शांत व विस्तृत दौरा।" } },
-    { time: "Day 1 - 04:30 PM", title: { en: "Mehtab Bagh Sunset Across the Yamuna", hi: "मेहताब बाग से ताज का सुरम्य सूर्यास्त" }, desc: { en: "Capture world-famous golden reflections across the river without tourist crowds.", hi: "यमुना पार चारबाग से ताजमहल का सबसे खूबसूरत सूर्यास्त फोटोग्राफी व्यू।" } },
-    { time: "Day 1 - 07:30 PM", title: { en: "Mughal Cuisine Dinner & Artisan Bazaar", hi: "मुगलई रात्रिभोज व सदर बाजार" }, desc: { en: "Experience authentic Mughlai dishes and stroll along vibrant local markets.", hi: "आगरा के प्रसिद्ध खान-पान और हस्तशिल्प बाज़ारों की सैर।" } },
-    { time: "Day 2 - 06:00 AM", title: { en: "Taj Mahal Sunrise Walk", hi: "ताजमहल शांत सूर्योदय दर्शन" }, desc: { en: "Early morning calm visit to the Taj Mahal with mesmerizing light.", hi: "सुबह की ताजगी और शांति में ताज का मुख्य गुंबद दर्शन।" } },
-    { time: "Day 2 - 11:00 AM", title: { en: "Fatehpur Sikri Imperial Capital Excursion", hi: "फतेहपुर सीकरी शाही राजधानी दौरा" }, desc: { en: "Drive 38 km to Akbar's ghost capital: Buland Darwaza, Jama Masjid, and Panch Mahal.", hi: "बादशाह अकबर की राजधानी फतेहपुर सीकरी, बुलंद दरवाजा और शेख सलीम चिश्ती की दरगाह।" } },
-    { time: "Day 2 - 04:30 PM", title: { en: "Return Drop to Delhi / Agra Station", hi: "दिल्ली अथवा आगरा स्टेशन पर वापसी ड्रॉप" }, desc: { en: "Chauffeur ensures prompt drop to your preferred destination.", hi: "यात्रा की मधुर स्मृतियों के साथ आपके गंतव्य तक सुरक्षित विदाई।" } },
+    { time: "Day 1 - 09:00 AM", title: "Doorstep Pickup & Hotel Check-in", desc: "Chauffeur picks you up and assists with your luxury hotel check-in in Agra." },
+    { time: "Day 1 - 11:30 AM", title: "Agra Fort & Itimad-ud-Daulah (Baby Taj)", desc: "Unrushed exploration of Agra Fort and the exquisite precursor to the Taj Mahal." },
+    { time: "Day 1 - 04:30 PM", title: "Mehtab Bagh Sunset Across Yamuna", desc: "Capture world-famous golden reflections across the river without tourist crowds." },
+    { time: "Day 1 - 07:30 PM", title: "Mughal Cuisine Dinner & Artisan Bazaar", desc: "Experience authentic Mughlai dishes and stroll along vibrant local markets." },
+    { time: "Day 2 - 06:00 AM", title: "Taj Mahal Sunrise Walk", desc: "Early morning tranquil visit to the Taj Mahal with ethereal golden dawn light." },
+    { time: "Day 2 - 11:00 AM", title: "Fatehpur Sikri Imperial Capital Excursion", desc: "Drive 38 km to Akbar's ghost capital: Buland Darwaza, Jama Masjid, and Panch Mahal." },
+    { time: "Day 2 - 04:30 PM", title: "Return Drop to Delhi NCR / Agra Station", desc: "Chauffeur ensures prompt drop to your preferred destination." },
   ],
   "golden-triangle": [
-    { time: "Day 1", title: { en: "Delhi City Highlights to Agra via Expressway", hi: "दिल्ली दर्शन से आगरा एक्सप्रेसवे यात्रा" }, desc: { en: "Tour India Gate, Rashtrapati Bhavan, Qutub Minar, then cruise down Yamuna Expressway to Agra.", hi: "दिल्ली के प्रमुख स्थलों का भ्रमण और यमुना एक्सप्रेसवे से आगरा की ओर आरामदायक ड्राइव।" } },
-    { time: "Day 2", title: { en: "Agra Taj Mahal Dawn to Jaipur via Fatehpur Sikri", hi: "ताजमहल दर्शन से फतेहपुर सीकरी होते हुए जयपुर" }, desc: { en: "Sunrise at Taj Mahal, Agra Fort, then scenic drive past Buland Darwaza to the Pink City Jaipur.", hi: "सुबह ताज महल, फिर आगरा किला और रास्ते में फतेहपुर सीकरी देखते हुए जयपुर आगमन।" } },
-    { time: "Day 3", title: { en: "Jaipur Forts & Palaces to Delhi Return", hi: "जयपुर के किले, महल व दिल्ली सुरक्षित वापसी" }, desc: { en: "Explore Amber Fort with elephant pavilions, Hawa Mahal, City Palace, then return drop to Delhi.", hi: "आमेर किला, हवा महल, जल महल और सिटी पैलेस का शाही दौरा, फिर दिल्ली वापसी।" } },
+    { time: "Day 1", title: "Delhi City Highlights to Agra via Expressway", desc: "Tour India Gate, Qutub Minar, and Rashtrapati Bhavan, then cruise down Yamuna Expressway to Agra." },
+    { time: "Day 2", title: "Agra Taj Mahal Dawn to Jaipur via Fatehpur Sikri", desc: "Sunrise at Taj Mahal, Agra Fort, then scenic drive past Buland Darwaza to the Pink City Jaipur." },
+    { time: "Day 3", title: "Jaipur Forts & Palaces to Delhi Return", desc: "Explore Amber Fort with elephant pavilions, Hawa Mahal, City Palace, then return drop to Delhi." },
   ],
 };
-
-interface VehicleUpgradeTier {
-  vehId: string;
-  name: { en: string; hi: string };
-  seats: string;
-  bags: string;
-  price: number;
-  popular?: boolean;
-}
-
-function getPackageVehicleTiers(pkg: TourPackage): VehicleUpgradeTier[] {
-  if (pkg.upgrades && pkg.upgrades.length > 0) {
-    return pkg.upgrades.map((u) => ({
-      vehId: u.vehId,
-      name: u.name,
-      seats: u.seats,
-      bags: u.vehId === "sedan" ? "2 Bags" : u.vehId === "ertiga" ? "3 Bags" : u.vehId === "innova" ? "4 Bags" : u.vehId === "tempo" ? "8 Bags" : "10 Bags",
-      price: u.price,
-      popular: u.vehId === "innova",
-    }));
-  }
-
-  // Realistic multipliers based on base fare (from)
-  const base = pkg.from;
-  const isMultiDay = pkg.duration.includes("day") && !pkg.duration.includes("1 day");
-  const multErtiga = isMultiDay ? 1.22 : 1.25;
-  const multInnova = isMultiDay ? 1.5 : 1.65;
-  const multTempo = isMultiDay ? 2.0 : 2.45;
-  const multUrbania = isMultiDay ? 2.5 : 3.4;
-
-  return [
-    {
-      vehId: "sedan",
-      name: { en: "Dzire / Etios Sedan", hi: "डिज़ायर / इटियोस सेडान" },
-      seats: "4+1",
-      bags: "2 Bags",
-      price: base,
-    },
-    {
-      vehId: "ertiga",
-      name: { en: "Maruti Ertiga MPV", hi: "मारुति अर्टिगा एमपीवी" },
-      seats: "6+1",
-      bags: "3 Bags",
-      price: Math.round((base * multErtiga) / 100) * 100,
-    },
-    {
-      vehId: "innova",
-      name: { en: "Toyota Innova Crysta", hi: "टोयोटा इनोवा क्रिस्टा" },
-      seats: "6+1",
-      bags: "4 Bags",
-      price: Math.round((base * multInnova) / 100) * 100,
-      popular: true,
-    },
-    {
-      vehId: "tempo",
-      name: { en: "Tempo Traveller (12-Seater)", hi: "टेम्पो ट्रैवलर (12-सीटर)" },
-      seats: "12+1",
-      bags: "8 Bags",
-      price: Math.round((base * multTempo) / 100) * 100,
-    },
-    {
-      vehId: "urbania",
-      name: { en: "Force Urbania Luxury Van", hi: "फ़ोर्स अर्बनिया लग्जरी वैन" },
-      seats: "10+1",
-      bags: "10 Bags",
-      price: Math.round((base * multUrbania) / 100) * 100,
-    },
-  ];
-}
 
 interface TourFaq {
-  q: { en: string; hi: string };
-  a: { en: string; hi: string };
+  q: string;
+  a: string;
 }
 
-const TOUR_SPECIFIC_FAQS: Record<string, TourFaq[]> = {
-  default: [
-    {
-      q: {
-        en: "Is the Taj Mahal closed on any day of the week?",
-        hi: "क्या ताजमहल सप्ताह के किसी दिन बंद रहता है?",
-      },
-      a: {
-        en: "Yes, the Taj Mahal remains strictly closed to tourists every Friday for afternoon prayers. If you book a Friday tour, we adjust the itinerary to cover the royal Fatehpur Sikri ghost city, Agra Fort, Baby Taj, and Mathura temples, or schedule Taj entry on the following morning.",
-        hi: "हाँ, ताजमहल प्रत्येक शुक्रवार को जुमे की नमाज के कारण पर्यटकों के लिए पूर्णतः बंद रहता है। यदि आपका टूर शुक्रवार का है, तो हम आगरा किला, फतेहपुर सीकरी, बेबी ताज और मथुरा दर्शन की व्यवस्था करते हैं अथवा अगले दिन सुबह ताज दर्शन कराते हैं।",
-      },
-    },
-    {
-      q: {
-        en: "Can we book official ASI monument tickets online in advance?",
-        hi: "क्या हम स्मारकों के आधिकारिक ASI टिकट पहले से ऑनलाइन बुक कर सकते हैं?",
-      },
-      a: {
-        en: "Yes! In fact, we strongly recommend booking tickets through the official Archaeological Survey of India (ASI) portal (asi.payumoney.com) to avoid physical queue counters. Your chauffeur and certified guide will share the official link and assist you with quick QR scanning at the gate.",
-        hi: "हाँ! हम भारतीय पुरातत्व सर्वेक्षण (ASI) के आधिकारिक पोर्टल से ही ऑनलाइन टिकट लेने की सलाह देते हैं ताकि टिकट खिड़की पर लाइन न लगानी पड़े। आपके ड्राइवर और गाइड गेट पर तुरंत क्यूआर कोड स्कैनिंग में पूरी सहायता करते हैं।",
-      },
-    },
-    {
-      q: {
-        en: "Can we safely store our luggage inside the cab while visiting monuments?",
-        hi: "स्मारकों के भ्रमण के दौरान क्या हमारा सामान कार में सुरक्षित रहेगा?",
-      },
-      a: {
-        en: "100% yes. Your private vehicle remains locked and guarded by your dedicated commercial chauffeur throughout your monument visits. You can leave heavy suitcases, backpacks, and personal shopping securely in the car.",
-        hi: "बिल्कुल सुरक्षित रहेगा। आपके भ्रमण के दौरान गाड़ी लॉक रहती है और आपके समर्पित वर्दीधारी ड्राइवर की देखरेख में रहती है। आप अपने भारी सूटकेस और खरीदारी का सामान कार में सुरक्षित छोड़ सकते हैं।",
-      },
-    },
-    {
-      q: {
-        en: "Are your tour guides licensed by the Ministry of Tourism?",
-        hi: "क्या आपके टूर गाइड पर्यटन मंत्रालय द्वारा अधिकृत और प्रमाणित हैं?",
-      },
-      a: {
-        en: "Yes. All guides arranged by SK Baghel Tour & Travels carry valid Ministry of Tourism (Govt. of India) or UP State Tourism identity badges. They are fluent in English, Hindi, and regional languages with deep scholarly knowledge of Mughal architecture, with zero forced shopping stops.",
-        hi: "हाँ, हमारे सभी गाइड भारत सरकार के पर्यटन मंत्रालय या उत्तर प्रदेश पर्यटन विभाग द्वारा अधिकृत बैजधारक हैं। उन्हें मुग़ल वास्तुकला की गहरी जानकारी है और वे किसी भी दुकान पर जबरन रुकने के दबाव से पूर्णतः मुक्त सेवा देते हैं।",
-      },
-    },
-    {
-      q: {
-        en: "What is your cancellation and refund policy for this tour package?",
-        hi: "इस टूर पैकेज के लिए रद्दीकरण और रिफंड की क्या नीति है?",
-      },
-      a: {
-        en: "For same-day cab tours, we offer 100% full refund if cancelled up to 24 hours prior to departure. For multi-day circuits (like Golden Triangle or Agra Overnight), cancellation is tiered: 100% refund for 61+ days notice, 80% for 31–60 days, down to 0% within 5 days. Approved refunds are credited in 5–7 business days.",
-        hi: "सेम-डे कैब टूर के लिए प्रस्थान से 24 घंटे पहले रद्द करने पर 100% पूरा रिफंड मिलता है। मल्टी-डे टूर के लिए 61+ दिन पहले 100%, 31–60 दिन पहले 80% और 5 दिन के भीतर 0% रिफंड देय होता है। रिफंड 5–7 दिनों में आपके बैंक में आ जाता है।",
-      },
-    },
-    {
-      q: {
-        en: "Are child safety seats or senior citizen wheelchairs available?",
-        hi: "क्या छोटे बच्चों के लिए सीट या वरिष्ठ नागरिकों के लिए व्हीलचेयर उपलब्ध है?",
-      },
-      a: {
-        en: "Yes! Child booster seats can be installed in our Sedans and Innova Crystas upon advance request. For senior citizens, authorized wheelchairs and electric golf-carts are readily available at the Taj Mahal and Agra Fort entry gates, and our chauffeurs assist you with complete priority access.",
-        hi: "हाँ! अनुरोध पर सेडान और इनोवा में चाइल्ड सीट लगाई जा सकती है। वरिष्ठ नागरिकों के लिए ताजमहल व आगरा किला प्रवेश द्वारों पर व्हीलचेयर और इलेक्ट्रिक गोल्फ कार्ट उपलब्ध रहते हैं, जिसमें हमारे ड्राइवर पूरा सहयोग करते हैं।",
-      },
-    },
-  ],
-};
+const TOUR_FAQS: TourFaq[] = [
+  {
+    q: "What happens if there is morning winter fog or overcast clouds?",
+    a: "While morning mist occurs predominantly during late December and January, the Taj Mahal creates an enchanting mystical silhouette in soft morning conditions. Our guides adapt the route pacing—starting with the intricate interiors and marble corridors, transitioning to open courtyard photography as the morning sun burns off the mist by 08:00 AM.",
+  },
+  {
+    q: "Are shoes allowed inside the main mausoleum chamber?",
+    a: "Shoes are not permitted on the main white marble plinth. Our tour package provides complimentary hygienic fabric shoe covers so you do not have to walk barefoot or wait in long queues at the public shoe deposit counters.",
+  },
+  {
+    q: "How do we purchase monument entry tickets?",
+    a: "The Archaeological Survey of India (ASI) requires photo identification (Passport or Aadhaar card) for ticket issuance. You may purchase tickets online via the ASI portal, or simply ask our WhatsApp concierge to pre-book them electronically under your names to bypass all on-site ticketing counters entirely.",
+  },
+  {
+    q: "Can we alter the departure timing or customize stops?",
+    a: "Yes, this is an entirely private tour. If you wish to adjust departure by 30 minutes, or replace Mehtab Bagh with the Tomb of I'timād-ud-Daulah (Baby Taj) or local petha sweets tasting, simply inform your concierge via WhatsApp or telephone without any penalty surcharge.",
+  },
+  {
+    q: "What is the exact 28% advance payment policy?",
+    a: "In accordance with our customer-protection charter, you pay only 28% online to lock the chauffeur and guide. The remaining 72% is paid directly to your chauffeur upon completion of your tour, after you are completely satisfied with your journey.",
+  },
+];
 
 export function PackageDetailPage({ language = "en", pkg }: PackageDetailPageProps) {
-  const [selectedCurrency, setSelectedCurrency] = useState<CurrencyCode>("INR");
-  const [expandedFaq, setExpandedFaq] = useState<number | null>(0);
+  // Interactive FAQ Accordion state
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
 
-  const currency = CURRENCIES[selectedCurrency];
-  const vehicleTiers = useMemo(() => getPackageVehicleTiers(pkg), [pkg]);
-  const timeline = useMemo(() => {
+  // Calculate 28% advance token
+  const grossPrice = pkg.from;
+  const advanceAmount = Math.round(grossPrice * 0.28);
+  const balanceAmount = grossPrice - advanceAmount;
+
+  // Resolve timeline stops
+  const timelineStops = useMemo<ItineraryItem[]>(() => {
     if (pkg.timeline && pkg.timeline.length > 0) {
-      return pkg.timeline;
+      return pkg.timeline.map((stop) => ({
+        time: stop.time,
+        title: typeof stop.title === "string" ? stop.title : stop.title.en,
+        desc: typeof stop.desc === "string" ? stop.desc : stop.desc.en,
+      }));
     }
-    return PACKAGE_DEFAULT_TIMELINES[pkg.id] || PACKAGE_DEFAULT_TIMELINES["taj-sunrise"];
+    if (PACKAGE_DEFAULT_TIMELINES[pkg.id]) {
+      return PACKAGE_DEFAULT_TIMELINES[pkg.id];
+    }
+    // Dynamic fallback stops generated from places
+    return pkg.places.map((place, idx) => ({
+      time: `Stop 0${idx + 1}`,
+      title: place,
+      desc: `Chauffeured visit and guided architectural exploration of ${place} with dedicated waiting time and parking assistance.`,
+    }));
   }, [pkg]);
 
-  const faqs = TOUR_SPECIFIC_FAQS[pkg.id] || TOUR_SPECIFIC_FAQS.default;
-
-  const startingPrice = formatPrice(pkg.from, currency);
-  const langPrefix = language === "hi" ? "/hi" : "/en";
-
-  const toggleFaq = (idx: number) => {
-    setExpandedFaq(expandedFaq === idx ? null : idx);
-  };
-
-  const whatsappInquiryUrl = `https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
-    `Hello SK Baghel Tour & Travels, I am interested in booking the "${pkg.name}" (${pkg.duration}). Please share vehicle availability and final all-inclusive quote.`
-  )}`;
-
-  // Schema.org JSON-LD Structured Data
-  const jsonLdData = {
+  // Schema.org structured data
+  const structuredData = {
     "@context": "https://schema.org",
     "@graph": [
       {
         "@type": "TouristTrip",
-        "@id": `https://skbagheltravels.in${langPrefix}/packages/${pkg.slug}/#tour`,
         name: pkg.name,
         description: pkg.blurb,
-        touristType: ["Family", "Couple", "International Tourist", "Solo Traveler"],
+        touristType: "Cultural, Heritage & Sightseeing",
         itinerary: {
           "@type": "ItemList",
-          numberOfItems: timeline.length,
-          itemListElement: timeline.map((item, index) => ({
+          numberOfItems: pkg.places.length,
+          itemListElement: pkg.places.map((place, idx) => ({
             "@type": "ListItem",
-            position: index + 1,
-            name: language === "hi" ? item.title.hi : item.title.en,
-            description: language === "hi" ? item.desc.hi : item.desc.en,
+            position: idx + 1,
+            name: place,
           })),
         },
         offers: {
@@ -322,24 +148,16 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
           price: pkg.from,
           priceCurrency: "INR",
           availability: "https://schema.org/InStock",
-          validFrom: "2026-01-01",
-          url: `https://skbagheltravels.in${langPrefix}/packages/${pkg.slug}/`,
         },
-      },
-      {
-        "@type": "TaxiService",
-        "@id": `https://skbagheltravels.in${langPrefix}/packages/${pkg.slug}/#service`,
-        name: `${pkg.name} — Private Chauffeur Tour`,
         provider: {
           "@type": "LocalBusiness",
           name: "SK Baghel Tour & Travels",
           telephone: contact.phone,
-          email: contact.email,
           address: {
             "@type": "PostalAddress",
-            streetAddress: "Near Taj East Gate Road, Taj Ganj",
+            streetAddress: "Near Taj Mahal, Taj Ganj",
             addressLocality: "Agra",
-            addressRegion: "Uttar Pradesh",
+            addressRegion: "UP",
             postalCode: "282001",
             addressCountry: "IN",
           },
@@ -351,618 +169,649 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
           {
             "@type": "ListItem",
             position: 1,
-            name: language === "hi" ? "होम" : "Home",
-            item: `https://skbagheltravels.in${langPrefix}/`,
+            name: "Home",
+            item: "https://skbagheltravels.in/en/",
           },
           {
             "@type": "ListItem",
             position: 2,
-            name: language === "hi" ? "टूर पैकेज" : "Tour Packages",
-            item: `https://skbagheltravels.in${langPrefix}/packages/`,
+            name: "Packages",
+            item: "https://skbagheltravels.in/en/packages/",
           },
           {
             "@type": "ListItem",
             position: 3,
             name: pkg.name,
-            item: `https://skbagheltravels.in${langPrefix}/packages/${pkg.slug}/`,
+            item: `https://skbagheltravels.in/en/packages/${pkg.slug}`,
           },
         ],
       },
       {
         "@type": "FAQPage",
-        mainEntity: faqs.map((f) => ({
+        mainEntity: TOUR_FAQS.map((faq) => ({
           "@type": "Question",
-          name: language === "hi" ? f.q.hi : f.q.en,
+          name: faq.q,
           acceptedAnswer: {
             "@type": "Answer",
-            text: language === "hi" ? f.a.hi : f.a.en,
+            text: faq.a,
           },
         })),
       },
     ],
   };
 
+  // Step 1 booking link (Vehicle Selection screen)
+  const bookStep1Url = `/book.html?package=${encodeURIComponent(pkg.slug)}&step=1`;
+  const whatsappUrl = `https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
+    `Hello SK Baghel Travels, I wish to reserve the ${pkg.name} (Starting ₹${pkg.from.toLocaleString("en-IN")}).`
+  )}`;
+
   return (
-    <main id="main-content" className="package-detail-page">
+    <div className="flex flex-col w-full bg-surface">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdData) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
 
-      {/* 1. Breadcrumbs & Top Utilities */}
-      <div className="detail-topbar">
-        <div className="container">
-          <div className="topbar-inner">
-            <nav className="breadcrumb-nav" aria-label="Breadcrumb">
-              <ol className="breadcrumb-list">
-                <li>
-                  <a href={langPrefix === "/hi" ? "/hi/" : "/"}>
-                    {language === "hi" ? "होम" : "Home"}
-                  </a>
-                </li>
-                <li className="separator">/</li>
-                <li>
-                  <a href={`${langPrefix}/packages/`}>
-                    {language === "hi" ? "टूर पैकेज" : "Tour Packages"}
-                  </a>
-                </li>
-                <li className="separator">/</li>
-                <li className="current" aria-current="page">
-                  {pkg.name}
-                </li>
-              </ol>
-            </nav>
-
-            {/* Currency Selector */}
-            <div className="currency-selector-wrap" aria-label="Select Currency">
-              <span className="currency-label">
-                {language === "hi" ? "मुद्रा चुनें:" : "Currency:"}
-              </span>
-              <div className="currency-pills" role="radiogroup">
-                {(Object.keys(CURRENCIES) as CurrencyCode[]).map((c) => (
-                  <button
-                    key={c}
-                    type="button"
-                    role="radio"
-                    aria-checked={selectedCurrency === c}
-                    className={`currency-pill ${selectedCurrency === c ? "active" : ""}`}
-                    onClick={() => setSelectedCurrency(c)}
-                  >
-                    {c}
-                  </button>
-                ))}
-              </div>
-            </div>
+      {/* BREADCRUMBS BAR */}
+      <div className="w-full bg-sandstone-wash/70 py-space-sm px-margin-mobile lg:px-margin border-b border-border-warm/50">
+        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-space-xs text-body-sm font-body-sm text-on-surface-variant">
+          <nav className="flex items-center gap-space-xs" aria-label="Breadcrumb">
+            <a className="hover:text-primary transition-colors" href="/en/">Home</a>
+            <span className="text-outline-variant text-[12px] font-sans">/</span>
+            <a className="hover:text-primary transition-colors" href="/en/packages/">Packages</a>
+            <span className="text-outline-variant text-[12px] font-sans">/</span>
+            <span className="text-primary font-medium">{pkg.name}</span>
+          </nav>
+          <div className="hidden sm:flex items-center gap-2 text-[12px] text-secondary">
+            <span className="w-2 h-2 rounded-full bg-success-jade inline-block animate-pulse"></span>
+            <span>24×7 Instant Dispatch Active</span>
           </div>
         </div>
       </div>
 
-      {/* 2. Package Hero Section */}
-      <section className="pkg-hero-section">
-        <div className="container">
-          <div className="pkg-hero-grid">
-            {/* Left Content Column */}
-            <div className="pkg-hero-content">
-              <div className="pkg-kicker-row">
-                <span className="pkg-kicker-pill">{pkg.kicker.toUpperCase()}</span>
-                <span className="pkg-duration-pill">⏱ {pkg.duration}</span>
-                <span className="pkg-rating-pill">★ 5.0 (480+ Reviews)</span>
+      {/* HERO STORY & VISUAL SHOWCASE */}
+      <section className="w-full max-w-7xl mx-auto px-margin-mobile lg:px-margin pt-space-xl pb-space-lg">
+        <div className="flex flex-col gap-space-md">
+          {/* Eyebrow Badges */}
+          <div className="flex flex-wrap items-center gap-space-xs">
+            <span className="bg-primary-fixed text-on-primary-fixed px-3 py-1 rounded-lg text-label-caps uppercase font-semibold tracking-widest">
+              {pkg.kicker || "Signature Tour"}
+            </span>
+            <span className="bg-sandstone-wash text-terracotta-sandstone px-3 py-1 rounded-lg text-label-caps uppercase font-semibold tracking-wider">
+              Private Expedition
+            </span>
+            <span className="bg-surface-container-high text-on-surface px-3 py-1 rounded-lg text-label-caps uppercase font-semibold">
+              All-Inclusive Chauffeur &amp; Guide
+            </span>
+            <span className="ml-auto inline-flex items-center gap-1 text-gold-accent font-semibold text-body-sm bg-ink-charcoal text-ivory-surface px-3 py-1 rounded-lg shadow-sm">
+              <span className="material-symbols-outlined text-[16px] text-gold-accent">star</span>
+              4.98 / 5 <span className="text-secondary-fixed-dim font-normal text-[11px]">(650+ Verified Visitors)</span>
+            </span>
+          </div>
+
+          {/* Headline & Subtitle */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-end">
+            <div className="lg:col-span-8 flex flex-col gap-space-xs">
+              <h1 className="font-headline-hero text-headline-hero text-on-surface leading-tight">
+                {pkg.name}
+              </h1>
+              <p className="font-body-lg text-body-lg text-on-surface-variant max-w-3xl leading-relaxed">
+                {pkg.blurb}
+              </p>
+            </div>
+            <div className="lg:col-span-4 flex flex-col items-start lg:items-end justify-center">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-container-low text-secondary text-body-sm">
+                <span className="material-symbols-outlined text-primary text-[18px]">schedule</span>
+                <span>Duration: <strong className="text-on-surface">{pkg.duration}</strong></span>
               </div>
+            </div>
+          </div>
 
-              <h1 className="pkg-title">{pkg.name}</h1>
-              <p className="pkg-blurb">{pkg.blurb}</p>
+          {/* Hero Visual Mosaic */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-space-md mt-space-md">
+            {/* Main Feature Image: Road Expedition / Luxury Vehicle */}
+            <div className="md:col-span-8 relative rounded-xl overflow-hidden min-h-[360px] lg:min-h-[460px] shadow-md group">
+              <img
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                alt={`${pkg.name} luxury chauffeur expedition`}
+                src={pkg.image || "https://lh3.googleusercontent.com/aida-public/AB6AXuBiOCbTHN9zNU00JUVh-NHzZiSulJU4g05nHT7WM3mpIgEs8t3Np8aPtrUzWPz27pzrRZFIU1XqXVFtYULmLW4xrJnr3LkO8eDxIHXafzYTeZjylHeqJR2qtv5FcTucAW8T1NyBOJ8Wvldh8aidLGYASoo-3Cq6yaG8COaSLvBY5leGL3qxFs4LQ_RKhMez4eIMDw_OVq42vHIrDhBRYY6QfEI99vopy0zV7TZjojCB6Cf9f7YXHp11iQ"}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-ink-charcoal/85 via-ink-charcoal/25 to-transparent"></div>
 
-              <div className="pkg-highlights-strip">
-                <span className="pkg-h-item">✓ 100% Private Sanitized AC Cab</span>
-                <span className="pkg-h-item">✓ Police-Verified Chauffeur</span>
-                <span className="pkg-h-item">✓ Zero Commission Traps</span>
-                <span className="pkg-h-item">✓ Doorstep Hotel/Station Pickup</span>
-              </div>
-
-              {/* Pricing Box */}
-              <div className="pkg-pricing-box">
-                <div className="pricing-left">
-                  <span className="pricing-caption">
-                    {language === "hi" ? "शुरुआती सर्व-समावेशी दर" : "Starting All-Inclusive Fare"}
+              <div className="absolute bottom-4 left-4 right-4 flex flex-wrap items-end justify-between gap-space-sm text-ivory-surface">
+                <div>
+                  <span className="text-label-caps uppercase text-gold-accent font-semibold tracking-wider">
+                    Unrivaled Comfort
                   </span>
-                  <div className="pricing-val-wrap">
-                    <span className="pricing-val">{startingPrice}</span>
-                    <span className="pricing-unit">
-                      / {language === "hi" ? "निजी सेडान (4+1)" : "Private Sedan (4+1)"}
-                    </span>
-                  </div>
-                  <p className="pricing-subtext">
-                    ✓ {language === "hi" ? "टोल, पार्किंग व ड्राइवर भत्ता शामिल" : "All Tolls, Parking & Driver Batta Included"}
+                  <h3 className="font-headline-md text-headline-sm text-surface">Yamuna Expressway VIP Cruiser</h3>
+                  <p className="text-body-sm text-secondary-fixed-dim max-w-lg">
+                    Zero toll delays, unlimited chilled Himalayan bottled water, wet wipes, and mints.
                   </p>
                 </div>
+                <span className="bg-surface/20 backdrop-blur-md px-3 py-1 rounded-lg text-body-sm font-medium">
+                  Fastag Pass Included
+                </span>
+              </div>
+            </div>
 
-                <div className="pricing-actions">
-                  <a
-                    href={`/book.html?package=${pkg.slug}`}
-                    className="button button-primary pkg-book-btn"
-                  >
-                    {language === "hi" ? "अभी ऑनलाइन बुक करें ↗" : "Book This Tour ↗"}
-                  </a>
-                  <a
-                    href={whatsappInquiryUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="button button-whatsapp pkg-wa-btn"
-                  >
-                    💬 {language === "hi" ? "व्हाट्सएप इन्क्वायरी" : "WhatsApp Inquiry"}
-                  </a>
+            {/* Secondary Heritage Views */}
+            <div className="md:col-span-4 grid grid-cols-1 gap-space-md">
+              <div className="relative rounded-xl overflow-hidden min-h-[170px] lg:min-h-[215px] shadow-sm group">
+                <img
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  alt="Taj Mahal morning sunlight view"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2yf-yBU3hlsj0yoDvKQuP0oe6WgHmL9Zp1It3UX4nt2DQnx758CLagwRSUfUyxP1x94bKKqwL8EeD-VILb9XhvYHbrj9ajEPX9oXgLEMY_ksbGoFyGii8FeQlpfiDsaJEaBiElqArswBsy-Szo9P1AiuEHzAqAHIBl2U5mryTmHPcxLdKPwyvoEk7Pc17rJDEn76H1pc-eP1-8L2SqkX8sVvPSIZZAjXjDDd2o__BhvpU5Aw0v4WFIw"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-ink-charcoal/70 via-transparent to-transparent"></div>
+                <div className="absolute bottom-3 left-3 text-ivory-surface">
+                  <span className="text-label-caps uppercase text-terracotta-sunlit">Monument Vantage</span>
+                  <p className="font-headline-sm text-[18px] leading-snug">Priority Entry &amp; Prime Photography</p>
+                </div>
+              </div>
+              <div className="relative rounded-xl overflow-hidden min-h-[170px] lg:min-h-[215px] shadow-sm group">
+                <img
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  alt="5-Star royal palace dining and refreshments"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBI1YNHnPOUMAYZXIn-msx_lCMvf_qW2T2cwxbtIVgvOgnUSQ5Es3br-96fv0T8NuwFm4EFi6bGA_QPKTGF6yKCLYfa279a_zZA8U4Dud5Ex6k0QTPqUTiymsfL4UhCGp9nhedjTOV-2Dg9Q4Y4MHN9bs0U-F_FF0lT2CBiiB1gfW0n8kVIE_azmlZqxA6lKnKD5AJXt2lZTxubG2rf9Grv4GXrmpphWD5jUJHc04_9DLcyq3sYwDVQ7Q"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-ink-charcoal/70 via-transparent to-transparent"></div>
+                <div className="absolute bottom-3 left-3 text-ivory-surface">
+                  <span className="text-label-caps uppercase text-gold-accent">Gourmet Repast</span>
+                  <p className="font-headline-sm text-[18px] leading-snug">5-Star Royal Palace Buffet</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* TWO COLUMN ARCHITECTURAL CORE: ITINERARY & RESERVATION DOCK */}
+      <section className="w-full max-w-7xl mx-auto px-margin-mobile lg:px-margin py-space-xl">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-start">
+          {/* LEFT COLUMN: Comprehensive Itinerary, Inclusions & Guidelines */}
+          <div className="lg:col-span-7 flex flex-col gap-space-2xl">
+            {/* Chapter 01: The Experience Overview */}
+            <div className="flex flex-col gap-space-md">
+              <div className="flex items-center gap-space-xs">
+                <span className="text-terracotta-sandstone font-headline-sm text-headline-sm font-serif">01.</span>
+                <h2 className="font-headline-md text-headline-md text-on-surface">The Imperial Heritage Experience</h2>
+              </div>
+              <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                {pkg.blurb} Designed with complete flexibility and royal hospitality, this private expedition bypasses crowded tour buses, ensuring an intimate, personalized connection with the grand history and architecture of North India.
+              </p>
+              <div className="bg-surface-container rounded-xl p-space-md flex items-start gap-space-sm border border-border-warm/60">
+                <span className="material-symbols-outlined text-gold-accent text-[24px] shrink-0 mt-0.5">hotel_class</span>
+                <div className="flex flex-col">
+                  <span className="font-title-md text-title-md text-on-surface font-semibold">Why Private Chauffeur Travel is Paramount</span>
+                  <p className="font-body-sm text-body-sm text-secondary mt-0.5">
+                    Doorstep hotel pickup, peaceful expressway transit, zero midway detours, and complete freedom to pause for photography and dining whenever you desire.
+                  </p>
                 </div>
               </div>
             </div>
 
-            {/* Right Media Column */}
-            <div className="pkg-hero-media">
-              <div className="pkg-image-card">
-                <picture>
-                  <source
-                    srcSet={pkg.image.replace(".webp", "-480.webp")}
-                    media="(max-width: 600px)"
-                  />
-                  <source
-                    srcSet={pkg.image.replace(".webp", "-768.webp")}
-                    media="(max-width: 1024px)"
-                  />
-                  <img
-                    src={pkg.image}
-                    alt={`${pkg.name} Sightseeing Tour`}
-                    width="600"
-                    height="380"
-                    className="pkg-hero-img"
-                    loading="eager"
-                  />
-                </picture>
-                <div className="pkg-badge-overlay">
-                  <span className="gold-dot" />
-                  <span>
-                    {language === "hi"
-                      ? "विश्व धरोहर व ऐतिहासिक सर्किट"
-                      : "UNESCO World Heritage Circuit"}
+            {/* Chapter 02: Clear Transparent Package Accounting */}
+            <div className="flex flex-col gap-space-md">
+              <div className="flex items-center gap-space-xs">
+                <span className="text-terracotta-sandstone font-headline-sm text-headline-sm font-serif">02.</span>
+                <h2 className="font-headline-md text-headline-md text-on-surface">Clear Transparent Package Accounting</h2>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+                {/* Included */}
+                <div className="bg-surface-container-low p-space-md rounded-xl shadow-sm flex flex-col gap-space-sm border border-border-warm/60">
+                  <div className="flex items-center gap-space-xs text-success-jade">
+                    <span className="material-symbols-outlined text-[22px]">check_circle</span>
+                    <span className="font-title-md text-title-md font-semibold text-on-surface">What is Fully Included</span>
+                  </div>
+                  <ul className="flex flex-col gap-space-xs text-body-sm font-body-sm text-on-surface-variant">
+                    {pkg.includes.map((inc, i) => (
+                      <li key={i} className="flex items-start gap-space-xs">
+                        <span className="material-symbols-outlined text-success-jade text-[18px] shrink-0 mt-0.5">check</span>
+                        <span>{inc}</span>
+                      </li>
+                    ))}
+                    <li className="flex items-start gap-space-xs">
+                      <span className="material-symbols-outlined text-success-jade text-[18px] shrink-0 mt-0.5">check</span>
+                      <span>Chauffeur-driven AC vehicle dedicated exclusively to your group</span>
+                    </li>
+                    <li className="flex items-start gap-space-xs">
+                      <span className="material-symbols-outlined text-success-jade text-[18px] shrink-0 mt-0.5">check</span>
+                      <span>All expressway FASTag tolls, parking fees, and state entry permits</span>
+                    </li>
+                    <li className="flex items-start gap-space-xs">
+                      <span className="material-symbols-outlined text-success-jade text-[18px] shrink-0 mt-0.5">check</span>
+                      <span>Chilled Himalayan mineral water, sanitizing wipes &amp; confectionary</span>
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Excluded */}
+                <div className="bg-surface-container-low p-space-md rounded-xl shadow-sm flex flex-col gap-space-sm border border-border-warm/60">
+                  <div className="flex items-center gap-space-xs text-secondary">
+                    <span className="material-symbols-outlined text-[22px]">cancel</span>
+                    <span className="font-title-md text-title-md font-semibold text-on-surface">What is Excluded</span>
+                  </div>
+                  <ul className="flex flex-col gap-space-xs text-body-sm font-body-sm text-on-surface-variant">
+                    {pkg.excludes.map((exc, i) => (
+                      <li key={i} className="flex items-start gap-space-xs">
+                        <span className="material-symbols-outlined text-secondary text-[18px] shrink-0 mt-0.5">remove</span>
+                        <span>{exc}</span>
+                      </li>
+                    ))}
+                    <li className="flex items-start gap-space-xs">
+                      <span className="material-symbols-outlined text-secondary text-[18px] shrink-0 mt-0.5">remove</span>
+                      <span>Monument entrance tickets (Pay direct or request concierge pre-booking: ₹1,100 foreign national / ₹50 Indian national)</span>
+                    </li>
+                    <li className="flex items-start gap-space-xs">
+                      <span className="material-symbols-outlined text-secondary text-[18px] shrink-0 mt-0.5">remove</span>
+                      <span>Personal purchases, marble handicraft souvenirs &amp; artisan items</span>
+                    </li>
+                    <li className="flex items-start gap-space-xs">
+                      <span className="material-symbols-outlined text-secondary text-[18px] shrink-0 mt-0.5">remove</span>
+                      <span>Driver &amp; Guide discretionary gratuity / tips</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Chapter 03: Essential Visitor Guidelines */}
+            <div className="flex flex-col gap-space-md">
+              <div className="flex items-center gap-space-xs">
+                <span className="text-terracotta-sandstone font-headline-sm text-headline-sm font-serif">03.</span>
+                <h2 className="font-headline-md text-headline-md text-on-surface">Essential Visitor Guidelines &amp; Protocols</h2>
+              </div>
+              <div className="bg-sandstone-wash/80 rounded-xl p-space-md flex flex-col gap-space-sm border border-border-warm">
+                <div className="flex items-center gap-2 text-primary font-semibold">
+                  <span className="material-symbols-outlined">warning</span>
+                  <span className="font-title-md text-title-md">Strict ASI Monument Protocols</span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-space-sm text-body-sm text-on-surface-variant">
+                  <div className="flex items-start gap-2">
+                    <span className="material-symbols-outlined text-terracotta-sandstone text-[18px] shrink-0 mt-0.5">event_busy</span>
+                    <div>
+                      <strong className="text-on-surface">Friday Taj Closure:</strong> The Taj Mahal is strictly closed to visitors every Friday for prayers. Agra Fort remains open.
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="material-symbols-outlined text-terracotta-sandstone text-[18px] shrink-0 mt-0.5">photo_camera</span>
+                    <div>
+                      <strong className="text-on-surface">Camera Regulations:</strong> Still cameras and smartphones permitted free. Drones, video tripods, and extra battery packs strictly prohibited by CISF.
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="material-symbols-outlined text-terracotta-sandstone text-[18px] shrink-0 mt-0.5">backpack</span>
+                    <div>
+                      <strong className="text-on-surface">Baggage Restrictions:</strong> Large backpacks, food items, tobacco, and lighters are confiscated at gate lockers. Please leave luggage inside our secured car trunk.
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="material-symbols-outlined text-terracotta-sandstone text-[18px] shrink-0 mt-0.5">badge</span>
+                    <div>
+                      <strong className="text-on-surface">Zero Commission Guarantee:</strong> We do not conduct high-pressure carpet or jewellery shop detours. Your time is dedicated strictly to heritage monuments.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Chapter 04: Hour-by-Hour Curated Itinerary */}
+            <div className="flex flex-col gap-space-md">
+              <div className="flex items-center gap-space-xs">
+                <span className="text-terracotta-sandstone font-headline-sm text-headline-sm font-serif">04.</span>
+                <h2 className="font-headline-md text-headline-md text-on-surface">Hour-by-Hour Curated Itinerary</h2>
+              </div>
+              <div className="relative pl-6 space-y-6 before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-[2px] before:bg-border-warm">
+                {timelineStops.map((stop, idx) => (
+                  <div key={idx} className="relative group">
+                    <div className="absolute -left-6 top-1 w-3 h-3 rounded-full bg-primary border-2 border-surface group-hover:scale-125 transition-transform"></div>
+                    <div className="bg-surface-container-low p-space-md rounded-xl shadow-sm border border-border-warm/60 flex flex-col gap-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-label-caps uppercase text-terracotta-sandstone font-bold tracking-wider">
+                          {stop.time}
+                        </span>
+                      </div>
+                      <h4 className="font-title-md text-title-md text-ink-charcoal font-semibold">{stop.title}</h4>
+                      <p className="text-body-sm text-on-surface-variant leading-relaxed">{stop.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* RIGHT COLUMN: Sticky Reservation & Vehicle Selection Console */}
+          <div className="lg:col-span-5 sticky top-24">
+            <div className="bg-surface-container-lowest rounded-xl p-space-lg shadow-xl flex flex-col gap-space-md border border-border-warm">
+              {/* Box Header */}
+              <div className="flex flex-col gap-space-xs pb-space-sm border-b border-border-warm/60">
+                <div className="flex items-center justify-between">
+                  <span className="text-label-caps text-terracotta-sandstone uppercase font-bold tracking-wider">
+                    Instant Reservation
+                  </span>
+                  <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-success-jade bg-surface-container px-2 py-0.5 rounded-full">
+                    <span className="material-symbols-outlined text-[14px]">verified</span> Instant Confirmation
                   </span>
                 </div>
-                <div className="pkg-type-badge">
-                  <span>100% PRIVATE CHAUFFEURED</span>
+                <h3 className="font-headline-md text-headline-sm text-on-surface">Reserve Your Private Tour</h3>
+                <div className="flex items-baseline gap-2 mt-1">
+                  <span className="text-body-sm text-secondary font-medium">Starting from</span>
+                  <span className="font-price-display text-price-display text-primary font-bold">
+                    ₹{pkg.from.toLocaleString("en-IN")}
+                  </span>
+                  <span className="text-[11px] text-terracotta-sandstone bg-sandstone-wash px-2 py-0.5 rounded font-semibold uppercase tracking-wider">
+                    All-Inclusive
+                  </span>
                 </div>
-              </div>
-
-              {/* Quick Trust Strip Below Image */}
-              <div className="pkg-media-trust">
-                <div className="trust-micro-item">
-                  <span className="trust-icon">🛡</span>
-                  <div>
-                    <strong>24×7 Local Desk</strong>
-                    <span>Taj Ganj, Agra</span>
-                  </div>
-                </div>
-                <div className="trust-micro-item">
-                  <span className="trust-icon">⚡</span>
-                  <div>
-                    <strong>Instant Confirmation</strong>
-                    <span>No Hidden Fees</span>
-                  </div>
-                </div>
-                <div className="trust-micro-item">
-                  <span className="trust-icon">🔄</span>
-                  <div>
-                    <strong>24h Free Cancel</strong>
-                    <span>100% Full Refund</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 3. Monuments & Places Covered */}
-      <section className="pkg-places-section">
-        <div className="container">
-          <div className="section-head-center">
-            <span className="section-eyebrow">
-              {language === "hi" ? "दर्शनीय स्थल" : "TOUR HIGHLIGHTS"}
-            </span>
-            <h2 className="section-title">
-              {language === "hi" ? "इस यात्रा में शामिल ऐतिहासिक स्मारक" : "Monuments & Sights Covered in This Tour"}
-            </h2>
-            <p className="section-desc">
-              {language === "hi"
-                ? "हमारी निजी गाड़ियाँ आपको बिना किसी हड़बड़ी के इन सभी ऐतिहासिक स्थलों का शांतिपूर्ण भ्रमण कराती हैं।"
-                : "A seamless, unrushed circuit covering the crown jewels of Mughal architecture and spiritual heritage."}
-            </p>
-          </div>
-
-          <div className="places-cards-grid">
-            {pkg.places.map((place, idx) => (
-              <div className="place-card" key={place}>
-                <div className="place-num">0{idx + 1}</div>
-                <div className="place-info">
-                  <h3 className="place-title">{place}</h3>
-                  <p className="place-desc">
-                    {language === "hi"
-                      ? "निजी एसी कैब से द्वार तक आसान पहुँच, गाइड सहायता एवं फोटोग्राफी के लिए पर्याप्त समय।"
-                      : "Direct doorstep access, guided historical insights, and relaxed time for architectural photography."}
-                  </p>
-                </div>
-                <span className="place-check-icon">✓</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 4. Hour-by-Hour Itinerary Timeline */}
-      <section className="pkg-itinerary-section">
-        <div className="container">
-          <div className="section-head-center">
-            <span className="section-eyebrow">
-              {language === "hi" ? "समय सारणी" : "DETAILED ITINERARY"}
-            </span>
-            <h2 className="section-title">
-              {language === "hi" ? "घंटे-दर-घंटे यात्रा कार्यक्रम" : "Hour-by-Hour Planned Schedule"}
-            </h2>
-            <p className="section-desc">
-              {language === "hi"
-                ? "यह एक निजी यात्रा है। आप अपनी सुविधा अनुसार किसी भी स्थल पर समय कम या ज्यादा कर सकते हैं।"
-                : "Designed for optimal monument lighting and minimum queue times. Paced entirely around your comfort."}
-            </p>
-          </div>
-
-          <div className="timeline-container">
-            {timeline.map((stop, index) => (
-              <div className="timeline-item" key={index}>
-                <div className="timeline-marker">
-                  <div className="marker-dot" />
-                  {index !== timeline.length - 1 && <div className="marker-line" />}
-                </div>
-                <div className="timeline-content">
-                  <span className="timeline-time">{stop.time}</span>
-                  <h3 className="timeline-title">
-                    {language === "hi" ? stop.title.hi : stop.title.en}
-                  </h3>
-                  <p className="timeline-desc">
-                    {language === "hi" ? stop.desc.hi : stop.desc.en}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 5. MakeMyTrip-Style Vehicle Upgrade Pricing Matrix */}
-      <section className="pkg-vehicles-section">
-        <div className="container">
-          <div className="section-head-center">
-            <span className="section-eyebrow">
-              {language === "hi" ? "गाड़ी विकल्प व किराया" : "VEHICLE OPTIONS & UPGRADES"}
-            </span>
-            <h2 className="section-title">
-              {language === "hi" ? "अपनी पसंद की गाड़ी चुनें" : "Select Your Preferred Chauffeur Vehicle"}
-            </h2>
-            <p className="section-desc">
-              {language === "hi"
-                ? "सभी किराये सर्व-समावेशी हैं। टोल, पार्किंग, ईंधन और ड्राइवर भत्ता पहले से शामिल है।"
-                : "Transparent flat package pricing across our sanitized commercial fleet. No surge, no hidden fees."}
-            </p>
-          </div>
-
-          <div className="pkg-vehicles-grid">
-            {vehicleTiers.map((tier) => {
-              const tierPriceFormatted = formatPrice(tier.price, currency);
-              return (
-                <div
-                  key={tier.vehId}
-                  className={`pkg-veh-card ${tier.popular ? "is-popular" : ""}`}
-                >
-                  {tier.popular && (
-                    <div className="veh-pop-tag">
-                      {language === "hi" ? "सर्वाधिक लोकप्रिय" : "★ MOST POPULAR CHOICE"}
-                    </div>
-                  )}
-
-                  <div className="veh-icon-wrapper">
-                    {tier.vehId === "sedan" && <SedanVector />}
-                    {tier.vehId === "ertiga" && <MpvVector />}
-                    {tier.vehId === "innova" && <SuvVector />}
-                    {(tier.vehId === "tempo" || tier.vehId === "urbania") && <VanVector />}
-                  </div>
-
-                  <div className="veh-header-info">
-                    <h3 className="veh-model-name">
-                      {language === "hi" ? tier.name.hi : tier.name.en}
-                    </h3>
-                    <div className="veh-spec-pills">
-                      <span className="veh-pill">👥 {tier.seats}</span>
-                      <span className="veh-pill">🧳 {tier.bags}</span>
-                      <span className="veh-pill">❄️ Dual AC</span>
-                    </div>
-                  </div>
-
-                  <div className="veh-price-block">
-                    <div className="veh-price-row">
-                      <span className="veh-price">{tierPriceFormatted}</span>
-                      <span className="veh-price-basis">
-                        {language === "hi" ? "कुल पैकेज किराया" : "Total Tour Fare"}
-                      </span>
-                    </div>
-                    <span className="veh-inclusive-label">
-                      ✓ {language === "hi" ? "टोल, पार्किंग व ड्राइवर शामिल" : "All Tolls, Parking & Driver Included"}
-                    </span>
-                  </div>
-
-                  <div className="veh-card-action">
-                    <a
-                      href={`/book.html?package=${pkg.slug}&vehicle=${tier.vehId}`}
-                      className={`button ${tier.popular ? "button-primary" : "button-outline"} veh-book-btn`}
-                    >
-                      {language === "hi" ? "यह गाड़ी चुनें ↗" : "Select & Book ↗"}
-                    </a>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* 6. Inclusions & Exclusions Breakdown Bento */}
-      <section className="pkg-inclusions-section">
-        <div className="container">
-          <div className="section-head-center">
-            <span className="section-eyebrow">
-              {language === "hi" ? "पारदर्शिता" : "CLEAR TRANSPARENCY"}
-            </span>
-            <h2 className="section-title">
-              {language === "hi" ? "पैकेज में क्या शामिल है और क्या नहीं" : "What is Included vs. Excluded"}
-            </h2>
-            <p className="section-desc">
-              {language === "hi"
-                ? "हमारी नीति 100% स्पष्ट है। यात्रा के दौरान आपसे कोई अघोषित या गुप्त शुल्क नहीं लिया जाता।"
-                : "Honest upfront billing with zero surprises. Compare exactly what you get."}
-            </p>
-          </div>
-
-          <div className="inclusions-bento-grid">
-            {/* Inclusions Box */}
-            <div className="inc-box inc-box-included">
-              <div className="inc-box-header">
-                <span className="inc-header-icon green">✓</span>
-                <h3 className="inc-header-title">
-                  {language === "hi" ? "100% पैकेज में शामिल" : "Included in Package Fare"}
-                </h3>
-              </div>
-              <ul className="inc-list">
-                {pkg.includes.map((inc, i) => (
-                  <li key={i}>
-                    <span className="check-bullet">✓</span>
-                    <span>{inc}</span>
-                  </li>
-                ))}
-                <li>
-                  <span className="check-bullet">✓</span>
-                  <span>{language === "hi" ? "स्वच्छ व वातानुकूलित (AC) निजी कैब" : "Dedicated sanitized private AC vehicle"}</span>
-                </li>
-                <li>
-                  <span className="check-bullet">✓</span>
-                  <span>{language === "hi" ? "सभी एक्सप्रेसवे टोल व राज्य बॉर्डर टैक्स" : "All Expressway tolls and inter-state permit taxes"}</span>
-                </li>
-                <li>
-                  <span className="check-bullet">✓</span>
-                  <span>{language === "hi" ? "स्मारकों की अधिकृत पार्किंग व ड्राइवर भत्ता" : "Monument authorized parking & driver allowances"}</span>
-                </li>
-              </ul>
-            </div>
-
-            {/* Exclusions Box */}
-            <div className="inc-box inc-box-excluded">
-              <div className="inc-box-header">
-                <span className="inc-header-icon red">✕</span>
-                <h3 className="inc-header-title">
-                  {language === "hi" ? "पैकेज में शामिल नहीं (वैकल्पिक)" : "Excluded (Pay As You Go)"}
-                </h3>
-              </div>
-              <ul className="inc-list">
-                {pkg.excludes.map((exc, i) => (
-                  <li key={i}>
-                    <span className="cross-bullet">✕</span>
-                    <span>{exc}</span>
-                  </li>
-                ))}
-                <li>
-                  <span className="cross-bullet">✕</span>
-                  <span>{language === "hi" ? "स्मारक प्रवेश टिकट (ASI ऑनलाइन पोर्टल से सीधे लें)" : "Monument entry tickets (booked directly via official ASI portal)"}</span>
-                </li>
-                <li>
-                  <span className="cross-bullet">✕</span>
-                  <span>{language === "hi" ? "व्यक्तिगत भोजन, जलपान व स्नैक्स" : "Meals, drinks & personal snacks"}</span>
-                </li>
-                <li>
-                  <span className="cross-bullet">✕</span>
-                  <span>{language === "hi" ? "मंदिरों में विशेष दर्शन वीआईपी पास व दान" : "Temple VIP line passes or personal donations"}</span>
-                </li>
-              </ul>
-
-              {/* Explanatory note */}
-              <div className="inc-explanation-note">
-                <strong>
-                  💡 {language === "hi" ? "टिकट अलग क्यों रखे गए हैं?" : "Why are tickets separate?"}
-                </strong>
-                <p>
-                  {language === "hi"
-                    ? "भारतीय व विदेशी पर्यटकों के टिकट मूल्य भिन्न होते हैं (जैसे ताज महल ₹50 भारतीय / ₹1,100 विदेशी)। टिकट अलग रखने से विदेशी व घरेलू यात्रियों से कोई अनुचित कमीशन नहीं लिया जाता और आपको सीधे आधिकारिक दर पर टिकट मिलता है।"
-                    : "ASI charges different entry fees for domestic (₹50) and international travelers (₹1,100). Keeping tickets unbundled ensures you pay only the genuine government rate with zero travel agency markup."}
+                <p className="text-[12px] text-secondary mt-0.5">
+                  Lock with only 28% advance deposit (₹{advanceAmount.toLocaleString("en-IN")}) • Pay remaining 72% on drop-off
                 </p>
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* 7. Departure Advice & Travel Tips Bento */}
-      <section className="pkg-advisory-section">
-        <div className="container">
-          <div className="section-head-center">
-            <span className="section-eyebrow">
-              {language === "hi" ? "यात्रा परामर्श" : "ESSENTIAL TOUR ADVICE"}
-            </span>
-            <h2 className="section-title">
-              {language === "hi" ? "सफल और आनंददायक यात्रा के सुझाव" : "Travel Tips & Planning Advisory"}
-            </h2>
-            <p className="section-desc">
-              {language === "hi"
-                ? "हमारी 15 वर्षों की स्थानीय विशेषज्ञता से तैयार किए गए महत्वपूर्ण दिशा-निर्देश।"
-                : "Local wisdom to ensure a hassle-free, memorable visit to the world's most famous monuments."}
-            </p>
-          </div>
-
-          <div className="pkg-advisory-grid">
-            <div className="advisory-card">
-              <div className="advisory-icon-wrap">🕌</div>
-              <h3 className="advisory-card-title">
-                {language === "hi" ? "शुक्रवार बंदी नियम" : "Friday Taj Closure Rule"}
-              </h3>
-              <p className="advisory-card-text">
-                {language === "hi"
-                  ? "ताजमहल प्रत्येक शुक्रवार को नमाज के लिए बंद रहता है। शुक्रवार को फतेहपुर सीकरी, आगरा किला व मथुरा-वृंदावन टूर खुले रहते हैं।"
-                  : "The Taj Mahal is closed every Friday. Other monuments (Agra Fort, Baby Taj, Fatehpur Sikri, Mathura) operate normally on Fridays."}
-              </p>
-            </div>
-
-            <div className="advisory-card">
-              <div className="advisory-icon-wrap">🌅</div>
-              <h3 className="advisory-card-title">
-                {language === "hi" ? "सूर्योदय का जादुई समय" : "Best Photography Hours"}
-              </h3>
-              <p className="advisory-card-text">
-                {language === "hi"
-                  ? "सुबह 6:00 से 8:30 बजे के बीच ताजमहल में सबसे सुंदर रोशनी और न्यूनतम भीड़ होती है। फोटोग्राफी के लिए यह समय सर्वोत्तम है।"
-                  : "06:00 AM to 08:30 AM offers mesmerizing golden light, cool morning breezes, and zero crowd reflections for photography."}
-              </p>
-            </div>
-
-            <div className="advisory-card">
-              <div className="advisory-icon-wrap">👟</div>
-              <h3 className="advisory-card-title">
-                {language === "hi" ? "पहनावा व जूते" : "Footwear & Dress Etiquette"}
-              </h3>
-              <p className="advisory-card-text">
-                {language === "hi"
-                  ? "ताजमहल के मुख्य संगमरमर चबूतरे पर जूता कवर आवश्यक हैं। मथुरा-वृंदावन मंदिरों में शालीन पोशाक पहनना अनिवार्य है।"
-                  : "Shoe covers are provided at the Taj Mahal mausoleum entrance. Modest shoulder-and-knee covering attire is required in Braj temples."}
-              </p>
-            </div>
-
-            <div className="advisory-card">
-              <div className="advisory-icon-wrap">🛡️</div>
-              <h3 className="advisory-card-title">
-                {language === "hi" ? "जीरो कमीशन गारंटी" : "Zero Commission Trap Guarantee"}
-              </h3>
-              <p className="advisory-card-text">
-                {language === "hi"
-                  ? "हमारे ड्राइवर आपको किसी भी कमीशन वाली मार्बल या कपड़े की दुकान पर जाने के लिए कभी मजबूर नहीं करेंगे। आपकी संतुष्टि ही हमारी प्राथमिकता है।"
-                  : "Our drivers are strictly prohibited from driving you to commission gift shops or fake emporiums. 100% honest local hospitality."}
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 8. Cancellation Policy Table */}
-      <section className="pkg-cancellation-section">
-        <div className="container">
-          <div className="cancellation-card">
-            <div className="cancellation-head">
-              <div className="cancel-badge">
-                {language === "hi" ? "पारदर्शी नीति" : "100% REFUND GUARANTEE"}
+              {/* Key Highlights / Quick Inclusions */}
+              <div className="bg-surface-container-low rounded-xl p-space-md flex flex-col gap-space-xs border border-border-warm shadow-sm">
+                <span className="text-label-caps text-secondary font-bold uppercase tracking-wider mb-1">
+                  Package Highlights
+                </span>
+                <div className="flex items-start gap-2.5 text-body-sm text-on-surface-variant">
+                  <span className="material-symbols-outlined text-terracotta-sandstone text-[18px] shrink-0 mt-0.5">
+                    directions_car
+                  </span>
+                  <span>
+                    <strong className="text-on-surface font-semibold">Private Doorstep Chauffeur:</strong> Sedan, Ertiga, Innova Crysta VIP, Tempo Traveller, or Urbania
+                  </span>
+                </div>
+                <div className="flex items-start gap-2.5 text-body-sm text-on-surface-variant">
+                  <span className="material-symbols-outlined text-terracotta-sandstone text-[18px] shrink-0 mt-0.5">
+                    toll
+                  </span>
+                  <span>
+                    <strong className="text-on-surface font-semibold">Expressway FastPass:</strong> Pre-cleared FASTag tolls &amp; interstate permits
+                  </span>
+                </div>
+                <div className="flex items-start gap-2.5 text-body-sm text-on-surface-variant">
+                  <span className="material-symbols-outlined text-terracotta-sandstone text-[18px] shrink-0 mt-0.5">
+                    history_edu
+                  </span>
+                  <span>
+                    <strong className="text-on-surface font-semibold">Licensed ASI Historian Guide:</strong> Expert English heritage narrative
+                  </span>
+                </div>
+                <div className="flex items-start gap-2.5 text-body-sm text-on-surface-variant">
+                  <span className="material-symbols-outlined text-terracotta-sandstone text-[18px] shrink-0 mt-0.5">
+                    restaurant
+                  </span>
+                  <span>
+                    <strong className="text-on-surface font-semibold">Hospitality Care:</strong> Chilled mineral water, sanitized cabin, and luggage assistance
+                  </span>
+                </div>
               </div>
-              <h2 className="cancellation-title">
-                {language === "hi" ? "रद्दीकरण व रिफंड अनुसूची" : "Tour Cancellation & Refund Schedule"}
-              </h2>
-              <p className="cancellation-subtitle">
-                {language === "hi"
-                  ? "डे कैब टूर 24 घंटे पहले रद्द करने पर 100% पूरा रिफंड मिलता है। मल्टी-डे टूर के लिए निम्न तालिका लागू होती है:"
-                  : "Same-day cab packages enjoy 100% free cancellation up to 24 hours before pickup. Multi-day tours follow our published transparent slabs:"}
-              </p>
-            </div>
 
-            <div className="cancellation-table-wrap">
-              <table className="cancellation-table">
-                <thead>
-                  <tr>
-                    <th>{language === "hi" ? "रद्दीकरण का समय" : "Notice Period Prior to Tour"}</th>
-                    <th>{language === "hi" ? "कटौती शुल्क" : "Cancellation Fee"}</th>
-                    <th>{language === "hi" ? "रिफंड राशि" : "Refund Amount"}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {cancellationSlabsTour.map((slab, i) => (
-                    <tr key={i}>
-                      <td><strong>{slab.days}</strong></td>
-                      <td>{slab.fee}</td>
-                      <td><span className="refund-pill">{slab.refund}</span></td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+              {/* Direct Booking CTAs */}
+              <div className="flex flex-col gap-2 pt-1">
+                <a
+                  href={bookStep1Url}
+                  className="w-full bg-primary hover:bg-terracotta-sunlit text-on-primary py-3.5 px-4 rounded-lg font-title-md text-title-md transition-all shadow-md flex items-center justify-center gap-2 group text-center"
+                >
+                  <span>Book This Tour Now</span>
+                  <span className="material-symbols-outlined text-[20px] group-hover:translate-x-1 transition-transform">
+                    arrow_forward
+                  </span>
+                </a>
+                <span className="text-center text-[12px] text-secondary font-medium">
+                  Select vehicle class &amp; pickup date in 2 easy steps
+                </span>
 
-            <p className="cancel-footer-note">
-              {language === "hi"
-                ? "सभी स्वीकृत रिफंड सीधे आपके मूल भुगतान स्रोत (बैंक खाता/यूपीआई/कार्ड) में 5–7 कार्यदिवसों के भीतर जमा कर दिए जाते हैं।"
-                : "All approved refunds are credited back to the original bank, UPI, or card account within 5 to 7 business days."}
-            </p>
+                <a
+                  className="w-full bg-ink-charcoal hover:bg-ink-slate text-ivory-surface py-3 px-4 rounded-lg font-label-lg text-label-lg transition-colors flex items-center justify-center gap-2 mt-1"
+                  href={whatsappUrl}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  <span className="material-symbols-outlined text-terracotta-sunlit text-[18px]">chat</span>
+                  <span>Chat with Concierge on WhatsApp</span>
+                </a>
+              </div>
+
+              {/* Trust & Peace-of-Mind Proof Signals */}
+              <div className="bg-sandstone-wash/60 p-space-md rounded-xl flex flex-col gap-2 text-[12px] text-on-surface-variant border border-border-warm/60">
+                <div className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-success-jade text-[18px] shrink-0">verified</span>
+                  <span><strong className="text-on-surface font-semibold">100% Full Refund Guarantee:</strong> Free cancellation up to 24h prior</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-gold-accent text-[18px] shrink-0">lock</span>
+                  <span><strong className="text-on-surface font-semibold">28% Advance Token Lock:</strong> Remaining balance upon tour completion</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-terracotta-sandstone text-[18px] shrink-0">no_meeting_room</span>
+                  <span><strong className="text-on-surface font-semibold">Zero Tourist Commission Traps:</strong> 100% authentic heritage time</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-primary text-[18px] shrink-0">support_agent</span>
+                  <span><strong className="text-on-surface font-semibold">24×7 Active Dispatch Desk:</strong> Chauffeur &amp; flight delay assistance</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* 9. Tour-Specific FAQ Accordion */}
-      <section className="pkg-faqs-section">
-        <div className="container">
-          <div className="section-head-center">
-            <span className="section-eyebrow">
-              {language === "hi" ? "सामान्य प्रश्न" : "TOUR FAQS"}
+      {/* INTERACTIVE ROUTE MAP & CORRIDOR */}
+      <section className="w-full bg-sandstone-wash/40 py-space-2xl border-t border-b border-border-warm/60">
+        <div className="max-w-7xl mx-auto px-margin-mobile lg:px-margin flex flex-col gap-space-xl">
+          <div className="flex flex-col gap-space-xs max-w-2xl">
+            <span className="text-label-caps text-terracotta-sandstone uppercase font-bold tracking-widest">
+              Expressway Corridor
             </span>
-            <h2 className="section-title">
-              {language === "hi" ? "टूर से जुड़े अक्सर पूछे जाने वाले सवाल" : "Frequently Asked Questions"}
-            </h2>
-            <p className="section-desc">
-              {language === "hi"
-                ? "इस पैकेज के बारे में यात्रियों द्वारा अक्सर पूछे जाने वाले महत्वपूर्ण प्रश्न।"
-                : "Everything you need to know about timings, guide services, child safety, and tickets."}
+            <h2 className="font-headline-lg text-headline-lg text-on-surface">The Seamless Expressway Transit</h2>
+            <p className="font-body-md text-body-md text-on-surface-variant">
+              Experience North India's prime 6-lane access-controlled expressways. Our verified chauffeur takes care of all electronic toll plazas and interstate permits while you recline in comfort.
             </p>
           </div>
+          {/* Corridor Map Card & Milestone Stops */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-center">
+            <div className="lg:col-span-7 rounded-xl overflow-hidden shadow-md">
+              <div
+                className="w-full h-80 lg:h-96 bg-cover bg-center rounded-xl relative"
+                style={{
+                  backgroundImage: `url("https://lh3.googleusercontent.com/aida-public/AB6AXuB5MplUWgIL3dBa34ksge2spKfOa_LJdpNiXZTHbwGt0HJ90RXV-xQehE_dNsw_shNP1dE9XU_hgbSObgOhTXH28BttgpGLWZ-bpeDgs0EQD8rjCeh1-16fy6FY8c_LBvIF9Wg-vou14nFagq6ah3sHX18MxOLFMqqPlpWBvfphCuUDuO-IhNmdOBDRWCESUiBQqjzD0CYpYJIwjYdV_aaaCb45l-rGexCnNH4hTfoEU_xxri2kUKtAtA")`,
+                }}
+              >
+                <div className="absolute inset-0 bg-ink-charcoal/20"></div>
+                <div className="absolute bottom-4 left-4 bg-surface/95 backdrop-blur-md p-space-sm rounded-lg shadow-md max-w-xs border border-border-warm">
+                  <span className="text-label-caps uppercase text-primary font-bold">Corridor Analytics</span>
+                  <p className="text-body-sm font-semibold text-on-surface">Delhi NCR → Yamuna Expressway → Taj Ganj</p>
+                  <p className="text-[12px] text-secondary">210 km • Average Transit: 3h 15m • 0 Traffic Jams</p>
+                </div>
+              </div>
+            </div>
+            <div className="lg:col-span-5 flex flex-col gap-space-md">
+              <div className="bg-surface-container-low p-space-md rounded-xl shadow-sm flex items-start gap-space-sm border border-border-warm/60">
+                <span className="material-symbols-outlined text-primary text-[24px] shrink-0 mt-1">speed</span>
+                <div>
+                  <h4 className="font-title-md text-title-md text-on-surface font-semibold">Pristine 100 km/h Highway Cruising</h4>
+                  <p className="font-body-sm text-body-sm text-secondary mt-0.5">
+                    Eliminates the congested old GT road. Constant tire pressure monitored fleet for top security at high speeds.
+                  </p>
+                </div>
+              </div>
+              <div className="bg-surface-container-low p-space-md rounded-xl shadow-sm flex items-start gap-space-sm border border-border-warm/60">
+                <span className="material-symbols-outlined text-gold-accent text-[24px] shrink-0 mt-1">local_cafe</span>
+                <div>
+                  <h4 className="font-title-md text-title-md text-on-surface font-semibold">Express Rest Stops at Jewel of Yamuna</h4>
+                  <p className="font-body-sm text-body-sm text-secondary mt-0.5">
+                    Optional 15-minute quick stop at certified hygienic plazas featuring Costa Coffee, Subway, and spotless restrooms.
+                  </p>
+                </div>
+              </div>
+              <div className="bg-surface-container-low p-space-md rounded-xl shadow-sm flex items-start gap-space-sm border border-border-warm/60">
+                <span className="material-symbols-outlined text-terracotta-sandstone text-[24px] shrink-0 mt-1">electric_rickshaw</span>
+                <div>
+                  <h4 className="font-title-md text-title-md text-on-surface font-semibold">Eco-Zone Battery Cart Transit</h4>
+                  <p className="font-body-sm text-body-sm text-secondary mt-0.5">
+                    Pre-reserved golf cart drops you directly from Shilpgram parking right to the East Gate turnstiles without walking.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-          <div className="pkg-faqs-accordion">
-            {faqs.map((faq, idx) => {
-              const isOpen = expandedFaq === idx;
+      {/* CUSTOMER REVIEWS & PHOTO TESTIMONIALS */}
+      <section className="w-full max-w-7xl mx-auto px-margin-mobile lg:px-margin py-space-3xl">
+        <div className="flex flex-col gap-space-2xl">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-space-md">
+            <div>
+              <span className="text-label-caps text-terracotta-sandstone uppercase font-bold tracking-widest">
+                Guest Impressions
+              </span>
+              <h2 className="font-headline-lg text-headline-lg text-on-surface">Verified Voyagers</h2>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="flex text-gold-accent">
+                {[...Array(5)].map((_, i) => (
+                  <span key={i} className="material-symbols-outlined text-[20px]">star</span>
+                ))}
+              </div>
+              <span className="font-bold text-on-surface">4.98 Rating</span>
+              <span className="text-secondary text-body-sm">• 650+ Reviews</span>
+            </div>
+          </div>
+          {/* Testimonial Cards Mosaic */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-space-lg">
+            {/* Review 1 */}
+            <div className="bg-surface-container-low p-space-lg rounded-xl shadow-sm flex flex-col justify-between gap-space-md border border-border-warm/60">
+              <div className="flex flex-col gap-space-xs">
+                <div className="flex items-center justify-between">
+                  <div className="flex text-gold-accent">
+                    {[...Array(5)].map((_, i) => (
+                      <span key={i} className="material-symbols-outlined text-[16px]">star</span>
+                    ))}
+                  </div>
+                  <span className="text-label-caps text-secondary">April 2025</span>
+                </div>
+                <p className="font-headline-sm text-[20px] text-on-surface font-serif italic">
+                  "Worth every second of the 2:30 AM wake up call. Truly ethereal."
+                </p>
+                <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                  Driver Vikram was waiting outside our Aerocity hotel at 02:20 AM. The Innova Crysta was spotless. Seeing the Taj emerge out of the dawn fog with our guide Tariq explaining the architecture without another soul in our photo was unforgettable. Breakfast at Courtyard Marriott was top class.
+                </p>
+              </div>
+              <div className="flex items-center gap-space-sm pt-space-xs">
+                <img
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuDoasPiitvHvyFvUqAWzXDFCGXiP1aBrZ67L-jI6N9FMA2qIsGmAiSYQRBc9QxBZGj9Mib7R50xaoEa7CFKAle8Vcz0IDnbOCNSIjXO_agmmAGIfbv9ZdK3PVX8sXB4T4cLVGUD-EIaTnIc44WioqxcR5eW_quOTdh8IEXPDcI3DxVmPvx2EQBKziB5J0L4AYsJaEAEym8zPM2NSv98fwU7GWmSIsOeiLlXCsCHKkI4Znu294QRWhAmZg"
+                  alt="Claire & William H."
+                  className="w-10 h-10 rounded-full object-cover shrink-0 shadow-sm"
+                />
+                <div className="flex flex-col">
+                  <span className="font-title-md text-body-md font-semibold text-on-surface">Claire &amp; William H.</span>
+                  <span className="text-body-sm text-secondary">London, United Kingdom</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Review 2 */}
+            <div className="bg-surface-container-low p-space-lg rounded-xl shadow-sm flex flex-col justify-between gap-space-md border border-border-warm/60">
+              <div className="flex flex-col gap-space-xs">
+                <div className="flex items-center justify-between">
+                  <div className="flex text-gold-accent">
+                    {[...Array(5)].map((_, i) => (
+                      <span key={i} className="material-symbols-outlined text-[16px]">star</span>
+                    ))}
+                  </div>
+                  <span className="text-label-caps text-secondary">March 2025</span>
+                </div>
+                <p className="font-headline-sm text-[20px] text-on-surface font-serif italic">
+                  "Honest, prompt and completely free of tourist shopping tricks."
+                </p>
+                <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                  Having been to India before, we were wary of driver commission stops. SK Baghel's agency stayed true to their promise: not a single pressured stop. Just pure history, magnificent views of Agra Fort, and smooth expressway cruising back to Gurgaon by 4 PM.
+                </p>
+              </div>
+              <div className="flex items-center gap-space-sm pt-space-xs">
+                <img
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBd9RCW5uuhOXQGC0Vx4YUS6e8fr4A9xEpwT9B99QN8flc7YWRptTRoZhuSaSGZfYiDN-E1biwiXzII0SZVbslArKmXfT7dw6nHR38bRE-h9ENzfCJvdCRVVojK8lFSnNtu3FHLNiCTtVuOcf3riy7bUyPL2Xjdceu3TfRdtGkmPMPCV3O2SZLpOKAfAnUhu15mZsdXCzsoVT2zC9it_-DjHXGqXju_QBkbZkHtin3pjVmK0ogIyXT4mg"
+                  alt="Rajesh & Smita Sharma"
+                  className="w-10 h-10 rounded-full object-cover shrink-0 shadow-sm"
+                />
+                <div className="flex flex-col">
+                  <span className="font-title-md text-body-md font-semibold text-on-surface">Rajesh &amp; Smita Sharma</span>
+                  <span className="text-body-sm text-secondary">San Jose, California</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Review 3 */}
+            <div className="bg-surface-container-low p-space-lg rounded-xl shadow-sm flex flex-col justify-between gap-space-md border border-border-warm/60">
+              <div className="flex flex-col gap-space-xs">
+                <div className="flex items-center justify-between">
+                  <div className="flex text-gold-accent">
+                    {[...Array(5)].map((_, i) => (
+                      <span key={i} className="material-symbols-outlined text-[16px]">star</span>
+                    ))}
+                  </div>
+                  <span className="text-label-caps text-secondary">February 2025</span>
+                </div>
+                <p className="font-headline-sm text-[20px] text-on-surface font-serif italic">
+                  "The 28% advance booking gave absolute peace of mind."
+                </p>
+                <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                  Booking online while in Sydney was simple. We paid the 28% token lock, received WhatsApp chauffeur dispatch details immediately, and settled the rest easily on drop-off. The morning breakfast buffet alone was exceptional. Highly recommended!
+                </p>
+              </div>
+              <div className="flex items-center gap-space-sm pt-space-xs">
+                <img
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuDPuUl77zgjEFRMI4neU9dYWnuwt7Ttiw0MY7msBIlxUHqTDUd2kxRSwx-4Ukr4fTOW6ZlmBO3WlTTNoh6b2u74YBJ7Nk6IaGr5gOJUF_tpJHUsOl4MrG-6fu8GS3rEplOE9TDImUCwvBSMqMeBlrtxPJ_fVTikjQxCZ7wCSwxUrfuetRoACOCCsW7miZhTSiZG1ZpVYcpDFIfnq6eIfGUCHMBKehblO7kWxKXTlEXlu6ra8nUpy2nU2w"
+                  alt="Marcus & Delphine B."
+                  className="w-10 h-10 rounded-full object-cover shrink-0 shadow-sm"
+                />
+                <div className="flex flex-col">
+                  <span className="font-title-md text-body-md font-semibold text-on-surface">Marcus &amp; Delphine B.</span>
+                  <span className="text-body-sm text-secondary">Sydney, Australia</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SPECIALIST FAQ DRAWER ACCORDION */}
+      <section className="w-full bg-surface-container-low py-space-2xl border-t border-border-warm/60">
+        <div className="max-w-4xl mx-auto px-margin-mobile lg:px-margin flex flex-col gap-space-xl">
+          <div className="text-center flex flex-col gap-space-xs">
+            <span className="text-label-caps text-terracotta-sandstone uppercase font-bold tracking-widest">
+              Clear Inquiries
+            </span>
+            <h2 className="font-headline-lg text-headline-lg text-on-surface">Frequently Asked Questions</h2>
+            <p className="font-body-md text-body-md text-on-surface-variant">
+              Everything you need to know about the tour departure, entrance protocols, and luxury transit.
+            </p>
+          </div>
+          <div className="flex flex-col gap-space-sm" id="faq-accordion">
+            {TOUR_FAQS.map((faq, index) => {
+              const isOpen = openFaq === index;
               return (
-                <div key={idx} className={`pkg-faq-item ${isOpen ? "open" : ""}`}>
-                  <button
-                    type="button"
-                    className="pkg-faq-btn"
-                    onClick={() => toggleFaq(idx)}
-                    aria-expanded={isOpen}
-                    aria-controls={`pkg-faq-ans-${idx}`}
-                  >
-                    <span className="pkg-faq-q">
-                      {language === "hi" ? faq.q.hi : faq.q.en}
-                    </span>
-                    <span className="pkg-faq-chevron" aria-hidden="true">
-                      {isOpen ? "−" : "+"}
-                    </span>
-                  </button>
-                  {isOpen && (
-                    <div
-                      id={`pkg-faq-ans-${idx}`}
-                      className="pkg-faq-body"
-                      role="region"
-                      aria-labelledby={`pkg-faq-btn-${idx}`}
+                <div
+                  key={index}
+                  className="bg-surface rounded-xl p-space-md shadow-sm border border-border-warm/60 cursor-pointer transition-all"
+                  onClick={() => setOpenFaq(isOpen ? null : index)}
+                >
+                  <div className="flex items-center justify-between gap-space-sm">
+                    <h4 className="font-title-md text-title-md text-on-surface font-medium">{faq.q}</h4>
+                    <span
+                      className={`material-symbols-outlined text-primary text-[20px] transition-transform duration-200 ${
+                        isOpen ? "rotate-180" : ""
+                      }`}
                     >
-                      <p>{language === "hi" ? faq.a.hi : faq.a.en}</p>
+                      expand_more
+                    </span>
+                  </div>
+                  {isOpen && (
+                    <div className="pt-space-sm text-body-md text-on-surface-variant leading-relaxed">
+                      {faq.a}
                     </div>
                   )}
                 </div>
@@ -972,52 +821,39 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
         </div>
       </section>
 
-      {/* 10. 24x7 Custom Tour Planning & Dispatch Banner */}
-      <section className="pkg-cta-section">
-        <div className="container">
-          <div className="pkg-cta-banner">
-            <div className="pkg-cta-text">
-              <span className="pkg-cta-eyebrow">
-                {language === "hi" ? "कस्टम टूर योजना" : "NEED A CUSTOM ITINERARY?"}
-              </span>
-              <h2 className="pkg-cta-title">
-                {language === "hi"
-                  ? "अपनी पसंद के अनुसार पैकेज कस्टमाइज़ कराएं"
-                  : "Tailor This Tour Exactly to Your Schedule"}
-              </h2>
-              <p className="pkg-cta-desc">
-                {language === "hi"
-                  ? "परिवार, समूह या विदेशी मेहमानों के लिए विशेष समय, गाइड अथवा वाहन व्यवस्था हेतु हमारे स्थानीय सहायता डेस्क से तुरंत संपर्क करें।"
-                  : "Traveling with family, corporate delegates, or international guests? Speak with our Taj Ganj dispatch team for customized timing and vehicle upgrades."}
-              </p>
-            </div>
-
-            <div className="pkg-cta-actions">
-              <a
-                href={`tel:${contact.phone}`}
-                className="button button-primary"
-              >
-                📞 {contact.phoneDisplay}
-              </a>
-              <a
-                href={whatsappInquiryUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="button button-whatsapp"
-              >
-                💬 {language === "hi" ? "व्हाट्सएप चैट" : "WhatsApp Chat"}
-              </a>
-              <a
-                href={`/book.html?package=${pkg.slug}`}
-                className="button button-outline"
-              >
-                {language === "hi" ? "ऑनलाइन बुकिंग ↗" : "Book Online ↗"}
-              </a>
-            </div>
+      {/* BOTTOM CALL TO ACTION STRIP */}
+      <section className="w-full bg-ink-charcoal text-ivory-surface py-space-xl px-margin-mobile lg:px-margin">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-space-lg">
+          <div className="flex flex-col gap-1">
+            <span className="text-label-caps text-gold-accent uppercase font-bold tracking-widest">
+              Limited Daily Capacity
+            </span>
+            <h3 className="font-headline-md text-headline-md text-surface">
+              Ready to experience {pkg.name}?
+            </h3>
+            <p className="text-body-sm text-secondary-fixed-dim">
+              Book today with only ₹{advanceAmount.toLocaleString("en-IN")} advance token (28%). Free cancellation up to 24 hours prior.
+            </p>
+          </div>
+          <div className="flex items-center gap-space-sm shrink-0">
+            <a
+              className="px-5 py-3 rounded-lg bg-surface/10 hover:bg-surface/20 text-surface text-label-lg font-semibold flex items-center gap-2 transition-colors"
+              href={`tel:${contact.phone}`}
+            >
+              <span className="material-symbols-outlined text-gold-accent text-[18px]">call</span>
+              <span>Call Desk</span>
+            </a>
+            <a
+              className="px-6 py-3 rounded-lg bg-terracotta-sandstone hover:bg-terracotta-sunlit text-on-primary text-label-lg font-semibold shadow-md transition-all flex items-center gap-2"
+              href={bookStep1Url}
+            >
+              <span>Book Tour Now</span>
+              <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+            </a>
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }
 

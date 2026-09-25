@@ -93,42 +93,33 @@ const hindiRoutePairs = [
   "agra-darshan-taxi",
 ];
 
-// Full manifest of static paths to render
+// Full manifest of static paths to render (English only)
 const routesToRender: string[] = [
   // Root & Home
   "/",
   "/en/",
-  "/hi/",
 
   // Booking Funnel & 404 Recovery
   "/book.html",
   "/book/",
   "/en/book/",
-  "/hi/book/",
   "/404.html",
   "/en/404/",
-  "/hi/404/",
 
-  // English & Hindi Hubs (9 * 2 = 18)
-  ...hubRoutes.flatMap((hub) => [`/en/${hub}/`, `/hi/${hub}/`]),
+  // English Hubs (9)
+  ...hubRoutes.map((hub) => `/en/${hub}/`),
 
-  // Fleet / Vehicles (5 * 2 = 10)
-  ...vehicleRoutes.flatMap((v) => [`/en/vehicles/${v}/`, `/hi/vehicles/${v}/`]),
+  // Fleet / Vehicles (5)
+  ...vehicleRoutes.map((v) => `/en/vehicles/${v}/`),
 
-  // Vehicle Aliases (2 * 2 = 4)
-  ...vehicleAliases.flatMap((v) => [`/en/vehicles/${v}/`, `/hi/vehicles/${v}/`]),
+  // Vehicle Aliases (2)
+  ...vehicleAliases.map((v) => `/en/vehicles/${v}/`),
 
-  // Tour Packages (6 * 2 = 12)
-  ...packageRoutes.flatMap((p) => [`/en/packages/${p}/`, `/hi/packages/${p}/`]),
+  // Tour Packages (6)
+  ...packageRoutes.map((p) => `/en/packages/${p}/`),
 
   // English Routes (8)
   ...routePairs.map((r) => `/en/${r}/`),
-
-  // Hindi Routes (English slugs under /hi/) (8)
-  ...routePairs.map((r) => `/hi/${r}/`),
-
-  // Hindi Routes (Hindi transliterated slugs under /hi/) (8)
-  ...hindiRoutePairs.map((r) => `/hi/${r}/`),
 ];
 
 // Legacy HTML redirect stubs for backward compatibility

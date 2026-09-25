@@ -19,9 +19,7 @@ export const marketingHubs = [
 export const marketingDetailPrefixes = ["vehicles", "packages"] as const;
 
 export const appRoutes: AppRoute[] = [
-  { path: "/", page: "home", localized: true },
-  { path: "/hi/", page: "home", localized: true },
+  { path: "/", page: "home", localized: false },
   { path: "/book.html", page: "booking", localized: false },
-  { path: "/en/*", page: "marketing", localized: true },
-  { path: "/hi/*", page: "marketing", localized: true }
+  { path: "/en/*", page: "marketing", localized: false }
 ];

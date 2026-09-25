@@ -3,641 +3,258 @@
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://skbagheltravels.in/</loc>
-    <lastmod>2026-09-17</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.00</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/" />
   </url>
   <url>
     <loc>https://skbagheltravels.in/en/</loc>
-    <lastmod>2026-09-17</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.90</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/" />
-  </url>
-  <url>
-    <loc>https://skbagheltravels.in/hi/</loc>
-    <lastmod>2026-09-17</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.00</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/" />
   </url>
   <url>
     <loc>https://skbagheltravels.in/en/services/</loc>
-    <lastmod>2026-09-17</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/services/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/services/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/services/" />
-  </url>
-  <url>
-    <loc>https://skbagheltravels.in/hi/services/</loc>
-    <lastmod>2026-09-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.90</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/services/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/services/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/services/" />
   </url>
   <url>
     <loc>https://skbagheltravels.in/en/routes/</loc>
-    <lastmod>2026-09-17</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/routes/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/routes/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/routes/" />
-  </url>
-  <url>
-    <loc>https://skbagheltravels.in/hi/routes/</loc>
-    <lastmod>2026-09-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.90</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/routes/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/routes/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/routes/" />
   </url>
   <url>
     <loc>https://skbagheltravels.in/en/packages/</loc>
-    <lastmod>2026-09-17</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/packages/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/packages/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/packages/" />
-  </url>
-  <url>
-    <loc>https://skbagheltravels.in/hi/packages/</loc>
-    <lastmod>2026-09-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.90</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/packages/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/packages/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/packages/" />
   </url>
   <url>
     <loc>https://skbagheltravels.in/en/fleet/</loc>
-    <lastmod>2026-09-17</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/fleet/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/fleet/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/fleet/" />
-  </url>
-  <url>
-    <loc>https://skbagheltravels.in/hi/fleet/</loc>
-    <lastmod>2026-09-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.90</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/fleet/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/fleet/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/fleet/" />
   </url>
   <url>
     <loc>https://skbagheltravels.in/en/about/</loc>
-    <lastmod>2026-09-17</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/about/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/about/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/about/" />
-  </url>
-  <url>
-    <loc>https://skbagheltravels.in/hi/about/</loc>
-    <lastmod>2026-09-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.90</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/about/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/about/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/about/" />
   </url>
   <url>
     <loc>https://skbagheltravels.in/en/contact/</loc>
-    <lastmod>2026-09-17</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/contact/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/contact/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/contact/" />
-  </url>
-  <url>
-    <loc>https://skbagheltravels.in/hi/contact/</loc>
-    <lastmod>2026-09-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.90</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/contact/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/contact/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/contact/" />
   </url>
   <url>
     <loc>https://skbagheltravels.in/en/faq/</loc>
-    <lastmod>2026-09-17</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/faq/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/faq/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/faq/" />
-  </url>
-  <url>
-    <loc>https://skbagheltravels.in/hi/faq/</loc>
-    <lastmod>2026-09-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.90</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/faq/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/faq/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/faq/" />
   </url>
   <url>
     <loc>https://skbagheltravels.in/en/privacy/</loc>
-    <lastmod>2026-09-17</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/privacy/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/privacy/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/privacy/" />
-  </url>
-  <url>
-    <loc>https://skbagheltravels.in/hi/privacy/</loc>
-    <lastmod>2026-09-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.90</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/privacy/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/privacy/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/privacy/" />
   </url>
   <url>
     <loc>https://skbagheltravels.in/en/terms/</loc>
-    <lastmod>2026-09-17</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/terms/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/terms/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/terms/" />
-  </url>
-  <url>
-    <loc>https://skbagheltravels.in/hi/terms/</loc>
-    <lastmod>2026-09-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.90</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/terms/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/terms/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/terms/" />
   </url>
   <url>
     <loc>https://skbagheltravels.in/en/vehicles/sedan/</loc>
-    <lastmod>2026-09-17</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/vehicles/sedan/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/vehicles/sedan/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/vehicles/sedan/" />
-  </url>
-  <url>
-    <loc>https://skbagheltravels.in/hi/vehicles/sedan/</loc>
-    <lastmod>2026-09-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/vehicles/sedan/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/vehicles/sedan/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/vehicles/sedan/" />
   </url>
   <url>
     <loc>https://skbagheltravels.in/en/vehicles/ertiga/</loc>
-    <lastmod>2026-09-17</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/vehicles/ertiga/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/vehicles/ertiga/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/vehicles/ertiga/" />
-  </url>
-  <url>
-    <loc>https://skbagheltravels.in/hi/vehicles/ertiga/</loc>
-    <lastmod>2026-09-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/vehicles/ertiga/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/vehicles/ertiga/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/vehicles/ertiga/" />
   </url>
   <url>
     <loc>https://skbagheltravels.in/en/vehicles/innova-crysta/</loc>
-    <lastmod>2026-09-17</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/vehicles/innova-crysta/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/vehicles/innova-crysta/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/vehicles/innova-crysta/" />
-  </url>
-  <url>
-    <loc>https://skbagheltravels.in/hi/vehicles/innova-crysta/</loc>
-    <lastmod>2026-09-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/vehicles/innova-crysta/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/vehicles/innova-crysta/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/vehicles/innova-crysta/" />
   </url>
   <url>
     <loc>https://skbagheltravels.in/en/vehicles/tempo-traveller/</loc>
-    <lastmod>2026-09-17</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/vehicles/tempo-traveller/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/vehicles/tempo-traveller/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/vehicles/tempo-traveller/" />
-  </url>
-  <url>
-    <loc>https://skbagheltravels.in/hi/vehicles/tempo-traveller/</loc>
-    <lastmod>2026-09-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/vehicles/tempo-traveller/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/vehicles/tempo-traveller/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/vehicles/tempo-traveller/" />
   </url>
   <url>
     <loc>https://skbagheltravels.in/en/vehicles/urbania/</loc>
-    <lastmod>2026-09-17</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/vehicles/urbania/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/vehicles/urbania/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/vehicles/urbania/" />
-  </url>
-  <url>
-    <loc>https://skbagheltravels.in/hi/vehicles/urbania/</loc>
-    <lastmod>2026-09-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/vehicles/urbania/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/vehicles/urbania/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/vehicles/urbania/" />
   </url>
   <url>
     <loc>https://skbagheltravels.in/en/vehicles/innova/</loc>
-    <lastmod>2026-09-17</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/vehicles/innova/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/vehicles/innova/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/vehicles/innova/" />
-  </url>
-  <url>
-    <loc>https://skbagheltravels.in/hi/vehicles/innova/</loc>
-    <lastmod>2026-09-17</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/vehicles/innova/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/vehicles/innova/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/vehicles/innova/" />
   </url>
   <url>
     <loc>https://skbagheltravels.in/en/vehicles/tempo/</loc>
-    <lastmod>2026-09-17</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/vehicles/tempo/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/vehicles/tempo/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/vehicles/tempo/" />
-  </url>
-  <url>
-    <loc>https://skbagheltravels.in/hi/vehicles/tempo/</loc>
-    <lastmod>2026-09-17</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/vehicles/tempo/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/vehicles/tempo/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/vehicles/tempo/" />
   </url>
   <url>
     <loc>https://skbagheltravels.in/en/packages/taj-mahal-sunrise-tour/</loc>
-    <lastmod>2026-09-17</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/packages/taj-mahal-sunrise-tour/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/packages/taj-mahal-sunrise-tour/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/packages/taj-mahal-sunrise-tour/" />
-  </url>
-  <url>
-    <loc>https://skbagheltravels.in/hi/packages/taj-mahal-sunrise-tour/</loc>
-    <lastmod>2026-09-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/packages/taj-mahal-sunrise-tour/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/packages/taj-mahal-sunrise-tour/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/packages/taj-mahal-sunrise-tour/" />
   </url>
   <url>
     <loc>https://skbagheltravels.in/en/packages/agra-sightseeing/</loc>
-    <lastmod>2026-09-17</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/packages/agra-sightseeing/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/packages/agra-sightseeing/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/packages/agra-sightseeing/" />
-  </url>
-  <url>
-    <loc>https://skbagheltravels.in/hi/packages/agra-sightseeing/</loc>
-    <lastmod>2026-09-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/packages/agra-sightseeing/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/packages/agra-sightseeing/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/packages/agra-sightseeing/" />
   </url>
   <url>
     <loc>https://skbagheltravels.in/en/packages/agra-unhurried/</loc>
-    <lastmod>2026-09-17</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/packages/agra-unhurried/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/packages/agra-unhurried/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/packages/agra-unhurried/" />
-  </url>
-  <url>
-    <loc>https://skbagheltravels.in/hi/packages/agra-unhurried/</loc>
-    <lastmod>2026-09-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/packages/agra-unhurried/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/packages/agra-unhurried/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/packages/agra-unhurried/" />
   </url>
   <url>
     <loc>https://skbagheltravels.in/en/packages/mathura-vrindavan/</loc>
-    <lastmod>2026-09-17</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/packages/mathura-vrindavan/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/packages/mathura-vrindavan/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/packages/mathura-vrindavan/" />
-  </url>
-  <url>
-    <loc>https://skbagheltravels.in/hi/packages/mathura-vrindavan/</loc>
-    <lastmod>2026-09-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/packages/mathura-vrindavan/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/packages/mathura-vrindavan/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/packages/mathura-vrindavan/" />
   </url>
   <url>
     <loc>https://skbagheltravels.in/en/packages/gatimaan-express-agra-tour/</loc>
-    <lastmod>2026-09-17</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/packages/gatimaan-express-agra-tour/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/packages/gatimaan-express-agra-tour/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/packages/gatimaan-express-agra-tour/" />
-  </url>
-  <url>
-    <loc>https://skbagheltravels.in/hi/packages/gatimaan-express-agra-tour/</loc>
-    <lastmod>2026-09-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/packages/gatimaan-express-agra-tour/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/packages/gatimaan-express-agra-tour/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/packages/gatimaan-express-agra-tour/" />
   </url>
   <url>
     <loc>https://skbagheltravels.in/en/packages/golden-triangle/</loc>
-    <lastmod>2026-09-17</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/packages/golden-triangle/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/packages/golden-triangle/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/packages/golden-triangle/" />
-  </url>
-  <url>
-    <loc>https://skbagheltravels.in/hi/packages/golden-triangle/</loc>
-    <lastmod>2026-09-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/packages/golden-triangle/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/packages/golden-triangle/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/packages/golden-triangle/" />
   </url>
   <url>
     <loc>https://skbagheltravels.in/en/agra-to-delhi-taxi/</loc>
-    <lastmod>2026-09-17</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/agra-to-delhi-taxi/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/agra-se-delhi-taxi/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/agra-to-delhi-taxi/" />
-  </url>
-  <url>
-    <loc>https://skbagheltravels.in/hi/agra-se-delhi-taxi/</loc>
-    <lastmod>2026-09-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/agra-to-delhi-taxi/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/agra-se-delhi-taxi/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/agra-to-delhi-taxi/" />
-  </url>
-  <url>
-    <loc>https://skbagheltravels.in/hi/agra-to-delhi-taxi/</loc>
-    <lastmod>2026-09-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.80</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/agra-to-delhi-taxi/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/agra-se-delhi-taxi/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/agra-to-delhi-taxi/" />
   </url>
   <url>
     <loc>https://skbagheltravels.in/en/delhi-to-agra-taxi/</loc>
-    <lastmod>2026-09-17</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/delhi-to-agra-taxi/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/delhi-se-agra-taxi/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/delhi-to-agra-taxi/" />
-  </url>
-  <url>
-    <loc>https://skbagheltravels.in/hi/delhi-se-agra-taxi/</loc>
-    <lastmod>2026-09-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/delhi-to-agra-taxi/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/delhi-se-agra-taxi/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/delhi-to-agra-taxi/" />
-  </url>
-  <url>
-    <loc>https://skbagheltravels.in/hi/delhi-to-agra-taxi/</loc>
-    <lastmod>2026-09-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.80</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/delhi-to-agra-taxi/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/delhi-se-agra-taxi/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/delhi-to-agra-taxi/" />
   </url>
   <url>
     <loc>https://skbagheltravels.in/en/agra-to-jaipur-taxi/</loc>
-    <lastmod>2026-09-17</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/agra-to-jaipur-taxi/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/agra-se-jaipur-taxi/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/agra-to-jaipur-taxi/" />
-  </url>
-  <url>
-    <loc>https://skbagheltravels.in/hi/agra-se-jaipur-taxi/</loc>
-    <lastmod>2026-09-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/agra-to-jaipur-taxi/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/agra-se-jaipur-taxi/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/agra-to-jaipur-taxi/" />
-  </url>
-  <url>
-    <loc>https://skbagheltravels.in/hi/agra-to-jaipur-taxi/</loc>
-    <lastmod>2026-09-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.80</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/agra-to-jaipur-taxi/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/agra-se-jaipur-taxi/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/agra-to-jaipur-taxi/" />
   </url>
   <url>
     <loc>https://skbagheltravels.in/en/delhi-to-jaipur-taxi/</loc>
-    <lastmod>2026-09-17</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/delhi-to-jaipur-taxi/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/delhi-se-jaipur-taxi/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/delhi-to-jaipur-taxi/" />
-  </url>
-  <url>
-    <loc>https://skbagheltravels.in/hi/delhi-se-jaipur-taxi/</loc>
-    <lastmod>2026-09-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/delhi-to-jaipur-taxi/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/delhi-se-jaipur-taxi/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/delhi-to-jaipur-taxi/" />
-  </url>
-  <url>
-    <loc>https://skbagheltravels.in/hi/delhi-to-jaipur-taxi/</loc>
-    <lastmod>2026-09-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.80</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/delhi-to-jaipur-taxi/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/delhi-se-jaipur-taxi/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/delhi-to-jaipur-taxi/" />
   </url>
   <url>
     <loc>https://skbagheltravels.in/en/agra-to-gwalior-taxi/</loc>
-    <lastmod>2026-09-17</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/agra-to-gwalior-taxi/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/agra-se-gwalior-taxi/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/agra-to-gwalior-taxi/" />
-  </url>
-  <url>
-    <loc>https://skbagheltravels.in/hi/agra-se-gwalior-taxi/</loc>
-    <lastmod>2026-09-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/agra-to-gwalior-taxi/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/agra-se-gwalior-taxi/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/agra-to-gwalior-taxi/" />
-  </url>
-  <url>
-    <loc>https://skbagheltravels.in/hi/agra-to-gwalior-taxi/</loc>
-    <lastmod>2026-09-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.80</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/agra-to-gwalior-taxi/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/agra-se-gwalior-taxi/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/agra-to-gwalior-taxi/" />
   </url>
   <url>
     <loc>https://skbagheltravels.in/en/agra-to-lucknow-taxi/</loc>
-    <lastmod>2026-09-17</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/agra-to-lucknow-taxi/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/agra-se-lucknow-taxi/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/agra-to-lucknow-taxi/" />
-  </url>
-  <url>
-    <loc>https://skbagheltravels.in/hi/agra-se-lucknow-taxi/</loc>
-    <lastmod>2026-09-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/agra-to-lucknow-taxi/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/agra-se-lucknow-taxi/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/agra-to-lucknow-taxi/" />
-  </url>
-  <url>
-    <loc>https://skbagheltravels.in/hi/agra-to-lucknow-taxi/</loc>
-    <lastmod>2026-09-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.80</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/agra-to-lucknow-taxi/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/agra-se-lucknow-taxi/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/agra-to-lucknow-taxi/" />
   </url>
   <url>
     <loc>https://skbagheltravels.in/en/agra-to-mathura-taxi/</loc>
-    <lastmod>2026-09-17</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/agra-to-mathura-taxi/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/agra-se-mathura-taxi/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/agra-to-mathura-taxi/" />
-  </url>
-  <url>
-    <loc>https://skbagheltravels.in/hi/agra-se-mathura-taxi/</loc>
-    <lastmod>2026-09-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/agra-to-mathura-taxi/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/agra-se-mathura-taxi/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/agra-to-mathura-taxi/" />
-  </url>
-  <url>
-    <loc>https://skbagheltravels.in/hi/agra-to-mathura-taxi/</loc>
-    <lastmod>2026-09-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.80</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/agra-to-mathura-taxi/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/agra-se-mathura-taxi/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/agra-to-mathura-taxi/" />
   </url>
   <url>
     <loc>https://skbagheltravels.in/en/agra-sightseeing-taxi/</loc>
-    <lastmod>2026-09-17</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/agra-sightseeing-taxi/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/agra-darshan-taxi/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/agra-sightseeing-taxi/" />
-  </url>
-  <url>
-    <loc>https://skbagheltravels.in/hi/agra-darshan-taxi/</loc>
-    <lastmod>2026-09-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/agra-sightseeing-taxi/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/agra-darshan-taxi/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/agra-sightseeing-taxi/" />
-  </url>
-  <url>
-    <loc>https://skbagheltravels.in/hi/agra-sightseeing-taxi/</loc>
-    <lastmod>2026-09-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.80</priority>
-    <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels.in/en/agra-sightseeing-taxi/" />
-    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels.in/hi/agra-darshan-taxi/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels.in/en/agra-sightseeing-taxi/" />
   </url>
 </urlset>

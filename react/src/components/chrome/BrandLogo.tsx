@@ -12,7 +12,7 @@ export interface BrandLogoProps {
 
 export function BrandLogo({
   href = "/",
-  subtitle = "TOUR & TRAVELS",
+  subtitle = "TOUR & TRAVELS AGRA",
   className = "",
   onClick,
 }: BrandLogoProps) {
@@ -28,7 +28,6 @@ export function BrandLogo({
   }, []);
 
   const startScramble = useCallback(() => {
-    // Respect user preference for reduced motion
     if (
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches
@@ -69,7 +68,7 @@ export function BrandLogo({
   return (
     <a
       href={href}
-      className={`brand ${className}`.trim()}
+      className={`flex items-center gap-space-sm group select-none ${className}`.trim()}
       aria-label="SK Baghel Tour & Travels"
       onMouseEnter={startScramble}
       onMouseLeave={stopScramble}
@@ -77,61 +76,68 @@ export function BrandLogo({
       onBlur={stopScramble}
       onClick={onClick}
     >
-      <span className="brand-mark" aria-hidden="true">
+      {/* Brand Emblem */}
+      <div className="w-10 h-10 rounded-lg bg-primary-container/10 border border-primary/20 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-all duration-300 shadow-xs shrink-0">
         <svg
           viewBox="0 0 32 32"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className="brand-compass-icon"
+          className="w-6 h-6 transform group-hover:rotate-45 transition-transform duration-500"
           aria-hidden="true"
         >
-          {/* Compass Outer Ring */}
+          {/* Outer Ring */}
           <circle
             cx="16"
             cy="16"
-            r="14"
+            r="13"
             stroke="currentColor"
             strokeWidth="1.5"
             strokeDasharray="2 2"
-            opacity="0.5"
+            opacity="0.6"
           />
-          {/* Compass Inner Cardinal Ring */}
+          {/* Inner Ring */}
           <circle
             cx="16"
             cy="16"
-            r="11"
-            stroke="var(--gold, #E5A044)"
+            r="10"
+            stroke="currentColor"
             strokeWidth="1.2"
           />
-          {/* Compass Needle - North (Gold Filled) */}
+          {/* North Point */}
           <path
-            d="M16 4L19 16H13L16 4Z"
-            fill="var(--gold, #E5A044)"
-          />
-          {/* Compass Needle - South (Charcoal / Muted) */}
-          <path
-            d="M16 28L13 16H19L16 28Z"
+            d="M16 5L19 16H13L16 5Z"
             fill="currentColor"
-            opacity="0.7"
           />
-          {/* Center Pivot Gem */}
+          {/* South Point */}
+          <path
+            d="M16 27L13 16H19L16 27Z"
+            fill="currentColor"
+            opacity="0.4"
+          />
+          {/* Center Gem */}
           <circle
             cx="16"
             cy="16"
-            r="2.2"
-            fill="var(--bg, #FFFFFF)"
-            stroke="var(--gold, #E5A044)"
-            strokeWidth="1.2"
+            r="2.5"
+            fill="#D99A3E"
           />
         </svg>
-      </span>
-      <span className="brand-copy">
-        <strong data-scramble className="brand-wordmark" aria-hidden="true">
+      </div>
+
+      {/* Brand Wordmark & Subtitle */}
+      <div className="flex flex-col">
+        <span
+          className="font-headline-sm text-[20px] font-semibold tracking-wide text-ink-charcoal group-hover:text-primary transition-colors leading-tight font-headline-sm"
+          aria-hidden="true"
+        >
           {displayText}
-        </strong>
-        <small className="brand-subtext">{subtitle}</small>
-      </span>
+        </span>
+        <span className="font-label-caps text-[10px] tracking-widest text-secondary uppercase font-semibold">
+          {subtitle}
+        </span>
+      </div>
     </a>
   );
 }
+
 export default BrandLogo;
