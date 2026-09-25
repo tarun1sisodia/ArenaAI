@@ -189,97 +189,112 @@ export function HomePage({ language = "en" }: HomePageProps) {
       >
         {/* ── HERO ── Taj Mahal sunrise background, text left / booking dock right */}
         <section className={`relative w-full ${showHeroAnimation ? "-mt-12 pt-16 sm:pt-24" : "pt-20 sm:pt-28"} pb-16 bg-ink-midnight text-on-primary overflow-hidden`}>
-          {/* Background image — Taj Mahal sunrise (matching animation) */}
+          {/* Background image — Taj Mahal sunrise, 80% opacity, full contrast & brightness */}
           <div
-            className="absolute inset-0 z-0 opacity-30 mix-blend-screen pointer-events-none bg-cover bg-[center_35%]"
+            className="absolute inset-0 z-0 opacity-80 pointer-events-none bg-cover bg-[center_35%] contrast-105 brightness-100"
             style={{
               backgroundImage:
                 'url("https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=2400&q=85")',
             }}
           />
-          {/* Bottom-fade gradient keeps text legible */}
-          <div className="absolute inset-0 bg-gradient-to-r from-ink-midnight via-ink-midnight/90 to-ink-midnight/45 z-0" />
+          {/* Subtle gradient overlay to ensure text and booking form legibility while leaving ~80% of the image vividly visible */}
+          <div className="absolute inset-0 bg-gradient-to-r from-ink-midnight/65 via-ink-midnight/35 to-ink-midnight/20 z-0 pointer-events-none" />
+          <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-ink-midnight to-transparent z-0 pointer-events-none" />
 
           <div className="relative z-10 max-w-[1280px] mx-auto px-margin-mobile lg:px-margin grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             {/* Left — headline + two CTAs only (hero stack discipline: 3 elements max) */}
             <div className="lg:col-span-6 flex flex-col items-start gap-space-md">
-              <span className="px-2.5 py-0.5 rounded-full bg-gold-accent/15 border border-gold-accent/30 text-gold-accent font-label-caps text-[9px] uppercase tracking-widest font-semibold backdrop-blur-sm">
+              <span className="px-2.5 py-0.5 rounded-full bg-gold-accent/15 border border-gold-accent/30 text-gold-accent font-label-caps text-[9px] uppercase tracking-widest font-semibold backdrop-blur-sm drop-shadow-sm">
                 Agra Outstation &amp; Local Cabs
               </span>
 
-              {/* 100% SEO-Safe Animated Headline: Semantic h1 with progressive motion reveal */}
-              <motion.h1
-                initial={isClient ? "hidden" : false}
-                animate={isClient ? "visible" : undefined}
-                variants={{
-                  hidden: { opacity: 0 },
-                  visible: {
-                    opacity: 1,
-                    transition: { staggerChildren: 0.12, delayChildren: 0.15 },
-                  },
-                }}
-                className="font-headline-hero text-headline-hero font-normal leading-[1.15]"
-              >
-                <span className="inline-block">
-                  <motion.span
-                    variants={{
-                      hidden: { opacity: 0, y: 16, filter: "blur(4px)" },
-                      visible: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
-                    }}
-                    className="inline-block mr-2"
-                  >
-                    Agra
-                  </motion.span>
-                  <motion.span
-                    variants={{
-                      hidden: { opacity: 0, y: 16, filter: "blur(4px)" },
-                      visible: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
-                    }}
-                    className="inline-block mr-2"
-                  >
-                    to
-                  </motion.span>
-                  <motion.span
-                    variants={{
-                      hidden: { opacity: 0, y: 16, filter: "blur(4px)" },
-                      visible: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
-                    }}
-                    className="inline-block"
-                  >
-                    anywhere,
-                  </motion.span>
-                </span>
-                <br />
-                <span className="relative inline-block mt-1">
-                  <motion.span
-                    variants={{
-                      hidden: { opacity: 0, y: 16, filter: "blur(4px)" },
-                      visible: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1], delay: 0.35 } },
-                    }}
-                    className="italic text-terracotta-sunlit inline-block"
-                  >
-                    in first-class comfort.
-                  </motion.span>
-                  {/* Handwriting stroke flourish line drawing underneath */}
-                  <motion.svg
-                    className="absolute -bottom-2 left-0 w-full h-3 text-gold-accent overflow-visible pointer-events-none"
-                    viewBox="0 0 300 12"
+              {/* 100% SEO-Safe Headline with SVG stroke-drawing 'hello' animation on the typography */}
+              <h1 className="font-headline-hero text-headline-hero font-normal leading-[1.15] w-full">
+                {/* Semantic HTML text for search crawlers & screen readers */}
+                <span className="sr-only">Agra to anywhere, in first-class comfort.</span>
+
+                {/* Animated typography stroke reveal replicating the Apple Hello effect */}
+                <div aria-hidden="true" className="select-none flex flex-col gap-1 w-full max-w-[560px]">
+                  {/* Line 1: Agra to anywhere, */}
+                  <svg
+                    viewBox="0 0 540 60"
+                    className="w-full max-w-[500px] h-auto overflow-visible drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)]"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
                   >
-                    <motion.path
-                      d="M2 9C60 3 150 2 298 7"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
+                    <motion.text
+                      x="2"
+                      y="46"
+                      className="font-serif tracking-normal"
+                      style={{
+                        fontFamily: "'EB Garamond', serif",
+                        fontSize: "46px",
+                        fontWeight: 400,
+                      }}
+                      stroke="#F9FAF6"
+                      strokeWidth="1.2"
                       strokeLinecap="round"
-                      initial={{ pathLength: 0, opacity: 0 }}
-                      animate={isClient ? { pathLength: 1, opacity: 0.85 } : { pathLength: 1, opacity: 0.85 }}
-                      transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.5 }}
-                    />
-                  </motion.svg>
-                </span>
-              </motion.h1>
-              <p className="font-body-lg text-body-lg text-ivory-surface/85 max-w-lg leading-relaxed">
+                      strokeLinejoin="round"
+                      fill="#F9FAF6"
+                      initial={isClient ? { strokeDasharray: 750, strokeDashoffset: 750, fillOpacity: 0 } : false}
+                      animate={isClient ? { strokeDashoffset: 0, fillOpacity: 1 } : undefined}
+                      transition={{
+                        strokeDashoffset: { duration: 1.6, ease: [0.25, 1, 0.5, 1], delay: 0.2 },
+                        fillOpacity: { duration: 0.6, delay: 1.1, ease: "easeOut" },
+                      }}
+                    >
+                      Agra to anywhere,
+                    </motion.text>
+                  </svg>
+
+                  {/* Line 2: in first-class comfort. + Gold flourish curve */}
+                  <div className="relative w-full max-w-[540px]">
+                    <svg
+                      viewBox="0 0 540 68"
+                      className="w-full max-w-[520px] h-auto overflow-visible drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)]"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <motion.text
+                        x="2"
+                        y="48"
+                        className="font-serif italic"
+                        style={{
+                          fontFamily: "'EB Garamond', serif",
+                          fontSize: "44px",
+                          fontStyle: "italic",
+                          fontWeight: 400,
+                        }}
+                        stroke="#E07A5F"
+                        strokeWidth="1.2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        fill="#E07A5F"
+                        initial={isClient ? { strokeDasharray: 750, strokeDashoffset: 750, fillOpacity: 0 } : false}
+                        animate={isClient ? { strokeDashoffset: 0, fillOpacity: 1 } : undefined}
+                        transition={{
+                          strokeDashoffset: { duration: 1.8, ease: [0.25, 1, 0.5, 1], delay: 0.8 },
+                          fillOpacity: { duration: 0.6, delay: 1.8, ease: "easeOut" },
+                        }}
+                      >
+                        in first-class comfort.
+                      </motion.text>
+
+                      {/* Cursive flourish underline stroke */}
+                      <motion.path
+                        d="M4 60 C80 54 180 53 380 57"
+                        stroke="#D99A3E"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        initial={isClient ? { pathLength: 0, opacity: 0 } : false}
+                        animate={isClient ? { pathLength: 1, opacity: 0.95 } : undefined}
+                        transition={{ duration: 1.0, delay: 2.0, ease: [0.16, 1, 0.3, 1] }}
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </h1>
+              <p className="font-body-lg text-body-lg text-ivory-surface max-w-lg leading-relaxed drop-shadow-[0_1px_4px_rgba(0,0,0,0.6)]">
                 Verified drivers, fixed fares, and all expressway tolls included. Direct pickup across Agra. Book online or on WhatsApp in 2 minutes.
               </p>
             <div className="flex flex-wrap items-center gap-space-sm">
