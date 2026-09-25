@@ -6,7 +6,6 @@ import { ReviewsMarquee } from "../components/home/ReviewsMarquee";
 import { WhatsAppIcon } from "../components/icons";
 import { SmoothScrollHero } from "@/components/ui/smooth-scroll-hero";
 import { InitialLoader } from "@/components/ui/InitialLoader";
-import { AppleHelloEnglishEffect } from "@/components/ui/apple-hello-effect";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ChevronDown, Sparkles } from "lucide-react";
 
@@ -156,7 +155,6 @@ export function HomePage({ language = "en" }: HomePageProps) {
           finalClipPercentage={75}
         >
           <div className="text-center px-4 max-w-2xl flex flex-col items-center">
-            <AppleHelloEnglishEffect className="h-10 sm:h-12 text-gold-accent drop-shadow-lg mb-2" speed={1.2} />
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-gold-accent/20 border border-gold-accent/40 text-gold-accent font-label-caps text-[10px] uppercase tracking-widest mb-3 backdrop-blur-md">
               <Sparkles className="w-3.5 h-3.5" />
               <span>Agra Taxi &amp; Cab Service</span>
@@ -205,16 +203,82 @@ export function HomePage({ language = "en" }: HomePageProps) {
           <div className="relative z-10 max-w-[1280px] mx-auto px-margin-mobile lg:px-margin grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             {/* Left — headline + two CTAs only (hero stack discipline: 3 elements max) */}
             <div className="lg:col-span-6 flex flex-col items-start gap-space-md">
-              <div className="flex items-center gap-3">
-                <AppleHelloEnglishEffect className="h-8 sm:h-10 text-terracotta-sunlit drop-shadow-md" speed={1.2} />
-                <span className="px-2.5 py-0.5 rounded-full bg-gold-accent/15 border border-gold-accent/30 text-gold-accent font-label-caps text-[9px] uppercase tracking-widest font-semibold backdrop-blur-sm">
-                  Welcome to Agra
+              <span className="px-2.5 py-0.5 rounded-full bg-gold-accent/15 border border-gold-accent/30 text-gold-accent font-label-caps text-[9px] uppercase tracking-widest font-semibold backdrop-blur-sm">
+                Agra Outstation &amp; Local Cabs
+              </span>
+
+              {/* 100% SEO-Safe Animated Headline: Semantic h1 with progressive motion reveal */}
+              <motion.h1
+                initial={isClient ? "hidden" : false}
+                animate={isClient ? "visible" : undefined}
+                variants={{
+                  hidden: { opacity: 0 },
+                  visible: {
+                    opacity: 1,
+                    transition: { staggerChildren: 0.12, delayChildren: 0.15 },
+                  },
+                }}
+                className="font-headline-hero text-headline-hero font-normal leading-[1.15]"
+              >
+                <span className="inline-block">
+                  <motion.span
+                    variants={{
+                      hidden: { opacity: 0, y: 16, filter: "blur(4px)" },
+                      visible: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
+                    }}
+                    className="inline-block mr-2"
+                  >
+                    Agra
+                  </motion.span>
+                  <motion.span
+                    variants={{
+                      hidden: { opacity: 0, y: 16, filter: "blur(4px)" },
+                      visible: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
+                    }}
+                    className="inline-block mr-2"
+                  >
+                    to
+                  </motion.span>
+                  <motion.span
+                    variants={{
+                      hidden: { opacity: 0, y: 16, filter: "blur(4px)" },
+                      visible: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
+                    }}
+                    className="inline-block"
+                  >
+                    anywhere,
+                  </motion.span>
                 </span>
-              </div>
-              <h1 className="font-headline-hero text-headline-hero font-normal leading-[1.15]">
-                Agra to anywhere, <br />
-                <span className="italic text-terracotta-sunlit">in first-class comfort.</span>
-              </h1>
+                <br />
+                <span className="relative inline-block mt-1">
+                  <motion.span
+                    variants={{
+                      hidden: { opacity: 0, y: 16, filter: "blur(4px)" },
+                      visible: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1], delay: 0.35 } },
+                    }}
+                    className="italic text-terracotta-sunlit inline-block"
+                  >
+                    in first-class comfort.
+                  </motion.span>
+                  {/* Handwriting stroke flourish line drawing underneath */}
+                  <motion.svg
+                    className="absolute -bottom-2 left-0 w-full h-3 text-gold-accent overflow-visible pointer-events-none"
+                    viewBox="0 0 300 12"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <motion.path
+                      d="M2 9C60 3 150 2 298 7"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      initial={{ pathLength: 0, opacity: 0 }}
+                      animate={isClient ? { pathLength: 1, opacity: 0.85 } : { pathLength: 1, opacity: 0.85 }}
+                      transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.5 }}
+                    />
+                  </motion.svg>
+                </span>
+              </motion.h1>
               <p className="font-body-lg text-body-lg text-ivory-surface/85 max-w-lg leading-relaxed">
                 Verified drivers, fixed fares, and all expressway tolls included. Direct pickup across Agra. Book online or on WhatsApp in 2 minutes.
               </p>
