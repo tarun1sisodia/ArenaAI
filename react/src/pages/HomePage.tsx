@@ -299,7 +299,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
               <div className="p-2.5 bg-surface-container-low rounded-lg mb-3 flex items-center justify-between border border-border-warm/40">
                 <div>
                   <span className="font-label-caps text-[9px] text-on-surface-variant block uppercase tracking-wider">Estimated Toll-Inclusive Fare</span>
-                  <span className="font-price-display text-xl sm:text-2xl text-primary font-bold">₹{estimatedFare.toLocaleString("en-IN")}</span>
+                  <span className="font-price-display text-base sm:text-lg text-primary font-bold">₹{estimatedFare.toLocaleString("en-IN")}</span>
                 </div>
                 <span className="font-label-caps text-[9.5px] text-success-jade bg-success-jade/10 px-2 py-0.5 rounded font-bold">
                   28% Advance Token

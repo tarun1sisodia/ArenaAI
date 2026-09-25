@@ -16,6 +16,7 @@ documentation pack.
    - Animation verification: `ANIMATION_RULES.md` — SEO safety & accessibility before adding animations
    - Payments: `docs/PAYMENT_SYSTEM.md` + `.agents/rules/PAYMENT_AGENT_RULES.md` — never live-charge without webhook + server fare
    - Backend Architecture & Engineering: `BACKEND_RULES.md` — for all backend APIs, database schemas, and integration
+   - Frontend Architecture & Design Standard: `FRONTEND_RULES.md` — for design tokens, typography scale, SSG, and component rules
    - Sequence & acceptance: `03_PHASE_PLAN.md` (frontend) / `PLAN.md` (backend)
    - State & history: `04_PROGRESS_TRACKER.md` (frontend) / `PROGRESS.md` (backend)
 

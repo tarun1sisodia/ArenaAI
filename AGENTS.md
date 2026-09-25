@@ -16,6 +16,7 @@ Deployment topology, provider settings and the command contract live in
 7. [`ANIMATION_RULES.md`](ANIMATION_RULES.md) — before adding or modifying any animation
 8. [`docs/PAYMENT_SYSTEM.md`](docs/PAYMENT_SYSTEM.md) + [`.agents/rules/PAYMENT_AGENT_RULES.md`](.agents/rules/PAYMENT_AGENT_RULES.md) — before any Razorpay, webhook, refund or "mark paid" work
 9. [`BACKEND_RULES.md`](BACKEND_RULES.md) — before any backend, API, database, controller or integration work
+10. [`FRONTEND_RULES.md`](FRONTEND_RULES.md) — master frontend architectural standard, typography scale, design tokens, SSG, and component rules
 
 Implement **exactly one step** from the tracker (`react/docs/04_PROGRESS_TRACKER.md`
 for frontend/React, [`PROGRESS.md`](PROGRESS.md) for backend). Update the tracker

@@ -47,7 +47,7 @@ export function PrivacyPage({ language = "en" }: PrivacyPageProps) {
                 Privacy Policy &amp; <br />
                 <span className="text-terracotta-sandstone italic font-normal">Passenger Data Integrity</span>
               </h1>
-              <p className="font-body-lg text-base sm:text-lg text-on-surface-variant max-w-2xl pt-2">
+              <p className="font-body-lg text-xs sm:text-[13px] text-on-surface-variant max-w-2xl pt-1">
                 Upholding timeless hospitality discretion with state-of-the-art telemetry compliance. Your movement across
                 North India remains strictly sovereign, encrypted, and respected.
               </p>
@@ -84,39 +84,39 @@ export function PrivacyPage({ language = "en" }: PrivacyPageProps) {
       </section>
 
       {/* 2. PRIVACY CONTENT BODY */}
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 space-y-12">
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 space-y-8">
         {/* Core Commitments */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="p-5 rounded-xl bg-surface-container-lowest border border-border-warm shadow-xs">
-            <span className="material-symbols-outlined text-primary text-2xl mb-2">lock</span>
-            <h4 className="font-bold text-sm text-ink-charcoal mb-1">Zero Data Selling</h4>
-            <p className="text-xs text-on-surface-variant leading-relaxed">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="p-3.5 sm:p-4 rounded-xl bg-surface-container-lowest border border-border-warm shadow-xs">
+            <span className="material-symbols-outlined text-primary text-xl mb-1.5">lock</span>
+            <h4 className="font-bold text-xs text-ink-charcoal mb-0.5">Zero Data Selling</h4>
+            <p className="text-[10px] text-on-surface-variant leading-relaxed">
               We never sell or rent passenger phone numbers, itineraries, or emails to souvenir shops, hotels, or advertisers.
             </p>
           </div>
-          <div className="p-5 rounded-xl bg-surface-container-lowest border border-border-warm shadow-xs">
-            <span className="material-symbols-outlined text-success-jade text-2xl mb-2">encrypted</span>
-            <h4 className="font-bold text-sm text-ink-charcoal mb-1">Encrypted Transit</h4>
-            <p className="text-xs text-on-surface-variant leading-relaxed">
+          <div className="p-3.5 sm:p-4 rounded-xl bg-surface-container-lowest border border-border-warm shadow-xs">
+            <span className="material-symbols-outlined text-success-jade text-xl mb-1.5">encrypted</span>
+            <h4 className="font-bold text-xs text-ink-charcoal mb-0.5">Encrypted Transit</h4>
+            <p className="text-[10px] text-on-surface-variant leading-relaxed">
               All booking vouchers, driver allocations, and payment tokens are processed over secure HTTPS with 256-bit encryption.
             </p>
           </div>
-          <div className="p-5 rounded-xl bg-surface-container-lowest border border-border-warm shadow-xs">
-            <span className="material-symbols-outlined text-primary text-2xl mb-2">delete_forever</span>
-            <h4 className="font-bold text-sm text-ink-charcoal mb-1">Right to Erasure</h4>
-            <p className="text-xs text-on-surface-variant leading-relaxed">
+          <div className="p-3.5 sm:p-4 rounded-xl bg-surface-container-lowest border border-border-warm shadow-xs">
+            <span className="material-symbols-outlined text-primary text-xl mb-1.5">delete_forever</span>
+            <h4 className="font-bold text-xs text-ink-charcoal mb-0.5">Right to Erasure</h4>
+            <p className="text-[10px] text-on-surface-variant leading-relaxed">
               Guests can email privacy@skbagheltravels.in anytime to request immediate deletion of their historical travel records.
             </p>
           </div>
         </div>
 
         {/* Clause 1: Information Collected */}
-        <div id="info-collected" className="scroll-mt-28 space-y-3">
-          <h2 className="font-headline-md text-2xl font-bold text-ink-charcoal">1. Categories of Information We Collect</h2>
-          <p className="text-sm text-on-surface-variant leading-relaxed">
+        <div id="info-collected" className="scroll-mt-28 space-y-2.5">
+          <h2 className="font-headline-md text-sm sm:text-base font-bold text-ink-charcoal">1. Categories of Information We Collect</h2>
+          <p className="text-[10.5px] sm:text-xs text-on-surface-variant leading-relaxed">
             To coordinate high-precision pickups and issue verified GST invoices, we collect:
           </p>
-          <ul className="list-disc pl-5 space-y-1 text-sm text-on-surface-variant">
+          <ul className="list-disc pl-5 space-y-1 text-[10.5px] sm:text-xs text-on-surface-variant">
             <li>
               <strong>Identity &amp; Contact:</strong> Guest Full Name, Primary Phone/WhatsApp Number, and Email Address.
             </li>
@@ -130,18 +130,18 @@ export function PrivacyPage({ language = "en" }: PrivacyPageProps) {
         </div>
 
         {/* Clause 2: Purpose */}
-        <div id="purpose-use" className="scroll-mt-28 space-y-3 border-t border-border-warm/60 pt-8">
-          <h2 className="font-headline-md text-2xl font-bold text-ink-charcoal">2. Purpose &amp; Lawful Basis of Processing</h2>
-          <p className="text-sm text-on-surface-variant leading-relaxed">
+        <div id="purpose-use" className="scroll-mt-28 space-y-2.5 border-t border-border-warm/60 pt-6">
+          <h2 className="font-headline-md text-sm sm:text-base font-bold text-ink-charcoal">2. Purpose &amp; Lawful Basis of Processing</h2>
+          <p className="text-[10.5px] sm:text-xs text-on-surface-variant leading-relaxed">
             Data is collected solely to perform our contractual service: assigning a verified chauffeur, tracking vehicle arrival
             punctuality, issuing computerized tax invoices, and providing immediate customer support on WhatsApp and phone.
           </p>
         </div>
 
         {/* Clause 3: Zero Data Selling */}
-        <div id="zero-selling" className="scroll-mt-28 space-y-3 border-t border-border-warm/60 pt-8">
-          <h2 className="font-headline-md text-2xl font-bold text-ink-charcoal">3. Zero Data Selling Guarantee</h2>
-          <p className="text-sm text-on-surface-variant leading-relaxed">
+        <div id="zero-selling" className="scroll-mt-28 space-y-2.5 border-t border-border-warm/60 pt-6">
+          <h2 className="font-headline-md text-sm sm:text-base font-bold text-ink-charcoal">3. Zero Data Selling Guarantee</h2>
+          <p className="text-[10.5px] sm:text-xs text-on-surface-variant leading-relaxed">
             Unlike mass online aggregators, SK Baghel Tour &amp; Travels operates as an independent, private fleet. We do not
             monetize guest telemetry or share personal contact details with commercial telemarketers, shopping emporiums, or tourist
             commission networks.
@@ -149,9 +149,9 @@ export function PrivacyPage({ language = "en" }: PrivacyPageProps) {
         </div>
 
         {/* Clause 4: Chauffeur Protocol */}
-        <div id="chauffeur-protocol" className="scroll-mt-28 space-y-3 border-t border-border-warm/60 pt-8">
-          <h2 className="font-headline-md text-2xl font-bold text-ink-charcoal">4. Chauffeur Discretion &amp; Privacy Protocol</h2>
-          <p className="text-sm text-on-surface-variant leading-relaxed">
+        <div id="chauffeur-protocol" className="scroll-mt-28 space-y-2.5 border-t border-border-warm/60 pt-6">
+          <h2 className="font-headline-md text-sm sm:text-base font-bold text-ink-charcoal">4. Chauffeur Discretion &amp; Privacy Protocol</h2>
+          <p className="text-[10.5px] sm:text-xs text-on-surface-variant leading-relaxed">
             Chauffeurs receive only the minimal logistical details needed to meet you (Name, Pickup Time, and Hotel/Terminal). Drivers
             are bound by our strict non-solicitation agreement and are forbidden from sharing passenger phone numbers or taking
             unauthorized photos.
@@ -159,30 +159,30 @@ export function PrivacyPage({ language = "en" }: PrivacyPageProps) {
         </div>
 
         {/* Clause 5: Retention & Rights */}
-        <div id="retention-rights" className="scroll-mt-28 space-y-3 border-t border-border-warm/60 pt-8">
-          <h2 className="font-headline-md text-2xl font-bold text-ink-charcoal">5. Retention &amp; Passenger Rights</h2>
-          <p className="text-sm text-on-surface-variant leading-relaxed">
+        <div id="retention-rights" className="scroll-mt-28 space-y-2.5 border-t border-border-warm/60 pt-6">
+          <h2 className="font-headline-md text-sm sm:text-base font-bold text-ink-charcoal">5. Retention &amp; Passenger Rights</h2>
+          <p className="text-[10.5px] sm:text-xs text-on-surface-variant leading-relaxed">
             Under India&apos;s Digital Personal Data Protection (DPDP) Act 2023, you have the right to review, update, or request the
             permanent erasure of all personal records held in our dispatch registry upon completion of your journey.
           </p>
         </div>
 
         {/* Clause 6: Cookies */}
-        <div id="cookies-storage" className="scroll-mt-28 space-y-3 border-t border-border-warm/60 pt-8">
-          <h2 className="font-headline-md text-2xl font-bold text-ink-charcoal">6. Cookies &amp; Session Storage</h2>
-          <p className="text-sm text-on-surface-variant leading-relaxed">
+        <div id="cookies-storage" className="scroll-mt-28 space-y-2.5 border-t border-border-warm/60 pt-6">
+          <h2 className="font-headline-md text-sm sm:text-base font-bold text-ink-charcoal">6. Cookies &amp; Session Storage</h2>
+          <p className="text-[10.5px] sm:text-xs text-on-surface-variant leading-relaxed">
             Our website uses strictly necessary local storage cookies to retain your chosen itinerary parameters while you complete
             your booking form. We do not utilize third-party cross-site advertising trackers or retargeting pixels.
           </p>
         </div>
 
         {/* Clause 7: DPO */}
-        <div id="grievance-dpo" className="scroll-mt-28 space-y-3 border-t border-border-warm/60 pt-8">
-          <h2 className="font-headline-md text-2xl font-bold text-ink-charcoal">7. Data Protection Officer (DPO)</h2>
-          <p className="text-sm text-on-surface-variant leading-relaxed">
+        <div id="grievance-dpo" className="scroll-mt-28 space-y-2.5 border-t border-border-warm/60 pt-6">
+          <h2 className="font-headline-md text-sm sm:text-base font-bold text-ink-charcoal">7. Data Protection Officer (DPO)</h2>
+          <p className="text-[10.5px] sm:text-xs text-on-surface-variant leading-relaxed">
             For any privacy inquiries, grievance redressals, or data deletion requests, contact our designated Data Protection Officer:
           </p>
-          <div className="p-4 rounded-xl bg-surface-container-lowest border border-border-warm text-xs space-y-1">
+          <div className="p-3 sm:p-3.5 rounded-xl bg-surface-container-lowest border border-border-warm text-[10.5px] space-y-1">
             <p><strong>Officer:</strong> Privacy &amp; Compliance Officer</p>
             <p><strong>Email:</strong> privacy@skbagheltravels.in</p>
             <p><strong>Address:</strong> Near Taj East Gate Road, Taj Ganj, Agra, Uttar Pradesh 282001, India</p>

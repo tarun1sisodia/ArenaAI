@@ -86,7 +86,7 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
             <h1 className="font-headline-hero text-ink-charcoal text-headline-hero tracking-tight leading-tight mb-3">
               Your chauffeur is stationed. We&apos;re a ring away.
             </h1>
-            <p className="text-on-surface-variant font-body-lg text-base sm:text-lg leading-relaxed mb-6">
+            <p className="text-on-surface-variant font-body-lg text-body-lg leading-relaxed mb-4">
               Headquartered directly beside the Taj Mahal in Taj Ganj, Agra. Dedicated round-the-clock dispatch for airport drops,
               outstation cabs across North India, and bespoke heritage tours.
             </p>

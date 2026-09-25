@@ -266,7 +266,7 @@ export function ServicesPage({ language = "en" }: ServicesPageProps) {
                       {s.subtitle}
                     </span>
                   </div>
-                  <h3 className="font-headline-md text-xl sm:text-2xl text-ink-charcoal mb-2 font-semibold">{s.name}</h3>
+                  <h3 className="font-headline-md text-base sm:text-lg text-ink-charcoal mb-1.5 font-semibold">{s.name}</h3>
                   <p className="font-body-sm text-[10.5px] sm:text-[11px] text-on-surface-variant leading-relaxed mb-3">
                     {s.description}
                   </p>

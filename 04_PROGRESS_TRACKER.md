@@ -124,6 +124,7 @@ this file at commit `2c02ee3`. The table below is the condensed record.
 - [x] **M4: Streamlined 2-Step Universal Booking & Billing Engine** — Step 1 (choose car tier: `step_1_taj_mahal_sunrise_guided_tour.html`), Step 2 (universal booking/billing form for all packages & routes: `step_2_booking_form_for_all.html`), and confirmation voucher (`book_confirmed.html`) wired to `fareEngine.ts`.
 - [x] **M5: Core Marketing Pages & Route Hubs** — `HomePage.tsx` (`home.html`), `FleetPage.tsx` (`fleet.html`), `RoutesPage.tsx` (`routes.html`), `ServicesPage.tsx` (`services.html`), and support/legal pages.
 - [x] **M6: Verification, SSR Pre-Rendering & Build Quality** — Update `prerender.ts`, typecheck, build validation.
+- [x] **M7: Master Frontend Standard & Typography Refinement** — Created canonical `FRONTEND_RULES.md` matching `BACKEND_RULES.md`, scaled down oversized headlines to luxury editorial scale (Hero 26px/20px, Section 20px/17px) while preserving compact 20% reduced body/card dimensions, zero mouse scroll hijacking, and passing monorepo `npm run verify`.
 
 ### Admin panel (`admin/`)
 

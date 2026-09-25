@@ -359,7 +359,7 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
               <div className="lg:col-span-7 p-3.5 sm:p-4.5 lg:p-5 flex flex-col justify-between">
                 <div>
                   <div className="flex flex-wrap items-baseline justify-between gap-2 mb-1.5">
-                    <h2 className="font-headline-md text-xl sm:text-2xl text-ink-charcoal font-semibold">
+                    <h2 className="font-headline-md text-base sm:text-lg text-ink-charcoal font-semibold">
                       {veh.name}
                     </h2>
                     <span className="font-label-caps text-[10px] px-2 py-0.5 rounded bg-sandstone-wash text-ink-charcoal font-bold border border-border-warm">

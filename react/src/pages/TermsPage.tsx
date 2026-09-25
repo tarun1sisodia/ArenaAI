@@ -45,7 +45,7 @@ export function TermsPage({ language = "en" }: TermsPageProps) {
             <h1 className="font-headline-hero text-ink-charcoal text-headline-hero tracking-tight leading-tight mb-3">
               Terms of Service &amp; Operational Charter
             </h1>
-            <p className="text-on-surface-variant font-body-lg text-base sm:text-lg leading-relaxed mb-6">
+            <p className="text-on-surface-variant font-body-lg text-xs sm:text-[13px] leading-relaxed mb-6">
               Binding operational agreement between SK Baghel Tour &amp; Travels (Agra) and the reserving guest or corporate
               client. Transparent commercial tariffs with zero hidden conditions.
             </p>
@@ -68,11 +68,11 @@ export function TermsPage({ language = "en" }: TermsPageProps) {
       </section>
 
       {/* 2. TERMS CONTENT BODY */}
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 space-y-12">
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 space-y-8">
         {/* Purpose */}
-        <div className="p-6 rounded-xl bg-sandstone-wash/40 border border-border-warm/70">
-          <h2 className="font-headline-sm text-xl font-bold text-ink-charcoal mb-2">Charter Purpose &amp; Enforceability</h2>
-          <p className="text-sm text-on-surface-variant leading-relaxed">
+        <div className="p-4 sm:p-5 rounded-xl bg-sandstone-wash/40 border border-border-warm/70">
+          <h2 className="font-headline-sm text-sm sm:text-base font-bold text-ink-charcoal mb-2">Charter Purpose &amp; Enforceability</h2>
+          <p className="text-[10.5px] sm:text-xs text-on-surface-variant leading-relaxed">
             This document constitutes a binding operational agreement between <strong>SK Baghel Tour &amp; Travels Agra</strong> and
             the reserving passenger or corporate institution. All chauffeurs, fleet categories, point-to-point drops, and multi-day
             heritage circuits are regulated strictly according to the transparent commercial tariffs established below. No verbal
@@ -81,46 +81,46 @@ export function TermsPage({ language = "en" }: TermsPageProps) {
         </div>
 
         {/* Section 1: Fleet */}
-        <div id="sec-fleet" className="scroll-mt-28 space-y-4">
-          <div className="flex items-center gap-3">
-            <span className="w-8 h-8 rounded-full bg-primary text-white font-bold flex items-center justify-center text-sm">
+        <div id="sec-fleet" className="scroll-mt-28 space-y-3">
+          <div className="flex items-center gap-2.5">
+            <span className="w-6 h-6 rounded-full bg-primary text-white font-bold flex items-center justify-center text-xs">
               01
             </span>
-            <h2 className="font-headline-md text-2xl font-bold text-ink-charcoal">Fleet Specifications &amp; Allocation</h2>
+            <h2 className="font-headline-md text-sm sm:text-base font-bold text-ink-charcoal">Fleet Specifications &amp; Allocation</h2>
           </div>
-          <p className="text-sm text-on-surface-variant leading-relaxed">
+          <p className="text-[10.5px] sm:text-xs text-on-surface-variant leading-relaxed">
             Every vehicle dispatched carries an active All-India Tourist Permit (AITP), yellow commercial license plates,
             comprehensive commercial passenger insurance, and dual-zone air conditioning. Vehicle tiers are categorized as:
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-            <div className="p-4 rounded-xl bg-surface-container-lowest border border-border-warm">
-              <h4 className="font-bold text-sm text-ink-charcoal">Sedan (Dzire / Etios)</h4>
-              <p className="text-xs text-on-surface-variant mt-1">4 Passengers · 2 Large Bags · ₹10/km outstation baseline.</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+            <div className="p-3 sm:p-3.5 rounded-xl bg-surface-container-lowest border border-border-warm">
+              <h4 className="font-bold text-xs text-ink-charcoal">Sedan (Dzire / Etios)</h4>
+              <p className="text-[10px] text-on-surface-variant mt-0.5">4 Passengers · 2 Large Bags · ₹10/km outstation baseline.</p>
             </div>
-            <div className="p-4 rounded-xl bg-surface-container-lowest border border-border-warm">
-              <h4 className="font-bold text-sm text-ink-charcoal">MPV (Maruti Ertiga)</h4>
-              <p className="text-xs text-on-surface-variant mt-1">6 Passengers · 3 Large Bags · ₹14/km outstation baseline.</p>
+            <div className="p-3 sm:p-3.5 rounded-xl bg-surface-container-lowest border border-border-warm">
+              <h4 className="font-bold text-xs text-ink-charcoal">MPV (Maruti Ertiga)</h4>
+              <p className="text-[10px] text-on-surface-variant mt-0.5">6 Passengers · 3 Large Bags · ₹14/km outstation baseline.</p>
             </div>
-            <div className="p-4 rounded-xl bg-surface-container-lowest border border-border-warm">
-              <h4 className="font-bold text-sm text-ink-charcoal">Executive SUV (Innova Crysta)</h4>
-              <p className="text-xs text-on-surface-variant mt-1">6/7 Passengers · 4 Large Bags · ₹18/km outstation baseline.</p>
+            <div className="p-3 sm:p-3.5 rounded-xl bg-surface-container-lowest border border-border-warm">
+              <h4 className="font-bold text-xs text-ink-charcoal">Executive SUV (Innova Crysta)</h4>
+              <p className="text-[10px] text-on-surface-variant mt-0.5">6/7 Passengers · 4 Large Bags · ₹18/km outstation baseline.</p>
             </div>
-            <div className="p-4 rounded-xl bg-surface-container-lowest border border-border-warm">
-              <h4 className="font-bold text-sm text-ink-charcoal">Group Van (Tempo / Urbania)</h4>
-              <p className="text-xs text-on-surface-variant mt-1">9 to 26 Passengers · Luggage Hold · ₹25–₹34/km baseline.</p>
+            <div className="p-3 sm:p-3.5 rounded-xl bg-surface-container-lowest border border-border-warm">
+              <h4 className="font-bold text-xs text-ink-charcoal">Group Van (Tempo / Urbania)</h4>
+              <p className="text-[10px] text-on-surface-variant mt-0.5">9 to 26 Passengers · Luggage Hold · ₹25–₹34/km baseline.</p>
             </div>
           </div>
         </div>
 
         {/* Section 2: Outstation 300 km */}
-        <div id="sec-outstation" className="scroll-mt-28 space-y-4 border-t border-border-warm/60 pt-8">
-          <div className="flex items-center gap-3">
-            <span className="w-8 h-8 rounded-full bg-primary text-white font-bold flex items-center justify-center text-sm">
+        <div id="sec-outstation" className="scroll-mt-28 space-y-3 border-t border-border-warm/60 pt-6">
+          <div className="flex items-center gap-2.5">
+            <span className="w-6 h-6 rounded-full bg-primary text-white font-bold flex items-center justify-center text-xs">
               02
             </span>
-            <h2 className="font-headline-md text-2xl font-bold text-ink-charcoal">Outstation 300 km/Day Rule</h2>
+            <h2 className="font-headline-md text-sm sm:text-base font-bold text-ink-charcoal">Outstation 300 km/Day Rule</h2>
           </div>
-          <p className="text-sm text-on-surface-variant leading-relaxed">
+          <p className="text-[10.5px] sm:text-xs text-on-surface-variant leading-relaxed">
             All multi-day and round-trip outstation itineraries are calculated on a standard commercial baseline of 300 km per
             calendar day (00:00 to 23:59). If the total distance driven across a 2-day trip is 520 km, the minimum billable
             distance charged is 600 km. Any kilometers exceeding 600 km are billed pro-rata at the vehicle rate card.
@@ -128,14 +128,14 @@ export function TermsPage({ language = "en" }: TermsPageProps) {
         </div>
 
         {/* Section 3: Tolls & State Taxes */}
-        <div id="sec-tolls" className="scroll-mt-28 space-y-4 border-t border-border-warm/60 pt-8">
-          <div className="flex items-center gap-3">
-            <span className="w-8 h-8 rounded-full bg-primary text-white font-bold flex items-center justify-center text-sm">
+        <div id="sec-tolls" className="scroll-mt-28 space-y-3 border-t border-border-warm/60 pt-6">
+          <div className="flex items-center gap-2.5">
+            <span className="w-6 h-6 rounded-full bg-primary text-white font-bold flex items-center justify-center text-xs">
               03
             </span>
-            <h2 className="font-headline-md text-2xl font-bold text-ink-charcoal">Toll Taxes &amp; State Border Clearance</h2>
+            <h2 className="font-headline-md text-sm sm:text-base font-bold text-ink-charcoal">Toll Taxes &amp; State Border Clearance</h2>
           </div>
-          <p className="text-sm text-on-surface-variant leading-relaxed">
+          <p className="text-[10.5px] sm:text-xs text-on-surface-variant leading-relaxed">
             One-way fixed rate corridors (e.g. Agra to Delhi IGI Airport, Agra to Jaipur) are all-inclusive of FASTag deductions,
             expressway tolls, and commercial interstate entry taxes. For custom open-ended round-trips, tolls, monument parking,
             and state permits are documented on the official driver trip log and billed at actual government receipt values.
@@ -143,32 +143,32 @@ export function TermsPage({ language = "en" }: TermsPageProps) {
         </div>
 
         {/* Section 4: Night Allowance */}
-        <div id="sec-night" className="scroll-mt-28 space-y-4 border-t border-border-warm/60 pt-8">
-          <div className="flex items-center gap-3">
-            <span className="w-8 h-8 rounded-full bg-primary text-white font-bold flex items-center justify-center text-sm">
+        <div id="sec-night" className="scroll-mt-28 space-y-3 border-t border-border-warm/60 pt-6">
+          <div className="flex items-center gap-2.5">
+            <span className="w-6 h-6 rounded-full bg-primary text-white font-bold flex items-center justify-center text-xs">
               04
             </span>
-            <h2 className="font-headline-md text-2xl font-bold text-ink-charcoal">Driver Night Allowance</h2>
+            <h2 className="font-headline-md text-sm sm:text-base font-bold text-ink-charcoal">Driver Night Allowance</h2>
           </div>
-          <p className="text-sm text-on-surface-variant leading-relaxed">
+          <p className="text-[10.5px] sm:text-xs text-on-surface-variant leading-relaxed">
             A fixed night allowance of ₹300 per night applies strictly when the vehicle is driven between 10:00 PM and 6:00 AM,
             or when a chauffeur stays overnight outside Agra city limits. Daytime driving incurs zero driver batta surcharges.
           </p>
         </div>
 
         {/* Section 5: Advance & Refunds */}
-        <div id="sec-advance" className="scroll-mt-28 space-y-4 border-t border-border-warm/60 pt-8">
-          <div className="flex items-center gap-3">
-            <span className="w-8 h-8 rounded-full bg-primary text-white font-bold flex items-center justify-center text-sm">
+        <div id="sec-advance" className="scroll-mt-28 space-y-3 border-t border-border-warm/60 pt-6">
+          <div className="flex items-center gap-2.5">
+            <span className="w-6 h-6 rounded-full bg-primary text-white font-bold flex items-center justify-center text-xs">
               05
             </span>
-            <h2 className="font-headline-md text-2xl font-bold text-ink-charcoal">28% Token Advance &amp; Cancellation Slabs</h2>
+            <h2 className="font-headline-md text-sm sm:text-base font-bold text-ink-charcoal">28% Token Advance &amp; Cancellation Slabs</h2>
           </div>
-          <p className="text-sm text-on-surface-variant leading-relaxed">
+          <p className="text-[10.5px] sm:text-xs text-on-surface-variant leading-relaxed">
             To secure vehicle booking and chauffeur assignment, a 28% advance token is collected via UPI, credit/debit card, or
             net banking. The 72% balance is paid directly at drop-off.
           </p>
-          <div className="p-4 rounded-xl bg-surface-container-lowest border border-border-warm space-y-2 text-xs">
+          <div className="p-3.5 rounded-xl bg-surface-container-lowest border border-border-warm space-y-1.5 text-[10.5px]">
             <div className="flex justify-between py-1 border-b border-border-warm/40">
               <span className="font-semibold text-ink-charcoal">&gt; 24 Hours before Pickup:</span>
               <span className="text-success-jade font-bold">100% Full Refund of Token</span>
@@ -185,14 +185,14 @@ export function TermsPage({ language = "en" }: TermsPageProps) {
         </div>
 
         {/* Section 6: Luggage & Etiquette */}
-        <div id="sec-luggage" className="scroll-mt-28 space-y-4 border-t border-border-warm/60 pt-8">
-          <div className="flex items-center gap-3">
-            <span className="w-8 h-8 rounded-full bg-primary text-white font-bold flex items-center justify-center text-sm">
+        <div id="sec-luggage" className="scroll-mt-28 space-y-3 border-t border-border-warm/60 pt-6">
+          <div className="flex items-center gap-2.5">
+            <span className="w-6 h-6 rounded-full bg-primary text-white font-bold flex items-center justify-center text-xs">
               06
             </span>
-            <h2 className="font-headline-md text-2xl font-bold text-ink-charcoal">Luggage &amp; Vehicle Etiquette</h2>
+            <h2 className="font-headline-md text-sm sm:text-base font-bold text-ink-charcoal">Luggage &amp; Vehicle Etiquette</h2>
           </div>
-          <p className="text-sm text-on-surface-variant leading-relaxed">
+          <p className="text-[10.5px] sm:text-xs text-on-surface-variant leading-relaxed">
             All vehicles are strictly non-smoking. Carrying contraband, illegal narcotics, or weapons is strictly prohibited and
             will result in immediate termination of the trip without refund. Pets are warmly welcomed on advance notice with
             appropriate protective seat hammocks.
@@ -200,14 +200,14 @@ export function TermsPage({ language = "en" }: TermsPageProps) {
         </div>
 
         {/* Section 7: Legal Jurisdiction */}
-        <div id="sec-legal" className="scroll-mt-28 space-y-4 border-t border-border-warm/60 pt-8">
-          <div className="flex items-center gap-3">
-            <span className="w-8 h-8 rounded-full bg-primary text-white font-bold flex items-center justify-center text-sm">
+        <div id="sec-legal" className="scroll-mt-28 space-y-3 border-t border-border-warm/60 pt-6">
+          <div className="flex items-center gap-2.5">
+            <span className="w-6 h-6 rounded-full bg-primary text-white font-bold flex items-center justify-center text-xs">
               07
             </span>
-            <h2 className="font-headline-md text-2xl font-bold text-ink-charcoal">Agra Legal Jurisdiction</h2>
+            <h2 className="font-headline-md text-sm sm:text-base font-bold text-ink-charcoal">Agra Legal Jurisdiction</h2>
           </div>
-          <p className="text-sm text-on-surface-variant leading-relaxed">
+          <p className="text-[10.5px] sm:text-xs text-on-surface-variant leading-relaxed">
             Any dispute, controversy, or claim arising out of or relating to services rendered by SK Baghel Tour &amp; Travels shall
             be subject exclusively to the jurisdiction of the competent courts of law located in Agra, Uttar Pradesh, India.
           </p>

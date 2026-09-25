@@ -67,22 +67,22 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
               {/* Trust Badges Strip (Compact -20%) */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-space-md">
                 <div className="flex flex-col bg-surface-container-low p-2.5 sm:p-3 rounded-lg shadow-xs border border-border-warm/40">
-                  <span className="font-headline-md text-xl sm:text-2xl text-terracotta-sandstone font-serif font-bold">15+</span>
+                  <span className="font-headline-md text-base sm:text-lg text-terracotta-sandstone font-serif font-bold">15+</span>
                   <span className="font-body-sm text-[11px] text-on-surface font-semibold">Years in Taj Ganj</span>
                   <span className="text-[9.5px] text-secondary">Family-run local legacy</span>
                 </div>
                 <div className="flex flex-col bg-surface-container-low p-2.5 sm:p-3 rounded-lg shadow-xs border border-border-warm/40">
-                  <span className="font-headline-md text-xl sm:text-2xl text-terracotta-sandstone font-serif font-bold">3,800+</span>
+                  <span className="font-headline-md text-base sm:text-lg text-terracotta-sandstone font-serif font-bold">3,800+</span>
                   <span className="font-body-sm text-[11px] text-on-surface font-semibold">Verified Expeditions</span>
                   <span className="text-[9.5px] text-secondary">4.9 / 5 Guest Satisfaction</span>
                 </div>
                 <div className="flex flex-col bg-surface-container-low p-2.5 sm:p-3 rounded-lg shadow-xs border border-border-warm/40">
-                  <span className="font-headline-md text-xl sm:text-2xl text-terracotta-sandstone font-serif font-bold">100%</span>
+                  <span className="font-headline-md text-base sm:text-lg text-terracotta-sandstone font-serif font-bold">100%</span>
                   <span className="font-body-sm text-[11px] text-on-surface font-semibold">Yellow-Plate Fleet</span>
                   <span className="text-[9.5px] text-secondary">Zero illegal white plates</span>
                 </div>
                 <div className="flex flex-col bg-surface-container-low p-2.5 sm:p-3 rounded-lg shadow-xs border border-border-warm/40">
-                  <span className="font-headline-md text-xl sm:text-2xl text-terracotta-sandstone font-serif font-bold">0</span>
+                  <span className="font-headline-md text-base sm:text-lg text-terracotta-sandstone font-serif font-bold">0</span>
                   <span className="font-body-sm text-[11px] text-on-surface font-semibold">Emporium Detours</span>
                   <span className="text-[9.5px] text-secondary">Zero commission traps</span>
                 </div>

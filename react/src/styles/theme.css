@@ -87,25 +87,25 @@
   --font-label-lg: "Plus Jakarta Sans", sans-serif;
   --font-label-caps: "Plus Jakarta Sans", sans-serif;
 
-  /* Scaled-up Head Text (+50%) & Scaled-down Body/Cards (-20%) */
-  --text-headline-hero: 42px;
-  --text-headline-hero--line-height: 50px;
-  --text-headline-hero-mobile: 30px;
-  --text-headline-hero-mobile--line-height: 36px;
-  --text-headline-lg: 30px;
-  --text-headline-lg--line-height: 38px;
-  --text-headline-lg-mobile: 24px;
-  --text-headline-lg-mobile--line-height: 30px;
-  --text-headline-md: 12px;
-  --text-headline-md--line-height: 17px;
-  --text-headline-sm: 11px;
-  --text-headline-sm--line-height: 15px;
-  --text-price-display: 20px;
-  --text-price-display--line-height: 24px;
-  --text-title-lg: 12.5px;
+  /* Refined Headline Tokens (Compact & Balanced Luxury Editorial) */
+  --text-headline-hero: 26px;
+  --text-headline-hero--line-height: 34px;
+  --text-headline-hero-mobile: 20px;
+  --text-headline-hero-mobile--line-height: 26px;
+  --text-headline-lg: 20px;
+  --text-headline-lg--line-height: 26px;
+  --text-headline-lg-mobile: 17px;
+  --text-headline-lg-mobile--line-height: 22px;
+  --text-headline-md: 15px;
+  --text-headline-md--line-height: 20px;
+  --text-headline-sm: 13.5px;
+  --text-headline-sm--line-height: 18px;
+  --text-price-display: 18px;
+  --text-price-display--line-height: 22px;
+  --text-title-lg: 13px;
   --text-title-lg--line-height: 17px;
-  --text-title-md: 11px;
-  --text-title-md--line-height: 15px;
+  --text-title-md: 12px;
+  --text-title-md--line-height: 16px;
   --text-body-lg: 12px;
   --text-body-lg--line-height: 18px;
   --text-body-md: 10.5px;
@@ -114,7 +114,7 @@
   --text-body-sm--line-height: 14px;
   --text-label-lg: 10px;
   --text-label-lg--line-height: 14px;
-  --text-label-caps: 8px;
+  --text-label-caps: 8.5px;
   --text-label-caps--line-height: 11px;
 
   /* Tightened Spacing Tokens (-20% reduction) */
