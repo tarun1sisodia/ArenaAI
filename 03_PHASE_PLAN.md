@@ -57,9 +57,9 @@ configs do.
 - [x] **M1: Tailwind CSS & Design Token System Setup** — Install `@tailwindcss/vite` & `tailwindcss`, configure design tokens in `theme.css`, load `EB Garamond` & `Plus Jakarta Sans` Google Fonts and `Material Symbols Outlined` in `index.html`.
 - [x] **M2: Global Chrome & Responsive Layout** — Rebuild luxury `Header.tsx` (with mobile drawer) and `Footer.tsx` (4-column layout with 28% advance guarantee).
 - [x] **M3: Universal Dynamic Tour Package Template & Catalogue** — Build universal dynamic `PackageDetailPage.tsx` based on `taj_mahal_sunrise_guided_tour.html` accepting `TourPackage` props, and `PackagesPage.tsx`.
-- [ ] **M4: Streamlined 2-Step Universal Booking & Billing Engine** — Build Step 1 (choose car tier) and universal Step 2 (booking/billing form for all packages & routes) with confirmation voucher screen and 28% advance calculation.
-- [ ] **M5: Core Marketing Pages & Route Hubs** — Rebuild `HomePage.tsx` (`home.html`), `FleetPage.tsx` (`fleet.html`), `RoutesPage.tsx` (`routes.html`), `ServicesPage.tsx` (`services.html`), and support/legal pages.
-- [ ] **M6: Verification, Pre-rendering & Build Quality** — Update `prerender.ts`, verify `npm --prefix react run typecheck`, `npm --prefix react run build`, and monorepo `npm run verify`.
+- [x] **M4: Streamlined 2-Step Universal Booking & Billing Engine** — Build Step 1 (choose car tier) and universal Step 2 (booking/billing form for all packages & routes) with confirmation voucher screen and 28% advance calculation.
+- [x] **M5: Core Marketing Pages & Route Hubs** — Rebuild `HomePage.tsx` (`home.html`), `FleetPage.tsx` (`fleet.html`), `RoutesPage.tsx` (`routes.html`), `ServicesPage.tsx` (`services.html`), and support/legal pages.
+- [x] **M6: Verification, Pre-rendering & Build Quality** — Update `prerender.ts`, verify `npm --prefix react run typecheck`, `npm --prefix react run build`, and monorepo `npm run verify`.
 
 ---
 

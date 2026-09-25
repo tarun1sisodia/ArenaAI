@@ -1,653 +1,637 @@
 import { useState, useMemo } from "react";
 import type { SupportedLanguage } from "../config";
 import { contact } from "../data/contact";
-import { vehicles, airportTransfers } from "../data";
 
-interface FleetPageProps {
+export interface FleetPageProps {
   language?: SupportedLanguage;
 }
 
-interface FleetFaq {
-  q: { en: string; hi: string };
-  a: { en: string; hi: string };
+interface FleetVehicle {
+  id: string;
+  name: string;
+  classTag: string;
+  category: "all" | "sedan" | "mpv" | "suv" | "group";
+  highlightBadge: string;
+  description: string;
+  image: string;
+  rates: {
+    outstationPerKm: number;
+    local8h80km: number;
+    fullDayYamuna: number;
+  };
+  specs: {
+    seats: string;
+    luggage: string;
+    climate: string;
+    fuel: string;
+  };
+  amenities: string[];
+  bestSuitedFor: string;
 }
 
-const FLEET_FAQS: FleetFaq[] = [
+const FLEET_DATA: FleetVehicle[] = [
   {
-    q: {
-      en: "What is the difference between Ertiga and Innova Crysta for outstation travel?",
-      hi: "आउटस्टेशन यात्रा के लिए मारुति अर्टिगा और इनोवा क्रिस्टा में क्या अंतर है?",
+    id: "sedan",
+    name: "Maruti Dzire / Toyota Etios",
+    classTag: "CLASS 01",
+    category: "sedan",
+    highlightBadge: "MOST POPULAR • CITY & EXPRESSWAY DROPS",
+    description:
+      "Agile, highly comfortable, and ideal for couples, solo business executives, and rapid airport transfers across the Yamuna Expressway and Delhi NCR.",
+    image:
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuDDtlpHyMEhQIkaWh-siDUWpvafWXLxtakmQnE3648Tz_fpFPqz3fclfXfL8vy2KSvlfvgNo6E6bBL87D1O1mNnTtnQI7pAPVo1lBjhMJyGHvzs7qVIIXZ2_s8qinUgznt8ZIoCYC7Ayc3QD1n36bl6SecXNPBKx1M65cSoi4R0xiQ4TFDVIxwVItPu_XvVGE2uZ6uo9DMIHDVXgQc1h2SyLWNR7obR2Lr2TpkGxcCVZXT3lRiaY4ZVqA",
+    rates: {
+      outstationPerKm: 10,
+      local8h80km: 1900,
+      fullDayYamuna: 3499,
     },
-    a: {
-      en: "While both seat 6 passengers, the Toyota Innova Crysta features a heavier ladder-frame chassis, superior highway suspension, wider captain-seat comfort, and dedicated luggage space behind the 3rd row. The Maruti Ertiga is lighter and more economical, ideal for budget-conscious families with light luggage.",
-      hi: "हालाँकि दोनों में 6 यात्री बैठ सकते हैं, लेकिन टोयोटा इनोवा क्रिस्टा में भारी चेसिस, बेहतर हाईवे सस्पेंशन, कैप्टन-सीट आराम और तीसरी पंक्ति के पीछे अधिक सामान की जगह मिलती है। मारुति अर्टिगा हल्की, किफायती और हल्के सामान वाले परिवारों के लिए सबसे बेहतर बजट विकल्प है।",
+    specs: {
+      seats: "4 Pax + Chauffeur",
+      luggage: "2 Large + 2 Bags",
+      climate: "Dual AC Vents",
+      fuel: "1.2L DualJet Petrol",
     },
+    amenities: [
+      "Chilled bottled water on arrival",
+      "Type-C & USB fast charging docks",
+      "Reading lamps & tissues",
+      "Umbrella on board",
+    ],
+    bestSuitedFor: "Same-day Taj Mahal tours, solo business transfers, couples visiting Fatehpur Sikri.",
   },
   {
-    q: {
-      en: "How does the per-km billing work for outstation trips?",
-      hi: "आउटस्टेशन यात्रा के लिए प्रति किलोमीटर किराया कैसे गिना जाता है?",
+    id: "ertiga",
+    name: "Maruti Ertiga Hybrid",
+    classTag: "CLASS 02",
+    category: "mpv",
+    highlightBadge: "FAMILY FAVORITE • ECONOMY 6-SEATER",
+    description:
+      "A versatile, fuel-efficient 6-passenger transporter designed for nuclear families, pilgrimage circles to Mathura-Vrindavan, and intercity sightseeing.",
+    image:
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuDhesay-ZLwlBtJ5ZxS_nHnmMWuLbYNhiTR_8-G0L93loc2JyYU38ra9_RnBzFYWW2VUkeB9EnuTm-a32VY1IqlUhT4nkGNkZNOGHaB80TLQrV-5viSEoaD9FSVqWtNLixnASZGTpeWs63Nv6x9due5VYDOo8MVPRk-0Avm26iQSVtPCRSdClQao_kvMc-jaqORcpO_6imYVUOwIdJwbqA11svh59eIGx8EgGvPvGljuPa7ScbwZiFy-w",
+    rates: {
+      outstationPerKm: 14,
+      local8h80km: 2600,
+      fullDayYamuna: 4800,
     },
-    a: {
-      en: "Outstation round-trips are billed based on the garage-to-garage distance with an industry-standard minimum threshold of 300 km per calendar day. For example, a 2-day round trip covers a minimum billable 600 km. Expressway toll taxes, state border permits, and parking are billed transparently at actuals.",
-      hi: "आउटस्टेशन राउंड-ट्रिप में गैराज-से-गैराज दूरी के आधार पर न्यूनतम 300 किमी प्रतिदिन का मानक नियम लागू होता है। उदाहरण के लिए, 2 दिन की यात्रा में न्यूनतम 600 किमी देय होता है। हाईवे टोल, स्टेट बॉर्डर टैक्स और पार्किंग रसीद के अनुसार अलग से देय होते हैं।",
+    specs: {
+      seats: "6 Pax + Chauffeur",
+      luggage: "3 Large + 2 Cabin Bags",
+      climate: "Roof-Mounted AC Blower",
+      fuel: "1.5L K15C Smart Hybrid",
     },
+    amenities: [
+      "Dedicated roof blower airflow",
+      "Flexible folding third-row seats",
+      "Chilled bottled water & paper napkins",
+      "Expressway emergency kit",
+    ],
+    bestSuitedFor: "Families with elders or children visiting temples in Mathura, Vrindavan, and Agra Fort.",
   },
   {
-    q: {
-      en: "Are luggage carriers or roof racks available for extra bags?",
-      hi: "क्या अतिरिक्त सामान के लिए गाड़ियों पर रूफ कैरियर उपलब्ध हैं?",
+    id: "innova",
+    name: "Toyota Innova Crysta",
+    classTag: "CLASS 03",
+    category: "suv",
+    highlightBadge: "EXECUTIVE LUXURY • CAPTAIN CHAIRS",
+    description:
+      "The undisputed emperor of Indian highway touring. Featuring deep plush captain seats, independent climate control, and unmatched sound insulation.",
+    image:
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuCF3eDfcGr4R6CkrjMTNZxdC2HZoUjDprlMBBmp-43c8tc_7gD7QQ3ep6HQmju0Ih0j-VoflOA5Ir-p5czU5jDcnHPtbHrDeCAqZSmLfI9nsoFav-HUfJY3BAHuG2JPoSKlfh00Suyh6kFmuKtkXZbUCSnVDMhVCgEF864ewhoWwk8FfOJA_PEVu-riAnO_-aRUUQzBAtwTExczUJFmqOHxugrwQIWYeZeafE112-PSmuyUHzR5VUOv5Q",
+    rates: {
+      outstationPerKm: 18,
+      local8h80km: 3500,
+      fullDayYamuna: 6499,
     },
-    a: {
-      en: "Yes. Our Force Tempo Travellers come equipped with heavy-duty roof luggage carriers with weatherproof tarpaulin covers, in addition to their rear luggage bays. For Ertiga and Innova Crysta, covered roof carriers can be mounted on advance request for airport groups carrying large suitcases.",
-      hi: "हाँ। हमारे फ़ोर्स टेम्पो ट्रैवलर में पीछे बूट स्पेस के अलावा वाटरप्रूफ कवर वाले मजबूत रूफ कैरियर लगे होते हैं। अर्टिगा और इनोवा क्रिस्टा में भी एयरपोर्ट यात्रियों के बड़े सूटकेस के लिए पूर्व सूचना पर कैरियर की व्यवस्था की जाती है।",
+    specs: {
+      seats: "6/7 Pax + Chauffeur",
+      luggage: "4 Large Bags + Racks",
+      climate: "Dual-Zone Digital Climate Control",
+      fuel: "2.4L GD Turbo Diesel",
     },
+    amenities: [
+      "Reclining leatherette captain seats",
+      "Dual-zone digital auto climate control",
+      "Premium acoustic ride damping",
+      "Mineral water bottles & newspaper",
+    ],
+    bestSuitedFor: "Foreign dignitaries, executive business delegations, and Golden Triangle multi-day loops.",
   },
   {
-    q: {
-      en: "Do all vehicles have full air-conditioning during peak summer and hill travel?",
-      hi: "क्या भीषण गर्मी और पहाड़ी यात्रा के दौरान भी एसी पूरी तरह काम करता है?",
+    id: "tempo",
+    name: "Force Tempo Traveller",
+    classTag: "CLASS 04",
+    category: "group",
+    highlightBadge: "GROUP TRAVEL • 12 TO 26 SEATER",
+    description:
+      "Roomy, high-roof touring van for large family groups, corporate offsites, and multi-city tourist parties who travel together in high comfort.",
+    image:
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuAtim6k1xZ-oNG2CqsGD4G34wTroprBPYyPJ9w7UYnqlD3AJi1jQBwG4iez5kq2R7JnA5jrbU71f63NA4Fg_9ivUh1cG2YmwcFEHjP8uB8yCO_rR0jqQtih9RtLuHMblGb62Vkg7AmFKA2kJO3duZSuqnhbnsr2yPOs-zIhv8qU0SlxpBYkAneSec38qdvXX221BLjsfOswvxgP68jLhUTwIPkQ9BZgyAVkuWywbAZJbcXZVSeMcPR58g",
+    rates: {
+      outstationPerKm: 25,
+      local8h80km: 5500,
+      fullDayYamuna: 9500,
     },
-    a: {
-      en: "100% yes. Every cab and van in our fleet is fitted with powerful factory-installed dual air conditioning systems. AC is kept continuously running during highway travel and city sightseeing without any compromise on passenger comfort.",
-      hi: "शत-प्रतिशत हाँ। हमारी फ्लीट की प्रत्येक गाड़ी में फैक्ट्री-फिटेड पावरफुल डुअल एसी सिस्टम है। हाईवे और शहर भ्रमण के दौरान यात्रियों के पूर्ण आराम के लिए एसी निरंतर चालू रखा जाता है।",
+    specs: {
+      seats: "12 to 26 Reclining Seats",
+      luggage: "Rear Bay + Heavy-Duty Carrier",
+      climate: "Commercial Dual AC Compressor",
+      fuel: "2.6L FM CR Common Rail",
     },
+    amenities: [
+      "Individual reclining high-back seats",
+      "Dedicated reading lights and USB ports",
+      "LCD multimedia screen & PA audio system",
+      "Weatherproof roof luggage carrier",
+    ],
+    bestSuitedFor: "Wedding party transits, student heritage excursions, and extended Rajasthan circuits.",
   },
   {
-    q: {
-      en: "Can we inspect or select a specific vehicle model or color before departure?",
-      hi: "क्या हम प्रस्थान से पहले गाड़ी का विशेष मॉडल या फोटो देख सकते हैं?",
+    id: "urbania",
+    name: "Force Urbania VIP",
+    classTag: "CLASS 05",
+    category: "group",
+    highlightBadge: "VIP MONOCOQUE VAN • EUROPEAN STYLING",
+    description:
+      "State-of-the-art European monocoque architecture delivering whisper-quiet highway ride, plush passenger lounge, and wide panoramic windows.",
+    image:
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuDdR9ZGfEatK4fikITqlV-5YeoJBg58LlBbVg3bINsK4p3p94b0zZowjut7sHOfzG76_UwHnf8DSibSs8nFsOwlyYfZxr0Am8uXSUZDFWlP5gBNAbGaZwm04A-RAXFJmCGkHrC5ozEC8HtDyJxH8X87rz1fagIHja_tL6PuQ-HUAjHu_bL1Ba_yVq9wUlM3rRpelaYNjGly7ZXvmprg37BIu2CuP8q2Yp_Py0lH3imXVkBikdrFugYBnQ",
+    rates: {
+      outstationPerKm: 34,
+      local8h80km: 7500,
+      fullDayYamuna: 12500,
     },
-    a: {
-      en: "Yes. Upon confirmation with our travel desk, we gladly share high-resolution photos, registration number, and chauffeur credentials on WhatsApp so you know exactly which car is arriving at your doorstep.",
-      hi: "हाँ। बुकिंग कन्फर्म होने पर हमारी टीम आपको व्हाट्सएप पर गाड़ी के वास्तविक फोटो, गाड़ी नंबर और ड्राइवर का विवरण प्रेषित करती है ताकि आपको पहले से पूरी जानकारी रहे।",
+    specs: {
+      seats: "10 to 17 Luxury Captain Seats",
+      luggage: "Dedicated Internal Deep Boot",
+      climate: "Individual Jet AC Louvers",
+      fuel: "Mercedes-Derived FM 2.6L CR",
     },
+    amenities: [
+      "Ultra-wide reclining plush captain seats",
+      "Aircraft-style individual jet vents & lighting",
+      "Panoramic tinted UV-cut glass",
+      "Large dedicated rear luggage hold",
+    ],
+    bestSuitedFor: "Luxury inbound travel groups, VIP wedding entourage, and luxury Golden Triangle tours.",
+  },
+];
+
+const FLEET_FAQS = [
+  {
+    q: "What is the difference between Ertiga and Innova Crysta for outstation travel?",
+    a: "While both accommodate 6 passengers, the Toyota Innova Crysta features a heavier ladder-frame chassis, superior highway suspension, wider captain-seat comfort, and dedicated luggage space behind the 3rd row. The Maruti Ertiga is lighter and more economical, ideal for budget-conscious families with light luggage.",
   },
   {
-    q: {
-      en: "What happens if a vehicle encounters an unexpected breakdown en route?",
-      hi: "यदि रास्ते में गाड़ी में कोई अचानक खराबी आ जाए तो क्या व्यवस्था है?",
-    },
-    a: {
-      en: "We operate a 24×7 commercial dispatch control room across Agra and Delhi NCR corridors. In the rare event of a mechanical failure or tire puncture, our roadside rescue protocol dispatches an equivalent or upgraded replacement vehicle within 30–45 minutes at zero extra cost to the passenger.",
-      hi: "हमारा 24×7 कंट्रोल रूम आगरा और दिल्ली एनसीआर में सक्रिय रहता है। किसी तकनीकी खराबी की स्थिति में हमारा रेस्क्यू नेटवर्क 30 से 45 मिनट के भीतर उसी श्रेणी या उससे बेहतर वैकल्पिक गाड़ी बिना किसी अतिरिक्त शुल्क के उपलब्ध कराता है।",
-    },
+    q: "How does the per-km billing work for outstation trips?",
+    a: "Outstation round-trips are billed based on the garage-to-garage distance with an industry-standard minimum threshold of 300 km per calendar day. For example, a 2-day round trip covers a minimum billable 600 km. Expressway toll taxes, state border permits, and parking are billed transparently at actuals.",
+  },
+  {
+    q: "Are luggage carriers or roof racks available for extra bags?",
+    a: "Yes. Our Force Tempo Travellers come equipped with heavy-duty roof luggage carriers with weatherproof tarpaulin covers, in addition to their rear luggage bays. For Ertiga and Innova Crysta, covered roof carriers can be mounted on advance request for airport groups carrying large suitcases.",
+  },
+  {
+    q: "Do all vehicles have full air-conditioning during peak summer and hill travel?",
+    a: "100% yes. Every cab and van in our fleet is fitted with powerful factory-installed dual air conditioning systems. AC is kept continuously running during highway travel and city sightseeing without any compromise on passenger comfort.",
+  },
+  {
+    q: "Are the vehicles yellow-plate commercial tourist cabs?",
+    a: "Every vehicle operated by SK Baghel Tour & Travels carries a registered commercial yellow plate, All-India Tourist Permit (AITP), up-to-date fitness certificates, and comprehensive passenger insurance.",
   },
 ];
 
 export function FleetPage({ language = "en" }: FleetPageProps) {
-  const isHindi = language === "hi";
-  const activeLanguage = isHindi ? "hi" : "en";
-  const langPrefix = isHindi ? "/hi" : "/en";
+  const [activeCategory, setActiveCategory] = useState<"all" | "sedan" | "mpv" | "suv" | "group">("all");
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  // Category filter state
-  const [filter, setFilter] = useState<"all" | "sedan" | "suv" | "van">("all");
-
-  // FAQ accordion state
-  const [openFaq, setOpenFaq] = useState<number | null>(0);
-
-  // Filtered vehicles
   const filteredVehicles = useMemo(() => {
-    return vehicles.filter((veh) => {
-      if (filter === "all") return true;
-      if (filter === "sedan") return veh.id === "sedan";
-      if (filter === "suv") return veh.id === "ertiga" || veh.id === "innova";
-      if (filter === "van") return veh.id === "tempo" || veh.id === "urbania";
-      return true;
-    });
-  }, [filter]);
-
-  // Structured Data (Schema.org)
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "TaxiService",
-        "@id": "https://skbagheltravels.in/#service",
-        name: "SK Baghel Tour & Travels Commercial Cab & Van Fleet",
-        serviceType: "Chauffeur-Driven Car Rental & Fleet Transporter",
-        provider: {
-          "@type": "LocalBusiness",
-          name: "SK Baghel Tour & Travels",
-          telephone: contact.phone,
-          address: {
-            "@type": "PostalAddress",
-            streetAddress: "Near Taj Mahal, Taj Ganj",
-            addressLocality: "Agra",
-            addressRegion: "UP",
-            postalCode: "282001",
-            addressCountry: "IN",
-          },
-        },
-      },
-      {
-        "@type": "BreadcrumbList",
-        itemListElement: [
-          {
-            "@type": "ListItem",
-            position: 1,
-            name: isHindi ? "होम" : "Home",
-            item: `https://skbagheltravels.in${langPrefix}/`,
-          },
-          {
-            "@type": "ListItem",
-            position: 2,
-            name: isHindi ? "हमारी गाड़ियाँ" : "Our Fleet",
-            item: `https://skbagheltravels.in${langPrefix}/fleet/`,
-          },
-        ],
-      },
-      {
-        "@type": "ItemList",
-        name: "Available Vehicles & Rates",
-        numberOfItems: vehicles.length,
-        itemListElement: vehicles.map((veh, idx) => ({
-          "@type": "ListItem",
-          position: idx + 1,
-          item: {
-            "@type": "Product",
-            name: `${veh.name} (${veh.klass})`,
-            description: veh.blurb,
-            offers: {
-              "@type": "Offer",
-              price: veh.perKm,
-              priceCurrency: "INR",
-              priceSpecification: {
-                "@type": "UnitPriceSpecification",
-                price: veh.perKm,
-                priceCurrency: "INR",
-                unitText: "per KM",
-              },
-            },
-          },
-        })),
-      },
-      {
-        "@type": "FAQPage",
-        mainEntity: FLEET_FAQS.map((faq) => ({
-          "@type": "Question",
-          name: faq.q[activeLanguage],
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: faq.a[activeLanguage],
-          },
-        })),
-      },
-    ],
-  };
+    if (activeCategory === "all") return FLEET_DATA;
+    return FLEET_DATA.filter((v) => v.category === activeCategory);
+  }, [activeCategory]);
 
   return (
-    <main id="main-content" className="fleet-hub-page">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-      />
-
-      {/* Hero Section */}
-      <header className="fleet-hub-hero">
-        <div className="container">
-          <p className="eyebrow">
-            {isHindi
-              ? "अनुमोदित एसी फ्लीट व कमर्शियल वाहन • एस के बघेल"
-              : "AC FLEET & COMMERCIAL TRANSPORTER • AGRA"}
-          </p>
-          <h1>
-            {isHindi ? (
-              <>
-                आगरा की सबसे भरोसेमंद व साफ-सुथरी फ्लीट,
-                <br />
-                <i>हर सफर और हर परिवार के लिए तैयार।</i>
-              </>
-            ) : (
-              <>
-                Well-maintained cabs and luxury vans,
-                <br />
-                <i>clean, inspected, and ready to roll.</i>
-              </>
-            )}
-          </h1>
-          <p className="hero-copy">
-            {isHindi
-              ? "दैनिक रूप से सैनिटाइज्ड सेडान से लेकर 6-सीटर इनोवा क्रिस्टा, 12-26 सीटर टेम्पो ट्रैवलर और प्रीमियम अर्बनिया लग्जरी वैन तक — पारदर्शी प्रति किमी दरें, पेशेवर ड्राइवर, और शत-प्रतिशत आरामदायक यात्रा।"
-              : "From fuel-efficient Dzire sedans to family-favourite Toyota Innova Crysta, 12–26 seater Tempo Travellers, and executive Force Urbania vans — spotless interiors, dual AC, verified chauffeurs, and transparent outstation billing."}
-          </p>
-
-          <div className="hero-actions">
-            <a className="button button-primary" href="#fleet-catalogue">
-              {isHindi ? "गाड़ियाँ देखें ↓" : "Explore Fleet Below ↓"}
+    <div className="bg-surface font-body-md text-body-md text-on-surface antialiased min-h-screen">
+      {/* 1. BREADCRUMB & HERO */}
+      <section className="w-full bg-sandstone-wash/40 py-10 sm:py-space-xl border-b border-border-warm/60">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <nav className="flex items-center gap-2 font-body-sm text-body-sm text-on-surface-variant mb-space-md flex-wrap">
+            <a className="hover:text-primary transition-colors" href="/">
+              Home
             </a>
-            <a className="button button-outline" href="#transfers-matrix">
-              {isHindi ? "एयरपोर्ट व स्टेशन दरें" : "Airport & Station Transfers"}
-            </a>
-            <a className="button button-outline" href={`tel:${contact.phone}`}>
-              {contact.phoneDisplay}
-            </a>
-          </div>
-        </div>
-      </header>
+            <span className="text-outline-variant font-medium">/</span>
+            <span className="text-ink-charcoal font-semibold">Fleet &amp; Chauffeured Vehicles</span>
+          </nav>
 
-      {/* Fleet Catalogue Section */}
-      <section
-        id="fleet-catalogue"
-        className="home-section fleet-catalogue-section"
-        aria-labelledby="fleet-catalogue-heading"
-      >
-        <div className="container">
-          <div className="section-heading">
-            <div>
-              <p className="eyebrow">
-                {isHindi ? "वाहन चयन" : "Vehicle Lineup & Specifications"}
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-space-lg mb-space-xl">
+            <div className="max-w-3xl">
+              <span className="px-3 py-1 rounded-full bg-primary/10 text-primary font-label-caps text-[11px] uppercase tracking-wider font-bold">
+                Commercial Luxury Fleet
+              </span>
+              <h1 className="font-headline-hero text-headline-hero-mobile sm:text-headline-lg lg:text-headline-hero text-ink-charcoal leading-tight tracking-tight mt-2">
+                Clean, modern vehicles. Verified drivers.{" "}
+                <span className="text-terracotta-sandstone italic block sm:inline">
+                  Transparent rates per kilometer.
+                </span>
+              </h1>
+              <p className="font-body-lg text-body-md sm:text-body-lg text-on-surface-variant mt-space-md leading-relaxed">
+                Explore our clean, government-registered commercial fleet in Agra. From fuel-efficient sedans
+                for the Yamuna Expressway to spacious Innova Crystas and Force Urbanias for families and group travel.
+                Zero hidden charges, 100% AC performance guaranteed.
               </p>
-              <h2 id="fleet-catalogue-heading">
-                {isHindi ? (
-                  <>
-                    हर यात्री समूह के लिए,
-                    <br />
-                    <i>उचित श्रेणी व पारदर्शी मूल्य।</i>
-                  </>
-                ) : (
-                  <>
-                    Engineered for comfort,
-                    <br />
-                    <i>tailored for your travelling party.</i>
-                  </>
-                )}
-              </h2>
+            </div>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
+              <a
+                className="inline-flex items-center justify-center gap-2 bg-terracotta-sandstone hover:bg-terracotta-sunlit text-on-primary font-label-lg text-label-lg px-6 py-3.5 rounded-lg shadow-md transition-all whitespace-nowrap font-semibold"
+                href="#spec-comparison"
+              >
+                <span>Compare Specs</span>
+                <span className="material-symbols-outlined text-[18px]">south</span>
+              </a>
+              <a
+                className="inline-flex items-center justify-center gap-2 bg-ink-charcoal hover:bg-ink-slate text-surface font-label-lg text-label-lg px-6 py-3.5 rounded-lg shadow-sm transition-all whitespace-nowrap font-semibold"
+                href="https://wa.me/919876543210"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <span className="material-symbols-outlined text-[18px] text-success-jade">chat</span>
+                <span>WhatsApp Support</span>
+              </a>
             </div>
           </div>
 
-          {/* Category Filter Tabs */}
-          <div className="fleet-filter-tabs" role="tablist" aria-label="Vehicle Categories">
-            <button
-              type="button"
-              className={`filter-tab-btn ${filter === "all" ? "is-active" : ""}`}
-              onClick={() => setFilter("all")}
-            >
-              {isHindi ? "सभी गाड़ियाँ (All Fleet)" : "All Fleet (5)"}
-            </button>
-            <button
-              type="button"
-              className={`filter-tab-btn ${filter === "sedan" ? "is-active" : ""}`}
-              onClick={() => setFilter("sedan")}
-            >
-              {isHindi ? "सेडान (Sedan 4+1)" : "Sedan & Hatchback (1)"}
-            </button>
-            <button
-              type="button"
-              className={`filter-tab-btn ${filter === "suv" ? "is-active" : ""}`}
-              onClick={() => setFilter("suv")}
-            >
-              {isHindi ? "पारिवारिक एसयूवी (MPV/SUV 6+1)" : "Family MPVs & SUVs (2)"}
-            </button>
-            <button
-              type="button"
-              className={`filter-tab-btn ${filter === "van" ? "is-active" : ""}`}
-              onClick={() => setFilter("van")}
-            >
-              {isHindi ? "ग्रुप वैन (Tempo & Urbania)" : "Group Luxury Vans (2)"}
-            </button>
-          </div>
-
-          {/* Vehicle Cards Grid */}
-          <div className="fleet-cards-grid">
-            {filteredVehicles.map((veh) => {
-              const isRecommended = veh.id === "innova";
-
-              return (
-                <article
-                  className={`fleet-vehicle-card ${isRecommended ? "is-featured" : ""}`}
-                  key={veh.id}
-                  id={veh.id}
-                >
-                  {/* Photo with Overlay Badges */}
-                  <div className="fleet-card-media">
-                    <img
-                      src={veh.image}
-                      alt={`${veh.name} cab hire in Agra`}
-                      width="640"
-                      height="360"
-                      loading="lazy"
-                    />
-                    <div className="media-overlay-tags">
-                      <span className="spec-badge">💺 {veh.seats}+1 Seats</span>
-                      <span className="spec-badge">🧳 {veh.bags} Bags</span>
-                      <span className="spec-badge">❄️ Dual AC</span>
-                      {isRecommended && (
-                        <span className="gold-star-badge">★ HIGHWAY FAVORITE</span>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="fleet-card-body">
-                    <div className="fleet-header-row">
-                      <div>
-                        <span className="vehicle-class-tag">{veh.klass}</span>
-                        <h3 className="vehicle-title">{veh.name}</h3>
-                      </div>
-                      <div className="rate-pill-wrap">
-                        <span className="rate-range-pill">{veh.rateRange}</span>
-                      </div>
-                    </div>
-
-                    <p className="vehicle-blurb">{veh.blurb}</p>
-
-                    {/* Suitable For Pill */}
-                    <div className="suitable-row">
-                      <span className="suitable-label">
-                        {isHindi ? "किसके लिए उपयुक्त:" : "Ideal For:"}
-                      </span>
-                      <span className="suitable-val">{veh.suitable}</span>
-                    </div>
-
-                    {/* Models Lineup */}
-                    <div className="models-box">
-                      <span className="models-label">
-                        {isHindi ? "शामिल वाहन मॉडल:" : "Models in this Category:"}
-                      </span>
-                      <div className="models-tags-list">
-                        {veh.models.map((model, idx) => (
-                          <span className="model-chip" key={idx}>
-                            🚗 {model}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Specifications Grid */}
-                    <div className="specs-table-grid">
-                      <div className="spec-item">
-                        <span className="spec-k">
-                          {isHindi ? "बैठने की क्षमता" : "Seating"}
-                        </span>
-                        <strong className="spec-v">{veh.seats} Passengers + 1 Chauffeur</strong>
-                      </div>
-                      <div className="spec-item">
-                        <span className="spec-k">
-                          {isHindi ? "सामान क्षमता" : "Luggage"}
-                        </span>
-                        <strong className="spec-v">{veh.bags} Large Suitcases</strong>
-                      </div>
-                      <div className="spec-item">
-                        <span className="spec-k">
-                          {isHindi ? "आउटस्टेशन दर" : "Base Outstation Rate"}
-                        </span>
-                        <strong className="spec-v gold-accent">₹{veh.perKm} / km</strong>
-                      </div>
-                      <div className="spec-item">
-                        <span className="spec-k">
-                          {isHindi ? "दैनिक न्यूनतम" : "Outstation Min Rule"}
-                        </span>
-                        <strong className="spec-v">300 km / calendar day</strong>
-                      </div>
-                    </div>
-
-                    {/* Card Actions Footer */}
-                    <div className="fleet-card-footer">
-                      <div className="footer-rates-hint">
-                        <span className="hint-label">
-                          {isHindi ? "स्थानीय 8 घंटे / 80 किमी:" : "Agra Local (8h/80km):"}
-                        </span>
-                        <strong className="hint-price">
-                          {veh.id === "sedan"
-                            ? "₹1,900"
-                            : veh.id === "ertiga"
-                              ? "₹2,600"
-                              : veh.id === "innova"
-                                ? "₹2,850"
-                                : veh.id === "tempo"
-                                  ? "₹5,500"
-                                  : "₹7,500"}
-                        </strong>
-                      </div>
-
-                      <div className="card-buttons-cluster">
-                        <a
-                          className={`button ${isRecommended ? "button-primary" : "button-outline"}`}
-                          href={`/book.html?vehicle=${veh.id}`}
-                        >
-                          {isHindi ? "गाड़ी बुक करें ↗" : "Book Vehicle ↗"}
-                        </a>
-                        <a
-                          className="button button-outline"
-                          href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
-                            `Hi SK Baghel Travels, I want to check availability for ${veh.name} (${veh.klass}).`
-                          )}`}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          {isHindi ? "व्हाट्सएप" : "WhatsApp"}
-                        </a>
-                        <a
-                          className="button button-outline"
-                          href={`${langPrefix}/vehicles/${veh.id === "innova" ? "innova-crysta" : veh.id === "tempo" ? "tempo-traveller" : veh.id}/`}
-                        >
-                          {isHindi ? "विवरण" : "Specs"}
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </article>
-              );
-            })}
+          {/* Trust Proof Ribbon */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-space-md">
+            <div className="bg-surface-container-lowest p-space-md rounded-lg shadow-sm border border-border-warm/70 flex items-start gap-space-sm h-full">
+              <div className="w-10 h-10 rounded bg-sandstone-wash flex items-center justify-center text-terracotta-sandstone shrink-0">
+                <span className="material-symbols-outlined text-[22px]">verified</span>
+              </div>
+              <div>
+                <h4 className="font-title-md text-title-md text-ink-charcoal leading-snug font-bold">100% Commercial Plates</h4>
+                <p className="font-body-sm text-body-sm text-on-surface-variant mt-1">
+                  All-India Tourist Permit with pre-cleared interstate taxes.
+                </p>
+              </div>
+            </div>
+            <div className="bg-surface-container-lowest p-space-md rounded-lg shadow-sm border border-border-warm/70 flex items-start gap-space-sm h-full">
+              <div className="w-10 h-10 rounded bg-sandstone-wash flex items-center justify-center text-terracotta-sandstone shrink-0">
+                <span className="material-symbols-outlined text-[22px]">speed</span>
+              </div>
+              <div>
+                <h4 className="font-title-md text-title-md text-ink-charcoal leading-snug font-bold">Speed Governed</h4>
+                <p className="font-body-sm text-body-sm text-on-surface-variant mt-1">
+                  Strict adherence to 80/100 km/h expressway security benchmarks.
+                </p>
+              </div>
+            </div>
+            <div className="bg-surface-container-lowest p-space-md rounded-lg shadow-sm border border-border-warm/70 flex items-start gap-space-sm h-full">
+              <div className="w-10 h-10 rounded bg-sandstone-wash flex items-center justify-center text-terracotta-sandstone shrink-0">
+                <span className="material-symbols-outlined text-[22px]">airline_seat_recline_extra</span>
+              </div>
+              <div>
+                <h4 className="font-title-md text-title-md text-ink-charcoal leading-snug font-bold">Clean, Sanitized Cabins</h4>
+                <p className="font-body-sm text-body-sm text-on-surface-variant mt-1">
+                  Vacuumed and cleaned before every single guest pickup.
+                </p>
+              </div>
+            </div>
+            <div className="bg-surface-container-lowest p-space-md rounded-lg shadow-sm border border-border-warm/70 flex items-start gap-space-sm h-full">
+              <div className="w-10 h-10 rounded bg-sandstone-wash flex items-center justify-center text-terracotta-sandstone shrink-0">
+                <span className="material-symbols-outlined text-[22px]">receipt_long</span>
+              </div>
+              <div>
+                <h4 className="font-title-md text-title-md text-ink-charcoal leading-snug font-bold">Official GST Billing</h4>
+                <p className="font-body-sm text-body-sm text-on-surface-variant mt-1">
+                  Instant GSTIN tax invoice for corporate &amp; family travel.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Airport & Railway Station Flat Transfers Section */}
-      <section
-        id="transfers-matrix"
-        className="home-section transfers-matrix-section"
-        aria-labelledby="transfers-heading"
-      >
-        <div className="container">
-          <div className="section-heading">
-            <div>
-              <p className="eyebrow">
-                {isHindi ? "फिक्स किराया तालिका" : "Flat Rate Transfer Matrix"}
-              </p>
-              <h2 id="transfers-heading">
-                {isHindi ? (
-                  <>
-                    एयरपोर्ट एवं रेलवे स्टेशन ट्रांसफर,
-                    <br />
-                    <i>बिना मोलभाव, निश्चित व पारदर्शी किराये।</i>
-                  </>
-                ) : (
-                  <>
-                    Punctual airport & station pickups,
-                    <br />
-                    <i>flat transparent rates with zero surge.</i>
-                  </>
-                )}
-              </h2>
-            </div>
-          </div>
+      {/* 2. CATEGORY FILTERS */}
+      <section className="w-full bg-surface border-b border-border-warm/60 py-4 sticky top-20 z-30 backdrop-blur-md bg-surface/90">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-2 overflow-x-auto">
+          {[
+            { id: "all", label: "All Vehicles (5)" },
+            { id: "sedan", label: "Executive Sedans" },
+            { id: "mpv", label: "Family MPVs (6-Seater)" },
+            { id: "suv", label: "Premium SUV (Innova Crysta)" },
+            { id: "group", label: "Group Vans & Minibus" },
+          ].map((cat) => (
+            <button
+              key={cat.id}
+              type="button"
+              onClick={() => setActiveCategory(cat.id as any)}
+              className={`px-4 py-2 rounded-lg font-label-caps text-xs uppercase tracking-wider transition-all whitespace-nowrap font-bold ${
+                activeCategory === cat.id
+                  ? "bg-primary text-white shadow-sm"
+                  : "bg-surface-container hover:bg-surface-container-high text-on-surface-variant"
+              }`}
+            >
+              {cat.label}
+            </button>
+          ))}
+        </div>
+      </section>
 
-          <div className="transfers-table-card">
-            <table className="transfers-table">
-              <thead>
+      {/* 3. COMPREHENSIVE FLEET SHOWROOM */}
+      <section className="w-full py-12 sm:py-space-2xl bg-surface">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col gap-8 sm:gap-space-2xl">
+          {filteredVehicles.map((veh) => (
+            <article
+              key={veh.id}
+              className="bg-surface-container-lowest rounded-xl shadow-md border border-border-warm/70 overflow-hidden grid grid-cols-1 lg:grid-cols-12 items-stretch transition-all duration-300 hover:shadow-xl"
+            >
+              <div className="lg:col-span-5 relative min-h-[260px] sm:min-h-[320px] lg:min-h-full bg-sandstone-wash overflow-hidden">
+                <img
+                  className="w-full h-full object-cover min-h-[260px] sm:min-h-[320px] lg:min-h-full"
+                  src={veh.image}
+                  alt={veh.name}
+                />
+                <div className="absolute top-4 left-4 right-4 flex justify-between items-start pointer-events-none">
+                  <span className="inline-block px-3 py-1 rounded bg-sandstone-wash/95 backdrop-blur-sm text-terracotta-sandstone font-label-caps text-[10px] uppercase tracking-wider shadow-sm font-bold">
+                    {veh.highlightBadge}
+                  </span>
+                </div>
+              </div>
+
+              <div className="lg:col-span-7 p-6 sm:p-space-lg lg:p-space-xl flex flex-col justify-between">
+                <div>
+                  <div className="flex flex-wrap items-baseline justify-between gap-2 mb-2">
+                    <h2 className="font-headline-md text-headline-sm sm:text-headline-md text-ink-charcoal font-semibold">
+                      {veh.name}
+                    </h2>
+                    <span className="font-label-caps text-xs px-2.5 py-1 rounded bg-sandstone-wash text-ink-charcoal font-bold border border-border-warm">
+                      {veh.classTag}
+                    </span>
+                  </div>
+                  <p className="font-body-md text-body-md text-on-surface-variant mb-space-md leading-relaxed">
+                    {veh.description}
+                  </p>
+
+                  {/* Pricing Banner */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 bg-surface-container-low p-space-md rounded-lg mb-space-md border border-border-warm/60 text-center">
+                    <div className="py-1">
+                      <span className="block font-label-caps text-[10px] text-secondary uppercase font-semibold">
+                        Outstation Rate
+                      </span>
+                      <div className="flex items-baseline justify-center gap-0.5 mt-0.5">
+                        <span className="font-price-display text-2xl text-terracotta-sandstone font-bold">
+                          ₹{veh.rates.outstationPerKm}
+                        </span>
+                        <span className="font-body-sm text-body-sm text-on-surface-variant font-medium">/ km</span>
+                      </div>
+                    </div>
+                    <div className="bg-surface-container-high/40 rounded py-1 px-1 sm:border-x sm:border-border-warm/40">
+                      <span className="block font-label-caps text-[10px] text-secondary uppercase font-semibold">
+                        8h/80Km Local
+                      </span>
+                      <span className="block font-price-display text-xl text-ink-charcoal font-bold mt-0.5">
+                        ₹{veh.rates.local8h80km.toLocaleString("en-IN")}
+                      </span>
+                      <span className="block font-body-sm text-xs text-on-surface-variant">Standard Day</span>
+                    </div>
+                    <div className="py-1">
+                      <span className="block font-label-caps text-[10px] text-secondary uppercase font-semibold">
+                        Full Day Agra
+                      </span>
+                      <span className="block font-price-display text-xl text-ink-charcoal font-bold mt-0.5">
+                        ₹{veh.rates.fullDayYamuna.toLocaleString("en-IN")}
+                      </span>
+                      <span className="block font-body-sm text-xs text-success-jade font-semibold">Tolls Included</span>
+                    </div>
+                  </div>
+
+                  {/* Technical Specs Grid */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-space-md">
+                    <div className="bg-surface-container p-2.5 rounded border border-border-warm/50 flex flex-col justify-between">
+                      <span className="flex items-center gap-1 font-label-caps text-[10px] text-secondary uppercase font-bold">
+                        <span className="material-symbols-outlined text-[16px] text-terracotta-sandstone">
+                          airline_seat_recline_normal
+                        </span>
+                        Seats
+                      </span>
+                      <span className="font-title-md text-xs text-ink-charcoal mt-1 block font-semibold">{veh.specs.seats}</span>
+                    </div>
+                    <div className="bg-surface-container p-2.5 rounded border border-border-warm/50 flex flex-col justify-between">
+                      <span className="flex items-center gap-1 font-label-caps text-[10px] text-secondary uppercase font-bold">
+                        <span className="material-symbols-outlined text-[16px] text-terracotta-sandstone">luggage</span>
+                        Luggage
+                      </span>
+                      <span className="font-title-md text-xs text-ink-charcoal mt-1 block font-semibold">{veh.specs.luggage}</span>
+                    </div>
+                    <div className="bg-surface-container p-2.5 rounded border border-border-warm/50 flex flex-col justify-between">
+                      <span className="flex items-center gap-1 font-label-caps text-[10px] text-secondary uppercase font-bold">
+                        <span className="material-symbols-outlined text-[16px] text-terracotta-sandstone">ac_unit</span>
+                        Climate
+                      </span>
+                      <span className="font-title-md text-xs text-ink-charcoal mt-1 block font-semibold">{veh.specs.climate}</span>
+                    </div>
+                    <div className="bg-surface-container p-2.5 rounded border border-border-warm/50 flex flex-col justify-between">
+                      <span className="flex items-center gap-1 font-label-caps text-[10px] text-secondary uppercase font-bold">
+                        <span className="material-symbols-outlined text-[16px] text-terracotta-sandstone">directions_car</span>
+                        Engine
+                      </span>
+                      <span className="font-title-md text-xs text-ink-charcoal mt-1 block font-semibold">{veh.specs.fuel}</span>
+                    </div>
+                  </div>
+
+                  {/* Amenities & Best Suited */}
+                  <div className="flex flex-col gap-2 mb-space-md text-on-surface-variant font-body-sm text-sm">
+                    <div className="flex items-start gap-2">
+                      <span className="material-symbols-outlined text-[16px] text-success-jade shrink-0 mt-0.5">check_circle</span>
+                      <span>
+                        <strong>Complimentary Amenities:</strong> {veh.amenities.join(" · ")}
+                      </span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <span className="material-symbols-outlined text-[16px] text-terracotta-sandstone shrink-0 mt-0.5">stars</span>
+                      <span>
+                        <strong>Best Suited For:</strong> {veh.bestSuitedFor}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-space-sm border-t border-border-warm/60 pb-2">
+                  <div className="flex items-center gap-2.5 flex-wrap sm:flex-nowrap">
+                    <a
+                      className="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-ink-charcoal hover:bg-ink-slate text-surface font-label-lg text-label-lg inline-flex items-center justify-center gap-1.5 transition-colors shrink-0 font-semibold"
+                      href={`https://wa.me/919876543210?text=Inquiry%20for%20${encodeURIComponent(veh.name)}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <span className="material-symbols-outlined text-[16px] text-success-jade">chat</span>
+                      <span>WhatsApp Inquiry</span>
+                    </a>
+                    <a
+                      className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-terracotta-sandstone hover:bg-terracotta-sunlit text-on-primary font-label-lg text-label-lg inline-flex items-center justify-center gap-1.5 shadow-sm transition-all shrink-0 font-semibold"
+                      href={`/book?vehicle=${veh.id}`}
+                    >
+                      <span>Book {veh.name.split(" ")[0]}</span>
+                      <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      {/* 4. COMPREHENSIVE COMPARISON TABLE */}
+      <section id="spec-comparison" className="w-full bg-sandstone-wash/30 py-12 sm:py-space-2xl border-y border-border-warm/70">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-space-xl">
+            <span className="font-label-caps text-label-caps text-terracotta-sandstone uppercase tracking-widest font-bold">
+              TRANSPARENT TARIFF BENCHMARK
+            </span>
+            <h2 className="font-headline-lg text-headline-sm sm:text-headline-lg text-ink-charcoal mt-1 font-semibold">
+              Side-by-Side Fleet Comparison
+            </h2>
+            <p className="font-body-md text-body-md text-on-surface-variant mt-2 leading-relaxed">
+              Compare key technical capabilities and outstation billing guidelines across all five classes before reserving your journey.
+            </p>
+          </div>
+          <div className="w-full overflow-x-auto rounded-xl shadow-md bg-surface-container-lowest border border-border-warm/80">
+            <table className="w-full text-left font-body-sm text-body-sm min-w-[760px] border-collapse">
+              <thead className="bg-surface-container text-ink-charcoal font-label-caps text-[11px] uppercase tracking-wider border-b border-border-warm font-bold">
                 <tr>
-                  <th scope="col">{isHindi ? "ट्रांसफर रूट व विवरण" : "Transfer Corridor / Route"}</th>
-                  <th scope="col">Sedan (4+1)</th>
-                  <th scope="col">Ertiga (6+1)</th>
-                  <th scope="col">Innova Crysta</th>
-                  <th scope="col">Tempo (12–26)</th>
-                  <th scope="col">Urbania Van</th>
-                  <th scope="col">{isHindi ? "कार्रवाई" : "Action"}</th>
+                  <th className="py-4 px-5 align-middle">Vehicle Class</th>
+                  <th className="py-4 px-5 align-middle">Passenger Capacity</th>
+                  <th className="py-4 px-5 align-middle">Luggage Capacity</th>
+                  <th className="py-4 px-5 align-middle">AC &amp; Climate Control</th>
+                  <th className="py-4 px-5 align-middle">Outstation Rate</th>
+                  <th className="py-4 px-5 align-middle text-right">Instant Action</th>
                 </tr>
               </thead>
-              <tbody>
-                {airportTransfers.map((item) => (
-                  <tr key={item.id}>
-                    <td>
-                      <strong className="transfer-corridor-name">{item.name}</strong>
-                      <span className="transfer-meta">
-                        {item.id === "delhi-airport"
-                          ? isHindi
-                            ? "यमुना एक्सप्रेसवे टोल व स्टेट टैक्स सहित"
-                            : "Yamuna Expressway Toll & Taxes Included"
-                          : isHindi
-                            ? "डोरस्टेप पिकअप / ड्रॉप व स्टेशन पार्किंग सहित"
-                            : "Doorstep Pickup/Drop & Station Parking Included"}
-                      </span>
-                    </td>
-                    <td className="transfer-fare">₹{item.fares.sedan.toLocaleString("en-IN")}</td>
-                    <td className="transfer-fare">₹{item.fares.ertiga.toLocaleString("en-IN")}</td>
-                    <td className="transfer-fare gold-fare">₹{item.fares.innova.toLocaleString("en-IN")}</td>
-                    <td className="transfer-fare">₹{item.fares.tempo.toLocaleString("en-IN")}</td>
-                    <td className="transfer-fare">₹{item.fares.urbania.toLocaleString("en-IN")}</td>
-                    <td>
-                      <a
-                        className="button button-outline button-xs"
-                        href={`/book.html?service=airport&transfer=${item.id}`}
-                      >
-                        {isHindi ? "बुक करें ↗" : "Book ↗"}
-                      </a>
-                    </td>
-                  </tr>
-                ))}
+              <tbody className="divide-y divide-surface-container">
+                <tr className="hover:bg-sandstone-wash/20 transition-colors">
+                  <td className="py-4 px-5 align-middle">
+                    <span className="block font-title-md text-title-md text-ink-charcoal font-semibold">Maruti Dzire / Etios</span>
+                    <span className="font-body-sm text-xs text-secondary font-normal">Executive Sedan</span>
+                  </td>
+                  <td className="py-4 px-5 align-middle text-on-surface-variant font-medium whitespace-nowrap">4 + 1 Pax</td>
+                  <td className="py-4 px-5 align-middle text-on-surface-variant">2 Large Trolley Bags</td>
+                  <td className="py-4 px-5 align-middle text-on-surface-variant">Dual Front/Rear Vents</td>
+                  <td className="py-4 px-5 align-middle font-bold text-terracotta-sandstone text-base whitespace-nowrap">₹10 / km</td>
+                  <td className="py-4 px-5 align-middle text-right whitespace-nowrap">
+                    <a
+                      className="inline-block px-3.5 py-1.5 rounded bg-terracotta-sandstone hover:bg-terracotta-sunlit text-on-primary font-label-caps text-xs tracking-wider transition-all shadow-sm font-bold"
+                      href="/book?vehicle=sedan"
+                    >
+                      Select Sedan
+                    </a>
+                  </td>
+                </tr>
+                <tr className="hover:bg-sandstone-wash/20 transition-colors">
+                  <td className="py-4 px-5 align-middle">
+                    <span className="block font-title-md text-title-md text-ink-charcoal font-semibold">Maruti Suzuki Ertiga</span>
+                    <span className="font-body-sm text-xs text-secondary font-normal">Smart Hybrid MPV</span>
+                  </td>
+                  <td className="py-4 px-5 align-middle text-on-surface-variant font-medium whitespace-nowrap">6 + 1 Pax</td>
+                  <td className="py-4 px-5 align-middle text-on-surface-variant">3 Medium + 3 Cabin</td>
+                  <td className="py-4 px-5 align-middle text-on-surface-variant">Roof Blower Airflow</td>
+                  <td className="py-4 px-5 align-middle font-bold text-terracotta-sandstone text-base whitespace-nowrap">₹14 / km</td>
+                  <td className="py-4 px-5 align-middle text-right whitespace-nowrap">
+                    <a
+                      className="inline-block px-3.5 py-1.5 rounded bg-terracotta-sandstone hover:bg-terracotta-sunlit text-on-primary font-label-caps text-xs tracking-wider transition-all shadow-sm font-bold"
+                      href="/book?vehicle=ertiga"
+                    >
+                      Select MPV
+                    </a>
+                  </td>
+                </tr>
+                <tr className="hover:bg-sandstone-wash/20 transition-colors bg-sandstone-wash/10">
+                  <td className="py-4 px-5 align-middle">
+                    <span className="block font-title-md text-title-md text-ink-charcoal font-semibold">Toyota Innova Crysta</span>
+                    <span className="font-body-sm text-xs text-terracotta-sandstone font-semibold">Executive Touring</span>
+                  </td>
+                  <td className="py-4 px-5 align-middle text-on-surface-variant font-medium whitespace-nowrap">6/7 + 1 Pax</td>
+                  <td className="py-4 px-5 align-middle text-on-surface-variant">4 Large + 4 Handbags</td>
+                  <td className="py-4 px-5 align-middle text-on-surface-variant">Dual-Zone Auto Digital</td>
+                  <td className="py-4 px-5 align-middle font-bold text-terracotta-sandstone text-base whitespace-nowrap">₹18 / km</td>
+                  <td className="py-4 px-5 align-middle text-right whitespace-nowrap">
+                    <a
+                      className="inline-block px-3.5 py-1.5 rounded bg-terracotta-sandstone hover:bg-terracotta-sunlit text-on-primary font-label-caps text-xs tracking-wider transition-all shadow-sm font-bold"
+                      href="/book?vehicle=innova"
+                    >
+                      Select Crysta
+                    </a>
+                  </td>
+                </tr>
+                <tr className="hover:bg-sandstone-wash/20 transition-colors">
+                  <td className="py-4 px-5 align-middle">
+                    <span className="block font-title-md text-title-md text-ink-charcoal font-semibold">Force Tempo Traveller</span>
+                    <span className="font-body-sm text-xs text-secondary font-normal">Luxury Minibus</span>
+                  </td>
+                  <td className="py-4 px-5 align-middle text-on-surface-variant font-medium whitespace-nowrap">12 to 26 Pax</td>
+                  <td className="py-4 px-5 align-middle text-on-surface-variant">15+ Bags + Deep Boot</td>
+                  <td className="py-4 px-5 align-middle text-on-surface-variant">Commercial Dual AC</td>
+                  <td className="py-4 px-5 align-middle font-bold text-terracotta-sandstone text-base whitespace-nowrap">₹25 / km</td>
+                  <td className="py-4 px-5 align-middle text-right whitespace-nowrap">
+                    <a
+                      className="inline-block px-3.5 py-1.5 rounded bg-terracotta-sandstone hover:bg-terracotta-sunlit text-on-primary font-label-caps text-xs tracking-wider transition-all shadow-sm font-bold"
+                      href="/book?vehicle=tempo"
+                    >
+                      Select Minibus
+                    </a>
+                  </td>
+                </tr>
+                <tr className="hover:bg-sandstone-wash/20 transition-colors">
+                  <td className="py-4 px-5 align-middle">
+                    <span className="block font-title-md text-title-md text-ink-charcoal font-semibold">Force Urbania VIP</span>
+                    <span className="font-body-sm text-xs text-secondary font-normal">Monocoque Executive Van</span>
+                  </td>
+                  <td className="py-4 px-5 align-middle text-on-surface-variant font-medium whitespace-nowrap">9 to 17 Pax</td>
+                  <td className="py-4 px-5 align-middle text-on-surface-variant">12+ Suitcases Hold</td>
+                  <td className="py-4 px-5 align-middle text-on-surface-variant">Individual Jet AC Louvers</td>
+                  <td className="py-4 px-5 align-middle font-bold text-terracotta-sandstone text-base whitespace-nowrap">₹34 / km</td>
+                  <td className="py-4 px-5 align-middle text-right whitespace-nowrap">
+                    <a
+                      className="inline-block px-3.5 py-1.5 rounded bg-terracotta-sandstone hover:bg-terracotta-sunlit text-on-primary font-label-caps text-xs tracking-wider transition-all shadow-sm font-bold"
+                      href="/book?vehicle=urbania"
+                    >
+                      Select Urbania
+                    </a>
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>
         </div>
       </section>
 
-      {/* Fleet Standards & Hygiene Pillars */}
-      <section
-        className="home-section fleet-standards-section"
-        aria-labelledby="standards-heading"
-      >
-        <div className="container">
-          <div className="section-heading">
-            <div>
-              <p className="eyebrow">
-                {isHindi ? "सुरक्षा एवं रखरखाव मानक" : "Vehicle Maintenance & Chauffeur Protocol"}
-              </p>
-              <h2 id="standards-heading">
-                {isHindi ? (
-                  <>
-                    हर सफर से पहले पूरी जांच,
-                    <br />
-                    <i>आपकी सुरक्षा और आराम की गारंटी।</i>
-                  </>
-                ) : (
-                  <>
-                    Inspected before every departure,
-                    <br />
-                    <i>uncompromising safety & cleanliness.</i>
-                  </>
-                )}
-              </h2>
-            </div>
+      {/* 5. FLEET FAQS */}
+      <section className="w-full bg-surface py-12 sm:py-space-2xl">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-space-xl">
+            <span className="font-label-caps text-label-caps text-primary uppercase tracking-widest font-bold block mb-1">
+              Vehicle Guidelines &amp; Policies
+            </span>
+            <h2 className="font-headline-lg text-headline-sm sm:text-headline-lg text-ink-charcoal font-semibold">
+              Frequently Asked Fleet Questions
+            </h2>
           </div>
-
-          <div className="standards-grid">
-            <div className="standard-pillar-card">
-              <span className="pillar-num">01</span>
-              <h3>
-                {isHindi ? "दैनिक सैनिटाइजेशन व एसी क्लीनिंग" : "Daily Sanitization & AC Duct Care"}
-              </h3>
-              <p>
-                {isHindi
-                  ? "हर ट्रिप के बाद वैक्यूम क्लीनिंग, फ्रेश इंटीरियर, और शक्तिशाली डुअल एसी डक्ट्स की नियमित सर्विसिंग ताकि यात्रा में ताजी हवा मिले।"
-                  : "Vacuumed interiors, fresh non-smoking cabin ambiance, and thoroughly serviced AC cooling ducts prior to every highway departure."}
-              </p>
-            </div>
-
-            <div className="standard-pillar-card">
-              <span className="pillar-num">02</span>
-              <h3>
-                {isHindi ? "सत्यापित एवं अनुभवी ड्राइवर" : "Verified Professional Chauffeurs"}
-              </h3>
-              <p>
-                {isHindi
-                  ? "पुलिस सत्यापन, वैध कमर्शियल ड्राइविंग लाइसेंस, और न्यूनतम 7+ वर्षों का एक्सप्रेसवे व पहाड़ी रास्तों का अनुभव।"
-                  : "Strict police background checks, verified commercial badges, and minimum 7+ years of Yamuna Expressway and heritage highway experience."}
-              </p>
-            </div>
-
-            <div className="standard-pillar-card">
-              <span className="pillar-num">03</span>
-              <h3>
-                {isHindi ? "आरसी व ऑल-इंडिया परमिट" : "Commercial RTO Yellow-Plate Permits"}
-              </h3>
-              <p>
-                {isHindi
-                  ? "सभी वाहनों में वैध कमर्शियल बीमा, फिटनेस सर्टिफिकेट, ऑल-इंडिया टूरिस्ट परमिट और जीपीएस ट्रैकिंग उपकरण लगे हैं।"
-                  : "Every vehicle operates with valid tourist commercial registration, passenger insurance, annual fitness certification, and live GPS tracking."}
-              </p>
-            </div>
-
-            <div className="standard-pillar-card">
-              <span className="pillar-num">04</span>
-              <h3>
-                {isHindi ? "24×7 आकस्मिक बैकअप गारंटी" : "24×7 Roadside Replacement Guarantee"}
-              </h3>
-              <p>
-                {isHindi
-                  ? "आगरा, दिल्ली एनसीआर और जयपुर कॉरिडोर में किसी तकनीकी रुकावट की स्थिति में 30–45 मिनट में वैकल्पिक वाहन का पक्का वादा।"
-                  : "In the unlikely event of a tire puncture or mechanical delay, our corridor rescue network dispatches a replacement car within 30–45 minutes."}
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Fleet FAQs Accordion */}
-      <section
-        className="home-section fleet-faq-section"
-        aria-labelledby="fleet-faq-heading"
-      >
-        <div className="container">
-          <div className="section-heading">
-            <div>
-              <p className="eyebrow">
-                {isHindi ? "फ्लीट एफएक्यू" : "Vehicle & Billing FAQs"}
-              </p>
-              <h2 id="fleet-faq-heading">
-                {isHindi ? (
-                  <>
-                    गाड़ियों व किराये से जुड़े सवाल,
-                    <br />
-                    <i>सच्चे जवाब, बिना किसी छिपे नियम के।</i>
-                  </>
-                ) : (
-                  <>
-                    Answers to fleet & billing questions,
-                    <br />
-                    <i>clarity before you step on board.</i>
-                  </>
-                )}
-              </h2>
-            </div>
-          </div>
-
-          <div className="fleet-faq-accordion">
-            {FLEET_FAQS.map((item, index) => {
+          <div className="space-y-3">
+            {FLEET_FAQS.map((faq, index) => {
               const isOpen = openFaq === index;
               return (
-                <div
-                  className={`fleet-faq-item ${isOpen ? "is-open" : ""}`}
-                  key={index}
-                >
+                <div key={faq.q} className="border border-border-warm/70 rounded-xl overflow-hidden bg-surface-container-lowest">
                   <button
                     type="button"
-                    className="fleet-faq-question"
                     onClick={() => setOpenFaq(isOpen ? null : index)}
-                    aria-expanded={isOpen}
-                    aria-controls={`fleet-faq-answer-${index}`}
+                    className="w-full text-left p-space-md flex items-center justify-between gap-4 hover:bg-sandstone-wash/20 transition-colors"
                   >
-                    <span>{item.q[activeLanguage]}</span>
-                    <span className="faq-toggle-icon" aria-hidden="true">
-                      {isOpen ? "−" : "+"}
+                    <span className="font-title-md text-sm sm:text-base font-semibold text-ink-charcoal">{faq.q}</span>
+                    <span className="material-symbols-outlined text-primary text-[20px] shrink-0">
+                      {isOpen ? "expand_less" : "expand_more"}
                     </span>
                   </button>
                   {isOpen && (
-                    <div
-                      className="fleet-faq-answer"
-                      id={`fleet-faq-answer-${index}`}
-                    >
-                      <p>{item.a[activeLanguage]}</p>
+                    <div className="p-space-md pt-0 text-on-surface-variant font-body-sm leading-relaxed border-t border-border-warm/40 mt-1">
+                      {faq.a}
                     </div>
                   )}
                 </div>
@@ -656,41 +640,6 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
           </div>
         </div>
       </section>
-
-      {/* Bottom 24x7 Fleet Dispatch Desk CTA */}
-      <section className="container fleet-cta-container">
-        <div className="fleet-cta-card">
-          <div className="fleet-cta-content">
-            <span className="fleet-cta-badge">24×7 FLEET CONTROL ROOM</span>
-            <h2>
-              {isHindi
-                ? "क्या आपकी कोई विशेष ग्रुप यात्रा या शादी की बुकिंग है?"
-                : "Need a tailored fleet quote for an event, wedding, or VIP delegation?"}
-            </h2>
-            <p>
-              {isHindi
-                ? "ताजगंज, आगरा स्थित हमारे मुख्य फ्लीट ऑपरेशन्स डेस्क से सीधे संपर्क करें। एक साथ कई वाहनों की बुकिंग और विशेष दरों के लिए तुरंत सहायता प्राप्त करें।"
-                : "Connect with our fleet manager directly. Multi-vehicle convoys, corporate airport runs, and bespoke outstation van rentals across North India."}
-            </p>
-            <div className="fleet-cta-buttons">
-              <a className="button button-primary" href="/book.html">
-                {isHindi ? "ऑनलाइन बुक करें ↗" : "Book Online ↗"}
-              </a>
-              <a
-                className="button button-outline"
-                href={`https://wa.me/${contact.whatsapp}`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                {isHindi ? "व्हाट्सएप संपर्क" : "WhatsApp Fleet Desk"}
-              </a>
-              <a className="button button-outline" href={`tel:${contact.phone}`}>
-                {contact.phoneDisplay}
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
+    </div>
   );
 }

@@ -1,84 +1,57 @@
-/**
- * VehicleDetailPage — Dynamic Fleet Vehicle Landing Template (Step R5.23)
- *
- * High-converting, SEO-optimized bilingual landing template for all 5 fleet tiers:
- * 1. Sedan (Dzire / Etios class)
- * 2. Ertiga (6+1 MPV)
- * 3. Innova Crysta (6+1 Premium SUV)
- * 4. Tempo Traveller (9–26 Seater Tourist Van)
- * 5. Force Urbania (Luxury Executive Van)
- *
- * Features:
- * - Semantic Breadcrumbs & Category Pill Tags
- * - 2-Column Hero Showcase with high-res photo, floating spec badges, rate card & direct booking CTA
- * - 4-Card Technical Specifications & Cabin Comfort Bento Grid
- * - Available Models Lineup Showcase with specs
- * - Comprehensive Multi-Service Pricing Breakdown:
- *   * Outstation Round-Trip (₹/km with 300 km/day rule)
- *   * Agra Local Sightseeing (8h/80km & Full Day)
- *   * Fixed One-Way Outstation Drops (Delhi, Jaipur, Mathura, Gwalior, Lucknow, Ayodhya)
- *   * Airport & Railway Transfers (Agra Cantt, Agra Airport, Delhi IGI)
- *   * Operating Policy Notes (Night allowance past 8PM, parking, Tempo round-trip mandate)
- * - Recommended Travel Scenarios ("Best For") Bento Grid
- * - Vehicle-Specific 6-Item Bilingual FAQ Accordion (ARIA 1.2 accessible)
- * - 24×7 Local Fleet Dispatch CTA Banner
- * - Schema.org JSON-LD graph (TaxiService, Product/Car, BreadcrumbList, FAQPage, LocalBusiness)
- */
-
 import React, { useState, useMemo } from "react";
 import { contact } from "../data/contact";
 import { type Vehicle, vehicles, routes } from "../data/catalogue";
 
 interface VehicleDetailPageProps {
-  language: "en" | "hi";
+  language?: "en" | "hi";
   vehicle: Vehicle;
 }
 
 // Fixed route prices by vehicle tier (aligned with CLIENT_CONFIRMATION_FARES_AND_RULES.md)
-const ONE_WAY_FARES_BY_VEHICLE: Record<string, Array<{ routeId: string; routeEn: string; routeHi: string; highway: string; km: number; fare: number }>> = {
+const ONE_WAY_FARES_BY_VEHICLE: Record<string, Array<{ routeId: string; routeEn: string; highway: string; km: number; fare: number }>> = {
   sedan: [
-    { routeId: "agra-delhi", routeEn: "Agra ⇄ Delhi (or IGI Airport)", routeHi: "आगरा ⇄ दिल्ली (या IGI एयरपोर्ट)", highway: "Yamuna Expressway", km: 210, fare: 4999 },
-    { routeId: "agra-jaipur", routeEn: "Agra ⇄ Jaipur (Pink City)", routeHi: "आगरा ⇄ जयपुर", highway: "NH-21 (Agra–Bikaner)", km: 240, fare: 4500 },
-    { routeId: "agra-mathura", routeEn: "Agra ⇄ Mathura / Vrindavan", routeHi: "आगरा ⇄ मथुरा / वृन्दावन", highway: "NH-19 (Delhi–Agra)", km: 58, fare: 2500 },
-    { routeId: "agra-gwalior", routeEn: "Agra ⇄ Gwalior", routeHi: "आगरा ⇄ ग्वालियर", highway: "NH-44 (North–South)", km: 120, fare: 3999 },
-    { routeId: "agra-lucknow", routeEn: "Agra ⇄ Lucknow", routeHi: "आगरा ⇄ लखनऊ", highway: "Agra–Lucknow Expressway", km: 335, fare: 7500 },
-    { routeId: "delhi-jaipur", routeEn: "Delhi ⇄ Jaipur (Intercity)", routeHi: "दिल्ली ⇄ जयपुर", highway: "NH-48 / NE-4", km: 280, fare: 5999 },
+    { routeId: "agra-delhi", routeEn: "Agra ⇄ Delhi (or IGI Airport)", highway: "Yamuna Expressway", km: 210, fare: 4999 },
+    { routeId: "agra-jaipur", routeEn: "Agra ⇄ Jaipur (Pink City)", highway: "NH-21 (Agra–Bikaner)", km: 240, fare: 4500 },
+    { routeId: "agra-mathura", routeEn: "Agra ⇄ Mathura / Vrindavan", highway: "NH-19 (Delhi–Agra)", km: 58, fare: 2500 },
+    { routeId: "agra-gwalior", routeEn: "Agra ⇄ Gwalior", highway: "NH-44 (North–South)", km: 120, fare: 3999 },
+    { routeId: "agra-lucknow", routeEn: "Agra ⇄ Lucknow", highway: "Agra–Lucknow Expressway", km: 335, fare: 7500 },
+    { routeId: "delhi-jaipur", routeEn: "Delhi ⇄ Jaipur (Intercity)", highway: "NH-48 / NE-4", km: 280, fare: 5999 },
   ],
   ertiga: [
-    { routeId: "agra-delhi", routeEn: "Agra ⇄ Delhi (or IGI Airport)", routeHi: "आगरा ⇄ दिल्ली (या IGI एयरपोर्ट)", highway: "Yamuna Expressway", km: 210, fare: 5999 },
-    { routeId: "agra-jaipur", routeEn: "Agra ⇄ Jaipur (Pink City)", routeHi: "आगरा ⇄ जयपुर", highway: "NH-21 (Agra–Bikaner)", km: 240, fare: 6800 },
-    { routeId: "agra-mathura", routeEn: "Agra ⇄ Mathura / Vrindavan", routeHi: "आगरा ⇄ मथुरा / वृन्दावन", highway: "NH-19 (Delhi–Agra)", km: 58, fare: 3000 },
-    { routeId: "agra-gwalior", routeEn: "Agra ⇄ Gwalior", routeHi: "आगरा ⇄ ग्वालियर", highway: "NH-44 (North–South)", km: 120, fare: 4500 },
-    { routeId: "agra-lucknow", routeEn: "Agra ⇄ Lucknow", routeHi: "आगरा ⇄ लखनऊ", highway: "Agra–Lucknow Expressway", km: 335, fare: 8500 },
-    { routeId: "delhi-jaipur", routeEn: "Delhi ⇄ Jaipur (Intercity)", routeHi: "दिल्ली ⇄ जयपुर", highway: "NH-48 / NE-4", km: 280, fare: 6999 },
+    { routeId: "agra-delhi", routeEn: "Agra ⇄ Delhi (or IGI Airport)", highway: "Yamuna Expressway", km: 210, fare: 5999 },
+    { routeId: "agra-jaipur", routeEn: "Agra ⇄ Jaipur (Pink City)", highway: "NH-21 (Agra–Bikaner)", km: 240, fare: 6800 },
+    { routeId: "agra-mathura", routeEn: "Agra ⇄ Mathura / Vrindavan", highway: "NH-19 (Delhi–Agra)", km: 58, fare: 3000 },
+    { routeId: "agra-gwalior", routeEn: "Agra ⇄ Gwalior", highway: "NH-44 (North–South)", km: 120, fare: 4500 },
+    { routeId: "agra-lucknow", routeEn: "Agra ⇄ Lucknow", highway: "Agra–Lucknow Expressway", km: 335, fare: 8500 },
+    { routeId: "delhi-jaipur", routeEn: "Delhi ⇄ Jaipur (Intercity)", highway: "NH-48 / NE-4", km: 280, fare: 6999 },
   ],
   innova: [
-    { routeId: "agra-delhi", routeEn: "Agra ⇄ Delhi (or IGI Airport)", routeHi: "आगरा ⇄ दिल्ली (या IGI एयरपोर्ट)", highway: "Yamuna Expressway", km: 210, fare: 7500 },
-    { routeId: "agra-jaipur", routeEn: "Agra ⇄ Jaipur (Pink City)", routeHi: "आगरा ⇄ जयपुर", highway: "NH-21 (Agra–Bikaner)", km: 240, fare: 8500 },
-    { routeId: "agra-mathura", routeEn: "Agra ⇄ Mathura / Vrindavan", routeHi: "आगरा ⇄ मथुरा / वृन्दावन", highway: "NH-19 (Delhi–Agra)", km: 58, fare: 4000 },
-    { routeId: "agra-gwalior", routeEn: "Agra ⇄ Gwalior", routeHi: "आगरा ⇄ ग्वालियर", highway: "NH-44 (North–South)", km: 120, fare: 6899 },
-    { routeId: "agra-lucknow", routeEn: "Agra ⇄ Lucknow", routeHi: "आगरा ⇄ लखनऊ", highway: "Agra–Lucknow Expressway", km: 335, fare: 9500 },
-    { routeId: "delhi-jaipur", routeEn: "Delhi ⇄ Jaipur (Intercity)", routeHi: "दिल्ली ⇄ जयपुर", highway: "NH-48 / NE-4", km: 280, fare: 8499 },
+    { routeId: "agra-delhi", routeEn: "Agra ⇄ Delhi (or IGI Airport)", highway: "Yamuna Expressway", km: 210, fare: 7500 },
+    { routeId: "agra-jaipur", routeEn: "Agra ⇄ Jaipur (Pink City)", highway: "NH-21 (Agra–Bikaner)", km: 240, fare: 8500 },
+    { routeId: "agra-mathura", routeEn: "Agra ⇄ Mathura / Vrindavan", highway: "NH-19 (Delhi–Agra)", km: 58, fare: 4000 },
+    { routeId: "agra-gwalior", routeEn: "Agra ⇄ Gwalior", highway: "NH-44 (North–South)", km: 120, fare: 6899 },
+    { routeId: "agra-lucknow", routeEn: "Agra ⇄ Lucknow", highway: "Agra–Lucknow Expressway", km: 335, fare: 9500 },
+    { routeId: "delhi-jaipur", routeEn: "Delhi ⇄ Jaipur (Intercity)", highway: "NH-48 / NE-4", km: 280, fare: 8499 },
   ],
   tempo: [
-    { routeId: "agra-delhi", routeEn: "Agra ⇄ Delhi (or IGI Airport)", routeHi: "आगरा ⇄ दिल्ली (या IGI एयरपोर्ट)", highway: "Yamuna Expressway", km: 210, fare: 8500 },
-    { routeId: "agra-jaipur", routeEn: "Agra ⇄ Jaipur (Pink City)", routeHi: "आगरा ⇄ जयपुर", highway: "NH-21 (Agra–Bikaner)", km: 240, fare: 8500 },
-    { routeId: "agra-mathura", routeEn: "Agra ⇄ Mathura / Vrindavan", routeHi: "आगरा ⇄ मथुरा / वृन्दावन", highway: "NH-19 (Delhi–Agra)", km: 58, fare: 5200 },
-    { routeId: "agra-gwalior", routeEn: "Agra ⇄ Gwalior", routeHi: "आगरा ⇄ ग्वालियर", highway: "NH-44 (North–South)", km: 120, fare: 7200 },
-    { routeId: "agra-lucknow", routeEn: "Agra ⇄ Lucknow", routeHi: "आगरा ⇄ लखनऊ", highway: "Agra–Lucknow Expressway", km: 335, fare: 12800 },
-    { routeId: "delhi-jaipur", routeEn: "Delhi ⇄ Jaipur (Intercity)", routeHi: "दिल्ली ⇄ जयपुर", highway: "NH-48 / NE-4", km: 280, fare: 10500 },
+    { routeId: "agra-delhi", routeEn: "Agra ⇄ Delhi (or IGI Airport)", highway: "Yamuna Expressway", km: 210, fare: 8500 },
+    { routeId: "agra-jaipur", routeEn: "Agra ⇄ Jaipur (Pink City)", highway: "NH-21 (Agra–Bikaner)", km: 240, fare: 8500 },
+    { routeId: "agra-mathura", routeEn: "Agra ⇄ Mathura / Vrindavan", highway: "NH-19 (Delhi–Agra)", km: 58, fare: 5200 },
+    { routeId: "agra-gwalior", routeEn: "Agra ⇄ Gwalior", highway: "NH-44 (North–South)", km: 120, fare: 7200 },
+    { routeId: "agra-lucknow", routeEn: "Agra ⇄ Lucknow", highway: "Agra–Lucknow Expressway", km: 335, fare: 12800 },
+    { routeId: "delhi-jaipur", routeEn: "Delhi ⇄ Jaipur (Intercity)", highway: "NH-48 / NE-4", km: 280, fare: 10500 },
   ],
   urbania: [
-    { routeId: "agra-delhi", routeEn: "Agra ⇄ Delhi (or IGI Airport)", routeHi: "आगरा ⇄ दिल्ली (या IGI एयरपोर्ट)", highway: "Yamuna Expressway", km: 210, fare: 11500 },
-    { routeId: "agra-jaipur", routeEn: "Agra ⇄ Jaipur (Pink City)", routeHi: "आगरा ⇄ जयपुर", highway: "NH-21 (Agra–Bikaner)", km: 240, fare: 11500 },
-    { routeId: "agra-mathura", routeEn: "Agra ⇄ Mathura / Vrindavan", routeHi: "आगरा ⇄ मथुरा / वृन्दावन", highway: "NH-19 (Delhi–Agra)", km: 58, fare: 7200 },
-    { routeId: "agra-gwalior", routeEn: "Agra ⇄ Gwalior", routeHi: "आगरा ⇄ ग्वालियर", highway: "NH-44 (North–South)", km: 120, fare: 9800 },
-    { routeId: "agra-lucknow", routeEn: "Agra ⇄ Lucknow", routeHi: "आगरा ⇄ लखनऊ", highway: "Agra–Lucknow Expressway", km: 335, fare: 16500 },
-    { routeId: "delhi-jaipur", routeEn: "Delhi ⇄ Jaipur (Intercity)", routeHi: "दिल्ली ⇄ जयपुर", highway: "NH-48 / NE-4", km: 280, fare: 14200 },
+    { routeId: "agra-delhi", routeEn: "Agra ⇄ Delhi (or IGI Airport)", highway: "Yamuna Expressway", km: 210, fare: 11500 },
+    { routeId: "agra-jaipur", routeEn: "Agra ⇄ Jaipur (Pink City)", highway: "NH-21 (Agra–Bikaner)", km: 240, fare: 11500 },
+    { routeId: "agra-mathura", routeEn: "Agra ⇄ Mathura / Vrindavan", highway: "NH-19 (Delhi–Agra)", km: 58, fare: 7200 },
+    { routeId: "agra-gwalior", routeEn: "Agra ⇄ Gwalior", highway: "NH-44 (North–South)", km: 120, fare: 9800 },
+    { routeId: "agra-lucknow", routeEn: "Agra ⇄ Lucknow", highway: "Agra–Lucknow Expressway", km: 335, fare: 16500 },
+    { routeId: "delhi-jaipur", routeEn: "Delhi ⇄ Jaipur (Intercity)", highway: "NH-48 / NE-4", km: 280, fare: 14200 },
   ],
 };
 
-// Local Sightseeing & Transfer rates by vehicle (Section 2.1 & 2.2)
+// Local Sightseeing & Transfer rates by vehicle
 const LOCAL_RATES: Record<string, { standard8h: number; fullDay: number; agraCantt: number; agraAirport: number; delAirport: number }> = {
   sedan: { standard8h: 2200, fullDay: 3000, agraCantt: 1200, agraAirport: 900, delAirport: 4999 },
   ertiga: { standard8h: 2900, fullDay: 4000, agraCantt: 1500, agraAirport: 1050, delAirport: 5999 },
@@ -87,657 +60,467 @@ const LOCAL_RATES: Record<string, { standard8h: number; fullDay: number; agraCan
   urbania: { standard8h: 9500, fullDay: 11500, agraCantt: 4500, agraAirport: 3800, delAirport: 11500 },
 };
 
-export function VehicleDetailPage({ language, vehicle }: VehicleDetailPageProps) {
-  const isHi = language === "hi";
+export function VehicleDetailPage({ vehicle }: VehicleDetailPageProps) {
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
 
   const vehicleSlug = vehicle.id === "innova" ? "innova-crysta" : vehicle.id === "tempo" ? "tempo-traveller" : vehicle.id;
   const rates = LOCAL_RATES[vehicle.id] || LOCAL_RATES.sedan;
   const oneWayRoutes = ONE_WAY_FARES_BY_VEHICLE[vehicle.id] || ONE_WAY_FARES_BY_VEHICLE.sedan;
-  const isCommercialVan = vehicle.id === "tempo" || vehicle.id === "urbania";
 
-  // Vehicle-specific FAQ items
-  const faqItems = useMemo(() => [
-    {
-      q: {
-        en: `Can the air conditioning run continuously during sightseeing in the ${vehicle.name}?`,
-        hi: `क्या ${vehicle.name} में दर्शनीय स्थलों पर रुकने के दौरान एसी लगातार चालू रह सकता है?`
+  const faqItems = useMemo(
+    () => [
+      {
+        q: `What is included in the ₹${vehicle.perKm}/km outstation rate for ${vehicle.name}?`,
+        a: `The per-kilometer rate covers vehicle charter, chauffeur driving allowance, and comprehensive vehicle maintenance. Fuel is calculated from our garage or pickup point. State entrance taxes and expressway tolls are billed at exact actuals or bundled transparently into fixed quotes.`,
       },
-      a: {
-        en: `Yes. All our ${vehicle.name} cabs come equipped with high-efficiency air conditioning with dual or individual roof vents. AC remains operational throughout your journey, monument transitions, and parking halts.`,
-        hi: `हाँ, हमारी सभी ${vehicle.name} गाड़ियों में शक्तिशाली एसी उपलब्ध है। यात्रा के दौरान, स्मारकों के आवागमन और ठहराव के समय भी वातानुकूलन निर्बाध रूप से चालू रहता है।`
-      }
-    },
-    {
-      q: {
-        en: `How much luggage can comfortably fit in the ${vehicle.name}?`,
-        hi: `${vehicle.name} में कितने बैग और सूटकेस आसानी से रखे जा सकते हैं?`
+      {
+        q: `How does the 300 km per day minimum billing rule apply to this ${vehicle.name}?`,
+        a: `In accordance with commercial transport regulations across Uttar Pradesh, Rajasthan, and Delhi NCR, outstation round-trip bookings adhere to a minimum of 300 km per calendar day. For instance, a 2-day round-trip charter has a 600 km minimum base allowance.`,
       },
-      a: {
-        en: `The ${vehicle.name} accommodates up to ${vehicle.bags} large hard-case suitcases plus personal soft backpacks. For large groups traveling in Tempos or Urbanias, a dedicated overhead luggage bay or rear carrier is provided.`,
-        hi: `${vehicle.name} में लगभग ${vehicle.bags} बड़े सूटकेस और हैंडबैग आसानी से रखे जा सकते हैं। टेम्पो व अर्बनिया में बड़ा लगेज कम्पार्टमेंट और कैरियर उपलब्ध रहता है।`
-      }
-    },
-    {
-      q: {
-        en: `Are highway tolls, parking fees, and state border taxes included in the fare?`,
-        hi: `क्या किराये में टोल टैक्स, पार्किंग शुल्क और राज्य सीमा कर शामिल हैं?`
+      {
+        q: `Are child seats and luggage carriers available for the ${vehicle.name}?`,
+        a: `Yes! Infant and booster child safety seats can be requested in advance at zero extra cost. For larger groups with oversized suitcases, roof-top waterproof luggage carriers are equipped upon request.`,
       },
-      a: {
-        en: `For all pre-fixed One-Way expressway drops, highway tolls, state commercial entry taxes, and driver allowances are 100% all-inclusive. For local sightseeing and custom multi-day outstation round trips, monument parking slips and interstate taxes are billed at actuals.`,
-        hi: `निर्धारित वन-वे एक्सप्रेसवे बुकिंग में हाईवे टोल, बॉर्डर टैक्स और ड्राइवर भत्ता 100% शामिल रहता है। स्थानीय दर्शनीय स्थल व राउंड ट्रिप में पार्किंग पर्चियां वास्तविक मूल्य पर देय होती हैं।`
-      }
-    },
-    {
-      q: {
-        en: `What is the night driving allowance policy for the ${vehicle.name}?`,
-        hi: `${vehicle.name} के लिए रात्रि चालक भत्ता (Night Allowance) नियम क्या है?`
+      {
+        q: `What is your chauffeur night allowance policy for ${vehicle.name}?`,
+        a: `A nominal driver night charge of ₹300 applies if the vehicle is engaged between 10:00 PM and 6:00 AM, allowing chauffeurs safe rest accommodations during overnight outstation stays.`,
       },
-      a: {
-        en: `For duty running past 8:00 PM (20:00) or departures before 6:00 AM, a standard driver night allowance applies: ₹300 for cars (Sedan, Ertiga, Innova Crysta) and ₹500 for commercial tourist vans (Tempo Traveller, Force Urbania).`,
-        hi: `रात 8:00 बजे (20:00) के बाद या सुबह 6:00 बजे से पहले सेवा पर मानक चालक रात्रि भत्ता लागू होता है: कारों के लिए ₹300 तथा टेम्पो ट्रैवलर व अर्बनिया के लिए ₹500।`
-      }
-    },
-    {
-      q: {
-        en: isCommercialVan
-          ? `Why are one-way Tempo Traveller and Urbania bookings billed on a round-trip basis?`
-          : `Can I book the ${vehicle.name} for same-day return or outstation multi-day trips?`,
-        hi: isCommercialVan
-          ? `टेम्पो ट्रैवलर और अर्बनिया वन-वे यात्रा के लिए दोनों तरफ (आने-जाने) का किराया क्यों लेते हैं?`
-          : `क्या मैं ${vehicle.name} को उसी दिन वापसी या बहु-दिवसीय यात्रा के लिए बुक कर सकता हूँ?`
+      {
+        q: `What is the cancellation and advance deposit policy?`,
+        a: `Bookings are secured with a modest 28% advance deposit. Cancellations made at least 24 hours prior to scheduled departure receive an immediate 100% full refund with zero cancellation fee.`,
       },
-      a: {
-        en: isCommercialVan
-          ? `Commercial passenger vehicles (9–26 seats) cannot obtain return loads on one-way drop routes in the open market. Therefore, all outstation tempo bookings mandate round-trip return coverage or follow the standard 300 km/day minimum billing.`
-          : `Yes. You can book for same-day return (which benefits from our discounted 1.85× one-way multiplier) or multi-day outstation tours with standard 300 km/day minimum billing.`,
-        hi: isCommercialVan
-          ? `व्यावसायिक पर्यटक वाहनों (9-26 सीट) को वन-वे ड्राप पर वापसी यात्री नहीं मिलते। अतः सभी आउटस्टेशन टेम्पो बुकिंग आने-जाने के कुल किराये या 300 किमी/दिन के न्यूनतम आधार पर मान्य होती हैं।`
-          : `हाँ, आप उसी दिन वापसी (1.85× रियायती गुणक) अथवा बहु-दिवसीय आउटस्टेशन यात्रा (300 किमी/दिन न्यूनतम) के लिए आसानी से बुक कर सकते हैं।`
-      }
-    },
-    {
-      q: {
-        en: `What is the cancellation and refund policy if my schedule changes?`,
-        hi: `यदि मेरा यात्रा कार्यक्रम बदल जाता है तो रद्दीकरण (Cancellation) नीति क्या है?`
+      {
+        q: `What happens if the vehicle encounters a mechanical delay on the highway?`,
+        a: `We maintain a 45-Minute Emergency Vehicle Replacement Guarantee along the Yamuna Expressway, NH-19, and NH-21 corridors. Our central Taj Ganj dispatch operations desk immediately deploys a backup commercial vehicle.`,
       },
-      a: {
-        en: `We offer 100% free cancellation for cab and vehicle bookings up to 24 hours prior to scheduled pickup time with full refund credited within 5–7 business days. No questions asked.`,
-        hi: `यात्रा के निर्धारित समय से 24 घंटे पहले तक कैब बुकिंग रद्द करने पर 100% पूर्ण रिफंड 5–7 कार्यदिवसों में वापस मिल जाता है। कोई कटौती नहीं की जाती।`
-      }
-    }
-  ], [vehicle.name, vehicle.bags, isCommercialVan]);
+    ],
+    [vehicle]
+  );
 
-  // Schema.org Structured Data Graph
-  const schemaGraph = useMemo(() => ({
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "Product",
-        "@id": `https://skbagheltravels.in/#vehicle-${vehicle.id}`,
-        "name": `${vehicle.name} Taxi Hire in Agra`,
-        "description": vehicle.blurb,
-        "image": `https://skbagheltravels.in${vehicle.image}`,
-        "category": "Car Rental",
-        "offers": {
-          "@type": "Offer",
-          "priceCurrency": "INR",
-          "price": vehicle.perKm,
-          "priceValidUntil": "2027-12-31",
-          "availability": "https://schema.org/InStock",
-          "unitText": "per kilometer",
-          "url": `https://skbagheltravels.in/en/vehicles/${vehicleSlug}/`
-        }
-      },
-      {
-        "@type": "TaxiService",
-        "@id": `https://skbagheltravels.in/#service-${vehicle.id}`,
-        "name": `${vehicle.name} Chauffeur Drive Service`,
-        "provider": {
-          "@type": "LocalBusiness",
-          "name": "SK Baghel Tour & Travels",
-          "telephone": contact.phone,
-          "address": {
-            "@type": "PostalAddress",
-            "streetAddress": "Near Taj East Gate Road, Taj Ganj",
-            "addressLocality": "Agra",
-            "addressRegion": "Uttar Pradesh",
-            "postalCode": "282001",
-            "addressCountry": "IN"
-          }
-        },
-        "areaServed": ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"]
-      },
-      {
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-          { "@type": "ListItem", "position": 1, "name": isHi ? "होम" : "Home", "item": isHi ? "https://skbagheltravels.in/hi/" : "https://skbagheltravels.in/" },
-          { "@type": "ListItem", "position": 2, "name": isHi ? "गाड़ियां" : "Fleet", "item": isHi ? "https://skbagheltravels.in/hi/fleet/" : "https://skbagheltravels.in/en/fleet/" },
-          { "@type": "ListItem", "position": 3, "name": vehicle.name, "item": `https://skbagheltravels.in/${language}/vehicles/${vehicleSlug}/` }
-        ]
-      },
-      {
-        "@type": "FAQPage",
-        "mainEntity": faqItems.map(item => ({
-          "@type": "Question",
-          "name": isHi ? item.q.hi : item.q.en,
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": isHi ? item.a.hi : item.a.en
-          }
-        }))
-      }
-    ]
-  }), [vehicle, vehicleSlug, language, isHi, faqItems]);
-
-  const bookingUrl = `/book.html?vehicle=${vehicle.id}`;
-  const whatsappUrl = `https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
-    isHi
-      ? `नमस्ते, मैं आगरा से ${vehicle.name} बुकिंग व किराये के बारे में जानकारी चाहता हूँ।`
-      : `Hello, I would like to inquire about booking the ${vehicle.name} from Agra.`
-  )}`;
+  const bookingUrl = `/book/?vehicle=${vehicleSlug}&step=1`;
+  const whatsappUrl = `https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(`Hello SK Baghel Desk, I would like to reserve the ${vehicle.name} for an upcoming journey.`)}`;
 
   return (
-    <div className="vehicle-detail-page">
-      {/* Schema.org JSON-LD */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaGraph) }}
-      />
+    <div className="flex flex-col w-full bg-surface">
+      {/* Breadcrumb Bar */}
+      <div className="w-full bg-sandstone-wash/70 py-space-sm border-b border-border-warm/40">
+        <div className="max-w-7xl mx-auto px-margin-mobile lg:px-margin flex items-center justify-between">
+          <nav aria-label="Breadcrumb" className="flex items-center gap-space-xs text-body-sm font-body-sm text-on-surface-variant">
+            <a className="hover:text-primary transition-colors" href="/">Home</a>
+            <span className="material-symbols-outlined text-[14px] text-terracotta-sandstone">chevron_right</span>
+            <a className="hover:text-primary transition-colors" href="/fleet/">Fleet</a>
+            <span className="material-symbols-outlined text-[14px] text-terracotta-sandstone">chevron_right</span>
+            <span className="text-terracotta-sandstone font-medium">{vehicle.name}</span>
+          </nav>
+          <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary-fixed text-primary text-label-caps font-label-caps uppercase tracking-wider">
+            <span className="material-symbols-outlined text-[14px]">verified</span>
+            100% Yellow-Plate Commercial
+          </span>
+        </div>
+      </div>
 
-      {/* Top Breadcrumbs Bar */}
-      <nav className="detail-topbar" aria-label="Breadcrumb">
-        <div className="container topbar-inner">
-          <ol className="breadcrumb-trail">
-            <li><a href={isHi ? "/hi/" : "/"}>{isHi ? "होम" : "Home"}</a></li>
-            <li className="sep">/</li>
-            <li><a href={isHi ? "/hi/fleet/" : "/en/fleet/"}>{isHi ? "गाड़ियां" : "Fleet"}</a></li>
-            <li className="sep">/</li>
-            <li className="current" aria-current="page">{vehicle.name}</li>
-          </ol>
-          <div className="topbar-tags">
-            <span className="spec-tag">{vehicle.seats} {isHi ? "सीटें" : "Seats"}</span>
-            <span className="spec-tag">{vehicle.bags} {isHi ? "बैग" : "Bags"}</span>
-            <span className="spec-tag">AC</span>
-            <span className="spec-tag rate-tag">₹{vehicle.perKm}/km</span>
+      {/* Hero Showcase */}
+      <section className="relative w-full bg-surface pt-space-xl pb-space-2xl overflow-hidden">
+        <div className="max-w-7xl mx-auto px-margin-mobile lg:px-margin">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-center">
+            {/* Left Column: Info & Booking Card */}
+            <div className="lg:col-span-7 flex flex-col gap-space-md">
+              <div className="flex flex-wrap items-center gap-space-xs">
+                <span className="px-3 py-1 rounded-full bg-sandstone-wash text-terracotta-sandstone font-label-caps text-label-caps uppercase tracking-wider border border-border-warm">
+                  {vehicle.klass}
+                </span>
+                <span className="px-3 py-1 rounded-full bg-surface-container-high text-on-surface-variant font-label-caps text-label-caps uppercase tracking-wider">
+                  {vehicle.seats} Seater Luxury
+                </span>
+              </div>
+
+              <h1 className="font-headline-hero text-headline-hero text-ink-charcoal tracking-tight font-serif">
+                {vehicle.name} Chauffeur Hire in Agra
+              </h1>
+
+              <p className="font-body-lg text-body-lg text-on-surface-variant max-w-2xl leading-relaxed">
+                {vehicle.blurb} Immaculate interiors, verified dual-zone air conditioning, and professional chauffeurs
+                steeped in Northern Indian highway expertise.
+              </p>
+
+              {/* Spec highlights */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-space-sm pt-space-xs">
+                <div className="flex items-center gap-2 p-space-sm rounded bg-surface-container-low border border-border-warm/40">
+                  <span className="material-symbols-outlined text-terracotta-sandstone text-[20px]">airline_seat_recline_extra</span>
+                  <div className="flex flex-col">
+                    <span className="font-title-md text-[14px] text-ink-charcoal font-semibold">{vehicle.seats} Seats</span>
+                    <span className="text-[11px] text-secondary">Contoured comfort</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 p-space-sm rounded bg-surface-container-low border border-border-warm/40">
+                  <span className="material-symbols-outlined text-terracotta-sandstone text-[20px]">luggage</span>
+                  <div className="flex flex-col">
+                    <span className="font-title-md text-[14px] text-ink-charcoal font-semibold">{vehicle.bags} Bags</span>
+                    <span className="text-[11px] text-secondary">Large boot bay</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 p-space-sm rounded bg-surface-container-low border border-border-warm/40">
+                  <span className="material-symbols-outlined text-terracotta-sandstone text-[20px]">mode_fan</span>
+                  <div className="flex flex-col">
+                    <span className="font-title-md text-[14px] text-ink-charcoal font-semibold">Dual AC</span>
+                    <span className="text-[11px] text-secondary">Pristine cooling</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 p-space-sm rounded bg-surface-container-low border border-border-warm/40">
+                  <span className="material-symbols-outlined text-terracotta-sandstone text-[20px]">shield_person</span>
+                  <div className="flex flex-col">
+                    <span className="font-title-md text-[14px] text-ink-charcoal font-semibold">Police ID</span>
+                    <span className="text-[11px] text-secondary">Verified driver</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Rate Card & Direct Booking Bar */}
+              <div className="bg-sandstone-wash/80 p-space-lg rounded-xl border border-border-warm shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-space-md mt-space-xs">
+                <div className="flex flex-col">
+                  <span className="font-label-caps text-label-caps text-terracotta-sandstone uppercase">Starting Outstation Fare</span>
+                  <div className="flex items-baseline gap-1 mt-0.5">
+                    <span className="font-headline-hero text-headline-hero text-ink-charcoal font-serif font-semibold">₹{vehicle.perKm}</span>
+                    <span className="text-body-md text-on-surface-variant font-medium">/ km</span>
+                  </div>
+                  <span className="text-body-sm text-secondary">Standard 300 km/day minimum • 28% advance token to lock</span>
+                </div>
+
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-space-sm">
+                  <a
+                    className="inline-flex items-center justify-center gap-space-xs bg-terracotta-sandstone text-on-primary px-6 py-3.5 rounded text-label-lg font-label-lg shadow-md hover:bg-terracotta-sunlit transition-all duration-200"
+                    href={bookingUrl}
+                  >
+                    <span className="material-symbols-outlined text-[20px]">calendar_month</span>
+                    <span>Reserve {vehicle.name}</span>
+                  </a>
+                  <a
+                    className="inline-flex items-center justify-center gap-space-xs bg-ink-charcoal text-ivory-surface px-5 py-3.5 rounded text-label-lg font-label-lg shadow-sm hover:bg-ink-slate transition-all duration-200"
+                    href={whatsappUrl}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    <span className="material-symbols-outlined text-[20px] text-terracotta-sunlit">chat</span>
+                    <span>WhatsApp</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: High-Res Photo Card */}
+            <div className="lg:col-span-5 relative">
+              <div className="relative rounded-xl overflow-hidden shadow-xl bg-surface-container border border-border-warm/60">
+                <img
+                  className="w-full h-[440px] object-cover"
+                  src={vehicle.image}
+                  alt={`${vehicle.name} luxury fleet charter`}
+                  loading="eager"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src =
+                      "https://lh3.googleusercontent.com/aida-public/AB6AXuCmlzP3c2lpWAi6vPrfCKZcIhEJWmPEuyRaJiN9TmXsdpvj1uZ1ukMv6Nzd9cC0T6Sctz_AqeUNPojvuyh5RtYNtdY-PerWt-3UyMfJRUTKEC66624PYqFAtQYKnMh5jtT4PGN0gZ5ofBTFYihl5NVD4QGgHvhRL24fqNpWbIZ1e3BXJd9AuuGzAfN9WGqyNy-Baldt15zxMELAzs7kDf38XCxMNFVwh-kfmNkwPHMgwXvxwocyIqt8JA";
+                  }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-ink-midnight/80 via-transparent to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-space-lg flex items-center justify-between text-ivory-surface">
+                  <div className="flex flex-col">
+                    <span className="font-title-md text-title-md font-serif">{vehicle.name}</span>
+                    <span className="text-body-sm text-sandstone-wash/80">{vehicle.seats} Passengers • {vehicle.bags} Bags</span>
+                  </div>
+                  <span className="bg-primary/90 text-ivory-surface px-3 py-1 rounded text-label-caps font-label-caps uppercase">
+                    Pristine Condition
+                  </span>
+                </div>
+              </div>
+
+              {/* Trust signals strip */}
+              <div className="grid grid-cols-2 gap-space-sm pt-space-md">
+                <div className="flex items-center gap-2 p-space-sm rounded bg-surface-container-low border border-border-warm/40">
+                  <span className="material-symbols-outlined text-success-jade text-[20px]">verified</span>
+                  <span className="text-body-sm text-on-surface font-medium">100% Yellow Commercial Plate</span>
+                </div>
+                <div className="flex items-center gap-2 p-space-sm rounded bg-surface-container-low border border-border-warm/40">
+                  <span className="material-symbols-outlined text-success-jade text-[20px]">speed</span>
+                  <span className="text-body-sm text-on-surface font-medium">80–100 km/h Speed Governed</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </nav>
+      </section>
 
-      <main id="main-content">
-        {/* 1. Vehicle Hero Section */}
-        <section className="veh-hero-section">
-          <div className="container">
-            <div className="veh-hero-grid">
-              {/* Left Column: Vehicle Identity, Blurb & Pricing Box */}
-              <div className="veh-hero-info">
-                <div className="veh-kicker-strip">
-                  <span className="veh-kicker-badge">
-                    {isHi ? "प्रीमियम फ्लीट" : "PREMIER FLEET"} • {vehicle.klass.toUpperCase()}
-                  </span>
-                  <span className="veh-rating-badge">★ 4.9 (500+ {isHi ? "समीक्षाएं" : "Trips"})</span>
+      {/* Section 2: Technical Specifications & Cabin Amenities Bento Grid */}
+      <section className="w-full bg-surface-container-low py-space-3xl border-t border-b border-border-warm/30">
+        <div className="max-w-7xl mx-auto px-margin-mobile lg:px-margin">
+          <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-space-2xl">
+            <span className="font-label-caps text-label-caps text-terracotta-sandstone uppercase tracking-widest mb-space-xs">
+              Specifications &amp; Comfort
+            </span>
+            <h2 className="font-headline-lg text-headline-lg text-ink-charcoal font-serif mb-space-sm">
+              Engineered for Highway Comfort &amp; Safety
+            </h2>
+            <p className="font-body-md text-body-md text-on-surface-variant">
+              Every vehicle is thoroughly audited before dispatch to guarantee pristine cabin cleanliness, mechanical
+              reliability, and passenger safety.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-lg">
+            <div className="bg-surface-container-lowest p-space-xl rounded-lg shadow-sm border border-border-warm/50 flex flex-col justify-between">
+              <div className="flex flex-col gap-space-sm">
+                <div className="w-12 h-12 rounded-lg bg-sandstone-wash flex items-center justify-center text-terracotta-sandstone">
+                  <span className="material-symbols-outlined text-[26px]">chair</span>
                 </div>
-
-                <h1 className="veh-title">
-                  {isHi ? `${vehicle.name} किराया व बुकिंग आगरा` : `${vehicle.name} Hire in Agra`}
-                </h1>
-                <p className="veh-subtitle">
-                  {isHi
-                    ? "वातानुकूलित, आधुनिक और आरामदायक व्यावसायिक कैब — स्थानीय व आउटस्टेशन यात्रा के लिए।"
-                    : "Air-conditioned, certified commercial vehicle for local sightseeing, outstation expressways, and transfers."}
+                <h3 className="font-title-lg text-title-lg text-on-surface font-serif">Seating &amp; Ergonomics</h3>
+                <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                  Comfortable pushback seats contoured for spinal support, generous legroom, and effortless ingress.
                 </p>
-
-                <p className="veh-blurb">{vehicle.blurb}</p>
-
-                {/* Comfort Feature Badges */}
-                <div className="veh-highlights-strip">
-                  <div className="veh-h-item">
-                    <span className="check-icon">✓</span>
-                    <span>{vehicle.seats} {isHi ? "आरामदायक सीटें" : "Pushback Seats"}</span>
-                  </div>
-                  <div className="veh-h-item">
-                    <span className="check-icon">✓</span>
-                    <span>{vehicle.bags} {isHi ? "बड़े बैग बूट स्पेस" : "Bags Luggage Bay"}</span>
-                  </div>
-                  <div className="veh-h-item">
-                    <span className="check-icon">✓</span>
-                    <span>{isHi ? "शक्तिशाली वातानुकूलन (AC)" : "High-Output AC Vents"}</span>
-                  </div>
-                  <div className="veh-h-item">
-                    <span className="check-icon">✓</span>
-                    <span>{isHi ? "सत्यापित अनुभवी ड्राइवर" : "Police-Verified Chauffeur"}</span>
-                  </div>
-                </div>
-
-                {/* Pricing Showcase Box */}
-                <div className="veh-pricing-box">
-                  <div className="pricing-headline">
-                    <span className="pricing-caption">{isHi ? "आउटस्टेशन शुरुआती दर" : "Starting Outstation Rate"}</span>
-                    <div className="pricing-amount">
-                      <span className="currency-symbol">₹</span>
-                      <span className="amount-num">{vehicle.perKm}</span>
-                      <span className="unit-label">/ km</span>
-                    </div>
-                    <span className="pricing-subtext">
-                      {isHi ? `दर सीमा: ${vehicle.rateRange} • पारदर्शी दरें` : `Rate range: ${vehicle.rateRange} • Zero hidden meter`}
-                    </span>
-                  </div>
-
-                  <div className="pricing-actions">
-                    <a href={bookingUrl} className="button button--primary button--gold">
-                      {isHi ? `यह ${vehicle.name} बुक करें ↗` : `Book This ${vehicle.name} ↗`}
-                    </a>
-                    <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="button button--outline">
-                      {isHi ? "व्हाट्सएप पूछताछ" : "WhatsApp Enquiry"}
-                    </a>
-                    <a href={`tel:${contact.phone}`} className="button button--ghost">
-                      📞 {contact.phoneDisplay}
-                    </a>
-                  </div>
-                </div>
               </div>
+              <div className="mt-space-md pt-space-sm border-t border-border-warm/40 flex items-center justify-between text-body-sm text-secondary font-medium">
+                <span>{vehicle.seats} Seats</span>
+                <span>{vehicle.klass}</span>
+              </div>
+            </div>
 
-              {/* Right Column: High-Res Photo Card & Trust Signals */}
-              <div className="veh-hero-media">
-                <div className="veh-image-card">
-                  <img
-                    src={vehicle.image}
-                    alt={`${vehicle.name} luxury fleet`}
-                    className="veh-main-image"
-                    loading="eager"
-                    decoding="async"
-                  />
-                  <div className="veh-image-overlay">
-                    <span className="veh-overlay-pill">
-                      👥 {vehicle.seats} {isHi ? "यात्री" : "Passengers"} • 🧳 {vehicle.bags} {isHi ? "बैग" : "Bags"}
-                    </span>
-                  </div>
+            <div className="bg-surface-container-lowest p-space-xl rounded-lg shadow-sm border border-border-warm/50 flex flex-col justify-between">
+              <div className="flex flex-col gap-space-sm">
+                <div className="w-12 h-12 rounded-lg bg-sandstone-wash flex items-center justify-center text-terracotta-sandstone">
+                  <span className="material-symbols-outlined text-[26px]">luggage</span>
                 </div>
+                <h3 className="font-title-lg text-title-lg text-on-surface font-serif">Luggage &amp; Storage</h3>
+                <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                  Dedicated secure trunk space accommodating {vehicle.bags} full-size suitcases plus cabin rucksacks.
+                </p>
+              </div>
+              <div className="mt-space-md pt-space-sm border-t border-border-warm/40 flex items-center justify-between text-body-sm text-secondary font-medium">
+                <span>{vehicle.bags} Large Bags</span>
+                <span>Secure Boot Bay</span>
+              </div>
+            </div>
 
-                <div className="veh-media-trust">
-                  <div className="trust-micro-item">
-                    <strong>100% Commercial</strong>
-                    <span>{isHi ? "कानूनी पीली नंबर प्लेट" : "Verified Yellow Plate"}</span>
-                  </div>
-                  <div className="trust-micro-item">
-                    <strong>GPS Tracked</strong>
-                    <span>{isHi ? "24×7 फ्लीट मॉनिटरिंग" : "Live Route Tracking"}</span>
-                  </div>
-                  <div className="trust-micro-item">
-                    <strong>45-Min SLA</strong>
-                    <span>{isHi ? "एक्सप्रेसवे वाहन रिप्लेसमेंट" : "Highway Replacement"}</span>
-                  </div>
-                  <div className="trust-micro-item">
-                    <strong>Zero Commission</strong>
-                    <span>{isHi ? "दुकान/गाइड कमीशन मुक्त" : "Honest Direct Travel"}</span>
-                  </div>
+            <div className="bg-surface-container-lowest p-space-xl rounded-lg shadow-sm border border-border-warm/50 flex flex-col justify-between">
+              <div className="flex flex-col gap-space-sm">
+                <div className="w-12 h-12 rounded-lg bg-sandstone-wash flex items-center justify-center text-terracotta-sandstone">
+                  <span className="material-symbols-outlined text-[26px]">ac_unit</span>
                 </div>
+                <h3 className="font-title-lg text-title-lg text-on-surface font-serif">Climate Control &amp; AC</h3>
+                <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                  High-capacity air conditioning delivering rapid cooling even in peak 45°C summer heat.
+                </p>
+              </div>
+              <div className="mt-space-md pt-space-sm border-t border-border-warm/40 flex items-center justify-between text-body-sm text-secondary font-medium">
+                <span>Dual / Roof AC</span>
+                <span>Sealed Cabin</span>
+              </div>
+            </div>
+
+            <div className="bg-surface-container-lowest p-space-xl rounded-lg shadow-sm border border-border-warm/50 flex flex-col justify-between">
+              <div className="flex flex-col gap-space-sm">
+                <div className="w-12 h-12 rounded-lg bg-sandstone-wash flex items-center justify-center text-terracotta-sandstone">
+                  <span className="material-symbols-outlined text-[26px]">verified_user</span>
+                </div>
+                <h3 className="font-title-lg text-title-lg text-on-surface font-serif">Safety &amp; Compliance</h3>
+                <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                  ABS brakes, speed-governed cruising, all-India commercial tourist permits, and emergency medical kits.
+                </p>
+              </div>
+              <div className="mt-space-md pt-space-sm border-t border-border-warm/40 flex items-center justify-between text-body-sm text-secondary font-medium">
+                <span>Commercial Yellow Plate</span>
+                <span>AITP Certified</span>
               </div>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* 2. Technical Specifications & Cabin Amenities Bento Grid */}
-        <section className="veh-specs-section">
-          <div className="container">
-            <div className="section-header text-center">
-              <span className="section-eyebrow">{isHi ? "तकनीकी विवरण" : "SPECIFICATIONS & COMFORT"}</span>
-              <h2 className="section-title">{isHi ? "केबिन सुविधाएं व सुरक्षा मानक" : "Engineered for Highway Comfort & Safety"}</h2>
-              <p className="section-blurb">
-                {isHi
-                  ? "लंबी यात्राओं और पारिवारिक पर्यटन के लिए विशेष रूप से सज्जित एवं अनुपालित गाड़ियां।"
-                  : "Every vehicle is inspected before dispatch to guarantee pristine cleanliness, mechanical reliability, and passenger safety."}
-              </p>
-            </div>
-
-            <div className="specs-bento-grid">
-              <div className="spec-card">
-                <div className="spec-icon-wrap">🪑</div>
-                <h3 className="spec-card-title">{isHi ? "सीटिंग व केबिन स्पेस" : "Seating & Ergonomics"}</h3>
-                <p className="spec-card-desc">
-                  {isHi
-                    ? `${vehicle.seats} यात्रियों के लिए आरामदायक पुशबैक सीटें, पर्याप्त लेगरूम और हेडरेस्ट।`
-                    : `Comfortable pushback seats contoured for spinal support, generous legroom, and effortless ingress.`}
-                </p>
-                <div className="spec-pill-row">
-                  <span className="spec-detail-pill">{vehicle.seats} {isHi ? "सीटें" : "Seats"}</span>
-                  <span className="spec-detail-pill">{vehicle.klass}</span>
-                </div>
-              </div>
-
-              <div className="spec-card">
-                <div className="spec-icon-wrap">🧳</div>
-                <h3 className="spec-card-title">{isHi ? "लगेज व बूट क्षमता" : "Luggage & Storage"}</h3>
-                <p className="spec-card-desc">
-                  {isHi
-                    ? `${vehicle.bags} बड़े सूटकेस आसानी से बूट में व्यवस्थित हो जाते हैं। बड़े समूहों के लिए कैरियर सुविधा।`
-                    : `Dedicated secure trunk space accommodating ${vehicle.bags} full-size suitcases plus cabin rucksacks.`}
-                </p>
-                <div className="spec-pill-row">
-                  <span className="spec-detail-pill">{vehicle.bags} {isHi ? "बड़े बैग" : "Large Bags"}</span>
-                  <span className="spec-detail-pill">{isHi ? "सुरक्षित बूट" : "Clean Boot"}</span>
-                </div>
-              </div>
-
-              <div className="spec-card">
-                <div className="spec-icon-wrap">❄️</div>
-                <h3 className="spec-card-title">{isHi ? "क्लाइमेट कंट्रोल व एसी" : "Climate Control & AC"}</h3>
-                <p className="spec-card-desc">
-                  {isHi
-                    ? "सभी सीटों तक पहुंचने वाले शक्तिशाली एसी वेंट, हीट रिफ्लेक्टिंग ग्लास व स्वच्छ एयर फिल्टर।"
-                    : "High-capacity air conditioning delivering rapid cooling even in peak 45°C summer heat."}
-                </p>
-                <div className="spec-pill-row">
-                  <span className="spec-detail-pill">{isHi ? "पूर्ण वातानुकूलित" : "Dual / Roof AC"}</span>
-                  <span className="spec-detail-pill">{isHi ? "धूल-मुक्त केबिन" : "Sealed Cabin"}</span>
-                </div>
-              </div>
-
-              <div className="spec-card">
-                <div className="spec-icon-wrap">🛡️</div>
-                <h3 className="spec-card-title">{isHi ? "सुरक्षा व सरकारी परमिट" : "Safety & Permitted Fleet"}</h3>
-                <p className="spec-card-desc">
-                  {isHi
-                    ? "ड्यूल एयरबैग, एबीएस, स्पीड गवर्नर, ऑल-इंडिया कमर्शियल परमिट व पुलिस सत्यापित चालक।"
-                    : "ABS brakes, speed-governed cruising, all-India commercial tourist permits, and emergency toolkits."}
-                </p>
-                <div className="spec-pill-row">
-                  <span className="spec-detail-pill">{isHi ? "पीली नंबर प्लेट" : "Commercial Yellow Plate"}</span>
-                  <span className="spec-detail-pill">{isHi ? "स्पीड गवर्नर" : "80 km/h Governed"}</span>
-                </div>
-              </div>
-            </div>
+      {/* Section 3: Comprehensive Multi-Service Pricing Breakdown */}
+      <section className="w-full bg-surface py-space-3xl">
+        <div className="max-w-7xl mx-auto px-margin-mobile lg:px-margin">
+          <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-space-2xl">
+            <span className="font-label-caps text-label-caps text-terracotta-sandstone uppercase tracking-widest mb-space-xs">
+              Transparent Commercial Pricing
+            </span>
+            <h2 className="font-headline-lg text-headline-lg text-ink-charcoal font-serif mb-space-sm">
+              Standard Fares &amp; Corridors for {vehicle.name}
+            </h2>
+            <p className="font-body-md text-body-md text-on-surface-variant">
+              Every fare is calculated with complete transparency. Lock your chauffeur vehicle today with a 28% advance
+              token; pay the balance upon completion.
+            </p>
           </div>
-        </section>
 
-        {/* 3. Available Models in this Category */}
-        <section className="veh-models-section">
-          <div className="container">
-            <div className="section-header text-center">
-              <span className="section-eyebrow">{isHi ? "उपलब्ध मॉडल" : "FLEET MODELS"}</span>
-              <h2 className="section-title">{isHi ? `${vehicle.name} श्रेणी में प्रमुख गाड़ियां` : `Models Available in ${vehicle.name} Category`}</h2>
-              <p className="section-blurb">
-                {isHi
-                  ? "आवश्यकता व उपलब्धता के अनुसार हम आपको शीर्ष ब्रांड्स के आधुनिक मॉडल उपलब्ध कराते हैं।"
-                  : "We assign well-maintained, latest-generation models from leading automakers."}
-              </p>
-            </div>
-
-            <div className="models-chips-grid">
-              {vehicle.models.map((modelName, index) => (
-                <div key={index} className="model-chip-card">
-                  <div className="model-chip-badge">0{index + 1}</div>
-                  <div className="model-chip-info">
-                    <h3 className="model-chip-name">{modelName}</h3>
-                    <span className="model-chip-tag">{isHi ? "व्यावसायिक अनुपालित" : "Commercial Tourist Permit"}</span>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-space-lg">
+            {/* Local Package Card */}
+            <div className="bg-surface-container-lowest p-space-xl rounded-xl shadow-sm border border-border-warm/60 flex flex-col justify-between">
+              <div className="flex flex-col gap-space-md">
+                <div className="flex items-center justify-between">
+                  <span className="font-title-md text-title-md font-serif text-terracotta-sandstone">Local Sightseeing</span>
+                  <span className="material-symbols-outlined text-primary text-[24px]">location_city</span>
+                </div>
+                <p className="font-body-sm text-body-sm text-on-surface-variant">
+                  Explore Taj Mahal, Agra Fort, Mehtab Bagh, and Baby Taj with a private dedicated chauffeur.
+                </p>
+                <div className="flex flex-col gap-space-xs pt-space-xs divide-y divide-border-warm/30">
+                  <div className="flex items-center justify-between py-2 text-body-sm">
+                    <span className="text-ink-charcoal font-medium">8 Hours / 80 km</span>
+                    <span className="font-semibold text-terracotta-sandstone font-serif text-[16px]">₹{rates.standard8h}</span>
                   </div>
-                  <div className="model-chip-arrow">↗</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* 4. Transparent Multi-Service Pricing Table for this Vehicle */}
-        <section className="veh-pricing-table-section">
-          <div className="container">
-            <div className="section-header text-center">
-              <span className="section-eyebrow">{isHi ? "पारदर्शी किराया दरें" : "TRANSPARENT TARIFF"}</span>
-              <h2 className="section-title">{isHi ? `${vehicle.name} किराया चार्ट व पैकेज` : `${vehicle.name} Complete Rate Card`}</h2>
-              <p className="section-blurb">
-                {isHi
-                  ? "कोई छिपा हुआ शुल्क नहीं। स्थानीय दर्शनीय स्थल, वन-वे एक्सप्रेसवे ड्राप और एयरपोर्ट ट्रांसफर की प्रमाणित दरें।"
-                  : "Transparent, upfront rates verified directly by our Agra travel desk."}
-              </p>
-            </div>
-
-            <div className="rate-tables-wrapper">
-              {/* Table A: Local Sightseeing & Transfers */}
-              <div className="rate-table-card">
-                <div className="table-card-header">
-                  <h3 className="table-card-title">🏙️ {isHi ? "आगरा स्थानीय दर्शनीय स्थल व ट्रांसफर" : "Agra Local Sightseeing & City Transfers"}</h3>
-                  <span className="table-card-badge">{isHi ? "निर्धारित पैकेज" : "Fixed Tariff"}</span>
-                </div>
-                <div className="table-responsive">
-                  <table className="veh-table">
-                    <thead>
-                      <tr>
-                        <th>{isHi ? "सेवा / पैकेज का नाम" : "Service / Package Name"}</th>
-                        <th>{isHi ? "अवधि व दूरी" : "Duration & Distance"}</th>
-                        <th>{isHi ? "कुल किराया" : "All-Inclusive Fare"}</th>
-                        <th>{isHi ? "कार्रवाई" : "Action"}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td><strong>{isHi ? "आगरा मानक दर्शनीय स्थल (Half Day)" : "Agra Standard Sightseeing"}</strong></td>
-                        <td>8 Hours / 80 KM</td>
-                        <td className="price-td">₹{rates.standard8h.toLocaleString("en-IN")}</td>
-                        <td><a href={`${bookingUrl}&trip=local&pkg=8h80km`} className="table-book-link">{isHi ? "बुक ↗" : "Book ↗"}</a></td>
-                      </tr>
-                      <tr>
-                        <td><strong>{isHi ? "आगरा फुल डे दर्शनीय स्थल (Full Day)" : "Agra Full Day Sightseeing"}</strong></td>
-                        <td>Full Day (12h / 120 km)</td>
-                        <td className="price-td">₹{rates.fullDay.toLocaleString("en-IN")}</td>
-                        <td><a href={`${bookingUrl}&trip=local&pkg=12h120km`} className="table-book-link">{isHi ? "बुक ↗" : "Book ↗"}</a></td>
-                      </tr>
-                      <tr>
-                        <td><strong>{isHi ? "आगरा कैंट रेलवे स्टेशन (AGC) ट्रांसफर" : "Agra Cantt Railway Station (AGC) Transfer"}</strong></td>
-                        <td>~15–20 km</td>
-                        <td className="price-td">₹{rates.agraCantt.toLocaleString("en-IN")}</td>
-                        <td><a href={`${bookingUrl}&trip=transfer&to=agra-cantt`} className="table-book-link">{isHi ? "बुक ↗" : "Book ↗"}</a></td>
-                      </tr>
-                      <tr>
-                        <td><strong>{isHi ? "आगरा एयरपोर्ट (Kheria AGR) ट्रांसफर" : "Agra Airport (AGR) Transfer"}</strong></td>
-                        <td>~15–25 km</td>
-                        <td className="price-td">₹{rates.agraAirport.toLocaleString("en-IN")}</td>
-                        <td><a href={`${bookingUrl}&trip=transfer&to=agra-airport`} className="table-book-link">{isHi ? "बुक ↗" : "Book ↗"}</a></td>
-                      </tr>
-                      <tr>
-                        <td><strong>{isHi ? "दिल्ली IGI एयरपोर्ट (DEL) एक्सप्रेसवे ट्रांसफर" : "Delhi IGI Airport (DEL) Direct Express Transfer"}</strong></td>
-                        <td>225 km (Yamuna Exp)</td>
-                        <td className="price-td">₹{rates.delAirport.toLocaleString("en-IN")}</td>
-                        <td><a href={`${bookingUrl}&trip=oneway&from=agra&to=delhi-airport`} className="table-book-link">{isHi ? "बुक ↗" : "Book ↗"}</a></td>
-                      </tr>
-                    </tbody>
-                  </table>
+                  <div className="flex items-center justify-between py-2 text-body-sm">
+                    <span className="text-ink-charcoal font-medium">Full Day Sightseeing (12h)</span>
+                    <span className="font-semibold text-terracotta-sandstone font-serif text-[16px]">₹{rates.fullDay}</span>
+                  </div>
+                  <div className="flex items-center justify-between py-2 text-body-sm">
+                    <span className="text-ink-charcoal font-medium">Agra Cantt Railway Drop</span>
+                    <span className="font-semibold text-terracotta-sandstone font-serif text-[16px]">₹{rates.agraCantt}</span>
+                  </div>
+                  <div className="flex items-center justify-between py-2 text-body-sm">
+                    <span className="text-ink-charcoal font-medium">Agra Airport (AGR) Transfer</span>
+                    <span className="font-semibold text-terracotta-sandstone font-serif text-[16px]">₹{rates.agraAirport}</span>
+                  </div>
                 </div>
               </div>
+              <a
+                className="mt-space-lg w-full inline-flex items-center justify-center gap-space-xs bg-sandstone-wash text-terracotta-sandstone hover:bg-terracotta-sandstone hover:text-on-primary py-3 rounded text-label-lg font-label-lg transition-colors border border-border-warm"
+                href={`/book/?vehicle=${vehicleSlug}&type=local&step=1`}
+              >
+                <span>Book Local Agra Cab</span>
+                <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+              </a>
+            </div>
 
-              {/* Table B: Fixed One-Way Outstation Drops */}
-              <div className="rate-table-card">
-                <div className="table-card-header">
-                  <h3 className="table-card-title">🛣️ {isHi ? "प्रमुख वन-वे एक्सप्रेसवे कॉरिडोर दरें" : "Key Intercity One-Way Expressway Drops"}</h3>
-                  <span className="table-card-badge">{isHi ? "टोल सहित" : "Tolls Included"}</span>
+            {/* Outstation One-Way Corridors */}
+            <div className="lg:col-span-2 bg-surface-container-lowest p-space-xl rounded-xl shadow-sm border border-border-warm/60 flex flex-col justify-between">
+              <div className="flex flex-col gap-space-md">
+                <div className="flex items-center justify-between">
+                  <span className="font-title-md text-title-md font-serif text-terracotta-sandstone">Popular Fixed Outstation Drops</span>
+                  <span className="material-symbols-outlined text-primary text-[24px]">alt_route</span>
                 </div>
-                <div className="table-responsive">
-                  <table className="veh-table">
-                    <thead>
-                      <tr>
-                        <th>{isHi ? "रूट कॉरिडोर" : "Corridor Route"}</th>
-                        <th>{isHi ? "हाईवे" : "Highway"}</th>
-                        <th>{isHi ? "दूरी" : "Distance"}</th>
-                        <th>{isHi ? "किराया" : "One-Way Fare"}</th>
-                        <th>{isHi ? "कार्रवाई" : "Action"}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {oneWayRoutes.map((r, idx) => (
-                        <tr key={idx}>
-                          <td><strong>{isHi ? r.routeHi : r.routeEn}</strong></td>
-                          <td><span className="highway-pill">{r.highway}</span></td>
-                          <td>{r.km} km</td>
-                          <td className="price-td">₹{r.fare.toLocaleString("en-IN")}</td>
-                          <td><a href={`${bookingUrl}&trip=oneway&route=${r.routeId}`} className="table-book-link">{isHi ? "बुक ↗" : "Book ↗"}</a></td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-
-            {/* Operating Rules Callout */}
-            <div className="veh-rules-callout">
-              <div className="rules-icon">ℹ️</div>
-              <div className="rules-text">
-                <h4 className="rules-heading">{isHi ? "महत्वपूर्ण परिचालन व किराया नियम" : "Important Commercial & Operational Rules"}</h4>
-                <ul className="rules-list">
-                  <li>
-                    <strong>{isHi ? "आउटस्टेशन 300 किमी/दिन नियम:" : "Outstation 300 KM/Day Rule:"}</strong>{" "}
-                    {isHi
-                      ? `राउंड ट्रिप आउटस्टेशन यात्राओं पर न्यूनतम औसत 300 किमी प्रति दिन का बिलिंग आधार लागू होता है (@ ₹${vehicle.perKm}/किमी)।`
-                      : `Multi-day outstation bookings follow the standard 300 KM/day minimum billing benchmark (@ ₹${vehicle.perKm}/km).`}
-                  </li>
-                  <li>
-                    <strong>{isHi ? "रात्रि चालक भत्ता (Night Allowance):" : "Driver Night Allowance (Past 8:00 PM):"}</strong>{" "}
-                    {isHi
-                      ? `रात 8:00 बजे (20:00) के बाद या सुबह 6:00 बजे से पहले सेवा पर ${isCommercialVan ? "₹500" : "₹300"} का अतिरिक्त रात्रि शुल्क लागू होता है।`
-                      : `For duty running past 8:00 PM or starting before 6:00 AM, a flat driver night charge of ${isCommercialVan ? "₹500" : "₹300"} applies.`}
-                  </li>
-                  {isCommercialVan && (
-                    <li className="highlight-rule">
-                      <strong>{isHi ? "टेम्पो व अर्बनिया आने-जाने का किराया नियम:" : "Tempo Traveller & Urbania Two-Way Return Rule:"}</strong>{" "}
-                      {isHi
-                        ? "बाजार में व्यावसायिक टेम्पो वन-वे नहीं मिलते। अतः सभी आउटस्टेशन टेम्पो बुकिंग आने-जाने के कुल किराये (Round-Trip) अथवा 300 किमी/दिन के आधार पर देय होती हैं। ऊपर दी गई वन-वे दरें वापसी वाहन आवागमन को ध्यान में रखकर निर्धारित की गई हैं।"
-                        : "In the open tourist transport market, commercial 12–26 seaters do not get return passenger loads. All outstation tempo bookings mandate round-trip coverage. The one-way rates listed above are pre-factored to cover return empty-run mobilization."}
-                    </li>
-                  )}
-                  <li>
-                    <strong>{isHi ? "पार्किंग शुल्क:" : "Parking Charges:"}</strong>{" "}
-                    {isHi
-                      ? "स्मारकों, रेलवे स्टेशनों व दर्शनीय स्थलों पर पार्किंग पर्चियां वास्तविक मूल्य पर सीधे ग्राहक द्वारा देय होती हैं।"
-                      : "Parking charges at monuments, railway stations, and airports are billed at actuals."}
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* 5. Recommended Travel Scenarios Bento */}
-        <section className="veh-scenarios-section">
-          <div className="container">
-            <div className="section-header text-center">
-              <span className="section-eyebrow">{isHi ? "सर्वोत्तम उपयोग" : "RECOMMENDED USE-CASES"}</span>
-              <h2 className="section-title">{isHi ? `${vehicle.name} किन यात्राओं के लिए उत्तम है?` : `When Should You Choose the ${vehicle.name}?`}</h2>
-              <p className="section-blurb">
-                {vehicle.suitable}
-              </p>
-            </div>
-
-            <div className="scenarios-grid">
-              <div className="scenario-card">
-                <span className="sc-icon">🏛️</span>
-                <h3 className="sc-title">{isHi ? "आगरा दर्शनीय स्थल व ताजमहल" : "Agra Sightseeing & Taj Mahal"}</h3>
-                <p className="sc-desc">
-                  {isHi
-                    ? "ताजमहल, आगरा किला और फतेहपुर सीकरी के लिए दिनभर के वातानुकूलित सफर का सर्वोत्तम विकल्प।"
-                    : "Hassle-free point-to-point drop at monument gates with chilled AC during waiting periods."}
+                <p className="font-body-sm text-body-sm text-on-surface-variant">
+                  One-way doorstep drops between Agra and major northern hubs. No return empty-run fare penalty.
                 </p>
-              </div>
-
-              <div className="scenario-card">
-                <span className="sc-icon">✈️</span>
-                <h3 className="sc-title">{isHi ? "दिल्ली व जयपुर एक्सप्रेसवे ड्राप" : "Expressway Airport Transfers"}</h3>
-                <p className="sc-desc">
-                  {isHi
-                    ? "यमुना एक्सप्रेसवे से दिल्ली IGI एयरपोर्ट या जयपुर के लिए समयबद्ध और सुरक्षित आवागमन।"
-                    : "Punctual, non-stop transit along Yamuna Expressway and NH-48 with generous luggage space."}
-                </p>
-              </div>
-
-              <div className="scenario-card">
-                <span className="sc-icon">🛕</span>
-                <h3 className="sc-title">{isHi ? "मथुरा-वृन्दावन व धार्मिक यात्राएं" : "Mathura-Vrindavan Circuits"}</h3>
-                <p className="sc-desc">
-                  {isHi
-                    ? "बांके बिहारी मंदिर, प्रेम मंदिर और गोवर्धन परिक्रमा के लिए परिवार के साथ आरामदायक भ्रमण।"
-                    : "Smooth spiritual day trips for elders and families with respectful, courteous local chauffeurs."}
-                </p>
-              </div>
-
-              <div className="scenario-card">
-                <span className="sc-icon">💼</span>
-                <h3 className="sc-title">{isHi ? "कॉर्पोरेट व वीआईपी टूरिज्म" : "Corporate & Golden Triangle"}</h3>
-                <p className="sc-desc">
-                  {isHi
-                    ? "दिल्ली-आगरा-जयपुर गोल्डन ट्रायंगल परिपथ के लिए भरोसेमंद और प्रतिष्ठित वाहन सेवा।"
-                    : "Pristine executive vehicle condition suitable for foreign delegates, business executives, and luxury circuits."}
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* 6. Vehicle-Specific Bilingual FAQ Accordion */}
-        <section className="veh-faqs-section">
-          <div className="container">
-            <div className="section-header text-center">
-              <span className="section-eyebrow">{isHi ? "अक्सर पूछे जाने वाले प्रश्न" : "FAQS"}</span>
-              <h2 className="section-title">{isHi ? `${vehicle.name} से जुड़े मुख्य सवाल` : `Frequently Asked Questions About ${vehicle.name}`}</h2>
-              <p className="section-blurb">
-                {isHi
-                  ? "बुकिंग से पहले यात्रियों द्वारा सबसे अधिक पूछे जाने वाले प्रश्नों के स्पष्ट व सीधे उत्तर।"
-                  : "Clear, transparent answers to help you book with absolute confidence."}
-              </p>
-            </div>
-
-            <div className="faqs-accordion-list">
-              {faqItems.map((item, idx) => {
-                const isOpen = openFaqIndex === idx;
-                return (
-                  <div key={idx} className={`faq-accordion-item ${isOpen ? "is-open" : ""}`}>
-                    <button
-                      type="button"
-                      className="faq-question-btn"
-                      onClick={() => setOpenFaqIndex(isOpen ? null : idx)}
-                      aria-expanded={isOpen}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-space-sm pt-space-xs">
+                  {oneWayRoutes.map((r) => (
+                    <div
+                      key={r.routeId}
+                      className="p-space-sm rounded bg-surface-container-low border border-border-warm/40 flex items-center justify-between"
                     >
-                      <span className="faq-q-text">{isHi ? item.q.hi : item.q.en}</span>
-                      <span className="faq-chevron-icon">{isOpen ? "−" : "+"}</span>
-                    </button>
-                    {isOpen && (
-                      <div className="faq-answer-body">
-                        <p>{isHi ? item.a.hi : item.a.en}</p>
+                      <div className="flex flex-col">
+                        <span className="font-title-md text-[13px] text-ink-charcoal font-semibold">{r.routeEn}</span>
+                        <span className="text-[11px] text-secondary">{r.highway} • {r.km} km</span>
                       </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-
-        {/* 7. Bottom 24x7 Local Dispatch CTA Banner */}
-        <section className="veh-cta-section">
-          <div className="container">
-            <div className="veh-cta-banner">
-              <div className="cta-left">
-                <span className="cta-eyebrow">{isHi ? "24×7 स्थानीय सहायता डेस्क" : "24×7 DIRECT FLEET DISPATCH"}</span>
-                <h2 className="cta-title">{isHi ? `आगरा से ${vehicle.name} तुरंत बुक करें` : `Ready to Reserve Your ${vehicle.name}?`}</h2>
-                <p className="cta-desc">
-                  {isHi
-                    ? "ऑनलाइन बुकिंग करें या हमारे स्थानीय आगरा डेस्क से सीधे कॉल व व्हाट्सएप पर बात करें। कोई मध्यस्थ नहीं, शून्य कमीशन।"
-                    : "Reserve online with zero prepayment anxiety or connect directly with our Agra travel desk for customized itineraries."}
-                </p>
+                      <div className="flex flex-col items-end">
+                        <span className="font-headline-sm text-[16px] text-terracotta-sandstone font-serif font-semibold">
+                          ₹{r.fare.toLocaleString("en-IN")}
+                        </span>
+                        <span className="text-[10px] text-secondary">One-Way</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-
-              <div className="cta-actions">
-                <a href={bookingUrl} className="button button--primary button--gold">
-                  {isHi ? "ऑनलाइन अभी बुक करें ↗" : "Book Online Now ↗"}
-                </a>
-                <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="button button--outline">
-                  {isHi ? "व्हाट्सएप चैट" : "Chat on WhatsApp"}
-                </a>
-                <a href={`tel:${contact.phone}`} className="button button--ghost">
-                  📞 {contact.phoneDisplay}
+              <div className="mt-space-lg pt-space-sm border-t border-border-warm/40 flex flex-col sm:flex-row items-center justify-between gap-space-sm">
+                <span className="text-body-sm text-secondary">
+                  Tolls and state entrance taxes bundled into fixed one-way bookings.
+                </span>
+                <a
+                  className="inline-flex items-center gap-space-xs bg-terracotta-sandstone text-on-primary px-6 py-2.5 rounded text-label-lg font-label-lg shadow-sm hover:bg-terracotta-sunlit transition-all"
+                  href={bookingUrl}
+                >
+                  <span>Book Outstation Transfer</span>
+                  <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
                 </a>
               </div>
             </div>
           </div>
-        </section>
-      </main>
+        </div>
+      </section>
+
+      {/* Section 4: Vehicle Specific FAQ Accordion */}
+      <section className="w-full bg-surface-container-low py-space-3xl border-t border-b border-border-warm/30">
+        <div className="max-w-4xl mx-auto px-margin-mobile lg:px-margin">
+          <div className="flex flex-col items-center text-center mb-space-2xl">
+            <span className="font-label-caps text-label-caps text-terracotta-sandstone uppercase tracking-widest mb-space-xs">
+              Frequently Asked Questions
+            </span>
+            <h2 className="font-headline-lg text-headline-lg text-ink-charcoal font-serif mb-space-sm">
+              Answers About the {vehicle.name}
+            </h2>
+            <p className="font-body-md text-body-md text-on-surface-variant">
+              Everything you need to know about pricing, luggage space, passenger limits, and chauffeur policies.
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-space-sm">
+            {faqItems.map((item, idx) => {
+              const isOpen = openFaqIndex === idx;
+              return (
+                <div
+                  key={idx}
+                  className="bg-surface-container-lowest rounded-lg border border-border-warm/60 overflow-hidden shadow-sm transition-all"
+                >
+                  <button
+                    type="button"
+                    onClick={() => setOpenFaqIndex(isOpen ? null : idx)}
+                    className="w-full p-space-lg flex items-center justify-between gap-space-md text-left focus:outline-none"
+                    aria-expanded={isOpen}
+                  >
+                    <span className="font-title-md text-title-md text-ink-charcoal font-serif">{item.q}</span>
+                    <span
+                      className={`material-symbols-outlined text-terracotta-sandstone text-[22px] transition-transform duration-200 shrink-0 ${
+                        isOpen ? "rotate-180" : ""
+                      }`}
+                    >
+                      keyboard_arrow_down
+                    </span>
+                  </button>
+                  {isOpen && (
+                    <div className="px-space-lg pb-space-lg pt-0 text-body-md text-on-surface-variant leading-relaxed border-t border-border-warm/20">
+                      {item.a}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Section 5: Grand Call-to-Action Strip */}
+      <section className="w-full bg-sandstone-wash py-space-3xl">
+        <div className="max-w-7xl mx-auto px-margin-mobile lg:px-margin">
+          <div className="bg-surface-container-lowest rounded-xl p-6 sm:p-8 md:p-12 shadow-xl flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 sm:gap-8 w-full border border-border-warm">
+            <div className="flex flex-col gap-space-xs max-w-xl text-left w-full">
+              <span className="font-label-caps text-label-caps text-terracotta-sandstone uppercase tracking-widest">
+                Reserve With Confidence
+              </span>
+              <h2 className="font-headline-lg text-[28px] sm:text-headline-md md:text-headline-lg text-ink-charcoal font-serif leading-tight">
+                Secure Your {vehicle.name} Today.
+              </h2>
+              <p className="font-body-md text-body-md text-on-surface-variant max-w-lg leading-relaxed">
+                Confirm your chauffeur car with a transparent 28% advance token. Zero hidden surcharges, fully air-conditioned,
+                and backed by our 45-minute roadside replacement guarantee.
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full lg:w-auto shrink-0">
+              <a
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-space-xs bg-terracotta-sandstone text-on-primary px-6 sm:px-8 py-3.5 sm:py-4 rounded text-label-lg font-label-lg shadow-md hover:bg-terracotta-sunlit transition-all duration-200 text-center"
+                href={bookingUrl}
+              >
+                <span className="material-symbols-outlined text-[20px]">calendar_today</span>
+                <span>Book This Vehicle</span>
+              </a>
+              <a
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-space-xs bg-ink-charcoal text-ivory-surface px-6 py-3.5 sm:py-4 rounded text-label-lg font-label-lg shadow-sm hover:bg-ink-slate transition-all duration-200 text-center"
+                href={`tel:${contact.phone}`}
+              >
+                <span className="material-symbols-outlined text-[20px] text-terracotta-sunlit">phone_in_talk</span>
+                <span>{contact.phoneDisplay}</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
+
+export default VehicleDetailPage;

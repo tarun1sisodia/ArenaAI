@@ -76,14 +76,14 @@ export function Header({
         }`}
         id="site-header"
       >
-        <div className="h-20 max-w-7xl mx-auto px-margin-mobile lg:px-margin flex items-center justify-between gap-space-md">
+        <div className="h-12 max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 flex items-center justify-between gap-3">
           {/* Logo & Brand Mark */}
-          <div className="flex items-center gap-space-md shrink-0">
+          <div className="flex items-center gap-2 shrink-0">
             <BrandLogo href="/" />
           </div>
 
           {/* Desktop Primary Navigation */}
-          <nav className="hidden xl:flex items-center gap-space-xs" aria-label="Primary">
+          <nav className="hidden xl:flex items-center gap-1" aria-label="Primary">
             {navLinks.map((link) => {
               const active = isLinkActive(link.href);
               return (
@@ -92,9 +92,9 @@ export function Header({
                   href={link.href}
                   onMouseEnter={() => prefetchDocument(link.href)}
                   aria-current={active ? "page" : undefined}
-                  className={`px-3.5 py-2 text-label-lg font-label-lg transition-colors rounded-lg ${
+                  className={`px-2.5 py-1 text-xs font-semibold transition-colors rounded-md ${
                     active
-                      ? "bg-primary-container text-on-primary-container font-semibold shadow-xs"
+                      ? "bg-primary-container text-on-primary-container shadow-xs"
                       : "text-on-surface-variant hover:text-on-surface hover:bg-sandstone-wash"
                   }`}
                 >
@@ -105,15 +105,15 @@ export function Header({
           </nav>
 
           {/* Actions: Phone, WhatsApp Concierge, and Mobile Menu */}
-          <div className="flex items-center gap-space-sm shrink-0">
+          <div className="flex items-center gap-2 shrink-0">
             {/* Phone Call CTA */}
             <a
               href={`tel:${contact.phone}`}
-              className="hidden lg:inline-flex items-center gap-space-xs px-space-md py-2 rounded-lg bg-surface-container hover:bg-surface-container-high transition-colors font-label-lg text-label-lg text-on-surface"
+              className="hidden lg:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-container hover:bg-surface-container-high transition-colors text-xs text-on-surface font-semibold"
               aria-label={`Call ${contact.phoneDisplay}`}
             >
-              <span className="material-symbols-outlined text-primary text-[18px]">call</span>
-              <span className="font-semibold">{contact.phoneDisplay}</span>
+              <span className="material-symbols-outlined text-primary text-[15px]">call</span>
+              <span>{contact.phoneDisplay}</span>
             </a>
 
             {/* WhatsApp Concierge */}
@@ -121,9 +121,9 @@ export function Header({
               href={`https://wa.me/${contact.whatsapp}?text=Hello%20SK%20Baghel%20Travels,%20I%20would%20like%20to%20inquire%20about%20a%20booking.`}
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden sm:inline-flex items-center gap-space-xs bg-ink-charcoal text-ivory-surface px-4 py-2.5 rounded-lg font-label-lg text-label-lg hover:bg-ink-slate hover:text-on-primary transition-colors shadow-xs"
+              className="hidden sm:inline-flex items-center gap-1.5 bg-ink-charcoal text-ivory-surface px-3 py-1 rounded-md text-xs hover:bg-ink-slate hover:text-on-primary transition-colors shadow-xs font-semibold"
             >
-              <span className="material-symbols-outlined text-[18px] text-gold-accent">chat</span>
+              <span className="material-symbols-outlined text-[15px] text-gold-accent">chat</span>
               <span>WhatsApp Concierge</span>
             </a>
 
@@ -133,9 +133,9 @@ export function Header({
               onClick={toggleMobileNav}
               aria-label={isMobileNavOpen ? "Close menu" : "Open menu"}
               aria-expanded={isMobileNavOpen}
-              className="xl:hidden p-2 rounded-lg text-on-surface hover:bg-sandstone-wash transition-colors flex items-center justify-center"
+              className="xl:hidden p-1 rounded-md text-on-surface hover:bg-sandstone-wash transition-colors flex items-center justify-center"
             >
-              <span className="material-symbols-outlined text-[24px]">
+              <span className="material-symbols-outlined text-[20px]">
                 {isMobileNavOpen ? "close" : "menu"}
               </span>
             </button>

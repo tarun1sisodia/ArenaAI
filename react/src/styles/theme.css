@@ -87,48 +87,68 @@
   --font-label-lg: "Plus Jakarta Sans", sans-serif;
   --font-label-caps: "Plus Jakarta Sans", sans-serif;
 
-  /* Font size & line height tokens */
-  --text-headline-hero: 56px;
-  --text-headline-hero--line-height: 64px;
-  --text-headline-hero-mobile: 38px;
-  --text-headline-hero-mobile--line-height: 44px;
-  --text-headline-lg: 40px;
-  --text-headline-lg--line-height: 48px;
-  --text-headline-lg-mobile: 30px;
-  --text-headline-lg-mobile--line-height: 36px;
-  --text-headline-md: 28px;
-  --text-headline-md--line-height: 36px;
-  --text-headline-sm: 22px;
-  --text-headline-sm--line-height: 28px;
-  --text-price-display: 32px;
-  --text-price-display--line-height: 36px;
-  --text-title-lg: 18px;
-  --text-title-lg--line-height: 26px;
-  --text-title-md: 16px;
-  --text-title-md--line-height: 24px;
-  --text-body-lg: 18px;
-  --text-body-lg--line-height: 28px;
-  --text-body-md: 15px;
-  --text-body-md--line-height: 24px;
-  --text-body-sm: 13px;
-  --text-body-sm--line-height: 20px;
-  --text-label-lg: 14px;
-  --text-label-lg--line-height: 20px;
-  --text-label-caps: 11px;
-  --text-label-caps--line-height: 16px;
+  /* Scaled-down Font size & line height tokens (70% scale) */
+  --text-headline-hero: 28px;
+  --text-headline-hero--line-height: 34px;
+  --text-headline-hero-mobile: 20px;
+  --text-headline-hero-mobile--line-height: 25px;
+  --text-headline-lg: 20px;
+  --text-headline-lg--line-height: 26px;
+  --text-headline-lg-mobile: 16px;
+  --text-headline-lg-mobile--line-height: 22px;
+  --text-headline-md: 15px;
+  --text-headline-md--line-height: 21px;
+  --text-headline-sm: 13px;
+  --text-headline-sm--line-height: 18px;
+  --text-price-display: 22px;
+  --text-price-display--line-height: 26px;
+  --text-title-lg: 15px;
+  --text-title-lg--line-height: 21px;
+  --text-title-md: 13.5px;
+  --text-title-md--line-height: 19px;
+  --text-body-lg: 14.5px;
+  --text-body-lg--line-height: 22px;
+  --text-body-md: 13px;
+  --text-body-md--line-height: 20px;
+  --text-body-sm: 11.5px;
+  --text-body-sm--line-height: 17px;
+  --text-label-lg: 12px;
+  --text-label-lg--line-height: 17px;
+  --text-label-caps: 10px;
+  --text-label-caps--line-height: 14px;
 
-  /* Custom Spacing Tokens */
+  /* Tightened Spacing Tokens (-25% to -35% gap reduction) */
   --spacing-space-xs: 0.25rem;
-  --spacing-space-sm: 0.5rem;
-  --spacing-space-md: 1rem;
-  --spacing-space-lg: 1.5rem;
-  --spacing-space-xl: 2.5rem;
-  --spacing-space-2xl: 4rem;
-  --spacing-space-3xl: 6rem;
-  --spacing-gutter: 1.5rem;
-  --spacing-gutter-mobile: 1rem;
-  --spacing-margin: 3rem;
-  --spacing-margin-mobile: 1.25rem;
+  --spacing-space-sm: 0.375rem;
+  --spacing-space-md: 0.625rem;
+  --spacing-space-lg: 1rem;
+  --spacing-space-xl: 1.5rem;
+  --spacing-space-2xl: 2rem;
+  --spacing-space-3xl: 3rem;
+  --spacing-gutter: 1rem;
+  --spacing-gutter-mobile: 0.75rem;
+  --spacing-margin: 1.75rem;
+  --spacing-margin-mobile: 1rem;
+}
+
+/* Infinite Marquee Roller Animation */
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 25s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
 }
 
 /* Material Symbols optical styling support */
@@ -136,7 +156,7 @@
   font-family: 'Material Symbols Outlined';
   font-weight: normal;
   font-style: normal;
-  font-size: 24px;
+  font-size: 20px;
   line-height: 1;
   letter-spacing: normal;
   text-transform: none;

@@ -315,9 +315,9 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
         <div className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin pt-space-xl pb-space-2xl relative z-10">
           {/* Breadcrumb Bar */}
           <nav className="flex items-center gap-space-xs text-on-surface-variant font-body-sm text-body-sm mb-space-lg" aria-label="Breadcrumb">
-            <a className="hover:text-primary transition-colors" href="/en/">Home</a>
+            <a className="hover:text-primary transition-colors" href="/">Home</a>
             <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-            <span className="text-primary font-semibold">Packages &amp; Curated Tours</span>
+            <span className="text-primary font-semibold">Tour Packages</span>
           </nav>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-end">
@@ -325,7 +325,7 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
               <div className="inline-flex items-center gap-space-xs px-space-sm py-1 rounded bg-sandstone-wash w-fit">
                 <span className="w-2 h-2 rounded-full bg-primary inline-block"></span>
                 <span className="font-label-caps text-label-caps uppercase tracking-wider text-terracotta-sandstone font-semibold">
-                  Official North India Heritage Desk
+                  Agra Tour &amp; Sightseeing Desk
                 </span>
               </div>
               <h1 className="font-headline-hero text-headline-hero text-ink-charcoal leading-[1.12]">
@@ -341,7 +341,7 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
                 <div className="flex items-center gap-space-sm">
                   <span className="material-symbols-outlined text-primary text-[28px]">shield</span>
                   <div>
-                    <div className="font-title-md text-title-md text-on-surface font-semibold">Mughal Hospitality Standard</div>
+                    <div className="font-title-md text-title-md text-on-surface font-semibold">Guaranteed Service Standard</div>
                     <div className="font-body-sm text-body-sm text-on-surface-variant">Regulated by Uttar Pradesh Tourism guidelines</div>
                   </div>
                 </div>
@@ -870,13 +870,13 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
             <div className="lg:col-span-7 flex flex-col gap-space-md">
               <div className="inline-flex items-center gap-space-xs px-space-sm py-1 rounded bg-ink-slate text-gold-accent w-fit font-label-caps text-label-caps uppercase tracking-widest">
                 <span className="material-symbols-outlined text-[16px]">headset_mic</span>
-                <span>24×7 Custom Tour Concierge Desk</span>
+                <span>24×7 Custom Tour Planning Desk</span>
               </div>
               <h2 className="font-headline-hero text-headline-hero text-ivory-surface leading-tight">
-                Need a bespoke multi-city itinerary or group expedition?
+                Need a custom multi-city itinerary or group tour?
               </h2>
               <p className="font-body-lg text-body-lg text-secondary-container max-w-xl leading-relaxed">
-                From multi-day royal wedding transit to multi-week Rajasthan heritage loops, our Agra dispatch desk crafts personalized turn-by-turn routes with vetted commercial tourist coaches.
+                From multi-day wedding travel to multi-week Rajasthan heritage loops, our Agra dispatch desk plans personalized turn-by-turn routes with verified commercial tourist vehicles.
               </p>
               {/* Trust Badges Row */}
               <div className="flex flex-wrap items-center gap-space-md pt-space-xs text-secondary-container font-label-caps text-label-caps">

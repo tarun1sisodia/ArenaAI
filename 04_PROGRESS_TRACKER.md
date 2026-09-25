@@ -12,11 +12,19 @@ this file at commit `2c02ee3`. The table below is the condensed record.
 
 ## Current State
 
-- **Current Phase:** Phase M — HTML UI to React Migration — **active**
-- **Current Step:** Step M3 complete (Universal Dynamic Tour Package Template & Catalogue). Next up: Step M4 — Streamlined 2-Step Universal Booking & Billing Engine.
+- **Current Phase:** Phase M — HTML UI to React Migration — **COMPLETED** ✅
+- **Current Step:** Phase M complete (HTML UI to React Migration 100% finished). Next up: Phase I1 — Backend Integration & PostgreSQL.
 - **Last updated:** 2026-09-25
-- **Summary:** Rebuilt `PackageDetailPage.tsx` dynamically driven by `pkg: TourPackage` props matching `taj_mahal_sunrise_guided_tour.html` with two-column architectural core, 4 chapters (Imperial Experience, Clear Transparent Accounting, Essential Visitor Guidelines, Hour-by-Hour Curated Itinerary), sticky reservation dock with starting fare and 28% advance deposit calculation, expressway corridor stats, customer reviews mosaic, and FAQ accordion. Rebuilt `PackagesPage.tsx` matching `packages.html` with architectural hero, filter segmented tabs, curated packages catalog grid, package & fleet decision matrix, Honest Heritage Charter, and 24x7 custom tour concierge desk.
-- **Verified:** `npm --prefix react run typecheck` passed (0 errors), `npm --prefix react run build` pre-rendered 37 static pages + sitemap (32 URLs), and monorepo `npm run verify` passed cleanly (3 typechecks, 55 backend unit tests, 3 builds).
+- **Summary:** All HTML designs from `react/new_design/` are completely converted into the React application with ultra-luxury aesthetic styling, design tokens (`theme.css`), and the strict English-only mandate:
+  * Master Design & Tokens: `@tailwindcss/vite`, `EB Garamond` + `Plus Jakarta Sans`, Material Symbols Outlined.
+  * Global Chrome: Luxury `Header.tsx` (with mobile navigation drawer) and `Footer.tsx` (4-column layout with 28% advance guarantee).
+  * Universal Dynamic Package Detail: Single dynamic template `PackageDetailPage.tsx` driven by `TourPackage` props (`taj_mahal_sunrise_guided_tour.html`), supporting 1,000+ packages without static code explosion.
+  * Curated Package Hub: `PackagesPage.tsx` (`packages.html`) with category tabs and decision matrix.
+  * Universal 2-Step Booking Funnel: `BookingPage.tsx` (`step_1_taj_mahal_sunrise_guided_tour.html`, `step_2_booking_form_for_all.html`, `book_confirmed.html`) with 28% advance token and GST calculation.
+  * Core Marketing & Corridor Hubs: `HomePage.tsx` (`home.html`), `FleetPage.tsx` (`fleet.html`), `RoutesPage.tsx` (`routes.html`), `ServicesPage.tsx` (`services.html`), and `AboutPage.tsx` (`services_why_choose_us.html`).
+  * Dynamic Templates: `RouteDetailPage.tsx` and `VehicleDetailPage.tsx` matching the new luxury design system and 2-step booking handoff.
+  * Support & Compliance: `ContactPage.tsx` (`contact-us.html`), `FaqPage.tsx` (`faq.html`), `TermsPage.tsx` (`terms_condit.html`), `PrivacyPage.tsx` (`privacy_policy.html`), and `NotFoundPage.tsx` (`404.html`).
+- **Verified:** `npm --prefix react run typecheck` passed (0 errors), `npm --prefix react run build` pre-rendered 37 static pages + 10 legacy redirects + sitemap (32 URLs), and monorepo `npm run verify` passed cleanly (3 typechecks, 55 backend unit tests, 3 builds).
 - **Deployment monitoring (delivered with the integration branch):**
   `scripts/healthcheck.mjs` performs dependency-free checks of the API `/health`,
   the customer site and the admin site, wired to `.github/workflows/uptime.yml`
@@ -86,6 +94,9 @@ this file at commit `2c02ee3`. The table below is the condensed record.
 | 2026-09-14 | Phase D1 | Deployment standardization: CI contract + guards, admin SPA routing, build-hygiene fix, Docker hardening, Pages project naming, doc pack rewritten (this file included) |
 | 2026-09-25 | Phase M (M0–M2) | Master migration plan (`react/docs/MIGRATION_PLAN.md`), Tailwind CSS v4 setup, design tokens (`theme.css`), brand logo, luxury header with mobile nav sheet, footer with 28% advance guarantee, English-only mandate refactor |
 | 2026-09-25 | Phase M (M3) | Universal dynamic tour package template (`PackageDetailPage.tsx`) powered by `TourPackage` props (`taj_mahal_sunrise_guided_tour.html`), curated package catalogue (`PackagesPage.tsx` from `packages.html`) with interactive category tabs and decision matrix |
+| 2026-09-25 | Phase M (M4) | Streamlined 2-step universal booking funnel & transit voucher in `BookingPage.tsx` (`step_1_taj_mahal_sunrise_guided_tour.html`, `step_2_booking_form_for_all.html`, `book_confirmed.html`) wired to 28% advance token and GST calculation |
+| 2026-09-25 | Phase M (M5) | Rebuilt all core marketing & support pages from `react/new_design/` (`HomePage.tsx`, `FleetPage.tsx`, `RoutesPage.tsx`, `ServicesPage.tsx`, `ContactPage.tsx`, `FaqPage.tsx`, `TermsPage.tsx`, `PrivacyPage.tsx`, `NotFoundPage.tsx`) under the English-only mandate |
+| 2026-09-25 | Phase M (M6) | Full migration completion: converted dynamic templates (`AboutPage.tsx` from `services_why_choose_us.html`, `RouteDetailPage.tsx`, `VehicleDetailPage.tsx`) into the luxury design system; typecheck clean (0 errors), SSG pre-rendered 37 pages + 10 redirects + sitemap (32 URLs), and monorepo `npm run verify` passed 100% |
 
 ---
 
@@ -110,9 +121,9 @@ this file at commit `2c02ee3`. The table below is the condensed record.
 - [x] **M1: Tailwind CSS & Design Token System Setup** — `@tailwindcss/vite` configuration, `@/styles/theme.css` tokens, Google Fonts (`EB Garamond`, `Plus Jakarta Sans`) & Material Symbols Outlined.
 - [x] **M2: Global Chrome & Responsive Layout** — New luxury `Header.tsx` (with mobile nav drawer) and `Footer.tsx` (4-column layout with 28% advance guarantee).
 - [x] **M3: Universal Dynamic Tour Package Template & Catalogue** — Rebuild `PackageDetailPage.tsx` dynamically driven by `TourPackage` props (`taj_mahal_sunrise_guided_tour.html`), and `PackagesPage.tsx`.
-- [ ] **M4: Streamlined 2-Step Universal Booking & Billing Engine** — Step 1 (choose car tier: `step_1_taj_mahal_sunrise_guided_tour.html`), Step 2 (universal booking/billing form for all packages & routes: `step_2_booking_form_for_all.html`), and confirmation voucher (`book_confirmed.html`) wired to `fareEngine.ts`.
-- [ ] **M5: Core Marketing Pages & Route Hubs** — `HomePage.tsx` (`home.html`), `FleetPage.tsx` (`fleet.html`), `RoutesPage.tsx` (`routes.html`), `ServicesPage.tsx` (`services.html`), and support/legal pages.
-- [ ] **M6: Verification, SSR Pre-Rendering & Build Quality** — Update `prerender.ts`, typecheck, build validation.
+- [x] **M4: Streamlined 2-Step Universal Booking & Billing Engine** — Step 1 (choose car tier: `step_1_taj_mahal_sunrise_guided_tour.html`), Step 2 (universal booking/billing form for all packages & routes: `step_2_booking_form_for_all.html`), and confirmation voucher (`book_confirmed.html`) wired to `fareEngine.ts`.
+- [x] **M5: Core Marketing Pages & Route Hubs** — `HomePage.tsx` (`home.html`), `FleetPage.tsx` (`fleet.html`), `RoutesPage.tsx` (`routes.html`), `ServicesPage.tsx` (`services.html`), and support/legal pages.
+- [x] **M6: Verification, SSR Pre-Rendering & Build Quality** — Update `prerender.ts`, typecheck, build validation.
 
 ### Admin panel (`admin/`)
 

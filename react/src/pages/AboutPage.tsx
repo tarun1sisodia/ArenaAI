@@ -1,318 +1,132 @@
-import { useState } from "react";
-import type { SupportedLanguage } from "../config";
+import React from "react";
 import { contact } from "../data/contact";
 
 interface AboutPageProps {
-  language?: SupportedLanguage;
+  language?: "en" | "hi";
 }
-
-interface AboutFaq {
-  q: { en: string; hi: string };
-  a: { en: string; hi: string };
-}
-
-const ABOUT_FAQS: AboutFaq[] = [
-  {
-    q: {
-      en: "How long has SK Baghel Tour & Travels been operating in Agra?",
-      hi: "एस के बघेल टूर एंड ट्रेवल्स आगरा में कितने वर्षों से कार्यरत है?",
-    },
-    a: {
-      en: "SK Baghel Tour & Travels was established in 2009 in Taj Ganj, Agra. Over the past 15+ years, we have grown from a boutique local service with two cabs to a trusted regional fleet managing airport transfers, outstation expressway corridors, and curated Golden Triangle tours with over 35,000 completed journeys.",
-      hi: "एस के बघेल टूर एंड ट्रेवल्स की स्थापना वर्ष 2009 में ताजगंज, आगरा में हुई थी। पिछले 15 से अधिक वर्षों में हमने 2 गाड़ियों से शुरुआत करके आज 35,000 से अधिक सफल यात्राओं, एयरपोर्ट ट्रांसफर और गोल्डन ट्रायंगल टूर का भरोसेमंद नेटवर्क स्थापित किया है।",
-    },
-  },
-  {
-    q: {
-      en: "Where is your physical office located in Agra?",
-      hi: "आगरा में आपका मुख्य कार्यालय कहाँ स्थित है?",
-    },
-    a: {
-      en: "Our primary operational headquarters is located on Taj East Gate Road, Taj Ganj, Agra, Uttar Pradesh 282001 (just minutes from the Taj Mahal East Gate). Travelers are always welcome to visit our desk for itinerary planning, vehicle inspection, or face-to-face travel consultations.",
-      hi: "हमारा मुख्य कार्यालय ताज ईस्ट गेट रोड, ताजगंज, आगरा (उत्तर प्रदेश 282001) में ताजमहल के पूर्वी द्वार के निकट स्थित है। यात्री यात्रा योजना, गाड़ी देखने या व्यक्तिगत परामर्श के लिए हमारे कार्यालय में सीधे आ सकते हैं।",
-    },
-  },
-  {
-    q: {
-      en: "How do you vet and select your chauffeurs?",
-      hi: "आप अपने ड्राइवरों का सत्यापन और चयन कैसे करते हैं?",
-    },
-    a: {
-      en: "Every driver on our roster undergoes thorough police background verification, holds a valid commercial passenger transport badge, and has a minimum of 7+ years of driving experience across the Yamuna Expressway, Rajasthan highways, and hill corridors. We strictly enforce a non-smoking cabin policy and courteous, professional conduct.",
-      hi: "हमारी टीम के प्रत्येक ड्राइवर का पुलिस सत्यापन होता है, उनके पास वैध कमर्शियल ड्राइविंग लाइसेंस और यमुना एक्सप्रेसवे व राष्ट्रीय राजमार्गों पर न्यूनतम 7+ वर्षों का ड्राइविंग अनुभव होता है। हमारी गाड़ियों में धूम्रपान निषेध और यात्रियों से शालीन व्यवहार अनिवार्य है।",
-    },
-  },
-  {
-    q: {
-      en: "Do your chauffeurs take tourists to commission shopping stores?",
-      hi: "क्या आपके ड्राइवर पर्यटकों को जबरन कमीशन की दुकानों पर ले जाते हैं?",
-    },
-    a: {
-      en: "Strictly NO. We have a zero-tolerance policy against commercial shopping kickbacks, high-pressure marble souvenir traps, or forced restaurant detours. Our drivers are compensated fairly and instructed to follow only the guest's chosen itinerary and preferred halts.",
-      hi: "बिल्कुल नहीं। हमारी कंपनी कमीशन की दुकानों, जबरन मार्बल या पेठा की दुकानों पर रुकने के सख्त खिलाफ है। हमारे ड्राइवरों को केवल वही स्टॉप लेने के निर्देश हैं जो यात्री अपनी इच्छा से चुनते हैं।",
-    },
-  },
-  {
-    q: {
-      en: "Are all vehicles registered commercially with valid passenger insurance?",
-      hi: "क्या आपकी सभी गाड़ियाँ कमर्शियल नंबर प्लेट व यात्री बीमा युक्त हैं?",
-    },
-    a: {
-      en: "Yes, 100%. We operate strictly with yellow-plate commercial tourist vehicles registered under the Regional Transport Authority (RTO) with up-to-date fitness certificates, comprehensive passenger insurance, and valid All-India Tourist Permits (AITP). We never deploy illegal private white-plate cars.",
-      hi: "हाँ, शत-प्रतिशत। हमारे सभी वाहन आरटीओ द्वारा अनुमोदित पीली कमर्शियल नंबर प्लेट, फिटनेस सर्टिफिकेट, ऑल-इंडिया टूरिस्ट परमिट और पूर्ण यात्री बीमा से सुरक्षित हैं। हम कभी भी अनधिकृत निजी सफेद प्लेट गाड़ियों का उपयोग नहीं करते।",
-    },
-  },
-  {
-    q: {
-      en: "Can your team organize customized multi-day circuits across Rajasthan and North India?",
-      hi: "क्या आपकी टीम राजस्थान व उत्तर भारत के लिए मनपसंद मल्टी-डे टूर प्लान कर सकती है?",
-    },
-    a: {
-      en: "Absolutely. In addition to Agra local sightseeing, we specialize in tailor-made Golden Triangle circuits (Delhi–Agra–Jaipur), Mathura-Vrindavan spiritual yatras, Gwalior-Khajuraho heritage routes, and Ranthambore wildlife safaris with dedicated vehicles and experienced chauffeurs.",
-      hi: "हाँ, बिल्कुल। आगरा दर्शन के अलावा हम दिल्ली-आगरा-जयपुर गोल्डन ट्रायंगल, मथुरा-वृंदावन तीर्थ यात्रा, ग्वालियर-ओरछा-खजुराहो हेरिटेज सर्किट और रणथंभौर सफारी के लिए विशेष रूप से अनुकूलित निजी वाहन उपलब्ध कराते हैं।",
-    },
-  },
-];
 
 export function AboutPage({ language = "en" }: AboutPageProps) {
-  const isHindi = language === "hi";
-  const activeLanguage = isHindi ? "hi" : "en";
-  const langPrefix = isHindi ? "/hi" : "/en";
-
-  // FAQ Accordion State
-  const [openFaq, setOpenFaq] = useState<number | null>(0);
-
-  // Structured Data (Schema.org)
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "LocalBusiness",
-        "@id": "https://skbagheltravels.in/#organization",
-        name: "SK Baghel Tour & Travels",
-        alternateName: "SK Baghel Taxi Service Agra",
-        telephone: contact.phone,
-        email: contact.email,
-        url: "https://skbagheltravels.in",
-        foundingDate: "2009",
-        founder: {
-          "@type": "Person",
-          name: "S.K. Baghel",
-          jobTitle: "Founder & Managing Director",
-        },
-        address: {
-          "@type": "PostalAddress",
-          streetAddress: "Near Taj East Gate Road, Taj Ganj",
-          addressLocality: "Agra",
-          addressRegion: "Uttar Pradesh",
-          postalCode: "282001",
-          addressCountry: "IN",
-        },
-        geo: {
-          "@type": "GeoCoordinates",
-          latitude: 27.1632,
-          longitude: 78.0322,
-        },
-        priceRange: "₹₹",
-        openingHours: "Mo-Su 00:00-24:00",
-        aggregateRating: {
-          "@type": "AggregateRating",
-          ratingValue: "4.9",
-          reviewCount: "3800",
-          bestRating: "5",
-          worstRating: "1",
-        },
-      },
-      {
-        "@type": "AboutPage",
-        "@id": `https://skbagheltravels.in${langPrefix}/about/#webpage`,
-        url: `https://skbagheltravels.in${langPrefix}/about/`,
-        name: isHindi
-          ? "हमारे बारे में — एस के बघेल टूर एंड ट्रेवल्स आगरा"
-          : "About Us — SK Baghel Tour & Travels Agra",
-        description: isHindi
-          ? "15+ वर्षों का अनुभव, स्थानीय ताजगंज आगरा मुख्यालय, सत्यापित ड्राइवर और पारदर्शी कैब सेवा।"
-          : "Founded in Taj Ganj, Agra in 2009. 15+ years of trusted outstation taxi and tour services.",
-        breadcrumb: {
-          "@type": "BreadcrumbList",
-          itemListElement: [
-            {
-              "@type": "ListItem",
-              position: 1,
-              name: isHindi ? "होम" : "Home",
-              item: `https://skbagheltravels.in${langPrefix}/`,
-            },
-            {
-              "@type": "ListItem",
-              position: 2,
-              name: isHindi ? "हमारे बारे में" : "About Us",
-              item: `https://skbagheltravels.in${langPrefix}/about/`,
-            },
-          ],
-        },
-      },
-      {
-        "@type": "FAQPage",
-        mainEntity: ABOUT_FAQS.map((faq) => ({
-          "@type": "Question",
-          name: faq.q[activeLanguage],
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: faq.a[activeLanguage],
-          },
-        })),
-      },
-    ],
-  };
-
   return (
-    <main id="main-content" className="about-hub-page">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-      />
-
-      {/* Hero Header */}
-      <header className="about-hub-hero">
-        <div className="container">
-          <p className="eyebrow">
-            {isHindi
-              ? "स्थानीय अनुभव एवं प्रामाणिक सेवा • 2009 से"
-              : "LOCAL HERITAGE & ETHICAL TRAVEL • SINCE 2009"}
-          </p>
-          <h1>
-            {isHindi ? (
-              <>
-                ताजगंज, आगरा से शुरू हुआ सफर,
-                <br />
-                <i>सच्चाई, सुरक्षा और भरोसे की मिसाल।</i>
-              </>
-            ) : (
-              <>
-                Born in Taj Ganj, Agra,
-                <br />
-                <i>built on trust, safety, and honest travel.</i>
-              </>
-            )}
-          </h1>
-          <p className="hero-copy">
-            {isHindi
-              ? "पिछले 15 वर्षों में 35,000 से अधिक सफल यात्राओं और 3,800+ 5-स्टार समीक्षाओं के साथ — हम पर्यटकों को कमीशन के चक्कर और छुपे किरायों से बचाकर परिवार जैसा आरामदायक सफर प्रदान करते हैं।"
-              : "For over 15 years, we have guided travelers across Agra, the Yamuna Expressway, and the Golden Triangle. No hidden fees, no tourist shopping traps — just dependable vehicles, verified local chauffeurs, and genuine hospitality."}
-          </p>
-
-          <div className="hero-actions">
-            <a className="button button-primary" href="#founder-message">
-              {isHindi ? "संस्थापक संदेश पढ़ें ↓" : "Founder's Message ↓"}
-            </a>
-            <a className="button button-outline" href="#company-pillars">
-              {isHindi ? "हमारे सिद्धांत" : "Core Values & Pillars"}
-            </a>
-            <a className="button button-outline" href={`tel:${contact.phone}`}>
-              {contact.phoneDisplay}
-            </a>
-          </div>
-
-          {/* Key Trust Numbers Bento Grid */}
-          <div className="about-stats-bento">
-            <div className="about-stat-tile">
-              <strong className="stat-number">15+</strong>
-              <span className="stat-label">
-                {isHindi ? "वर्षों का अनुभव (स्थापना 2009)" : "Years Operating Heritage (Est. 2009)"}
-              </span>
-            </div>
-            <div className="about-stat-tile">
-              <strong className="stat-number">35,000+</strong>
-              <span className="stat-label">
-                {isHindi ? "सफल यात्राएं व खुशहाल यात्री" : "Completed Tours & Transfers"}
-              </span>
-            </div>
-            <div className="about-stat-tile">
-              <strong className="stat-number">4.9 ★</strong>
-              <span className="stat-label">
-                {isHindi ? "3,800+ गूगल समीक्षाएं" : "3,800+ Verified 5-Star Reviews"}
-              </span>
-            </div>
-            <div className="about-stat-tile">
-              <strong className="stat-number">100%</strong>
-              <span className="stat-label">
-                {isHindi ? "कमर्शियल पीली प्लेट गाड़ियां" : "Commercial RTO Yellow-Plate Fleet"}
-              </span>
-            </div>
-          </div>
+    <div className="flex flex-col w-full bg-surface">
+      {/* Top Breadcrumb Bar */}
+      <div className="w-full bg-sandstone-wash/70 py-space-sm border-b border-border-warm/40">
+        <div className="max-w-7xl mx-auto px-margin-mobile lg:px-margin flex items-center justify-between">
+          <nav aria-label="Breadcrumb" className="flex items-center gap-space-xs text-body-sm font-body-sm text-on-surface-variant">
+            <a className="hover:text-primary transition-colors" href="/">Home</a>
+            <span className="material-symbols-outlined text-[14px] text-terracotta-sandstone">chevron_right</span>
+            <span className="text-on-surface font-semibold">Why Choose Us</span>
+            <span className="material-symbols-outlined text-[14px] text-terracotta-sandstone">chevron_right</span>
+            <span className="text-terracotta-sandstone font-medium">The Baghel Standard</span>
+          </nav>
         </div>
-      </header>
+      </div>
 
-      {/* Founder & Managing Director's Message */}
-      <section
-        id="founder-message"
-        className="home-section founder-section"
-        aria-labelledby="founder-heading"
-      >
-        <div className="container">
-          <div className="founder-card">
-            <div className="founder-card-quote-mark" aria-hidden="true">
-              “
-            </div>
-            <div className="founder-card-content">
-              <span className="founder-eyebrow">
-                {isHindi ? "संस्थापक का संदेश" : "MESSAGE FROM OUR FOUNDER"}
+      {/* Hero Chapter: Poetic Classical Modernism */}
+      <section className="relative w-full bg-surface pt-space-xl pb-space-2xl overflow-hidden">
+        {/* Ambient Heritage Glow */}
+        <div className="absolute -top-32 right-1/4 w-96 h-96 rounded-full bg-sandstone-wash/60 blur-3xl pointer-events-none -z-10" />
+        <div className="absolute bottom-0 left-0 w-80 h-80 rounded-full bg-primary-fixed/20 blur-2xl pointer-events-none -z-10" />
+
+        <div className="max-w-7xl mx-auto px-margin-mobile lg:px-margin">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-center">
+            {/* Text Column */}
+            <div className="lg:col-span-7 flex flex-col gap-space-md">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary-fixed text-primary text-label-caps font-label-caps uppercase tracking-widest w-fit">
+                <span className="material-symbols-outlined text-[14px]">verified</span>
+                Heritage Chauffeur Ethics Since 2009
               </span>
-              <h2 id="founder-heading">
-                {isHindi ? (
-                  <>
-                    "पर्यटक केवल ग्राहक नहीं,
-                    <br />
-                    <i>हमारे शहर के सम्मानीय अतिथि हैं।"</i>
-                  </>
-                ) : (
-                  <>
-                    "Travelers are not just customers,
-                    <br />
-                    <i>they are revered guests of our city."</i>
-                  </>
-                )}
-              </h2>
+              <h1 className="font-headline-hero text-headline-hero text-ink-charcoal tracking-tight font-serif">
+                Chauffeured Transit as an Art Form.{" "}
+                <span className="italic text-terracotta-sandstone">Never an Anonymous Ride.</span>
+              </h1>
+              <p className="font-body-lg text-body-lg text-on-surface-variant max-w-2xl leading-relaxed">
+                For over 15 years, headquartered directly beside the Taj East Gate in Taj Ganj, SK Baghel Tour &amp;
+                Travels has provided discerning travelers, families, and diplomats with peerless road journeys across
+                Agra, the Golden Triangle, and North India.
+              </p>
 
-              <div className="founder-letter">
-                {isHindi ? (
-                  <>
-                    <p>
-                      जब मैंने 2009 में आगरा में पहली बार पर्यटकों को ताजमहल ले जाना शुरू किया, तो मैंने अक्सर देखा कि दूर-दराज और विदेशों से आए यात्रियों को अनिश्चित किराये, अनपेक्षित कमीशन दुकानों और असंवेदनशील ड्राइवरों के कारण असुविधा होती थी।
-                    </p>
-                    <p>
-                      मैंने एस के बघेल टूर एंड ट्रेवल्स की नींव एक बहुत ही सरल सिद्धांत पर रखी: <strong>हर यात्री के साथ अपने परिवार जैसा व्यवहार करना।</strong> हम बुकिंग के समय ही टोल, टैक्स और पार्किंग सहित अंतिम किराया बताते हैं, केवल पुलिस-सत्यापित और विनम्र ड्राइवरों को ही सेवा में लगाते हैं, और किसी भी प्रकार की कमीशन दुकानों पर समय बर्बाद नहीं करते।
-                    </p>
-                    <p>
-                      आज 15 साल बाद भी, हमारे कार्यालय का हर सदस्य इसी ईमानदारी के साथ काम करता है। चाहे आप दिल्ली एयरपोर्ट से आधी रात में आ रहे हों या सूर्योदय के समय ताजमहल का दर्शन कर रहे हों — आपकी सुरक्षा और सुविधा हमारी व्यक्तिगत जिम्मेदारी है।
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <p>
-                      When I first began driving travelers around Agra in 2009, I saw firsthand how frequently visitors were burdened by hidden expressway surcharges, aggressive touts, and forced detours into overpriced commission emporiums.
-                    </p>
-                    <p>
-                      I founded SK Baghel Tour & Travels on one simple, unbreakable pledge: <strong>treat every traveler like our own family.</strong> We quote transparent all-inclusive fares upfront, assign only background-verified chauffeurs who take genuine pride in their hospitality, and maintain a strict zero-tolerance policy against commercial shopping kickbacks.
-                    </p>
-                    <p>
-                      Fifteen years later, whether we are dispatching a midnight pickup from Delhi IGI Airport or driving a family to the Taj Mahal at dawn, our commitment remains unchanged: punctual service, spotless cars, and honest local guidance you can trust.
-                    </p>
-                  </>
-                )}
+              <div className="pt-space-xs flex flex-wrap items-center gap-space-md">
+                <a
+                  className="inline-flex items-center gap-space-xs bg-terracotta-sandstone text-on-primary px-6 py-3.5 rounded text-label-lg font-label-lg shadow-md hover:bg-terracotta-sunlit transition-all duration-200"
+                  href="/book/"
+                >
+                  <span className="material-symbols-outlined text-[20px]">calendar_month</span>
+                  <span>Reserve With 28% Token</span>
+                </a>
+                <a
+                  className="inline-flex items-center gap-space-xs bg-ink-charcoal text-ivory-surface px-6 py-3.5 rounded text-label-lg font-label-lg shadow-sm hover:bg-ink-slate transition-all duration-200"
+                  href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent("Hello SK Baghel Desk, I would like to inquire about your chauffeur services in Agra.")}`}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  <span className="material-symbols-outlined text-[20px] text-terracotta-sunlit">chat</span>
+                  <span>WhatsApp Taj Ganj Desk</span>
+                </a>
               </div>
 
-              <div className="founder-signature-block">
-                <div className="founder-details">
-                  <strong className="founder-name">S.K. Baghel</strong>
-                  <span className="founder-title">
-                    {isHindi
-                      ? "संस्थापक एवं प्रबंध निदेशक • एस के बघेल टूर एंड ट्रेवल्स"
-                      : "Founder & Managing Director • SK Baghel Tour & Travels"}
-                  </span>
-                  <span className="founder-meta">
-                    📍 Taj Ganj, Agra · Registered Commercial Transporter
-                  </span>
+              {/* Trust Badges Strip */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-space-md pt-space-lg">
+                <div className="flex flex-col bg-surface-container-low p-space-md rounded shadow-sm border border-border-warm/40">
+                  <span className="font-headline-md text-headline-md text-terracotta-sandstone font-serif">15+</span>
+                  <span className="font-body-sm text-body-sm text-on-surface font-semibold">Years in Taj Ganj</span>
+                  <span className="text-[11px] text-secondary">Family-run local legacy</span>
+                </div>
+                <div className="flex flex-col bg-surface-container-low p-space-md rounded shadow-sm border border-border-warm/40">
+                  <span className="font-headline-md text-headline-md text-terracotta-sandstone font-serif">3,800+</span>
+                  <span className="font-body-sm text-body-sm text-on-surface font-semibold">Verified Expeditions</span>
+                  <span className="text-[11px] text-secondary">4.9 / 5 Guest Satisfaction</span>
+                </div>
+                <div className="flex flex-col bg-surface-container-low p-space-md rounded shadow-sm border border-border-warm/40">
+                  <span className="font-headline-md text-headline-md text-terracotta-sandstone font-serif">100%</span>
+                  <span className="font-body-sm text-body-sm text-on-surface font-semibold">Yellow-Plate Fleet</span>
+                  <span className="text-[11px] text-secondary">Zero illegal white plates</span>
+                </div>
+                <div className="flex flex-col bg-surface-container-low p-space-md rounded shadow-sm border border-border-warm/40">
+                  <span className="font-headline-md text-headline-md text-terracotta-sandstone font-serif">0</span>
+                  <span className="font-body-sm text-body-sm text-on-surface font-semibold">Emporium Detours</span>
+                  <span className="text-[11px] text-secondary">Zero commission traps</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Visual Column with Asymmetric Editorial Overlay */}
+            <div className="lg:col-span-5 relative">
+              <div className="relative rounded-xl overflow-hidden shadow-xl bg-surface-container border border-border-warm/60">
+                <img
+                  className="w-full h-[460px] object-cover"
+                  alt="A pristine Toyota Innova Crysta luxury touring vehicle parked on a scenic road with historic sandstone monuments in the background"
+                  src="/assets/fleet/innova.webp"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src =
+                      "https://lh3.googleusercontent.com/aida-public/AB6AXuCmlzP3c2lpWAi6vPrfCKZcIhEJWmPEuyRaJiN9TmXsdpvj1uZ1ukMv6Nzd9cC0T6Sctz_AqeUNPojvuyh5RtYNtdY-PerWt-3UyMfJRUTKEC66624PYqFAtQYKnMh5jtT4PGN0gZ5ofBTFYihl5NVD4QGgHvhRL24fqNpWbIZ1e3BXJd9AuuGzAfN9WGqyNy-Baldt15zxMELAzs7kDf38XCxMNFVwh-kfmNkwPHMgwXvxwocyIqt8JA";
+                  }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-ink-midnight/80 via-ink-midnight/20 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-space-lg flex flex-col gap-space-xs text-ivory-surface">
+                  <div className="flex items-center justify-between">
+                    <span className="bg-primary/90 text-ivory-surface px-2.5 py-0.5 rounded text-label-caps font-label-caps uppercase tracking-wider">
+                      Heritage Highway Cruiser
+                    </span>
+                    <span className="flex items-center gap-1 text-gold-accent text-body-sm font-semibold">
+                      <span className="material-symbols-outlined text-[16px]">verified</span>
+                      Toyota Innova Crysta ZX
+                    </span>
+                  </div>
+                  <p className="font-headline-sm text-headline-sm font-serif italic text-ivory-surface">
+                    “Agra to Jaipur through Fatehpur Sikri without a single interruption.”
+                  </p>
+                  <span className="text-body-sm text-sandstone-wash/80">— The Baghel Royal Fleet Assurance</span>
+                </div>
+              </div>
+
+              {/* Floating Micro Card */}
+              <div className="absolute -bottom-6 -left-6 hidden sm:flex items-center gap-space-sm bg-surface-container-lowest p-space-md rounded-lg shadow-xl max-w-xs border border-border-warm/60">
+                <div className="w-10 h-10 rounded bg-sandstone-wash flex items-center justify-center shrink-0">
+                  <span className="material-symbols-outlined text-terracotta-sandstone text-[22px]">shield_person</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-title-md text-title-md text-on-surface leading-tight">Chauffeur Police Clear</span>
+                  <span className="font-body-sm text-body-sm text-secondary">Pre-verified UP &amp; Delhi Police IDs</span>
                 </div>
               </div>
             </div>
@@ -320,358 +134,577 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
         </div>
       </section>
 
-      {/* 4 Core Operational Pillars */}
-      <section
-        id="company-pillars"
-        className="home-section about-pillars-section"
-        aria-labelledby="pillars-heading"
-      >
-        <div className="container">
-          <div className="section-heading">
-            <div>
-              <p className="eyebrow">
-                {isHindi ? "हमारे मूल सिद्धांत" : "Ethical Operating Pillars"}
-              </p>
-              <h2 id="pillars-heading">
-                {isHindi ? (
-                  <>
-                    हम दूसरों से अलग क्यों हैं,
-                    <br />
-                    <i>हमारे 4 अटूट सेवा मानक।</i>
-                  </>
-                ) : (
-                  <>
-                    Why travelers trust us,
-                    <br />
-                    <i>our 4 non-negotiable operational commitments.</i>
-                  </>
-                )}
-              </h2>
-            </div>
+      {/* Section 2: The 6 Pillars of the Baghel Standard */}
+      <section className="w-full bg-surface-container-low py-space-3xl border-t border-b border-border-warm/30">
+        <div className="max-w-7xl mx-auto px-margin-mobile lg:px-margin">
+          {/* Section Title Header */}
+          <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-space-2xl">
+            <span className="font-label-caps text-label-caps text-terracotta-sandstone uppercase tracking-widest mb-space-xs">
+              The Chauffeur Ethics Protocol
+            </span>
+            <h2 className="font-headline-lg text-headline-lg text-ink-charcoal font-serif mb-space-sm">
+              Six Sacred Pillars of Our Transit Standard
+            </h2>
+            <p className="font-body-md text-body-md text-on-surface-variant">
+              In an industry plagued by bait-and-switch app aggregators and aggressive tourist brokers, we hold an
+              unyielding contract with our guests: complete autonomy, total transparency, and unwavering courtesy.
+            </p>
           </div>
 
-          <div className="pillars-grid">
-            <div className="pillar-tile">
-              <span className="pillar-badge">01</span>
-              <h3>
-                {isHindi ? "शून्य कमीशन व पारदर्शी यात्रा" : "Zero Commission Shopping Traps"}
-              </h3>
-              <p>
-                {isHindi
-                  ? "हम अपने ड्राइवरों को किसी भी मार्बल, कालीन या हस्तशिल्प की कमीशन दुकानों पर रुकने की सख्त मनाही करते हैं। आपका कीमती समय केवल दर्शनीय स्थलों के आनंद के लिए है।"
-                  : "We strictly prohibit commission-based stops at overpriced souvenir marble or carpet shops. Your time in Agra belongs exclusively to sightseeing and relaxed exploration."}
-              </p>
+          {/* 6 Pillars Bento Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-space-lg">
+            {/* Pillar 01 */}
+            <div className="bg-surface-container-lowest p-space-xl rounded-lg shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between border border-border-warm/50">
+              <div className="flex flex-col gap-space-md">
+                <div className="flex items-center justify-between">
+                  <span className="font-headline-md text-headline-md font-serif text-terracotta-sandstone">01</span>
+                  <span className="material-symbols-outlined text-primary text-[28px]">do_not_disturb_on</span>
+                </div>
+                <h3 className="font-title-lg text-title-lg text-on-surface font-serif">Zero Commission Traps Guarantee</h3>
+                <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                  Strict contractual prohibition against unsolicited marble, rug, spice, or jewelry emporiums. Your
+                  itinerary belongs to you. If a driver forces an unrequested stop, your entire return fare is fully
+                  refunded on the spot.
+                </p>
+              </div>
+              <div className="mt-space-md pt-space-sm bg-sandstone-wash/50 p-space-sm rounded">
+                <span className="font-label-caps text-label-caps text-terracotta-sandstone uppercase block">Guest Protection</span>
+                <span className="font-body-sm text-body-sm text-ink-charcoal font-medium">100% Uncompromised Itinerary Integrity</span>
+              </div>
             </div>
 
-            <div className="pillar-tile">
-              <span className="pillar-badge">02</span>
-              <h3>
-                {isHindi ? "सत्यापित एवं संस्कारित ड्राइवर" : "Police-Verified Highway Chauffeurs"}
-              </h3>
-              <p>
-                {isHindi
-                  ? "हमारी फ्लीट के सभी ड्राइवरों का पुलिस रिकॉर्ड सत्यापित होता है। वे न्यूनतम 7+ वर्षों के अनुभवी, गैर-धूम्रपान करने वाले और शालीन व्यवहार वाले पेशेवर हैं।"
-                  : "Every chauffeur holds a clean police record, valid commercial tourist badge, and minimum 7+ years of expressway and heritage driving experience. Courteous, punctual, and non-smoking."}
-              </p>
+            {/* Pillar 02 */}
+            <div className="bg-surface-container-lowest p-space-xl rounded-lg shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between border border-border-warm/50">
+              <div className="flex flex-col gap-space-md">
+                <div className="flex items-center justify-between">
+                  <span className="font-headline-md text-headline-md font-serif text-terracotta-sandstone">02</span>
+                  <span className="material-symbols-outlined text-primary text-[28px]">flight_takeoff</span>
+                </div>
+                <h3 className="font-title-lg text-title-lg text-on-surface font-serif">Punctual Doorstep &amp; Flight Tracking</h3>
+                <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                  Live radar sync with Delhi IGI Terminal 3 arrivals and Agra Cantt Gatimaan Express. Your chauffeur
+                  positions vehicle 15 minutes before touch-down, holding a personalized name placard at the arrival
+                  vestibule.
+                </p>
+              </div>
+              <div className="mt-space-md pt-space-sm bg-sandstone-wash/50 p-space-sm rounded">
+                <span className="font-label-caps text-label-caps text-terracotta-sandstone uppercase block">Buffer Guarantee</span>
+                <span className="font-body-sm text-body-sm text-ink-charcoal font-medium">Zero Surcharge for Flight or Rail Delays</span>
+              </div>
             </div>
 
-            <div className="pillar-tile">
-              <span className="pillar-badge">03</span>
-              <h3>
-                {isHindi ? "साफ-सुथरी व सुरक्षित गाड़ियां" : "Spotless Fleet & Full Passenger Insurance"}
-              </h3>
-              <p>
-                {isHindi
-                  ? "प्रत्येक यात्रा से पूर्व अंदरूनी वैक्यूम क्लीनिंग, कार्यशील डुअल एसी की जांच, और केवल पीली प्लेट कमर्शियल आरटीओ परमिट वाले वाहनों का संचालन।"
-                  : "Every vehicle is sanitized before pickup, features powerful dual air conditioning, and carries comprehensive commercial passenger insurance and All-India Tourist Permits."}
-              </p>
+            {/* Pillar 03 */}
+            <div className="bg-surface-container-lowest p-space-xl rounded-lg shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between border border-border-warm/50">
+              <div className="flex flex-col gap-space-md">
+                <div className="flex items-center justify-between">
+                  <span className="font-headline-md text-headline-md font-serif text-terracotta-sandstone">03</span>
+                  <span className="material-symbols-outlined text-primary text-[28px]">badge</span>
+                </div>
+                <h3 className="font-title-lg text-title-lg text-on-surface font-serif">100% Yellow-Plate Commercial Fleet</h3>
+                <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                  We never run precarious private "white-plate" personal cars. Every vehicle holds active tourist
+                  permits, passenger liability insurance up to ₹1,000,000, and is strictly under 36 months in service
+                  age.
+                </p>
+              </div>
+              <div className="mt-space-md pt-space-sm bg-sandstone-wash/50 p-space-sm rounded">
+                <span className="font-label-caps text-label-caps text-terracotta-sandstone uppercase block">Legal Verification</span>
+                <span className="font-body-sm text-body-sm text-ink-charcoal font-medium">All India Tourist Permit (AITP) Certified</span>
+              </div>
             </div>
 
-            <div className="pillar-tile">
-              <span className="pillar-badge">04</span>
-              <h3>
-                {isHindi ? "100% स्पष्ट व पूर्व-निर्धारित किराया" : "Transparent Upfront Pricing"}
-              </h3>
-              <p>
-                {isHindi
-                  ? "यमुना एक्सप्रेसवे टोल, राज्य बॉर्डर टैक्स और ड्राइवर भत्ता पहले से स्पष्ट किया जाता है। यात्रा समाप्त होने पर कोई भी अप्रत्याशित अतिरिक्त शुल्क नहीं मांगा जाता।"
-                  : "Yamuna Expressway tolls, state border permits, and chauffeur charges are stated upfront. No sudden hidden surcharges or post-trip fuel renegotiations."}
-              </p>
+            {/* Pillar 04 */}
+            <div className="bg-surface-container-lowest p-space-xl rounded-lg shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between border border-border-warm/50">
+              <div className="flex flex-col gap-space-md">
+                <div className="flex items-center justify-between">
+                  <span className="font-headline-md text-headline-md font-serif text-terracotta-sandstone">04</span>
+                  <span className="material-symbols-outlined text-primary text-[28px]">person_apron</span>
+                </div>
+                <h3 className="font-title-lg text-title-lg text-on-surface font-serif">Chauffeur Etiquette &amp; Heritage Fluency</h3>
+                <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                  Police background verified, crisp formal attire, and non-smoking interiors. Chauffeurs possess minimum
+                  7+ years highway mastery, fluent in Hindi &amp; English, trained in discreet guest hospitality.
+                </p>
+              </div>
+              <div className="mt-space-md pt-space-sm bg-sandstone-wash/50 p-space-sm rounded">
+                <span className="font-label-caps text-label-caps text-terracotta-sandstone uppercase block">Chauffeur Standard</span>
+                <span className="font-body-sm text-body-sm text-ink-charcoal font-medium">Bilingual, Courteous &amp; Tobacco-Free</span>
+              </div>
+            </div>
+
+            {/* Pillar 05 */}
+            <div className="bg-surface-container-lowest p-space-xl rounded-lg shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between border border-border-warm/50">
+              <div className="flex flex-col gap-space-md">
+                <div className="flex items-center justify-between">
+                  <span className="font-headline-md text-headline-md font-serif text-terracotta-sandstone">05</span>
+                  <span className="material-symbols-outlined text-primary text-[28px]">payments</span>
+                </div>
+                <h3 className="font-title-lg text-title-lg text-on-surface font-serif">Transparent 28% Advance &amp; Fare Lock</h3>
+                <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                  Confirm bookings with a clean 28% advance token. The balance is paid upon reaching your destination. All
+                  Yamuna Expressway and Eastern Peripheral tolls are transparently bundled. Zero surprise return fees.
+                </p>
+              </div>
+              <div className="mt-space-md pt-space-sm bg-sandstone-wash/50 p-space-sm rounded">
+                <span className="font-label-caps text-label-caps text-terracotta-sandstone uppercase block">Financial Safety</span>
+                <span className="font-body-sm text-body-sm text-ink-charcoal font-medium">GST Invoiced • No Cash Shakedowns</span>
+              </div>
+            </div>
+
+            {/* Pillar 06 */}
+            <div className="bg-surface-container-lowest p-space-xl rounded-lg shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between border border-border-warm/50">
+              <div className="flex flex-col gap-space-md">
+                <div className="flex items-center justify-between">
+                  <span className="font-headline-md text-headline-md font-serif text-terracotta-sandstone">06</span>
+                  <span className="material-symbols-outlined text-primary text-[28px]">support_agent</span>
+                </div>
+                <h3 className="font-title-lg text-title-lg text-on-surface font-serif">24×7 Human Taj Ganj Dispatch Desk</h3>
+                <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                  Zero automated phone menus. Direct access to experienced dispatchers physically based in Taj Ganj,
+                  Agra. Need to alter a morning sunrise pickup time at 11:30 PM? We answer within two telephone rings.
+                </p>
+              </div>
+              <div className="mt-space-md pt-space-sm bg-sandstone-wash/50 p-space-sm rounded">
+                <span className="font-label-caps text-label-caps text-terracotta-sandstone uppercase block">Instant Human Voice</span>
+                <span className="font-body-sm text-body-sm text-ink-charcoal font-medium">Direct Telephone &amp; Live WhatsApp Desk</span>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Company Journey Milestones Timeline */}
-      <section
-        className="home-section about-timeline-section"
-        aria-labelledby="timeline-heading"
-      >
-        <div className="container">
-          <div className="section-heading">
-            <div>
-              <p className="eyebrow">
-                {isHindi ? "हमारी विकास यात्रा" : "Company Heritage & Milestones"}
-              </p>
-              <h2 id="timeline-heading">
-                {isHindi ? (
-                  <>
-                    2009 से 2024 तक का सफर,
-                    <br />
-                    <i>निरंतर विश्वास और सेवा विस्तार।</i>
-                  </>
-                ) : (
-                  <>
-                    From two cabs to a trusted fleet,
-                    <br />
-                    <i>15 years of continuous growth & reliability.</i>
-                  </>
-                )}
-              </h2>
-            </div>
-          </div>
+      {/* Section 3: 21-Point Mechanical Inspection & Fleet Standards */}
+      <section className="w-full bg-surface py-space-3xl">
+        <div className="max-w-7xl mx-auto px-margin-mobile lg:px-margin">
+          <div className="bg-ink-charcoal text-ivory-surface rounded-xl p-space-xl lg:p-space-2xl shadow-xl overflow-hidden relative">
+            <svg
+              className="absolute -right-12 -top-12 w-64 h-64 opacity-5 text-terracotta-sunlit pointer-events-none"
+              fill="currentColor"
+              viewBox="0 0 100 100"
+            >
+              <polygon points="50,0 60,35 95,35 68,57 78,92 50,70 22,92 32,57 5,35 40,35" />
+            </svg>
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-center">
+              <div className="lg:col-span-5 flex flex-col gap-space-md">
+                <span className="text-terracotta-sunlit text-label-caps font-label-caps uppercase tracking-widest">
+                  Unwavering Vehicle Readiness
+                </span>
+                <h2 className="font-headline-lg text-headline-lg text-ivory-surface font-serif">
+                  The 21-Point Morning Pre-Departure Ritual
+                </h2>
+                <p className="text-secondary-fixed-dim font-body-md text-body-md">
+                  Before any Baghel vehicle pulls up to your hotel porch, an uncompromising 45-minute mechanical and
+                  sensory audit is executed at our Taj Ganj maintenance facility.
+                </p>
+                <div className="flex flex-col gap-space-xs pt-space-xs">
+                  <div className="flex items-center gap-space-sm text-body-sm">
+                    <span className="material-symbols-outlined text-gold-accent text-[20px]">speed</span>
+                    <span className="text-ivory-surface font-medium">Governor Speed Cap:</span>
+                    <span className="text-secondary-fixed-dim">Strictly calibrated to 80–100 km/h</span>
+                  </div>
+                  <div className="flex items-center gap-space-sm text-body-sm">
+                    <span className="material-symbols-outlined text-gold-accent text-[20px]">local_drink</span>
+                    <span className="text-ivory-surface font-medium">In-Cabin Hospitality:</span>
+                    <span className="text-secondary-fixed-dim">Chilled sealed water, tissues &amp; mints</span>
+                  </div>
+                  <div className="flex items-center gap-space-sm text-body-sm">
+                    <span className="material-symbols-outlined text-gold-accent text-[20px]">medical_services</span>
+                    <span className="text-ivory-surface font-medium">Safety Equipment:</span>
+                    <span className="text-secondary-fixed-dim">ISO-approved medical kit &amp; fire canister</span>
+                  </div>
+                </div>
+              </div>
 
-          <div className="timeline-cards-track">
-            {/* 2009 */}
-            <div className="timeline-event-card">
-              <span className="timeline-year">2009</span>
-              <h3 className="timeline-event-title">
-                {isHindi ? "ताजगंज में स्थापना" : "Humble Beginnings in Taj Ganj"}
-              </h3>
-              <p className="timeline-event-desc">
-                {isHindi
-                  ? "आगरा कैंट स्टेशन और ताजगंज होटलों के लिए 2 सेडान कारों के साथ स्थानीय टैक्सी सेवा की शुरुआत की गई।"
-                  : "Launched operations with two chauffeured sedans serving railway passengers at Agra Cantt and hotel guests in Taj Ganj."}
-              </p>
-            </div>
+              {/* Inspection Interactive / List Matrix */}
+              <div className="lg:col-span-7">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
+                  <div className="bg-ink-slate p-space-md rounded-lg flex flex-col gap-space-xs border border-white/5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-label-caps font-label-caps text-gold-accent uppercase">Mechanical Systems</span>
+                      <span className="material-symbols-outlined text-success-jade text-[18px]">check_circle</span>
+                    </div>
+                    <h4 className="font-title-md text-title-md text-ivory-surface font-serif">Braking &amp; Tread Depth</h4>
+                    <p className="font-body-sm text-body-sm text-secondary-fixed-dim">
+                      Digital vernier measurement ensuring &gt;4mm tread for Yamuna Expressway wet performance.
+                    </p>
+                  </div>
+                  <div className="bg-ink-slate p-space-md rounded-lg flex flex-col gap-space-xs border border-white/5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-label-caps font-label-caps text-gold-accent uppercase">Atmospheric Purity</span>
+                      <span className="material-symbols-outlined text-success-jade text-[18px]">check_circle</span>
+                    </div>
+                    <h4 className="font-title-md text-title-md text-ivory-surface font-serif">Dual-Zone AC Sanitization</h4>
+                    <p className="font-body-sm text-body-sm text-secondary-fixed-dim">
+                      Daily HEPA filter vacuuming and ozone treatment to keep air crisp and allergen-free.
+                    </p>
+                  </div>
+                  <div className="bg-ink-slate p-space-md rounded-lg flex flex-col gap-space-xs border border-white/5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-label-caps font-label-caps text-gold-accent uppercase">Navigational Rigor</span>
+                      <span className="material-symbols-outlined text-success-jade text-[18px]">check_circle</span>
+                    </div>
+                    <h4 className="font-title-md text-title-md text-ivory-surface font-serif">Redundant GPS Telematics</h4>
+                    <p className="font-body-sm text-body-sm text-secondary-fixed-dim">
+                      Dual SIM tracking transponders connected to our central Taj Ganj dispatch monitoring wall.
+                    </p>
+                  </div>
+                  <div className="bg-ink-slate p-space-md rounded-lg flex flex-col gap-space-xs border border-white/5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-label-caps font-label-caps text-gold-accent uppercase">Guest Ergonomics</span>
+                      <span className="material-symbols-outlined text-success-jade text-[18px]">check_circle</span>
+                    </div>
+                    <h4 className="font-title-md text-title-md text-ivory-surface font-serif">Power Port Validation</h4>
+                    <p className="font-body-sm text-body-sm text-secondary-fixed-dim">
+                      Multivolt USB-C &amp; Type-A fast charging docks tested for iPhone, Android, and laptops.
+                    </p>
+                  </div>
+                </div>
 
-            {/* 2014 */}
-            <div className="timeline-event-card">
-              <span className="timeline-year">2014</span>
-              <h3 className="timeline-event-title">
-                {isHindi ? "यमुना एक्सप्रेसवे कॉरिडोर विस्तार" : "Yamuna Expressway Corridor Launch"}
-              </h3>
-              <p className="timeline-event-desc">
-                {isHindi
-                  ? "यमुना एक्सप्रेसवे के खुलते ही आगरा-दिल्ली के बीच 3.5 घंटे के नॉन-स्टॉप सुरक्षित आउटस्टेशन ट्रांसफर की शुरुआत हुई।"
-                  : "Pioneered fast door-to-door transfers connecting Delhi NCR to Agra in 3.5 hours following the Yamuna Expressway opening."}
-              </p>
-            </div>
-
-            {/* 2019 */}
-            <div className="timeline-event-card">
-              <span className="timeline-year">2019</span>
-              <h3 className="timeline-event-title">
-                {isHindi ? "टेम्पो ट्रैवलर व लग्जरी ग्रुप फ्लीट" : "Tempo Traveller & Group Fleet"}
-              </h3>
-              <p className="timeline-event-desc">
-                {isHindi
-                  ? "पारिवारिक व कॉर्पोरेट समूहों के लिए 9 से 26 सीटर लग्जरी टेम्पो ट्रैवलर और गोल्डन ट्रायंगल टूर पैकेज जोड़े गए।"
-                  : "Inducted executive 9–26 seater Tempo Travellers for extended family vacations, destination weddings, and Golden Triangle circuits."}
-              </p>
-            </div>
-
-            {/* 2024 */}
-            <div className="timeline-event-card">
-              <span className="timeline-year">2024</span>
-              <h3 className="timeline-event-title">
-                {isHindi ? "35,000+ यात्राएं व 24×7 डिजिटल डेस्क" : "35,000+ Journeys & 24×7 Digital Desk"}
-              </h3>
-              <p className="timeline-event-desc">
-                {isHindi
-                  ? "35,000 से अधिक सफल यात्राओं और 3,800+ 5-स्टार रेटिंग के साथ आधुनिक 24×7 ऑनलाइन बुकिंग व सपोर्ट डेस्क की शुरुआत।"
-                  : "Crossed 35,000 completed journeys with 3,800+ five-star reviews, offering round-the-clock digital assistance and transparent billing."}
-              </p>
+                {/* Visual Fleet Cutout Strip */}
+                <div className="mt-space-md bg-ink-slate/60 p-space-md rounded-lg flex flex-wrap items-center justify-between gap-space-sm text-body-sm border border-white/5">
+                  <div className="flex items-center gap-space-sm">
+                    <span className="material-symbols-outlined text-terracotta-sunlit">airline_seat_recline_normal</span>
+                    <span className="text-ivory-surface">
+                      Toyota Innova Crysta • Dzire Executive • Urbania 10-Seater • Tempo Traveller
+                    </span>
+                  </div>
+                  <span className="text-gold-accent font-semibold">100% AC Verified</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Local Agra Office & Dispatch Desk */}
-      <section
-        className="home-section about-office-section"
-        aria-labelledby="office-heading"
-      >
-        <div className="container">
-          <div className="office-card">
-            <div className="office-content">
-              <p className="eyebrow">
-                {isHindi ? "हमारा स्थानीय मुख्यालय" : "Physical Office & Dispatch Center"}
-              </p>
-              <h2 id="office-heading">
-                {isHindi ? (
-                  <>
-                    ताजमहल के पास,
-                    <br />
-                    <i>हमारा स्थानीय कार्यालय हमेशा आपकी सेवा में।</i>
-                  </>
-                ) : (
-                  <>
-                    Minutes from the Taj Mahal,
-                    <br />
-                    <i>our local operations desk is always open.</i>
-                  </>
-                )}
-              </h2>
-              <p className="office-desc">
-                {isHindi
-                  ? "हम कोई अज्ञात ऑनलाइन एग्रीगेटर नहीं हैं। हमारा कार्यालय ताजमहल के पूर्वी द्वार के निकट ताजगंज में स्थित है। हमारे पास अपनी स्वयं की फ्लीट, स्थानीय कर्मचारी और 24×7 आपातकालीन सहायता केंद्र उपलब्ध है।"
-                  : "Unlike faceless app aggregators, SK Baghel Tour & Travels operates a permanent physical headquarters in Taj Ganj, Agra. Our local dispatch team is on duty 24 hours a day to assist with early-morning departures, hotel pickups, and airport transfers."}
-              </p>
+      {/* Section 4: Transparent Comparison Matrix */}
+      <section className="w-full bg-surface-container-low py-space-3xl border-t border-b border-border-warm/30">
+        <div className="max-w-7xl mx-auto px-margin-mobile lg:px-margin">
+          <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-space-2xl">
+            <span className="font-label-caps text-label-caps text-terracotta-sandstone uppercase tracking-widest mb-space-xs">
+              The Unfiltered Truth
+            </span>
+            <h2 className="font-headline-lg text-headline-lg text-ink-charcoal font-serif mb-space-sm">
+              Why Discerning Voyagers Avoid The App Lottery
+            </h2>
+            <p className="font-body-md text-body-md text-on-surface-variant">
+              Comparing SK Baghel Tour &amp; Travels with generic app-based rides and street touts operating around Agra
+              tourist stations.
+            </p>
+          </div>
 
-              <div className="office-nap-list">
-                <div className="nap-row">
-                  <span className="nap-icon">📍</span>
-                  <div>
-                    <strong>{isHindi ? "पता:" : "Address:"}</strong>
-                    <span>{contact.address}</span>
+          {/* Comparison Table Wrapper */}
+          <div className="w-full bg-surface-container-lowest rounded-xl shadow-md overflow-x-auto border border-border-warm/50">
+            <table className="w-full text-left border-collapse min-w-[700px]">
+              <thead>
+                <tr className="bg-sandstone-wash/80 text-on-surface border-b border-border-warm">
+                  <th className="py-4 px-6 font-title-md text-title-md">Standard Criteria</th>
+                  <th className="py-4 px-6 font-title-md text-title-md text-terracotta-sandstone bg-sandstone-wash">
+                    <span className="flex items-center gap-1">
+                      <span className="material-symbols-outlined text-terracotta-sandstone text-[20px]">stars</span>
+                      SK Baghel Tour &amp; Travels
+                    </span>
+                  </th>
+                  <th className="py-4 px-6 font-title-md text-title-md text-secondary">Anonymous App Cabs</th>
+                  <th className="py-4 px-6 font-title-md text-title-md text-secondary">Street Brokers / Touts</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border-warm/30 text-body-md">
+                {/* Row 1 */}
+                <tr className="bg-surface-container-lowest hover:bg-surface-container-low transition-colors">
+                  <td className="py-4 px-6 font-medium text-ink-charcoal">Vehicle Model Guarantee</td>
+                  <td className="py-4 px-6 font-semibold text-success-jade bg-sandstone-wash/30">
+                    <div className="flex items-center gap-1">
+                      <span className="material-symbols-outlined text-[18px]">check_circle</span>
+                      Exact Model Reserved (e.g. Crysta ZX)
+                    </div>
+                  </td>
+                  <td className="py-4 px-6 text-on-surface-variant">"Or Equivalent" often downgraded</td>
+                  <td className="py-4 px-6 text-error">Unverified worn vehicles</td>
+                </tr>
+                {/* Row 2 */}
+                <tr className="bg-surface-container hover:bg-surface-container-low transition-colors">
+                  <td className="py-4 px-6 font-medium text-ink-charcoal">Unsolicited Commission Stops</td>
+                  <td className="py-4 px-6 font-semibold text-success-jade bg-sandstone-wash/30">
+                    <div className="flex items-center gap-1">
+                      <span className="material-symbols-outlined text-[18px]">verified_user</span>
+                      Strict Zero Tolerance (Cash penalty)
+                    </div>
+                  </td>
+                  <td className="py-4 px-6 text-on-surface-variant">Drivers often push preferred shops</td>
+                  <td className="py-4 px-6 text-error">Extreme pressure to buy marble &amp; rugs</td>
+                </tr>
+                {/* Row 3 */}
+                <tr className="bg-surface-container-lowest hover:bg-surface-container-low transition-colors">
+                  <td className="py-4 px-6 font-medium text-ink-charcoal">Yamuna Toll &amp; State Taxes</td>
+                  <td className="py-4 px-6 font-semibold text-success-jade bg-sandstone-wash/30">
+                    <div className="flex items-center gap-1">
+                      <span className="material-symbols-outlined text-[18px]">check_circle</span>
+                      Bundled &amp; Stated Upfront
+                    </div>
+                  </td>
+                  <td className="py-4 px-6 text-on-surface-variant">Arbitrary cash demands at toll gates</td>
+                  <td className="py-4 px-6 text-error">Frequent extortion at highway borders</td>
+                </tr>
+                {/* Row 4 */}
+                <tr className="bg-surface-container hover:bg-surface-container-low transition-colors">
+                  <td className="py-4 px-6 font-medium text-ink-charcoal">Driver Verification</td>
+                  <td className="py-4 px-6 font-semibold text-success-jade bg-sandstone-wash/30">
+                    <div className="flex items-center gap-1">
+                      <span className="material-symbols-outlined text-[18px]">check_circle</span>
+                      Police ID + 7+ Yrs Golden Triangle
+                    </div>
+                  </td>
+                  <td className="py-4 px-6 text-on-surface-variant">Basic gig-worker profile</td>
+                  <td className="py-4 px-6 text-error">Zero background oversight</td>
+                </tr>
+                {/* Row 5 */}
+                <tr className="bg-surface-container-lowest hover:bg-surface-container-low transition-colors">
+                  <td className="py-4 px-6 font-medium text-ink-charcoal">Chauffeur Contact Time</td>
+                  <td className="py-4 px-6 font-semibold text-success-jade bg-sandstone-wash/30">
+                    <div className="flex items-center gap-1">
+                      <span className="material-symbols-outlined text-[18px]">check_circle</span>
+                      Assigned 18–24 Hours Prior
+                    </div>
+                  </td>
+                  <td className="py-4 px-6 text-on-surface-variant">Assigned 10 mins before departure</td>
+                  <td className="py-4 px-6 text-error">Random driver on spot</td>
+                </tr>
+                {/* Row 6 */}
+                <tr className="bg-surface-container hover:bg-surface-container-low transition-colors">
+                  <td className="py-4 px-6 font-medium text-ink-charcoal">Cancellation &amp; Reschedule</td>
+                  <td className="py-4 px-6 font-semibold text-success-jade bg-sandstone-wash/30">
+                    <div className="flex items-center gap-1">
+                      <span className="material-symbols-outlined text-[18px]">check_circle</span>
+                      Free Reschedule up to 12 Hours
+                    </div>
+                  </td>
+                  <td className="py-4 px-6 text-on-surface-variant">Strict non-negotiable penalty</td>
+                  <td className="py-4 px-6 text-error">Total forfeiture of deposit</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 5: Real Heritage Testimonials */}
+      <section className="w-full bg-surface py-space-3xl">
+        <div className="max-w-7xl mx-auto px-margin-mobile lg:px-margin">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-space-2xl gap-space-md">
+            <div className="flex flex-col gap-space-xs max-w-xl">
+              <span className="font-label-caps text-label-caps text-terracotta-sandstone uppercase tracking-widest">
+                Guest Chronicle
+              </span>
+              <h2 className="font-headline-lg text-headline-lg text-ink-charcoal font-serif">
+                Words From Those Who Journeyed With Us
+              </h2>
+            </div>
+            <div className="flex items-center gap-space-xs text-body-sm font-body-sm text-secondary">
+              <span className="material-symbols-outlined text-gold-accent text-[20px]">star</span>
+              <span className="font-semibold text-ink-charcoal">4.92 / 5.0 Aggregate</span>
+              <span>across Google &amp; TripAdvisor</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-space-lg">
+            {/* Testimonial 1 */}
+            <div className="bg-surface-container-lowest p-space-xl rounded-lg shadow-sm flex flex-col justify-between border border-border-warm/50">
+              <div className="flex flex-col gap-space-md">
+                <div className="flex items-center justify-between text-gold-accent">
+                  <div className="flex gap-0.5">
+                    {[...Array(5)].map((_, i) => (
+                      <span key={i} className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: '"FILL" 1' }}>
+                        star
+                      </span>
+                    ))}
+                  </div>
+                  <span className="text-body-sm text-secondary font-mono">Delhi ⇄ Agra Same-Day</span>
+                </div>
+                <p className="font-headline-sm text-headline-sm font-serif italic text-ink-charcoal leading-relaxed">
+                  “Zero pressure. As two solo women travelers visiting the Taj at sunrise, our driver Mr. Rajesh was
+                  chivalrous, highly defensive on the expressway, and didn’t stop at a single souvenir shop.”
+                </p>
+              </div>
+              <div className="pt-space-md mt-space-md border-t border-border-warm/40 flex flex-col gap-space-xs">
+                <div className="flex items-center justify-between">
+                  <div className="flex flex-col">
+                    <span className="font-title-md text-title-md text-on-surface">Elena Rostova &amp; Claire V.</span>
+                    <span className="text-body-sm text-secondary">Geneva, Switzerland</span>
+                  </div>
+                  <div className="flex items-center gap-1 bg-surface-container px-2 py-0.5 rounded text-success-jade text-[11px] font-medium">
+                    <span className="material-symbols-outlined text-success-jade text-[18px]">verified</span>
+                    <span>Verified Guest</span>
                   </div>
                 </div>
-                <div className="nap-row">
-                  <span className="nap-icon">📞</span>
-                  <div>
-                    <strong>{isHindi ? "हेल्पलाइन:" : "Helpline:"}</strong>
-                    <a href={`tel:${contact.phone}`}>{contact.phoneDisplay}</a>
+              </div>
+            </div>
+
+            {/* Testimonial 2 */}
+            <div className="bg-surface-container-lowest p-space-xl rounded-lg shadow-sm flex flex-col justify-between border border-border-warm/50">
+              <div className="flex flex-col gap-space-md">
+                <div className="flex items-center justify-between text-gold-accent">
+                  <div className="flex gap-0.5">
+                    {[...Array(5)].map((_, i) => (
+                      <span key={i} className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: '"FILL" 1' }}>
+                        star
+                      </span>
+                    ))}
+                  </div>
+                  <span className="text-body-sm text-secondary font-mono">Mathura-Vrindavan Circuit</span>
+                </div>
+                <p className="font-headline-sm text-headline-sm font-serif italic text-ink-charcoal leading-relaxed">
+                  “We booked a 12-seater Tempo Traveller for an extended family pilgrimage. The vehicle had clean
+                  seatcovers, pristine cold AC throughout 42°C heat, and courteous behavior toward elderly parents.”
+                </p>
+              </div>
+              <div className="pt-space-md mt-space-md border-t border-border-warm/40 flex flex-col gap-space-xs">
+                <div className="flex items-center justify-between">
+                  <div className="flex flex-col">
+                    <span className="font-title-md text-title-md text-on-surface">Rajesh &amp; Sunita Sharma</span>
+                    <span className="text-body-sm text-secondary">Greater Kailash, New Delhi</span>
+                  </div>
+                  <div className="flex items-center gap-1 bg-surface-container px-2 py-0.5 rounded text-success-jade text-[11px] font-medium">
+                    <span className="material-symbols-outlined text-success-jade text-[18px]">verified</span>
+                    <span>Verified Guest</span>
                   </div>
                 </div>
-                <div className="nap-row">
-                  <span className="nap-icon">💬</span>
-                  <div>
-                    <strong>{isHindi ? "व्हाट्सएप:" : "WhatsApp Desk:"}</strong>
+              </div>
+            </div>
+
+            {/* Testimonial 3 */}
+            <div className="bg-surface-container-lowest p-space-xl rounded-lg shadow-sm flex flex-col justify-between border border-border-warm/50">
+              <div className="flex flex-col gap-space-md">
+                <div className="flex items-center justify-between text-gold-accent">
+                  <div className="flex gap-0.5">
+                    {[...Array(5)].map((_, i) => (
+                      <span key={i} className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: '"FILL" 1' }}>
+                        star
+                      </span>
+                    ))}
+                  </div>
+                  <span className="text-body-sm text-secondary font-mono">Golden Triangle 4-Day</span>
+                </div>
+                <p className="font-headline-sm text-headline-sm font-serif italic text-ink-charcoal leading-relaxed">
+                  “I arrange road delegations for visiting architectural academics. The punctuality of SK Baghel's desk
+                  at Taj Ganj is the finest in Uttar Pradesh. Transparent invoicing and genuine warmth.”
+                </p>
+              </div>
+              <div className="pt-space-md mt-space-md border-t border-border-warm/40 flex flex-col gap-space-xs">
+                <div className="flex items-center justify-between">
+                  <div className="flex flex-col">
+                    <span className="font-title-md text-title-md text-on-surface">David Miller</span>
+                    <span className="text-body-sm text-secondary">Melbourne, Australia</span>
+                  </div>
+                  <div className="flex items-center gap-1 bg-surface-container px-2 py-0.5 rounded text-success-jade text-[11px] font-medium">
+                    <span className="material-symbols-outlined text-success-jade text-[18px]">verified</span>
+                    <span>Verified Guest</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 6: Direct Dispatch Location & Ground Reality */}
+      <section className="w-full bg-surface-container-low py-space-3xl border-t border-b border-border-warm/30">
+        <div className="max-w-7xl mx-auto px-margin-mobile lg:px-margin">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-center">
+            <div className="lg:col-span-6 flex flex-col gap-space-md">
+              <span className="font-label-caps text-label-caps text-terracotta-sandstone uppercase tracking-widest">
+                Physical Roots in Taj Ganj
+              </span>
+              <h2 className="font-headline-lg text-headline-lg text-ink-charcoal font-serif">
+                Not a Remote Call-Center. We Are Directly On The Heritage Ground.
+              </h2>
+              <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                Our office sits 450 meters from the Taj Mahal Eastern Gate ticket concourse. When monsoon storms cause
+                expressway delays or VIP motorcades divert city traffic, our local dispatchers navigate alternate
+                historical bypasses in real time.
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-space-md pt-space-xs">
+                <div className="bg-surface-container-lowest p-space-md rounded flex items-start gap-space-sm shadow-sm border border-border-warm/50">
+                  <span className="material-symbols-outlined text-terracotta-sandstone mt-1">pin_drop</span>
+                  <div className="flex flex-col">
+                    <span className="font-title-md text-title-md text-on-surface font-serif">Taj Ganj Station</span>
+                    <span className="text-body-sm text-secondary">{contact.address}</span>
+                  </div>
+                </div>
+                <div className="bg-surface-container-lowest p-space-md rounded flex items-start gap-space-sm shadow-sm border border-border-warm/50">
+                  <span className="material-symbols-outlined text-terracotta-sandstone mt-1">alarm_on</span>
+                  <div className="flex flex-col">
+                    <span className="font-title-md text-title-md text-on-surface font-serif">Agra Cantt Backup</span>
+                    <span className="text-body-sm text-secondary">Dedicated station coordinator on platform 1 arrival</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="lg:col-span-6">
+              <div
+                className="w-full h-80 rounded-xl bg-cover bg-center shadow-lg relative overflow-hidden border border-border-warm/50"
+                style={{
+                  backgroundImage:
+                    'url("https://lh3.googleusercontent.com/aida-public/AB6AXuALNFtE_t9S1tflUDMiOHf8x9XKFB-pu_9ClHHIFbgooHKB-ZbhqzZqvUThjN2vnlik5EVFfYEVcp1iHDW0vh3TP0ZqnD-T1qIOz_E536R_Q5lAFnS-Yjm4STKUGUnQnI3MOlWllmpqT3qbx2FR-bKC9Si_By6seFgbNlqFyY4rIxN19eVjjujnsqTqg0tcXlmwT8mUjaCPbv91WBv_5dopcIVWOVqWayrAbhXR4KS7e1NKZVpJnP3akg")',
+                }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-t from-ink-midnight/80 via-transparent to-transparent flex items-end p-space-md">
+                  <div className="flex items-center justify-between w-full text-ivory-surface">
+                    <div>
+                      <p className="font-title-md text-title-md font-serif">SK Baghel Taj Ganj Control Center</p>
+                      <p className="text-body-sm text-sandstone-wash/80">Active 24 Hours • 7 Days A Week</p>
+                    </div>
                     <a
-                      href={`https://wa.me/${contact.whatsapp}`}
+                      className="bg-terracotta-sandstone text-ivory-surface px-3 py-1.5 rounded text-label-caps font-label-caps uppercase hover:bg-terracotta-sunlit transition-colors"
+                      href={contact.mapsUrl}
+                      rel="noopener noreferrer"
                       target="_blank"
-                      rel="noreferrer"
                     >
-                      +91 98765 43210 (24×7 Active)
+                      Open In Maps
                     </a>
                   </div>
                 </div>
-                <div className="nap-row">
-                  <span className="nap-icon">🕒</span>
-                  <div>
-                    <strong>{isHindi ? "कार्य समय:" : "Operating Hours:"}</strong>
-                    <span>{contact.hours}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="office-actions">
-                <a
-                  className="button button-primary"
-                  href={contact.mapsUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {isHindi ? "गूगल मैप्स पर देखें ↗" : "Get Directions on Google Maps ↗"}
-                </a>
-                <a className="button button-outline" href="/book.html">
-                  {isHindi ? "ऑनलाइन कैब बुक करें ↗" : "Book Online ↗"}
-                </a>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* About FAQs Accordion */}
-      <section
-        className="home-section about-faq-section"
-        aria-labelledby="about-faq-heading"
-      >
-        <div className="container">
-          <div className="section-heading">
-            <div>
-              <p className="eyebrow">
-                {isHindi ? "कंपनी एफएक्यू" : "Company & Credibility FAQs"}
-              </p>
-              <h2 id="about-faq-heading">
-                {isHindi ? (
-                  <>
-                    हमारी कंपनी के बारे में जरूरी सवाल,
-                    <br />
-                    <i>प्रामाणिक जानकारी और सीधे जवाब।</i>
-                  </>
-                ) : (
-                  <>
-                    Questions travelers ask about us,
-                    <br />
-                    <i>transparent answers about our operations.</i>
-                  </>
-                )}
+      {/* Section 7: Grand Call-to-Action Strip */}
+      <section className="w-full bg-sandstone-wash py-space-3xl">
+        <div className="max-w-7xl mx-auto px-margin-mobile lg:px-margin">
+          <div className="bg-surface-container-lowest rounded-xl p-6 sm:p-8 md:p-12 shadow-xl flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 sm:gap-8 w-full border border-border-warm">
+            <div className="flex flex-col gap-space-xs max-w-xl text-left w-full">
+              <span className="font-label-caps text-label-caps text-terracotta-sandstone uppercase tracking-widest">
+                Unrivaled Hospitality Awaits
+              </span>
+              <h2 className="font-headline-lg text-[28px] sm:text-headline-md md:text-headline-lg text-ink-charcoal font-serif leading-tight">
+                Experience Agra With Dignity &amp; Poise.
               </h2>
+              <p className="font-body-md text-body-md text-on-surface-variant max-w-lg leading-relaxed">
+                Lock your chauffeur vehicle today with a transparent 28% advance token. Zero hidden charges, spotless
+                air-conditioned fleet, and gracious guidance.
+              </p>
             </div>
-          </div>
-
-          <div className="about-faq-accordion">
-            {ABOUT_FAQS.map((item, index) => {
-              const isOpen = openFaq === index;
-              return (
-                <div
-                  className={`about-faq-item ${isOpen ? "is-open" : ""}`}
-                  key={index}
-                >
-                  <button
-                    type="button"
-                    className="about-faq-question"
-                    onClick={() => setOpenFaq(isOpen ? null : index)}
-                    aria-expanded={isOpen}
-                    aria-controls={`about-faq-answer-${index}`}
-                  >
-                    <span>{item.q[activeLanguage]}</span>
-                    <span className="faq-toggle-icon" aria-hidden="true">
-                      {isOpen ? "−" : "+"}
-                    </span>
-                  </button>
-                  {isOpen && (
-                    <div
-                      className="about-faq-answer"
-                      id={`about-faq-answer-${index}`}
-                    >
-                      <p>{item.a[activeLanguage]}</p>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Bottom 24x7 Dispatch Desk CTA */}
-      <section className="container about-cta-container">
-        <div className="about-cta-card">
-          <div className="about-cta-content">
-            <span className="about-cta-badge">24×7 LOCAL TRAVEL DESK</span>
-            <h2>
-              {isHindi
-                ? "क्या आप आगरा यात्रा की योजना बना रहे हैं?"
-                : "Planning a visit to Agra or an outstation tour?"}
-            </h2>
-            <p>
-              {isHindi
-                ? "हमारे स्थानीय कार्यालय से सीधे बात करें। कोई मध्यस्थ नहीं, कोई कमीशन नहीं — केवल पारदर्शी किराये और अनुभवी ड्राइवर।"
-                : "Speak directly with our local tour coordinators in Taj Ganj, Agra. Direct chauffeur allocation, transparent pricing, and 24×7 customer support."}
-            </p>
-            <div className="about-cta-buttons">
-              <a className="button button-primary" href="/book.html">
-                {isHindi ? "ऑनलाइन बुक करें ↗" : "Book Online ↗"}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full lg:w-auto shrink-0">
+              <a
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-space-xs bg-terracotta-sandstone text-on-primary px-6 sm:px-8 py-3.5 sm:py-4 rounded text-label-lg font-label-lg shadow-md hover:bg-terracotta-sunlit transition-all duration-200 text-center"
+                href="/book/"
+              >
+                <span className="material-symbols-outlined text-[20px]">calendar_today</span>
+                <span>Book Your Chauffeur Now</span>
               </a>
               <a
-                className="button button-outline"
-                href={`https://wa.me/${contact.whatsapp}`}
-                target="_blank"
-                rel="noreferrer"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-space-xs bg-ink-charcoal text-ivory-surface px-6 py-3.5 sm:py-4 rounded text-label-lg font-label-lg shadow-sm hover:bg-ink-slate transition-all duration-200 text-center"
+                href={`tel:${contact.phone}`}
               >
-                {isHindi ? "व्हाट्सएप संपर्क" : "WhatsApp Us"}
-              </a>
-              <a className="button button-outline" href={`tel:${contact.phone}`}>
-                {contact.phoneDisplay}
+                <span className="material-symbols-outlined text-[20px] text-terracotta-sunlit">phone_in_talk</span>
+                <span>{contact.phoneDisplay}</span>
               </a>
             </div>
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }
+export default AboutPage;

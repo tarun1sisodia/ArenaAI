@@ -1,16 +1,3 @@
-/**
- * RouteDetailPage — Dynamic Route Landing Template (Step R5.21)
- *
- * High-converting, SEO-optimized bilingual landing template for all 8 route pairs featuring:
- * 1. Semantic Breadcrumbs & Highway Hero with route stats & distance pill
- * 2. MakeMyTrip-style 5-Vehicle Fare Comparison Matrix (Sedan, Ertiga, Innova, Tempo, Urbania)
- * 3. 4-Card Highway Intelligence & Road Advisory Bento (Highway, Timing, Rest Stops, Tolls)
- * 4. En-Route Sightseeing & Stopovers Showcase
- * 5. Route-Specific 6-Item Bilingual FAQ Accordion (ARIA 1.2 accessible)
- * 6. 24×7 Local Dispatch Desk CTA Banner (Call, WhatsApp, Online Booking)
- * 7. Schema.org JSON-LD graph (TaxiService, BreadcrumbList, FAQPage, LocalBusiness)
- */
-
 import React, { useState } from "react";
 import { contact } from "../data/contact";
 import {
@@ -21,27 +8,15 @@ import {
 } from "../data/catalogue";
 
 interface RouteDetailPageProps {
-  language: "en" | "hi";
+  language?: "en" | "hi";
   route: Route;
 }
 
-const CITY_NAMES_HI: Record<string, string> = {
-  agra: "आगरा",
-  delhi: "दिल्ली",
-  jaipur: "जयपुर",
-  mathura: "मथुरा",
-  gwalior: "ग्वालियर",
-  lucknow: "लखनऊ",
-};
-
-export function RouteDetailPage({ language, route }: RouteDetailPageProps) {
-  const isHi = language === "hi";
+export function RouteDetailPage({ route }: RouteDetailPageProps) {
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
 
   const fromEn = route.from.charAt(0).toUpperCase() + route.from.slice(1);
   const toEn = route.to.charAt(0).toUpperCase() + route.to.slice(1);
-  const fromHi = CITY_NAMES_HI[route.from] || fromEn;
-  const toHi = CITY_NAMES_HI[route.to] || toEn;
 
   const isLocal = route.kind === "local";
   const routeGuidanceData = routeGuidance[route.id] || {
@@ -49,488 +24,364 @@ export function RouteDetailPage({ language, route }: RouteDetailPageProps) {
     transitTime: `${route.duration} (${route.km} km)`,
     departureTip: {
       en: "Early morning or mid-day departures are ideal to avoid peak city rush hours.",
-      hi: "शहर के पीक ट्रैफिक से बचने के लिए सुबह जल्दी या दोपहर में प्रस्थान करना उत्तम है।",
+      hi: "Early morning departures avoid peak city rush hours.",
     },
     restStops: {
       en: "Verified highway food courts with hygienic washrooms and branded eateries.",
-      hi: "स्वच्छ वॉशरूम और भोजन सुविधा वाले प्रमाणित हाईवे रेस्टोरेंट।",
+      hi: "Verified highway food courts with hygienic washrooms.",
     },
     tollTaxPolicy: {
       en: "One-way booking includes highway tolls. Round-trip subject to standard outstation rules.",
-      hi: "वन-वे बुकिंग में हाईवे टोल शामिल है। राउंड-ट्रिप मानक आउटस्टेशन नियमानुसार।",
+      hi: "One-way booking includes highway tolls.",
     },
   };
 
-  const routeTitle = isLocal
-    ? isHi
-      ? "आगरा लोकल दर्शन व दर्शनीय टैक्सी सेवा"
-      : "Agra Sightseeing & Heritage City Cab Service"
-    : isHi
-      ? `${fromHi} से ${toHi} टैक्सी सेवा — निश्चित ऑल-इनक्लूसिव किराया`
-      : `${fromEn} to ${toEn} Taxi Service — Fixed All-Inclusive Cabs`;
-
-  const canonicalUrl = `https://skbagheltravels.in/${language}/${
-    isLocal
-      ? isHi
-        ? "agra-darshan-taxi"
-        : "agra-sightseeing-taxi"
-      : isHi
-        ? `${route.from}-se-${route.to}-taxi`
-        : `${route.from}-to-${route.to}-taxi`
-  }/`;
-
-  // Route-Specific FAQs
-  const faqs = [
-    {
-      qEn: `Are expressway toll taxes and driver allowances included in the ${fromEn} to ${toEn} one-way fare?`,
-      qHi: `क्या ${fromHi} से ${toHi} वन-वे किराये में एक्सप्रेसवे टोल टैक्स और ड्राइवर भत्ता शामिल हैं?`,
-      aEn: `Yes, 100%! All published one-way fares for the ${fromEn} to ${toEn} route are all-inclusive. Yamuna Expressway or national highway tolls, state entry permits for one-way transfers, and driver allowances are bundled upfront with strictly zero hidden surcharges.`,
-      aHi: `हाँ, बिल्कुल! ${fromHi} से ${toHi} रूट के लिए सभी प्रकाशित वन-वे किराये 100% ऑल-इनक्लूसिव हैं। इसमें एक्सप्रेसवे टोल, स्टेट टैक्स और ड्राइवर भत्ता पहले से शामिल हैं — यात्रा के दौरान कोई छुपा हुआ चार्ज नहीं लिया जाता।`,
-    },
-    {
-      qEn: `Can the chauffeur stop for food, coffee, or a sightseeing monument on the way from ${fromEn} to ${toEn}?`,
-      qHi: `क्या ${fromHi} से ${toHi} रास्ते में ड्राइवर भोजन, कॉफी या किसी स्मारक पर गाड़ी रोक सकते हैं?`,
-      aEn: `Certainly. Our chauffeur will happily pause at sanitized wayside plazas (such as Haldiram's, Costa Coffee, or McDonald's) for breakfast, tea, or restroom breaks. En-route heritage stops (e.g., Fatehpur Sikri on the Jaipur route, or Mathura Vrindavan on the Delhi route) can be accommodated seamlessly.`,
-      aHi: `हाँ, बिल्कुल। हमारे ड्राइवर रास्ते में स्वच्छ फूड प्लाजा (जैसे हल्दीराम, कोस्टा कॉफी) पर जलपान या वॉशरूम ब्रेक के लिए आसानी से रुकते हैं। रास्ते में पड़ने वाले दर्शनीय स्थलों (जैसे फतेहपुर सीकरी या मथुरा-वृंदावन) पर भी सुविधापूर्वक स्टॉप लिया जा सकता है।`,
-    },
-    {
-      qEn: `What is the night driving allowance policy for late-night departures or early morning airport drops?`,
-      qHi: `देर रात के प्रस्थान या तड़के एयरपोर्ट ड्रॉप के लिए नाइट ड्राइविंग चार्ज का क्या नियम है?`,
-      aEn: `Per commercial transport norms, an outstation night allowance of ₹300 (for Sedans and Ertigas) or ₹500 (for Innova Crysta and Tempo Travellers) applies only if travel occurs between 22:00 (10:00 PM) and 05:00 (05:00 AM). Sunrise Taj Mahal departures are strictly exempt from night charges.`,
-      aHi: `वाणिज्यिक नियमों के अनुसार, रात्रि 10:00 बजे से सुबह 05:00 बजे के बीच यात्रा करने पर ₹300 (सेडान/अर्टिगा) या ₹500 (इनोवा/टेम्पो ट्रैवलर) का नाइट अलाउंस लगता है। सूर्योदय ताज महल टूर पर यह पूरी तरह मुफ्त है।`,
-    },
-    {
-      qEn: `What happens if my train or flight is delayed before pickup in ${fromEn}?`,
-      qHi: `यदि ${fromHi} में पिकअप से पहले मेरी ट्रेन या फ्लाइट लेट हो जाती है तो क्या होगा?`,
-      aEn: `We provide free flight and train tracking! Provide your flight number or train PNR when booking, and your chauffeur will adjust their arrival time automatically. We include up to 60 minutes of complimentary waiting at airport terminals and railway stations.`,
-      aHi: `हम फ्लाइट व ट्रेन का लाइव स्टेटस ट्रैक करते हैं! बुकिंग के समय अपनी ट्रेन या फ्लाइट नंबर दर्ज करें। एयरपोर्ट व रेलवे स्टेशन पर 60 मिनट तक का वेटिंग समय पूरी तरह निःशुल्क रहता है।`,
-    },
-    {
-      qEn: `What is your cancellation and refund policy if my ${fromEn} to ${toEn} travel schedule changes?`,
-      qHi: `यदि मेरा यात्रा कार्यक्रम बदल जाए तो कैंसिलेशन और रिफंड की क्या नीति है?`,
-      aEn: `Enjoy complete peace of mind with our 24-Hour Cab Cancellation Policy: If you cancel 24 hours or more before scheduled pickup, you receive a 100% full refund with zero cancellation fee, credited back within 5 to 7 business days.`,
-      aHi: `हमारी 24 घंटे की कैब कैंसिलेशन नीति के तहत, यदि आप निर्धारित समय से 24 घंटे पहले बुकिंग रद्द करते हैं, तो आपको बिना किसी कटौती के 100% पूरा रिफंड 5 से 7 कार्यदिवसों में वापस मिल जाता है।`,
-    },
-    {
-      qEn: `What emergency breakdown replacement guarantee do you provide along the highway?`,
-      qHi: `हाईवे पर गाड़ी में खराबी आने पर क्या इमरजेंसी रिप्लेसमेंट गारंटी उपलब्ध है?`,
-      aEn: `We operate a 45-Minute Emergency Vehicle Replacement Guarantee along the Yamuna Expressway and Agra highway corridors. Our dispatch control center continuously monitors vehicles, and a backup commercial cab will be deployed immediately if required.`,
-      aHi: `यमुना एक्सप्रेसवे व प्रमुख हाईवे कॉरिडोर पर हम 45-मिनट की इमरजेंसी गाड़ी रिप्लेसमेंट गारंटी देते हैं। किसी भी तकनीकी खराबी की स्थिति में हमारा 24×7 कंट्रोल रूम तुरंत बैकअप गाड़ी भेजता है।`,
-    },
-  ];
-
-  // Stopover recommendations
+  // Route-specific stopovers
   const stopovers = isLocal
     ? [
         {
-          icon: "🕌",
-          titleEn: "Taj Mahal (East Gate)",
-          titleHi: "ताज महल (ईस्ट गेट)",
-          descEn: "Marvel at pristine white marble in the soft golden light of sunrise.",
-          descHi: "सूर्योदय की सुनहरी रोशनी में विश्व प्रसिद्ध संगमरमरी ताज का दीदार करें।",
+          icon: "mosque",
+          title: "Taj Mahal (East Gate)",
+          desc: "Marvel at pristine white marble in the soft golden light of sunrise.",
         },
         {
-          icon: "🏰",
-          titleEn: "Agra Fort & Diwan-i-Khas",
-          titleHi: "आगरा किला व दीवान-ए-खास",
-          descEn: "Explore the red sandstone imperial citadel of the Mughal Emperors.",
-          descHi: "मुगल सम्राटों के भव्य लाल बलुआ पत्थर के ऐतिहासिक किले का भ्रमण करें।",
+          icon: "castle",
+          title: "Agra Fort & Diwan-i-Khas",
+          desc: "Explore the red sandstone imperial citadel of the Mughal Emperors.",
         },
         {
-          icon: "🌅",
-          titleEn: "Mehtab Bagh Sunset",
-          titleHi: "मेहताब बाग सूर्यास्त",
-          descEn: "Witness the silhouette of the Taj Mahal across the sacred Yamuna river.",
-          descHi: "यमुना नदी के पार से ताज महल के भव्य सूर्यास्त का मनमोहक नजारा देखें।",
+          icon: "park",
+          title: "Mehtab Bagh Sunset",
+          desc: "Witness the silhouette of the Taj Mahal across the sacred Yamuna river.",
         },
       ]
     : route.id.includes("jaipur")
       ? [
           {
-            icon: "🏛️",
-            titleEn: "Fatehpur Sikri UNESCO Citadel",
-            titleHi: "फतेहपुर सीकरी विश्व धरोहर",
-            descEn: "Optional 90-minute stop at Emperor Akbar's ghost capital and Buland Darwaza.",
-            descHi: "सम्राट अकबर की ऐतिहासिक राजधानी और बुलंद दरवाजे पर 90 मिनट का स्टॉप लें।",
+            icon: "fort",
+            title: "Fatehpur Sikri UNESCO Citadel",
+            desc: "Optional 90-minute stop at Emperor Akbar's ghost capital and Buland Darwaza.",
           },
           {
-            icon: "🦚",
-            titleEn: "Bharatpur Bird Sanctuary",
-            titleHi: "केवलादेव राष्ट्रीय पक्षी अभयारण्य",
-            descEn: "A paradise for migratory birds and nature lovers midway along NH-21.",
-            descHi: "हाईवे पर स्थित विश्व प्रसिद्ध पक्षी अभयारण्य जहाँ दुर्लभ विदेशी पक्षी आते हैं।",
+            icon: "flutter_dash",
+            title: "Bharatpur Bird Sanctuary",
+            desc: "A paradise for migratory birds and nature lovers midway along NH-21.",
           },
           {
-            icon: "🏰",
-            titleEn: "Abhaneri Stepwell (Chand Baori)",
-            titleHi: "आभानेरी चाँद बावड़ी",
-            descEn: "One of the world's deepest and most visually stunning geometric stepwells.",
-            descHi: "संसार की सबसे गहरी और ज्यामितीय सुंदरता वाली 8वीं शताब्दी की ऐतिहासिक बावड़ी।",
+            icon: "stairs",
+            title: "Abhaneri Stepwell (Chand Baori)",
+            desc: "One of the world's deepest and most visually stunning geometric stepwells.",
           },
         ]
       : route.id.includes("mathura")
         ? [
             {
-              icon: "🛕",
-              titleEn: "Krishna Janmabhoomi Mathura",
-              titleHi: "श्री कृष्ण जन्मभूमि मथुरा",
-              descEn: "Sacred birth temple of Lord Krishna located on the historic NH-19 corridor.",
-              descHi: "भगवान श्री कृष्ण की पावन जन्मस्थली व प्राचीन मंदिर परिसर के दर्शन।",
+              icon: "temple_hindu",
+              title: "Krishna Janmabhoomi Mathura",
+              desc: "Sacred birth temple of Lord Krishna located on the historic NH-19 corridor.",
             },
             {
-              icon: "✨",
-              titleEn: "Prem Mandir Vrindavan",
-              titleHi: "प्रेम मंदिर वृंदावन",
-              descEn: "Stunning Italian white marble temple renowned for its evening laser light show.",
-              descHi: "इतालवी सफेद संगमरमर से निर्मित भव्य मंदिर और शाम का मनमोहक प्रकाश दृश्य।",
+              icon: "temple_buddhist",
+              title: "Prem Mandir Vrindavan",
+              desc: "Stunning Italian white marble temple renowned for its evening light show.",
             },
             {
-              icon: "🌊",
-              titleEn: "Yamuna Vishram Ghat",
-              titleHi: "विश्राम घाट व यमुना आरती",
-              descEn: "Peaceful boat rides and evening devotional aarti on the banks of Yamuna.",
-              descHi: "यमुना नदी के तट पर शाम की पावन आरती और शांत नौकायन का आनंद।",
+              icon: "water",
+              title: "Yamuna Vishram Ghat",
+              desc: "Peaceful boat rides and evening devotional aarti on the banks of Yamuna.",
             },
           ]
         : route.id.includes("gwalior")
           ? [
               {
-                icon: "🐊",
-                titleEn: "Chambal River Safari",
-                titleHi: "राष्ट्रीय चंबल घड़ियाल अभयारण्य",
-                descEn: "Scenic river crossing home to gharials, marsh crocodiles, and rare dolphins.",
-                descHi: "चंबल नदी के स्वच्छ पानी में घड़ियाल, मगरमच्छ और दुर्लभ डॉल्फ़िन देखें।",
+                icon: "phishing",
+                title: "Chambal River Safari",
+                desc: "Protected sanctuary famous for gharials, dolphins, and rare aquatic wildlife.",
               },
               {
-                icon: "🍬",
-                titleEn: "Morena Gajak Hub",
-                titleHi: "मुरैना की प्रसिद्ध गज़क",
-                descEn: "Authentic sesame and jaggery delicacies freshly made at roadside dhabas.",
-                descHi: "सर्दियों की प्रसिद्ध शुद्ध तिल-गुड़ की पारंपरिक मुरैना गज़क का स्वाद लें।",
+                icon: "castle",
+                title: "Gwalior Fort & Man Mandir",
+                desc: "Hilltop fortress described by Mughal Emperor Babur as the 'pearl of fortresses'.",
               },
               {
-                icon: "🏰",
-                titleEn: "Gwalior Fort & Man Singh Palace",
-                titleHi: "ग्वालियर दुर्ग व मान सिंह महल",
-                descEn: "The pearl of Indian fortresses rising majestically over the sandstone cliff.",
-                descHi: "पहाड़ी की चोटी पर स्थित अभेद्य ग्वालियर किला और प्राचीन नक्काशीदार महल।",
+                icon: "history_edu",
+                title: "Jai Vilas Palace",
+                desc: "19th-century royal palace housing the world's largest crystal chandeliers.",
               },
             ]
-          : route.id.includes("lucknow")
-            ? [
-                {
-                  icon: "💎",
-                  titleEn: "Firozabad Glass Bazaars",
-                  titleHi: "फिरोजाबाद सुहागनगरी व ग्लास हब",
-                  descEn: "India's celebrated glass-blowing and crystal chandelier center along the expressway.",
-                  descHi: "भारत का सुप्रसिद्ध चूड़ी व कांच हस्तशिल्प बाजार एक्सप्रेसवे के समीप।",
-                },
-                {
-                  icon: "🌸",
-                  titleEn: "Kannauj Perfume Capital",
-                  titleHi: "कन्नौज इत्र की नगरी",
-                  descEn: "Century-old artisanal rose and soil attar distilleries near the wayside plaza.",
-                  descHi: "प्राचीन मिट्टी व गुलाब के प्राकृतिक इत्र बनाने की पारंपरिक भट्टियाँ।",
-                },
-                {
-                  icon: "✈️",
-                  titleEn: "Expressway Air Strip Stretch",
-                  titleHi: "एक्सप्रेसवे फाइटर जेट हवाई पट्टी",
-                  descEn: "Famous 3.5 km reinforced roadway designed as an emergency fighter jet landing strip.",
-                  descHi: "भारतीय वायुसेना के लड़ाकू विमानों की इमरजेंसी लैंडिंग के लिए निर्मित विशेष पट्टी।",
-                },
-              ]
-            : [
-                {
-                  icon: "🛣️",
-                  titleEn: "Yamuna Expressway 6-Lane Cruise",
-                  titleHi: "यमुना एक्सप्रेसवे 6-लेन सुगम यात्रा",
-                  descEn: "Smooth 165 km concrete access-controlled speedway with 100 km/h cruising.",
-                  descHi: "165 किमी लंबा कंक्रीट हाईवे जहाँ 100 किमी/घंटा की गति से सुगम सफर होता है।",
-                },
-                {
-                  icon: "☕",
-                  titleEn: "Tappal & Jewar Food Courts",
-                  titleHi: "टप्पल व जेवर आधुनिक फूड प्लाजा",
-                  descEn: "Haldiram's, Costa Coffee, Subway, and sanitised restrooms at KM 64 and KM 118.",
-                  descHi: "किमी 64 और 118 पर हल्दीराम, सबवे, कोस्टा कॉफी व स्वच्छ विश्राम गृह।",
-                },
-                {
-                  icon: "🛡️",
-                  titleEn: "24×7 Highway Patrol & Safety",
-                  titleHi: "24×7 हाईवे पेट्रोल व सुरक्षा",
-                  descEn: "Speed cameras, SOS call boxes every 2 km, and 45-minute breakdown replacement.",
-                  descHi: "प्रत्येक 2 किमी पर इमरजेंसी बूथ, आधुनिक कैमरे और 45-मिनट रिप्लेसमेंट गारंटी।",
-                },
-              ];
+          : [
+              {
+                icon: "ev_station",
+                title: "Expressway Rest Plaza",
+                desc: "Modern expressway comfort stop with clean restrooms, branded food, and coffee.",
+              },
+              {
+                icon: "temple_hindu",
+                title: "Vrindavan Expressway Cut",
+                desc: "Optional detour to Banke Bihari and ISKCON temples before entering Agra.",
+              },
+              {
+                icon: "storefront",
+                title: "Sikandra - Akbar's Tomb",
+                desc: "Magnificent red sandstone mausoleum nestled in quiet deer park grounds.",
+              },
+            ];
 
-  // Schema.org JSON-LD
-  const schemaGraph = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "TaxiService",
-        "@id": `${canonicalUrl}#service`,
-        "url": canonicalUrl,
-        "name": routeTitle,
-        "description": isHi
-          ? `${fromHi} से ${toHi} तक वातानुकूलित टैक्सी सेवा। एक्सप्रेसवे टोल सहित, शून्य सर्ज प्राइसिंग, ₹${route.fares.sedan} से शुरू।`
-          : `Chauffeur-driven private taxi from ${fromEn} to ${toEn}. Toll included, zero surge pricing, fares starting at ₹${route.fares.sedan}.`,
-        "provider": {
-          "@type": "LocalBusiness",
-          "name": "SK Baghel Tour & Travels",
-          "telephone": contact.phone,
-          "email": contact.email,
-          "address": {
-            "@type": "PostalAddress",
-            "streetAddress": "Near Taj East Gate Road, Taj Ganj",
-            "addressLocality": "Agra",
-            "addressRegion": "Uttar Pradesh",
-            "postalCode": "282001",
-            "addressCountry": "IN",
-          },
-        },
-        "offers": {
-          "@type": "Offer",
-          "priceCurrency": "INR",
-          "price": route.fares.sedan,
-          "availability": "https://schema.org/InStock",
-        },
-      },
-      {
-        "@type": "BreadcrumbList",
-        "@id": `${canonicalUrl}#breadcrumb`,
-        "itemListElement": [
-          {
-            "@type": "ListItem",
-            "position": 1,
-            "name": isHi ? "होम" : "Home",
-            "item": `https://skbagheltravels.in/${language}/`,
-          },
-          {
-            "@type": "ListItem",
-            "position": 2,
-            "name": isHi ? "रूट्स" : "Routes",
-            "item": `https://skbagheltravels.in/${language}/routes/`,
-          },
-          {
-            "@type": "ListItem",
-            "position": 3,
-            "name": isLocal ? (isHi ? "आगरा दर्शन" : "Agra Sightseeing") : `${fromEn} to ${toEn}`,
-            "item": canonicalUrl,
-          },
-        ],
-      },
-      {
-        "@type": "FAQPage",
-        "@id": `${canonicalUrl}#faq`,
-        "mainEntity": faqs.map((f) => ({
-          "@type": "Question",
-          "name": isHi ? f.qHi : f.qEn,
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": isHi ? f.aHi : f.aEn,
-          },
-        })),
-      },
-      {
-        "@type": "LocalBusiness",
-        "@id": "https://skbagheltravels.in/#localbusiness",
-        "name": "SK Baghel Tour & Travels",
-        "telephone": contact.phone,
-        "email": contact.email,
-        "priceRange": "₹₹",
-        "address": {
-          "@type": "PostalAddress",
-          "streetAddress": "Near Taj East Gate Road, Taj Ganj",
-          "addressLocality": "Agra",
-          "addressRegion": "Uttar Pradesh",
-          "postalCode": "282001",
-          "addressCountry": "IN",
-        },
-      },
-    ],
-  };
+  // Route-specific FAQs
+  const faqItems = [
+    {
+      q: `Are expressway tolls, FASTag charges, and state road taxes included?`,
+      a: `Yes! For fixed one-way transfers between ${fromEn} and ${toEn}, all Yamuna Expressway or national highway FASTag tolls and interstate taxes are 100% included in the quoted fare. There are zero surprise toll requests on the road.`,
+    },
+    {
+      q: `Can we stop at en-route landmarks like Fatehpur Sikri or highway food plazas?`,
+      a: `Absolutely! Unlike app-based aggregators with rigid routes, our private chauffeur services accommodate requested refreshment stops, coffee breaks, and sightseeing detours. Just let your driver know your preferences.`,
+    },
+    {
+      q: `What is the night driving allowance for late-night departures?`,
+      a: `Standard commercial regulations apply a nominal night driving charge of ₹300 (Sedan/Ertiga) or ₹500 (Innova/Tempo) for journeys active between 10:00 PM and 5:00 AM. Sunrise Taj Mahal tours commencing early morning are completely exempt.`,
+    },
+    {
+      q: `What happens if my flight or train is delayed before pickup?`,
+      a: `We provide complimentary flight and train tracking! When booking, simply provide your arrival flight number or train PNR. Your chauffeur will automatically sync departure and include up to 60 minutes of complimentary waiting at terminal pickup bays.`,
+    },
+    {
+      q: `What is your cancellation and refund policy?`,
+      a: `Enjoy full peace of mind with our 24-Hour Free Cancellation Policy. If cancelled 24 hours or more before scheduled pickup, your 28% advance deposit is refunded 100% with zero cancellation penalty.`,
+    },
+    {
+      q: `What emergency roadside assistance do you provide along this corridor?`,
+      a: `We guarantee a 45-Minute Emergency Vehicle Replacement along major highway corridors (Yamuna Expressway, NH-19, and NH-21). Our central Taj Ganj dispatch operations desk immediately deploys a replacement commercial cab if required.`,
+    },
+  ];
+
+  const primaryFare = route.fares.sedan;
+  const advanceToken = Math.round(primaryFare * 0.28);
+  const bookingUrl = `/book/?route=${route.id}&step=1`;
+  const whatsappUrl = `https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(`Hello SK Baghel Desk, I would like to inquire about taxi booking from ${fromEn} to ${toEn}.`)}`;
 
   return (
-    <div className="route-detail-page">
-      {/* Inject SEO Schema */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaGraph) }}
-      />
-
-      {/* Hero Section */}
-      <section className="page-hero route-detail-hero">
-        <div className="container">
-          <nav className="breadcrumb-nav" aria-label="Breadcrumb">
-            <ol className="breadcrumb-list">
-              <li className="breadcrumb-item">
-                <a href={`/${language}/`}>{isHi ? "होम" : "Home"}</a>
-              </li>
-              <li className="breadcrumb-separator" aria-hidden="true">/</li>
-              <li className="breadcrumb-item">
-                <a href={`/${language}/routes/`}>{isHi ? "रूट्स" : "Routes"}</a>
-              </li>
-              <li className="breadcrumb-separator" aria-hidden="true">/</li>
-              <li className="breadcrumb-item breadcrumb-item--active" aria-current="page">
-                {isLocal ? (isHi ? "आगरा दर्शन टैक्सी" : "Agra Sightseeing Taxi") : `${fromEn} → ${toEn}`}
-              </li>
-            </ol>
+    <div className="flex flex-col w-full bg-surface">
+      {/* Breadcrumb Bar */}
+      <div className="w-full bg-sandstone-wash/70 py-space-sm border-b border-border-warm/40">
+        <div className="max-w-7xl mx-auto px-margin-mobile lg:px-margin flex items-center justify-between">
+          <nav aria-label="Breadcrumb" className="flex items-center gap-space-xs text-body-sm font-body-sm text-on-surface-variant">
+            <a className="hover:text-primary transition-colors" href="/">Home</a>
+            <span className="material-symbols-outlined text-[14px] text-terracotta-sandstone">chevron_right</span>
+            <a className="hover:text-primary transition-colors" href="/routes/">Routes</a>
+            <span className="material-symbols-outlined text-[14px] text-terracotta-sandstone">chevron_right</span>
+            <span className="text-terracotta-sandstone font-medium">{fromEn} to {toEn}</span>
           </nav>
+          <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary-fixed text-primary text-label-caps font-label-caps uppercase tracking-wider">
+            <span className="material-symbols-outlined text-[14px]">speed</span>
+            Expressway Corridor
+          </span>
+        </div>
+      </div>
 
-          <div className="page-hero__badge">
-            <span className="live-dot" aria-hidden="true" />
-            <span>
-              {route.duration} • {route.km} KM • {routeGuidanceData.highway}
-            </span>
-          </div>
+      {/* Hero Corridor Showcase */}
+      <section className="relative w-full bg-surface pt-space-xl pb-space-2xl overflow-hidden">
+        <div className="max-w-7xl mx-auto px-margin-mobile lg:px-margin">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-center">
+            {/* Left Column: Corridor Specs & Booking Callout */}
+            <div className="lg:col-span-7 flex flex-col gap-space-md">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary-fixed text-primary text-label-caps font-label-caps uppercase tracking-widest w-fit">
+                <span className="material-symbols-outlined text-[14px]">directions_car</span>
+                Doorstep Intercity Transit • Zero Return Penalties
+              </span>
 
-          <h1 className="page-hero__title">
-            {isLocal ? (
-              isHi ? (
-                <>
-                  आगरा लोकल दर्शन टैक्सी —<br />
-                  <i>₹{route.fares.sedan.toLocaleString("en-IN")} से 8 घंटे / 80 किमी दर्शनीय यात्रा</i>
-                </>
-              ) : (
-                <>
-                  Agra Sightseeing Cab Service —<br />
-                  <i>8 Hours / 80 KM Private Heritage Tour from ₹{route.fares.sedan.toLocaleString("en-IN")}</i>
-                </>
-              )
-            ) : isHi ? (
-              <>
-                {fromHi} से {toHi} टैक्सी सेवा —<br />
-                <i>₹{route.fares.sedan.toLocaleString("en-IN")} से निश्चित ऑल-इनक्लूसिव किराया</i>
-              </>
-            ) : (
-              <>
-                {fromEn} to {toEn} Taxi Service —<br />
-                <i>Fixed All-Inclusive Fares from ₹{route.fares.sedan.toLocaleString("en-IN")}</i>
-              </>
-            )}
-          </h1>
+              <h1 className="font-headline-hero text-headline-hero text-ink-charcoal tracking-tight font-serif">
+                {isLocal ? "Agra Local Sightseeing Taxi" : `${fromEn} to ${toEn} Chauffeur Taxi`}
+              </h1>
 
-          <p className="page-hero__lead">
-            {isHi
-              ? `निजी वातानुकूलित कैब, सत्यापित स्थानीय ड्राइवर, 100% ऑल-इनक्लूसिव एक्सप्रेसवे टोल और घर से पिकअप सुविधा। कोई सर्ज प्राइसिंग नहीं और 45-मिनट रिप्लेसमेंट गारंटी।`
-              : `Private sanitized cabs with 100% upfront toll transparency, zero surge pricing, verified English/Hindi-speaking chauffeurs, and door-to-door pickup across ${fromEn} and ${toEn}.`}
-          </p>
+              <p className="font-body-lg text-body-lg text-on-surface-variant max-w-2xl leading-relaxed">
+                Experience seamless, air-conditioned road journeys between {fromEn} and {toEn}. Fully permitted commercial
+                yellow-plate fleet, sanitized cabins, and veteran chauffeurs with zero commission shopping detours.
+              </p>
 
-          <div className="hero-cta-buttons">
-            <a href={`/book.html?route=${route.id}`} className="button button-gold">
-              <span>{isHi ? "यह रूट बुक करें" : "Book This Route Now"}</span>
-              <span aria-hidden="true">↗</span>
-            </a>
+              {/* Highway Corridor Intelligence Strip */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-space-sm pt-space-xs">
+                <div className="flex items-center gap-2 p-space-sm rounded bg-surface-container-low border border-border-warm/40">
+                  <span className="material-symbols-outlined text-terracotta-sandstone text-[20px]">straighten</span>
+                  <div className="flex flex-col">
+                    <span className="font-title-md text-[14px] text-ink-charcoal font-semibold">{route.km} km</span>
+                    <span className="text-[11px] text-secondary">Verified Distance</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 p-space-sm rounded bg-surface-container-low border border-border-warm/40">
+                  <span className="material-symbols-outlined text-terracotta-sandstone text-[20px]">schedule</span>
+                  <div className="flex flex-col">
+                    <span className="font-title-md text-[14px] text-ink-charcoal font-semibold">{route.duration}</span>
+                    <span className="text-[11px] text-secondary">Est. Transit Time</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 p-space-sm rounded bg-surface-container-low border border-border-warm/40">
+                  <span className="material-symbols-outlined text-terracotta-sandstone text-[20px]">alt_route</span>
+                  <div className="flex flex-col">
+                    <span className="font-title-md text-[14px] text-ink-charcoal font-semibold">Tolls Inc.</span>
+                    <span className="text-[11px] text-secondary">One-Way Drops</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 p-space-sm rounded bg-surface-container-low border border-border-warm/40">
+                  <span className="material-symbols-outlined text-terracotta-sandstone text-[20px]">verified</span>
+                  <div className="flex flex-col">
+                    <span className="font-title-md text-[14px] text-ink-charcoal font-semibold">28% Token</span>
+                    <span className="text-[11px] text-secondary">Reserve to Lock</span>
+                  </div>
+                </div>
+              </div>
 
-            <a href={`tel:${contact.phone}`} className="button button-secondary">
-              <span>{isHi ? "कॉल करें: " + contact.phoneDisplay : "Call " + contact.phoneDisplay}</span>
-              <span aria-hidden="true">📞</span>
-            </a>
+              {/* Rate Card & Direct Booking Bar */}
+              <div className="bg-sandstone-wash/80 p-space-lg rounded-xl border border-border-warm shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-space-md mt-space-xs">
+                <div className="flex flex-col">
+                  <span className="font-label-caps text-label-caps text-terracotta-sandstone uppercase">Starting Corridor Fare (Sedan)</span>
+                  <div className="flex items-baseline gap-1 mt-0.5">
+                    <span className="font-headline-hero text-headline-hero text-ink-charcoal font-serif font-semibold">
+                      ₹{primaryFare.toLocaleString("en-IN")}
+                    </span>
+                    <span className="text-body-md text-on-surface-variant font-medium">All-Inclusive</span>
+                  </div>
+                  <span className="text-body-sm text-secondary">
+                    Lock with only ₹{advanceToken.toLocaleString("en-IN")} (28% advance deposit)
+                  </span>
+                </div>
 
-            <a
-              href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
-                isHi
-                  ? `नमस्ते! मुझे ${fromHi} से ${toHi} टैक्सी बुकिंग के लिए किराया कोटेशन चाहिए।`
-                  : `Hello SK Baghel Travels, I would like a quote for ${fromEn} to ${toEn} taxi.`
-              )}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="button button-outline"
-            >
-              <span>{isHi ? "व्हाट्सएप कोट" : "WhatsApp Quote"}</span>
-              <span aria-hidden="true">💬</span>
-            </a>
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-space-sm">
+                  <a
+                    className="inline-flex items-center justify-center gap-space-xs bg-terracotta-sandstone text-on-primary px-6 py-3.5 rounded text-label-lg font-label-lg shadow-md hover:bg-terracotta-sunlit transition-all duration-200"
+                    href={bookingUrl}
+                  >
+                    <span className="material-symbols-outlined text-[20px]">calendar_month</span>
+                    <span>Book This Route</span>
+                  </a>
+                  <a
+                    className="inline-flex items-center justify-center gap-space-xs bg-ink-charcoal text-ivory-surface px-5 py-3.5 rounded text-label-lg font-label-lg shadow-sm hover:bg-ink-slate transition-all duration-200"
+                    href={whatsappUrl}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    <span className="material-symbols-outlined text-[20px] text-terracotta-sunlit">chat</span>
+                    <span>WhatsApp</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: Visual Highway Card */}
+            <div className="lg:col-span-5 relative">
+              <div className="relative rounded-xl overflow-hidden shadow-xl bg-surface-container border border-border-warm/60">
+                <img
+                  className="w-full h-[440px] object-cover"
+                  src={
+                    route.id.includes("delhi")
+                      ? "/assets/routes/expressway.webp"
+                      : route.id.includes("jaipur")
+                        ? "/assets/routes/jaipur-highway.webp"
+                        : "/assets/routes/agra-lucknow.webp"
+                  }
+                  alt={`${fromEn} to ${toEn} highway corridor`}
+                  loading="eager"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src =
+                      "https://lh3.googleusercontent.com/aida-public/AB6AXuCmlzP3c2lpWAi6vPrfCKZcIhEJWmPEuyRaJiN9TmXsdpvj1uZ1ukMv6Nzd9cC0T6Sctz_AqeUNPojvuyh5RtYNtdY-PerWt-3UyMfJRUTKEC66624PYqFAtQYKnMh5jtT4PGN0gZ5ofBTFYihl5NVD4QGgHvhRL24fqNpWbIZ1e3BXJd9AuuGzAfN9WGqyNy-Baldt15zxMELAzs7kDf38XCxMNFVwh-kfmNkwPHMgwXvxwocyIqt8JA";
+                  }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-ink-midnight/80 via-transparent to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-space-lg flex items-center justify-between text-ivory-surface">
+                  <div className="flex flex-col">
+                    <span className="font-title-md text-title-md font-serif">{routeGuidanceData.highway}</span>
+                    <span className="text-body-sm text-sandstone-wash/80">{route.km} km • {route.duration}</span>
+                  </div>
+                  <span className="bg-primary/90 text-ivory-surface px-3 py-1 rounded text-label-caps font-label-caps uppercase">
+                    Smooth Pavement
+                  </span>
+                </div>
+              </div>
+
+              {/* Trust signals strip */}
+              <div className="grid grid-cols-2 gap-space-sm pt-space-md">
+                <div className="flex items-center gap-2 p-space-sm rounded bg-surface-container-low border border-border-warm/40">
+                  <span className="material-symbols-outlined text-success-jade text-[20px]">verified</span>
+                  <span className="text-body-sm text-on-surface font-medium">100% Commercial Fleet</span>
+                </div>
+                <div className="flex items-center gap-2 p-space-sm rounded bg-surface-container-low border border-border-warm/40">
+                  <span className="material-symbols-outlined text-success-jade text-[20px]">car_repair</span>
+                  <span className="text-body-sm text-on-surface font-medium">45-Min Highway Replacement</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Vehicle Comparison Matrix Section */}
-      <section className="route-matrix-section">
-        <div className="container">
-          <div className="section-header-compact">
-            <span className="section-kicker">
-              {isHi ? "पारदर्शी किराया सारणी" : "TRANSPARENT TARIFF MATRIX"}
+      {/* Section 2: 5-Vehicle Fare Comparison Matrix */}
+      <section className="w-full bg-surface-container-low py-space-3xl border-t border-b border-border-warm/30">
+        <div className="max-w-7xl mx-auto px-margin-mobile lg:px-margin">
+          <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-space-2xl">
+            <span className="font-label-caps text-label-caps text-terracotta-sandstone uppercase tracking-widest mb-space-xs">
+              Vehicle Comparison
             </span>
-            <h2 className="section-title">
-              {isHi
-                ? "अपनी यात्रा के लिए उपयुक्त गाड़ी चुनें"
-                : "Compare Vehicles for This Journey"}
+            <h2 className="font-headline-lg text-headline-lg text-ink-charcoal font-serif mb-space-sm">
+              Select Your Travel Tier for {fromEn} to {toEn}
             </h2>
-            <p className="section-subtitle">
-              {isHi
-                ? "सभी किराये एक्सप्रेसवे टोल, ड्राइवर भत्ता व जीएसटी इनवॉइस सुविधा सहित हैं।"
-                : "All one-way tariffs include highway tolls, fuel, chauffeur allowances, and complimentary waiting."}
+            <p className="font-body-md text-body-md text-on-surface-variant">
+              Transparent, guaranteed fares across all vehicle categories. Zero hidden meter charges or surprise return toll fees.
             </p>
-
-            {/* Inclusions Pill Bar */}
-            <div className="matrix-inclusions-bar">
-              <span className="inclusion-chip">✓ {isHi ? "एक्सप्रेसवे टोल शामिल" : "Highway Tolls Included"}</span>
-              <span className="inclusion-chip">✓ {isHi ? "ड्राइवर भत्ता शामिल" : "Chauffeur Allowance Included"}</span>
-              <span className="inclusion-chip">✓ {isHi ? "शून्य सर्ज चार्ज" : "Zero Surge Pricing"}</span>
-              <span className="inclusion-chip">✓ {isHi ? "जीएसटी इनवॉइस उपलब्ध" : "GST Invoice Available"}</span>
-              <span className="inclusion-chip">✓ {isHi ? "24 घंटे में मुफ्त कैंसिलेशन" : "24-Hr Free Cancellation"}</span>
-            </div>
           </div>
 
-          {/* 5 Vehicle Cards Grid */}
-          <div className="route-vehicles-grid">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-space-md">
             {vehicles.map((v) => {
-              const fare = route.fares[v.id];
-              const isPopular = v.id === "sedan" || v.id === "innova";
+              const fare = route.fares[v.id as VehicleId] || primaryFare;
+              const token = Math.round(fare * 0.28);
+              const vSlug = v.id === "innova" ? "innova-crysta" : v.id === "tempo" ? "tempo-traveller" : v.id;
 
               return (
                 <div
                   key={v.id}
-                  className={`route-vehicle-card ${isPopular ? "route-vehicle-card--popular" : ""}`}
+                  className="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm border border-border-warm/60 flex flex-col justify-between hover:shadow-md transition-shadow"
                 >
-                  {isPopular && (
-                    <div className="vehicle-badge-popular">
-                      {v.id === "sedan"
-                        ? isHi ? "सर्वश्रेष्ठ बजट" : "Best Value"
-                        : isHi ? "सर्वाधिक लोकप्रिय" : "Most Popular"}
+                  <div className="flex flex-col gap-space-sm">
+                    <div className="flex items-center justify-between">
+                      <span className="px-2.5 py-0.5 rounded bg-sandstone-wash text-terracotta-sandstone font-label-caps text-[11px] uppercase tracking-wider font-semibold">
+                        {v.klass}
+                      </span>
+                      <span className="text-body-sm text-secondary font-medium">{v.seats} Seats</span>
                     </div>
-                  )}
 
-                  <div className="vehicle-card-top">
-                    <div className="vehicle-icon-circle" aria-hidden="true">
-                      {v.id === "sedan" ? "🚗" : v.id === "ertiga" ? "🚙" : v.id === "innova" ? "🚐" : "🚌"}
+                    <h3 className="font-title-lg text-title-lg text-ink-charcoal font-serif mt-1">{v.name}</h3>
+
+                    <div className="flex flex-col gap-1 py-space-xs border-y border-border-warm/30 text-body-sm text-on-surface-variant">
+                      <div className="flex items-center justify-between">
+                        <span>Luggage Capacity:</span>
+                        <span className="font-medium text-ink-charcoal">{v.bags} Bags</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span>Air Conditioning:</span>
+                        <span className="font-medium text-success-jade">Verified Dual AC</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span>Chauffeur:</span>
+                        <span className="font-medium text-ink-charcoal">Police Verified</span>
+                      </div>
                     </div>
-                    <div>
-                      <span className="vehicle-class-tag">{v.klass}</span>
-                      <h3 className="vehicle-name">{v.name}</h3>
-                    </div>
-                  </div>
 
-                  <p className="vehicle-models-text">
-                    {v.models.slice(0, 2).join(" • ")}
-                  </p>
-
-                  <div className="vehicle-specs-row">
-                    <span className="spec-pill">👥 {v.seats} {isHi ? "सीटें" : "Seats"}</span>
-                    <span className="spec-pill">🧳 {v.bags} {isHi ? "बैग" : "Bags"}</span>
-                    <span className="spec-pill">❄️ {isHi ? "एसी" : "Dual AC"}</span>
-                  </div>
-
-                  <div className="vehicle-fare-block">
-                    <div className="fare-label">{isHi ? "निश्चित वन-वे किराया" : "Fixed One-Way Fare"}</div>
-                    <div className="fare-amount">
-                      ₹{fare.toLocaleString("en-IN")}
-                    </div>
-                    <div className="fare-subtext">
-                      {isLocal
-                        ? isHi ? "8 घंटे / 80 किमी पैकेज" : "8h / 80km package"
-                        : isHi ? `बेस दर: ₹${v.perKm}/किमी` : `Base: ₹${v.perKm}/km`}
+                    <div className="flex flex-col pt-1">
+                      <span className="text-[11px] font-label-caps text-secondary uppercase">All-Inclusive Fare</span>
+                      <span className="font-headline-md text-headline-md text-terracotta-sandstone font-serif font-semibold">
+                        ₹{fare.toLocaleString("en-IN")}
+                      </span>
+                      <span className="text-[11px] text-secondary">
+                        ₹{token.toLocaleString("en-IN")} token to lock
+                      </span>
                     </div>
                   </div>
 
                   <a
-                    href={`/book.html?route=${route.id}&vehicle=${v.id}`}
-                    className={`button ${isPopular ? "button-gold" : "button-outline"} vehicle-book-btn`}
+                    className="mt-space-md w-full inline-flex items-center justify-center gap-1 bg-terracotta-sandstone text-on-primary py-2.5 rounded text-label-lg font-label-lg shadow-sm hover:bg-terracotta-sunlit transition-all text-center"
+                    href={`/book/?route=${route.id}&vehicle=${vSlug}&step=2`}
                   >
-                    <span>{isHi ? `${v.name} चुनें` : `Select ${v.name}`}</span>
-                    <span aria-hidden="true">↗</span>
+                    <span>Select {v.name.split(" ")[0]}</span>
+                    <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
                   </a>
                 </div>
               );
@@ -539,154 +390,163 @@ export function RouteDetailPage({ language, route }: RouteDetailPageProps) {
         </div>
       </section>
 
-      {/* Highway Intelligence & Advisory Bento Section */}
-      <section className="route-advisory-section">
-        <div className="container">
-          <div className="section-header-compact">
-            <span className="section-kicker">
-              {isHi ? "हाईवे गाइडेंस व यात्रा सलाह" : "HIGHWAY INTELLIGENCE"}
+      {/* Section 3: Highway Advisory & Route Intelligence Bento Grid */}
+      <section className="w-full bg-surface py-space-3xl">
+        <div className="max-w-7xl mx-auto px-margin-mobile lg:px-margin">
+          <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-space-2xl">
+            <span className="font-label-caps text-label-caps text-terracotta-sandstone uppercase tracking-widest mb-space-xs">
+              Highway Intelligence
             </span>
-            <h2 className="section-title">
-              {isHi
-                ? `${fromHi} ⇄ ${toHi} मार्ग से जुड़ी महत्वपूर्ण जानकारी`
-                : `Travel Advisory for ${fromEn} ⇄ ${toEn}`}
+            <h2 className="font-headline-lg text-headline-lg text-ink-charcoal font-serif mb-space-sm">
+              Transit Logistics &amp; Travel Advisory
             </h2>
-            <p className="section-subtitle">
-              {isHi
-                ? "स्थानीय ज्ञान, सड़क की स्थिति और समय की बचत के लिए व्यावहारिक सुझाव।"
-                : "Real highway conditions, optimal transit timings, and vetted pitstops."}
+            <p className="font-body-md text-body-md text-on-surface-variant">
+              Expert highway insights curated by our Taj Ganj dispatch desk for an effortless transit.
             </p>
           </div>
 
-          <div className="route-advisory-grid">
-            {/* Card 1: Highway Profile */}
-            <div className="advisory-bento-card">
-              <div className="advisory-card-header">
-                <span className="advisory-icon" aria-hidden="true">🛣️</span>
-                <span className="advisory-tag">{isHi ? "सड़क विनिर्देश" : "Highway Profile"}</span>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-lg">
+            <div className="bg-surface-container-low p-space-xl rounded-xl shadow-sm border border-border-warm/50 flex flex-col justify-between">
+              <div className="flex flex-col gap-space-sm">
+                <div className="w-12 h-12 rounded-lg bg-sandstone-wash flex items-center justify-center text-terracotta-sandstone">
+                  <span className="material-symbols-outlined text-[26px]">road</span>
+                </div>
+                <h3 className="font-title-lg text-title-lg text-on-surface font-serif">Highway Infrastructure</h3>
+                <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                  {routeGuidanceData.highway}. Fully access-controlled with continuous surveillance and wide lanes.
+                </p>
               </div>
-              <h3>{routeGuidanceData.highway}</h3>
-              <p>
-                {isHi
-                  ? `दूरी: ${route.km} किमी • औसत समय: ${route.duration}। उच्च गति एक्सप्रेसवे जहाँ 100 किमी/घंटा की निर्बाध गति रहती है। FASTag टोल स्वचालित रूप से निष्पादित होता है।`
-                  : `Distance: ${route.km} km • Estimated transit time: ${route.duration}. Access-controlled corridor built for continuous 100–120 km/h cruising with automated FASTag lanes.`}
-              </p>
+              <div className="mt-space-md pt-space-sm border-t border-border-warm/40 text-body-sm text-secondary font-medium">
+                Fast &amp; Predictable
+              </div>
             </div>
 
-            {/* Card 2: Timing Advisory */}
-            <div className="advisory-bento-card">
-              <div className="advisory-card-header">
-                <span className="advisory-icon" aria-hidden="true">⏱️</span>
-                <span className="advisory-tag">{isHi ? "प्रस्थान समय" : "Optimal Timing"}</span>
+            <div className="bg-surface-container-low p-space-xl rounded-xl shadow-sm border border-border-warm/50 flex flex-col justify-between">
+              <div className="flex flex-col gap-space-sm">
+                <div className="w-12 h-12 rounded-lg bg-sandstone-wash flex items-center justify-center text-terracotta-sandstone">
+                  <span className="material-symbols-outlined text-[26px]">wb_sunny</span>
+                </div>
+                <h3 className="font-title-lg text-title-lg text-on-surface font-serif">Recommended Departure</h3>
+                <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                  {routeGuidanceData.departureTip.en}
+                </p>
               </div>
-              <h3>{isHi ? "सुझाया गया प्रस्थान समय" : "Recommended Departure Window"}</h3>
-              <p>
-                {isHi
-                  ? routeGuidanceData.departureTip.hi
-                  : routeGuidanceData.departureTip.en}
-              </p>
+              <div className="mt-space-md pt-space-sm border-t border-border-warm/40 text-body-sm text-secondary font-medium">
+                Avoid City Bottlenecks
+              </div>
             </div>
 
-            {/* Card 3: Rest Stops */}
-            <div className="advisory-bento-card">
-              <div className="advisory-card-header">
-                <span className="advisory-icon" aria-hidden="true">☕</span>
-                <span className="advisory-tag">{isHi ? "विश्राम स्थल" : "Pitstops & Dining"}</span>
+            <div className="bg-surface-container-low p-space-xl rounded-xl shadow-sm border border-border-warm/50 flex flex-col justify-between">
+              <div className="flex flex-col gap-space-sm">
+                <div className="w-12 h-12 rounded-lg bg-sandstone-wash flex items-center justify-center text-terracotta-sandstone">
+                  <span className="material-symbols-outlined text-[26px]">restaurant</span>
+                </div>
+                <h3 className="font-title-lg text-title-lg text-on-surface font-serif">Hygienic Rest Stops</h3>
+                <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                  {routeGuidanceData.restStops.en}
+                </p>
               </div>
-              <h3>{isHi ? "प्रमाणित फूड कोर्ट व स्वच्छ वॉशरूम" : "Vetted Rest Areas & Food Plazas"}</h3>
-              <p>
-                {isHi
-                  ? routeGuidanceData.restStops.hi
-                  : routeGuidanceData.restStops.en}
-              </p>
+              <div className="mt-space-md pt-space-sm border-t border-border-warm/40 text-body-sm text-secondary font-medium">
+                Family &amp; Senior Friendly
+              </div>
             </div>
 
-            {/* Card 4: Tolls & Night Allowances */}
-            <div className="advisory-bento-card">
-              <div className="advisory-card-header">
-                <span className="advisory-icon" aria-hidden="true">🎫</span>
-                <span className="advisory-tag">{isHi ? "टोल व कर नियम" : "Tolls & Tax Clarity"}</span>
+            <div className="bg-surface-container-low p-space-xl rounded-xl shadow-sm border border-border-warm/50 flex flex-col justify-between">
+              <div className="flex flex-col gap-space-sm">
+                <div className="w-12 h-12 rounded-lg bg-sandstone-wash flex items-center justify-center text-terracotta-sandstone">
+                  <span className="material-symbols-outlined text-[26px]">receipt_long</span>
+                </div>
+                <h3 className="font-title-lg text-title-lg text-on-surface font-serif">Toll &amp; Tax Policy</h3>
+                <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                  {routeGuidanceData.tollTaxPolicy.en}
+                </p>
               </div>
-              <h3>{isHi ? "100% पारदर्शी टोल व नियम" : "Tolls, Taxes & Night Surcharges"}</h3>
-              <p>
-                {isHi
-                  ? `${routeGuidanceData.tollTaxPolicy.hi} रात्रि 10:00 से सुबह 05:00 के बीच ₹300/₹500 नाइट चार्ज लागू होता है।`
-                  : `${routeGuidanceData.tollTaxPolicy.en} Night driving allowance of ₹300/₹500 applies only between 22:00 and 05:00.`}
-              </p>
+              <div className="mt-space-md pt-space-sm border-t border-border-warm/40 text-body-sm text-secondary font-medium">
+                Zero Toll Cash Shakedowns
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* En-Route Sightseeing & Highlights Section */}
-      <section className="route-stopovers-section">
-        <div className="container">
-          <div className="section-header-compact">
-            <span className="section-kicker">
-              {isHi ? "रास्ते के दर्शनीय स्थल" : "EN-ROUTE HIGHLIGHTS"}
+      {/* Section 4: En-Route Heritage Stopovers */}
+      <section className="w-full bg-surface-container-low py-space-3xl border-t border-b border-border-warm/30">
+        <div className="max-w-7xl mx-auto px-margin-mobile lg:px-margin">
+          <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-space-2xl">
+            <span className="font-label-caps text-label-caps text-terracotta-sandstone uppercase tracking-widest mb-space-xs">
+              Curated Halts
             </span>
-            <h2 className="section-title">
-              {isHi
-                ? "यात्रा के दौरान लोकप्रिय स्टॉपओवर विकल्प"
-                : "Popular En-Route Sightseeing & Stopovers"}
+            <h2 className="font-headline-lg text-headline-lg text-ink-charcoal font-serif mb-space-sm">
+              En-Route Sights &amp; Historical Stopovers
             </h2>
-            <p className="section-subtitle">
-              {isHi
-                ? "हमारी निजी कैब में आप रास्ते के प्रसिद्ध स्मारकों और मंदिरों के दर्शन का अनुरोध कर सकते हैं।"
-                : "Customize your private road journey with scenic detours and heritage stopovers."}
+            <p className="font-body-md text-body-md text-on-surface-variant">
+              Turn your road transit into an authentic cultural excursion. Mention your preferred stops when booking.
             </p>
           </div>
 
-          <div className="stopovers-grid">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-space-lg">
             {stopovers.map((s, idx) => (
-              <div key={idx} className="stopover-card">
-                <div className="stopover-icon" aria-hidden="true">{s.icon}</div>
-                <h3>{isHi ? s.titleHi : s.titleEn}</h3>
-                <p>{isHi ? s.descHi : s.descEn}</p>
+              <div
+                key={idx}
+                className="bg-surface-container-lowest p-space-xl rounded-xl shadow-sm border border-border-warm/50 flex flex-col justify-between"
+              >
+                <div className="flex flex-col gap-space-sm">
+                  <div className="w-12 h-12 rounded-lg bg-sandstone-wash flex items-center justify-center text-terracotta-sandstone">
+                    <span className="material-symbols-outlined text-[26px]">{s.icon}</span>
+                  </div>
+                  <h3 className="font-title-lg text-title-lg text-on-surface font-serif">{s.title}</h3>
+                  <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">{s.desc}</p>
+                </div>
+                <div className="mt-space-md pt-space-sm border-t border-border-warm/40 text-body-sm text-terracotta-sandstone font-medium">
+                  Custom Itinerary Flexible
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Route-Specific FAQs Section */}
-      <section className="route-faqs-section">
-        <div className="container">
-          <div className="section-header-compact">
-            <span className="section-kicker">
-              {isHi ? "अक्सर पूछे जाने वाले सवाल" : "ROUTE FAQS"}
+      {/* Section 5: Route Specific FAQ Accordion */}
+      <section className="w-full bg-surface py-space-3xl">
+        <div className="max-w-4xl mx-auto px-margin-mobile lg:px-margin">
+          <div className="flex flex-col items-center text-center mb-space-2xl">
+            <span className="font-label-caps text-label-caps text-terracotta-sandstone uppercase tracking-widest mb-space-xs">
+              Corridor Clarifications
             </span>
-            <h2 className="section-title">
-              {isHi
-                ? `${fromHi} से ${toHi} टैक्सी से जुड़े सामान्य प्रश्न`
-                : `Frequently Asked Questions for ${fromEn} to ${toEn}`}
+            <h2 className="font-headline-lg text-headline-lg text-ink-charcoal font-serif mb-space-sm">
+              Frequently Asked Questions for {fromEn} to {toEn}
             </h2>
+            <p className="font-body-md text-body-md text-on-surface-variant">
+              Clear answers regarding toll inclusions, pickup punctuality, night allowances, and cancellation.
+            </p>
           </div>
 
-          <div className="route-faqs-accordion">
-            {faqs.map((item, idx) => {
+          <div className="flex flex-col gap-space-sm">
+            {faqItems.map((item, idx) => {
               const isOpen = openFaqIndex === idx;
-
               return (
                 <div
                   key={idx}
-                  className={`route-faq-item ${isOpen ? "route-faq-item--open" : ""}`}
+                  className="bg-surface-container-low rounded-lg border border-border-warm/60 overflow-hidden shadow-sm transition-all"
                 >
                   <button
                     type="button"
-                    className="route-faq-question-btn"
                     onClick={() => setOpenFaqIndex(isOpen ? null : idx)}
+                    className="w-full p-space-lg flex items-center justify-between gap-space-md text-left focus:outline-none"
                     aria-expanded={isOpen}
                   >
-                    <span>{isHi ? item.qHi : item.qEn}</span>
-                    <span className="faq-toggle-icon" aria-hidden="true">
-                      {isOpen ? "−" : "+"}
+                    <span className="font-title-md text-title-md text-ink-charcoal font-serif">{item.q}</span>
+                    <span
+                      className={`material-symbols-outlined text-terracotta-sandstone text-[22px] transition-transform duration-200 shrink-0 ${
+                        isOpen ? "rotate-180" : ""
+                      }`}
+                    >
+                      keyboard_arrow_down
                     </span>
                   </button>
-
                   {isOpen && (
-                    <div className="route-faq-answer">
-                      <p>{isHi ? item.aHi : item.aEn}</p>
+                    <div className="px-space-lg pb-space-lg pt-0 text-body-md text-on-surface-variant leading-relaxed border-t border-border-warm/20">
+                      {item.a}
                     </div>
                   )}
                 </div>
@@ -696,49 +556,36 @@ export function RouteDetailPage({ language, route }: RouteDetailPageProps) {
         </div>
       </section>
 
-      {/* Conversion CTA Banner Strip */}
-      <section className="route-cta-strip">
-        <div className="container">
-          <div className="cta-banner-box">
-            <div className="cta-banner-content">
-              <span className="cta-banner-tag">
-                {isHi ? "निश्चित व सुरक्षित" : "Fixed & Reliable"}
+      {/* Section 6: Grand Call-to-Action Strip */}
+      <section className="w-full bg-sandstone-wash py-space-3xl border-t border-border-warm/40">
+        <div className="max-w-7xl mx-auto px-margin-mobile lg:px-margin">
+          <div className="bg-surface-container-lowest rounded-xl p-6 sm:p-8 md:p-12 shadow-xl flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 sm:gap-8 w-full border border-border-warm">
+            <div className="flex flex-col gap-space-xs max-w-xl text-left w-full">
+              <span className="font-label-caps text-label-caps text-terracotta-sandstone uppercase tracking-widest">
+                Reserve With 28% Token
               </span>
-              <h2 className="cta-banner-title">
-                {isHi
-                  ? `अपनी ${fromHi} ⇄ ${toHi} यात्रा को अभी सुरक्षित करें।`
-                  : `Reserve Your ${fromEn} ⇄ ${toEn} Private Cab Today.`}
+              <h2 className="font-headline-lg text-[28px] sm:text-headline-md md:text-headline-lg text-ink-charcoal font-serif leading-tight">
+                Travel from {fromEn} to {toEn} in Comfort.
               </h2>
-              <p className="cta-banner-desc">
-                {isHi
-                  ? "पारदर्शी मूल्य, शून्य सर्ज, 45-मिनट रिप्लेसमेंट बैकअप और 24×7 व्यक्तिगत सहायता। कूपन ASTTCAR500OFF के साथ ₹500 की छूट पाएं।"
-                  : "Transparent fares, zero surge pricing, 45-minute breakdown replacement guarantee, and 24×7 chauffeur support. Use coupon ASTTCAR500OFF for ₹500 discount."}
+              <p className="font-body-md text-body-md text-on-surface-variant max-w-lg leading-relaxed">
+                Guaranteed commercial yellow-plate vehicle, police-verified chauffeur, and clean air conditioning.
+                Lock your schedule with a modest 28% advance deposit.
               </p>
             </div>
-
-            <div className="cta-banner-buttons">
-              <a href={`/book.html?route=${route.id}`} className="button button-gold">
-                <span>{isHi ? "ऑनलाइन बुक करें" : "Book Cab Online"}</span>
-                <span aria-hidden="true">↗</span>
-              </a>
-
-              <a href={`tel:${contact.phone}`} className="button button-secondary">
-                <span>{isHi ? "कॉल करें: " + contact.phoneDisplay : "Call " + contact.phoneDisplay}</span>
-                <span aria-hidden="true">📞</span>
-              </a>
-
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full lg:w-auto shrink-0">
               <a
-                href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
-                  isHi
-                    ? `नमस्ते! मुझे ${fromHi} से ${toHi} टैक्सी बुकिंग के लिए तुरंत सहायता चाहिए।`
-                    : `Hello SK Baghel Travels, I would like to book a cab for ${fromEn} to ${toEn}.`
-                )}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="button button-outline"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-space-xs bg-terracotta-sandstone text-on-primary px-6 sm:px-8 py-3.5 sm:py-4 rounded text-label-lg font-label-lg shadow-md hover:bg-terracotta-sunlit transition-all duration-200 text-center"
+                href={bookingUrl}
               >
-                <span>{isHi ? "व्हाट्सएप चैट" : "WhatsApp Desk"}</span>
-                <span aria-hidden="true">💬</span>
+                <span className="material-symbols-outlined text-[20px]">calendar_today</span>
+                <span>Book This Journey</span>
+              </a>
+              <a
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-space-xs bg-ink-charcoal text-ivory-surface px-6 py-3.5 sm:py-4 rounded text-label-lg font-label-lg shadow-sm hover:bg-ink-slate transition-all duration-200 text-center"
+                href={`tel:${contact.phone}`}
+              >
+                <span className="material-symbols-outlined text-[20px] text-terracotta-sunlit">phone_in_talk</span>
+                <span>{contact.phoneDisplay}</span>
               </a>
             </div>
           </div>
@@ -747,3 +594,5 @@ export function RouteDetailPage({ language, route }: RouteDetailPageProps) {
     </div>
   );
 }
+
+export default RouteDetailPage;

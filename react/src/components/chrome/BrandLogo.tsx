@@ -77,12 +77,12 @@ export function BrandLogo({
       onClick={onClick}
     >
       {/* Brand Emblem */}
-      <div className="w-10 h-10 rounded-lg bg-primary-container/10 border border-primary/20 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-all duration-300 shadow-xs shrink-0">
+      <div className="w-7 h-7 rounded-md bg-primary-container/10 border border-primary/20 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-all duration-300 shadow-xs shrink-0">
         <svg
           viewBox="0 0 32 32"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className="w-6 h-6 transform group-hover:rotate-45 transition-transform duration-500"
+          className="w-4 h-4 transform group-hover:rotate-45 transition-transform duration-500"
           aria-hidden="true"
         >
           {/* Outer Ring */}
@@ -127,12 +127,12 @@ export function BrandLogo({
       {/* Brand Wordmark & Subtitle */}
       <div className="flex flex-col">
         <span
-          className="font-headline-sm text-[20px] font-semibold tracking-wide text-ink-charcoal group-hover:text-primary transition-colors leading-tight font-headline-sm"
+          className="font-headline-sm text-[13.5px] font-semibold tracking-wide text-ink-charcoal group-hover:text-primary transition-colors leading-none"
           aria-hidden="true"
         >
           {displayText}
         </span>
-        <span className="font-label-caps text-[10px] tracking-widest text-secondary uppercase font-semibold">
+        <span className="font-label-caps text-[7.5px] tracking-wider text-secondary uppercase font-semibold leading-none mt-0.5">
           {subtitle}
         </span>
       </div>

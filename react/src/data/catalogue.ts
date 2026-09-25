@@ -23,6 +23,7 @@ import {
 import { contact } from "./contact";
 
 export type {
+  TourPackage,
   VehicleId,
   FareByVehicle,
   City,

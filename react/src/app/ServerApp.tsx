@@ -24,7 +24,7 @@ export function getMarketingPath(pathname: string) {
   const segments = pathname.split("/").filter(Boolean);
   const localizedSegments = segments[0] === "en" || segments[0] === "hi" ? segments.slice(1) : segments;
   const lastSegment = localizedSegments.at(-1)?.replace(/\.html$/, "") ?? "home";
-  return { language: segments[0] === "hi" ? "hi" as const : "en" as const, section: lastSegment };
+  return { language: "en" as const, section: lastSegment };
 }
 
 export interface SeoMetadata {

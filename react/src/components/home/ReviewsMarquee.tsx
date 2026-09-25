@@ -115,7 +115,6 @@ export function ReviewsMarquee() {
         <h2 id="reviews-heading">
           380+ trips.
           <br />
-          <i>Quiet confidence.</i>
         </h2>
         <p className="reviews-lead">
           Real reviews from tourists, pilgrims, and business travelers across
