@@ -244,16 +244,14 @@ export function BookingPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-space-sm">
             {/* Step 1 */}
             <div
-              className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${
-                step === 1
+              className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${step === 1
                   ? "bg-surface-container-lowest shadow-sm border border-border-warm"
                   : "bg-surface-container-lowest/50 opacity-85"
-              }`}
+                }`}
             >
               <div
-                className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${
-                  step > 1 ? "bg-success-jade text-on-primary" : "bg-primary text-on-primary"
-                }`}
+                className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${step > 1 ? "bg-success-jade text-on-primary" : "bg-primary text-on-primary"
+                  }`}
               >
                 {step > 1 ? <span className="material-symbols-outlined text-[20px]">check</span> : "1"}
               </div>
@@ -269,20 +267,18 @@ export function BookingPage() {
 
             {/* Step 2 */}
             <div
-              className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${
-                step === 2
+              className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${step === 2
                   ? "bg-surface-container-lowest shadow-sm border border-border-warm"
                   : "bg-surface-container-lowest/50 opacity-85"
-              }`}
+                }`}
             >
               <div
-                className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${
-                  step > 2
+                className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${step > 2
                     ? "bg-success-jade text-on-primary"
                     : step === 2
-                    ? "bg-primary text-on-primary"
-                    : "bg-surface-container-highest text-secondary"
-                }`}
+                      ? "bg-primary text-on-primary"
+                      : "bg-surface-container-highest text-secondary"
+                  }`}
               >
                 {step > 2 ? <span className="material-symbols-outlined text-[20px]">check</span> : "2"}
               </div>
@@ -298,16 +294,14 @@ export function BookingPage() {
 
             {/* Step 3 */}
             <div
-              className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${
-                step === 3
+              className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${step === 3
                   ? "bg-ink-charcoal text-ivory-surface shadow-md"
                   : "bg-surface-container-lowest/50 opacity-75"
-              }`}
+                }`}
             >
               <div
-                className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${
-                  step === 3 ? "bg-terracotta-sandstone text-on-primary" : "bg-surface-container-highest text-secondary"
-                }`}
+                className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${step === 3 ? "bg-terracotta-sandstone text-on-primary" : "bg-surface-container-highest text-secondary"
+                  }`}
               >
                 <span className="material-symbols-outlined text-[20px]">verified</span>
               </div>
@@ -388,11 +382,10 @@ export function BookingPage() {
                     <div
                       key={veh.id}
                       onClick={() => setSelectedVehicleId(veh.id)}
-                      className={`relative bg-surface-container-lowest rounded-xl p-space-md lg:p-space-lg transition-all cursor-pointer border ${
-                        isSelected
+                      className={`relative bg-surface-container-lowest rounded-xl p-space-md lg:p-space-lg transition-all cursor-pointer border ${isSelected
                           ? "ring-2 ring-primary border-primary shadow-md bg-sandstone-wash/20"
                           : "border-border-warm hover:shadow-md"
-                      }`}
+                        }`}
                     >
                       {/* Optional Highlight Badge */}
                       {veh.badge && (
@@ -606,7 +599,7 @@ export function BookingPage() {
                     </span>
                   </button>
 
-                  {/* Secondary WhatsApp Concierge Link */}
+                  {/* Secondary WhatsApp Link */}
                   <a
                     className="flex items-center justify-center gap-2 py-2.5 px-space-sm rounded-lg bg-black hover:bg-neutral-900 border border-white/10 text-white font-label-lg text-label-lg transition-colors text-center active:scale-[0.98]"
                     href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
@@ -616,7 +609,7 @@ export function BookingPage() {
                     target="_blank"
                   >
                     <WhatsAppIcon className="w-4 h-4 shrink-0" />
-                    <span>Need custom vehicle or delegation? WhatsApp Concierge</span>
+                    <span>Need custom vehicle or delegation? WhatsApp</span>
                   </a>
 
                   {/* Trust Signals */}
@@ -1078,11 +1071,10 @@ export function BookingPage() {
                     {/* Partial 28% Choice */}
                     <label
                       onClick={() => setPaymentChoice("partial")}
-                      className={`cursor-pointer flex items-center justify-between p-space-sm md:p-space-md rounded-xl border transition-all shadow-sm ${
-                        paymentChoice === "partial"
+                      className={`cursor-pointer flex items-center justify-between p-space-sm md:p-space-md rounded-xl border transition-all shadow-sm ${paymentChoice === "partial"
                           ? "bg-sandstone-wash/40 border-primary ring-1 ring-primary"
                           : "bg-surface-container-lowest border-border-warm hover:bg-surface-container-low"
-                      }`}
+                        }`}
                     >
                       <div className="flex items-center gap-space-sm">
                         <input
@@ -1108,11 +1100,10 @@ export function BookingPage() {
                     {/* Full Payment Choice */}
                     <label
                       onClick={() => setPaymentChoice("full")}
-                      className={`cursor-pointer flex items-center justify-between p-space-sm md:p-space-md rounded-xl border transition-all shadow-sm ${
-                        paymentChoice === "full"
+                      className={`cursor-pointer flex items-center justify-between p-space-sm md:p-space-md rounded-xl border transition-all shadow-sm ${paymentChoice === "full"
                           ? "bg-sandstone-wash/40 border-primary ring-1 ring-primary"
                           : "bg-surface-container-lowest border-border-warm hover:bg-surface-container-low"
-                      }`}
+                        }`}
                     >
                       <div className="flex items-center gap-space-sm">
                         <input

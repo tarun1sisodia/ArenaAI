@@ -54,7 +54,7 @@ export function StickyLeadBar({ currentPath }: StickyLeadBarProps) {
         href={`https://wa.me/${contact.whatsapp}?text=Hello%20SK%20Baghel%20Travels`}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label="WhatsApp Concierge"
+        aria-label="WhatsApp"
       >
         <WhatsAppIcon className="w-[18px] h-[18px] shrink-0" />
         <span className="mt-0.5">WhatsApp</span>

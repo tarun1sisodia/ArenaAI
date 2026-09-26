@@ -91,15 +91,13 @@ export function Header({
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 w-full z-50 transition-all duration-500 ease-out transform ${
-          heroScrolledPast
+        className={`fixed top-0 left-0 right-0 w-full z-50 transition-all duration-500 ease-out transform ${heroScrolledPast
             ? "translate-y-0 opacity-100 pointer-events-auto"
             : "-translate-y-full opacity-0 pointer-events-none"
-        } ${
-          isScrolled
+          } ${isScrolled
             ? "bg-surface/95 backdrop-blur-xl shadow-[0_1px_12px_rgba(159,60,22,0.08)] border-b border-border-warm/60"
             : "bg-surface/90 backdrop-blur-md border-b border-border-warm/30 shadow-[0_1px_8px_rgba(0,0,0,0.03)]"
-        }`}
+          }`}
         id="site-header"
       >
         <div className="h-12 max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 flex items-center justify-between gap-3">
@@ -118,11 +116,10 @@ export function Header({
                   href={link.href}
                   onMouseEnter={() => prefetchDocument(link.href)}
                   aria-current={active ? "page" : undefined}
-                  className={`px-2.5 py-1 text-xs font-semibold transition-colors rounded-md ${
-                    active
+                  className={`px-2.5 py-1 text-xs font-semibold transition-colors rounded-md ${active
                       ? "bg-primary text-white shadow-xs"
                       : "text-on-surface-variant hover:text-on-surface hover:bg-sandstone-wash"
-                  }`}
+                    }`}
                 >
                   {link.label}
                 </a>
@@ -130,7 +127,7 @@ export function Header({
             })}
           </nav>
 
-          {/* Actions: Phone, WhatsApp Concierge, and Mobile Menu */}
+          {/* Actions: Phone, WhatsApp, and Mobile Menu */}
           <div className="flex items-center gap-2 shrink-0">
             {/* Phone Call CTA */}
             <a
@@ -142,7 +139,7 @@ export function Header({
               <span>{contact.phoneDisplay}</span>
             </a>
 
-            {/* WhatsApp Concierge - Luxury black button with real WhatsApp icon */}
+            {/* WhatsApp - Luxury black button with real WhatsApp icon */}
             <a
               href={`https://wa.me/${contact.whatsapp}?text=Hello%20SK%20Baghel%20Travels,%20I%20would%20like%20to%20inquire%20about%20a%20booking.`}
               target="_blank"
@@ -150,7 +147,7 @@ export function Header({
               className="hidden sm:inline-flex items-center gap-1.5 bg-black hover:bg-neutral-900 text-white px-3.5 py-1.5 rounded-md text-xs font-semibold shadow-xs transition-all active:scale-[0.98] border border-white/15"
             >
               <WhatsAppIcon className="w-[15px] h-[15px] shrink-0" />
-              <span className="text-white font-medium">WhatsApp Concierge</span>
+              <span className="text-white font-medium">WhatsApp</span>
             </a>
 
             {/* Mobile Hamburger Menu Button */}

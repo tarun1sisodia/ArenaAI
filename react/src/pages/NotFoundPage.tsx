@@ -86,7 +86,7 @@ export function NotFoundPage({ language = "en" }: NotFoundPageProps) {
                   className="px-4 py-2.5 rounded-lg bg-black hover:bg-neutral-900 border border-white/10 text-white text-sm font-semibold transition-colors flex items-center gap-2 shadow-xs active:scale-[0.98]"
                 >
                   <WhatsAppIcon className="w-[18px] h-[18px] shrink-0" />
-                  <span>WhatsApp Concierge</span>
+                  <span>WhatsApp</span>
                 </a>
               </div>
             </div>

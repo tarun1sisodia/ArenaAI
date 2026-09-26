@@ -7,6 +7,7 @@ import { FamousPlacesSection } from "../components/home/FamousPlacesSection";
 import { WhatsAppIcon } from "../components/icons";
 import { SmoothScrollHero } from "@/components/ui/smooth-scroll-hero";
 import { InitialLoader } from "@/components/ui/InitialLoader";
+import { AppleHelloEnglishEffect } from "@/components/ui/apple-hello-effect";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ChevronDown, Sparkles } from "lucide-react";
 
@@ -206,92 +207,74 @@ export function HomePage({ language = "en" }: HomePageProps) {
             {/* Left — headline + two CTAs only (hero stack discipline: 3 elements max) */}
             <div className="lg:col-span-6 flex flex-col items-start gap-space-md">
 
-              {/* 100% SEO-Safe Headline with SVG stroke-drawing 'hello' animation on the typography */}
-              <h1 className="font-headline-hero text-headline-hero font-normal leading-[1.15] w-full">
-                {/* Semantic HTML text for search crawlers & screen readers */}
-                <span className="sr-only">Agra to anywhere, in first-class comfort.</span>
+              {/* 100% SEO-Safe Headline with Signature Hello Animation + Elegant Write-On Reveal */}
+              <div className="flex flex-col items-start gap-1 w-full max-w-[620px]">
+                {/* Signature Apple-Style Cursive Hello Effect */}
+                <div className="overflow-visible pb-0.5" aria-hidden="true">
+                  <AppleHelloEnglishEffect
+                    className="h-12 sm:h-14 md:h-16 w-auto text-[#E5A044] drop-shadow-[0_2px_14px_rgba(229,160,68,0.5)]"
+                    speed={0.8}
+                  />
+                </div>
 
-                {/* Animated typography stroke reveal replicating the Apple Hello effect */}
-                <div aria-hidden="true" className="select-none flex flex-col gap-1 w-full max-w-[560px]">
-                  {/* Line 1: Agra to anywhere, */}
-                  <svg
-                    viewBox="0 0 540 60"
-                    className="w-full max-w-[500px] h-auto overflow-visible drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)]"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <motion.text
-                      x="2"
-                      y="46"
-                      className="font-serif tracking-normal"
+                <h1 className="font-headline-hero text-headline-hero font-normal leading-[1.12] w-full">
+                  {/* Semantic HTML text for search crawlers & screen readers */}
+                  <span className="sr-only">Agra to anywhere, in first-class comfort.</span>
+
+                  <div aria-hidden="true" className="select-none flex flex-col gap-1 w-full">
+                    {/* Line 1: Agra to anywhere, */}
+                    <motion.div
+                      className="text-ivory-surface font-serif tracking-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
                       style={{
-                        fontFamily: "'EB Garamond', serif",
-                        fontSize: "46px",
-                        fontWeight: 400,
+                        fontSize: "clamp(2.4rem, 5vw, 3.6rem)",
+                        lineHeight: 1.15,
+                        fontFamily: "'Playfair Display', 'EB Garamond', Georgia, serif",
                       }}
-                      stroke="#F9FAF6"
-                      strokeWidth="1.2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      fill="#F9FAF6"
-                      initial={isClient ? { strokeDasharray: 750, strokeDashoffset: 750, fillOpacity: 0 } : false}
-                      animate={isClient ? { strokeDashoffset: 0, fillOpacity: 1 } : undefined}
-                      transition={{
-                        strokeDashoffset: { duration: 1.6, ease: [0.25, 1, 0.5, 1], delay: 0.2 },
-                        fillOpacity: { duration: 0.6, delay: 1.1, ease: "easeOut" },
-                      }}
+                      initial={isClient ? { opacity: 0, clipPath: "inset(0 100% 0 0)" } : false}
+                      animate={isClient ? { opacity: 1, clipPath: "inset(0 0% 0 0)" } : undefined}
+                      transition={{ duration: 1.0, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
                     >
                       Agra to anywhere,
-                    </motion.text>
-                  </svg>
+                    </motion.div>
 
-                  {/* Line 2: in first-class comfort. + Gold flourish curve */}
-                  <div className="relative w-full max-w-[540px]">
-                    <svg
-                      viewBox="0 0 540 68"
-                      className="w-full max-w-[520px] h-auto overflow-visible drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)]"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <motion.text
-                        x="2"
-                        y="48"
-                        className="font-serif italic"
+                    {/* Line 2: in first-class comfort. + Gold flourish curve */}
+                    <div className="relative w-full max-w-[560px]">
+                      <motion.div
+                        className="font-serif italic tracking-tight text-[#E07A5F] drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
                         style={{
-                          fontFamily: "'EB Garamond', serif",
-                          fontSize: "44px",
+                          fontSize: "clamp(2.3rem, 4.8vw, 3.5rem)",
+                          lineHeight: 1.15,
+                          fontFamily: "'Playfair Display', 'EB Garamond', Georgia, serif",
                           fontStyle: "italic",
-                          fontWeight: 400,
                         }}
-                        stroke="#E07A5F"
-                        strokeWidth="1.2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        fill="#E07A5F"
-                        initial={isClient ? { strokeDasharray: 750, strokeDashoffset: 750, fillOpacity: 0 } : false}
-                        animate={isClient ? { strokeDashoffset: 0, fillOpacity: 1 } : undefined}
-                        transition={{
-                          strokeDashoffset: { duration: 1.8, ease: [0.25, 1, 0.5, 1], delay: 0.8 },
-                          fillOpacity: { duration: 0.6, delay: 1.8, ease: "easeOut" },
-                        }}
+                        initial={isClient ? { opacity: 0, clipPath: "inset(0 100% 0 0)" } : false}
+                        animate={isClient ? { opacity: 1, clipPath: "inset(0 0% 0 0)" } : undefined}
+                        transition={{ duration: 1.1, delay: 1.2, ease: [0.16, 1, 0.3, 1] }}
                       >
                         in first-class comfort.
-                      </motion.text>
+                      </motion.div>
 
                       {/* Cursive flourish underline stroke */}
-                      <motion.path
-                        d="M4 60 C80 54 180 53 380 57"
-                        stroke="#D99A3E"
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                        initial={isClient ? { pathLength: 0, opacity: 0 } : false}
-                        animate={isClient ? { pathLength: 1, opacity: 0.95 } : undefined}
-                        transition={{ duration: 1.0, delay: 2.0, ease: [0.16, 1, 0.3, 1] }}
-                      />
-                    </svg>
+                      <svg
+                        viewBox="0 0 520 24"
+                        className="w-full max-w-[480px] h-auto overflow-visible mt-0.5 drop-shadow-[0_2px_8px_rgba(229,160,68,0.4)]"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <motion.path
+                          d="M4 14 C120 18, 300 6, 500 12"
+                          stroke="#E5A044"
+                          strokeWidth="3.2"
+                          strokeLinecap="round"
+                          initial={isClient ? { pathLength: 0, opacity: 0 } : false}
+                          animate={isClient ? { pathLength: 1, opacity: 1 } : undefined}
+                          transition={{ duration: 1.1, delay: 2.1, ease: [0.16, 1, 0.3, 1] }}
+                        />
+                      </svg>
+                    </div>
                   </div>
-                </div>
-              </h1>
+                </h1>
+              </div>
               <p className="font-body-lg text-body-lg text-ivory-surface max-w-lg leading-relaxed drop-shadow-[0_1px_4px_rgba(0,0,0,0.6)]">
                 Verified drivers, fixed fares, and all expressway tolls included. Direct pickup across Agra. Book online or on WhatsApp in 2 minutes.
               </p>
@@ -536,7 +519,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
                 Cab Services
               </span>
               <h2 className="font-headline-lg text-headline-lg text-ivory-surface max-w-xl">
-                Cab &amp; Tour Services from Agra
+                Cab &amp; Tour Services
               </h2>
             </div>
 
@@ -658,10 +641,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
                     alt={v.label}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-ink-midnight/60 via-transparent to-transparent" />
-                  <span className="absolute bottom-2.5 left-2.5 font-price-display text-2xl font-bold text-ivory-surface drop-shadow">{v.price}</span>
-                  <span className="absolute bottom-2.5 right-2.5 font-label-caps text-[8px] text-ivory-surface/80 bg-ink-midnight/60 px-1.5 py-0.5 rounded backdrop-blur-sm uppercase">
-                    Delhi drop
-                  </span>
+                 
                 </div>
                 <div className="p-3.5 flex-1 flex flex-col gap-2">
                   <div>

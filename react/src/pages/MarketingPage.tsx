@@ -19,14 +19,14 @@ const copy = {
     fallback: ["SK Baghel Tour & Travels", "Plan your next journey from Agra.", "Explore our services, routes, vehicles, and private tour packages."]
   },
   hi: {
-    fleet: ["हमारी गाड़ियां", "हर यात्रा के लिए आरामदायक गाड़ियां।", "यात्रियों, सामान और रास्ते के अनुसार वाहन चुनें।"],
-    routes: ["लोकप्रिय रूट", "आगरा से साफ और आसान किराये।", "अपनी यात्रा के लिए सही वाहन चुनकर अनुरोध भेजें।"],
-    packages: ["यात्रा पैकेज", "आराम से शहर और स्मारक देखें।", "आगरा और आसपास के लिए निजी ड्राइवर वाले पैकेज।"],
-    services: ["यात्रा सेवाएं", "पूरी यात्रा के लिए एक स्थानीय टीम।", "टैक्सी, दर्शनीय स्थल और बहु-शहर यात्रा एक ही जगह।"],
-    contact: ["संपर्क", "बताइए आपको कहां जाना है।", "स्थानीय टीम से कॉल या संदेश पर सही गाड़ी और समय चुनें।"],
-    about: ["SK Baghel के बारे में", "स्थानीय जानकारी, भरोसेमंद यात्रा।", "आगरा से एयरपोर्ट ट्रांसफर, दर्शनीय स्थल, टैक्सी और निजी टूर।"],
-    faq: ["अक्सर पूछे जाने वाले प्रश्न", "बुकिंग से पहले सीधे जवाब।", "यात्री सबसे अधिक यही जानकारी पूछते हैं।"],
-    fallback: ["SK Baghel Tour & Travels", "आगरा से अगली यात्रा की योजना बनाएं।", "सेवाएं, रूट, गाड़ियां और निजी टूर देखें।"]
+    fleet: ["Our fleet", "Comfortable cars for every kind of journey.", "Choose a vehicle by group size, luggage, and the kind of road ahead."],
+    routes: ["Popular routes", "Clear fares from Agra and beyond.", "Compare common outstation journeys and request the vehicle that fits your plan."],
+    packages: ["Curated journeys", "See more, without rushing.", "Private, chauffeur-driven itineraries built around Agra's landmarks and nearby cities."],
+    services: ["Travel services", "One local team for the whole journey.", "From a Taj Mahal morning to a multi-city transfer, we keep the details simple."],
+    contact: ["Contact", "Tell us where you want to go.", "Call or message the local desk and we will help you choose the right car and timing."],
+    about: ["About SK Baghel", "Local knowledge, dependable travel.", "We are an Agra-based travel desk for airport transfers, sightseeing, outstation taxis, and private tours."],
+    faq: ["Frequently asked questions", "Straight answers before you book.", "Here are the details travellers usually want to know."],
+    fallback: ["SK Baghel Tour & Travels", "Plan your next journey from Agra.", "Explore our services, routes, vehicles, and private tour packages."]
   }
 } as const;
 

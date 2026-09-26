@@ -15,8 +15,7 @@ export function RadialDock({ currentPath, className = "" }: RadialDockProps) {
   const path =
     currentPath ||
     (typeof window !== "undefined" ? window.location.pathname : "/");
-  const isHindi = path.startsWith("/hi");
-  const packagesHref = isHindi ? "/hi/packages/" : "/en/packages/";
+  const packagesHref = "/en/packages/";
   const bookHref = "/book.html";
 
   // Toggle open/closed state on click
@@ -65,14 +64,14 @@ export function RadialDock({ currentPath, className = "" }: RadialDockProps) {
       ref={dockRef}
       className={`about radial-dock ${isOpen ? "is-open" : ""} ${className}`.trim()}
       role="region"
-      aria-label={isHindi ? "त्वरित संपर्क एवं नेविगेशन" : "Quick Actions"}
+      aria-label="Quick Actions"
     >
       {/* 1. Phone Call Action */}
       <a
         className="bg_links social portfolio"
         href={`tel:${contact.phone}`}
-        aria-label={isHindi ? `कॉल करें ${contact.phoneDisplay}` : `Call ${contact.phoneDisplay}`}
-        title={isHindi ? `कॉल करें: ${contact.phoneDisplay}` : `Call ${contact.phoneDisplay}`}
+        aria-label={`Call ${contact.phoneDisplay}`}
+        title={`Call: ${contact.phoneDisplay}`}
         tabIndex={isOpen ? 0 : -1}
       >
         <span className="icon">
@@ -88,7 +87,7 @@ export function RadialDock({ currentPath, className = "" }: RadialDockProps) {
         href={`https://wa.me/${contact.whatsapp}`}
         target="_blank"
         rel="noreferrer"
-        aria-label={isHindi ? "व्हाट्सएप संपर्क" : `WhatsApp ${contact.phoneDisplay}`}
+        aria-label={`WhatsApp ${contact.phoneDisplay}`}
         title="WhatsApp"
         tabIndex={isOpen ? 0 : -1}
       >
@@ -104,8 +103,8 @@ export function RadialDock({ currentPath, className = "" }: RadialDockProps) {
         className="bg_links social linkedin"
         href={packagesHref}
         onMouseEnter={() => prefetchDocument(packagesHref)}
-        aria-label={isHindi ? "टूर पैकेज देखें" : "Explore Tours"}
-        title={isHindi ? "टूर पैकेज देखें" : "Explore Tours"}
+        aria-label="Explore Tours"
+        title="Explore Tours"
         tabIndex={isOpen ? 0 : -1}
       >
         <span className="icon">
@@ -132,8 +131,8 @@ export function RadialDock({ currentPath, className = "" }: RadialDockProps) {
         className="bg_links social booking"
         href={bookHref}
         onMouseEnter={() => prefetchDocument(bookHref)}
-        aria-label={isHindi ? "तत्काल टैक्सी बुकिंग" : "Instant Taxi Booking"}
-        title={isHindi ? "तत्काल टैक्सी बुकिंग" : "Instant Taxi Booking"}
+        aria-label="Instant Taxi Booking"
+        title="Instant Taxi Booking"
         tabIndex={isOpen ? 0 : -1}
       >
         <span className="icon">
@@ -162,17 +161,9 @@ export function RadialDock({ currentPath, className = "" }: RadialDockProps) {
         type="button"
         className="bg_links logo"
         onClick={toggleOpen}
-        aria-label={
-          isOpen
-            ? isHindi
-              ? "त्वरित मेनू बंद करें"
-              : "Close quick actions menu"
-            : isHindi
-            ? "त्वरित मेनू खोलें"
-            : "Quick Actions"
-        }
+        aria-label={isOpen ? "Close quick actions menu" : "Quick Actions"}
         aria-expanded={isOpen}
-        title={isHindi ? "त्वरित मेनू" : "Quick Navigation"}
+        title="Quick Navigation"
       >
         <span className="icon">
           <span className="icon icon-action" aria-hidden="true">

@@ -180,11 +180,10 @@ export function FaqPage({ language = "en" }: FaqPageProps) {
                   key={cat.id}
                   type="button"
                   onClick={() => setActiveCategory(cat.id as any)}
-                  className={`px-4 py-2 rounded-lg font-label-caps text-xs uppercase tracking-wider transition-all whitespace-nowrap font-bold ${
-                    activeCategory === cat.id
+                  className={`px-4 py-2 rounded-lg font-label-caps text-xs uppercase tracking-wider transition-all whitespace-nowrap font-bold ${activeCategory === cat.id
                       ? "bg-ink-charcoal text-white shadow-sm"
                       : "bg-surface-container hover:bg-surface-container-high text-on-surface-variant"
-                  }`}
+                    }`}
                 >
                   {cat.label}
                 </button>
@@ -259,7 +258,7 @@ export function FaqPage({ language = "en" }: FaqPageProps) {
               <div className="w-8 h-8 rounded-full bg-neutral-800 flex items-center justify-center mb-2">
                 <WhatsAppIcon className="w-5 h-5 shrink-0" />
               </div>
-              <h4 className="font-title-md text-xs font-bold text-white">WhatsApp Concierge</h4>
+              <h4 className="font-title-md text-xs font-bold text-white">WhatsApp</h4>
               <p className="text-[10.5px] text-[#25D366] font-bold mt-0.5">Instant Response</p>
             </a>
 

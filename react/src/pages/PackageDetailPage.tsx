@@ -85,7 +85,7 @@ const TOUR_FAQS: TourFaq[] = [
   },
   {
     q: "How do we purchase monument entry tickets?",
-    a: "The Archaeological Survey of India (ASI) requires photo identification (Passport or Aadhaar card) for ticket issuance. You may purchase tickets online via the ASI portal, or simply ask our WhatsApp concierge to pre-book them electronically under your names to bypass all on-site ticketing counters entirely.",
+    a: "The Archaeological Survey of India (ASI) requires photo identification (Passport or Aadhaar card) for ticket issuance. You may purchase tickets online via the ASI portal, or simply ask our WhatsApp to pre-book them electronically under your names to bypass all on-site ticketing counters entirely.",
   },
   {
     q: "Can we alter the departure timing or customize stops?",
@@ -803,9 +803,8 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
                   <div className="flex items-center justify-between gap-space-sm">
                     <h4 className="font-title-md text-title-md text-on-surface font-medium">{faq.q}</h4>
                     <span
-                      className={`material-symbols-outlined text-primary text-[20px] transition-transform duration-200 ${
-                        isOpen ? "rotate-180" : ""
-                      }`}
+                      className={`material-symbols-outlined text-primary text-[20px] transition-transform duration-200 ${isOpen ? "rotate-180" : ""
+                        }`}
                     >
                       expand_more
                     </span>

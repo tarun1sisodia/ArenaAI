@@ -81,9 +81,7 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
           </nav>
 
           <div className="max-w-4xl">
-            <span className="px-3 py-1 rounded-full bg-primary/10 text-primary font-label-caps text-[11px] uppercase tracking-wider font-bold inline-block mb-3">
-              Taj Ganj Central Dispatch
-            </span>
+           
             <h1 className="font-headline-hero text-ink-charcoal text-headline-hero tracking-tight leading-tight mb-3">
               Your chauffeur is stationed. We&apos;re a ring away.
             </h1>
@@ -166,7 +164,7 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
             </a>
           </div>
 
-          {/* Card 2: WhatsApp Concierge Desk (Compact -20%) */}
+          {/* Card 2: WhatsApp Desk (Compact -20%) */}
           <div className="bg-surface-container-lowest border border-border-warm rounded-xl p-3.5 sm:p-4.5 flex flex-col justify-between shadow-xs hover:shadow-sm transition-shadow relative overflow-hidden">
             <div className="absolute top-0 right-0">
               <span className="bg-success-jade text-white font-label-caps text-[9px] px-2.5 py-0.5 rounded-bl uppercase tracking-wider font-semibold">
@@ -178,7 +176,7 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
                 <WhatsAppIcon className="w-5 h-5 shrink-0" />
               </div>
               <h3 className="font-headline-sm text-ink-charcoal text-base mb-1 font-semibold">
-                WhatsApp Concierge Desk (Fastest)
+                WhatsApp Desk (Fastest)
               </h3>
               <p className="font-title-lg text-ink-charcoal mb-2 font-bold text-sm sm:text-base">+91 98765 43210</p>
               <p className="text-on-surface-variant font-body-sm leading-relaxed mb-4 text-[10.5px]">
@@ -228,251 +226,7 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
           </div>
         </div>
 
-        {/* 3. TWO-COLUMN LAYOUT: INQUIRY FORM + GARAGE DETAILS */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start pt-4">
-          {/* Left Column (7 cols): Booking / Quote Form (Compact -20%) */}
-          <div className="lg:col-span-7 bg-surface-container-lowest border border-border-warm rounded-xl p-4 sm:p-5 lg:p-6 shadow-xs">
-            <div className="border-b border-border-warm pb-4 mb-4">
-              <div className="flex items-center gap-1.5 text-terracotta-sandstone text-[10px] font-bold uppercase tracking-wider font-label-caps mb-1">
-                <span className="material-symbols-outlined text-sm">speed</span>
-                <span>15-Minute Guaranteed Confirmation</span>
-              </div>
-              <h2 className="font-headline-lg text-headline-lg text-ink-charcoal">
-                Send Itinerary or Request Direct Quote
-              </h2>
-              <p className="text-on-surface-variant font-body-sm mt-1 text-[11px]">
-                Receive customized rates with zero hidden charges within 15 minutes directly on WhatsApp or Call.
-              </p>
-            </div>
-
-            {submitted && (
-              <div className="mb-4 p-3 rounded-lg bg-success-jade/10 border border-success-jade/30 text-success-jade flex items-center gap-2.5">
-                <span className="material-symbols-outlined text-xl">check_circle</span>
-                <div>
-                  <h4 className="font-bold text-xs">Inquiry Dispatched to Taj Ganj Control Desk!</h4>
-                  <p className="text-[10px] mt-0.5">Connecting you with our concierge on WhatsApp shortly...</p>
-                </div>
-              </div>
-            )}
-
-            <form onSubmit={handleSubmit} className="space-y-3">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-label-lg text-ink-charcoal text-[10px] mb-1 uppercase tracking-wider font-bold">
-                    Full Name *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="e.g. Vikram Malhotra"
-                    className="w-full rounded-lg border border-border-warm bg-surface-bright px-3 py-2 text-xs text-ink-charcoal focus:border-terracotta-sandstone focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block font-label-lg text-ink-charcoal text-[10px] mb-1 uppercase tracking-wider font-bold">
-                    WhatsApp Number *
-                  </label>
-                  <div className="flex">
-                    <span className="inline-flex items-center px-2.5 border border-r-0 border-border-warm bg-sandstone-wash text-ink-charcoal text-[10px] font-semibold rounded-l-lg">
-                      +91
-                    </span>
-                    <input
-                      type="tel"
-                      required
-                      value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      placeholder="98765 43210"
-                      className="w-full rounded-r-lg border border-border-warm bg-surface-bright px-3 py-2 text-xs text-ink-charcoal focus:border-terracotta-sandstone focus:outline-none"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <label className="block font-label-lg text-ink-charcoal text-[10px] mb-1 uppercase tracking-wider font-bold">
-                  Email Address{" "}
-                  <span className="text-secondary text-[10px] normal-case font-normal">(For GST Tax Receipt &amp; Voucher)</span>
-                </label>
-                <input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  placeholder="name@company.com"
-                  className="w-full rounded-lg border border-border-warm bg-surface-bright px-3 py-2 text-xs text-ink-charcoal focus:border-terracotta-sandstone focus:outline-none"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-label-lg text-ink-charcoal text-[10px] mb-1 uppercase tracking-wider font-bold">
-                    Service Category *
-                  </label>
-                  <select
-                    value={formData.serviceType}
-                    onChange={(e) => setFormData({ ...formData, serviceType: e.target.value })}
-                    className="w-full rounded-lg border border-border-warm bg-surface-bright px-3 py-2 text-xs text-ink-charcoal focus:border-terracotta-sandstone focus:outline-none cursor-pointer"
-                  >
-                    <option value="outstation-oneway">One-Way Outstation Drop (Delhi/Jaipur/Lucknow)</option>
-                    <option value="roundtrip">Multi-Day Round Trip (Rajasthan / Golden Triangle)</option>
-                    <option value="sightseeing">Taj Mahal &amp; Agra Sightseeing (8h/80km)</option>
-                    <option value="airport">Airport/Railway Station Transfer (IGI / Cantt)</option>
-                    <option value="tempo">Tempo Traveller Group Booking</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block font-label-lg text-ink-charcoal text-[10px] mb-1 uppercase tracking-wider font-bold">
-                    Preferred Vehicle *
-                  </label>
-                  <select
-                    value={formData.vehiclePreference}
-                    onChange={(e) => setFormData({ ...formData, vehiclePreference: e.target.value })}
-                    className="w-full rounded-lg border border-border-warm bg-surface-bright px-3 py-2 text-xs text-ink-charcoal focus:border-terracotta-sandstone focus:outline-none cursor-pointer"
-                  >
-                    <option value="sedan">Sedan (Dzire / Etios) - 4 Pax</option>
-                    <option value="ertiga">Ertiga MPV (6+1 Seater AC) - 5-6 Pax</option>
-                    <option value="crysta">Innova Crysta Captain Seats - 6-7 Pax</option>
-                    <option value="tempo">Force Tempo Traveller (12 to 26 Seater)</option>
-                    <option value="urbania">Force Urbania VIP Luxury Van</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-label-lg text-ink-charcoal text-[10px] mb-1 uppercase tracking-wider font-bold">
-                    Pickup Date *
-                  </label>
-                  <input
-                    type="date"
-                    required
-                    value={formData.tripDate}
-                    onChange={(e) => setFormData({ ...formData, tripDate: e.target.value })}
-                    className="w-full rounded-lg border border-border-warm bg-surface-bright px-3 py-2 text-xs text-ink-charcoal focus:border-terracotta-sandstone focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block font-label-lg text-ink-charcoal text-[10px] mb-1 uppercase tracking-wider font-bold">
-                    Pickup Time *
-                  </label>
-                  <input
-                    type="time"
-                    required
-                    value={formData.tripTime}
-                    onChange={(e) => setFormData({ ...formData, tripTime: e.target.value })}
-                    className="w-full rounded-lg border border-border-warm bg-surface-bright px-3 py-2 text-xs text-ink-charcoal focus:border-terracotta-sandstone focus:outline-none"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block font-label-lg text-ink-charcoal text-[10px] mb-1 uppercase tracking-wider font-bold">
-                  Pickup Location in Agra or NCR *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.pickupLocation}
-                  onChange={(e) => setFormData({ ...formData, pickupLocation: e.target.value })}
-                  placeholder="e.g. Hotel Clarks Shiraz / Agra Cantt (AGC) / Delhi IGI Airport T3"
-                  className="w-full rounded-lg border border-border-warm bg-surface-bright px-3 py-2 text-xs text-ink-charcoal focus:border-terracotta-sandstone focus:outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block font-label-lg text-ink-charcoal text-[10px] mb-1 uppercase tracking-wider font-bold">
-                  Destination / Itinerary Details
-                </label>
-                <textarea
-                  rows={2}
-                  value={formData.notes}
-                  onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                  placeholder="e.g. Arriving by Gatimaan Express at 9:50 AM, need Taj Mahal + Agra Fort + Fatehpur Sikri drop at hotel."
-                  className="w-full rounded-lg border border-border-warm bg-surface-bright px-3 py-2 text-xs text-ink-charcoal focus:border-terracotta-sandstone focus:outline-none resize-none"
-                />
-              </div>
-
-              <div className="flex items-center gap-2 pt-0.5">
-                <input
-                  type="checkbox"
-                  id="gst-invoice"
-                  checked={formData.gstRequired}
-                  onChange={(e) => setFormData({ ...formData, gstRequired: e.target.checked })}
-                  className="rounded border-border-warm text-terracotta-sandstone focus:ring-terracotta-sandstone size-3.5"
-                />
-                <label htmlFor="gst-invoice" className="text-[10.5px] text-on-surface font-medium select-none cursor-pointer">
-                  I require an official GST tax invoice for corporate / personal expense filing
-                </label>
-              </div>
-
-              <button
-                type="submit"
-                className="w-full py-2.5 px-4 rounded-lg bg-terracotta-sandstone hover:bg-primary text-white font-label-lg text-xs font-semibold transition-all shadow-xs flex items-center justify-center gap-1.5 mt-3"
-              >
-                <span>Request Guaranteed Quote (15-Min Response)</span>
-                <span className="material-symbols-outlined text-[16px]">send</span>
-              </button>
-            </form>
-          </div>
-
-          {/* Right Column (5 cols): Garage & Express Corridors (Compact -20%) */}
-          <div className="lg:col-span-5 space-y-4">
-            {/* Physical Garage Box */}
-            <div className="bg-surface-container-lowest border border-border-warm rounded-xl p-4 sm:p-4.5 shadow-xs">
-              <div className="flex items-center gap-2.5 mb-3">
-                <div className="w-8 h-8 rounded-full bg-sandstone-wash flex items-center justify-center text-primary">
-                  <span className="material-symbols-outlined text-[18px]">storefront</span>
-                </div>
-                <div>
-                  <h4 className="font-title-md text-xs text-ink-charcoal font-bold">Taj Ganj Operational Hub</h4>
-                  <span className="font-label-caps text-[9px] text-on-surface-variant uppercase">Headquarters &amp; Garage</span>
-                </div>
-              </div>
-              <p className="text-[10.5px] text-on-surface-variant leading-relaxed mb-3">
-                Near Taj East Gate Road, Taj Ganj, Agra, Uttar Pradesh 282001. Operating 24 hours daily with round-the-clock vehicle
-                sanitization bays and relief driver quarters.
-              </p>
-              <div className="space-y-1.5 text-[10.5px] border-t border-border-warm/60 pt-2.5">
-                <div className="flex justify-between">
-                  <span className="text-on-surface-variant">Agra Cantt Railway Station:</span>
-                  <span className="font-semibold text-ink-charcoal">12 mins (4.8 km)</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-on-surface-variant">Yamuna Expressway Toll Plaza:</span>
-                  <span className="font-semibold text-ink-charcoal">15 mins (11 km)</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-on-surface-variant">Taj Mahal East Gate Entrance:</span>
-                  <span className="font-semibold text-ink-charcoal">3 mins (800 m)</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Quick Distance Benchmark */}
-            <div className="bg-sandstone-wash/40 border border-border-warm/70 rounded-xl p-4 sm:p-4.5">
-              <h4 className="font-headline-sm text-ink-charcoal text-sm font-semibold mb-2">Popular Distance Benchmark</h4>
-              <div className="space-y-2 text-[10.5px] text-on-surface-variant">
-                <div className="flex items-center justify-between pb-1.5 border-b border-border-warm/40">
-                  <span className="font-medium text-ink-charcoal">Agra → Delhi IGI T3</span>
-                  <span className="text-primary font-bold">230 km · 3h 30m</span>
-                </div>
-                <div className="flex items-center justify-between pb-1.5 border-b border-border-warm/40">
-                  <span className="font-medium text-ink-charcoal">Agra → Jaipur Pink City</span>
-                  <span className="text-primary font-bold">240 km · 4h 30m</span>
-                </div>
-                <div className="flex items-center justify-between pb-1.5 border-b border-border-warm/40">
-                  <span className="font-medium text-ink-charcoal">Agra → Mathura Vrindavan</span>
-                  <span className="text-primary font-bold">55 km · 1h 15m</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="font-medium text-ink-charcoal">Agra → Gwalior Fort</span>
-                  <span className="text-primary font-bold">120 km · 2h 30m</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      
 
         {/* 4. DISPATCH FAQS (Compact -20%) */}
         <div className="max-w-4xl mx-auto pt-6">

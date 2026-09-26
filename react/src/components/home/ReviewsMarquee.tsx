@@ -99,24 +99,13 @@ export function ReviewsMarquee() {
       <div className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin mb-space-lg text-center">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-accent/15 text-gold-accent font-label-caps text-[10px] mb-2 font-bold">
           <span className="material-symbols-outlined text-[15px]">hotel_class</span>
-          VERIFIED TRAVELER REVIEWS
+          OUR TRAVELER REVIEWS
         </div>
         <h2 className="font-headline-lg text-headline-lg text-on-surface tracking-tight">
           3,800+ Expeditions. <br className="hidden sm:inline" />
-          <span className="italic text-terracotta-sandstone">Quiet Confidence.</span>
         </h2>
         <div className="flex items-center justify-center gap-2 mt-2">
-          <div className="flex text-gold-accent" aria-hidden="true">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <span key={i} className="material-symbols-outlined text-[18px]">
-                star
-              </span>
-            ))}
-          </div>
-          <span className="font-title-md text-sm text-on-surface font-bold">4.9 / 5</span>
-          <span className="text-on-surface-variant text-xs font-medium">
-            · Over 3,800 Verified Journeys
-          </span>
+         
         </div>
       </div>
 

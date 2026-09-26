@@ -222,15 +222,15 @@ export const routeGuidance: Readonly<Record<string, RouteGuidanceItem>> = {
     transitTime: "3h 30m (230 km)",
     departureTip: {
       en: "Early morning (05:00–07:00 AM) or mid-afternoon (01:00–03:00 PM) to avoid Delhi NCR peak rush hour.",
-      hi: "दिल्ली एनसीआर के पीक ट्रैफिक से बचने के लिए सुबह जल्दी (05:00–07:00 AM) या दोपहर 1:00 से 3:00 बजे निकलना उत्तम रहता है।",
+      hi: "Early morning (05:00–07:00 AM) or mid-afternoon (01:00–03:00 PM) to avoid Delhi NCR peak rush hour.",
     },
     restStops: {
       en: "Jewar Toll Plaza & Tappal Plaza (Costa Coffee, Haldiram's, Subway, clean sanitised rest areas).",
-      hi: "जेवर टोल प्लाजा व टप्पल प्लाजा फूड कोर्ट (हल्दीराम, सबवे, कोस्टा कॉफी व स्वच्छ वॉशरूम)।",
+      hi: "Jewar Toll Plaza & Tappal Plaza (Costa Coffee, Haldiram's, Subway, clean sanitised rest areas).",
     },
     tollTaxPolicy: {
       en: "One-way booking includes Yamuna Expressway toll. Round-trip tolls and state permits charged at actuals.",
-      hi: "वन-वे बुकिंग में यमुना एक्सप्रेसवे टोल शामिल है। राउंड-ट्रिप में टोल व स्टेट टैक्स वास्तविक पर्ची अनुसार।",
+      hi: "One-way booking includes Yamuna Expressway toll. Round-trip tolls and state permits charged at actuals.",
     },
   },
   "delhi-agra": {
@@ -238,15 +238,15 @@ export const routeGuidance: Readonly<Record<string, RouteGuidanceItem>> = {
     transitTime: "3h 30m (230 km)",
     departureTip: {
       en: "06:00 AM departure from Delhi gets you to the Taj Mahal ticket gate by 09:30 AM before peak tourist crowds.",
-      hi: "दिल्ली से सुबह 6:00 बजे निकलने पर आप सुबह 9:30 बजे तक ताज महल पहुँच सकते हैं, भीड़ से पहले।",
+      hi: "06:00 AM departure from Delhi gets you to the Taj Mahal ticket gate by 09:30 AM before peak tourist crowds.",
     },
     restStops: {
       en: "Food courts at KM 64 and KM 118 on Yamuna Expressway with hygienic breakfast options.",
-      hi: "यमुना एक्सप्रेसवे पर किमी 64 और किमी 118 पर स्वच्छ रेस्टोरेंट व ब्रेकफास्ट सुविधा।",
+      hi: "Food courts at KM 64 and KM 118 on Yamuna Expressway with hygienic breakfast options.",
     },
     tollTaxPolicy: {
       en: "One-way fare is 100% all-inclusive (expressway toll & driver allowance included).",
-      hi: "वन-वे किराया पूरी तरह ऑल-इनक्लूसिव है (एक्सप्रेसवे टोल व ड्राइवर चार्ज शामिल)।",
+      hi: "One-way fare is 100% all-inclusive (expressway toll & driver allowance included).",
     },
   },
   "agra-jaipur": {
@@ -254,15 +254,15 @@ export const routeGuidance: Readonly<Record<string, RouteGuidanceItem>> = {
     transitTime: "4h 30m (240 km)",
     departureTip: {
       en: "Depart by 07:30 AM with an optional 1.5-hour stop at UNESCO World Heritage Fatehpur Sikri en route.",
-      hi: "सुबह 7:30 बजे प्रस्थान करें, रास्ते में विश्व धरोहर फतेहपुर सीकरी का 1.5 घंटे का स्टॉप ले सकते हैं।",
+      hi: "Depart by 07:30 AM with an optional 1.5-hour stop at UNESCO World Heritage Fatehpur Sikri en route.",
     },
     restStops: {
       en: "Midway restaurants near Bharatpur and Mahwa Highway Treat with pure vegetarian Rajasthani thalis.",
-      hi: "भरतपुर और महवा के पास हाईवे डाइनिंग (शुद्ध शाकाहारी भोजन व जलपान)।",
+      hi: "Midway restaurants near Bharatpur and Mahwa Highway Treat with pure vegetarian Rajasthani thalis.",
     },
     tollTaxPolicy: {
       en: "NH-21 highway toll included in one-way fare. Rajasthan state tax is separate on round trips.",
-      hi: "वन-वे किराये में हाईवे टोल शामिल। राउंड-ट्रिप पर राजस्थान राज्य प्रवेश कर अलग से देय।",
+      hi: "NH-21 highway toll included in one-way fare. Rajasthan state tax is separate on round trips.",
     },
   },
   "agra-mathura": {
@@ -270,15 +270,15 @@ export const routeGuidance: Readonly<Record<string, RouteGuidanceItem>> = {
     transitTime: "1h 15m (55 km)",
     departureTip: {
       en: "Plan your trip around temple aarti times: Morning (07:00–11:00 AM) or Evening (04:30–08:30 PM).",
-      hi: "मंदिरों के पट खुलने व आरती के समय अनुसार यात्रा करें: सुबह 7 से 11 या शाम 4:30 से 8:30 बजे।",
+      hi: "Plan your trip around temple aarti times: Morning (07:00–11:00 AM) or Evening (04:30–08:30 PM).",
     },
     restStops: {
       en: "Famous Brijwasi sweets and Highway Masala Dosa hubs along the Farah–Mathura stretch.",
-      hi: "मथुरा मार्ग पर प्रसिद्ध ब्रजवासी मिष्ठान और हाईवे रेस्टोरेंट।",
+      hi: "Famous Brijwasi sweets and Highway Masala Dosa hubs along the Farah–Mathura stretch.",
     },
     tollTaxPolicy: {
       en: "Local toll and temple area parking assistance included in package.",
-      hi: "लोकल टोल और मंदिर परिसर पार्किंग सहायता किराये में शामिल।",
+      hi: "Local toll and temple area parking assistance included in package.",
     },
   },
   "agra-gwalior": {
@@ -286,15 +286,15 @@ export const routeGuidance: Readonly<Record<string, RouteGuidanceItem>> = {
     transitTime: "2h 30m (120 km)",
     departureTip: {
       en: "Early morning departure recommended for scenic crossing of the Chambal river valley.",
-      hi: "चंबल नदी घाटी के खूबसूरत नज़ारे देखने के लिए सुबह जल्दी प्रस्थान करें।",
+      hi: "Early morning departure recommended for scenic crossing of the Chambal river valley.",
     },
     restStops: {
       en: "Morena roadside dhabas famous for Gajak and North Indian breakfast.",
-      hi: "मुरैना के पास प्रसिद्ध गज़क और स्वादिष्ट नाश्ते के ढाबे।",
+      hi: "Morena roadside dhabas famous for Gajak and North Indian breakfast.",
     },
     tollTaxPolicy: {
       en: "Includes toll taxes. MP state commercial tax separate on outstation trips.",
-      hi: "टोल टैक्स शामिल। आउटस्टेशन ट्रिप पर मध्य प्रदेश स्टेट टैक्स अलग से देय।",
+      hi: "Includes toll taxes. MP state commercial tax separate on outstation trips.",
     },
   },
   "delhi-jaipur": {
@@ -302,15 +302,15 @@ export const routeGuidance: Readonly<Record<string, RouteGuidanceItem>> = {
     transitTime: "4h 30m (270 km)",
     departureTip: {
       en: "Use the new Delhi–Mumbai Expressway via Sohna for ultra-smooth 120 km/h driving experience.",
-      hi: "सोहना होकर नए दिल्ली-मुंबई एक्सप्रेसवे का उपयोग करें — तीव्र व आरामदायक सफर।",
+      hi: "Use the new Delhi–Mumbai Expressway via Sohna for ultra-smooth 120 km/h driving experience.",
     },
     restStops: {
       en: "Modern wayside amenities along NE-4 every 50 km with EV charging, McDonald's, and restrooms.",
-      hi: "एक्सप्रेसवे पर प्रत्येक 50 किमी पर आधुनिक फूड प्लाजा व स्वच्छ विश्राम स्थल।",
+      hi: "Modern wayside amenities along NE-4 every 50 km with EV charging, McDonald's, and restrooms.",
     },
     tollTaxPolicy: {
       en: "Expressway toll included in one-way fare. Round trip subject to 300 km/day minimum billing.",
-      hi: "वन-वे किराये में एक्सप्रेसवे टोल शामिल। राउंड ट्रिप 300 किमी/दिन की न्यूनतम दर पर।",
+      hi: "Expressway toll included in one-way fare. Round trip subject to 300 km/day minimum billing.",
     },
   },
   "agra-lucknow": {
@@ -318,15 +318,15 @@ export const routeGuidance: Readonly<Record<string, RouteGuidanceItem>> = {
     transitTime: "5h 15m (335 km)",
     departureTip: {
       en: "Non-stop 100 km/h cruising. Ensure vehicle tyre pressure is checked before entering expressway.",
-      hi: "100 किमी/घंटा की निर्बाध गति। एक्सप्रेसवे पर चढ़ने से पहले टायर प्रेशर अवश्य चेक करें।",
+      hi: "Non-stop 100 km/h cruising. Ensure vehicle tyre pressure is checked before entering expressway.",
     },
     restStops: {
       en: "Official UPEIDA wayside food courts at Firozabad, Kannauj, and Saifai.",
-      hi: "फिरोजाबाद, कन्नौज और सैफई पर आधिकारिक यूपीडा (UPEIDA) फूड प्लाजा।",
+      hi: "Official UPEIDA wayside food courts at Firozabad, Kannauj, and Saifai.",
     },
     tollTaxPolicy: {
       en: "Expressway toll included for one-way journeys.",
-      hi: "वन-वे यात्रा के लिए एक्सप्रेसवे टोल शामिल।",
+      hi: "Expressway toll included for one-way journeys.",
     },
   },
   "agra-local": {
@@ -334,15 +334,15 @@ export const routeGuidance: Readonly<Record<string, RouteGuidanceItem>> = {
     transitTime: "8 Hours / 80 Kilometers",
     departureTip: {
       en: "Start by 08:30 AM at Taj Mahal East Gate, followed by Agra Fort, Baby Taj, and sunset at Mehtab Bagh.",
-      hi: "सुबह 8:30 बजे ताज महल ईस्ट गेट से शुरुआत करें, फिर आगरा किला, बेबी ताज और मेहताब बाग सूर्यास्त।",
+      hi: "Start by 08:30 AM at Taj Mahal East Gate, followed by Agra Fort, Baby Taj, and sunset at Mehtab Bagh.",
     },
     restStops: {
       en: "Pinch of Spice, Dasaprakash, and Joney's Place for lunch; Sadar Bazaar for evening tea.",
-      hi: "फतेहाबाद रोड पर प्रसिद्ध रेस्टोरेंट (पिंच ऑफ स्पाइस आदि) और सदर बाजार में शाम की चाय।",
+      hi: "Pinch of Spice, Dasaprakash, and Joney's Place for lunch; Sadar Bazaar for evening tea.",
     },
     tollTaxPolicy: {
       en: "Includes fuel, driver allowance, and city parking. Extra km at ₹11/km (sedan) and extra hr at ₹150/hr.",
-      hi: "ईंधन, ड्राइवर भत्ता व पार्किंग शामिल। अतिरिक्त किमी ₹11/किमी और अतिरिक्त घंटा ₹150/घंटा।",
+      hi: "Includes fuel, driver allowance, and city parking. Extra km at ₹11/km (sedan) and extra hr at ₹150/hr.",
     },
   },
 };
@@ -367,18 +367,18 @@ export const packages: readonly TourPackage[] = [
     includes: ["Private AC vehicle", "Professional chauffeur", "All tolls, parking & state tax", "Guide assistance", "Bottled water"],
     excludes: ["Monument tickets", "Meals"],
     timeline: [
-      { time: "06:00 AM", title: { en: "Doorstep Pickup", hi: "होटल अथवा निवास से पिकअप" }, desc: { en: "Chauffeur arrives at your hotel or residence in Delhi NCR / Agra.", hi: "दिल्ली एनसीआर या आगरा में आपके होटल से आरामदायक प्रस्थान।" } },
-      { time: "09:30 AM", title: { en: "Taj Mahal Guided Visit", hi: "ताजमहल दर्शन" }, desc: { en: "Explore the UNESCO World Heritage marble mausoleum with historical insights.", hi: "विश्व प्रसिद्ध ताजमहल का विस्तृत व शांत भ्रमण।" } },
-      { time: "01:00 PM", title: { en: "Mughal Buffet Lunch", hi: "लंच ब्रेक" }, desc: { en: "Relaxed lunch at a verified multi-cuisine restaurant.", hi: "स्वच्छ व प्रामाणिक रेस्टोरेंट में दोपहर का भोजन।" } },
-      { time: "02:30 PM", title: { en: "Agra Fort & Baby Taj", hi: "आगरा किला व एत्मादुद्दौला" }, desc: { en: "Visit the red sandstone fort and the intricate jewel-box tomb.", hi: "भव्य लाल बलुआ पत्थर के किले व खूबसूरत नक्काशीदार मकबरे का दौरा।" } },
-      { time: "05:30 PM", title: { en: "Mehtab Bagh Sunset & Drop", hi: "मेहताब बाग सूर्यास्त व वापसी" }, desc: { en: "Catch sunset reflections across the Yamuna before return drop.", hi: "यमुना पार से ताज का सूर्यास्त दर्शन और वापसी।" } },
+      { time: "06:00 AM", title: { en: "Doorstep Pickup", hi: "Doorstep Pickup" }, desc: { en: "Chauffeur arrives at your hotel or residence in Delhi NCR / Agra.", hi: "Chauffeur arrives at your hotel or residence in Delhi NCR / Agra." } },
+      { time: "09:30 AM", title: { en: "Taj Mahal Guided Visit", hi: "Taj Mahal Guided Visit" }, desc: { en: "Explore the UNESCO World Heritage marble mausoleum with historical insights.", hi: "Explore the UNESCO World Heritage marble mausoleum with historical insights." } },
+      { time: "01:00 PM", title: { en: "Mughal Buffet Lunch", hi: "Mughal Buffet Lunch" }, desc: { en: "Relaxed lunch at a verified multi-cuisine restaurant.", hi: "Relaxed lunch at a verified multi-cuisine restaurant." } },
+      { time: "02:30 PM", title: { en: "Agra Fort & Baby Taj", hi: "Agra Fort & Baby Taj" }, desc: { en: "Visit the red sandstone fort and the intricate jewel-box tomb.", hi: "Visit the red sandstone fort and the intricate jewel-box tomb." } },
+      { time: "05:30 PM", title: { en: "Mehtab Bagh Sunset & Drop", hi: "Mehtab Bagh Sunset & Drop" }, desc: { en: "Catch sunset reflections across the Yamuna before return drop.", hi: "Catch sunset reflections across the Yamuna before return drop." } },
     ],
     upgrades: [
-      { vehId: "sedan", name: { en: "Sedan (Dzire / Etios)", hi: "सेडान (डिज़ायर / इटियोस)" }, seats: "4+1", price: 3499 },
-      { vehId: "ertiga", name: { en: "Ertiga MPV (6+1)", hi: "अर्टिगा एमपीवी (6+1)" }, seats: "6+1", price: 4499 },
-      { vehId: "innova", name: { en: "Innova Crysta (6+1)", hi: "इनोवा क्रिस्टा (6+1)" }, seats: "6+1", price: 6499 },
-      { vehId: "tempo", name: { en: "Tempo Traveller (12-Seater)", hi: "टेम्पो ट्रैवलर (12-सीटर)" }, seats: "12+1", price: 9500 },
-      { vehId: "urbania", name: { en: "Force Urbania Luxury Van", hi: "फ़ोर्स अर्बनिया लग्जरी वैन" }, seats: "10+1", price: 14000 },
+      { vehId: "sedan", name: { en: "Sedan (Dzire / Etios)", hi: "Sedan (Dzire / Etios)" }, seats: "4+1", price: 3499 },
+      { vehId: "ertiga", name: { en: "Ertiga MPV (6+1)", hi: "Ertiga MPV (6+1)" }, seats: "6+1", price: 4499 },
+      { vehId: "innova", name: { en: "Innova Crysta (6+1)", hi: "Innova Crysta (6+1)" }, seats: "6+1", price: 6499 },
+      { vehId: "tempo", name: { en: "Tempo Traveller (12-Seater)", hi: "Tempo Traveller (12-Seater)" }, seats: "12+1", price: 9500 },
+      { vehId: "urbania", name: { en: "Force Urbania Luxury Van", hi: "Force Urbania Luxury Van" }, seats: "10+1", price: 14000 },
     ],
   },
   {
@@ -446,11 +446,11 @@ export const packages: readonly TourPackage[] = [
     includes: ["Dedicated AC car for 3 days", "Driver stay & fuel", "All interstate taxes & tolls", "Hotel pickups"],
     excludes: ["Hotels", "Monument tickets", "Meals"],
     upgrades: [
-      { vehId: "sedan", name: { en: "Sedan (Dzire / Etios)", hi: "सेडान (डिज़ायर / इटियोस)" }, seats: "4+1", price: 18500 },
-      { vehId: "ertiga", name: { en: "Ertiga MPV (6+1)", hi: "अर्टिगा एमपीवी (6+1)" }, seats: "6+1", price: 22500 },
-      { vehId: "innova", name: { en: "Innova Crysta (6+1)", hi: "इनोवा क्रिस्टा (6+1)" }, seats: "6+1", price: 27500 },
-      { vehId: "tempo", name: { en: "Tempo Traveller (12-Seater)", hi: "टेम्पो ट्रैवलर (12-सीटर)" }, seats: "12+1", price: 36500 },
-      { vehId: "urbania", name: { en: "Force Urbania Luxury Van", hi: "फ़ोर्स अर्बनिया लग्जरी वैन" }, seats: "10+1", price: 45000 },
+      { vehId: "sedan", name: { en: "Sedan (Dzire / Etios)", hi: "Sedan (Dzire / Etios)" }, seats: "4+1", price: 18500 },
+      { vehId: "ertiga", name: { en: "Ertiga MPV (6+1)", hi: "Ertiga MPV (6+1)" }, seats: "6+1", price: 22500 },
+      { vehId: "innova", name: { en: "Innova Crysta (6+1)", hi: "Innova Crysta (6+1)" }, seats: "6+1", price: 27500 },
+      { vehId: "tempo", name: { en: "Tempo Traveller (12-Seater)", hi: "Tempo Traveller (12-Seater)" }, seats: "12+1", price: 36500 },
+      { vehId: "urbania", name: { en: "Force Urbania Luxury Van", hi: "Force Urbania Luxury Van" }, seats: "10+1", price: 45000 },
     ],
   },
 ];
@@ -631,7 +631,7 @@ export const agraMonuments: readonly AgraMonument[] = [
     builtIn: "1631 – 1648",
     blurb: {
       en: "The iconic white marble mausoleum and UNESCO World Heritage wonder built on the banks of the Yamuna River.",
-      hi: "यमुना नदी के तट पर स्थित विश्व प्रसिद्ध संगमरमर का मकबरा और यूनेस्को विश्व धरोहर स्थल।",
+      hi: "The iconic white marble mausoleum and UNESCO World Heritage wonder built on the banks of the Yamuna River.",
     },
   },
   {
@@ -643,7 +643,7 @@ export const agraMonuments: readonly AgraMonument[] = [
     builtIn: "1565",
     blurb: {
       en: "Massive 16th-century red sandstone fortress that served as the imperial seat of the Mughal dynasty.",
-      hi: "मुगल साम्राज्य की राजधानी रहा 16वीं शताब्दी का विशाल लाल बलुआ पत्थर का ऐतिहासिक किला।",
+      hi: "Massive 16th-century red sandstone fortress that served as the imperial seat of the Mughal dynasty.",
     },
   },
   {
@@ -655,7 +655,7 @@ export const agraMonuments: readonly AgraMonument[] = [
     builtIn: "1571",
     blurb: {
       en: "Preserved royal ghost city boasting the magnificent Buland Darwaza and Salim Chishti Dargah.",
-      hi: "अकबर द्वारा बसाई गई ऐतिहासिक नगरी, जहाँ विशाल बुलंद दरवाजा और शेख सलीम चिश्ती की दरगाह स्थित है।",
+      hi: "Preserved royal ghost city boasting the magnificent Buland Darwaza and Salim Chishti Dargah.",
     },
   },
   {
@@ -667,7 +667,7 @@ export const agraMonuments: readonly AgraMonument[] = [
     builtIn: "1622 – 1628",
     blurb: {
       en: "Delicate marble tomb renowned as the 'Jewel Box' and architectural precursor to the Taj Mahal.",
-      hi: "'ज्वेल बॉक्स' के नाम से प्रसिद्ध नक्काशीदार संगमरमर का मकबरा, जो ताजमहल की प्रेरणा बना।",
+      hi: "Delicate marble tomb renowned as the 'Jewel Box' and architectural precursor to the Taj Mahal.",
     },
   },
   {
@@ -679,7 +679,7 @@ export const agraMonuments: readonly AgraMonument[] = [
     builtIn: "Early 1500s / 1631",
     blurb: {
       en: "Charbagh complex across the river offering the quintessential sunset reflection of the Taj Mahal.",
-      hi: "यमुना पार स्थित चारबाग कॉम्प्लेक्स, जहाँ से सूर्यास्त के समय ताजमहल का भव्य नजारा दिखता है।",
+      hi: "Charbagh complex across the river offering the quintessential sunset reflection of the Taj Mahal.",
     },
   },
   {
@@ -691,7 +691,7 @@ export const agraMonuments: readonly AgraMonument[] = [
     builtIn: "1605 – 1613",
     blurb: {
       en: "Majestic five-tiered sandstone and marble tomb set amidst lush gardens with roaming deer.",
-      hi: "हरे-भरे उद्यानों के बीच स्थित सम्राट अकबर का भव्य पांच मंजिला बलुआ पत्थर व संगमरमर का मकबरा।",
+      hi: "Majestic five-tiered sandstone and marble tomb set amidst lush gardens with roaming deer.",
     },
   },
   {
@@ -703,7 +703,7 @@ export const agraMonuments: readonly AgraMonument[] = [
     builtIn: "1648 A.D.",
     blurb: {
       en: "Historic red sandstone congregational mosque built by Shah Jahan dedicated to his daughter Jahanara Begum.",
-      hi: "शाहजहाँ द्वारा अपनी पुत्री जहाँआरा बेगम की स्मृति में बनवाई गई लाल बलुआ पत्थर की ऐतिहासिक जामा मस्जिद।",
+      hi: "Historic red sandstone congregational mosque built by Shah Jahan dedicated to his daughter Jahanara Begum.",
     },
   },
   {
@@ -715,7 +715,7 @@ export const agraMonuments: readonly AgraMonument[] = [
     builtIn: "1648 A.D.",
     blurb: {
       en: "Gleaming pure white marble mosque situated inside the Agra Fort complex overlooking the Yamuna.",
-      hi: "आगरा किला परिसर में स्थित सफेद संगमरमर की अत्यंत सुंदर और भव्य मोती मस्जिद।",
+      hi: "Gleaming pure white marble mosque situated inside the Agra Fort complex overlooking the Yamuna.",
     },
   },
   {
@@ -727,7 +727,7 @@ export const agraMonuments: readonly AgraMonument[] = [
     builtIn: "16th century",
     blurb: {
       en: "Grand architectural fusion of Hindu Rajputana and Mughal styles built to honor Empress Mariam-uz-Zamani (Jodha Bai).",
-      hi: "राजपूताना और मुगल वास्तुकला का अनुपम संगम, जिसे अकबर ने महारानी जोधाबाई के लिए बनवाया था।",
+      hi: "Grand architectural fusion of Hindu Rajputana and Mughal styles built to honor Empress Mariam-uz-Zamani (Jodha Bai).",
     },
   },
   {
@@ -739,7 +739,7 @@ export const agraMonuments: readonly AgraMonument[] = [
     builtIn: "1611 A.D.",
     blurb: {
       en: "Serene Mughal garden tomb built by Emperor Jahangir for his mother Mariam-uz-Zamani.",
-      hi: "सम्राट जहाँगीर द्वारा अपनी माता मरियम-उज़-ज़मानी के सम्मान में बनवाया गया शांत मुगल बाग मकबरा।",
+      hi: "Serene Mughal garden tomb built by Emperor Jahangir for his mother Mariam-uz-Zamani.",
     },
   },
 ];
@@ -750,11 +750,11 @@ export const outstationDestinations: readonly TouristDestination[] = [
     name: "Gwalior",
     state: "Madhya Pradesh",
     distanceKm: 120,
-    tagline: { en: "City of Forts, Music & Royal Palaces", hi: "किलों, संगीत और राजमहलों की ऐतिहासिक नगरी" },
+    tagline: { en: "City of Forts, Music & Royal Palaces", hi: "City of Forts, Music & Royal Palaces" },
     highlights: ["Gwalior Fort", "Jai Vilas Palace", "Gujari Mahal", "Teli Ka Mandir", "Scindia Museum"],
     blurb: {
       en: "Historical powerhouse featuring the impregnable 15th-century Gwalior Fort and the opulent Italian-designed Jai Vilas Palace.",
-      hi: "मध्य प्रदेश का ऐतिहासिक शहर, जो अजेय ग्वालियर किले और भव्य जय विलास पैलेस के लिए विख्यात है।",
+      hi: "Historical powerhouse featuring the impregnable 15th-century Gwalior Fort and the opulent Italian-designed Jai Vilas Palace.",
     },
   },
   {
@@ -762,11 +762,11 @@ export const outstationDestinations: readonly TouristDestination[] = [
     name: "Nainital",
     state: "Uttarakhand",
     distanceKm: 340,
-    tagline: { en: "The Pristine Lake City in the Kumaon Hills", hi: "कुमाऊं की पहाड़ियों में झीलों का सुरम्य शहर" },
+    tagline: { en: "The Pristine Lake City in the Kumaon Hills", hi: "The Pristine Lake City in the Kumaon Hills" },
     highlights: ["Naini Lake", "Naina Devi Temple", "Snow View Point", "Bhimtal", "Sattal Lake"],
     blurb: {
       en: "Scenic hill station nestled around emerald lunar-shaped Naini Lake at 1,938 meters altitude with snow-capped Himalayan vistas.",
-      hi: "समुद्र तल से 1,938 मीटर की ऊंचाई पर नैनी झील के चारों ओर बसा शांत व ठंडा हिल स्टेशन।",
+      hi: "Scenic hill station nestled around emerald lunar-shaped Naini Lake at 1,938 meters altitude with snow-capped Himalayan vistas.",
     },
   },
   {
@@ -774,11 +774,11 @@ export const outstationDestinations: readonly TouristDestination[] = [
     name: "Jim Corbett National Park",
     state: "Uttarakhand",
     distanceKm: 380,
-    tagline: { en: "India's Oldest Tiger Reserve & Wildlife Haven", hi: "भारत का पहला राष्ट्रीय उद्यान एवं बाघ अभयारण्य" },
+    tagline: { en: "India's Oldest Tiger Reserve & Wildlife Haven", hi: "India's Oldest Tiger Reserve & Wildlife Haven" },
     highlights: ["Bengal Tiger Safari", "Dhikala Zone", "Jhirna Zone", "Corbett Falls", "Kosi River"],
     blurb: {
       en: "Established in 1936 as Hailey National Park, the cradle of Project Tiger boasting 5 diverse forest zones and rich wildlife.",
-      hi: "1936 में स्थापित भारत का सबसे पुराना राष्ट्रीय उद्यान, जो रॉयल बंगाल टाइगर और घने जंगलों के लिए प्रसिद्ध है।",
+      hi: "Established in 1936 as Hailey National Park, the cradle of Project Tiger boasting 5 diverse forest zones and rich wildlife.",
     },
   },
   {
@@ -786,11 +786,11 @@ export const outstationDestinations: readonly TouristDestination[] = [
     name: "Dholpur",
     state: "Rajasthan",
     distanceKm: 55,
-    tagline: { en: "Ancient Red Sandstone & Sacred Heritage", hi: "प्राचीन लाल बलुआ पत्थर और पवित्र तीर्थ स्थल" },
+    tagline: { en: "Ancient Red Sandstone & Sacred Heritage", hi: "Ancient Red Sandstone & Sacred Heritage" },
     highlights: ["Machkund Temple", "Damoh Waterfall", "Shergarh Fort", "Van Vihar Sanctuary", "Khanpur Mahal"],
     blurb: {
       en: "Historic city dating back to Mahabharata times, celebrated for the sacred Muchukund pilgrim kund and Damoh waterfalls.",
-      hi: "महाभारत कालीन ऐतिहासिक नगरी, जो पवित्र मचकुंड तीर्थ और सुरम्य दमोह जलप्रपात के लिए विख्यात है।",
+      hi: "Historic city dating back to Mahabharata times, celebrated for the sacred Muchukund pilgrim kund and Damoh waterfalls.",
     },
   },
   {
@@ -798,11 +798,11 @@ export const outstationDestinations: readonly TouristDestination[] = [
     name: "Bharatpur",
     state: "Rajasthan",
     distanceKm: 56,
-    tagline: { en: "World-Renowned UNESCO Keoladeo Bird Sanctuary", hi: "विश्व प्रसिद्ध यूनेस्को केवलादेव पक्षी अभयारण्य" },
+    tagline: { en: "World-Renowned UNESCO Keoladeo Bird Sanctuary", hi: "World-Renowned UNESCO Keoladeo Bird Sanctuary" },
     highlights: ["Keoladeo National Park", "Lohagarh Fort", "Deeg Palace", "Ganga Mandir", "Government Museum"],
     blurb: {
       en: "UNESCO World Heritage bird paradise welcoming thousands of migratory birds, alongside the unbreached Lohagarh Fort.",
-      hi: "हजारों दुर्लभ प्रवासी पक्षियों का स्वर्ग यूनेस्को केवलादेव पक्षी अभयारण्य और अजेय लोहागढ़ किला।",
+      hi: "UNESCO World Heritage bird paradise welcoming thousands of migratory birds, alongside the unbreached Lohagarh Fort.",
     },
   },
   {
@@ -810,11 +810,11 @@ export const outstationDestinations: readonly TouristDestination[] = [
     name: "Mathura & Vrindavan",
     state: "Uttar Pradesh",
     distanceKm: 55,
-    tagline: { en: "The Divine Brijbhoomi & Sacred Krishna Circuit", hi: "पवित्र ब्रजभूमि एवं भगवान श्री कृष्ण की जन्मस्थली" },
+    tagline: { en: "The Divine Brijbhoomi & Sacred Krishna Circuit", hi: "The Divine Brijbhoomi & Sacred Krishna Circuit" },
     highlights: ["Krishna Janmabhoomi", "Banke Bihari Mandir", "Prem Mandir", "Dwarkadhish Temple", "ISKCON"],
     blurb: {
       en: "The sacred spiritual heartland on the banks of Yamuna celebrating Lord Krishna's divine leelas with evening aartis.",
-      hi: "भगवान श्री कृष्ण की पावन जन्मभूमि और लीलास्थली, जहाँ के भव्य मंदिर और यमुना आरती मन मोह लेते हैं।",
+      hi: "The sacred spiritual heartland on the banks of Yamuna celebrating Lord Krishna's divine leelas with evening aartis.",
     },
   },
   {
@@ -822,21 +822,21 @@ export const outstationDestinations: readonly TouristDestination[] = [
     name: "Alwar & Sariska",
     state: "Rajasthan",
     distanceKm: 160,
-    tagline: { en: "Aravalli Wilderness, Palaces & Mysterious Forts", hi: "अरावली की वादियां, भव्य महल और रहस्यमयी किले" },
+    tagline: { en: "Aravalli Wilderness, Palaces & Mysterious Forts", hi: "Aravalli Wilderness, Palaces & Mysterious Forts" },
     highlights: ["Sariska Tiger Reserve", "Bhangarh Fort", "Siliserh Lake", "Bala Quila", "Neemrana Fort"],
     blurb: {
       en: "Dramatic Aravalli destination combining Sariska wildlife sightings with the historic Bala Quila and legendary Bhangarh.",
-      hi: "अरावली पहाड़ियों में बसा शहर जहाँ सरिस्का टाइगर रिजर्व, सिलीसेढ़ झील और ऐतिहासिक भानगढ़ किला स्थित हैं।",
+      hi: "Dramatic Aravalli destination combining Sariska wildlife sightings with the historic Bala Quila and legendary Bhangarh.",
     },
   },
 ];
 
 export const petFriendlyService = {
   enabled: true,
-  title: { en: "Pet-Friendly Cabs in Agra", hi: "पेट-फ्रेंडली कैब सेवा आगरा" },
+  title: { en: "Pet-Friendly Cabs in Agra", hi: "Pet-Friendly Cabs in Agra" },
   blurb: {
     en: "Travel comfortably across Agra and outstation destinations with your dogs, cats, and pets. Dedicated sanitized vehicles with carrier space and scheduled relief stops.",
-    hi: "अपने पालतू जानवरों के साथ आराम से यात्रा करें। विशेष सैनिटाइज्ड गाड़ियाँ, कैरियर स्पेस और आवश्यकतानुसार स्टॉप्स की सुविधा।",
+    hi: "Travel comfortably across Agra and outstation destinations with your dogs, cats, and pets. Dedicated sanitized vehicles with carrier space and scheduled relief stops.",
   },
   couponCode: "ASTTCAR500OFF",
 } as const;
@@ -856,7 +856,7 @@ export const trustSignals = [
 
 export const cancellationPolicyCab = {
   en: "Free cancellation up to 24 hours before pickup for a 100% refund (credited via original payment method in 5–7 business days). Cancellations within 24 hours may be subject to partial advance retention. No refund for no-shows.",
-  hi: "पिकअप से 24 घंटे पहले तक रद्द करने पर 100% पूरा रिफंड (मूल भुगतान माध्यम में 5-7 कार्य दिवसों में)। 24 घंटे के भीतर रद्द करने पर आंशिक कटौती हो सकती है। नो-शो पर कोई रिफंड नहीं।",
+  hi: "Free cancellation up to 24 hours before pickup for a 100% refund (credited via original payment method in 5–7 business days). Cancellations within 24 hours may be subject to partial advance retention. No refund for no-shows.",
 } as const;
 
 export const cancellationSlabsTour: readonly TourCancellationSlab[] = [
@@ -879,58 +879,58 @@ export const outstationRules = {
 export const faqs: readonly FaqItem[] = [
   {
     category: "booking",
-    question: { en: "How does the advance payment work?", hi: "एडवांस पेमेंट कैसे काम करता है?" },
+    question: { en: "How does the advance payment work?", hi: "How does the advance payment work?" },
     answer: {
       en: "You pay a 28% advance deposit (minimum ₹500) online to secure the chauffeur and vehicle. The remaining balance is paid directly to the driver at the start or completion of your trip.",
-      hi: "आप ड्राइवर और गाड़ी सुरक्षित करने के लिए 28% एडवांस (न्यूनतम ₹500) ऑनलाइन भुगतान करते हैं। बाकी राशि यात्रा शुरू या पूरी होने पर सीधे ड्राइवर को दी जाती है।",
+      hi: "You pay a 28% advance deposit (minimum ₹500) online to secure the chauffeur and vehicle. The remaining balance is paid directly to the driver at the start or completion of your trip.",
     },
   },
   {
     category: "cancellation",
-    question: { en: "What is the cancellation and refund policy?", hi: "रद्दीकरण और रिफंड नीति क्या है?" },
+    question: { en: "What is the cancellation and refund policy?", hi: "What is the cancellation and refund policy?" },
     answer: {
       en: "For cab bookings, free cancellation is available up to 24 hours before pickup for a 100% refund (credited in 5–7 business days). Tour packages follow a tiered refund schedule based on notice days.",
-      hi: "टैक्सी बुकिंग के लिए पिकअप से 24 घंटे पहले तक 100% रिफंड के साथ निःशुल्क रद्दीकरण उपलब्ध है (5-7 दिनों में रिफंड)। टूर पैकेज के लिए पूर्व सूचना के दिनों के आधार पर स्लैब लागू होता है।",
+      hi: "For cab bookings, free cancellation is available up to 24 hours before pickup for a 100% refund (credited in 5–7 business days). Tour packages follow a tiered refund schedule based on notice days.",
     },
   },
   {
     category: "fares",
-    question: { en: "Are highway tolls, state tax, and parking included?", hi: "क्या हाईवे टोल, स्टेट टैक्स और पार्किंग शामिल हैं?" },
+    question: { en: "Are highway tolls, state tax, and parking included?", hi: "Are highway tolls, state tax, and parking included?" },
     answer: {
       en: "All our one-way expressway fares (such as Agra–Delhi ₹3,499) are 100% all-inclusive (toll, state permits, and driver charges included). For outstation round-trips, tolls and parking are billed at actuals.",
-      hi: "हमारे सभी वन-वे एक्सप्रेसवे किराए (जैसे आगरा-दिल्ली ₹3,499) ऑल-इनक्लूसिव हैं (टोल, राज्य कर व ड्राइवर चार्ज शामिल)। राउंड-ट्रिप में टोल व पार्किंग वास्तविक रसीद अनुसार देय हैं।",
+      hi: "All our one-way expressway fares (such as Agra–Delhi ₹3,499) are 100% all-inclusive (toll, state permits, and driver charges included). For outstation round-trips, tolls and parking are billed at actuals.",
     },
   },
   {
     category: "night",
-    question: { en: "What is the night driving allowance?", hi: "नाइट ड्राइविंग अलाउंस क्या है?" },
+    question: { en: "What is the night driving allowance?", hi: "What is the night driving allowance?" },
     answer: {
       en: "For outstation pickups between 08:00 PM (20:00) and 06:00 AM, a flat driver night allowance of ₹300 for cars and ₹500 for Tempo Travellers is added to the fare.",
-      hi: "रात 8:00 बजे से सुबह 6:00 बजे के बीच आउटस्टेशन पिकअप के लिए कारों पर ₹300 और टेम्पो ट्रैवलर पर ₹500 का फिक्स नाइट अलाउंस लागू होता है।",
+      hi: "For outstation pickups between 08:00 PM (20:00) and 06:00 AM, a flat driver night allowance of ₹300 for cars and ₹500 for Tempo Travellers is added to the fare.",
     },
   },
   {
     category: "outstation",
-    question: { en: "How are outstation round-trips billed?", hi: "आउटस्टेशन राउंड-ट्रिप का किराया कैसे तय होता है?" },
+    question: { en: "How are outstation round-trips billed?", hi: "How are outstation round-trips billed?" },
     answer: {
       en: "Outstation round trips follow the standard tourism industry benchmark of minimum 300 KM per calendar day, or the 1.85× base route formula, whichever accurately covers the itinerary.",
-      hi: "आउटस्टेशन राउंड ट्रिप में पर्यटन उद्योग के मानक 300 किमी प्रति दिन या 1.85× फॉर्मूला के अनुसार पारदर्शी बिलिंग होती है।",
+      hi: "Outstation round trips follow the standard tourism industry benchmark of minimum 300 KM per calendar day, or the 1.85× base route formula, whichever accurately covers the itinerary.",
     },
   },
   {
     category: "pet",
-    question: { en: "Can I travel with my pets in your taxis?", hi: "क्या मैं आपकी टैक्सी में पालतू जानवरों के साथ यात्रा कर सकता हूँ?" },
+    question: { en: "Can I travel with my pets in your taxis?", hi: "Can I travel with my pets in your taxis?" },
     answer: {
       en: "Yes, we provide dedicated pet-friendly cabs equipped with protective seat covers and carrier space. There are no breed or size restrictions; please mention your pet while reserving so we can arrange relief stops.",
-      hi: "हाँ, हम पालतू जानवरों के लिए विशेष सैनिटाइज्ड गाड़ियाँ उपलब्ध कराते हैं। किसी भी नस्ल या आकार पर प्रतिबंध नहीं है; कृपया बुकिंग के समय जानकारी दें।",
+      hi: "Yes, we provide dedicated pet-friendly cabs equipped with protective seat covers and carrier space. There are no breed or size restrictions; please mention your pet while reserving so we can arrange relief stops.",
     },
   },
   {
     category: "intercity",
-    question: { en: "Is one-way intercity cab service available without paying return fare?", hi: "क्या बिना वापसी किराए के वन-वे इंटरसिटी कैब सेवा उपलब्ध है?" },
+    question: { en: "Is one-way intercity cab service available without paying return fare?", hi: "Is one-way intercity cab service available without paying return fare?" },
     answer: {
       en: "Yes, our one-way intercity taxi service covers Agra to Delhi, Noida, Gurgaon, Jaipur, and Lucknow at fixed all-inclusive rates without any return toll or empty-return charges.",
-      hi: "हाँ, आगरा से दिल्ली, नोएडा, गुड़गांव, जयपुर और लखनऊ के लिए हमारी वन-वे सेवा उपलब्ध है, जिसमें कोई वापसी किराया नहीं लिया जाता।",
+      hi: "Yes, our one-way intercity taxi service covers Agra to Delhi, Noida, Gurgaon, Jaipur, and Lucknow at fixed all-inclusive rates without any return toll or empty-return charges.",
     },
   },
 ];
@@ -944,50 +944,50 @@ export type BenefitItem = {
 export const coreBenefits: readonly BenefitItem[] = [
   {
     id: "easy-booking",
-    title: { en: "Easy Booking", hi: "आसान बुकिंग" },
+    title: { en: "Easy Booking", hi: "Easy Booking" },
     desc: {
       en: "Book your taxi in minutes with a simple, user-friendly and transparent process.",
-      hi: "बिना किसी झंझट के कुछ ही मिनटों में अपनी टैक्सी आसानी से बुक करें।",
+      hi: "Book your taxi in minutes with a simple, user-friendly and transparent process.",
     },
   },
   {
     id: "multiple-fleets",
-    title: { en: "Multiple Fleets", hi: "विविध फ्लीट विकल्प" },
+    title: { en: "Multiple Fleets", hi: "Multiple Fleets" },
     desc: {
       en: "Choose from clean Sedans, Ertiga, Innova Crysta, and 9–26 seater luxury Tempo Travellers.",
-      hi: "सेडान, अर्टिगा, इनोवा क्रिस्टा और 9-26 सीटर टेम्पो ट्रैवलर में से अपनी पसंद चुनें।",
+      hi: "Choose from clean Sedans, Ertiga, Innova Crysta, and 9–26 seater luxury Tempo Travellers.",
     },
   },
   {
     id: "lowest-fares",
-    title: { en: "Lowest Fares", hi: "किफायती व पारदर्शी दरें" },
+    title: { en: "Lowest Fares", hi: "Lowest Fares" },
     desc: {
       en: "Book with confidence and enjoy authentic fixed fares starting at ₹10/KM with zero hidden fees.",
-      hi: "₹10/किमी से शुरू होने वाले पारदर्शी और सबसे किफायती किराए का लाभ उठाएं।",
+      hi: "Book with confidence and enjoy authentic fixed fares starting at ₹10/KM with zero hidden fees.",
     },
   },
   {
     id: "exciting-offers",
-    title: { en: "Exciting Offers", hi: "विशेष छूट व ऑफर्स" },
+    title: { en: "Exciting Offers", hi: "Exciting Offers" },
     desc: {
       en: "Unlock flat ₹500 OFF with promo code ASTTCAR500OFF on bookings above ₹2,000.",
-      hi: "कूपन कोड ASTTCAR500OFF से ₹2,000 से अधिक की बुकिंग पर पाएं ₹500 की फ्लैट छूट।",
+      hi: "Unlock flat ₹500 OFF with promo code ASTTCAR500OFF on bookings above ₹2,000.",
     },
   },
   {
     id: "on-time-service",
-    title: { en: "On-Time Service", hi: "समय की पाबंदी" },
+    title: { en: "On-Time Service", hi: "On-Time Service" },
     desc: {
       en: "Punctual airport transfers, railway pickups, and morning sunrise tours guaranteed.",
-      hi: "एयरपोर्ट, रेलवे स्टेशन और सनराइज टूर के लिए समय पर गाड़ी पहुंचने की गारंटी।",
+      hi: "Punctual airport transfers, railway pickups, and morning sunrise tours guaranteed.",
     },
   },
   {
     id: "24x7-support",
-    title: { en: "24×7 Support", hi: "24×7 ग्राहक सहायता" },
+    title: { en: "24×7 Support", hi: "24×7 Support" },
     desc: {
       en: "Direct phone and WhatsApp support on route for complete peace of mind throughout India.",
-      hi: "यात्रा के दौरान किसी भी सहायता के लिए हमारी टीम 24 घंटे कॉल व व्हाट्सएप पर उपलब्ध है।",
+      hi: "Direct phone and WhatsApp support on route for complete peace of mind throughout India.",
     },
   },
 ];

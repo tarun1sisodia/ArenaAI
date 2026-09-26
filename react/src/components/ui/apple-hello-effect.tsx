@@ -1,7 +1,7 @@
 "use client";
 
-import type { TargetAndTransition } from "motion/react";
-import { motion } from "motion/react";
+import type { TargetAndTransition } from "framer-motion";
+import { motion } from "framer-motion";
 
 import { cn } from "@/lib/utils";
 

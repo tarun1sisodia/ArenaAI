@@ -5,7 +5,6 @@ import { WhatsAppIcon } from "../icons/WhatsAppIcon";
 export interface FamousPlace {
   id: string;
   name: string;
-  hindiName: string;
   category: "all" | "heritage" | "braj" | "outstation";
   categoryBadge: string;
   subtitle: string;
@@ -26,7 +25,6 @@ export const FAMOUS_PLACES: FamousPlace[] = [
   {
     id: "taj-mahal",
     name: "Taj Mahal",
-    hindiName: "ताज महल",
     category: "heritage",
     categoryBadge: "UNESCO World Wonder",
     subtitle: "Pristine white marble mausoleum on the Yamuna riverfront",
@@ -63,7 +61,6 @@ export const FAMOUS_PLACES: FamousPlace[] = [
   {
     id: "agra-fort",
     name: "Agra Red Fort",
-    hindiName: "आगरा का लाल किला",
     category: "heritage",
     categoryBadge: "UNESCO Citadel",
     subtitle: "Imperial 16th-century Mughal fortress of red sandstone",
@@ -95,7 +92,6 @@ export const FAMOUS_PLACES: FamousPlace[] = [
   {
     id: "fatehpur-sikri",
     name: "Fatehpur Sikri & Buland Darwaza",
-    hindiName: "फतेहपुर सीकरी",
     category: "heritage",
     categoryBadge: "UNESCO Ghost City",
     subtitle: "Akbar's magnificent red sandstone imperial capital",
@@ -127,7 +123,6 @@ export const FAMOUS_PLACES: FamousPlace[] = [
   {
     id: "mathura-vrindavan",
     name: "Mathura & Vrindavan",
-    hindiName: "मथुरा एवं वृन्दावन",
     category: "braj",
     categoryBadge: "Sacred Pilgrimage",
     subtitle: "Lord Krishna's holy birthplace & temple circuit",
@@ -159,7 +154,6 @@ export const FAMOUS_PLACES: FamousPlace[] = [
   {
     id: "mehtab-bagh",
     name: "Mehtab Bagh & Baby Taj",
-    hindiName: "मेहताब बाग एवं बेबी ताज",
     category: "heritage",
     categoryBadge: "Sunset River Vista",
     subtitle: "Charbagh garden complex with moonlit river reflections",
@@ -191,7 +185,6 @@ export const FAMOUS_PLACES: FamousPlace[] = [
   {
     id: "jaipur-pink-city",
     name: "Jaipur & Amber Fort",
-    hindiName: "जयपुर (पिंक सिटी)",
     category: "outstation",
     categoryBadge: "Golden Triangle Royal",
     subtitle: "Rajasthan's royal Pink City & majestic hilltop fortress",
@@ -298,7 +291,7 @@ export function FamousPlacesSection() {
                   onClick={() =>
                     setModalImage({
                       url: activeImg.url,
-                      title: `${place.name} (${place.hindiName})`,
+                      title: place.name,
                       caption: activeImg.caption,
                     })
                   }
@@ -317,7 +310,7 @@ export function FamousPlacesSection() {
                   onClick={() =>
                     setModalImage({
                       url: activeImg.url,
-                      title: `${place.name} (${place.hindiName})`,
+                      title: place.name,
                       caption: activeImg.caption,
                     })
                   }
@@ -375,9 +368,6 @@ export function FamousPlacesSection() {
                     <h3 className="font-headline-sm text-base sm:text-lg font-bold text-on-surface">
                       {place.name}
                     </h3>
-                    <span className="font-title-md text-xs text-primary font-bold">
-                      {place.hindiName}
-                    </span>
                   </div>
                   <p className="font-title-md text-xs text-on-surface-variant mt-0.5">
                     {place.subtitle}

@@ -20,9 +20,7 @@ export function SkipLink({
   const path =
     currentPath ||
     (typeof window !== "undefined" ? window.location.pathname : "/");
-  const isHindi = path.startsWith("/hi");
-  const displayLabel =
-    label || (isHindi ? "मुख्य सामग्री पर जाएं" : "Skip to main content");
+  const displayLabel = label || "Skip to main content";
 
   const handleClick = useCallback(
     (e: React.MouseEvent<HTMLAnchorElement>) => {
