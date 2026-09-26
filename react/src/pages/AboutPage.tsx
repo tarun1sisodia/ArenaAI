@@ -1,5 +1,6 @@
 import React from "react";
 import { contact } from "../data/contact";
+import { WhatsAppIcon } from "../components/icons";
 
 interface AboutPageProps {
   language?: "en" | "hi";
@@ -54,12 +55,12 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                   <span>Reserve With 28% Token</span>
                 </a>
                 <a
-                  className="inline-flex items-center gap-space-xs bg-ink-charcoal text-ivory-surface px-4.5 py-2.5 rounded-lg text-xs font-label-lg shadow-xs hover:bg-ink-slate transition-all duration-200 font-semibold"
+                  className="inline-flex items-center gap-space-xs bg-black text-white px-4.5 py-2.5 rounded-lg text-xs font-label-lg shadow-xs hover:bg-neutral-900 border border-white/10 transition-all duration-200 font-semibold active:scale-[0.98]"
                   href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent("Hello SK Baghel Desk, I would like to inquire about your chauffeur services in Agra.")}`}
                   rel="noopener noreferrer"
                   target="_blank"
                 >
-                  <span className="material-symbols-outlined text-[18px] text-terracotta-sunlit">chat</span>
+                  <WhatsAppIcon className="w-[18px] h-[18px] shrink-0" />
                   <span>WhatsApp Taj Ganj Desk</span>
                 </a>
               </div>

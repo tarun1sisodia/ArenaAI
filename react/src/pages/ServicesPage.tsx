@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { SupportedLanguage } from "../config";
 import { contact } from "../data/contact";
+import { WhatsAppIcon } from "../components/icons";
 
 export interface ServicesPageProps {
   language?: SupportedLanguage;
@@ -291,12 +292,13 @@ export function ServicesPage({ language = "en" }: ServicesPageProps) {
                     <span className="material-symbols-outlined text-[15px]">arrow_forward</span>
                   </a>
                   <a
-                    className="px-3.5 py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-lg text-xs font-semibold transition-colors"
+                    className="px-3.5 py-2 rounded-lg bg-black hover:bg-neutral-900 border border-white/10 text-white font-label-lg text-xs font-semibold transition-colors inline-flex items-center gap-1.5 active:scale-[0.98]"
                     href={`https://wa.me/919876543210?text=Inquiry%20for%20${encodeURIComponent(s.name)}`}
                     target="_blank"
                     rel="noreferrer"
                   >
-                    WhatsApp Inquiry
+                    <WhatsAppIcon className="w-3.5 h-3.5 shrink-0" />
+                    <span>WhatsApp Inquiry</span>
                   </a>
                 </div>
               </div>

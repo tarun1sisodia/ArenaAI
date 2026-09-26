@@ -3,6 +3,7 @@ import { contact } from "../../data/contact";
 import { packages, routes, vehicles, type VehicleId, type TourPackage } from "../../data/catalogue";
 import { calcFare, advanceOf, formatInr, localPackages, type LocalPackageKey } from "./fareEngine";
 import { createDraftBooking, type BackendTripType, type BackendVehicleTier } from "../../services/api";
+import { WhatsAppIcon } from "../../components/icons";
 
 type BookingStep = 1 | 2 | 3;
 
@@ -607,14 +608,14 @@ export function BookingPage() {
 
                   {/* Secondary WhatsApp Concierge Link */}
                   <a
-                    className="flex items-center justify-center gap-2 py-2.5 px-space-sm rounded-lg bg-ink-charcoal text-ivory-surface font-label-lg text-label-lg hover:bg-ink-slate transition-colors text-center"
+                    className="flex items-center justify-center gap-2 py-2.5 px-space-sm rounded-lg bg-black hover:bg-neutral-900 border border-white/10 text-white font-label-lg text-label-lg transition-colors text-center active:scale-[0.98]"
                     href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
                       `Hello SK Baghel Travels, I am interested in custom delegation for ${matchedPackage.name} with ${selectedVehicle.name}.`
                     )}`}
                     rel="noopener noreferrer"
                     target="_blank"
                   >
-                    <span className="material-symbols-outlined text-[18px] text-gold-accent">chat</span>
+                    <WhatsAppIcon className="w-4 h-4 shrink-0" />
                     <span>Need custom vehicle or delegation? WhatsApp Concierge</span>
                   </a>
 
@@ -1225,14 +1226,14 @@ export function BookingPage() {
                   <span>Download PDF Receipt</span>
                 </button>
                 <a
-                  className="w-full py-2.5 px-space-md bg-ink-charcoal text-ivory-surface rounded-lg font-label-lg text-label-lg flex items-center justify-center gap-2 hover:bg-ink-slate transition-colors shadow-sm"
+                  className="w-full py-2.5 px-space-md bg-black hover:bg-neutral-900 border border-white/10 text-white rounded-lg font-label-lg text-label-lg flex items-center justify-center gap-2 transition-colors shadow-sm active:scale-[0.98]"
                   href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
                     `Hello SK Baghel Travels, inquiry for Booking ${bookingRef}`
                   )}`}
                   rel="noopener noreferrer"
                   target="_blank"
                 >
-                  <span className="material-symbols-outlined text-[18px] text-gold-accent">chat</span>
+                  <WhatsAppIcon className="w-4 h-4 shrink-0" />
                   <span>WhatsApp Support Desk</span>
                 </a>
               </div>

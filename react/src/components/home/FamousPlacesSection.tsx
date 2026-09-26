@@ -1,0 +1,516 @@
+import { useState } from "react";
+import { contact } from "../../data/contact";
+import { WhatsAppIcon } from "../icons/WhatsAppIcon";
+
+export interface FamousPlace {
+  id: string;
+  name: string;
+  hindiName: string;
+  category: "all" | "heritage" | "braj" | "outstation";
+  categoryBadge: string;
+  subtitle: string;
+  description: string;
+  distance: string;
+  driveTime: string;
+  bestTime: string;
+  recommendedVehicle: string;
+  highlights: string[];
+  images: Array<{
+    url: string;
+    caption: string;
+    alt: string;
+  }>;
+}
+
+export const FAMOUS_PLACES: FamousPlace[] = [
+  {
+    id: "taj-mahal",
+    name: "Taj Mahal",
+    hindiName: "ताज महल",
+    category: "heritage",
+    categoryBadge: "UNESCO World Wonder",
+    subtitle: "Pristine white marble mausoleum on the Yamuna riverfront",
+    description:
+      "Commissioned in 1631 by Mughal Emperor Shah Jahan for Empress Mumtaz Mahal. Renowned worldwide for its symmetrical ivory-white marble architecture, delicate floral pietra dura inlay, and majestic reflecting pools.",
+    distance: "5 km from Agra Cantt",
+    driveTime: "15 mins",
+    bestTime: "Sunrise 05:45 AM – 08:30 AM",
+    recommendedVehicle: "Sedan or Innova Crysta",
+    highlights: ["UNESCO World Heritage", "Pietra Dura Inlay", "Yamuna Reflection"],
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=1200&q=85",
+        caption: "Iconic reflection pool at golden dawn",
+        alt: "Taj Mahal reflection pool at dawn in Agra",
+      },
+      {
+        url: "https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1200&q=85",
+        caption: "Intricate marble archways & minarets",
+        alt: "Intricate marble archways and minarets of Taj Mahal",
+      },
+      {
+        url: "https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=1200&q=85",
+        caption: "Yamuna riverfront sunrise silhouette",
+        alt: "Taj Mahal sunrise silhouette from Yamuna river",
+      },
+      {
+        url: "https://images.unsplash.com/photo-1658313286353-81f8cf3a328a?auto=format&fit=crop&w=1200&q=85",
+        caption: "Panoramic aerial perspective of the dome",
+        alt: "Panoramic aerial view of the Taj Mahal dome and gardens",
+      },
+    ],
+  },
+  {
+    id: "agra-fort",
+    name: "Agra Red Fort",
+    hindiName: "आगरा का लाल किला",
+    category: "heritage",
+    categoryBadge: "UNESCO Citadel",
+    subtitle: "Imperial 16th-century Mughal fortress of red sandstone",
+    description:
+      "The primary residence of the Mughal emperors until 1638. Spans 94 acres with monumental 70-foot-high double ramparts, Jahangiri Mahal, Diwan-i-Khas, and the Musamman Burj where Shah Jahan gazed upon the Taj Mahal.",
+    distance: "4 km from Agra Cantt",
+    driveTime: "12 mins",
+    bestTime: "Morning 09:00 AM – 12:30 PM",
+    recommendedVehicle: "Executive Sedan / Ertiga",
+    highlights: ["Emperor Akbar 1565", "Jahangiri Mahal", "Taj Viewpoint"],
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1592635196078-9fdc757f27f4?auto=format&fit=crop&w=1200&q=85",
+        caption: "Monumental red sandstone walls and bastion gate",
+        alt: "Agra Fort massive red sandstone walls and main gateway",
+      },
+      {
+        url: "https://images.unsplash.com/photo-1585135497273-1a86b09fe70e?auto=format&fit=crop&w=1200&q=85",
+        caption: "Diwan-i-Am royal courtyard and pillared halls",
+        alt: "Agra Fort royal courtyard and red sandstone colonnades",
+      },
+      {
+        url: "https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=1200&q=85",
+        caption: "Classic Mughal arches overlooking the Yamuna",
+        alt: "Historic archway inside Agra Fort complex",
+      },
+    ],
+  },
+  {
+    id: "fatehpur-sikri",
+    name: "Fatehpur Sikri & Buland Darwaza",
+    hindiName: "फतेहपुर सीकरी",
+    category: "heritage",
+    categoryBadge: "UNESCO Ghost City",
+    subtitle: "Akbar's magnificent red sandstone imperial capital",
+    description:
+      "Founded in 1571 by Emperor Akbar to celebrate his victory in Gujarat. Highlights include the 54-meter Buland Darwaza (the highest gateway in the world), the sacred white marble Dargah of Salim Chishti, and Panch Mahal.",
+    distance: "38 km from Agra",
+    driveTime: "45 mins via NH-21",
+    bestTime: "Afternoon to Sunset",
+    recommendedVehicle: "Innova Crysta / Tempo Traveller",
+    highlights: ["54m Buland Darwaza", "Salim Chishti Shrine", "Panch Mahal"],
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=1200&q=85",
+        caption: "Imperial courtyard and historic red pavilions",
+        alt: "Fatehpur Sikri ancient Mughal palace complex",
+      },
+      {
+        url: "https://images.unsplash.com/photo-1608958435020-e8a7109ba809?auto=format&fit=crop&w=1200&q=85",
+        caption: "Panch Mahal five-storey pillared architecture",
+        alt: "Panch Mahal five-storey palace at Fatehpur Sikri",
+      },
+      {
+        url: "https://images.unsplash.com/photo-1596701062351-8c2c14d1fdd0?auto=format&fit=crop&w=1200&q=85",
+        caption: "Monumental gateway arches and heritage plaza",
+        alt: "Buland Darwaza grand entrance at Fatehpur Sikri",
+      },
+    ],
+  },
+  {
+    id: "mathura-vrindavan",
+    name: "Mathura & Vrindavan",
+    hindiName: "मथुरा एवं वृन्दावन",
+    category: "braj",
+    categoryBadge: "Sacred Pilgrimage",
+    subtitle: "Lord Krishna's holy birthplace & temple circuit",
+    description:
+      "The spiritual heartland of Braj on the banks of the sacred Yamuna river. Experience Krishna Janmabhoomi temple, Banke Bihari Ji's divine darshan, ISKCON temple, and the evening light show at Prem Mandir.",
+    distance: "55 km from Agra",
+    driveTime: "1h 15m via NH-19",
+    bestTime: "04:30 PM – 08:30 PM (Evening Aarti)",
+    recommendedVehicle: "Ertiga / Innova / Tempo",
+    highlights: ["Krishna Janmabhoomi", "Banke Bihari", "Prem Mandir Lighting"],
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&w=1200&q=85",
+        caption: "Prem Mandir illuminated with evening light show",
+        alt: "Prem Mandir temple illuminated at night in Vrindavan",
+      },
+      {
+        url: "https://images.unsplash.com/photo-1620619767323-b95a89183081?auto=format&fit=crop&w=1200&q=85",
+        caption: "Ancient temple sanctum and spiritual stone carvings",
+        alt: "Traditional temple sanctum and carvings in Mathura",
+      },
+      {
+        url: "https://images.unsplash.com/photo-1566837945700-30057527ade0?auto=format&fit=crop&w=1200&q=85",
+        caption: "Sacred Yamuna riverfront ghats at sunset",
+        alt: "Evening prayers and ghats along the sacred Yamuna in Mathura",
+      },
+    ],
+  },
+  {
+    id: "mehtab-bagh",
+    name: "Mehtab Bagh & Baby Taj",
+    hindiName: "मेहताब बाग एवं बेबी ताज",
+    category: "heritage",
+    categoryBadge: "Sunset River Vista",
+    subtitle: "Charbagh garden complex with moonlit river reflections",
+    description:
+      "Located directly opposite the Taj Mahal across the Yamuna River, this 25-acre garden was built by Babur and aligned with the Taj complex by Shah Jahan. Nearby Itimad-ud-Daulah ('Baby Taj') showcases the finest pietra dura marble mosaic in India.",
+    distance: "8 km from Tajganj",
+    driveTime: "20 mins",
+    bestTime: "Golden Hour 04:30 PM – 06:30 PM",
+    recommendedVehicle: "Comfort AC Sedan",
+    highlights: ["Sunset Taj View", "Baby Taj Marble Inlay", "Quiet Charbagh"],
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=1200&q=85",
+        caption: "Sunset vistas looking across the Yamuna river",
+        alt: "Mehtab Bagh gardens overlooking the Taj Mahal at sunset",
+      },
+      {
+        url: "https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1200&q=85",
+        caption: "Itimad-ud-Daulah intricate marble lattice and inlays",
+        alt: "Intricate marble work of Baby Taj Itimad-ud-Daulah",
+      },
+      {
+        url: "https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=1200&q=85",
+        caption: "Mirror reflections on water bodies at dusk",
+        alt: "Twilight reflection of heritage monuments in Agra",
+      },
+    ],
+  },
+  {
+    id: "jaipur-pink-city",
+    name: "Jaipur & Amber Fort",
+    hindiName: "जयपुर (पिंक सिटी)",
+    category: "outstation",
+    categoryBadge: "Golden Triangle Royal",
+    subtitle: "Rajasthan's royal Pink City & majestic hilltop fortress",
+    description:
+      "A premier Golden Triangle destination 4 hours from Agra via smooth NH-21. Features the honeycomb facade of Hawa Mahal, the hilltop Amber Fort overlooking Maota Lake, the City Palace, and vibrant Johari Bazaar.",
+    distance: "240 km from Agra",
+    driveTime: "4h 15m via NH-21",
+    bestTime: "Full Day Trip or Overnight",
+    recommendedVehicle: "Innova Crysta / Urbania",
+    highlights: ["Hawa Mahal", "Amber Fort Hilltop", "Royal City Palace"],
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=1200&q=85",
+        caption: "Hawa Mahal (Palace of Winds) iconic pink facade",
+        alt: "Hawa Mahal palace of winds in Jaipur",
+      },
+      {
+        url: "https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=1200&q=85",
+        caption: "Amber Fort majestic hilltop palace reflection",
+        alt: "Amber Fort towering over Maota Lake in Jaipur",
+      },
+      {
+        url: "https://images.unsplash.com/photo-1534766555764-ce878a5e3a2b?auto=format&fit=crop&w=1200&q=85",
+        caption: "City Palace courtyards and royal Rajput heritage",
+        alt: "Grand courtyards inside Jaipur City Palace",
+      },
+    ],
+  },
+];
+
+export function FamousPlacesSection() {
+  const [activeCategory, setActiveCategory] = useState<"all" | "heritage" | "braj" | "outstation">("all");
+  const [activeImageIndices, setActiveImageIndices] = useState<Record<string, number>>({});
+  const [modalImage, setModalImage] = useState<{ url: string; title: string; caption: string } | null>(null);
+
+  const filteredPlaces = FAMOUS_PLACES.filter(
+    (p) => activeCategory === "all" || p.category === activeCategory
+  );
+
+  const handleSelectImage = (placeId: string, imgIdx: number) => {
+    setActiveImageIndices((prev) => ({ ...prev, [placeId]: imgIdx }));
+  };
+
+  return (
+    <section className="w-full py-space-3xl max-w-[1280px] mx-auto px-margin-mobile lg:px-margin" id="famous-places">
+      {/* Section Header */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-space-md mb-space-xl">
+        <div className="max-w-2xl">
+          <span className="font-label-caps text-label-caps text-primary uppercase tracking-widest block mb-2 font-bold">
+            Heritage &amp; Destinations
+          </span>
+          <h2 className="font-headline-lg text-headline-lg text-on-surface font-semibold">
+            Famous Places &amp; Monuments Around Agra
+          </h2>
+          <p className="font-body-md text-body-md text-on-surface-variant mt-2 leading-relaxed">
+            Explore authentic high-resolution perspectives of world wonders, sacred pilgrimage circuits, and royal fortresses.
+            Private, doorstep-pickup AC taxis with verified commercial chauffeurs.
+          </p>
+        </div>
+
+        {/* Category Filter Pills */}
+        <div className="flex flex-wrap items-center gap-1.5 bg-surface-container p-1 rounded-xl border border-border-warm/40 shrink-0">
+          {[
+            { id: "all", label: "All Destinations" },
+            { id: "heritage", label: "Agra Heritage" },
+            { id: "braj", label: "Sacred Braj" },
+            { id: "outstation", label: "Royal Outstation" },
+          ].map((cat) => (
+            <button
+              key={cat.id}
+              type="button"
+              onClick={() => setActiveCategory(cat.id as any)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-label-lg transition-all font-semibold ${
+                activeCategory === cat.id
+                  ? "bg-primary text-white shadow-sm font-bold"
+                  : "text-on-surface-variant hover:text-on-surface hover:bg-sandstone-wash"
+              }`}
+            >
+              {cat.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Places Cards Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-space-lg">
+        {filteredPlaces.map((place) => {
+          const currentImgIdx = activeImageIndices[place.id] || 0;
+          const activeImg = place.images[currentImgIdx] || place.images[0];
+
+          return (
+            <article
+              key={place.id}
+              className="bg-surface-container-lowest rounded-2xl overflow-hidden border border-border-warm/50 flex flex-col shadow-xs hover:shadow-lg transition-all duration-300 group"
+            >
+              {/* Main Image Showcase Stage */}
+              <div className="relative aspect-[16/10] w-full overflow-hidden bg-surface-container-high">
+                <img
+                  src={activeImg.url}
+                  alt={activeImg.alt}
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 cursor-pointer"
+                  onClick={() =>
+                    setModalImage({
+                      url: activeImg.url,
+                      title: `${place.name} (${place.hindiName})`,
+                      caption: activeImg.caption,
+                    })
+                  }
+                />
+
+                {/* Top Badge: Category */}
+                <div className="absolute top-3 left-3 flex items-center gap-1.5">
+                  <span className="px-2.5 py-1 rounded-full bg-ink-midnight/80 text-white font-label-caps text-[9px] uppercase tracking-wider font-semibold backdrop-blur-md shadow-xs">
+                    {place.categoryBadge}
+                  </span>
+                </div>
+
+                {/* Top Right: Expand Lightbox Button */}
+                <button
+                  type="button"
+                  onClick={() =>
+                    setModalImage({
+                      url: activeImg.url,
+                      title: `${place.name} (${place.hindiName})`,
+                      caption: activeImg.caption,
+                    })
+                  }
+                  className="absolute top-3 right-3 w-8 h-8 rounded-full bg-ink-midnight/70 hover:bg-ink-midnight text-white flex items-center justify-center backdrop-blur-md transition-colors shadow-xs"
+                  aria-label="View photo in high-resolution lightbox"
+                  title="Expand high-res photo"
+                >
+                  <span className="material-symbols-outlined text-[17px]">zoom_in</span>
+                </button>
+
+                {/* Bottom Overlay: Photo Caption & Image Counter */}
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink-midnight/90 via-ink-midnight/40 to-transparent p-3 pt-6 flex items-end justify-between">
+                  <span className="text-[11px] text-white/95 font-medium truncate max-w-[75%] drop-shadow-xs">
+                    {activeImg.caption}
+                  </span>
+                  <span className="px-2 py-0.5 rounded bg-black/60 text-white text-[9.5px] font-mono tracking-wider backdrop-blur-xs font-semibold">
+                    {currentImgIdx + 1} / {place.images.length}
+                  </span>
+                </div>
+              </div>
+
+              {/* Multi-Image Interactive Thumbnails Strip */}
+              <div className="p-2.5 bg-surface-container-low/70 border-b border-border-warm/40 flex items-center gap-2 overflow-x-auto no-scrollbar">
+                {place.images.map((img, idx) => (
+                  <button
+                    key={img.url}
+                    type="button"
+                    onClick={() => handleSelectImage(place.id, idx)}
+                    className={`relative w-14 h-10 rounded-md overflow-hidden shrink-0 transition-all border ${
+                      currentImgIdx === idx
+                        ? "ring-2 ring-primary border-primary scale-[1.03] shadow-xs"
+                        : "opacity-65 hover:opacity-100 border-border-warm/60"
+                    }`}
+                    title={img.caption}
+                    aria-label={`View photo ${idx + 1}: ${img.caption}`}
+                  >
+                    <img
+                      src={img.url}
+                      alt={img.alt}
+                      loading="lazy"
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                ))}
+                <span className="text-[10px] text-on-surface-variant font-label-caps ml-auto pr-1 shrink-0 font-medium">
+                  {place.images.length} Real Photos
+                </span>
+              </div>
+
+              {/* Body Content */}
+              <div className="p-4 sm:p-5 flex-1 flex flex-col gap-3">
+                {/* Title & Subtitle */}
+                <div>
+                  <div className="flex items-baseline justify-between gap-2">
+                    <h3 className="font-headline-sm text-base sm:text-lg font-bold text-on-surface">
+                      {place.name}
+                    </h3>
+                    <span className="font-title-md text-xs text-primary font-bold">
+                      {place.hindiName}
+                    </span>
+                  </div>
+                  <p className="font-title-md text-xs text-on-surface-variant mt-0.5">
+                    {place.subtitle}
+                  </p>
+                </div>
+
+                {/* Editorial Blurb */}
+                <p className="font-body-sm text-xs text-on-surface-variant leading-relaxed line-clamp-3">
+                  {place.description}
+                </p>
+
+                {/* Specs Strip */}
+                <div className="grid grid-cols-2 gap-2 bg-surface-container-low p-2.5 rounded-lg border border-border-warm/40 text-[10.5px]">
+                  <div>
+                    <span className="font-label-caps text-[9px] text-on-surface-variant uppercase block font-semibold">
+                      Distance
+                    </span>
+                    <span className="font-title-md text-on-surface font-bold">
+                      {place.distance}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="font-label-caps text-[9px] text-on-surface-variant uppercase block font-semibold">
+                      Cab Duration
+                    </span>
+                    <span className="font-title-md text-on-surface font-bold">
+                      {place.driveTime}
+                    </span>
+                  </div>
+                  <div className="col-span-2 pt-1 border-t border-border-warm/40 flex items-center justify-between">
+                    <span className="text-on-surface-variant text-[10px]">
+                      Best Visit: <strong className="text-on-surface">{place.bestTime}</strong>
+                    </span>
+                  </div>
+                </div>
+
+                {/* Highlights Tags */}
+                <div className="flex flex-wrap gap-1.5">
+                  {place.highlights.map((tag) => (
+                    <span
+                      key={tag}
+                      className="px-2 py-0.5 rounded bg-sandstone-wash text-on-surface-variant font-label-caps text-[9px] font-semibold"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                {/* Action CTAs */}
+                <div className="mt-auto pt-3 border-t border-border-warm/40 flex items-center justify-between gap-2">
+                  <a
+                    className="flex-1 py-2 px-3 rounded-lg bg-primary hover:bg-primary-container text-white font-label-lg text-xs font-semibold transition-all shadow-xs text-center active:scale-[0.98] inline-flex items-center justify-center gap-1"
+                    href={`/book?from=Agra&to=${encodeURIComponent(place.name)}`}
+                  >
+                    <span>Book Cab</span>
+                    <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
+                  </a>
+
+                  {/* WhatsApp CTA in Pure Black with Real WhatsApp Icon */}
+                  <a
+                    className="px-3 py-2 rounded-lg bg-black hover:bg-neutral-900 border border-white/10 text-white font-label-lg text-xs font-semibold shadow-xs transition-all active:scale-[0.98] inline-flex items-center gap-1.5 shrink-0"
+                    href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
+                      `Hello SK Baghel Desk, I would like to inquire about a taxi trip to ${place.name} (${place.distance}).`
+                    )}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={`WhatsApp inquiry for ${place.name}`}
+                  >
+                    <WhatsAppIcon className="w-3.5 h-3.5 shrink-0" />
+                    <span>WhatsApp</span>
+                  </a>
+                </div>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+
+      {/* High-Res Modal Lightbox Preview */}
+      {modalImage && (
+        <div
+          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4"
+          onClick={() => setModalImage(null)}
+          role="dialog"
+          aria-modal="true"
+        >
+          <div
+            className="relative max-w-4xl w-full bg-surface-container-lowest rounded-2xl overflow-hidden shadow-2xl border border-white/10"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="relative aspect-[16/10] sm:aspect-[16/9] w-full bg-black">
+              <img
+                src={modalImage.url}
+                alt={modalImage.caption}
+                className="w-full h-full object-contain"
+              />
+              <button
+                type="button"
+                onClick={() => setModalImage(null)}
+                className="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/70 hover:bg-black text-white flex items-center justify-center transition-colors shadow-md"
+                aria-label="Close high-res preview"
+              >
+                <span className="material-symbols-outlined text-[20px]">close</span>
+              </button>
+            </div>
+            <div className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface-container-lowest">
+              <div>
+                <h4 className="font-title-md text-sm sm:text-base font-bold text-on-surface">
+                  {modalImage.title}
+                </h4>
+                <p className="font-body-sm text-xs text-on-surface-variant mt-0.5">
+                  {modalImage.caption}
+                </p>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <a
+                  className="px-4 py-2 rounded-lg bg-black hover:bg-neutral-900 border border-white/10 text-white font-label-lg text-xs font-semibold inline-flex items-center gap-2 active:scale-[0.98]"
+                  href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
+                    `Hello SK Baghel Travels, I am inquiring about visiting ${modalImage.title}.`
+                  )}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <WhatsAppIcon className="w-4 h-4 shrink-0" />
+                  <span>WhatsApp Desk</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}
+
+export default FamousPlacesSection;

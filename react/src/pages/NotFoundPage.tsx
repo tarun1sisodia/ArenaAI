@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { SupportedLanguage } from "../config";
 import { contact } from "../data/contact";
+import { WhatsAppIcon } from "../components/icons";
 
 export interface NotFoundPageProps {
   language?: SupportedLanguage;
@@ -82,9 +83,9 @@ export function NotFoundPage({ language = "en" }: NotFoundPageProps) {
                   href="https://wa.me/919876543210"
                   target="_blank"
                   rel="noreferrer"
-                  className="px-4 py-2.5 rounded-lg bg-ink-charcoal hover:bg-ink-slate text-surface text-sm font-semibold transition-colors flex items-center gap-1.5"
+                  className="px-4 py-2.5 rounded-lg bg-black hover:bg-neutral-900 border border-white/10 text-white text-sm font-semibold transition-colors flex items-center gap-2 shadow-xs active:scale-[0.98]"
                 >
-                  <span className="material-symbols-outlined text-[18px] text-gold-accent">chat</span>
+                  <WhatsAppIcon className="w-[18px] h-[18px] shrink-0" />
                   <span>WhatsApp Concierge</span>
                 </a>
               </div>

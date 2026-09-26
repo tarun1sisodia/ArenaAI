@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import type { SupportedLanguage } from "../config";
 import { contact } from "../data/contact";
 import { type TourPackage } from "../data";
+import { WhatsAppIcon } from "../components/icons";
 
 interface PackageDetailPageProps {
   language?: SupportedLanguage;
@@ -564,12 +565,12 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
                 </span>
 
                 <a
-                  className="w-full bg-ink-charcoal hover:bg-ink-slate text-ivory-surface py-3 px-4 rounded-lg font-label-lg text-label-lg transition-colors flex items-center justify-center gap-2 mt-1"
+                  className="w-full bg-black hover:bg-neutral-900 border border-white/10 text-white py-3 px-4 rounded-lg font-label-lg text-label-lg transition-colors flex items-center justify-center gap-2 mt-1 shadow-sm active:scale-[0.98]"
                   href={whatsappUrl}
                   rel="noopener noreferrer"
                   target="_blank"
                 >
-                  <span className="material-symbols-outlined text-terracotta-sunlit text-[18px]">chat</span>
+                  <WhatsAppIcon className="w-[18px] h-[18px] shrink-0" />
                   <span>Chat with Concierge on WhatsApp</span>
                 </a>
               </div>

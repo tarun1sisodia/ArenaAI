@@ -6,6 +6,7 @@ import {
   routeGuidance,
   type VehicleId,
 } from "../data/catalogue";
+import { WhatsAppIcon } from "../components/icons";
 
 interface RouteDetailPageProps {
   language?: "en" | "hi";
@@ -255,12 +256,12 @@ export function RouteDetailPage({ route }: RouteDetailPageProps) {
                     <span>Book This Route</span>
                   </a>
                   <a
-                    className="inline-flex items-center justify-center gap-space-xs bg-ink-charcoal text-ivory-surface px-5 py-3.5 rounded text-label-lg font-label-lg shadow-sm hover:bg-ink-slate transition-all duration-200"
+                    className="inline-flex items-center justify-center gap-space-xs bg-black text-white hover:bg-neutral-900 border border-white/10 px-5 py-3.5 rounded text-label-lg font-label-lg shadow-sm transition-all duration-200 active:scale-[0.98]"
                     href={whatsappUrl}
                     rel="noopener noreferrer"
                     target="_blank"
                   >
-                    <span className="material-symbols-outlined text-[20px] text-terracotta-sunlit">chat</span>
+                    <WhatsAppIcon className="w-5 h-5 shrink-0" />
                     <span>WhatsApp</span>
                   </a>
                 </div>

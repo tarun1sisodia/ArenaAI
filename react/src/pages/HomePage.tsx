@@ -3,6 +3,7 @@ import type { SupportedLanguage } from "../config";
 import { contact } from "../data/contact";
 import { packages, routes, vehicles } from "../data/catalogue";
 import { ReviewsMarquee } from "../components/home/ReviewsMarquee";
+import { FamousPlacesSection } from "../components/home/FamousPlacesSection";
 import { WhatsAppIcon } from "../components/icons";
 import { SmoothScrollHero } from "@/components/ui/smooth-scroll-hero";
 import { InitialLoader } from "@/components/ui/InitialLoader";
@@ -303,12 +304,12 @@ export function HomePage({ language = "en" }: HomePageProps) {
                   <span className="text-white">Call +91 98765 43210</span>
                 </a>
                 <a
-                  className="inline-flex items-center gap-space-xs px-space-lg py-3 rounded-lg bg-terracotta-sandstone hover:bg-primary text-white font-label-lg text-label-lg shadow-md transition-all font-semibold active:scale-[0.98] border border-primary-fixed/30"
+                  className="inline-flex items-center gap-space-xs px-space-lg py-3 rounded-lg bg-black hover:bg-neutral-900 text-white font-label-lg text-label-lg shadow-md transition-all font-semibold active:scale-[0.98] border border-white/10"
                   href={`https://wa.me/${contact.whatsapp}`}
                   target="_blank"
                   rel="noreferrer"
                 >
-                  <WhatsAppIcon className="w-[18px] h-[18px] text-white shrink-0" />
+                  <WhatsAppIcon className="w-[18px] h-[18px] shrink-0" />
                   <span className="text-white">WhatsApp</span>
                 </a>
               </div>
@@ -797,6 +798,9 @@ export function HomePage({ language = "en" }: HomePageProps) {
           </div>
         </motion.section>
 
+        {/* ── FAMOUS PLACES & HERITAGE LANDMARKS ── Multi-image high-res Unsplash gallery */}
+        <FamousPlacesSection />
+
         {/* ── REVIEWS MARQUEE ── LOCKED, no changes */}
         <ReviewsMarquee />
 
@@ -983,8 +987,8 @@ export function HomePage({ language = "en" }: HomePageProps) {
                     </div>
                   </a>
                   <a className="p-3.5 rounded-xl bg-surface-container-lowest hover:bg-surface-container transition-all flex items-center gap-3 shadow-sm border border-border-warm/40" href={`https://wa.me/${contact.whatsapp}`} target="_blank" rel="noreferrer">
-                    <div className="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center shrink-0">
-                      <WhatsAppIcon className="w-[18px] h-[18px] text-white shrink-0" />
+                    <div className="w-9 h-9 rounded-full bg-black text-white flex items-center justify-center shrink-0 shadow-sm">
+                      <WhatsAppIcon className="w-[18px] h-[18px] shrink-0" />
                     </div>
                     <div>
                       <span className="font-label-caps text-[9.5px] text-on-surface-variant block uppercase font-bold">WhatsApp</span>

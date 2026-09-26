@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import type { SupportedLanguage } from "../config";
 import { contact } from "../data/contact";
+import { WhatsAppIcon } from "../components/icons";
 
 export interface ContactPageProps {
   language?: SupportedLanguage;
@@ -101,7 +102,7 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
               </p>
             </div>
             <div className="inline-flex items-center gap-2 rounded-lg bg-surface-container border border-border-warm px-3.5 py-1.5 shadow-xs">
-              <span className="material-symbols-outlined text-xs sm:text-sm text-success-jade shrink-0">chat</span>
+              <WhatsAppIcon className="w-4 h-4 shrink-0" />
               <p className="text-ink-charcoal text-xs sm:text-sm font-medium whitespace-nowrap">
                 Direct WhatsApp Travel Desk (+91 98765 43210)
               </p>
@@ -173,8 +174,8 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
               </span>
             </div>
             <div>
-              <div className="w-9 h-9 rounded-full bg-[#E8F3EE] flex items-center justify-center text-success-jade mb-3 mt-1">
-                <span className="material-symbols-outlined text-lg">chat</span>
+              <div className="w-9 h-9 rounded-full bg-black flex items-center justify-center mb-3 mt-1 shadow-sm">
+                <WhatsAppIcon className="w-5 h-5 shrink-0" />
               </div>
               <h3 className="font-headline-sm text-ink-charcoal text-base mb-1 font-semibold">
                 WhatsApp Concierge Desk (Fastest)
@@ -186,12 +187,12 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
               </p>
             </div>
             <a
-              className="w-full inline-flex items-center justify-center gap-1.5 bg-success-jade hover:bg-[#23533e] text-white font-label-lg py-2 px-3 rounded-lg transition-colors text-center text-xs font-semibold shadow-xs"
+              className="w-full inline-flex items-center justify-center gap-2 bg-black hover:bg-neutral-900 border border-white/10 text-white font-label-lg py-2.5 px-3 rounded-lg transition-colors text-center text-xs font-semibold shadow-xs active:scale-[0.98]"
               href="https://wa.me/919876543210"
               target="_blank"
               rel="noreferrer"
             >
-              <span className="material-symbols-outlined text-[16px]">chat</span>
+              <WhatsAppIcon className="w-4 h-4 shrink-0" />
               <span>Chat on WhatsApp ↗</span>
             </a>
           </div>

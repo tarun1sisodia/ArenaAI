@@ -18,6 +18,7 @@
 import React, { useState } from "react";
 import { contact } from "../../data/contact";
 import { createInquiry, formatInquiryPhone, sanitizeInquiryName } from "../../services/api";
+import { WhatsAppIcon } from "../icons/WhatsAppIcon";
 
 export function ContactCard() {
   const [formData, setFormData] = useState({
@@ -132,13 +133,14 @@ export function ContactCard() {
             </h2>
           </div>
           <a
-            className="button button-outline"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-black hover:bg-neutral-900 border border-white/10 text-white font-label-lg text-xs font-semibold shadow-xs transition-all active:scale-[0.98]"
             href={`https://wa.me/${contact.whatsapp}`}
             target="_blank"
             rel="noreferrer"
             aria-label="Chat with SK Baghel on WhatsApp"
           >
-            WhatsApp Desk ↗
+            <WhatsAppIcon className="w-4 h-4 shrink-0" />
+            <span>WhatsApp Desk ↗</span>
           </a>
         </div>
 
@@ -251,18 +253,7 @@ export function ContactCard() {
                   role="listitem"
                 >
                   <div className="contact-tile-icon" aria-hidden="true">
-                    <svg
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      width="20"
-                      height="20"
-                    >
-                      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
-                    </svg>
+                    <WhatsAppIcon className="w-5 h-5 shrink-0" />
                   </div>
                   <div>
                     <span className="contact-tile-label">WhatsApp</span>
@@ -389,14 +380,15 @@ export function ContactCard() {
                   </p>
                   <div className="contact-success-actions">
                     <a
-                      className="button button-primary"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-black hover:bg-neutral-900 border border-white/10 text-white font-title-md text-xs font-semibold shadow-xs transition-all active:scale-[0.98]"
                       href={`https://wa.me/${contact.whatsapp}?text=Hi%20SK%20Baghel,%20I%20just%20submitted%20an%20inquiry%20for%20${encodeURIComponent(
                         formData.name
                       )}.`}
                       target="_blank"
                       rel="noreferrer"
                     >
-                      Chat on WhatsApp
+                      <WhatsAppIcon className="w-4 h-4 shrink-0" />
+                      <span>Chat on WhatsApp</span>
                     </a>
                     <button
                       type="button"

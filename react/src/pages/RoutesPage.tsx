@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import type { SupportedLanguage } from "../config";
 import { contact } from "../data/contact";
+import { WhatsAppIcon } from "../components/icons";
 
 export interface RoutesPageProps {
   language?: SupportedLanguage;
@@ -393,12 +394,13 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
                   </span>
                   <div className="flex items-center gap-2">
                     <a
-                      className="px-3 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-caps text-xs transition-colors font-bold"
+                      className="px-3 py-1.5 rounded-lg bg-black hover:bg-neutral-900 border border-white/10 text-white font-label-caps text-xs transition-colors font-bold inline-flex items-center gap-1.5 active:scale-[0.98]"
                       href={`https://wa.me/919876543210?text=Booking%20Route%20${encodeURIComponent(route.name)}`}
                       target="_blank"
                       rel="noreferrer"
                     >
-                      WhatsApp
+                      <WhatsAppIcon className="w-3.5 h-3.5 shrink-0" />
+                      <span>WhatsApp</span>
                     </a>
                     <a
                       className="px-3.5 py-1.5 rounded-lg bg-primary hover:bg-primary-container text-white font-label-caps text-xs transition-all shadow-xs font-bold flex items-center gap-1"

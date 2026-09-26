@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import type { SupportedLanguage } from "../config";
 import { contact } from "../data/contact";
+import { WhatsAppIcon } from "../components/icons";
 
 export interface FleetPageProps {
   language?: SupportedLanguage;
@@ -244,12 +245,12 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                 <span className="material-symbols-outlined text-[16px]">south</span>
               </a>
               <a
-                className="inline-flex items-center justify-center gap-1.5 bg-ink-charcoal hover:bg-ink-slate text-surface font-label-lg text-xs px-4.5 py-2.5 rounded-lg shadow-xs transition-all whitespace-nowrap font-semibold"
+                className="inline-flex items-center justify-center gap-2 bg-black hover:bg-neutral-900 border border-white/10 text-white font-label-lg text-xs px-4.5 py-2.5 rounded-lg shadow-xs transition-all whitespace-nowrap font-semibold active:scale-[0.98]"
                 href="https://wa.me/919876543210"
                 target="_blank"
                 rel="noreferrer"
               >
-                <span className="material-symbols-outlined text-[16px] text-success-jade">chat</span>
+                <WhatsAppIcon className="w-[18px] h-[18px] shrink-0" />
                 <span>WhatsApp Support</span>
               </a>
             </div>
@@ -453,12 +454,12 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pt-space-xs border-t border-border-warm/60">
                   <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
                     <a
-                      className="w-full sm:w-auto px-3.5 py-2 rounded-lg bg-ink-charcoal hover:bg-ink-slate text-surface font-label-lg text-xs inline-flex items-center justify-center gap-1.5 transition-colors shrink-0 font-semibold"
+                      className="w-full sm:w-auto px-3.5 py-2 rounded-lg bg-black hover:bg-neutral-900 border border-white/10 text-white font-label-lg text-xs inline-flex items-center justify-center gap-1.5 transition-colors shrink-0 font-semibold active:scale-[0.98]"
                       href={`https://wa.me/919876543210?text=Inquiry%20for%20${encodeURIComponent(veh.name)}`}
                       target="_blank"
                       rel="noreferrer"
                     >
-                      <span className="material-symbols-outlined text-[15px] text-success-jade">chat</span>
+                      <WhatsAppIcon className="w-3.5 h-3.5 shrink-0" />
                       <span>WhatsApp Inquiry</span>
                     </a>
                     <a

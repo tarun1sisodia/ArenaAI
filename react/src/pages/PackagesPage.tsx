@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import type { SupportedLanguage } from "../config";
 import { contact } from "../data/contact";
 import { packages, type TourPackage } from "../data";
+import { WhatsAppIcon } from "../components/icons";
 
 interface PackagesPageProps {
   language?: SupportedLanguage;
@@ -551,12 +552,13 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
                     </div>
                     <div className="grid grid-cols-2 gap-1.5 pt-0.5">
                       <a
-                        className="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-lg bg-ink-charcoal text-ivory-surface text-xs font-semibold hover:bg-ink-slate transition-colors"
+                        className="inline-flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-black text-white text-xs font-semibold hover:bg-neutral-900 border border-white/10 transition-colors active:scale-[0.98]"
                         href={whatsappPackageUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        <span className="material-symbols-outlined text-gold-accent text-[16px]">chat</span> WhatsApp
+                        <WhatsAppIcon className="w-3.5 h-3.5 shrink-0" />
+                        <span>WhatsApp</span>
                       </a>
                       <a
                         className="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-lg bg-primary text-on-primary text-xs font-semibold hover:bg-primary-container transition-colors shadow-xs"
@@ -913,7 +915,7 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
                   </a>
                   {/* WhatsApp Card */}
                   <a
-                    className="flex items-center justify-between p-space-md rounded-lg bg-ink-charcoal hover:bg-ink-charcoal/90 text-ivory-surface transition-colors border border-warm/10 group"
+                    className="flex items-center justify-between p-space-md rounded-lg bg-black hover:bg-neutral-900 text-white transition-colors border border-white/10 group shadow-sm active:scale-[0.98]"
                     href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
                       "Hello SK Baghel Travels, I would like a custom tour quote."
                     )}`}
@@ -921,17 +923,17 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
                     rel="noopener noreferrer"
                   >
                     <div className="flex items-center gap-space-sm">
-                      <div className="w-10 h-10 rounded-full bg-gold-accent/20 flex items-center justify-center shrink-0">
-                        <span className="material-symbols-outlined text-gold-accent text-[20px]">chat</span>
+                      <div className="w-10 h-10 rounded-full bg-neutral-800 flex items-center justify-center shrink-0">
+                        <WhatsAppIcon className="w-5 h-5 shrink-0" />
                       </div>
                       <div className="flex flex-col text-left">
-                        <span className="font-label-lg text-label-lg font-bold">WhatsApp Direct Quote</span>
-                        <span className="font-body-sm text-body-sm text-secondary-container">
+                        <span className="font-label-lg text-label-lg font-bold text-white">WhatsApp Direct Quote</span>
+                        <span className="font-body-sm text-body-sm text-neutral-400">
                           Route estimates &amp; vehicle photos in 15 mins
                         </span>
                       </div>
                     </div>
-                    <span className="material-symbols-outlined text-gold-accent text-[20px] transition-transform group-hover:translate-x-1">
+                    <span className="material-symbols-outlined text-white text-[20px] transition-transform group-hover:translate-x-1">
                       open_in_new
                     </span>
                   </a>

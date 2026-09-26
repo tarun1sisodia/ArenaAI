@@ -1,5 +1,6 @@
 import { contact } from "../data/contact";
 import { cities, packages, routes, vehicles, type Package, type Route, type Vehicle } from "../data/catalogue";
+import { WhatsAppIcon } from "../components/icons";
 
 type MarketingPageProps = {
   language: "en" | "hi";
@@ -105,7 +106,7 @@ function DetailPage({ detail, language }: { detail: Vehicle | Package | Route; l
         <p className="hero-copy">{description}</p>
         <div className="hero-actions">
           <a className="button button-primary" href={`tel:${contact.phone}`}>Call {contact.phoneDisplay}</a>
-          <a className="button button-outline" href={`https://wa.me/${contact.whatsapp}`}>WhatsApp</a>
+          <a className="button button-whatsapp inline-flex items-center gap-2" href={`https://wa.me/${contact.whatsapp}`} target="_blank" rel="noreferrer"><WhatsAppIcon className="w-4 h-4 shrink-0" /><span>WhatsApp</span></a>
           <a className="button button-outline" href={`/book.html?${isVehicle ? `vehicle=${detail.id}` : isPackage ? `package=${detail.slug}` : `route=${detail.id}`}`}>Book now ↗</a>
         </div>
       </section>
@@ -187,7 +188,7 @@ export function MarketingPage({ language, section }: MarketingPageProps) {
           <h2>{section === "about" ? "Local knowledge, dependable travel." : "Your local travel desk in Agra."}</h2>
           <p>{intro}</p>
           <div className="contact-details"><a href={`tel:${contact.phone}`}>{contact.phoneDisplay}</a><a href={`mailto:${contact.email}`}>{contact.email}</a><a href={contact.mapsUrl}>{contact.address}</a></div>
-          <div className="hero-actions"><a className="button button-primary" href={`https://wa.me/${contact.whatsapp}`}>Message on WhatsApp</a><a className="button button-outline" href="/book.html">Start a booking</a></div>
+          <div className="hero-actions"><a className="button button-whatsapp inline-flex items-center gap-2" href={`https://wa.me/${contact.whatsapp}`} target="_blank" rel="noreferrer"><WhatsAppIcon className="w-4 h-4 shrink-0" /><span>Message on WhatsApp</span></a><a className="button button-outline" href="/book.html">Start a booking</a></div>
         </section>
       )}
     </main>
