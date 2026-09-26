@@ -36,6 +36,7 @@
 | `LOCK-N04` | **Ultra-Luxury Chrome Suite** | `LOCKED` | `react/src/components/chrome/` | Glassmorphic sticky header (`bg-surface/90 backdrop-blur-xl`), phone + WhatsApp CTAs, mobile navigation drawer, and 4-column luxury footer with 28% advance guarantee trust seals. | 2026-09-25 |
 | `LOCK-N05` | **Fare Engine Invariants** | `LOCKED` | `react/src/features/booking/fareEngine.ts`<br>`react/src/fares.ts` | 300 km/day minimum outstation billing, toll inclusions, 28% advance deposit calculation, zero tourist trap guarantee. | 2026-09-25 |
 | `LOCK-N06` | **Dual Infinite Reviews Marquee** | `LOCKED` | `react/src/components/home/ReviewsMarquee.tsx` | Two-row opposing infinite marquee roller in Mughal Terracotta tokens. Row 1 scrolls left, Row 2 reverses right. Pause-on-hover, edge-gradient masks, verified badge pills, gold 5-star Material Symbols. Data from `reviews` catalogue. All class names use `font-*` and `text-*` design tokens only. | 2026-09-25 |
+| `LOCK-N07` | **HomePage Master Editorial Design & Bento System** | `LOCKED` | `react/src/pages/HomePage.tsx`<br>`react/src/components/home/` | Approved luxury design master: Dark atmospheric hero with live booking fare dock, Famous Places showcase with pure black WhatsApp CTA & white text, unified luxury dark bento cards (`bg-ink-charcoal text-ivory-surface` with `bg-primary text-white` icons & gold pills), and editorial typography hierarchy. | 2026-09-26 |
 
 ---
 

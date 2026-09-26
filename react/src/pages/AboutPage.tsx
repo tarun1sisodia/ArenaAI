@@ -1,6 +1,11 @@
 import React from "react";
 import { contact } from "../data/contact";
 import { WhatsAppIcon } from "../components/icons";
+import {
+  EDITORIAL_TYPOGRAPHY,
+  PrimaryButton,
+  WhatsAppButton,
+} from "../components/layout/EditorialPageTemplate";
 
 interface AboutPageProps {
   language?: "en" | "hi";
@@ -32,37 +37,29 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-center">
             {/* Text Column */}
             <div className="lg:col-span-7 flex flex-col gap-space-md">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary-fixed text-primary text-label-caps font-label-caps uppercase tracking-widest w-fit">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary-fixed text-primary font-label-caps text-[9.5px] uppercase tracking-widest w-fit font-bold">
                 <span className="material-symbols-outlined text-[14px]">verified</span>
                 Heritage Chauffeur Ethics Since 2009
               </span>
-              <h1 className="font-headline-hero text-headline-hero text-ink-charcoal tracking-tight font-serif">
+              <h1 className={EDITORIAL_TYPOGRAPHY.heroH1}>
                 Chauffeured Transit as an Art Form.{" "}
-                <span className="italic text-terracotta-sandstone">Never an Anonymous Ride.</span>
+                <span className={EDITORIAL_TYPOGRAPHY.heroAccent}>Never an Anonymous Ride.</span>
               </h1>
-              <p className="font-body-lg text-body-lg text-on-surface-variant max-w-2xl leading-relaxed">
+              <p className={`${EDITORIAL_TYPOGRAPHY.lead} max-w-2xl`}>
                 For over 15 years, headquartered directly beside the Taj East Gate in Taj Ganj, SK Baghel Tour &amp;
                 Travels has provided discerning travelers, families, and diplomats with peerless road journeys across
                 Agra, the Golden Triangle, and North India.
               </p>
 
               <div className="pt-space-xs flex flex-wrap items-center gap-space-sm">
-                <a
-                  className="inline-flex items-center gap-space-xs bg-terracotta-sandstone text-on-primary px-4.5 py-2.5 rounded-lg text-xs font-label-lg shadow-sm hover:bg-terracotta-sunlit transition-all duration-200 font-semibold"
-                  href="/book/"
-                >
-                  <span className="material-symbols-outlined text-[18px]">calendar_month</span>
-                  <span>Reserve With 28% Token</span>
-                </a>
-                <a
-                  className="inline-flex items-center gap-space-xs bg-black text-white px-4.5 py-2.5 rounded-lg text-xs font-label-lg shadow-xs hover:bg-neutral-900 border border-white/10 transition-all duration-200 font-semibold active:scale-[0.98]"
-                  href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent("Hello SK Baghel Desk, I would like to inquire about your chauffeur services in Agra.")}`}
-                  rel="noopener noreferrer"
-                  target="_blank"
-                >
-                  <WhatsAppIcon className="w-[18px] h-[18px] shrink-0" />
-                  <span>WhatsApp Taj Ganj Desk</span>
-                </a>
+                <PrimaryButton href="/book/" size="lg" icon="calendar_month" iconPosition="left">
+                  Reserve With 28% Token
+                </PrimaryButton>
+                <WhatsAppButton
+                  size="lg"
+                  inquiryText="Hello SK Baghel Desk, I would like to inquire about your chauffeur services in Agra."
+                  label="WhatsApp Taj Ganj Desk"
+                />
               </div>
 
               {/* Trust Badges Strip (Compact -20%) */}
@@ -102,32 +99,6 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                   }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-ink-midnight/80 via-ink-midnight/20 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-space-md flex flex-col gap-space-xs text-ivory-surface">
-                  <div className="flex items-center justify-between">
-                    <span className="bg-primary/90 text-ivory-surface px-2 py-0.5 rounded text-[9.5px] font-label-caps uppercase tracking-wider font-semibold">
-                      Heritage Highway Cruiser
-                    </span>
-                    <span className="flex items-center gap-1 text-gold-accent text-xs font-semibold">
-                      <span className="material-symbols-outlined text-[15px]">verified</span>
-                      Toyota Innova Crysta ZX
-                    </span>
-                  </div>
-                  <p className="font-headline-sm text-xs sm:text-[13px] font-serif italic text-ivory-surface">
-                    “Agra to Jaipur through Fatehpur Sikri without a single interruption.”
-                  </p>
-                  <span className="text-[10px] text-sandstone-wash/80">— The Baghel Royal Fleet Assurance</span>
-                </div>
-              </div>
-
-              {/* Floating Micro Card */}
-              <div className="absolute -bottom-4 -left-4 hidden sm:flex items-center gap-2 bg-surface-container-lowest p-2.5 rounded-lg shadow-md max-w-xs border border-border-warm/60">
-                <div className="w-8 h-8 rounded bg-sandstone-wash flex items-center justify-center shrink-0">
-                  <span className="material-symbols-outlined text-terracotta-sandstone text-[18px]">shield_person</span>
-                </div>
-                <div className="flex flex-col">
-                  <span className="font-title-md text-xs text-on-surface leading-tight font-semibold">Chauffeur Police Clear</span>
-                  <span className="font-body-sm text-[10px] text-secondary">Pre-verified UP &amp; Delhi Police IDs</span>
-                </div>
               </div>
             </div>
           </div>
@@ -139,13 +110,13 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
         <div className="max-w-7xl mx-auto px-margin-mobile lg:px-margin">
           {/* Section Title Header */}
           <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-6 sm:mb-space-lg">
-            <span className="font-label-caps text-[9.5px] text-terracotta-sandstone uppercase tracking-widest mb-1 font-bold">
+            <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowSandstone} mb-1`}>
               The Chauffeur Ethics Protocol
             </span>
-            <h2 className="font-headline-lg text-headline-lg text-ink-charcoal font-serif mb-1.5">
+            <h2 className={`${EDITORIAL_TYPOGRAPHY.sectionH2} mb-1.5`}>
               Six Sacred Pillars of Our Transit Standard
             </h2>
-            <p className="font-body-md text-body-md text-on-surface-variant">
+            <p className={EDITORIAL_TYPOGRAPHY.body}>
               In an industry plagued by bait-and-switch app aggregators and aggressive tourist brokers, we hold an
               unyielding contract with our guests: complete autonomy, total transparency, and unwavering courtesy.
             </p>
@@ -160,16 +131,16 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                   <span className="font-headline-md text-lg sm:text-xl font-serif text-terracotta-sandstone font-bold">01</span>
                   <span className="material-symbols-outlined text-primary text-[22px]">do_not_disturb_on</span>
                 </div>
-                <h3 className="font-title-md text-[13px] sm:text-[14px] text-on-surface font-serif font-bold">Zero Commission Traps Guarantee</h3>
-                <p className="font-body-sm text-[10.5px] sm:text-[11px] text-on-surface-variant leading-relaxed">
+                <h3 className={EDITORIAL_TYPOGRAPHY.subH4}>Zero Commission Traps Guarantee</h3>
+                <p className={EDITORIAL_TYPOGRAPHY.compact}>
                   Strict contractual prohibition against unsolicited marble, rug, spice, or jewelry emporiums. Your
                   itinerary belongs to you. If a driver forces an unrequested stop, your entire return fare is fully
                   refunded on the spot.
                 </p>
               </div>
               <div className="mt-3 pt-2 bg-sandstone-wash/50 p-2 rounded">
-                <span className="font-label-caps text-[8.5px] text-terracotta-sandstone uppercase block font-bold">Guest Protection</span>
-                <span className="font-body-sm text-[10px] text-ink-charcoal font-medium">100% Uncompromised Itinerary Integrity</span>
+                <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowSandstone} text-[8.5px] mb-0.5`}>Guest Protection</span>
+                <span className="font-body-sm text-[10.5px] text-ink-charcoal font-medium">100% Uncompromised Itinerary Integrity</span>
               </div>
             </div>
 
@@ -180,16 +151,16 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                   <span className="font-headline-md text-lg sm:text-xl font-serif text-terracotta-sandstone font-bold">02</span>
                   <span className="material-symbols-outlined text-primary text-[22px]">flight_takeoff</span>
                 </div>
-                <h3 className="font-title-md text-[13px] sm:text-[14px] text-on-surface font-serif font-bold">Punctual Doorstep &amp; Flight Tracking</h3>
-                <p className="font-body-sm text-[10.5px] sm:text-[11px] text-on-surface-variant leading-relaxed">
+                <h3 className={EDITORIAL_TYPOGRAPHY.subH4}>Punctual Doorstep &amp; Flight Tracking</h3>
+                <p className={EDITORIAL_TYPOGRAPHY.compact}>
                   Live radar sync with Delhi IGI Terminal 3 arrivals and Agra Cantt Gatimaan Express. Your chauffeur
                   positions vehicle 15 minutes before touch-down, holding a personalized name placard at the arrival
                   vestibule.
                 </p>
               </div>
               <div className="mt-3 pt-2 bg-sandstone-wash/50 p-2 rounded">
-                <span className="font-label-caps text-[8.5px] text-terracotta-sandstone uppercase block font-bold">Buffer Guarantee</span>
-                <span className="font-body-sm text-[10px] text-ink-charcoal font-medium">Zero Surcharge for Flight or Rail Delays</span>
+                <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowSandstone} text-[8.5px] mb-0.5`}>Buffer Guarantee</span>
+                <span className="font-body-sm text-[10.5px] text-ink-charcoal font-medium">Zero Surcharge for Flight or Rail Delays</span>
               </div>
             </div>
 
@@ -200,16 +171,16 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                   <span className="font-headline-md text-lg sm:text-xl font-serif text-terracotta-sandstone font-bold">03</span>
                   <span className="material-symbols-outlined text-primary text-[22px]">badge</span>
                 </div>
-                <h3 className="font-title-md text-[13px] sm:text-[14px] text-on-surface font-serif font-bold">100% Yellow-Plate Commercial Fleet</h3>
-                <p className="font-body-sm text-[10.5px] sm:text-[11px] text-on-surface-variant leading-relaxed">
+                <h3 className={EDITORIAL_TYPOGRAPHY.subH4}>100% Yellow-Plate Commercial Fleet</h3>
+                <p className={EDITORIAL_TYPOGRAPHY.compact}>
                   We never run precarious private "white-plate" personal cars. Every vehicle holds active tourist
                   permits, passenger liability insurance up to ₹1,000,000, and is strictly under 36 months in service
                   age.
                 </p>
               </div>
               <div className="mt-3 pt-2 bg-sandstone-wash/50 p-2 rounded">
-                <span className="font-label-caps text-[8.5px] text-terracotta-sandstone uppercase block font-bold">Legal Verification</span>
-                <span className="font-body-sm text-[10px] text-ink-charcoal font-medium">All India Tourist Permit (AITP) Certified</span>
+                <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowSandstone} text-[8.5px] mb-0.5`}>Legal Verification</span>
+                <span className="font-body-sm text-[10.5px] text-ink-charcoal font-medium">All India Tourist Permit (AITP) Certified</span>
               </div>
             </div>
 
@@ -220,15 +191,15 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                   <span className="font-headline-md text-lg sm:text-xl font-serif text-terracotta-sandstone font-bold">04</span>
                   <span className="material-symbols-outlined text-primary text-[22px]">person_apron</span>
                 </div>
-                <h3 className="font-title-md text-[13px] sm:text-[14px] text-on-surface font-serif font-bold">Chauffeur Etiquette &amp; Heritage Fluency</h3>
-                <p className="font-body-sm text-[10.5px] sm:text-[11px] text-on-surface-variant leading-relaxed">
+                <h3 className={EDITORIAL_TYPOGRAPHY.subH4}>Chauffeur Etiquette &amp; Heritage Fluency</h3>
+                <p className={EDITORIAL_TYPOGRAPHY.compact}>
                   Police background verified, crisp formal attire, and non-smoking interiors. Chauffeurs possess minimum
                   7+ years highway mastery, fluent in Hindi &amp; English, trained in discreet guest hospitality.
                 </p>
               </div>
               <div className="mt-3 pt-2 bg-sandstone-wash/50 p-2 rounded">
-                <span className="font-label-caps text-[8.5px] text-terracotta-sandstone uppercase block font-bold">Chauffeur Standard</span>
-                <span className="font-body-sm text-[10px] text-ink-charcoal font-medium">Bilingual, Courteous &amp; Tobacco-Free</span>
+                <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowSandstone} text-[8.5px] mb-0.5`}>Chauffeur Standard</span>
+                <span className="font-body-sm text-[10.5px] text-ink-charcoal font-medium">Bilingual, Courteous &amp; Tobacco-Free</span>
               </div>
             </div>
 
@@ -239,15 +210,15 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                   <span className="font-headline-md text-lg sm:text-xl font-serif text-terracotta-sandstone font-bold">05</span>
                   <span className="material-symbols-outlined text-primary text-[22px]">payments</span>
                 </div>
-                <h3 className="font-title-md text-[13px] sm:text-[14px] text-on-surface font-serif font-bold">Transparent 28% Advance &amp; Fare Lock</h3>
-                <p className="font-body-sm text-[10.5px] sm:text-[11px] text-on-surface-variant leading-relaxed">
+                <h3 className={EDITORIAL_TYPOGRAPHY.subH4}>Transparent 28% Advance &amp; Fare Lock</h3>
+                <p className={EDITORIAL_TYPOGRAPHY.compact}>
                   Confirm bookings with a clean 28% advance token. The balance is paid upon reaching your destination. All
                   Yamuna Expressway and Eastern Peripheral tolls are transparently bundled. Zero surprise return fees.
                 </p>
               </div>
               <div className="mt-3 pt-2 bg-sandstone-wash/50 p-2 rounded">
-                <span className="font-label-caps text-[8.5px] text-terracotta-sandstone uppercase block font-bold">Financial Safety</span>
-                <span className="font-body-sm text-[10px] text-ink-charcoal font-medium">GST Invoiced • No Cash Shakedowns</span>
+                <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowSandstone} text-[8.5px] mb-0.5`}>Financial Safety</span>
+                <span className="font-body-sm text-[10.5px] text-ink-charcoal font-medium">GST Invoiced • No Cash Shakedowns</span>
               </div>
             </div>
 
@@ -258,15 +229,15 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                   <span className="font-headline-md text-lg sm:text-xl font-serif text-terracotta-sandstone font-bold">06</span>
                   <span className="material-symbols-outlined text-primary text-[22px]">support_agent</span>
                 </div>
-                <h3 className="font-title-md text-[13px] sm:text-[14px] text-on-surface font-serif font-bold">24×7 Human Taj Ganj Dispatch Desk</h3>
-                <p className="font-body-sm text-[10.5px] sm:text-[11px] text-on-surface-variant leading-relaxed">
+                <h3 className={EDITORIAL_TYPOGRAPHY.subH4}>24×7 Human Taj Ganj Dispatch Desk</h3>
+                <p className={EDITORIAL_TYPOGRAPHY.compact}>
                   Zero automated phone menus. Direct access to experienced dispatchers physically based in Taj Ganj,
                   Agra. Need to alter a morning sunrise pickup time at 11:30 PM? We answer within two telephone rings.
                 </p>
               </div>
               <div className="mt-3 pt-2 bg-sandstone-wash/50 p-2 rounded">
-                <span className="font-label-caps text-[8.5px] text-terracotta-sandstone uppercase block font-bold">Instant Human Voice</span>
-                <span className="font-body-sm text-[10px] text-ink-charcoal font-medium">Direct Telephone &amp; Live WhatsApp Desk</span>
+                <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowSandstone} text-[8.5px] mb-0.5`}>Instant Human Voice</span>
+                <span className="font-body-sm text-[10.5px] text-ink-charcoal font-medium">Direct Telephone &amp; Live WhatsApp Desk</span>
               </div>
             </div>
           </div>
@@ -286,13 +257,13 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
             </svg>
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-center">
               <div className="lg:col-span-5 flex flex-col gap-2.5">
-                <span className="text-terracotta-sunlit text-[9.5px] font-label-caps uppercase tracking-widest font-bold">
+                <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowGold} text-[9.5px]`}>
                   Unwavering Vehicle Readiness
                 </span>
-                <h2 className="font-headline-lg text-headline-lg text-ivory-surface font-serif">
+                <h2 className={EDITORIAL_TYPOGRAPHY.sectionH2Dark}>
                   The 21-Point Morning Pre-Departure Ritual
                 </h2>
-                <p className="text-secondary-fixed-dim font-body-sm text-[10.5px] sm:text-[11px] leading-relaxed">
+                <p className={EDITORIAL_TYPOGRAPHY.compactDark}>
                   Before any Baghel vehicle pulls up to your hotel porch, an uncompromising 45-minute mechanical and
                   sensory audit is executed at our Taj Ganj maintenance facility.
                 </p>
@@ -320,41 +291,41 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   <div className="bg-ink-slate p-2.5 sm:p-3 rounded-lg flex flex-col gap-1 border border-white/5">
                     <div className="flex items-center justify-between">
-                      <span className="text-[8.5px] font-label-caps text-gold-accent uppercase font-bold">Mechanical Systems</span>
+                      <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowGold} text-[8.5px]`}>Mechanical Systems</span>
                       <span className="material-symbols-outlined text-success-jade text-[16px]">check_circle</span>
                     </div>
-                    <h4 className="font-title-md text-xs text-ivory-surface font-serif font-semibold">Braking &amp; Tread Depth</h4>
-                    <p className="font-body-sm text-[10px] text-secondary-fixed-dim">
+                    <h4 className={EDITORIAL_TYPOGRAPHY.subH4Dark}>Braking &amp; Tread Depth</h4>
+                    <p className={EDITORIAL_TYPOGRAPHY.compactDark}>
                       Digital vernier measurement ensuring &gt;4mm tread for Yamuna Expressway wet performance.
                     </p>
                   </div>
                   <div className="bg-ink-slate p-2.5 sm:p-3 rounded-lg flex flex-col gap-1 border border-white/5">
                     <div className="flex items-center justify-between">
-                      <span className="text-[8.5px] font-label-caps text-gold-accent uppercase font-bold">Atmospheric Purity</span>
+                      <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowGold} text-[8.5px]`}>Atmospheric Purity</span>
                       <span className="material-symbols-outlined text-success-jade text-[16px]">check_circle</span>
                     </div>
-                    <h4 className="font-title-md text-xs text-ivory-surface font-serif font-semibold">Dual-Zone AC Sanitization</h4>
-                    <p className="font-body-sm text-[10px] text-secondary-fixed-dim">
+                    <h4 className={EDITORIAL_TYPOGRAPHY.subH4Dark}>Dual-Zone AC Sanitization</h4>
+                    <p className={EDITORIAL_TYPOGRAPHY.compactDark}>
                       Daily HEPA filter vacuuming and ozone treatment to keep air crisp and allergen-free.
                     </p>
                   </div>
                   <div className="bg-ink-slate p-2.5 sm:p-3 rounded-lg flex flex-col gap-1 border border-white/5">
                     <div className="flex items-center justify-between">
-                      <span className="text-[8.5px] font-label-caps text-gold-accent uppercase font-bold">Navigational Rigor</span>
+                      <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowGold} text-[8.5px]`}>Navigational Rigor</span>
                       <span className="material-symbols-outlined text-success-jade text-[16px]">check_circle</span>
                     </div>
-                    <h4 className="font-title-md text-xs text-ivory-surface font-serif font-semibold">Redundant GPS Telematics</h4>
-                    <p className="font-body-sm text-[10px] text-secondary-fixed-dim">
+                    <h4 className={EDITORIAL_TYPOGRAPHY.subH4Dark}>Redundant GPS Telematics</h4>
+                    <p className={EDITORIAL_TYPOGRAPHY.compactDark}>
                       Dual SIM tracking transponders connected to our central Taj Ganj dispatch monitoring wall.
                     </p>
                   </div>
                   <div className="bg-ink-slate p-2.5 sm:p-3 rounded-lg flex flex-col gap-1 border border-white/5">
                     <div className="flex items-center justify-between">
-                      <span className="text-[8.5px] font-label-caps text-gold-accent uppercase font-bold">Guest Ergonomics</span>
+                      <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowGold} text-[8.5px]`}>Guest Ergonomics</span>
                       <span className="material-symbols-outlined text-success-jade text-[16px]">check_circle</span>
                     </div>
-                    <h4 className="font-title-md text-xs text-ivory-surface font-serif font-semibold">Power Port Validation</h4>
-                    <p className="font-body-sm text-[10px] text-secondary-fixed-dim">
+                    <h4 className={EDITORIAL_TYPOGRAPHY.subH4Dark}>Power Port Validation</h4>
+                    <p className={EDITORIAL_TYPOGRAPHY.compactDark}>
                       Multivolt USB-C &amp; Type-A fast charging docks tested for iPhone, Android, and laptops.
                     </p>
                   </div>
@@ -380,13 +351,13 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
       <section className="w-full bg-surface-container-low py-8 sm:py-space-xl border-t border-b border-border-warm/30">
         <div className="max-w-7xl mx-auto px-margin-mobile lg:px-margin">
           <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-6 sm:mb-space-lg">
-            <span className="font-label-caps text-[9.5px] text-terracotta-sandstone uppercase tracking-widest mb-1 font-bold">
+            <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowSandstone} mb-1`}>
               The Unfiltered Truth
             </span>
-            <h2 className="font-headline-lg text-headline-lg text-ink-charcoal font-serif mb-1.5">
+            <h2 className={`${EDITORIAL_TYPOGRAPHY.sectionH2} mb-1.5`}>
               Why Discerning Voyagers Avoid The App Lottery
             </h2>
-            <p className="font-body-md text-body-md text-on-surface-variant">
+            <p className={EDITORIAL_TYPOGRAPHY.body}>
               Comparing SK Baghel Tour &amp; Travels with generic app-based rides and street touts operating around Agra
               tourist stations.
             </p>
@@ -492,10 +463,10 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
         <div className="max-w-7xl mx-auto px-margin-mobile lg:px-margin">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 sm:mb-space-lg gap-space-sm">
             <div className="flex flex-col gap-1 max-w-xl">
-              <span className="font-label-caps text-[9.5px] text-terracotta-sandstone uppercase tracking-widest font-bold">
+              <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowSandstone} mb-0.5`}>
                 Guest Chronicle
               </span>
-              <h2 className="font-headline-lg text-headline-lg text-ink-charcoal font-serif">
+              <h2 className={EDITORIAL_TYPOGRAPHY.sectionH2}>
                 Words From Those Who Journeyed With Us
               </h2>
             </div>
@@ -611,13 +582,13 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
         <div className="max-w-7xl mx-auto px-margin-mobile lg:px-margin">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
             <div className="lg:col-span-6 flex flex-col gap-3">
-              <span className="font-label-caps text-[9.5px] text-terracotta-sandstone uppercase tracking-widest font-bold">
+              <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowSandstone} text-[9.5px]`}>
                 Physical Roots in Taj Ganj
               </span>
-              <h2 className="font-headline-lg text-headline-lg text-ink-charcoal font-serif">
+              <h2 className={EDITORIAL_TYPOGRAPHY.sectionH2}>
                 Not a Remote Call-Center. We Are Directly On The Heritage Ground.
               </h2>
-              <p className="font-body-sm text-[10.5px] sm:text-[11px] text-on-surface-variant leading-relaxed">
+              <p className={EDITORIAL_TYPOGRAPHY.compact}>
                 Our office sits 450 meters from the Taj Mahal Eastern Gate ticket concourse. When monsoon storms cause
                 expressway delays or VIP motorcades divert city traffic, our local dispatchers navigate alternate
                 historical bypasses in real time.
@@ -674,32 +645,26 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
         <div className="max-w-7xl mx-auto px-margin-mobile lg:px-margin">
           <div className="bg-surface-container-lowest rounded-xl p-6 sm:p-8 md:p-12 shadow-xl flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 sm:gap-8 w-full border border-border-warm">
             <div className="flex flex-col gap-space-xs max-w-xl text-left w-full">
-              <span className="font-label-caps text-label-caps text-terracotta-sandstone uppercase tracking-widest">
+              <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowSandstone} text-[9.5px]`}>
                 Unrivaled Hospitality Awaits
               </span>
-              <h2 className="font-headline-lg text-[28px] sm:text-headline-md md:text-headline-lg text-ink-charcoal font-serif leading-tight">
+              <h2 className={EDITORIAL_TYPOGRAPHY.sectionH2}>
                 Experience Agra With Dignity &amp; Poise.
               </h2>
-              <p className="font-body-md text-body-md text-on-surface-variant max-w-lg leading-relaxed">
+              <p className={`${EDITORIAL_TYPOGRAPHY.body} max-w-lg`}>
                 Lock your chauffeur vehicle today with a transparent 28% advance token. Zero hidden charges, spotless
                 air-conditioned fleet, and gracious guidance.
               </p>
             </div>
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full lg:w-auto shrink-0">
-              <a
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-space-xs bg-terracotta-sandstone text-on-primary px-6 sm:px-8 py-3.5 sm:py-4 rounded text-label-lg font-label-lg shadow-md hover:bg-terracotta-sunlit transition-all duration-200 text-center"
-                href="/book/"
-              >
-                <span className="material-symbols-outlined text-[20px]">calendar_today</span>
-                <span>Book Your Chauffeur Now</span>
-              </a>
-              <a
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-space-xs bg-ink-charcoal text-ivory-surface px-6 py-3.5 sm:py-4 rounded text-label-lg font-label-lg shadow-sm hover:bg-ink-slate transition-all duration-200 text-center"
-                href={`tel:${contact.phone}`}
-              >
-                <span className="material-symbols-outlined text-[20px] text-terracotta-sunlit">phone_in_talk</span>
-                <span>{contact.phoneDisplay}</span>
-              </a>
+              <PrimaryButton href="/book/" size="lg" icon="calendar_today" iconPosition="left">
+                Book Your Chauffeur Now
+              </PrimaryButton>
+              <WhatsAppButton
+                size="lg"
+                inquiryText="Hello SK Baghel Desk, I would like to inquire about your chauffeur services in Agra."
+                label="WhatsApp Taj Ganj Desk"
+              />
             </div>
           </div>
         </div>

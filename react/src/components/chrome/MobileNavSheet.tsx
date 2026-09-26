@@ -35,6 +35,7 @@ export function MobileNavSheet({
 
   const links = [
     { label: "Home", href: "/", icon: "home" },
+    { label: "About Us", href: "/en/about/", icon: "info" },
     { label: "Services", href: "/en/services/", icon: "room_service" },
     { label: "Outstation Routes", href: "/en/routes/", icon: "alt_route" },
     { label: "Tour Packages", href: "/en/packages/", icon: "explore" },
@@ -42,6 +43,7 @@ export function MobileNavSheet({
     { label: "Contact & Support", href: "/en/contact/", icon: "support_agent" },
     { label: "FAQs", href: "/en/faq/", icon: "help" },
   ];
+
 
   return (
     <div
