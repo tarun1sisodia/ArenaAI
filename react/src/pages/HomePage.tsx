@@ -7,6 +7,7 @@ import { FamousPlacesSection } from "../components/home/FamousPlacesSection";
 import { WhatsAppIcon } from "../components/icons";
 import { SmoothScrollHero } from "@/components/ui/smooth-scroll-hero";
 import { InitialLoader } from "@/components/ui/InitialLoader";
+import TextLoop from "@/components/ui/text-loop";
 import { AppleHelloEnglishEffect } from "@/components/ui/apple-hello-effect";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ChevronDown, Sparkles } from "lucide-react";
@@ -207,52 +208,48 @@ export function HomePage({ language = "en" }: HomePageProps) {
             {/* Left — headline + two CTAs only (hero stack discipline: 3 elements max) */}
             <div className="lg:col-span-6 flex flex-col items-start gap-space-md">
 
-              {/* 100% SEO-Safe Headline with Signature Hello Animation + Elegant Write-On Reveal */}
-              <div className="flex flex-col items-start gap-1 w-full max-w-[620px]">
-                {/* Signature Apple-Style Cursive Hello Effect */}
-                <div className="overflow-visible pb-0.5" aria-hidden="true">
-                  <AppleHelloEnglishEffect
-                    className="h-12 sm:h-14 md:h-16 w-auto text-[#E5A044] drop-shadow-[0_2px_14px_rgba(229,160,68,0.5)]"
-                    speed={0.8}
-                  />
+              {/* 100% SEO-Safe Headline with Dynamic TextLoop Animation */}
+              <div className="flex flex-col items-start gap-2 w-full max-w-[640px]">
+                {/* Prestige Heritage Pill Badge */}
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold-accent/15 border border-gold-accent/30 text-gold-accent font-label-caps text-[11px] uppercase tracking-widest backdrop-blur-md mb-0.5 shadow-sm">
+                  <Sparkles className="w-3.5 h-3.5 text-gold-accent" />
+                  <span>Premier Chauffeur Fleet • Est. Agra</span>
                 </div>
 
-                <h1 className="font-headline-hero text-headline-hero font-normal leading-[1.12] w-full">
+                <h1 className="font-headline-hero text-headline-hero font-normal leading-[1.14] w-full">
                   {/* Semantic HTML text for search crawlers & screen readers */}
                   <span className="sr-only">Agra to anywhere, in first-class comfort.</span>
 
                   <div aria-hidden="true" className="select-none flex flex-col gap-1 w-full">
-                    {/* Line 1: Agra to anywhere, */}
-                    <motion.div
-                      className="text-ivory-surface font-serif tracking-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
-                      style={{
-                        fontSize: "clamp(2.4rem, 5vw, 3.6rem)",
-                        lineHeight: 1.15,
-                        fontFamily: "'Playfair Display', 'EB Garamond', Georgia, serif",
-                      }}
-                      initial={isClient ? { opacity: 0, clipPath: "inset(0 100% 0 0)" } : false}
-                      animate={isClient ? { opacity: 1, clipPath: "inset(0 0% 0 0)" } : undefined}
-                      transition={{ duration: 1.0, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                    >
-                      Agra to anywhere,
-                    </motion.div>
+                    {/* Line 1: Agra to anywhere, (Interactive TextLoop) */}
+                    <TextLoop
+                      staticText="Agra to"
+                      rotatingTexts={["anywhere,", "Delhi NCR,", "Jaipur,", "Mathura,", "Lucknow,"]}
+                      className="font-serif tracking-tight text-[clamp(2.2rem,4.8vw,3.6rem)] leading-[1.15] font-normal"
+                      staticTextClassName="text-ivory-surface font-serif tracking-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)] mr-2 sm:mr-3"
+                      rotatingTextClassName="bg-gradient-to-r from-ivory-surface via-[#FFF2DE] to-[#E5A044] bg-clip-text text-transparent font-serif drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)] pr-1"
+                      cursorClassName="bg-[#E5A044] shadow-[0_0_10px_#E5A044]"
+                      backgroundClassName="bg-gradient-to-r from-transparent via-[#E5A044]/15 to-[#E5A044]/25 rounded-md"
+                      interval={3200}
+                    />
 
-                    {/* Line 2: in first-class comfort. + Gold flourish curve */}
-                    <div className="relative w-full max-w-[560px]">
-                      <motion.div
-                        className="font-serif italic tracking-tight text-[#E07A5F] drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
-                        style={{
-                          fontSize: "clamp(2.3rem, 4.8vw, 3.5rem)",
-                          lineHeight: 1.15,
-                          fontFamily: "'Playfair Display', 'EB Garamond', Georgia, serif",
-                          fontStyle: "italic",
-                        }}
-                        initial={isClient ? { opacity: 0, clipPath: "inset(0 100% 0 0)" } : false}
-                        animate={isClient ? { opacity: 1, clipPath: "inset(0 0% 0 0)" } : undefined}
-                        transition={{ duration: 1.1, delay: 1.2, ease: [0.16, 1, 0.3, 1] }}
-                      >
-                        in first-class comfort.
-                      </motion.div>
+                    {/* Line 2: in first-class comfort. (Interactive TextLoop + Underline Flourish) */}
+                    <div className="relative w-full max-w-[580px]">
+                      <TextLoop
+                        staticText="in"
+                        rotatingTexts={[
+                          "first-class comfort.",
+                          "unrivaled luxury.",
+                          "verified safety.",
+                          "transparent fares.",
+                        ]}
+                        className="font-serif italic tracking-tight text-[clamp(2.1rem,4.5vw,3.4rem)] leading-[1.18] font-normal"
+                        staticTextClassName="text-ivory-surface/90 font-serif italic mr-2 sm:mr-3 drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
+                        rotatingTextClassName="bg-gradient-to-r from-[#E07A5F] via-[#F4A261] to-[#E5A044] bg-clip-text text-transparent font-serif italic drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)] pr-1.5"
+                        cursorClassName="bg-[#E07A5F] shadow-[0_0_10px_#E07A5F]"
+                        backgroundClassName="bg-gradient-to-r from-transparent via-[#E07A5F]/15 to-[#E07A5F]/25 rounded-md"
+                        interval={3200}
+                      />
 
                       {/* Cursive flourish underline stroke */}
                       <svg
@@ -268,7 +265,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
                           strokeLinecap="round"
                           initial={isClient ? { pathLength: 0, opacity: 0 } : false}
                           animate={isClient ? { pathLength: 1, opacity: 1 } : undefined}
-                          transition={{ duration: 1.1, delay: 2.1, ease: [0.16, 1, 0.3, 1] }}
+                          transition={{ duration: 1.1, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
                         />
                       </svg>
                     </div>
