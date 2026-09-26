@@ -7,8 +7,6 @@ import { FamousPlacesSection } from "../components/home/FamousPlacesSection";
 import { WhatsAppIcon } from "../components/icons";
 import { SmoothScrollHero } from "@/components/ui/smooth-scroll-hero";
 import { InitialLoader } from "@/components/ui/InitialLoader";
-import TextLoop from "@/components/ui/text-loop";
-import { AppleHelloEnglishEffect } from "@/components/ui/apple-hello-effect";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ChevronDown, Sparkles } from "lucide-react";
 
@@ -17,6 +15,7 @@ export interface HomePageProps {
 }
 
 export function HomePage({ language = "en" }: HomePageProps) {
+  const text = "Agra to Anywhere";
   const [tripType, setTripType] = useState<"oneway" | "round" | "local">("oneway");
   const [origin, setOrigin] = useState("Agra");
   const [destination, setDestination] = useState("Delhi");
@@ -208,12 +207,11 @@ export function HomePage({ language = "en" }: HomePageProps) {
             {/* Left — headline + two CTAs only (hero stack discipline: 3 elements max) */}
             <div className="lg:col-span-6 flex flex-col items-start gap-space-md">
 
-              {/* 100% SEO-Safe Headline with Dynamic TextLoop Animation */}
-              <div className="flex flex-col items-start gap-2 w-full max-w-[640px]">
+              {/* 100% SEO-Safe Headline with Letter-by-Letter Handwriting Reveal */}
+              <div className="flex flex-col items-start gap-1 w-full max-w-[640px]">
                 {/* Prestige Heritage Pill Badge */}
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold-accent/15 border border-gold-accent/30 text-gold-accent font-label-caps text-[11px] uppercase tracking-widest backdrop-blur-md mb-0.5 shadow-sm">
-                  <Sparkles className="w-3.5 h-3.5 text-gold-accent" />
-                  <span>Premier Chauffeur Fleet • Est. Agra</span>
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold-accent/15 border border-gold-accent/30 text-gold-accent font-label-caps text-[11px] uppercase tracking-widest backdrop-blur-md mb-1 shadow-sm">
+                  
                 </div>
 
                 <h1 className="font-headline-hero text-headline-hero font-normal leading-[1.14] w-full">
@@ -221,35 +219,60 @@ export function HomePage({ language = "en" }: HomePageProps) {
                   <span className="sr-only">Agra to anywhere, in first-class comfort.</span>
 
                   <div aria-hidden="true" className="select-none flex flex-col gap-1 w-full">
-                    {/* Line 1: Agra to anywhere, (Interactive TextLoop) */}
-                    <TextLoop
-                      staticText="Agra to"
-                      rotatingTexts={["anywhere,", "Delhi NCR,", "Jaipur,", "Mathura,", "Lucknow,"]}
-                      className="font-serif tracking-tight text-[clamp(2.2rem,4.8vw,3.6rem)] leading-[1.15] font-normal"
-                      staticTextClassName="text-ivory-surface font-serif tracking-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)] mr-2 sm:mr-3"
-                      rotatingTextClassName="bg-gradient-to-r from-ivory-surface via-[#FFF2DE] to-[#E5A044] bg-clip-text text-transparent font-serif drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)] pr-1"
-                      cursorClassName="bg-[#E5A044] shadow-[0_0_10px_#E5A044]"
-                      backgroundClassName="bg-gradient-to-r from-transparent via-[#E5A044]/15 to-[#E5A044]/25 rounded-md"
-                      interval={3200}
-                    />
+                    {/* Animated "Agra to Anywhere" handwriting-style reveal */}
+                    <motion.div
+                      className="text-[#E5A044] drop-shadow-[0_2px_14px_rgba(229,160,68,0.5)] overflow-visible pb-0.5"
+                      initial="hidden"
+                      animate="visible"
+                      variants={{
+                        hidden: {},
+                        visible: {
+                          transition: {
+                            staggerChildren: 0.08,
+                          },
+                        },
+                      }}
+                      aria-label={text}
+                    >
+                      {text.split("").map((letter, index) => (
+                        <motion.span
+                          key={`${letter}-${index}`}
+                          className="inline-block font-serif italic text-4xl sm:text-5xl md:text-6xl"
+                          variants={{
+                            hidden: {
+                              opacity: 0,
+                              y: 18,
+                              rotate: 8,
+                              clipPath: "inset(0 100% 0 0)",
+                            },
+                            visible: {
+                              opacity: 1,
+                              y: 0,
+                              rotate: 0,
+                              clipPath: "inset(0 0% 0 0)",
+                              transition: {
+                                duration: 0.45,
+                                ease: [0.16, 1, 0.3, 1],
+                              },
+                            },
+                          }}
+                        >
+                          {letter === " " ? "\u00A0" : letter}
+                        </motion.span>
+                      ))}
+                    </motion.div>
 
-                    {/* Line 2: in first-class comfort. (Interactive TextLoop + Underline Flourish) */}
-                    <div className="relative w-full max-w-[580px]">
-                      <TextLoop
-                        staticText="in"
-                        rotatingTexts={[
-                          "first-class comfort.",
-                          "unrivaled luxury.",
-                          "verified safety.",
-                          "transparent fares.",
-                        ]}
-                        className="font-serif italic tracking-tight text-[clamp(2.1rem,4.5vw,3.4rem)] leading-[1.18] font-normal"
-                        staticTextClassName="text-ivory-surface/90 font-serif italic mr-2 sm:mr-3 drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
-                        rotatingTextClassName="bg-gradient-to-r from-[#E07A5F] via-[#F4A261] to-[#E5A044] bg-clip-text text-transparent font-serif italic drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)] pr-1.5"
-                        cursorClassName="bg-[#E07A5F] shadow-[0_0_10px_#E07A5F]"
-                        backgroundClassName="bg-gradient-to-r from-transparent via-[#E07A5F]/15 to-[#E07A5F]/25 rounded-md"
-                        interval={3200}
-                      />
+                    {/* Static Line 2: in first-class comfort. + Gold flourish curve */}
+                    <div className="relative w-full max-w-[560px] mt-0.5">
+                      <div
+                        className="font-serif italic tracking-tight text-[#E07A5F] drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)] text-3xl sm:text-4xl md:text-5xl"
+                        style={{
+                          lineHeight: 1.18,
+                          fontFamily: "'Playfair Display', 'EB Garamond', Georgia, serif",
+                        }}
+                      >
+                        in first-class comfort.
+                      </div>
 
                       {/* Cursive flourish underline stroke */}
                       <svg
@@ -258,14 +281,11 @@ export function HomePage({ language = "en" }: HomePageProps) {
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
                       >
-                        <motion.path
+                        <path
                           d="M4 14 C120 18, 300 6, 500 12"
                           stroke="#E5A044"
                           strokeWidth="3.2"
                           strokeLinecap="round"
-                          initial={isClient ? { pathLength: 0, opacity: 0 } : false}
-                          animate={isClient ? { pathLength: 1, opacity: 1 } : undefined}
-                          transition={{ duration: 1.1, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
                         />
                       </svg>
                     </div>
