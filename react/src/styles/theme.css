@@ -7,6 +7,7 @@
   --color-primary-fixed: #ffdbcf;
   --color-primary-fixed-dim: #ffb59c;
   --color-on-primary: #ffffff;
+  --color-white: #ffffff;
   --color-on-primary-container: #fffbff;
   --color-on-primary-fixed: #390c00;
   --color-on-primary-fixed-variant: #822801;
@@ -35,6 +36,7 @@
   --color-surface-variant: #e6e2df;
   --color-surface-tint: #a23e18;
   --color-background: #fdf8f5;
+  --color-foreground: #1c1b1a;
   --color-on-background: #1c1b1a;
   --color-on-surface: #1c1b1a;
   --color-on-surface-variant: #57423b;

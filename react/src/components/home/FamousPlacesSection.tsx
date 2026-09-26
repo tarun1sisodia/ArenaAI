@@ -428,7 +428,8 @@ export function FamousPlacesSection() {
 
                   {/* WhatsApp CTA in Pure Black with Real WhatsApp Icon */}
                   <a
-                    className="px-3 py-2 rounded-lg bg-black hover:bg-neutral-900 border border-white/10 text-white font-label-lg text-xs font-semibold shadow-xs transition-all active:scale-[0.98] inline-flex items-center gap-1.5 shrink-0"
+                    className="px-3 py-2 rounded-lg bg-black hover:bg-neutral-900 border border-white/20 text-white font-label-lg text-xs font-semibold shadow-xs transition-all active:scale-[0.98] inline-flex items-center gap-1.5 shrink-0"
+                    style={{ color: "#ffffff" }}
                     href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
                       `Hello SK Baghel Desk, I would like to inquire about a taxi trip to ${place.name} (${place.distance}).`
                     )}`}
@@ -436,8 +437,8 @@ export function FamousPlacesSection() {
                     rel="noreferrer"
                     aria-label={`WhatsApp inquiry for ${place.name}`}
                   >
-                    <WhatsAppIcon className="w-3.5 h-3.5 shrink-0" />
-                    <span>WhatsApp</span>
+                    <WhatsAppIcon className="w-3.5 h-3.5 shrink-0 text-white" />
+                    <span className="text-white font-semibold" style={{ color: "#ffffff" }}>WhatsApp</span>
                   </a>
                 </div>
               </div>
@@ -484,15 +485,16 @@ export function FamousPlacesSection() {
               </div>
               <div className="flex items-center gap-2 shrink-0">
                 <a
-                  className="px-4 py-2 rounded-lg bg-black hover:bg-neutral-900 border border-white/10 text-white font-label-lg text-xs font-semibold inline-flex items-center gap-2 active:scale-[0.98]"
+                  className="px-4 py-2 rounded-lg bg-black hover:bg-neutral-900 border border-white/20 text-white font-label-lg text-xs font-semibold inline-flex items-center gap-2 active:scale-[0.98]"
+                  style={{ color: "#ffffff" }}
                   href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
                     `Hello SK Baghel Travels, I am inquiring about visiting ${modalImage.title}.`
                   )}`}
                   target="_blank"
                   rel="noreferrer"
                 >
-                  <WhatsAppIcon className="w-4 h-4 shrink-0" />
-                  <span>WhatsApp Desk</span>
+                  <WhatsAppIcon className="w-4 h-4 shrink-0 text-white" />
+                  <span className="text-white font-semibold" style={{ color: "#ffffff" }}>WhatsApp Desk</span>
                 </a>
               </div>
             </div>

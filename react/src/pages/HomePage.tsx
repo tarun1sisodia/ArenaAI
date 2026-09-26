@@ -838,42 +838,36 @@ export function HomePage({ language = "en" }: HomePageProps) {
                 title: "Confirmed in 2 Minutes",
                 desc: "Instant booking via website or WhatsApp. Fast SMS confirmation with driver details — no middlemen.",
                 badge: "Fast Booking",
-                dark: true,
               },
               {
                 icon: "price_check",
                 title: "Zero Hidden Fees",
                 desc: "All expressway tolls, state permits, and fuel charges included upfront. No return-trip charges on one-way rides.",
                 badge: "Toll-Inclusive",
-                dark: false,
               },
               {
                 icon: "schedule",
                 title: "Punctual Every Time",
                 desc: "Live train and flight delay tracking. Your cab arrives 15 minutes before scheduled pickup time.",
                 badge: "Live Tracking",
-                dark: false,
               },
               {
                 icon: "policy",
                 title: "Verified Drivers",
                 desc: "Commercial driver license, police background check, and minimum 5 years highway driving experience.",
                 badge: "Police-Verified",
-                dark: false,
               },
               {
                 icon: "garage",
                 title: "Sedan to 26-Seater",
                 desc: "Spotless AC Dzire, Ertiga, Innova Crysta, and 9–26 seat Tempo Travellers and luxury Urbania.",
                 badge: "Clean AC Fleet",
-                dark: false,
               },
               {
                 icon: "support_agent",
                 title: "24×7 Local Dispatch",
                 desc: "Direct phone and WhatsApp support from our Taj Ganj dispatch office in Agra. Real humans, not bots.",
                 badge: "Taj Ganj Office",
-                dark: false,
               },
             ].map((item) => (
               <motion.div
@@ -883,33 +877,20 @@ export function HomePage({ language = "en" }: HomePageProps) {
                   visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: "easeOut" } },
                 }}
                 whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                className={`p-5 rounded-xl border flex flex-col gap-3 group transition-all duration-300 ${item.dark
-                    ? "bg-ink-charcoal text-ivory-surface border-border-warm/20 hover:border-gold-accent/40 shadow-sm hover:shadow-md"
-                    : "bg-surface-container-lowest text-on-surface border-border-warm/40 hover:border-primary/40 hover:shadow-md"
-                  }`}
+                className="p-5 rounded-xl border flex flex-col gap-3 group transition-all duration-300 bg-ink-charcoal text-ivory-surface border-border-warm/20 hover:border-gold-accent/40 shadow-sm hover:shadow-md"
               >
                 <div className="flex items-center justify-between">
-                  <div
-                    className={`w-9 h-9 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-105 ${item.dark
-                        ? "bg-primary text-white"
-                        : "bg-sandstone-wash text-primary group-hover:bg-primary group-hover:text-white"
-                      }`}
-                  >
+                  <div className="w-9 h-9 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-105 bg-primary text-white">
                     <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
                   </div>
-                  <span
-                    className={`font-label-caps text-[8.5px] uppercase font-bold px-2 py-0.5 rounded-full ${item.dark
-                        ? "bg-gold-accent/15 text-gold-accent border border-gold-accent/30"
-                        : "bg-sandstone-wash text-primary border border-primary/20"
-                      }`}
-                  >
+                  <span className="font-label-caps text-[8.5px] uppercase font-bold px-2 py-0.5 rounded-full bg-gold-accent/15 text-gold-accent border border-gold-accent/30">
                     {item.badge}
                   </span>
                 </div>
-                <h3 className={`font-headline-sm text-headline-sm font-semibold ${item.dark ? "text-ivory-surface" : "text-on-surface"}`}>
+                <h3 className="font-headline-sm text-headline-sm font-semibold text-ivory-surface">
                   {item.title}
                 </h3>
-                <p className={`font-body-sm text-[10.5px] leading-relaxed ${item.dark ? "text-ivory-surface/75" : "text-on-surface-variant"}`}>
+                <p className="font-body-sm text-[10.5px] leading-relaxed text-ivory-surface/75">
                   {item.desc}
                 </p>
               </motion.div>
