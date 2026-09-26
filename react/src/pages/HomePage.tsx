@@ -200,7 +200,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
             }}
           />
           {/* Subtle gradient overlay to ensure text and booking form legibility while leaving ~80% of the image vividly visible */}
-          <div className="absolute inset-0 bg-gradient-to-r from-ink-midnight/65 via-ink-midnight/35 to-ink-midnight/20 z-0 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-r from-ink-midnight/65 via-ink-midnight/10 to-ink-midnight/10 z-0 pointer-events-none" />
           <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-ink-midnight to-transparent z-0 pointer-events-none" />
 
           <div className="relative z-10 max-w-[1280px] mx-auto px-margin-mobile lg:px-margin grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
@@ -210,18 +210,15 @@ export function HomePage({ language = "en" }: HomePageProps) {
               {/* 100% SEO-Safe Headline with Letter-by-Letter Handwriting Reveal */}
               <div className="flex flex-col items-start gap-1 w-full max-w-[640px]">
                 {/* Prestige Heritage Pill Badge */}
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold-accent/15 border border-gold-accent/30 text-gold-accent font-label-caps text-[11px] uppercase tracking-widest backdrop-blur-md mb-1 shadow-sm">
-                  
-                </div>
 
                 <h1 className="font-headline-hero text-headline-hero font-normal leading-[1.14] w-full">
                   {/* Semantic HTML text for search crawlers & screen readers */}
                   <span className="sr-only">Agra to anywhere, in first-class comfort.</span>
 
                   <div aria-hidden="true" className="select-none flex flex-col gap-1 w-full">
-                    {/* Animated "Agra to Anywhere" handwriting-style reveal */}
+                    {/* Animated "Agra to Anywhere" handwriting-style reveal in luminous white gradient */}
                     <motion.div
-                      className="text-[#E5A044] drop-shadow-[0_2px_14px_rgba(229,160,68,0.5)] overflow-visible pb-0.5"
+                      className="text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)] drop-shadow-[0_4px_24px_rgba(0,0,0,0.6)] overflow-visible pb-0.5"
                       initial="hidden"
                       animate="visible"
                       variants={{
@@ -237,7 +234,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
                       {text.split("").map((letter, index) => (
                         <motion.span
                           key={`${letter}-${index}`}
-                          className="inline-block font-serif italic text-4xl sm:text-5xl md:text-6xl"
+                          className="inline-block font-serif italic text-4xl sm:text-5xl md:text-6xl text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/80"
                           variants={{
                             hidden: {
                               opacity: 0,
@@ -262,10 +259,10 @@ export function HomePage({ language = "en" }: HomePageProps) {
                       ))}
                     </motion.div>
 
-                    {/* Static Line 2: in first-class comfort. + Gold flourish curve */}
+                    {/* Static Line 2: in first-class comfort. in luminous light white/champagne */}
                     <div className="relative w-full max-w-[560px] mt-0.5">
                       <div
-                        className="font-serif italic tracking-tight text-[#E07A5F] drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)] text-3xl sm:text-4xl md:text-5xl"
+                        className="font-serif italic tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-white/95 to-white/80 drop-shadow-[0_2px_10px_rgba(0,0,0,0.85)] text-3xl sm:text-4xl md:text-5xl"
                         style={{
                           lineHeight: 1.18,
                           fontFamily: "'Playfair Display', 'EB Garamond', Georgia, serif",
@@ -274,19 +271,27 @@ export function HomePage({ language = "en" }: HomePageProps) {
                         in first-class comfort.
                       </div>
 
-                      {/* Cursive flourish underline stroke */}
+                      {/* Cursive flourish underline stroke in luminous white silk */}
                       <svg
                         viewBox="0 0 520 24"
-                        className="w-full max-w-[480px] h-auto overflow-visible mt-0.5 drop-shadow-[0_2px_8px_rgba(229,160,68,0.4)]"
+                        className="w-full max-w-[480px] h-auto overflow-visible mt-0.5 drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)]"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
                       >
                         <path
                           d="M4 14 C120 18, 300 6, 500 12"
-                          stroke="#E5A044"
-                          strokeWidth="3.2"
+                          stroke="url(#underlineWhiteSilk)"
+                          strokeWidth="2.8"
                           strokeLinecap="round"
                         />
+                        <defs>
+                          <linearGradient id="underlineWhiteSilk" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.15" />
+                            <stop offset="25%" stopColor="#FFFFFF" stopOpacity="0.95" />
+                            <stop offset="75%" stopColor="#F5F2EB" stopOpacity="0.9" />
+                            <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0.1" />
+                          </linearGradient>
+                        </defs>
                       </svg>
                     </div>
                   </div>

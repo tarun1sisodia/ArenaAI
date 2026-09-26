@@ -13,7 +13,7 @@ this file at commit `2c02ee3`. The table below is the condensed record.
 ## Current State
 
 - **Current Phase:** Phase M — HTML UI to React Migration — **COMPLETED** ✅
-- **Current Step:** Step M13 complete (Handwriting-style letter-by-letter reveal animation integrated on "Agra to Anywhere"). Next up: Phase I1 — Backend Integration & PostgreSQL.
+- **Current Step:** Step M14 complete (Editorial light/white gradient palette applied to hero headline). Next up: Phase I1 — Backend Integration & PostgreSQL.
 - **Last updated:** 2026-09-26
 - **Summary:** All HTML designs from `react/new_design/` are completely converted into the React application with ultra-luxury aesthetic styling, design tokens (`theme.css`), and the strict English-only mandate:
   * Master Design & Tokens: `@tailwindcss/vite`, `EB Garamond` + `Plus Jakarta Sans`, Material Symbols Outlined.
@@ -133,6 +133,7 @@ this file at commit `2c02ee3`. The table below is the condensed record.
 - [x] **M11: Authentic Fleet Photography Integration (F:\Dev)** — Ingested real vehicle fleet photos directly from the user's `F:\Dev` storage (`Maruti Dzire.jpg`, `Maruti Ertiga.webp`, `Toyota Innova Crysta.webp`, `Force Tempo.webp`, `urbania-picture.webp`); generated responsive multi-resolution WebP sets (`-480.webp`, `-768.webp`, `.webp`) in `react/public/assets/fleet/` and `assets/fleet/`; eradicated all external car placeholders and Google usercontent URLs across `HomePage.tsx`, `FleetPage.tsx`, `BookingPage.tsx`, `ServicesPage.tsx`, `AboutPage.tsx`, `NotFoundPage.tsx`, `VehicleDetailPage.tsx`, and `RouteDetailPage.tsx`; all vehicle cards, options, and fallbacks now point to authentic fleet imagery; monorepo `npm run verify` green (3 typechecks, 55 backend tests, 3 builds).
 - [x] **M12: TextLoop Component Integration** — Integrated shadcn-compatible `text-loop.tsx` and updated `demo.tsx` in `react/src/components/ui/` with `motion/react` (`LazyMotion`, `AnimatePresence`, `domAnimation`).
 - [x] **M13: Handwriting-Style Letter-by-Letter Reveal for 'Agra to Anywhere'** — Replaced `AppleHelloEnglishEffect` with letter-by-letter handwriting-style reveal animation on `"Agra to Anywhere"` using `framer-motion` staggered children (`staggerChildren: 0.08`, `duration: 0.45`, ease `[0.16, 1, 0.3, 1]`) in `#E5A044` with gold glow drop shadow; removed looping text animation from headline body lines, restoring clean, static editorial typography on `"in first-class comfort."` with gold flourish underline; monorepo `npm run verify` green (3 typechecks, 55 backend tests, 3 builds).
+- [x] **M14: Editorial Light/White Palette Refinement for Hero Headline** — Upgraded the hero headline gradient on *"Agra to Anywhere, in first-class comfort"* to a luminous white and pearl palette per anti-slop design standards; Line 1 (*"Agra to Anywhere"*) now features vertical white-to-pearl illumination (`from-white via-white to-white/80`) with dual layered shadows for contrast over the brighter hero image; Line 2 (*"in first-class comfort."*) features an editorial horizontal light gradient (`from-white via-white/95 to-white/80`); upgraded underline flourish to a silk-white gradient (`underlineWhiteSilk`); monorepo `npm run verify` green (3 typechecks, 55 backend tests, 3 builds).
 
 ### Admin panel (`admin/`)
 
