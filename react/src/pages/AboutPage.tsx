@@ -98,8 +98,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                   alt="A pristine Toyota Innova Crysta luxury touring vehicle parked on a scenic road with historic sandstone monuments in the background"
                   src="/assets/fleet/innova.webp"
                   onError={(e) => {
-                    (e.currentTarget as HTMLImageElement).src =
-                      "https://lh3.googleusercontent.com/aida-public/AB6AXuCmlzP3c2lpWAi6vPrfCKZcIhEJWmPEuyRaJiN9TmXsdpvj1uZ1ukMv6Nzd9cC0T6Sctz_AqeUNPojvuyh5RtYNtdY-PerWt-3UyMfJRUTKEC66624PYqFAtQYKnMh5jtT4PGN0gZ5ofBTFYihl5NVD4QGgHvhRL24fqNpWbIZ1e3BXJd9AuuGzAfN9WGqyNy-Baldt15zxMELAzs7kDf38XCxMNFVwh-kfmNkwPHMgwXvxwocyIqt8JA";
+                    (e.currentTarget as HTMLImageElement).src = "/assets/fleet/innova.webp";
                   }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-ink-midnight/80 via-ink-midnight/20 to-transparent" />
@@ -645,7 +644,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                 className="w-full h-80 rounded-xl bg-cover bg-center shadow-lg relative overflow-hidden border border-border-warm/50"
                 style={{
                   backgroundImage:
-                    'url("https://lh3.googleusercontent.com/aida-public/AB6AXuALNFtE_t9S1tflUDMiOHf8x9XKFB-pu_9ClHHIFbgooHKB-ZbhqzZqvUThjN2vnlik5EVFfYEVcp1iHDW0vh3TP0ZqnD-T1qIOz_E536R_Q5lAFnS-Yjm4STKUGUnQnI3MOlWllmpqT3qbx2FR-bKC9Si_By6seFgbNlqFyY4rIxN19eVjjujnsqTqg0tcXlmwT8mUjaCPbv91WBv_5dopcIVWOVqWayrAbhXR4KS7e1NKZVpJnP3akg")',
+                    'url("/assets/fleet/innova.webp")',
                 }}
               >
                 <div className="absolute inset-0 bg-gradient-to-t from-ink-midnight/80 via-transparent to-transparent flex items-end p-space-md">

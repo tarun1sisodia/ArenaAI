@@ -283,8 +283,7 @@ export function RouteDetailPage({ route }: RouteDetailPageProps) {
                   alt={`${fromEn} to ${toEn} highway corridor`}
                   loading="eager"
                   onError={(e) => {
-                    (e.currentTarget as HTMLImageElement).src =
-                      "https://lh3.googleusercontent.com/aida-public/AB6AXuCmlzP3c2lpWAi6vPrfCKZcIhEJWmPEuyRaJiN9TmXsdpvj1uZ1ukMv6Nzd9cC0T6Sctz_AqeUNPojvuyh5RtYNtdY-PerWt-3UyMfJRUTKEC66624PYqFAtQYKnMh5jtT4PGN0gZ5ofBTFYihl5NVD4QGgHvhRL24fqNpWbIZ1e3BXJd9AuuGzAfN9WGqyNy-Baldt15zxMELAzs7kDf38XCxMNFVwh-kfmNkwPHMgwXvxwocyIqt8JA";
+                    (e.currentTarget as HTMLImageElement).src = "/assets/fleet/innova.webp";
                   }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-ink-midnight/80 via-transparent to-transparent" />

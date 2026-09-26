@@ -32,8 +32,7 @@ const SERVICES_MODULES: ServiceModule[] = [
     fareDetail: "Agra to Delhi IGI Airport / NCR · All Tolls Included",
     description:
       "Swift, private, access-controlled expressway drops from Agra to New Delhi, IGI Airport, Jaipur, Mathura, Gwalior, and Lucknow. You pay strictly for the single journey with zero empty return charges.",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuB3_s7rAtCf0nSQi2UuDDGFBpDDjQmVfkvW4yJ2S-0o90HP_rho-IpEndht4M3LbtXYNSHc27KqpjLABZGjgL0KtSOfKlHL3UcUA6LNLDTQR263zPSPhjmFNvASkp2v-zJJGRazHc5AxxuOQCm7_UpRbHUEC40w53UzJtoTiqcLbq-fJnrQGIDK26kmB5yUmIDRkswtLLg6UhMnRfmgun0kJ35P_X8J5GJH33A2u_VNL7tXkNjhTRom0w",
+    image: "/assets/fleet/sedan.webp",
     highlights: [
       "Yamuna & Agra-Lucknow expressway tolls included",
       "Doorstep pickup anywhere in Agra city",
@@ -53,8 +52,7 @@ const SERVICES_MODULES: ServiceModule[] = [
     fareDetail: "Min. 300 km/day · All-India Tourist Permit",
     description:
       "Hire a clean, comfortable vehicle and a polite driver for multi-day trips across Rajasthan, Uttarakhand, and Madhya Pradesh. Standard 300 km/day billing with zero hidden kilometer charges.",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuCHrE-wY56s83l-D-i7k_9eY5l1rL3zO2fO-5lFw6bL7m1p8s9a0b1c2d3e4f5g6h7i8j9k0l1m2n3o4p5q6r7s8t9u0v1w2x3y4z5a6b7c8d9e0f1g2h3i4j5k6l7m8n9o0p1q2r3s4t5u6v7w8x9y0z1a2b3c4d5e6f7g8h9i0j1k2l3",
+    image: "/assets/fleet/innova.webp",
     highlights: [
       "Dedicated vehicle & chauffeur on standby all day",
       "Transparent garage-to-garage kilometer logbook",
@@ -74,8 +72,7 @@ const SERVICES_MODULES: ServiceModule[] = [
     fareDetail: "8 Hours / 80 Kilometers · AC Sedan & Chauffeur",
     description:
       "Explore the architectural crown jewels of the Mughal Empire without rushing. Our experienced chauffeurs navigate local monument gates, bypass tourist bottlenecks, and wait patiently while you explore.",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuCFhG9SwH6I507dQuN34sU4ztKi3I66cmDMi8b2wQ9-mgznrz6OBZW9nRuYxUlrqmon_CvVUHDheRh9SL1uEan5slXPh1a6-8-V8ImuIJekxYh9TMlwzphg1crfgHAAdFmn_IvAyGACdBKhKDCs-cLtchmJIMuiwT_QuVr6njYzGc_Q9ULbq5FL0YmYy2Oh65CgOwQjvFhvpu4L0J26qByHJmdd3URyQv2dEdNa3x5KdEX-mPUzW233fw",
+    image: "/assets/packages/agra-fort.webp",
     highlights: [
       "Covers Taj Mahal, Agra Fort, Itimad-ud-Daulah, Mehtab Bagh",
       "8h/80km (₹1,900) or 12h/120km (₹2,200) standard slots",
@@ -95,8 +92,7 @@ const SERVICES_MODULES: ServiceModule[] = [
     fareDetail: "Agra Cantt from ₹800 · Delhi IGI Airport ₹3,499",
     description:
       "Guaranteed punctual station and airport transit. Whether arriving on the Gatimaan Express at Agra Cantt or catching an international departure from Delhi IGI Terminal 3, your driver is on the curb 15 minutes before your scheduled arrival.",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuCJz6QxABxfP0OnVaOxqZq5rxESNxi9wIVmcCbgVAmkuZgwEvEeOZF9kZSlE1a8Lz5_LsvjLQTkP04nP8ZcwXtSO9Vb1hXJgUZQgUp806bzIlzdh8EYOCrLKVoJgqtaWDBROiLrIBn8VabE0cpSyt0xKbpZhZx7ma9PksfkS80dSiCsVQZ_Uq8ermU8bimVRPEcFLL6hMTLJSC17PJXFER28Z8SvArG5SqWUh_5PyH64i-RYMOs1V3uMg",
+    image: "/assets/fleet/ertiga.webp",
     highlights: [
       "Chauffeur waiting with personalized name signboard",
       "Live flight and train delay tracking",
@@ -116,8 +112,7 @@ const SERVICES_MODULES: ServiceModule[] = [
     fareDetail: "9 to 26 Seats · Rear Baggage Cargo Hold",
     description:
       "Eliminate the hassle of splitting your party across multiple small cabs. Our Force Tempo Travellers and luxury Force Urbanias offer individual AC vents, reclining high-back seating, and ample cargo storage for everyone.",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuAtim6k1xZ-oNG2CqsGD4G34wTroprBPYyPJ9w7UYnqlD3AJi1jQBwG4iez5kq2R7JnA5jrbU71f63NA4Fg_9ivUh1cG2YmwcFEHjP8uB8yCO_rR0jqQtih9RtLuHMblGb62Vkg7AmFKA2kJO3duZSuqnhbnsr2yPOs-zIhv8qU0SlxpBYkAneSec38qdvXX221BLjsfOswvxgP68jLhUTwIPkQ9BZgyAVkuWywbAZJbcXZVSeMcPR58g",
+    image: "/assets/fleet/tempo.webp",
     highlights: [
       "9, 12, 16, 20, and 26-seater configurations available",
       "Individual aircraft-style jet AC louvers",
@@ -137,8 +132,7 @@ const SERVICES_MODULES: ServiceModule[] = [
     fareDetail: "Same-Day to 3-Day Circuits · Doorstep Service",
     description:
       "All-inclusive private tours designed to maximize monument time and eliminate tourist stress. From sunrise at the Taj Mahal to the sacred evening aarti of Mathura and the royal palaces of Jaipur.",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuCxTJ0Lw2g0E-2f7Njva0bk9tnu2uxD4fDQEnjl9HfXhIsZPXpREe6IH64YxcrkLTU9LA-Sq18VOKNINmCXcE1SqhLJ0FRlDY7PcP8mXPJGqImX8UX6ulEV1tfIi-EaTk44xK2SVpNfowCr9XWRL4DoGWaRLWcuc9yzCK9WgY9T9q6I7XUpPjl8Suc6hiJQtpkLga47lMN99jxmLDggAJ-a-DA6OJ6dZ-ji_iNWU1c4dm5DVgEpmyTxBQ",
+    image: "/assets/packages/taj-dawn.webp",
     highlights: [
       "Sunrise Taj Mahal Guided Tour (VIP Dawn Entry)",
       "Mathura & Vrindavan Darshan with Krishna Janmabhoomi",

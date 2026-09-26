@@ -39,8 +39,7 @@ const FLEET_DATA: FleetVehicle[] = [
     highlightBadge: "MOST POPULAR • CITY & EXPRESSWAY DROPS",
     description:
       "Agile, highly comfortable, and ideal for couples, solo business executives, and rapid airport transfers across the Yamuna Expressway and Delhi NCR.",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuDDtlpHyMEhQIkaWh-siDUWpvafWXLxtakmQnE3648Tz_fpFPqz3fclfXfL8vy2KSvlfvgNo6E6bBL87D1O1mNnTtnQI7pAPVo1lBjhMJyGHvzs7qVIIXZ2_s8qinUgznt8ZIoCYC7Ayc3QD1n36bl6SecXNPBKx1M65cSoi4R0xiQ4TFDVIxwVItPu_XvVGE2uZ6uo9DMIHDVXgQc1h2SyLWNR7obR2Lr2TpkGxcCVZXT3lRiaY4ZVqA",
+    image: "/assets/fleet/sedan.webp",
     rates: {
       outstationPerKm: 10,
       local8h80km: 1900,
@@ -68,8 +67,7 @@ const FLEET_DATA: FleetVehicle[] = [
     highlightBadge: "FAMILY FAVORITE • ECONOMY 6-SEATER",
     description:
       "A versatile, fuel-efficient 6-passenger transporter designed for nuclear families, pilgrimage circles to Mathura-Vrindavan, and intercity sightseeing.",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuDhesay-ZLwlBtJ5ZxS_nHnmMWuLbYNhiTR_8-G0L93loc2JyYU38ra9_RnBzFYWW2VUkeB9EnuTm-a32VY1IqlUhT4nkGNkZNOGHaB80TLQrV-5viSEoaD9FSVqWtNLixnASZGTpeWs63Nv6x9due5VYDOo8MVPRk-0Avm26iQSVtPCRSdClQao_kvMc-jaqORcpO_6imYVUOwIdJwbqA11svh59eIGx8EgGvPvGljuPa7ScbwZiFy-w",
+    image: "/assets/fleet/ertiga.webp",
     rates: {
       outstationPerKm: 14,
       local8h80km: 2600,
@@ -97,8 +95,7 @@ const FLEET_DATA: FleetVehicle[] = [
     highlightBadge: "EXECUTIVE LUXURY • CAPTAIN CHAIRS",
     description:
       "The undisputed emperor of Indian highway touring. Featuring deep plush captain seats, independent climate control, and unmatched sound insulation.",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuCF3eDfcGr4R6CkrjMTNZxdC2HZoUjDprlMBBmp-43c8tc_7gD7QQ3ep6HQmju0Ih0j-VoflOA5Ir-p5czU5jDcnHPtbHrDeCAqZSmLfI9nsoFav-HUfJY3BAHuG2JPoSKlfh00Suyh6kFmuKtkXZbUCSnVDMhVCgEF864ewhoWwk8FfOJA_PEVu-riAnO_-aRUUQzBAtwTExczUJFmqOHxugrwQIWYeZeafE112-PSmuyUHzR5VUOv5Q",
+    image: "/assets/fleet/innova.webp",
     rates: {
       outstationPerKm: 18,
       local8h80km: 3500,
@@ -126,8 +123,7 @@ const FLEET_DATA: FleetVehicle[] = [
     highlightBadge: "GROUP TRAVEL • 12 TO 26 SEATER",
     description:
       "Roomy, high-roof touring van for large family groups, corporate offsites, and multi-city tourist parties who travel together in high comfort.",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuAtim6k1xZ-oNG2CqsGD4G34wTroprBPYyPJ9w7UYnqlD3AJi1jQBwG4iez5kq2R7JnA5jrbU71f63NA4Fg_9ivUh1cG2YmwcFEHjP8uB8yCO_rR0jqQtih9RtLuHMblGb62Vkg7AmFKA2kJO3duZSuqnhbnsr2yPOs-zIhv8qU0SlxpBYkAneSec38qdvXX221BLjsfOswvxgP68jLhUTwIPkQ9BZgyAVkuWywbAZJbcXZVSeMcPR58g",
+    image: "/assets/fleet/tempo.webp",
     rates: {
       outstationPerKm: 25,
       local8h80km: 5500,
@@ -155,8 +151,7 @@ const FLEET_DATA: FleetVehicle[] = [
     highlightBadge: "VIP MONOCOQUE VAN • EUROPEAN STYLING",
     description:
       "State-of-the-art European monocoque architecture delivering whisper-quiet highway ride, plush passenger lounge, and wide panoramic windows.",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuDdR9ZGfEatK4fikITqlV-5YeoJBg58LlBbVg3bINsK4p3p94b0zZowjut7sHOfzG76_UwHnf8DSibSs8nFsOwlyYfZxr0Am8uXSUZDFWlP5gBNAbGaZwm04A-RAXFJmCGkHrC5ozEC8HtDyJxH8X87rz1fagIHja_tL6PuQ-HUAjHu_bL1Ba_yVq9wUlM3rRpelaYNjGly7ZXvmprg37BIu2CuP8q2Yp_Py0lH3imXVkBikdrFugYBnQ",
+    image: "/assets/fleet/urbania.webp",
     rates: {
       outstationPerKm: 34,
       local8h80km: 7500,

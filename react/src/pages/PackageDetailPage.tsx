@@ -276,7 +276,7 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
               <img
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 alt={`${pkg.name} luxury chauffeur expedition`}
-                src={pkg.image || "https://lh3.googleusercontent.com/aida-public/AB6AXuBiOCbTHN9zNU00JUVh-NHzZiSulJU4g05nHT7WM3mpIgEs8t3Np8aPtrUzWPz27pzrRZFIU1XqXVFtYULmLW4xrJnr3LkO8eDxIHXafzYTeZjylHeqJR2qtv5FcTucAW8T1NyBOJ8Wvldh8aidLGYASoo-3Cq6yaG8COaSLvBY5leGL3qxFs4LQ_RKhMez4eIMDw_OVq42vHIrDhBRYY6QfEI99vopy0zV7TZjojCB6Cf9f7YXHp11iQ"}
+                src={pkg.image || "/assets/packages/taj-dawn.webp"}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-ink-charcoal/85 via-ink-charcoal/25 to-transparent"></div>
 

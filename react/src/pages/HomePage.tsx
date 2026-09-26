@@ -610,27 +610,27 @@ export function HomePage({ language = "en" }: HomePageProps) {
               {
                 id: "sedan", label: "Sedan", sub: "Dzire / Etios", note: "Ideal for 1-4 passengers and expressway trips",
                 seats: "4+1", luggage: "2 Large Bags", rate: "₹10/km", price: "₹3,499",
-                img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDDtlpHyMEhQIkaWh-siDUWpvafWXLxtakmQnE3648Tz_fpFPqz3fclfXfL8vy2KSvlfvgNo6E6bBL87D1O1mNnTtnQI7pAPVo1lBjhMJyGHvzs7qVIIXZ2_s8qinUgznt8ZIoCYC7Ayc3QD1n36bl6SecXNPBKx1M65cSoi4R0xiQ4TFDVIxwVItPu_XvVGE2uZ6uo9DMIHDVXgQc1h2SyLWNR7obR2Lr2TpkGxcCVZXT3lRiaY4ZVqA",
+                img: "/assets/fleet/sedan.webp",
               },
               {
                 id: "ertiga", label: "Ertiga MPV", sub: "Maruti Ertiga", note: "6-passenger seating for families with luggage",
                 seats: "6+1", luggage: "3 Large Bags", rate: "₹13/km", price: "₹4,800",
-                img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDhesay-ZLwlBtJ5ZxS_nHnmMWuLbYNhiTR_8-G0L93loc2JyYU38ra9_RnBzFYWW2VUkeB9EnuTm-a32VY1IqlUhT4nkGNkZNOGHaB80TLQrV-5viSEoaD9FSVqWtNLixnASZGTpeWs63Nv6x9due5VYDOo8MVPRk-0Avm26iQSVtPCRSdClQao_kvMc-jaqORcpO_6imYVUOwIdJwbqA11svh59eIGx8EgGvPvGljuPa7ScbwZiFy-w",
+                img: "/assets/fleet/ertiga.webp",
               },
               {
                 id: "innova", label: "Innova Crysta", sub: "Toyota Crysta", note: "Premium outstation ride with captain seats",
                 seats: "6+1 Captain", luggage: "4 Large Bags", rate: "₹18/km", price: "₹6,499",
-                img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCF3eDfcGr4R6CkrjMTNZxdC2HZoUjDprlMBBmp-43c8tc_7gD7QQ3ep6HQmju0Ih0j-VoflOA5Ir-p5czU5jDcnHPtbHrDeCAqZSmLfI9nsoFav-HUfJY3BAHuG2JPoSKlfh00Suyh6kFmuKtkXZbUCSnVDMhVCgEF864ewhoWwk8FfOJA_PEVu-riAnO_-aRUUQzBAtwTExczUJFmqOHxugrwQIWYeZeafE112-PSmuyUHzR5VUOv5Q",
+                img: "/assets/fleet/innova.webp",
               },
               {
                 id: "tempo", label: "Tempo Traveller", sub: "12–17 Seater", note: "Reclining seats, rear AC, and separate luggage bay",
                 seats: "12–17 Seater", luggage: "Rear Cargo Bay", rate: "₹25/km", price: "₹9,500",
-                img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAtim6k1xZ-oNG2CqsGD4G34wTroprBPYyPJ9w7UYnqlD3AJi1jQBwG4iez5kq2R7JnA5jrbU71f63NA4Fg_9ivUh1cG2YmwcFEHjP8uB8yCO_rR0jqQtih9RtLuHMblGb62Vkg7AmFKA2kJO3duZSuqnhbnsr2yPOs-zIhv8qU0SlxpBYkAneSec38qdvXX221BLjsfOswvxgP68jLhUTwIPkQ9BZgyAVkuWywbAZJbcXZVSeMcPR58g",
+                img: "/assets/fleet/tempo.webp",
               },
               {
                 id: "urbania", label: "Force Urbania", sub: "10–13 Luxury Seats", note: "Luxury van with individual recline and USB charging",
                 seats: "10–13 Luxury", luggage: "Huge Cargo Bay", rate: "₹34/km", price: "₹12,500",
-                img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDdR9ZGfEatK4fikITqlV-5YeoJBg58LlBbVg3bINsK4p3p94b0zZowjut7sHOfzG76_UwHnf8DSibSs8nFsOwlyYfZxr0Am8uXSUZDFWlP5gBNAbGaZwm04A-RAXFJmCGkHrC5ozEC8HtDyJxH8X87rz1fagIHja_tL6PuQ-HUAjHu_bL1Ba_yVq9wUlM3rRpelaYNjGly7ZXvmprg37BIu2CuP8q2Yp_Py0lH3imXVkBikdrFugYBnQ",
+                img: "/assets/fleet/urbania.webp",
               },
             ].map((v) => (
               <div key={v.id} className="bg-surface-container-lowest rounded-xl overflow-hidden border border-border-warm/40 flex flex-col group transition-all duration-300 hover:shadow-xl hover:-translate-y-1 cursor-pointer hover:ring-1 hover:ring-primary">
@@ -708,7 +708,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
                 {
                   badge: "Same Day", badgeColor: "bg-ink-midnight/80 text-tertiary-fixed",
                   price: "₹3,499", priceColor: "bg-terracotta-sandstone",
-                  img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCFhG9SwH6I507dQuN34sU4ztKi3I66cmDMi8b2wQ9-mgznrz6OBZW9nRuYxUlrqmon_CvVUHDheRh9SL1uEan5slXPh1a6-8-V8ImuIJekxYh9TMlwzphg1crfgHAAdFmn_IvAyGACdBKhKDCs-cLtchmJIMuiwT_QuVr6njYzGc_Q9ULbq5FL0YmYy2Oh65CgOwQjvFhvpu4L0J26qByHJmdd3URyQv2dEdNa3x5KdEX-mPUzW233fw",
+                  img: "/assets/packages/agra-fort.webp",
                   alt: "Taj Mahal Tour",
                   title: "Same Day Agra — Taj Mahal & Agra Fort",
                   body: "Full-day sightseeing covering Taj Mahal, Agra Fort, and Mehtab Bagh with hotel pickup.",
@@ -719,7 +719,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
                 {
                   badge: "Dawn Special", badgeColor: "bg-ink-midnight/80 text-gold-accent",
                   price: "₹5,200", priceColor: "bg-terracotta-sandstone",
-                  img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCxTJ0Lw2g0E-2f7Njva0bk9tnu2uxD4fDQEnjl9HfXhIsZPXpREe6IH64YxcrkLTU9LA-Sq18VOKNINmCXcE1SqhLJ0FRlDY7PcP8mXPJGqImX8UX6ulEV1tfIi-EaTk44xK2SVpNfowCr9XWRL4DoGWaRLWcuc9yzCK9WgY9T9q6I7XUpPjl8Suc6hiJQtpkLga47lMN99jxmLDggAJ-a-DA6OJ6dZ-ji_iNWU1c4dm5DVgEpmyTxBQ",
+                  img: "/assets/packages/taj-dawn.webp",
                   alt: "Taj Sunrise Tour",
                   title: "Taj Mahal Sunrise Guided Tour",
                   body: "Early morning entry to the Taj Mahal at dawn to beat crowds and heat, with licensed monument guide.",
@@ -730,7 +730,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
                 {
                   badge: "Pilgrimage", badgeColor: "bg-ink-midnight/80 text-tertiary-fixed",
                   price: "₹4,200", priceColor: "bg-terracotta-sandstone",
-                  img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBWn_np3YTwZ3dHJXWWaNmOYnGK1EVc0QOQHv15SFtKbGuB9q4FGRB2nZMtjPCVCVd-YWzfB53bYDbPE7ln2sNi_CX1qb54jetI4Ygnuvy902WKeKQiNDsxrvf_u0bx6cNCBTK5lK1ZC6a8TG6_rZOuWT1-hszrhb8F_sTmie0J3CbmI7a192IdUb1RDlnk8TI0t5khOuhP_RUokajdQ2qc_Xw3GjJx99Sai5se6qYz9Lrt7-3cQCLsw",
+                  img: "/assets/packages/mathura.webp",
                   alt: "Mathura Vrindavan",
                   title: "Mathura & Vrindavan Darshan",
                   body: "Same-day temple circuit covering Krishna Janmabhoomi, Banke Bihari, and Prem Mandir.",

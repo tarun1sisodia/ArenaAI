@@ -111,7 +111,7 @@ export function NotFoundPage({ language = "en" }: NotFoundPageProps) {
                   <div className="relative w-full h-56 rounded-xl overflow-hidden shadow-inner">
                     <img
                       className="w-full h-full object-cover"
-                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuDD8qIomeQK1B1K10edswimb7LBthYlOrRfCm9L--JN2JH4dvvFzYC8Eb79o3xkthSTzN4dNVRaVizv7Le5pjLLSw4cmwdgO6n8QDbahmm3pQn2U5-sfrzvMUdNp4S_XcRjqLvJByj2qao2UvBk71J_gEV-VsW2i4nrLyPsy9G6A-WzzawThUTN5DrldRngzssKQD8-dRuuzsZi67EZhbWs9WDgGtnz5d8d0MtM-WmrAXmhI_0exJRflA"
+                      src="/assets/fleet/innova.webp"
                       alt="Chauffeur stationed outside Mughal gateway in Agra"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-ink-midnight/80 via-transparent to-transparent" />

@@ -124,7 +124,7 @@ To comply with the rule of **implementing exactly one step at a time**, the migr
    - Translucent glassmorphism (`bg-surface/90 backdrop-blur-xl`).
    - SK Baghel logo & typography.
    - Desktop navigation links with active state styling.
-   - Quick action pill: Phone (`+91 98765 43210`) & WhatsApp Concierge link.
+   - Quick action pill: Phone (`+91 98765 43210`) & WhatsApp link.
    - Mobile navigation hamburger & slide-over drawer (`MobileNavSheet.tsx`).
 2. **New Luxury Footer (`Footer.tsx`):**
    - 4-column layout: Brand narrative, quick route links, fleet categories, and 24x7 Taj Ganj dispatch contact.
@@ -162,7 +162,7 @@ To comply with the rule of **implementing exactly one step at a time**, the migr
      - Supported Gateways badges (UPI, Visa, Mastercard, RuPay).
 2. **Completion: Booking Confirmation Voucher (`BookingConfirmation.tsx`):**
    - Sourced from `book_confirmed.html`.
-   - Displays confirmed Booking Reference (`SKB-TMT-XXXXX`), digital voucher overview, downloadable receipt trigger, and 24x7 WhatsApp concierge handoff.
+   - Displays confirmed Booking Reference (`SKB-TMT-XXXXX`), digital voucher overview, downloadable receipt trigger, and 24x7 WhatsApp handoff.
 3. **Business Logic Binding:**
    - Connect all calculations to `fareEngine.ts` and standard advance token formulas (28% advance deposit, 72% balance on drop-off).
 
@@ -205,7 +205,7 @@ In earlier phases, legacy v1 components (`LOCK-001` through `LOCK-011`) were loc
 | `LOCK-N01` | **Mughal Terracotta Design Tokens** | `ACTIVE` | Hex palette: `#9F3C16` primary, `#C85A32` sandstone, `#0F131A` ink-midnight, `#FDF8F5` ivory surface. Fonts: `EB Garamond` + `Plus Jakarta Sans`. |
 | `LOCK-N02` | **Universal Package Template** | `ACTIVE` | `PackageDetailPage.tsx` driven dynamically by `TourPackage` props. 4 chapters: Overview, Inclusions/Exclusions, Monument Guidelines, Hourly Timeline. |
 | `LOCK-N03` | **4-Step Booking & Billing Flow** | `ACTIVE` | Steps 1–3 + Billing Form + Voucher Confirmation. 28% advance deposit calculation. |
-| `LOCK-N04` | **Luxury Header & Navigation** | `ACTIVE` | Glassmorphic sticky header, phone + WhatsApp concierge CTAs, mobile drawer. |
+| `LOCK-N04` | **Luxury Header & Navigation** | `ACTIVE` | Glassmorphic sticky header, phone + WhatsApp CTAs, mobile drawer. |
 | `LOCK-N05` | **Fare Engine Invariants** | `ACTIVE` | 300 km/day minimum outstation billing, toll inclusions, 28% advance deposit lock. |
 
 ---
