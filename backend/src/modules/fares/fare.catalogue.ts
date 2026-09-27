@@ -9,6 +9,7 @@ export type VehicleSpec = {
   seats: number;
   bags: number;
   perKm: number;
+  alwaysRoundTrip: boolean;
 };
 
 export type RouteFare = {
@@ -43,11 +44,11 @@ export const OUTSTATION_RULES = {
 } as const;
 
 export const VEHICLES: readonly VehicleSpec[] = [
-  { id: "sedan", tier: "sedan", name: "Sedan", seats: 4, bags: 2, perKm: 10 },
-  { id: "ertiga", tier: "ertiga", name: "Ertiga", seats: 6, bags: 3, perKm: 14 },
-  { id: "innova", tier: "innova-crysta", name: "Innova Crysta", seats: 6, bags: 4, perKm: 18 },
-  { id: "tempo", tier: "tempo-traveller", name: "Tempo Traveller", seats: 12, bags: 8, perKm: 25 },
-  { id: "urbania", tier: "urbania", name: "Force Urbania", seats: 16, bags: 10, perKm: 34 },
+  { id: "sedan", tier: "sedan", name: "Sedan", seats: 4, bags: 2, perKm: 10, alwaysRoundTrip: false },
+  { id: "ertiga", tier: "ertiga", name: "Ertiga", seats: 6, bags: 3, perKm: 14, alwaysRoundTrip: false },
+  { id: "innova", tier: "innova-crysta", name: "Innova Crysta", seats: 6, bags: 4, perKm: 18, alwaysRoundTrip: false },
+  { id: "tempo", tier: "tempo-traveller", name: "Tempo Traveller", seats: 12, bags: 8, perKm: 25, alwaysRoundTrip: true },
+  { id: "urbania", tier: "urbania", name: "Force Urbania", seats: 16, bags: 10, perKm: 34, alwaysRoundTrip: true },
 ];
 
 export const PACKAGE_UPGRADES: Record<InternalVehicleId, number> = {
@@ -103,28 +104,19 @@ export const AIRPORT_TRANSFERS: Record<string, { name: string; km: number; fares
   },
 };
 
-export const ROUTES: readonly RouteFare[] = [
-  { id: "agra-delhi", from: "agra", to: "delhi", km: 230, duration: "3h 30m", kind: "one-way", fares: { sedan: 3499, ertiga: 4499, innova: 6499, tempo: 9500, urbania: 14000 } },
-  { id: "delhi-agra", from: "delhi", to: "agra", km: 230, duration: "3h 30m", kind: "one-way", fares: { sedan: 3499, ertiga: 4499, innova: 6499, tempo: 9500, urbania: 14000 } },
-  { id: "agra-jaipur", from: "agra", to: "jaipur", km: 240, duration: "4h 30m", kind: "one-way", fares: { sedan: 3499, ertiga: 4999, innova: 6999, tempo: 11000, urbania: 16000 } },
-  { id: "agra-mathura", from: "agra", to: "mathura", km: 55, duration: "1h 15m", kind: "one-way", fares: { sedan: 2200, ertiga: 2800, innova: 3800, tempo: 5500, urbania: 8000 } },
-  { id: "agra-gwalior", from: "agra", to: "gwalior", km: 120, duration: "2h 30m", kind: "one-way", fares: { sedan: 3000, ertiga: 3800, innova: 5500, tempo: 7500, urbania: 11000 } },
-  { id: "delhi-jaipur", from: "delhi", to: "jaipur", km: 270, duration: "5h", kind: "one-way", fares: { sedan: 5000, ertiga: 6200, innova: 8800, tempo: 12000, urbania: 17500 } },
-  { id: "agra-lucknow", from: "agra", to: "lucknow", km: 335, duration: "6h", kind: "one-way", fares: { sedan: 7000, ertiga: 8500, innova: 12000, tempo: 16000, urbania: 22000 } },
-  { id: "agra-noida", from: "agra", to: "noida", km: 190, duration: "3h", kind: "one-way", fares: { sedan: 3999, ertiga: 4999, innova: 6999, tempo: 8500, urbania: 11500 } },
-  { id: "agra-gurgaon", from: "agra", to: "gurgaon", km: 215, duration: "3h 45m", kind: "one-way", fares: { sedan: 4999, ertiga: 5499, innova: 6550, tempo: 8900, urbania: 11900 } },
-  { id: "agra-ayodhya", from: "agra", to: "ayodhya", km: 470, duration: "7h", kind: "one-way", fares: { sedan: 9999, ertiga: 11999, innova: 13999, tempo: 17500, urbania: 23000 } },
-  {
-    id: "agra-local",
-    from: "agra",
-    to: "agra",
-    km: 80,
-    duration: "8h",
-    kind: "local",
-    localLabel: "Agra sightseeing (8h / 80km)",
-    fares: { sedan: 1900, ertiga: 2600, innova: 2850, tempo: 5500, urbania: 7500 },
-  },
-];
+import catalogData from "./catalog.data.json" with { type: "json" };
+
+export const ROUTES: readonly RouteFare[] = Object.values(catalogData).map((r: any) => ({
+  id: r.id,
+  from: r.from,
+  to: r.to,
+  km: r.km,
+  duration: r.duration,
+  kind: r.kind,
+  localLabel: r.localLabel,
+  fares: r.fares,
+}));
+
 
 export const PACKAGES: readonly TourPackageFare[] = [
   { id: "agra-day", slug: "agra-sightseeing", name: "Same Day Agra Taj Mahal Tour", duration: "1 day", from: 3499 },
@@ -203,17 +195,14 @@ export function slugifyPlace(value: string): string {
 
 export function isGroupExceptionVehicle(tierOrName?: string | null): boolean {
   if (!tierOrName) return false;
-  const clean = tierOrName.trim().toLowerCase();
-  return (
-    clean === "tempo" ||
-    clean === "tempo-traveller" ||
-    clean === "urbania" ||
-    clean === "force-urbania" ||
-    clean === "force-tempo" ||
-    clean.includes("force") ||
-    clean.includes("urbania") ||
-    clean.includes("tempo")
-  );
+  try {
+    const spec = vehicleSpec(tierOrName);
+    return Boolean(spec.alwaysRoundTrip);
+  } catch {
+    const id = toInternalVehicleId(tierOrName);
+    const found = VEHICLES.find((v) => v.id === id);
+    return Boolean(found?.alwaysRoundTrip);
+  }
 }
 
 export function toInternalVehicleId(tier: string): InternalVehicleId {

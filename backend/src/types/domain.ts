@@ -93,6 +93,8 @@ export type FareBreakdown = {
   label: string;
   duration: string;
   distanceKm: number;
+  billedKm: number;
+  alwaysRoundTrip: boolean;
   tripType: TripType;
   vehicleTier: VehicleTier;
   promoCode: string | null;

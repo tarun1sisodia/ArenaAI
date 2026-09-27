@@ -44,6 +44,8 @@ export const FareResponseSchema = z.object({
   label: z.string(),
   duration: z.string(),
   distanceKm: z.number().nonnegative(),
+  billedKm: z.number().nonnegative(),
+  alwaysRoundTrip: z.boolean(),
   tripType: z.enum(TRIP_TYPES),
   vehicleTier: z.enum(VEHICLE_TIERS),
   promoCode: z.string().nullable(),

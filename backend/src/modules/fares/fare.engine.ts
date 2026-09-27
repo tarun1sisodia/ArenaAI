@@ -1,5 +1,5 @@
 import { AppError } from "../../shared/errors.js";
-import { hourInIst } from "../../shared/clock.js";
+import { calendarDaysInclusiveIst, hourInIst } from "../../shared/clock.js";
 import { advanceOf, roundRupees } from "../../shared/money.js";
 import type { TripType, VehicleTier } from "../../types/domain.js";
 import {
@@ -12,6 +12,7 @@ import {
   PACKAGES,
   PACKAGE_UPGRADES,
   ROUTES,
+  VEHICLES,
   isGroupExceptionVehicle,
   nightAllowanceFor,
   slugifyPlace,
@@ -128,12 +129,13 @@ export function estimateDistanceKm(fromSlug: string, toSlug: string): number {
 }
 
 function perKmFares(km: number): FareByVehicle {
+  const getRate = (id: string) => VEHICLES.find((v) => v.id === id)?.perKm ?? 10;
   return {
-    sedan: roundRupees(Math.max(2200, km * 10)),
-    ertiga: roundRupees(Math.max(2800, km * 14)),
-    innova: roundRupees(Math.max(3800, km * 18)),
-    tempo: roundRupees(Math.max(5500, km * 25)),
-    urbania: roundRupees(Math.max(7500, km * 34)),
+    sedan: roundRupees(Math.max(2200, km * getRate("sedan"))),
+    ertiga: roundRupees(Math.max(2800, km * getRate("ertiga"))),
+    innova: roundRupees(Math.max(3800, km * getRate("innova"))),
+    tempo: roundRupees(Math.max(5500, km * getRate("tempo"))),
+    urbania: roundRupees(Math.max(7500, km * getRate("urbania"))),
   };
 }
 
@@ -195,19 +197,54 @@ export function calculateFare(input: FareEngineInput): FareEngineResult {
     }
   }
 
+  // Force commercial vehicles cannot use promo codes
+  if (input.promoCode?.trim() && isGroupExceptionVehicle(input.vehicleTier)) {
+    throw new AppError("PROMO_NOT_ALLOWED", "Group commercial vehicles cannot use promo codes.", 400);
+  }
+
   const fareVersion = input.fareVersion ?? FARE_RULES_VERSION_DEFAULT;
   const pack = packageByIdOrSlug(input.packageId);
   if (pack) {
+    if (isGroupExceptionVehicle(input.vehicleTier)) {
+      const spec = vehicleSpec(input.vehicleTier);
+      const days = Math.max(1, calendarDaysInclusiveIst(input.pickupDatetime, input.returnDatetime));
+      const billedKm = input.tripType === "round-trip" ? input.distanceKm : input.distanceKm * 2;
+      const baseFare = roundRupees(billedKm * spec.perKm);
+      const driverAllowance = 500 * days;
+      return finalize({
+        tripType: "round-trip",
+        vehicleTier: input.vehicleTier,
+        pickupDatetime: input.pickupDatetime,
+        promoCode: input.promoCode,
+        allowPromo: false,
+        fareVersion,
+        baseFare,
+        nightAllowance: 0,
+        driverAllowance,
+        distanceKm: input.distanceKm,
+        billedKm,
+        alwaysRoundTrip: true,
+        label: pack.name,
+        duration: pack.duration,
+        roundMultiplierApplied: false,
+        applyNight: false,
+        rules: ["package-tour-force-rule", "commercial-group-vehicle-exception", "forced-round-trip"],
+      });
+    }
+
     return finalize({
       tripType: input.tripType,
       vehicleTier: input.vehicleTier,
       pickupDatetime: input.pickupDatetime,
       promoCode: input.promoCode,
+      allowPromo: true,
       fareVersion,
       baseFare: pack.from + PACKAGE_UPGRADES[toInternalVehicleId(input.vehicleTier)],
       nightAllowance: 0,
       driverAllowance: 0,
       distanceKm: input.distanceKm,
+      billedKm: input.distanceKm,
+      alwaysRoundTrip: false,
       label: pack.name,
       duration: pack.duration,
       roundMultiplierApplied: false,
@@ -220,16 +257,20 @@ export function calculateFare(input: FareEngineInput): FareEngineResult {
     const key = input.localPackageKey === "12hr-120km" ? "12hr-120km" : "8hr-80km";
     const lp = LOCAL_PACKAGES[key];
     const vehicleId = toInternalVehicleId(input.vehicleTier);
+    const isForce = isGroupExceptionVehicle(input.vehicleTier);
     return finalize({
       tripType: "local-tour",
       vehicleTier: input.vehicleTier,
       pickupDatetime: input.pickupDatetime,
       promoCode: input.promoCode,
+      allowPromo: !isForce,
       fareVersion,
       baseFare: lp.fares[vehicleId],
       nightAllowance: 0,
-      driverAllowance: 0,
+      driverAllowance: isForce ? 500 : 0,
       distanceKm: lp.km,
+      billedKm: lp.km,
+      alwaysRoundTrip: isForce,
       label: lp.label,
       duration: lp.duration,
       roundMultiplierApplied: false,
@@ -246,16 +287,20 @@ export function calculateFare(input: FareEngineInput): FareEngineResult {
       fares: LOCAL_PACKAGES["airport-transfer"].fares,
     };
     const vehicleId = toInternalVehicleId(input.vehicleTier);
+    const isForce = isGroupExceptionVehicle(input.vehicleTier);
     return finalize({
       tripType: "airport-transfer",
       vehicleTier: input.vehicleTier,
       pickupDatetime: input.pickupDatetime,
       promoCode: input.promoCode,
+      allowPromo: !isForce,
       fareVersion,
       baseFare: transfer.fares[vehicleId],
       nightAllowance: 0,
       driverAllowance: 0,
       distanceKm: transfer.km,
+      billedKm: transfer.km,
+      alwaysRoundTrip: isForce,
       label: transfer.name,
       duration: "Point to Point",
       roundMultiplierApplied: false,
@@ -271,17 +316,20 @@ export function calculateFare(input: FareEngineInput): FareEngineResult {
   const rules: string[] = [`route:${route.id}`];
 
   if (route.kind === "local") {
+    const isForce = isGroupExceptionVehicle(input.vehicleTier);
     return finalize({
       tripType: "local-tour",
       vehicleTier: input.vehicleTier,
       pickupDatetime: input.pickupDatetime,
       promoCode: input.promoCode,
-      allowPromo: !isGroupExceptionVehicle(input.vehicleTier),
+      allowPromo: !isForce,
       fareVersion,
       baseFare: catalogFare,
       nightAllowance: 0,
-      driverAllowance: 0,
+      driverAllowance: isForce ? 500 : 0,
       distanceKm: route.km,
+      billedKm: route.km,
+      alwaysRoundTrip: isForce,
       label: route.localLabel ?? `${titleCase(input.originName)} Local Tour`,
       duration: route.duration,
       roundMultiplierApplied: false,
@@ -310,6 +358,8 @@ export function calculateFare(input: FareEngineInput): FareEngineResult {
     nightAllowance: 0,
     driverAllowance: calculation.driverAllowance,
     distanceKm: calculation.distanceKm,
+    billedKm: calculation.billedKm,
+    alwaysRoundTrip: calculation.alwaysRoundTrip,
     label: `${titleCase(input.originName)} → ${titleCase(input.destinationName)}`,
     duration: route.duration,
     roundMultiplierApplied: calculation.roundMultiplierApplied,
@@ -329,6 +379,8 @@ function finalize(args: {
   nightAllowance: number;
   driverAllowance: number;
   distanceKm: number;
+  billedKm: number;
+  alwaysRoundTrip: boolean;
   label: string;
   duration: string;
   roundMultiplierApplied: boolean;
@@ -359,6 +411,8 @@ function finalize(args: {
     label: args.label,
     duration: args.duration,
     distanceKm: args.distanceKm,
+    billedKm: args.billedKm,
+    alwaysRoundTrip: args.alwaysRoundTrip,
     tripType: args.tripType,
     vehicleTier: args.vehicleTier,
     promoCode: promo.valid ? promo.code : args.promoCode ? args.promoCode.trim().toUpperCase() : null,
