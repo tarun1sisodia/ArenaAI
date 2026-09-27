@@ -18,6 +18,7 @@ interface FleetVehicle {
   rates: {
     outstationPerKm: number;
     local8h80km: number;
+    minimum?: number;
     fullDayYamuna: number;
   };
   specs: {
@@ -127,6 +128,7 @@ const FLEET_DATA: FleetVehicle[] = [
     rates: {
       outstationPerKm: 25,
       local8h80km: 5500,
+      minimum: 300,
       fullDayYamuna: 9500,
     },
     specs: {
@@ -155,6 +157,7 @@ const FLEET_DATA: FleetVehicle[] = [
     rates: {
       outstationPerKm: 34,
       local8h80km: 7500,
+      minimum: 300,
       fullDayYamuna: 12500,
     },
     specs: {

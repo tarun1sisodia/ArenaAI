@@ -3,12 +3,13 @@ import type { SupportedLanguage } from "../config";
 import { contact } from "../data/contact";
 import { packages, type TourPackage } from "../data";
 import { WhatsAppIcon } from "../components/icons";
+import { Pagination } from "../components/ui/Pagination";
 
 interface PackagesPageProps {
   language?: SupportedLanguage;
 }
 
-type PackageFilterCategory = "all" | "sightseeing" | "dawn" | "pilgrimage" | "multiday";
+type PackageFilterCategory = "all" | "sightseeing" | "dawn" | "pilgrimage" | "multiday" | "excursion";
 
 interface PackageCardData {
   pkg: TourPackage;
@@ -151,6 +152,153 @@ const PACKAGE_METADATA: Record<string, {
     suitedFor: "International Voyagers",
     recommendedFleet: "Innova / Tempo Traveller",
   },
+  "fatehpur-sikri": {
+    categories: ["sightseeing", "excursion"],
+    badgeTag: "CITADEL EXCURSION",
+    badgeClass: "bg-terracotta-sandstone text-on-primary font-bold",
+    durationBadge: "40 KM Corridor",
+    durationIcon: "fort",
+    stops: ["Buland Darwaza", "Sheikh Salim Chishti Dargah", "Panch Mahal", "Jodha Bai Palace"],
+    inclusions: [
+      "Agra hotel doorstep pickup & drop",
+      "All highway tolls & parking receipts included",
+      "Dedicated AC chauffeur & chilled bottled water",
+    ],
+    vehiclePrices: [
+      { label: "Sedan", price: "₹2,000" },
+      { label: "Ertiga", price: "₹2,700" },
+      { label: "Innova", price: "₹3,645" },
+      { label: "Tempo", price: "₹5,800" },
+    ],
+    suitedFor: "History Enthusiasts",
+    recommendedFleet: "Sedan / Ertiga / Innova",
+  },
+  "jaipur-excursion": {
+    categories: ["sightseeing", "excursion"],
+    badgeTag: "ROYAL EXCURSION",
+    badgeClass: "bg-gold-accent text-ink-charcoal font-bold",
+    durationBadge: "240 KM Corridor",
+    durationIcon: "directions_car",
+    stops: ["Amber Fort & Lake", "Hawa Mahal", "Jal Mahal Palace", "City Palace"],
+    inclusions: [
+      "All NH-21 tolls and Rajasthan state passenger tax included",
+      "Dedicated long-range highway cruiser",
+      "Agra hotel pickup & drop with zero dead-mileage charges",
+    ],
+    vehiclePrices: [
+      { label: "Sedan", price: "₹3,499" },
+      { label: "Ertiga", price: "₹4,800" },
+      { label: "Innova", price: "₹6,499" },
+      { label: "Tempo", price: "₹9,800" },
+    ],
+    suitedFor: "Royal Culture Voyagers",
+    recommendedFleet: "Sedan / Innova Crysta",
+  },
+  "bharatpur-sanctuary": {
+    categories: ["excursion"],
+    badgeTag: "WILDLIFE SAFARI",
+    badgeClass: "bg-success-jade text-white font-bold",
+    durationBadge: "55 KM Corridor",
+    durationIcon: "flutter_dash",
+    stops: ["Keoladeo National Park (UNESCO)", "Sarus Crane Wetland", "Lohagarh Fort", "Deeg Palace"],
+    inclusions: [
+      "Doorstep Agra round-trip cab transfer",
+      "Rajasthan commercial entry permit paid",
+      "Keoladeo sanctuary parking and toll fees included",
+    ],
+    vehiclePrices: [
+      { label: "Sedan", price: "₹2,200" },
+      { label: "Ertiga", price: "₹2,900" },
+      { label: "Innova", price: "₹3,800" },
+      { label: "Tempo", price: "₹5,800" },
+    ],
+    suitedFor: "Birdwatchers & Nature Lovers",
+    recommendedFleet: "Sedan / Ertiga / Innova",
+  },
+  "delhi-landmarks": {
+    categories: ["sightseeing", "excursion"],
+    badgeTag: "CAPITAL CIRCUIT",
+    badgeClass: "bg-ink-charcoal text-white font-bold",
+    durationBadge: "230 KM Corridor",
+    durationIcon: "location_city",
+    stops: ["Qutub Minar", "Humayun's Tomb", "India Gate", "Red Fort"],
+    inclusions: [
+      "Yamuna Expressway fast-track tolls included",
+      "Delhi commercial entry passenger permits settled",
+      "Full Delhi city transit and doorstep hotel drop",
+    ],
+    vehiclePrices: [
+      { label: "Sedan", price: "₹3,499" },
+      { label: "Ertiga", price: "₹4,800" },
+      { label: "Innova", price: "₹6,499" },
+      { label: "Tempo", price: "₹9,500" },
+    ],
+    suitedFor: "Capital Voyagers",
+    recommendedFleet: "Sedan / Innova Crysta",
+  },
+  "agra-markets": {
+    categories: ["sightseeing"],
+    badgeTag: "SHOPPING TOUR",
+    badgeClass: "bg-sandstone-wash text-primary font-bold",
+    durationBadge: "8 Hours / 80 KM",
+    durationIcon: "shopping_bag",
+    stops: ["Sadar Bazaar Crafts", "Kinari Bazaar Zardozi", "Marble Inlay Studios", "Petha Confectioners"],
+    inclusions: [
+      "8 hours / 80 km continuous vehicle custody",
+      "Dedicated chauffeur waiting at every market stop",
+      "Zero parking stress and safe luggage custody in vehicle",
+    ],
+    vehiclePrices: [
+      { label: "Sedan", price: "₹1,900" },
+      { label: "Ertiga", price: "₹2,600" },
+      { label: "Innova", price: "₹2,850" },
+      { label: "Tempo", price: "₹5,500" },
+    ],
+    suitedFor: "Souvenir & Handicraft Shoppers",
+    recommendedFleet: "Sedan / Ertiga",
+  },
+  "agra-complete": {
+    categories: ["sightseeing"],
+    badgeTag: "ALL 6 MONUMENTS",
+    badgeClass: "bg-primary text-on-primary font-bold",
+    durationBadge: "12 Hours / 120 KM",
+    durationIcon: "hotel_class",
+    stops: ["Taj Mahal & Agra Fort", "Baby Taj", "Mehtab Bagh Sunset", "Akbar Tomb Sikandra"],
+    inclusions: [
+      "12 hours / 120 km comprehensive vehicle custody",
+      "All Agra municipal parking and tolls included",
+      "Chilled bottled water & verified chauffeur",
+    ],
+    vehiclePrices: [
+      { label: "Sedan", price: "₹2,200" },
+      { label: "Ertiga", price: "₹2,900" },
+      { label: "Innova", price: "₹3,400" },
+      { label: "Tempo", price: "₹6,200" },
+    ],
+    suitedFor: "Architecture Aficionados",
+    recommendedFleet: "Sedan / Innova / Urbania",
+  },
+  "golden-triangle-4d": {
+    categories: ["multiday"],
+    badgeTag: "GRAND CIRCUIT",
+    badgeClass: "bg-ink-charcoal text-gold-accent font-bold",
+    durationBadge: "4 Days / 3 Nights",
+    durationIcon: "route",
+    stops: ["Delhi Historic Quarters", "Taj Mahal Sunrise", "Fatehpur Sikri & Stepwell", "Jaipur Royal Palaces"],
+    inclusions: [
+      "4 continuous days dedicated private vehicle custody",
+      "All 3 state entry taxes (UP, DL, RJ) and highway tolls",
+      "Chauffeur overnight stay allowances fully covered",
+    ],
+    vehiclePrices: [
+      { label: "Sedan", price: "₹24,000" },
+      { label: "Ertiga", price: "₹29,000" },
+      { label: "Innova", price: "₹35,000" },
+      { label: "Tempo", price: "₹47,000" },
+    ],
+    suitedFor: "Complete India Tour Voyagers",
+    recommendedFleet: "Innova Crysta / Force Urbania",
+  },
 };
 
 const PACKAGES_FAQS = [
@@ -179,6 +327,28 @@ const PACKAGES_FAQS = [
 export function PackagesPage({ language = "en" }: PackagesPageProps) {
   // Category Filter State
   const [activeCategory, setActiveCategory] = useState<PackageFilterCategory>("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(() => {
+    if (typeof window !== "undefined") {
+      const page = Number(new URLSearchParams(window.location.search).get("page"));
+      return page > 0 ? page : 1;
+    }
+    return 1;
+  });
+  const itemsPerPage = 6;
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.set("page", String(newPage));
+      window.history.pushState({}, "", url.toString());
+      const section = document.getElementById("packages-directory");
+      if (section) {
+        section.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+  };
 
   // Enrich packages with metadata
   const enrichedPackages = useMemo<PackageCardData[]>(() => {
@@ -214,9 +384,24 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
 
   // Filtered packages
   const filteredPackages = useMemo(() => {
-    if (activeCategory === "all") return enrichedPackages;
-    return enrichedPackages.filter((item) => item.categories.includes(activeCategory));
-  }, [enrichedPackages, activeCategory]);
+    const q = searchQuery.trim().toLowerCase();
+    return enrichedPackages.filter((item) => {
+      const matchesCategory = activeCategory === "all" || item.categories.includes(activeCategory);
+      if (!matchesCategory) return false;
+      if (!q) return true;
+      return (
+        item.pkg.name.toLowerCase().includes(q) ||
+        item.pkg.blurb.toLowerCase().includes(q) ||
+        item.stops.some((s) => s.toLowerCase().includes(q)) ||
+        item.inclusions.some((inc) => inc.toLowerCase().includes(q))
+      );
+    });
+  }, [enrichedPackages, activeCategory, searchQuery]);
+
+  const displayedPackages = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return filteredPackages.slice(start, start + itemsPerPage);
+  }, [filteredPackages, currentPage, itemsPerPage]);
 
   // Structured Data (Schema.org)
   const structuredData = {
@@ -381,69 +566,87 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
           <div className="inline-flex flex-wrap items-center gap-1.5 p-1 bg-surface-container-high rounded-xl">
             <button
               className={`px-3 py-1.5 rounded-lg text-xs transition-all ${activeCategory === "all"
-                  ? "bg-ink-charcoal text-ivory-surface shadow-xs font-semibold"
-                  : "text-on-surface hover:bg-surface-container-lowest"
+                ? "bg-ink-charcoal text-ivory-surface shadow-xs font-semibold"
+                : "text-on-surface hover:bg-surface-container-lowest"
                 }`}
-              onClick={() => setActiveCategory("all")}
+              onClick={() => { setActiveCategory("all"); setCurrentPage(1); }}
               type="button"
             >
               All Packages ({packages.length})
             </button>
             <button
               className={`px-3 py-1.5 rounded-lg text-xs transition-all ${activeCategory === "sightseeing"
-                  ? "bg-ink-charcoal text-ivory-surface shadow-xs font-semibold"
-                  : "text-on-surface hover:bg-surface-container-lowest"
+                ? "bg-ink-charcoal text-ivory-surface shadow-xs font-semibold"
+                : "text-on-surface hover:bg-surface-container-lowest"
                 }`}
-              onClick={() => setActiveCategory("sightseeing")}
+              onClick={() => { setActiveCategory("sightseeing"); setCurrentPage(1); }}
               type="button"
             >
               Taj &amp; Agra Sightseeing
             </button>
             <button
               className={`px-3 py-1.5 rounded-lg text-xs transition-all ${activeCategory === "dawn"
-                  ? "bg-ink-charcoal text-ivory-surface shadow-xs font-semibold"
-                  : "text-on-surface hover:bg-surface-container-lowest"
+                ? "bg-ink-charcoal text-ivory-surface shadow-xs font-semibold"
+                : "text-on-surface hover:bg-surface-container-lowest"
                 }`}
-              onClick={() => setActiveCategory("dawn")}
+              onClick={() => { setActiveCategory("dawn"); setCurrentPage(1); }}
               type="button"
             >
               Dawn &amp; Fast-Track
             </button>
             <button
               className={`px-3 py-1.5 rounded-lg text-xs transition-all ${activeCategory === "pilgrimage"
-                  ? "bg-ink-charcoal text-ivory-surface shadow-xs font-semibold"
-                  : "text-on-surface hover:bg-surface-container-lowest"
+                ? "bg-ink-charcoal text-ivory-surface shadow-xs font-semibold"
+                : "text-on-surface hover:bg-surface-container-lowest"
                 }`}
-              onClick={() => setActiveCategory("pilgrimage")}
+              onClick={() => { setActiveCategory("pilgrimage"); setCurrentPage(1); }}
               type="button"
             >
               Pilgrimage Circuits
             </button>
             <button
-              className={`px-3 py-1.5 rounded-lg text-xs transition-all ${activeCategory === "multiday"
-                  ? "bg-ink-charcoal text-ivory-surface shadow-xs font-semibold"
-                  : "text-on-surface hover:bg-surface-container-lowest"
+              className={`px-3 py-1.5 rounded-lg text-xs transition-all ${activeCategory === "excursion"
+                ? "bg-ink-charcoal text-ivory-surface shadow-xs font-semibold"
+                : "text-on-surface hover:bg-surface-container-lowest"
                 }`}
-              onClick={() => setActiveCategory("multiday")}
+              onClick={() => { setActiveCategory("excursion"); setCurrentPage(1); }}
+              type="button"
+            >
+              Day Excursions
+            </button>
+            <button
+              className={`px-3 py-1.5 rounded-lg text-xs transition-all ${activeCategory === "multiday"
+                ? "bg-ink-charcoal text-ivory-surface shadow-xs font-semibold"
+                : "text-on-surface hover:bg-surface-container-lowest"
+                }`}
+              onClick={() => { setActiveCategory("multiday"); setCurrentPage(1); }}
               type="button"
             >
               Multi-Day Golden Triangle
             </button>
           </div>
 
-          {/* Quick Assistance Anchor */}
-          <div className="flex items-center gap-2 text-on-surface-variant text-xs">
-            <span className="material-symbols-outlined text-primary text-[16px]">support_agent</span>
-            <span>Need a tailored route?</span>
-            <a className="text-primary font-bold hover:underline text-xs" href="#custom-quote">
-              Custom Itinerary Desk ↓
-            </a>
+          {/* Search Bar */}
+          <div className="relative min-w-[240px]">
+            <span className="material-symbols-outlined text-on-surface-variant absolute left-3 top-2 text-[16px]">
+              search
+            </span>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setCurrentPage(1);
+              }}
+              placeholder="Search tour, monument, temple..."
+              className="w-full pl-8 pr-3 py-1.5 rounded-lg bg-surface-container-lowest border border-border-warm/60 text-on-surface text-xs focus:outline-none focus:border-primary"
+            />
           </div>
         </div>
       </section>
 
       {/* CURATED PACKAGES CATALOG GRID (Compact -20%) */}
-      <section className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin py-8 sm:py-10 w-full">
+      <section id="packages-directory" className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin py-8 sm:py-10 w-full">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-space-md mb-6">
           <div>
             <span className="font-label-caps text-[9.5px] text-primary uppercase font-bold tracking-widest">
@@ -451,13 +654,24 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
             </span>
             <h2 className="font-headline-lg text-headline-lg text-ink-charcoal mt-1">Curated North India Tours</h2>
           </div>
-          <p className="font-body-sm text-[10.5px] text-on-surface-variant max-w-md">
-            All vehicles strictly private, sanitized with commercial yellow-plate tourist permits. Guaranteed on-time dispatch from Taj Ganj, Agra.
-          </p>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+            <span className="text-xs text-on-surface-variant font-medium">
+              Showing <strong className="text-on-surface">{filteredPackages.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0}–{Math.min(currentPage * itemsPerPage, filteredPackages.length)}</strong> of <strong className="text-on-surface">{filteredPackages.length}</strong> tours
+            </span>
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => { setSearchQuery(""); setCurrentPage(1); }}
+                className="text-primary hover:underline text-xs font-semibold"
+              >
+                Clear filter
+              </button>
+            )}
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-          {filteredPackages.map((item) => {
+          {displayedPackages.map((item) => {
             const { pkg } = item;
             const packageDetailUrl = `/en/packages/${pkg.slug}`;
             const bookStep1Url = `/book.html?package=${encodeURIComponent(pkg.slug)}&step=1`;
@@ -568,6 +782,17 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
             );
           })}
         </div>
+        {filteredPackages.length > itemsPerPage && (
+          <Pagination
+            totalItems={filteredPackages.length}
+            itemsPerPage={itemsPerPage}
+            currentPage={currentPage}
+            onPageChange={handlePageChange}
+            className="mt-8"
+            showFirstLastButtons={true}
+            pageButtonLimit={5}
+          />
+        )}
       </section>
 
       {/* PACKAGE COMPARISON & FLEET DECISION MATRIX (Compact -20%) */}

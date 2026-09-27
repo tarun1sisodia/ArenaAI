@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import { useState, type FC } from "react";
 import { Pagination, type PaginationProps } from "./Pagination";
 
 export { Pagination };
 export type { PaginationProps };
 
-export const ExampleUsage: React.FC = () => {
+export const ExampleUsage: FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const totalItems = 100;
   const itemsPerPage = 10;

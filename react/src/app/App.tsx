@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useState, useEffect } from "react";
 import { ErrorBoundary } from "../components/ErrorBoundary";
 import { SiteLayout } from "../layouts/SiteLayout";
 import { HomePage } from "../pages/HomePage";
@@ -20,7 +20,7 @@ const BookingPage = lazy(() => import("../features/booking/BookingPage").then((m
 const MarketingPage = lazy(() => import("../pages/MarketingPage").then((m) => ({ default: m.MarketingPage })));
 import { marketingHubs } from "./routes";
 import { SeoHead } from "../components/seo/SeoHead";
-import { packages, routes, vehicles } from "../data/catalogue";
+import { packages, routes, vehicles, type Route } from "../data/catalogue";
 
 export function getMarketingPath(pathname: string) {
   const segments = pathname.split("/").filter(Boolean);
@@ -215,10 +215,50 @@ export function App({ pathname: propPathname }: AppProps = {}) {
     cleanPath === "/booking" ||
     cleanPath === "/en/book";
 
+  const [manifestRoute, setManifestRoute] = useState<Route | null>(null);
+
   const matchedRoute = routes.find((item) => {
     const from = item.from === "agra" && item.to === "agra" ? "agra-sightseeing" : `${item.from}-to-${item.to}`;
     return pathname.includes(`${from}-taxi`);
   });
+
+  const activeRoute = matchedRoute || manifestRoute;
+
+  useEffect(() => {
+    if (matchedRoute || isHome || isBooking || isMarketingHub) return;
+    const cleanSection = section.replace(/\.html$/, "");
+    let isMounted = true;
+    fetch("/routes-manifest.json")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!data || !isMounted) return;
+        const entry = data[cleanSection] || Object.entries(data).find(([k]) => pathname.includes(k))?.[1];
+        if (entry) {
+          const durationHrs = Math.floor(entry.m / 60);
+          const durationMins = entry.m % 60;
+          const durationStr = `${durationHrs}h${durationMins ? ` ${durationMins}m` : ""}`;
+          setManifestRoute({
+            id: cleanSection,
+            from: entry.o,
+            to: entry.d,
+            km: entry.km > 0 ? entry.km : 180,
+            duration: durationStr,
+            kind: entry.pm === "day120" ? "local" : "one-way",
+            fares: {
+              sedan: entry.fs || 2500,
+              ertiga: entry.fe || 3200,
+              innova: entry.fi || 4500,
+              tempo: entry.ft > 100 ? entry.ft : 9500,
+              urbania: entry.fu > 100 ? entry.fu : 14000,
+            },
+          });
+        }
+      })
+      .catch(() => {});
+    return () => {
+      isMounted = false;
+    };
+  }, [section, pathname, matchedRoute, isHome, isBooking, isMarketingHub]);
 
   const matchedPackage = pathname.includes("/packages/") && packages.find((item) => {
     const p = pathname.replace(/\/$/, "");
@@ -237,7 +277,7 @@ export function App({ pathname: propPathname }: AppProps = {}) {
     isHome ||
     isBooking ||
     isMarketingHub ||
-    Boolean(matchedRoute) ||
+    Boolean(activeRoute) ||
     Boolean(matchedPackage) ||
     Boolean(matchedVehicle) ||
     packages.some((item) => pathname.endsWith(item.slug) || pathname.endsWith(item.slug + "/"));
@@ -276,8 +316,8 @@ export function App({ pathname: propPathname }: AppProps = {}) {
             <BookingPage />
           ) : isHome ? (
             <HomePage language={language} />
-          ) : matchedRoute ? (
-            <RouteDetailPage language={language} route={matchedRoute} />
+          ) : activeRoute ? (
+            <RouteDetailPage language={language} route={activeRoute} />
           ) : matchedPackage ? (
             <PackageDetailPage language={language} pkg={matchedPackage} />
           ) : matchedVehicle ? (

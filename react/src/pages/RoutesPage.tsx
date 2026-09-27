@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import type { SupportedLanguage } from "../config";
 import { contact } from "../data/contact";
 import { WhatsAppIcon } from "../components/icons";
@@ -9,10 +9,14 @@ export interface RoutesPageProps {
   language?: SupportedLanguage;
 }
 
+export type RouteCategory = "expressway" | "golden-triangle" | "pilgrimage" | "heritage" | "local" | "tempo";
+
 interface RouteItem {
   id: string;
   name: string;
-  category: "expressway" | "golden-triangle" | "pilgrimage" | "heritage";
+  origin?: string;
+  destination?: string;
+  category: RouteCategory;
   categoryBadge: string;
   distanceKm: number;
   duration: string;
@@ -20,6 +24,7 @@ interface RouteItem {
   description: string;
   tollNote: string;
   stateTaxNote: string;
+  pricingModel?: string;
   fares: {
     sedan: number;
     ertiga: number;
@@ -27,6 +32,22 @@ interface RouteItem {
     tempo: number;
     urbania: number;
   };
+}
+
+interface ManifestRouteData {
+  o: string;
+  d: string;
+  km: number;
+  m: number;
+  fh: number;
+  fs: number;
+  fe: number;
+  fi: number;
+  ft: number;
+  fu: number;
+  pm: "oneway" | "day120" | "tempo" | "tour" | "custom";
+  c: string;
+  toll: 1 | 0;
 }
 
 const PRIMARY_ROUTES: RouteItem[] = [
@@ -204,6 +225,7 @@ const ROUTE_FAQS = [
 ];
 
 export function RoutesPage({ language = "en" }: RoutesPageProps) {
+  const [manifest, setManifest] = useState<Record<string, ManifestRouteData> | null>(null);
   const [selectedFilter, setSelectedFilter] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -214,6 +236,81 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
     }
     return 1;
   });
+  const itemsPerPage = 12;
+
+  useEffect(() => {
+    let isMounted = true;
+    fetch("/routes-manifest.json")
+      .then((res) => (res.ok ? res.json() : Promise.reject()))
+      .then((data: Record<string, ManifestRouteData>) => {
+        if (isMounted) setManifest(data);
+      })
+      .catch(() => {});
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const allRoutes = useMemo<RouteItem[]>(() => {
+    if (!manifest) return PRIMARY_ROUTES;
+    return Object.entries(manifest).map(([slug, item]) => {
+      const isLocal = item.pm === "day120";
+      const isTempo = item.pm === "tempo";
+      let category: RouteCategory = "expressway";
+      const cLower = (item.c || "").toLowerCase();
+      if (cLower.includes("expressway") || cLower.includes("delhi") || cLower.includes("gurgaon") || cLower.includes("noida")) {
+        category = "expressway";
+      } else if (cLower.includes("jaipur") || cLower.includes("golden") || cLower.includes("rajasthan")) {
+        category = "golden-triangle";
+      } else if (cLower.includes("mathura") || cLower.includes("vrindavan") || cLower.includes("haridwar") || cLower.includes("ayodhya") || cLower.includes("ganga")) {
+        category = "pilgrimage";
+      } else if (cLower.includes("lucknow") || cLower.includes("gwalior") || cLower.includes("heritage")) {
+        category = "heritage";
+      } else if (isLocal) {
+        category = "local";
+      } else if (isTempo) {
+        category = "tempo";
+      } else {
+        category = "expressway";
+      }
+
+      const durationHrs = Math.floor(item.m / 60);
+      const durationMins = item.m % 60;
+      const durationStr = `${durationHrs}h${durationMins ? ` ${durationMins}m` : ""}`;
+      const dist = item.km > 0 ? item.km : durationHrs * 55;
+
+      return {
+        id: slug,
+        name: `${item.o} → ${item.d}`,
+        origin: item.o,
+        destination: item.d,
+        category,
+        categoryBadge: item.c ? item.c.replace("->", "→") : (isLocal ? "LOCAL 120KM PACKAGE" : "OUTSTATION CORRIDOR"),
+        distanceKm: dist,
+        duration: durationStr,
+        highway: item.c.includes("->") ? item.c.replace("->", "⇄") : item.c || "Direct Highway Corridor",
+        description: isLocal
+          ? `Dedicated 120 km full-day local & outstation chauffeur service connecting ${item.o} to ${item.d}.`
+          : isTempo
+          ? `Spacious 9-26 seater Tempo Traveller & Force Urbania group rental connecting ${item.o} to ${item.d}.`
+          : `Point-to-point AC outstation cab directly connecting ${item.o} to ${item.d} with transparent pricing.`,
+        tollNote: item.toll === 1 ? "Highway tolls included in one-way fare" : "Tolls as per actuals",
+        stateTaxNote: item.o.toLowerCase().includes("delhi") || item.d.toLowerCase().includes("delhi")
+          ? "Delhi/Haryana state permit included"
+          : item.o.toLowerCase().includes("jaipur") || item.d.toLowerCase().includes("jaipur")
+          ? "Rajasthan state entry tax included"
+          : "Interstate commercial permits clear",
+        pricingModel: item.pm,
+        fares: {
+          sedan: item.fs || 2500,
+          ertiga: item.fe || 3200,
+          crysta: item.fi || 4500,
+          tempo: item.ft > 100 ? item.ft : (dist > 0 ? dist * (item.ft || 17) : 9500),
+          urbania: item.fu > 100 ? item.fu : (dist > 0 ? dist * (item.fu || 25) : 14000),
+        },
+      };
+    });
+  }, [manifest]);
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
@@ -229,16 +326,30 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
   };
 
   const filteredRoutes = useMemo(() => {
-    return PRIMARY_ROUTES.filter((route) => {
-      const matchesFilter = selectedFilter === "all" || route.category === selectedFilter;
-      const matchesSearch =
-        searchQuery.trim() === "" ||
-        route.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        route.highway.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        route.description.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchesFilter && matchesSearch;
+    const q = searchQuery.trim().toLowerCase();
+    return allRoutes.filter((route) => {
+      const matchesFilter =
+        selectedFilter === "all" ||
+        route.category === selectedFilter ||
+        (selectedFilter === "local" && route.pricingModel === "day120") ||
+        (selectedFilter === "tempo" && route.pricingModel === "tempo");
+      if (!matchesFilter) return false;
+      if (!q) return true;
+      return (
+        route.name.toLowerCase().includes(q) ||
+        (route.origin && route.origin.toLowerCase().includes(q)) ||
+        (route.destination && route.destination.toLowerCase().includes(q)) ||
+        route.categoryBadge.toLowerCase().includes(q) ||
+        route.highway.toLowerCase().includes(q) ||
+        route.description.toLowerCase().includes(q)
+      );
     });
-  }, [selectedFilter, searchQuery]);
+  }, [allRoutes, selectedFilter, searchQuery]);
+
+  const paginatedRoutes = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return filteredRoutes.slice(start, start + itemsPerPage);
+  }, [filteredRoutes, currentPage, itemsPerPage]);
 
   return (
     <div className="bg-surface font-body-md text-body-md text-on-surface antialiased min-h-screen">
@@ -275,8 +386,8 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
                 <span className="material-symbols-outlined text-[18px]">signpost</span>
               </div>
               <div>
-                <div className="font-title-md text-xs sm:text-[13px] text-ink-charcoal font-bold">8 Primary</div>
-                <div className="font-body-sm text-[9.5px] text-on-surface-variant">Expressway Corridors</div>
+                <div className="font-title-md text-xs sm:text-[13px] text-ink-charcoal font-bold">{allRoutes.length} Corridors</div>
+                <div className="font-body-sm text-[9.5px] text-on-surface-variant">Verified Intercity Drops</div>
               </div>
             </div>
             <div className="flex items-center gap-2 p-1">
@@ -315,11 +426,13 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mb-space-md">
             <div className="flex flex-wrap items-center gap-1.5 overflow-x-auto">
               {[
-                { id: "all", label: "All Corridors (8)" },
-                { id: "expressway", label: "Expressway (Delhi NCR)" },
-                { id: "golden-triangle", label: "Golden Triangle (Jaipur)" },
-                { id: "pilgrimage", label: "Pilgrimage (Mathura & Ganga)" },
-                { id: "heritage", label: "Heritage (Gwalior / Lucknow)" },
+                { id: "all", label: `All Corridors (${allRoutes.length})` },
+                { id: "expressway", label: "Expressway & NCR" },
+                { id: "golden-triangle", label: "Jaipur & Rajasthan" },
+                { id: "pilgrimage", label: "Mathura & Pilgrimage" },
+                { id: "heritage", label: "Lucknow & Gwalior" },
+                { id: "local", label: "Day Packages (120 KM)" },
+                { id: "tempo", label: "Tempo Traveller" },
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -328,10 +441,11 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
                     setSelectedFilter(tab.id);
                     setCurrentPage(1);
                   }}
-                  className={`px-3 py-1.5 rounded-full font-label-caps text-xs uppercase tracking-wider transition-all font-bold ${selectedFilter === tab.id
+                  className={`px-3 py-1.5 rounded-full font-label-caps text-xs uppercase tracking-wider transition-all font-bold ${
+                    selectedFilter === tab.id
                       ? "bg-ink-charcoal text-white shadow-xs"
                       : "bg-surface-container text-on-surface hover:bg-surface-container-high"
-                    }`}
+                  }`}
                 >
                   {tab.label}
                 </button>
@@ -360,8 +474,23 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
       {/* 2. COMPREHENSIVE ROUTE DIRECTORY (CARDS -20% Compact) */}
       <section id="routes-directory" className="w-full bg-surface py-6 sm:py-8">
         <div className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-on-surface-variant font-medium mb-4">
+            <span>
+              Showing <strong className="text-on-surface">{filteredRoutes.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0}–{Math.min(currentPage * itemsPerPage, filteredRoutes.length)}</strong> of <strong className="text-on-surface">{filteredRoutes.length}</strong> verified corridors
+            </span>
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => { setSearchQuery(""); setCurrentPage(1); }}
+                className="text-primary hover:underline font-semibold text-xs"
+              >
+                Clear filter
+              </button>
+            )}
+          </div>
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5">
-            {filteredRoutes.map((route) => (
+            {paginatedRoutes.map((route) => (
               <div
                 key={route.id}
                 className="bg-surface-container-lowest rounded-xl p-3.5 sm:p-4.5 shadow-xs border border-border-warm/70 flex flex-col justify-between hover:shadow-md transition-all"
@@ -449,7 +578,7 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
                     </a>
                     <a
                       className="px-3.5 py-1.5 rounded-lg bg-primary hover:bg-primary-container text-white font-label-caps text-xs transition-all shadow-xs font-bold flex items-center gap-1"
-                      href={`/book?from=Agra&to=${encodeURIComponent(route.name.split("→")[1]?.trim() || "")}`}
+                      href={`/book?from=${encodeURIComponent(route.origin || route.name.split("→")[0]?.trim() || "Agra")}&to=${encodeURIComponent(route.destination || route.name.split("→")[1]?.trim() || "")}`}
                     >
                       <span>Book Cab</span>
                       <span className="material-symbols-outlined text-[13px]">arrow_forward</span>
@@ -460,15 +589,17 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
             ))}
           </div>
         </div>
-        <Pagination
-          totalItems={searchQuery || selectedFilter !== "all" ? filteredRoutes.length : 982}
-          itemsPerPage={10}
-          currentPage={currentPage}
-          onPageChange={handlePageChange}
-          className="mt-6"
-          showFirstLastButtons={true}
-          pageButtonLimit={5}
-        />
+        {filteredRoutes.length > itemsPerPage && (
+          <Pagination
+            totalItems={filteredRoutes.length}
+            itemsPerPage={itemsPerPage}
+            currentPage={currentPage}
+            onPageChange={handlePageChange}
+            className="mt-8"
+            showFirstLastButtons={true}
+            pageButtonLimit={5}
+          />
+        )}
       </section>
 
       {/* 3. OUTSTATION BILLING PRINCIPLES (Compact -20%) */}
