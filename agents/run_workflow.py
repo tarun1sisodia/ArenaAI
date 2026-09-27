@@ -5,7 +5,7 @@ from google.adk.sessions import InMemorySessionService
 from google.genai import types
 from openai import AsyncOpenAI
 
-from agents.config import GATEWAY_BASE_URL, GATEWAY_API_KEY
+from agents.config import GATEWAY_BASE_URL, GATEWAY_API_KEY, FAST_WORKER_MODEL
 from agents.adk_supervisor import create_supervisor_agent, ArenaAIDecomposedTasks
 from agents.specialists.backend_agent import generate_backend_module
 from agents.specialists.frontend_agent import generate_frontend_component
@@ -19,27 +19,44 @@ async def run_parallel_pipeline(user_request: str):
     print(f"\n[1] Requirement:\n    {user_request}\n")
 
     # Step 1: Supervisor (Google ADK) decomposes the task into atomic micro-tasks
-    print("[2] 🧠 Google ADK Supervisor: Decomposing into bounded micro-tasks...")
-    supervisor = create_supervisor_agent()
-    session_service = InMemorySessionService()
-    runner = Runner(app_name="arena_ai_pipeline", agent=supervisor, session_service=session_service)
-    session = await session_service.create_session(app_name="arena_ai_pipeline", user_id="developer")
-
-    message = types.Content(role="user", parts=[types.Part.from_text(text=user_request)])
-    events = []
-    async for event in runner.run_async(session_id=session.id, user_id="developer", new_message=message):
-        events.append(event)
-
+    print("[2] 🧠 Supervisor Agent: Decomposing into bounded micro-tasks...")
     raw_output = None
-    for event in reversed(events):
-        if hasattr(event, "content") and event.content:
-            raw_output = event.content
-            break
-        elif hasattr(event, "actions") and event.actions:
-            for act in event.actions:
-                if hasattr(act, "output") and act.output:
-                    raw_output = act.output
-                    break
+    try:
+        supervisor = create_supervisor_agent()
+        session_service = InMemorySessionService()
+        runner = Runner(app_name="arena_ai_pipeline", agent=supervisor, session_service=session_service)
+        session = await session_service.create_session(app_name="arena_ai_pipeline", user_id="developer")
+
+        message = types.Content(role="user", parts=[types.Part.from_text(text=user_request)])
+        events = []
+        async for event in runner.run_async(session_id=session.id, user_id="developer", new_message=message):
+            events.append(event)
+
+        for event in reversed(events):
+            if hasattr(event, "content") and event.content:
+                raw_output = event.content
+                break
+            elif hasattr(event, "actions") and event.actions:
+                for act in event.actions:
+                    if hasattr(act, "output") and act.output:
+                        raw_output = act.output
+                        break
+    except Exception as adk_err:
+        print(f"    (ADK Supervisor unavailable [{adk_err}], using Gateway fallback...)")
+        try:
+            gw_client = AsyncOpenAI(base_url=GATEWAY_BASE_URL, api_key=GATEWAY_API_KEY, timeout=30.0)
+            decomp_res = await gw_client.chat.completions.create(
+                model=FAST_WORKER_MODEL,
+                messages=[
+                    {"role": "system", "content": "You are Lead Architect. Output valid JSON matching fields: feature_name, target_subsystem, backend_task, frontend_task, catalog_task, test_task."},
+                    {"role": "user", "content": f"Decompose this task into micro-tasks: {user_request}"}
+                ],
+                response_format={"type": "json_object"},
+                temperature=0.1
+            )
+            raw_output = decomp_res.choices[0].message.content
+        except Exception as gw_err:
+            print(f"    (Gateway fallback exception: {gw_err})")
 
     try:
         if isinstance(raw_output, str):
@@ -48,10 +65,11 @@ async def run_parallel_pipeline(user_request: str):
             decomposed = ArenaAIDecomposedTasks.model_validate(raw_output)
         else:
             decomposed = ArenaAIDecomposedTasks(
-                feature_name="Dynamic Feature Implementation",
+                feature_name="Feature Implementation",
                 target_subsystem="fullstack",
                 backend_task=f"Implement Fastify route and Zod schema for: {user_request}",
                 frontend_task=f"Implement React 19 UI component for: {user_request}",
+                catalog_task=f"Implement route/package details for: {user_request}",
                 test_task=f"Implement Vitest test suite for: {user_request}",
             )
     except Exception as e:
@@ -61,6 +79,7 @@ async def run_parallel_pipeline(user_request: str):
             target_subsystem="fullstack",
             backend_task=f"Implement Fastify route and Zod schema for: {user_request}",
             frontend_task=f"Implement React 19 UI component for: {user_request}",
+            catalog_task=f"Implement route/package details for: {user_request}",
             test_task=f"Implement Vitest test suite for: {user_request}",
         )
 

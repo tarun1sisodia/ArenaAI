@@ -15,13 +15,14 @@ async def generate_service_logic(task_description: str, schema_context: str = ""
     if client is None:
         client = AsyncOpenAI(base_url=GATEWAY_BASE_URL, api_key=GATEWAY_API_KEY, timeout=30.0)
         
-    template = AgentTaskTemplate(
-        **PYTHON_BACKEND_TEMPLATE_DEFAULTS,
-        role="Backend Service Engineer",
-        objective="Write clean, modular, async business logic functions for FastAPI.",
-        context_slice=schema_context,
-        task_input=task_description
-    )
+    template_kwargs = dict(PYTHON_BACKEND_TEMPLATE_DEFAULTS)
+    template_kwargs.update({
+        "role": "Backend Service Engineer",
+        "objective": "Write clean, modular, async business logic functions for FastAPI.",
+        "context_slice": schema_context,
+        "task_input": task_description
+    })
+    template = AgentTaskTemplate(**template_kwargs)
 
     response = await client.chat.completions.create(
         model=FAST_WORKER_MODEL,
