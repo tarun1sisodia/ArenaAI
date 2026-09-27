@@ -4,7 +4,7 @@ This file is the single source of truth for architecture decisions. It should st
 almost static; if anyone deviates from it, that deviation must be logged in
 `04_PROGRESS_TRACKER.md`'s Decision Log, not made silently.
 
-Canonical domain: `https://skbagheltravels.in`
+Canonical domain: `https://agraskbagheltourandtravels.com`
 Deployment topology and provider settings: [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
 
 ## 1. What this is
@@ -104,7 +104,7 @@ route pages (all marketing pages on mobile). Translate copy, never fares.
 - Phone `+91 98765 43210` · WhatsApp `919876543210` — **placeholder until the
   client supplies the real number** (see `LAUNCH_CHECKLIST` notes in
   `react/docs/`).
-- Email `bookings@skbagheltravels.in`
+- Email `bookings@agraskbagheltourandtravels.com`
 - Address: Near Taj East Gate Road, Taj Ganj, Agra 282001 · Geo 27.1632, 78.0322
 - Session key `skb-booking` · ticket prefix `AGR-` (`AGR-YYYYMMDD-XXXX`)
 - Package add-ons sit on top of the package price; local sightseeing is not

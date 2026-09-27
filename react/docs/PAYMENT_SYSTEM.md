@@ -76,7 +76,7 @@ Static HTML cannot:
 - Issue refunds
 - Idempotency keys
 
-**Minimum backend:** one Cloudflare Worker `pay.skbagheltravels.in` + **D1** (SQL) + **KV** (idempotency) + **Queues** (webhook retry processing).
+**Minimum backend:** one Cloudflare Worker `pay.agraskbagheltourandtravels.com` + **D1** (SQL) + **KV** (idempotency) + **Queues** (webhook retry processing).
 
 If Workers limits hurt (long webhooks, PDF invoices, GST), add a small API on Fly.io / Railway / a Mumbai VM. Frontend still talks only to **your** API, never Razorpay secret.
 
@@ -245,7 +245,7 @@ This is **necessary but not sufficient**. Webhook still required (user may close
 
 ### 5.5 Webhooks (source of truth)
 
-Dashboard URL: `https://pay.skbagheltravels.in/webhooks/razorpay`  
+Dashboard URL: `https://pay.agraskbagheltourandtravels.com/webhooks/razorpay`  
 Events (minimum):
 
 - `order.paid`
@@ -339,7 +339,7 @@ Lock numbers at order create. Later catalogue price changes **must not** change 
 ### 7.2 Transport
 
 - HTTPS only; HSTS.
-- API CORS: allow **only** `https://skbagheltravels.in` (and `www`). Not `*`.
+- API CORS: allow **only** `https://agraskbagheltourandtravels.com` (and `www`). Not `*`.
 - Cloudflare: WAF, bot fight, rate limit `/api/payments/*` (e.g. 10 req / 10 min / IP + phone).
 
 ### 7.3 PCI

@@ -181,8 +181,8 @@ export function FaqPage({ language = "en" }: FaqPageProps) {
                   type="button"
                   onClick={() => setActiveCategory(cat.id as any)}
                   className={`px-4 py-2 rounded-lg font-label-caps text-xs uppercase tracking-wider transition-all whitespace-nowrap font-bold ${activeCategory === cat.id
-                      ? "bg-ink-charcoal text-white shadow-sm"
-                      : "bg-surface-container hover:bg-surface-container-high text-on-surface-variant"
+                    ? "bg-ink-charcoal text-white shadow-sm"
+                    : "bg-surface-container hover:bg-surface-container-high text-on-surface-variant"
                     }`}
                 >
                   {cat.label}
@@ -263,7 +263,7 @@ export function FaqPage({ language = "en" }: FaqPageProps) {
             </a>
 
             <a
-              href="mailto:bookings@skbagheltravels.in"
+              href="mailto:bookings@agraskbagheltourandtravels.com"
               className="p-3.5 rounded-xl bg-surface-container-lowest border border-border-warm/70 hover:border-primary transition-all flex flex-col items-center text-center shadow-xs"
             >
               <div className="w-8 h-8 rounded-full bg-sandstone-wash flex items-center justify-center text-primary mb-2">
@@ -271,7 +271,7 @@ export function FaqPage({ language = "en" }: FaqPageProps) {
               </div>
               <h4 className="font-title-md text-xs font-bold text-ink-charcoal">Email Support</h4>
               <p className="text-[10px] text-on-surface-variant font-medium mt-0.5 truncate max-w-full">
-                bookings@skbagheltravels.in
+                bookings@agraskbagheltourandtravels.com
               </p>
             </a>
           </div>

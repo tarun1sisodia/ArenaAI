@@ -13,7 +13,7 @@
 ### 1. Mock business contact data (NAP) is published and would be indexed sitewide
 - **Category:** Partial Impl / SEO / Domain · **Severity:** 🔴
 - **Location:** `scripts/catalog.py` (PHONE `+91 98765 43210`, WHATSAPP `919876543210`, EMAIL), duplicated in `js/data.js` `SKB.contact`; surfaced in every header, footer, lead-bar, contact page, tel:/wa.me CTA, and `LocalBusiness` JSON-LD on every page.
-- **Description:** The entire site — including schema.org `telephone`/`email` — carries the canonical Indian dummy number `98765 43210` and an unprovisioned `bookings@skbagheltravels.in`. Two independent sources of truth must be manually swapped.
+- **Description:** The entire site — including schema.org `telephone`/`email` — carries the canonical Indian dummy number `98765 43210` and an unprovisioned `bookings@agraskbagheltourandtravels.com`. Two independent sources of truth must be manually swapped.
 - **Impact:** If deployed/indexed as-is: every primary CTA (the #1 conversion path in a taxi business is *Call/WhatsApp*) routes to a dead/unknown number — direct revenue loss. Google cross-references NAP for local ranking; publishing dummy LocalBusiness data corrodes Local Pack trust and can put the entity into a bad data state that takes weeks to correct. The "4.9/5 · 380+ trips" trust chip is also fabricated and has no `AggregateRating` schema to back it — a spam-policy exposure if kept at launch.
 - **Recommended fix:** Single constants module consumed by both SSG and `data.js` (generate `js/data.js` contact block from `catalog.py` at build time); one `LAUNCH_DATA.md` checklist gating go-live on real NAP; drop or qualify the rating chip until real reviews exist (then add `aggregateRating` to JSON-LD).
 
@@ -113,7 +113,7 @@ Export once (e.g. in `fares.js` as `SKB.localTomorrow`) and consume in both file
 
 ### 14. Contact-form no-JS fallback sends to an unprovisioned mailbox
 - **Category:** Partial Impl · **Severity:** 🟡
-- **Location:** `en/hi/contact/` pages — `action="mailto:bookings@skbagheltravels.in"` (added as the zero-JS escape hatch).
+- **Location:** `en/hi/contact/` pages — `action="mailto:bookings@agraskbagheltourandtravels.com"` (added as the zero-JS escape hatch).
 - **Description:** The domain isn't live; a customer's no-JS enquiry composes mail to an inbox no one monitors. `mailto:` also triggers the OS handler with no confirmation — users on shared/desktop devices may abandon silently.
 - **Fix:** Before launch either provision the mailbox, or swap the fallback to a real form endpoint (Formspree/Web3Forms) with the same static page.
 

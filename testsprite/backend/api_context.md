@@ -1,6 +1,6 @@
 # ArenaAI API TestSprite context
 
-Base URL: `http://localhost:4000` locally or `https://api.skbagheltravels.in` in an isolated staging environment.
+Base URL: `http://localhost:4000` locally or `https://api.agraskbagheltourandtravels.com` in an isolated staging environment.
 
 ## Response conventions
 

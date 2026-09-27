@@ -224,7 +224,7 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
     "@graph": [
       {
         "@type": "TaxiService",
-        "@id": "https://skbagheltravels.in/#service",
+        "@id": "https://agraskbagheltourandtravels.com/#service",
         name: "SK Baghel Tour & Travels Private Sightseeing Packages",
         serviceType: "Private Heritage & Outstation Tour Packages",
         provider: {
@@ -248,13 +248,13 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://skbagheltravels.in/en/",
+            item: "https://agraskbagheltourandtravels.com/en/",
           },
           {
             "@type": "ListItem",
             position: 2,
             name: "Packages",
-            item: "https://skbagheltravels.in/en/packages/",
+            item: "https://agraskbagheltourandtravels.com/en/packages/",
           },
         ],
       },
@@ -337,7 +337,7 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
                 Private, doorstep-pickup itineraries covering the Taj Mahal, sacred Braj temples, imperial Mughal ruins, and the Golden Triangle. Complete fare transparency, verified English &amp; Hindi-speaking commercial chauffeurs, and zero commission-shop traps.
               </p>
             </div>
-            
+
           </div>
 
           {/* Trust Ribbon Mosaic (Compact -20%) */}
@@ -380,55 +380,50 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
           {/* Filter Segmented Tabs */}
           <div className="inline-flex flex-wrap items-center gap-1.5 p-1 bg-surface-container-high rounded-xl">
             <button
-              className={`px-3 py-1.5 rounded-lg text-xs transition-all ${
-                activeCategory === "all"
+              className={`px-3 py-1.5 rounded-lg text-xs transition-all ${activeCategory === "all"
                   ? "bg-ink-charcoal text-ivory-surface shadow-xs font-semibold"
                   : "text-on-surface hover:bg-surface-container-lowest"
-              }`}
+                }`}
               onClick={() => setActiveCategory("all")}
               type="button"
             >
               All Packages ({packages.length})
             </button>
             <button
-              className={`px-3 py-1.5 rounded-lg text-xs transition-all ${
-                activeCategory === "sightseeing"
+              className={`px-3 py-1.5 rounded-lg text-xs transition-all ${activeCategory === "sightseeing"
                   ? "bg-ink-charcoal text-ivory-surface shadow-xs font-semibold"
                   : "text-on-surface hover:bg-surface-container-lowest"
-              }`}
+                }`}
               onClick={() => setActiveCategory("sightseeing")}
               type="button"
             >
               Taj &amp; Agra Sightseeing
             </button>
             <button
-              className={`px-3 py-1.5 rounded-lg text-xs transition-all ${
-                activeCategory === "dawn"
+              className={`px-3 py-1.5 rounded-lg text-xs transition-all ${activeCategory === "dawn"
                   ? "bg-ink-charcoal text-ivory-surface shadow-xs font-semibold"
                   : "text-on-surface hover:bg-surface-container-lowest"
-              }`}
+                }`}
               onClick={() => setActiveCategory("dawn")}
               type="button"
             >
               Dawn &amp; Fast-Track
             </button>
             <button
-              className={`px-3 py-1.5 rounded-lg text-xs transition-all ${
-                activeCategory === "pilgrimage"
+              className={`px-3 py-1.5 rounded-lg text-xs transition-all ${activeCategory === "pilgrimage"
                   ? "bg-ink-charcoal text-ivory-surface shadow-xs font-semibold"
                   : "text-on-surface hover:bg-surface-container-lowest"
-              }`}
+                }`}
               onClick={() => setActiveCategory("pilgrimage")}
               type="button"
             >
               Pilgrimage Circuits
             </button>
             <button
-              className={`px-3 py-1.5 rounded-lg text-xs transition-all ${
-                activeCategory === "multiday"
+              className={`px-3 py-1.5 rounded-lg text-xs transition-all ${activeCategory === "multiday"
                   ? "bg-ink-charcoal text-ivory-surface shadow-xs font-semibold"
                   : "text-on-surface hover:bg-surface-container-lowest"
-              }`}
+                }`}
               onClick={() => setActiveCategory("multiday")}
               type="button"
             >
@@ -611,9 +606,8 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
                   return (
                     <tr
                       key={pkg.id}
-                      className={`hover:bg-sandstone-wash/40 transition-colors ${
-                        idx % 2 === 1 ? "bg-sandstone-wash/20" : ""
-                      }`}
+                      className={`hover:bg-sandstone-wash/40 transition-colors ${idx % 2 === 1 ? "bg-sandstone-wash/20" : ""
+                        }`}
                     >
                       <td className="py-2.5 px-3 font-semibold text-ink-charcoal">
                         <a href={`/en/packages/${pkg.slug}`} className="hover:text-primary transition-colors">

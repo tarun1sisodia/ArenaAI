@@ -21,9 +21,9 @@ This document provides an exhaustive, phase-divided master blueprint addressing 
 
 | Application | Workspace Path | Target Host | Production Domain | Tech Stack | Status |
 |---|---|---|---|---|---|
-| **Customer Site** | `react/` | Cloudflare Pages | `skbagheltravels.in`<br>`www.skbagheltravels.in` | React 19, Vite, TypeScript, Static Pre-Renderer (`prerender.ts`) | UI complete; typography oversized on subpages; color grading needs minimalism; booking flow mock-only |
-| **Admin Panel** | `admin/` | Cloudflare Pages | `admin.skbagheltravels.in` | React 19, Vite, Tailwind CSS v4, Motion, Lucide | UI complete; missing real API layer, live auth, live bookings, refunds, audit trail |
-| **Backend API** | `backend/` | Render (Docker) | `api.skbagheltravels.in` (custom)<br>`skb-baghel-api.onrender.com` | Fastify, TypeScript, Supabase PostgreSQL, MongoDB Atlas, Docker | **Live on Render**; ports 4000; health endpoints `/health` & `/ready` active |
+| **Customer Site** | `react/` | Cloudflare Pages | `agraskbagheltourandtravels.com`<br>`www.agraskbagheltourandtravels.com` | React 19, Vite, TypeScript, Static Pre-Renderer (`prerender.ts`) | UI complete; typography oversized on subpages; color grading needs minimalism; booking flow mock-only |
+| **Admin Panel** | `admin/` | Cloudflare Pages | `admin.agraskbagheltourandtravels.com` | React 19, Vite, Tailwind CSS v4, Motion, Lucide | UI complete; missing real API layer, live auth, live bookings, refunds, audit trail |
+| **Backend API** | `backend/` | Render (Docker) | `api.agraskbagheltourandtravels.com` (custom)<br>`skb-baghel-api.onrender.com` | Fastify, TypeScript, Supabase PostgreSQL, MongoDB Atlas, Docker | **Live on Render**; ports 4000; health endpoints `/health` & `/ready` active |
 
 ---
 
@@ -93,14 +93,14 @@ graph TD
   - `[MODIFY]` [admin/wrangler.jsonc](file:///home/bot/Internship/ArenaAI/admin/wrangler.jsonc): Change `"not_found_handling": "404-page"` to `"not_found_handling": "single-page-application"`.
   - `[MODIFY]` [react/wrangler.jsonc](file:///home/bot/Internship/ArenaAI/react/wrangler.jsonc): Ensure `"not_found_handling": "single-page-application"`.
 * **Acceptance Criteria:**
-  - `curl -I https://admin.skbagheltravels.in/bookings` returns HTTP 200 and serves `index.html`.
-  - `curl -I https://skbagheltravels.in/en/services/` returns HTTP 200 without routing collapse.
+  - `curl -I https://admin.agraskbagheltourandtravels.com/bookings` returns HTTP 200 and serves `index.html`.
+  - `curl -I https://agraskbagheltourandtravels.com/en/services/` returns HTTP 200 without routing collapse.
 
 #### Task 1.2: Environment Variables & Production API Target
-* **Objective:** Connect both frontends to the live Render backend (`https://api.skbagheltravels.in` or fallback Render URL `https://skb-baghel-api.onrender.com`).
+* **Objective:** Connect both frontends to the live Render backend (`https://api.agraskbagheltourandtravels.com` or fallback Render URL `https://skb-baghel-api.onrender.com`).
 * **Files to configure:**
-  - [react/cloudflare-pages.toml](file:///home/bot/Internship/ArenaAI/react/cloudflare-pages.toml): Define `VITE_API_BASE_URL = "https://api.skbagheltravels.in"`.
-  - [admin/cloudflare-pages.toml](file:///home/bot/Internship/ArenaAI/admin/cloudflare-pages.toml): Define `VITE_API_BASE_URL = "https://api.skbagheltravels.in"`.
+  - [react/cloudflare-pages.toml](file:///home/bot/Internship/ArenaAI/react/cloudflare-pages.toml): Define `VITE_API_BASE_URL = "https://api.agraskbagheltourandtravels.com"`.
+  - [admin/cloudflare-pages.toml](file:///home/bot/Internship/ArenaAI/admin/cloudflare-pages.toml): Define `VITE_API_BASE_URL = "https://api.agraskbagheltourandtravels.com"`.
   - `react/.env.production` & `admin/.env.production`: Define standard Vite environment variables for builds.
 * **Acceptance Criteria:**
   - `npm run build` in both directories produces bundles referencing the production API URL rather than `localhost:4000`.
@@ -109,7 +109,7 @@ graph TD
 * **Objective:** Authorize cross-origin communication between Cloudflare Pages and Render API.
 * **Backend Verification:**
   - Verify [backend/src/config/env.ts](file:///home/bot/Internship/ArenaAI/backend/src/config/env.ts) and Render environment variable `CORS_ORIGINS`:
-    `https://skbagheltravels.in,https://www.skbagheltravels.in,https://admin.skbagheltravels.in`.
+    `https://agraskbagheltourandtravels.com,https://www.agraskbagheltourandtravels.com,https://admin.agraskbagheltourandtravels.com`.
 * **Acceptance Criteria:**
   - Browser preflight requests (`OPTIONS /api/v1/fares/calculate`) return `Access-Control-Allow-Origin` matching the calling origin.
 
@@ -334,7 +334,7 @@ The current `BookingPage.tsx` is a barebones mock component featuring native HTM
   npm run build:all
 
   # 4. Run automated uptime monitor against live hosts
-  HEALTHCHECK_URLS="https://api.skbagheltravels.in/health,https://skbagheltravels.in/,https://admin.skbagheltravels.in/" npm run healthcheck
+  HEALTHCHECK_URLS="https://api.agraskbagheltourandtravels.com/health,https://agraskbagheltourandtravels.com/,https://admin.agraskbagheltourandtravels.com/" npm run healthcheck
   ```
 
 ---
@@ -346,7 +346,7 @@ The current `BookingPage.tsx` is a barebones mock component featuring native HTM
    - *Mitigation:* The repo has `.github/workflows/uptime.yml` sending pings every 5 minutes. However, for a commercial travel agency handling real customer bookings and live Razorpay webhooks, a paid Render Starter instance ($7/month) or VPS behind Cloudflare Tunnel is necessary to prevent missed webhook timeouts (Razorpay drops webhooks if the server doesn't respond within 5–10 seconds).
 
 2. **Razorpay KYC & Webhook Signatures:**
-   - *Limitation:* Razorpay webhooks require a live HTTPS endpoint (`https://api.skbagheltravels.in/api/v1/payments/webhooks/razorpay`) configured in the Razorpay Dashboard with the matching `RAZORPAY_WEBHOOK_SECRET`. Live payments cannot process without verified business KYC (GSTIN, travel agency bank account).
+   - *Limitation:* Razorpay webhooks require a live HTTPS endpoint (`https://api.agraskbagheltourandtravels.com/api/v1/payments/webhooks/razorpay`) configured in the Razorpay Dashboard with the matching `RAZORPAY_WEBHOOK_SECRET`. Live payments cannot process without verified business KYC (GSTIN, travel agency bank account).
    - *Mitigation:* The system uses test keys (`rzp_test_...`) during staging drills; production activation requires swapping environment keys in Render.
 
 3. **Cloudflare Pages SPA Deep Linking vs Static SSG:**

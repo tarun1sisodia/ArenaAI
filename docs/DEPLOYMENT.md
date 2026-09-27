@@ -4,9 +4,9 @@ ArenaAI is a single repository with three independently deployable applications.
 
 | Application | Root directory | Production platform | Domain | Build command | Output |
 |---|---|---|---|---|---|
-| Customer site | `react/` | Cloudflare Pages | `skbagheltravels.in` | `npm ci && npm run build` | `dist` |
-| Admin panel | `admin/` | Cloudflare Pages | `admin.skbagheltravels.in` | `npm ci && npm run build` | `dist` |
-| Backend API | `backend/` | Render Docker service (or VPS Docker + Cloudflare Tunnel) | `api.skbagheltravels.in` | Dockerfile | Port `4000` |
+| Customer site | `react/` | Cloudflare Pages | `agraskbagheltourandtravels.com` | `npm ci && npm run build` | `dist` |
+| Admin panel | `admin/` | Cloudflare Pages | `admin.agraskbagheltourandtravels.com` | `npm ci && npm run build` | `dist` |
+| Backend API | `backend/` | Render Docker service (or VPS Docker + Cloudflare Tunnel) | `api.agraskbagheltourandtravels.com` | Dockerfile | Port `4000` |
 
 `main` is the production branch. `design/homepage` is the integration branch. The normal release path is: feature branch → pull request into `design/homepage` → validation → pull request into `main` → provider auto-deploy from `main`. No application may be copied into a second repository, and nothing may be deployed from a generated artifact committed to Git.
 
@@ -104,16 +104,16 @@ The image is multi-stage: full dependencies build `dist`, a separate stage insta
 ### Add the API custom domain
 
 1. In Render, open the service's **Settings → Custom Domains → Add Custom Domain**.
-2. Enter `api.skbagheltravels.in` and copy the DNS target Render gives you.
+2. Enter `api.agraskbagheltourandtravels.com` and copy the DNS target Render gives you.
 3. In Cloudflare DNS, create the requested CNAME record. Start with the proxy disabled if Render's domain verification requires direct DNS; enable the orange-cloud proxy only after TLS and routing are confirmed.
 4. Wait for Render TLS issuance and verify:
 
 ```bash
-curl -fsS https://api.skbagheltravels.in/health
-curl -fsS https://api.skbagheltravels.in/ready
+curl -fsS https://api.agraskbagheltourandtravels.com/health
+curl -fsS https://api.agraskbagheltourandtravels.com/ready
 ```
 
-The API must allow CORS from `https://skbagheltravels.in`, `https://www.skbagheltravels.in`, and `https://admin.skbagheltravels.in` (`CORS_ORIGINS`).
+The API must allow CORS from `https://agraskbagheltourandtravels.com`, `https://www.agraskbagheltourandtravels.com`, and `https://admin.agraskbagheltourandtravels.com` (`CORS_ORIGINS`).
 
 ### Render free-tier wake-up limitation
 
@@ -130,15 +130,15 @@ If the final hosting decision is a VPS instead of Render, use the same `backend/
 5. Set **Root directory** to `/react`.
 6. Set **Build command** to `npm ci && npm run build`.
 7. Set **Build output directory** to `dist`.
-8. Add the production variable `VITE_API_BASE_URL=https://api.skbagheltravels.in` under **Settings → Environment variables → Production**.
+8. Add the production variable `VITE_API_BASE_URL=https://api.agraskbagheltourandtravels.com` under **Settings → Environment variables → Production**.
 9. Under **Settings → Build & deployments → Ignored build command**, enter:
    ```
    git diff --quiet HEAD^ HEAD -- react/
    ```
    Cloudflare will skip the build entirely when no `react/` files changed (exit 0 = skip, exit 1 = build).
 10. Deploy. Cloudflare Pages should show the generated site preview URL.
-10. Add `skbagheltravels.in` and `www.skbagheltravels.in` under **Custom domains**. Cloudflare will create or request the required DNS records.
-11. Confirm the site loads at `https://skbagheltravels.in/`, the Hindi routes load, and `/en/404/` returns the styled 404.
+10. Add `agraskbagheltourandtravels.com` and `www.agraskbagheltourandtravels.com` under **Custom domains**. Cloudflare will create or request the required DNS records.
+11. Confirm the site loads at `https://agraskbagheltourandtravels.com/`, the Hindi routes load, and `/en/404/` returns the styled 404.
 
 The same settings are recorded in [`react/cloudflare-pages.toml`](../react/cloudflare-pages.toml). For a manual deployment from a machine with Wrangler authentication:
 
@@ -157,14 +157,14 @@ The customer site is **pre-rendered** by `react/scripts/prerender.ts`: every mar
 3. Set **Root directory** to `/admin`.
 4. Set **Build command** to `npm ci && npm run build`.
 5. Set **Build output directory** to `dist`.
-6. Add `VITE_API_BASE_URL=https://api.skbagheltravels.in` under the production environment variables.
+6. Add `VITE_API_BASE_URL=https://api.agraskbagheltourandtravels.com` under the production environment variables.
 7. Under **Settings → Build & deployments → Ignored build command**, enter:
    ```
    git diff --quiet HEAD^ HEAD -- admin/
    ```
    Cloudflare will skip the admin build when no `admin/` files changed.
 8. Deploy and open the generated Pages URL.
-8. Add the custom domain `admin.skbagheltravels.in` under **Custom domains**.
+8. Add the custom domain `admin.agraskbagheltourandtravels.com` under **Custom domains**.
 9. Confirm the login route, deep links such as `/bookings`, and API requests work over HTTPS.
 
 The same settings are recorded in [`admin/cloudflare-pages.toml`](../admin/cloudflare-pages.toml). For manual deployment:
@@ -184,14 +184,14 @@ The admin panel is a React Router SPA with a single `index.html`. It handles SPA
 Use this order to avoid deploying frontends that point at an unavailable API:
 
 1. Deploy Render and verify `/health` and `/ready` on the Render hostname.
-2. Add and verify `api.skbagheltravels.in`.
+2. Add and verify `api.agraskbagheltourandtravels.com`.
 3. Set `VITE_API_BASE_URL` in both Pages projects.
-4. Deploy the customer Pages project and add `skbagheltravels.in`.
-5. Deploy the admin Pages project and add `admin.skbagheltravels.in`.
+4. Deploy the customer Pages project and add `agraskbagheltourandtravels.com`.
+5. Deploy the admin Pages project and add `admin.agraskbagheltourandtravels.com`.
 6. Run the complete public check:
 
 ```bash
-HEALTHCHECK_URLS="https://api.skbagheltravels.in/health,https://skbagheltravels.in/,https://admin.skbagheltravels.in/" npm run healthcheck
+HEALTHCHECK_URLS="https://api.agraskbagheltourandtravels.com/health,https://agraskbagheltourandtravels.com/,https://admin.agraskbagheltourandtravels.com/" npm run healthcheck
 ```
 
 The API is the authority for fares, booking state, payments, and admin permissions. Never put database, payment, webhook, or service-role secrets in Cloudflare or Vite variables — frontend builds are public static clients.
@@ -211,7 +211,7 @@ npm run healthcheck
 To monitor custom domains instead of provider-hosted URLs, override:
 
 ```bash
-HEALTHCHECK_URLS="https://api.skbagheltravels.in/health,https://skbagheltravels.in/,https://admin.skbagheltravels.in/" npm run healthcheck
+HEALTHCHECK_URLS="https://api.agraskbagheltourandtravels.com/health,https://agraskbagheltourandtravels.com/,https://admin.agraskbagheltourandtravels.com/" npm run healthcheck
 ```
 
 Override the targets for staging or a Render preview service:

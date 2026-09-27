@@ -13,7 +13,7 @@ When implementing address autocomplete (LocationIQ, Google Places, Mapbox) in a 
 > **"Should the frontend browser call LocationIQ directly, or should requests pass through our backend server?"**
 
 ### Direct Answer:
-- **For Initial Phase (Right Now):** **Frontend Direct** is completely fine and fast to build. By using HTTP Referer domain restrictions (whitelisting `skbagheltravels.in`) and client-side static fallbacks, the site functions without waiting for backend deployment.
+- **For Initial Phase (Right Now):** **Frontend Direct** is completely fine and fast to build. By using HTTP Referer domain restrictions (whitelisting `agraskbagheltourandtravels.com`) and client-side static fallbacks, the site functions without waiting for backend deployment.
 - **For Production at Scale (Final):** A **Backend Proxy** is the industry standard (used by Uber, MakeMyTrip, Ola). It protects your API token from quota theft and **slashes API billing costs by 80–90%** through shared multi-user server caching.
 
 ---
@@ -118,8 +118,8 @@ If keeping LocationIQ on the frontend for now, apply these 3 safeguards:
    - Log in to your LocationIQ Dashboard.
    - Under **API Keys** -> **Allowed HTTP Referrers**, set:
      ```
-     https://skbagheltravels.in/*
-     https://*.skbagheltravels.in/*
+     https://agraskbagheltourandtravels.com/*
+     https://*.agraskbagheltourandtravels.com/*
      http://localhost:*
      ```
    - This ensures that even if someone copies your token, their unauthorized websites cannot make requests with it.

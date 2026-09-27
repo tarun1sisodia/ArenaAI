@@ -106,12 +106,12 @@ export function HomePage({ language = "en" }: HomePageProps) {
     "@graph": [
       {
         "@type": ["TravelAgency", "TaxiService", "LocalBusiness"],
-        "@id": "https://skbagheltravels.in/#business",
+        "@id": "https://agraskbagheltourandtravels.com/#business",
         name: "SK Baghel Tour & Travels",
-        url: "https://skbagheltravels.in",
+        url: "https://agraskbagheltourandtravels.com",
         telephone: contact.phone,
         email: contact.email,
-        image: "https://skbagheltravels.in/assets/brand/og-banner.webp",
+        image: "https://agraskbagheltourandtravels.com/assets/brand/og-banner.webp",
         priceRange: "₹",
         currenciesAccepted: "INR",
         paymentAccepted: "Cash, UPI, Credit Card",
@@ -331,8 +331,8 @@ export function HomePage({ language = "en" }: HomePageProps) {
                       type="button"
                       onClick={() => setTripType(mode)}
                       className={`py-1.5 rounded-md transition-all font-semibold text-[10.5px] tracking-wider ${tripType === mode
-                          ? "bg-primary text-white shadow-sm font-bold"
-                          : "text-on-surface-variant hover:text-on-surface hover:bg-sandstone-wash"
+                        ? "bg-primary text-white shadow-sm font-bold"
+                        : "text-on-surface-variant hover:text-on-surface hover:bg-sandstone-wash"
                         }`}
                     >
                       {mode === "oneway" ? "One Way" : mode === "round" ? "Round Trip" : "Local Taxi"}
@@ -389,8 +389,8 @@ export function HomePage({ language = "en" }: HomePageProps) {
                         type="button"
                         onClick={() => setSelectedVehicle(v)}
                         className={`flex flex-col items-center justify-center p-1.5 rounded-lg transition-all border text-[10px] ${selectedVehicle === v
-                            ? "bg-sandstone-wash border-primary text-primary font-bold shadow-sm"
-                            : "bg-surface-container-low border-transparent text-on-surface hover:bg-surface-container"
+                          ? "bg-sandstone-wash border-primary text-primary font-bold shadow-sm"
+                          : "bg-surface-container-low border-transparent text-on-surface hover:bg-surface-container"
                           }`}
                       >
                         <span className="material-symbols-outlined text-[18px]">
@@ -663,7 +663,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
                     alt={v.label}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-ink-midnight/60 via-transparent to-transparent" />
-                 
+
                 </div>
                 <div className="p-3.5 flex-1 flex flex-col gap-2">
                   <div>

@@ -189,7 +189,7 @@ export function LoginPage({ onLogin }: { onLogin: (user: AdminUser) => void }) {
                 autoFocus
                 autoComplete="username"
                 inputMode="email"
-                placeholder="you@skbagheltravels.in"
+                placeholder="you@agraskbagheltourandtravels.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 aria-invalid={Boolean(error && !emailValid)}

@@ -3,7 +3,7 @@
 **Status:** Approved Architecture & Phase Roadmap  
 **Target Platform:** Single Unified Responsive Web & Mobile App (Desktop, Tablet, Mobile Web, and PWA / Hybrid Shell)  
 **Stack:** React 19 + TypeScript (Strict) + Vite + Vanilla CSS Tokens  
-**Runtime Base:** Custom Domain Root (`https://skbagheltravels.in`) and Pages Subpath (`/ArenaAI`)  
+**Runtime Base:** Custom Domain Root (`https://agraskbagheltourandtravels.com`) and Pages Subpath (`/ArenaAI`)  
 **SEO & Language:** Bilingual English (`/en/` & `/`) and Hindi (`/hi/`) with full Schema.org JSON-LD  
 **Authentication & Payments:** Zero Auth (Public Browsing); Mock Frontend Payment (~900ms simulation with ticket `AGR-XXXXXX`)  
 
@@ -80,7 +80,7 @@ Rather than maintaining separate codebases for mobile apps and desktop websites:
 - **NAP Data:**
   - Phone: `+91 98765 43210`
   - WhatsApp: `919876543210`
-  - Email: `bookings@skbagheltravels.in`
+  - Email: `bookings@agraskbagheltourandtravels.com`
   - Address: Near Taj East Gate Road, Taj Ganj, Agra, Uttar Pradesh 282001
   - Hours: Bookings open 24×7
   - Maps: `https://maps.google.com/?q=Taj+Ganj+Agra`
@@ -243,7 +243,7 @@ Every single unit of work is broken down into a discrete, verifiable step. Imple
 
 ### Phase R0: Scope, Architecture & Baseline Freeze ✅
 - [x] **R0.1:** Product Architecture Decision: Migrate to single responsive React 19 + TypeScript codebase for both web and mobile app (PWA/Capacitor ready) beside the legacy static site.
-- [x] **R0.2:** URL & Domain Contract: Canonical domain `https://skbagheltravels.in`, dual root & subpath `/ArenaAI` support, legacy `.html` redirect stubs to clean `/en/` and `/hi/` routes.
+- [x] **R0.2:** URL & Domain Contract: Canonical domain `https://agraskbagheltourandtravels.com`, dual root & subpath `/ArenaAI` support, legacy `.html` redirect stubs to clean `/en/` and `/hi/` routes.
 - [x] **R0.3:** Scope & Non-Goals Freeze: Zero Auth (Public Browsing); Mock Payment Simulation only (~900ms); no live Razorpay, no backend database, no live driver tracking.
 - [x] **R0.4:** Full Baseline Inventory: Documented all 113 URLs, 5 vehicle tiers, 8 routes, 6 packages, 6 services, 16 animation patterns, and NAP contact data.
 
@@ -374,7 +374,7 @@ Every single unit of work is broken down into a discrete, verifiable step. Imple
 - [ ] **R9.2:** Link Integrity & Crawl Audit: Automated crawl of all 113 bilingual URLs confirming 0 broken links and 100% HTTP 200 responses.
 - [ ] **R9.3:** Senior Frontend Quality Auditor Scorecard (`quality_audit.py`): Full scorecard execution verifying 10.0/10.0 A+ score on Technical SEO, Schema.org, Accessibility, and JS health.
 - [ ] **R9.4:** Legacy Redirect Stubs & URL Backward Compatibility: Verification of all `.html` redirect stubs to clean React routes.
-- [ ] **R9.5:** Production Cutover & Domain Switchover: Final approval and deployment to `https://skbagheltravels.in`.
+- [ ] **R9.5:** Production Cutover & Domain Switchover: Final approval and deployment to `https://agraskbagheltourandtravels.com`.
 - [ ] **R9.6:** Rollback Plan & Operating Documentation: Documented rollback switch, updated `README.md`, and finalized `04_PROGRESS_TRACKER.md`.
 
 ---

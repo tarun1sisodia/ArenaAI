@@ -83,7 +83,7 @@
   - In-card success state with direct WhatsApp pre-filled message deep link.
 - **Forbidden Alterations:**
   - Do NOT remove or modify the corner plus crosses.
-  - Do NOT remove verified NAP details (`+91 98765 43210`, `bookings@skbagheltravels.in`, Taj Ganj live map link).
+  - Do NOT remove verified NAP details (`+91 98765 43210`, `bookings@agraskbagheltourandtravels.com`, Taj Ganj live map link).
   - Do NOT strip the feedback toast or success card state.
 
 ### 3. `ReviewsMarquee.tsx` (`LOCK-003`)

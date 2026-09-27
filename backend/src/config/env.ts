@@ -9,7 +9,7 @@ const EnvSchema = z.object({
   CORS_ORIGINS: z
     .string()
     .default(
-      "http://localhost:5173,http://localhost:5174,http://localhost:4174,http://localhost:4175,http://127.0.0.1:5173,http://127.0.0.1:5174,http://127.0.0.1:4174,http://127.0.0.1:4175,http://localhost:3000,https://skbagheltravels.in,https://www.skbagheltravels.in,https://admin.skbagheltravels.in",
+      "http://localhost:5173,http://localhost:5174,http://localhost:4174,http://localhost:4175,http://127.0.0.1:5173,http://127.0.0.1:5174,http://127.0.0.1:4174,http://127.0.0.1:4175,http://localhost:3000,https://agraskbagheltourandtravels.com,https://www.agraskbagheltourandtravels.com,https://admin.agraskbagheltourandtravels.com",
     ),
   ALLOW_TEST_AUTH: z
     .string()
@@ -47,7 +47,7 @@ const EnvSchema = z.object({
   WHATSAPP_PHONE_NUMBER_ID: z.string().optional().default(""),
   WHATSAPP_TEMPLATE_PAYMENT: z.string().default("skb_payment_confirmed"),
   RESEND_API_KEY: z.string().optional().default(""),
-  EMAIL_FROM: z.string().default("bookings@skbagheltravels.in"),
+  EMAIL_FROM: z.string().default("bookings@agraskbagheltourandtravels.com"),
 
   FX_USD_PER_INR: z.coerce.number().positive().default(0.012),
   FX_EUR_PER_INR: z.coerce.number().positive().default(0.011),

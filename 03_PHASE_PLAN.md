@@ -65,7 +65,7 @@ configs do.
 
 ## Phase I1 — Frontend ↔ API integration (queued after Phase M)
 
-**Goal:** the deployed frontends talk to `https://api.skbagheltravels.in` instead of
+**Goal:** the deployed frontends talk to `https://api.agraskbagheltourandtravels.com` instead of
 the in-repo catalogue.
 
 1. Add a shared typed API client in `react/src/` reading `VITE_API_BASE_URL`

@@ -32,6 +32,11 @@
   --color-surface-container-high: #ece7e4;
   --color-surface-container-highest: #e6e2df;
   --color-surface-bright: #fdf8f5;
+  --color-primary-foreground: #ffffff;
+  --color-muted: #f2edea;
+  --color-muted-foreground: #57423b;
+  --color-accent: #f2edea;
+  --color-accent-foreground: #1c1b1a;
   --color-surface-dim: #ded9d6;
   --color-surface-variant: #e6e2df;
   --color-surface-tint: #a23e18;

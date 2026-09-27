@@ -48,7 +48,7 @@ PRD: /absolute/path/to/ArenaAI/testsprite/standard_prd.json
 Manual plan: /absolute/path/to/ArenaAI/testsprite/customer/frontend_test_plan.json
 ```
 
-Use the customer app's local URL or the production URL `https://skbagheltravels.in` depending on the environment under test.
+Use the customer app's local URL or the production URL `https://agraskbagheltourandtravels.com` depending on the environment under test.
 
 ### Admin frontend
 

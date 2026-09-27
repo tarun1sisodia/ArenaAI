@@ -20,7 +20,7 @@ services:
       - key: DATABASE_URL
         sync: false
       - key: CORS_ORIGINS
-        value: https://skbagheltravels.in,https://www.skbagheltravels.in,https://admin.skbagheltravels.in
+        value: https://agraskbagheltourandtravels.com,https://www.agraskbagheltourandtravels.com,https://admin.agraskbagheltourandtravels.com
       - key: ALLOW_TEST_AUTH
         value: "false"
       - key: API_BASE_URL
@@ -48,4 +48,4 @@ services:
       - key: RESEND_API_KEY
         sync: false
       - key: EMAIL_FROM
-        value: bookings@skbagheltravels.in
+        value: bookings@agraskbagheltourandtravels.com

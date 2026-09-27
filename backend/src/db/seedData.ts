@@ -32,7 +32,7 @@ export const SEED_PROFILES: ProfileRecord[] = [
     id: "00000000-0000-4000-a000-000000000001",
     fullName: "S. K. Baghel",
     phone: "+919876543210",
-    email: "admin@skbagheltravels.in",
+    email: "admin@agraskbagheltourandtravels.com",
     role: "super_admin",
     createdAt: "2026-01-01T00:00:00.000Z",
     updatedAt: BASE_TIME,

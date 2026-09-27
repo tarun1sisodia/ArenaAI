@@ -2,7 +2,7 @@
 
 **Product:** Agra SK Baghel Tour & Travels — customer platform, operations desk, API
 **Repository:** one monorepo (`react/`, `admin/`, `backend/`)
-**Canonical domain:** `https://skbagheltravels.in`
+**Canonical domain:** `https://agraskbagheltourandtravels.com`
 **Status:** current target scope. v1–v3 described the retired static site; this version
 describes the deployed platform and what must still be true at launch.
 
@@ -185,7 +185,7 @@ reviews, GBP synced, analytics + GSC/Bing verified, CI green on `main`, and
 URL rules: lower-case, hyphenated, keyword-bearing; one canonical URL per intent; no
 indexable query-parameter variants (params only prefill the booking funnel); legacy
 `*.html` hubs redirect to `/en/…/` stubs; canonical origin is always
-`https://skbagheltravels.in`.
+`https://agraskbagheltourandtravels.com`.
 
 Build currently emits **75 pre-rendered pages + 10 redirect stubs** and a **71-URL
 sitemap** with 213 `xhtml:link` alternates.
@@ -484,7 +484,7 @@ Crysta, Tempo Traveller, Urbania. Routes: Agra↔Delhi, Agra↔Jaipur, Delhi↔J
 Agra→Mathura, Agra→Gwalior, Agra→Lucknow, Agra local sightseeing. Packages: Taj Mahal
 Sunrise, Agra Sightseeing, Agra Unhurried, Mathura–Vrindavan, Gatimaan Express,
 Golden Triangle. NAP (placeholder until launch): `+91 98765 43210` / `919876543210`,
-`bookings@skbagheltravels.in`, Near Taj East Gate Road, Taj Ganj, Agra 282001.
+`bookings@agraskbagheltourandtravels.com`, Near Taj East Gate Road, Taj Ganj, Agra 282001.
 
 ### 15.2 Content standards
 Answer-first; short paragraphs; question H2s; tables and lists; local voice and real

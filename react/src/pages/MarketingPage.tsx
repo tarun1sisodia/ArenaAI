@@ -46,7 +46,7 @@ const faqItems = [
 ] as const;
 
 const legalSections = {
-  privacy: [["1. Information collection", "We collect only the contact and journey details needed to answer an enquiry or prepare a mock booking."], ["2. How information is used", "Details are used for travel coordination, fare estimates, customer support and service improvement. No live payment or marketing API is connected in this frontend."], ["3. Contact", "For privacy questions, email bookings@skbagheltravels.in."]],
+  privacy: [["1. Information collection", "We collect only the contact and journey details needed to answer an enquiry or prepare a mock booking."], ["2. How information is used", "Details are used for travel coordination, fare estimates, customer support and service improvement. No live payment or marketing API is connected in this frontend."], ["3. Contact", "For privacy questions, email bookings@agraskbagheltourandtravels.com."]],
   terms: [["1. Booking and advance", "A booking is confirmed only after availability is checked by the travel desk. The current React flow is a demonstration and does not collect money."], ["2. Fares and inclusions", "Published fares are sample fares. Toll, parking, night allowance and package inclusions are shown before confirmation and may be reconfirmed by the desk."], ["3. Cancellation", "Cab cancellation is free up to 24 hours before pickup. Tour package refunds depend on the published cancellation slab."]]
 } as const;
 

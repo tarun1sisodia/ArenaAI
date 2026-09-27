@@ -43,7 +43,7 @@ Measured with exactly that command:
 
 Consequences when previewing anywhere except `*.github.io/ArenaAI/`
 (local, Arena live preview, or the future custom domain
-`skbagheltravels.in`, which also serves the repo at `/`):
+`agraskbagheltourandtravels.com`, which also serves the repo at `/`):
 
 | Symptom you reported | Mechanism |
 |---|---|
@@ -52,7 +52,7 @@ Consequences when previewing anywhere except `*.github.io/ArenaAI/`
 | "Forms issuing" | `app.js` / `booking.js` / `fares.js` 404 → booking stepper dead, fare calculator dead, date fields never pre-filled (and `date` is `required`, so the hero widget can't even submit), mobile nav sheet dead |
 
 ⚠️ **This also means production is at risk**: the canonical domain in the
-code is `https://skbagheltravels.in` (custom domain). On GitHub Pages with a
+code is `https://agraskbagheltourandtravels.com` (custom domain). On GitHub Pages with a
 custom domain the repo is served at `/`, so `/ArenaAI/…` URLs 404 there too.
 The current build only works at exactly one URL: `*.github.io/ArenaAI/`.
 
@@ -92,7 +92,7 @@ confirm and the plan executes as written.
 
 | Option | Production URL | Build |
 |---|---|---|
-| **A (recommended)** | `skbagheltravels.in` custom domain (matches canonical URLs already in the HTML) | `SITE_BASE=` (empty). GitHub Pages preview at `/ArenaAI/` becomes a secondary build artifact |
+| **A (recommended)** | `agraskbagheltourandtravels.com` custom domain (matches canonical URLs already in the HTML) | `SITE_BASE=` (empty). GitHub Pages preview at `/ArenaAI/` becomes a secondary build artifact |
 | B | Keep `tarun1sisodia.github.io/ArenaAI/` as the only public site | `SITE_BASE=/ArenaAI`, fix local preview with a path-rewrite dev server |
 
 Everything else in this plan is independent of that choice.

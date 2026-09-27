@@ -81,7 +81,7 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
           </nav>
 
           <div className="max-w-4xl">
-           
+
             <h1 className="font-headline-hero text-ink-charcoal text-headline-hero tracking-tight leading-tight mb-3">
               Your chauffeur is stationed. We&apos;re a ring away.
             </h1>
@@ -208,9 +208,9 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
               </div>
               <h3 className="font-headline-sm text-ink-charcoal text-base mb-1 font-semibold">Corporate &amp; Tour Desk</h3>
               <p className="font-title-md text-ink-charcoal mb-0.5 font-semibold text-xs break-all">
-                bookings@skbagheltravels.in
+                bookings@agraskbagheltourandtravels.com
               </p>
-              <p className="text-on-surface-variant font-body-sm mb-2 text-[10px] break-all">dispatch@skbagheltravels.in</p>
+              <p className="text-on-surface-variant font-body-sm mb-2 text-[10px] break-all">dispatch@agraskbagheltourandtravels.com</p>
               <p className="text-on-surface-variant font-body-sm leading-relaxed mb-4 text-[10.5px]">
                 Multi-day Golden Triangle itineraries, wedding group transit in Tempo Travellers/Urbania, and B2B GST tax
                 invoices.
@@ -218,7 +218,7 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
             </div>
             <a
               className="w-full inline-flex items-center justify-center gap-1.5 bg-surface-container-high hover:bg-surface-container-highest text-ink-charcoal font-label-lg py-2 px-3 rounded-lg transition-colors border border-outline-variant text-center text-xs font-semibold"
-              href="mailto:bookings@skbagheltravels.in"
+              href="mailto:bookings@agraskbagheltourandtravels.com"
             >
               <span className="material-symbols-outlined text-[16px]">mail</span>
               <span>Email Itinerary</span>
@@ -226,7 +226,7 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
           </div>
         </div>
 
-      
+
 
         {/* 4. DISPATCH FAQS (Compact -20%) */}
         <div className="max-w-4xl mx-auto pt-6">

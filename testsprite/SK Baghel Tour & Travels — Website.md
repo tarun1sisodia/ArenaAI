@@ -38,7 +38,7 @@ test plans are documented in [`testsprite/README.md`](./testsprite/README.md).
 # GitHub Pages project site (default — uses /ArenaAI)
 python3 scripts/render_pages.py
 
-# Custom domain / repo root (e.g. skbagheltravels.in)
+# Custom domain / repo root (e.g. agraskbagheltourandtravels.com)
 SITE_BASE= python3 scripts/render_pages.py
 ```
 

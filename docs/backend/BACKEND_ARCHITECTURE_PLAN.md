@@ -394,7 +394,7 @@ backend/
    - Public Booking & Fare endpoints: 60 requests / minute / IP.
    - Lead Capture (`/inquiries`): 5 requests / minute / IP.
    - Webhook Endpoint: Whitelisted Razorpay IP ranges or strict HMAC verification.
-3. **CORS Configuration:** Restricted to `https://skbagheltravels.in`, local dev previews, and designated admin staging origins.
+3. **CORS Configuration:** Restricted to `https://agraskbagheltourandtravels.com`, local dev previews, and designated admin staging origins.
 4. **Data Protection (DPDP India 2023):** Customer phone numbers and emails masked in public responses; assigned-driver contact details shown only to verified customers and authorized administrators; no live tracking exists.
 
 ---

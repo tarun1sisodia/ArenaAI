@@ -105,7 +105,7 @@ export function PrivacyPage({ language = "en" }: PrivacyPageProps) {
             <span className="material-symbols-outlined text-primary text-xl mb-1.5">delete_forever</span>
             <h4 className="font-bold text-xs text-ink-charcoal mb-0.5">Right to Erasure</h4>
             <p className="text-[10px] text-on-surface-variant leading-relaxed">
-              Guests can email privacy@skbagheltravels.in anytime to request immediate deletion of their historical travel records.
+              Guests can email privacy@agraskbagheltourandtravels.com anytime to request immediate deletion of their historical travel records.
             </p>
           </div>
         </div>
@@ -184,7 +184,7 @@ export function PrivacyPage({ language = "en" }: PrivacyPageProps) {
           </p>
           <div className="p-3 sm:p-3.5 rounded-xl bg-surface-container-lowest border border-border-warm text-[10.5px] space-y-1">
             <p><strong>Officer:</strong> Privacy &amp; Compliance Officer</p>
-            <p><strong>Email:</strong> privacy@skbagheltravels.in</p>
+            <p><strong>Email:</strong> privacy@agraskbagheltourandtravels.com</p>
             <p><strong>Address:</strong> Near Taj East Gate Road, Taj Ganj, Agra, Uttar Pradesh 282001, India</p>
           </div>
         </div>

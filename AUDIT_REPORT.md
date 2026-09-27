@@ -46,7 +46,7 @@ A total of **27 confirmed findings** were cataloged (`FIND-001` through `FIND-02
 - **Database Index Definition:** `0012_hyper_scale_indexes.sql` line 9 references `'driver_assigned'` which does not exist in `booking_status_enum` (`FIND-001`).
 - **Catalog Media Foreign Key Bug:** `catalog.service.ts` line 129 inserts the URL parameter slug into `catalog_item_media.catalog_item_id` instead of the resolved UUID `item.id`, throwing an FK constraint violation on PostgreSQL (`FIND-007`).
 - **PostgreSQL Mutation Parity Gap:** `bookings.update()` in `postgres.ts` only mutates `status`, `version`, `special_notes`, and `updated_at`, silently dropping changes to customer/pickup fields, unlike `memory.ts` (`FIND-011`).
-- **Admin Production CORS Rejection:** `CORS_ORIGINS` in `env.ts` omits `https://admin.skbagheltravels.in`, causing browser CORS errors on all production admin API requests (`FIND-022`).
+- **Admin Production CORS Rejection:** `CORS_ORIGINS` in `env.ts` omits `https://admin.agraskbagheltourandtravels.com`, causing browser CORS errors on all production admin API requests (`FIND-022`).
 - **In-Memory Transaction Isolation:** `memoryRepos.transaction()` does not roll back state on exceptions, causing test state contamination (`FIND-021`).
 
 ### 2.5 What Is Missing?
@@ -73,7 +73,7 @@ A total of **27 confirmed findings** were cataloged (`FIND-001` through `FIND-02
   - Customer funnel: `from`/`to` vs `originName`/`destinationName`; `round` vs `round-trip`; `innova` vs `innova-crysta` (`FIND-023`).
   - Customer inquiries: Form sends extra fields rejected by `.strict()` and allows empty messages where backend requires `min(10)` (`FIND-024`).
   - Admin domain models: Casing (`pickupDateTime` vs `pickupDatetime`), naming, and status enums diverge across 5 entity domains (`FIND-025`).
-- **Canonical Domain Discrepancy:** `react/src/config.ts` declares `agraskbagheltourandtravels.com` while sitemaps and SEO declare `skbagheltravels.in` (`FIND-015`).
+- **Canonical Domain Discrepancy:** `react/src/config.ts` declares `agraskbagheltourandtravels.com` while sitemaps and SEO declare `agraskbagheltourandtravels.com` (`FIND-015`).
 
 ---
 
@@ -99,15 +99,15 @@ flowchart TB
     subgraph Target_Architecture ["TARGET INTEGRATED STATE"]
         direction TB
         subgraph Browsers ["Web Clients"]
-            C_APP["Customer Site (react/)<br/>skbagheltravels.in"]
-            A_APP["Admin Operations Desk (admin/)<br/>admin.skbagheltravels.in"]
+            C_APP["Customer Site (react/)<br/>agraskbagheltourandtravels.com"]
+            A_APP["Admin Operations Desk (admin/)<br/>admin.agraskbagheltourandtravels.com"]
         end
 
         subgraph Edge_Cloudflare ["Cloudflare Pages & Tunnel"]
             CF_EDGE["SSL / Edge Cache / WAF"]
         end
 
-        subgraph Server ["Fastify API Service (api.skbagheltravels.in)"]
+        subgraph Server ["Fastify API Service (api.agraskbagheltourandtravels.com)"]
             FASTIFY["Fastify Router & Middleware<br/>(CORS, Helmet, Rate-Limit, AuthGuard)"]
             BOOKING_MOD["Booking & Fare Modules"]
             PAYMENT_MOD["Payment & Webhook Modules"]
@@ -158,14 +158,14 @@ flowchart TB
 | **FIND-012** | **P1** | Customer Frontend | `ContactPage.tsx`, `ContactCard.tsx` | Inquiry forms use `setTimeout` and never send leads to backend API. |
 | **FIND-013** | **P3** | Frontend Hygiene | `react/src/` | ~2,500 lines of dead, unmounted code (`LocationCombobox`, `distance.ts`). |
 | **FIND-014** | **P2** | Customer Frontend | `BookingPage.tsx` | Round-trip lacks return date/time pickers; form omits customer email input. |
-| **FIND-015** | **P3** | Frontend Config | `config.ts` | `domain` declares `agraskbagheltourandtravels.com` vs canonical `skbagheltravels.in`. |
+| **FIND-015** | **P3** | Frontend Config | `config.ts` | `domain` declares `agraskbagheltourandtravels.com` vs canonical `agraskbagheltourandtravels.com`. |
 | **FIND-016** | **P2** | Backend API | `admin.routes.ts`, `inquiry.routes.ts` | Backend API missing admin routes for Inquiries list, Payments, and Fare rules. |
 | **FIND-017** | **P1** | Application Security | `LoginPage.tsx` | Admin login is an unauthenticated radio role selector without passwords/Auth. |
 | **FIND-018** | **P2** | Architecture | `types.ts`, `domain.ts` | Domain model drift: vehicle tiers, trip types, and fare rates differ across apps. |
 | **FIND-019** | **P3** | Admin Config | `cloudflare-pages.toml` | `VITE_API_BASE_URL` defined in deployment config but never read in `admin/src`. |
 | **FIND-020** | **P1** | Backend API | `admin.routes.ts`, `booking.service.ts` | Missing admin booking status transition route (`POST /ops/admin/bookings/:id/transition`). |
 | **FIND-021** | **P3** | Testing | `memory.ts` | In-memory repository transactions lack rollback on error, contaminating tests. |
-| **FIND-022** | **P2** | Backend Config | `env.ts`, `.env.example` | Admin domain `https://admin.skbagheltravels.in` missing from backend `CORS_ORIGINS`. |
+| **FIND-022** | **P2** | Backend Config | `env.ts`, `.env.example` | Admin domain `https://admin.agraskbagheltourandtravels.com` missing from backend `CORS_ORIGINS`. |
 | **FIND-023** | **P1** | Integration | `BookingPage.tsx`, `booking.schema.ts` | Contract divergence prevents POSTing `BookingState` to `/api/v1/bookings/draft`. |
 | **FIND-024** | **P2** | Integration | `ContactPage.tsx`, `inquiry.schema.ts` | Inquiry contract mismatch: `.strict()` rejects form fields, empty message fails. |
 | **FIND-025** | **P2** | Integration | `admin/src/lib/types.ts` | Admin data model divergence across 5 entity domains (casing, fields, enums). |
@@ -203,7 +203,7 @@ The remediation plan is structured chronologically in 4 phases to eliminate bloc
 ### Phase B: Backend API Completeness & Security Integrity (P2)
 1. **Fix Backend CORS Allowed Origins (`FIND-022`):**
    - *Files:* `backend/src/config/env.ts`, `backend/.env.example`
-   - *Action:* Add `https://admin.skbagheltravels.in` to default `CORS_ORIGINS`.
+   - *Action:* Add `https://admin.agraskbagheltourandtravels.com` to default `CORS_ORIGINS`.
 2. **Fix Catalog Media Attachment Foreign Key Bug (`FIND-007`):**
    - *File:* `backend/src/modules/catalog/catalog.service.ts`
    - *Action:* Change line 129 from `catalogItemId: id` to `catalogItemId: item.id`.
@@ -242,7 +242,7 @@ The remediation plan is structured chronologically in 4 phases to eliminate bloc
    - *Action:* Remove unused files to reduce bundle size by ~2,500 lines.
 4. **Fix Canonical Domain Discrepancy (`FIND-015`):**
    - *File:* `react/src/config.ts`
-   - *Action:* Update `siteConfig.domain` to `https://skbagheltravels.in`.
+   - *Action:* Update `siteConfig.domain` to `https://agraskbagheltourandtravels.com`.
 5. **Drop Orphaned Tables (`FIND-009`):**
    - *File:* `backend/migrations/0014_drop_orphaned_tables.sql` (new)
    - *Action:* Cleanly drop unused tables `fare_rules` and `device_registrations`.

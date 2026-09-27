@@ -3,9 +3,9 @@
     "project": "ArenaAI / SK Baghel Tour & Travels",
     "version": "1.0",
     "prepared_by": "ArenaAI engineering",
-    "canonical_customer_domain": "https://skbagheltravels.in",
-    "admin_domain": "https://admin.skbagheltravels.in",
-    "api_domain": "https://api.skbagheltravels.in"
+    "canonical_customer_domain": "https://agraskbagheltourandtravels.com",
+    "admin_domain": "https://admin.agraskbagheltourandtravels.com",
+    "api_domain": "https://api.agraskbagheltourandtravels.com"
   },
   "product_overview": "A bilingual Agra taxi and tour platform consisting of a React customer website, an operations admin panel, and a Fastify API. The customer experience presents routes, vehicles, packages, fares, contact channels, and a five-step booking flow. The API is authoritative for fare calculations, bookings, payments, catalog, inquiries, reviews, and admin operations.",
   "core_goals": [
@@ -17,14 +17,66 @@
     "Keep the customer and admin clients maintainable as static deployments while the API remains the source of truth."
   ],
   "key_features": [
-    { "name": "Customer marketing site", "description": "Responsive React pages for home, routes, services, fleet, packages, about, contact, FAQ, privacy, terms, and not-found handling.", "apps": ["customer"] },
-    { "name": "Bilingual navigation", "description": "English and Hindi routes with language-aware content, metadata, canonical links, and hreflang parity.", "apps": ["customer"] },
-    { "name": "Fare discovery", "description": "Route and vehicle selection with one-way/round-trip, passenger capacity, night allowance, package, and promo behavior.", "apps": ["customer", "backend"] },
-    { "name": "Five-step booking", "description": "Search, vehicle selection, customer details, mock payment method, and confirmation ticket flow.", "apps": ["customer", "backend"] },
-    { "name": "Location autocomplete", "description": "Location search backed by static curated places locally and LocationIQ when configured.", "apps": ["customer", "backend"] },
-    { "name": "Admin operations", "description": "Dashboard and role-oriented screens for bookings, finance, catalog, reviews, inquiries, fares, and audit.", "apps": ["admin", "backend"] },
-    { "name": "API security", "description": "CORS, helmet, rate limits, request IDs, schema validation, auth guards, role guards, raw webhook handling, and masked booking data.", "apps": ["backend"] },
-    { "name": "Payments and webhooks", "description": "Checkout creation, idempotency, signed webhook reconciliation, refunds, and provider adapters.", "apps": ["backend"] }
+    {
+      "name": "Customer marketing site",
+      "description": "Responsive React pages for home, routes, services, fleet, packages, about, contact, FAQ, privacy, terms, and not-found handling.",
+      "apps": [
+        "customer"
+      ]
+    },
+    {
+      "name": "Bilingual navigation",
+      "description": "English and Hindi routes with language-aware content, metadata, canonical links, and hreflang parity.",
+      "apps": [
+        "customer"
+      ]
+    },
+    {
+      "name": "Fare discovery",
+      "description": "Route and vehicle selection with one-way/round-trip, passenger capacity, night allowance, package, and promo behavior.",
+      "apps": [
+        "customer",
+        "backend"
+      ]
+    },
+    {
+      "name": "Five-step booking",
+      "description": "Search, vehicle selection, customer details, mock payment method, and confirmation ticket flow.",
+      "apps": [
+        "customer",
+        "backend"
+      ]
+    },
+    {
+      "name": "Location autocomplete",
+      "description": "Location search backed by static curated places locally and LocationIQ when configured.",
+      "apps": [
+        "customer",
+        "backend"
+      ]
+    },
+    {
+      "name": "Admin operations",
+      "description": "Dashboard and role-oriented screens for bookings, finance, catalog, reviews, inquiries, fares, and audit.",
+      "apps": [
+        "admin",
+        "backend"
+      ]
+    },
+    {
+      "name": "API security",
+      "description": "CORS, helmet, rate limits, request IDs, schema validation, auth guards, role guards, raw webhook handling, and masked booking data.",
+      "apps": [
+        "backend"
+      ]
+    },
+    {
+      "name": "Payments and webhooks",
+      "description": "Checkout creation, idempotency, signed webhook reconciliation, refunds, and provider adapters.",
+      "apps": [
+        "backend"
+      ]
+    }
   ],
   "user_flow_summary": [
     "Customer opens the site, switches English/Hindi, browses a route or package, and reaches a fare or contact CTA.",
@@ -48,8 +100,28 @@
     "Accessibility covers keyboard navigation, labels, focus states, semantic headings, contrast, reduced motion, and meaningful error announcements."
   ],
   "code_summary": {
-    "tech_stack": ["React 19", "TypeScript", "Vite", "React Router", "Fastify 5", "Zod", "Vitest", "PostgreSQL/Supabase", "MongoDB optional", "Cloudflare Pages", "Render Docker"],
-    "project_roots": { "customer": "react/", "admin": "admin/", "backend": "backend/" },
-    "entry_points": { "customer": "react/src/main.tsx", "admin": "admin/src/main.tsx", "backend": "backend/src/server.ts" }
+    "tech_stack": [
+      "React 19",
+      "TypeScript",
+      "Vite",
+      "React Router",
+      "Fastify 5",
+      "Zod",
+      "Vitest",
+      "PostgreSQL/Supabase",
+      "MongoDB optional",
+      "Cloudflare Pages",
+      "Render Docker"
+    ],
+    "project_roots": {
+      "customer": "react/",
+      "admin": "admin/",
+      "backend": "backend/"
+    },
+    "entry_points": {
+      "customer": "react/src/main.tsx",
+      "admin": "admin/src/main.tsx",
+      "backend": "backend/src/server.ts"
+    }
   }
 }

@@ -228,7 +228,7 @@ Please verify the official business credentials displayed on invoices and online
 | **Office Address** | Near Taj East Gate Road, Taj Ganj, Agra, UP 282001 | [ ] |
 | **Primary Phone** | +91 98765 43210 *(Placeholder - replace with actual)* | [ ] |
 | **WhatsApp Number** | +91 98765 43210 *(Placeholder - replace with actual)* | [ ] |
-| **Email Address** | bookings@skbagheltravels.in *(Placeholder)* | [ ] |
+| **Email Address** | bookings@agraskbagheltourandtravels.com *(Placeholder)* | [ ] |
 | **GSTIN** | 09ABCDE1234F1Z5 *(Placeholder - replace with actual)* | [ ] |
 | **Operating Hours** | Bookings Open 24×7, 365 Days | [ ] |
 | **Google Maps Location** | Near Taj East Gate Road, Taj Ganj, Agra | [ ] |

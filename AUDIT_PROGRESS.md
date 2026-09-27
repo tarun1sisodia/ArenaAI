@@ -103,7 +103,7 @@
 - [x] Trace customer booking funnel contract: `BookingState` vs `CreateDraftBookingSchema` (FIND-023)
 - [x] Trace customer payment lifecycle: Zero Razorpay SDK / polling integration on customer frontend
 - [x] Trace customer inquiry funnel: `InquiryFormData` vs `CreateInquirySchema` (FIND-024)
-- [x] Trace admin CORS configuration: Discovered `https://admin.skbagheltravels.in` missing from backend default `CORS_ORIGINS` (FIND-022)
+- [x] Trace admin CORS configuration: Discovered `https://admin.agraskbagheltourandtravels.com` missing from backend default `CORS_ORIGINS` (FIND-022)
 - [x] Trace admin authentication & session lifecycle: Mock localStorage session with zero Bearer token headers
 - [x] Trace admin data model alignment: Discovered field casing, naming, fare schemas, and enum mismatches across 5 entity domains (FIND-025)
 - [x] Trace admin operations routes: Confirmed missing endpoints for booking transitions, inquiry management, payment ledger, and fares

@@ -11,7 +11,7 @@ export async function createTestApp(db?: Repositories) {
     ...process.env,
     NODE_ENV: "test",
     ALLOW_TEST_AUTH: "true",
-    CORS_ORIGINS: "http://localhost:5173,http://localhost:3000,https://skbagheltravels.in",
+    CORS_ORIGINS: "http://localhost:5173,http://localhost:3000,https://agraskbagheltourandtravels.com",
   });
   const logger = pino({ level: "silent" });
   const repos = db ?? createMemoryRepositories(new Date().toISOString());

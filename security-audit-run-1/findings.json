@@ -127,7 +127,7 @@
     "execution": {
       "attacker_perspective": "Attacker who can serve a page to the victim (cross-origin attacker)",
       "payloads": [
-        "JavaScript: fetch('https://api.skbagheltravels.in/api/v1/bookings/AGR-20260916-0001').then(() => { const e = performance.getEntriesByName('https://api.skbagheltravels.in/api/v1/bookings/AGR-20260916-0001')[0]; console.log(e.duration); })"
+        "JavaScript: fetch('https://api.agraskbagheltourandtravels.com/api/v1/bookings/AGR-20260916-0001').then(() => { const e = performance.getEntriesByName('https://api.agraskbagheltourandtravels.com/api/v1/bookings/AGR-20260916-0001')[0]; console.log(e.duration); })"
       ],
       "instructions": [
         "Host a page at an arbitrary origin",

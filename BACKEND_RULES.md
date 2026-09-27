@@ -517,7 +517,7 @@ export function verifyRazorpayWebhook(
   - In development, `react/vite.config.ts` proxies `/api` requests to `http://localhost:4000`.
 - **Backend API (`backend/`):**
   - Runs on `PORT=4000` (configurable via `.env`).
-  - CORS configured to allow `http://localhost:5173`, `http://localhost:3000`, and `https://skbagheltravels.in`.
+  - CORS configured to allow `http://localhost:5173`, `http://localhost:3000`, and `https://agraskbagheltourandtravels.com`.
 
 ### 8.2 Frontend End-to-End Flow Mapping
 

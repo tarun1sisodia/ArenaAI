@@ -4,7 +4,7 @@
  * Implements comprehensive SEO and social sharing metadata management:
  * 1. Document title, language tag (en-IN / hi-IN), and text direction (ltr)
  * 2. Meta description, robots index/follow directives (with noindex, nofollow guard)
- * 3. Fully qualified Canonical URL based on single source domain (https://skbagheltravels.in)
+ * 3. Fully qualified Canonical URL based on single source domain (https://agraskbagheltourandtravels.com)
  * 4. Bilingual Hreflang Alternates (en-IN, hi-IN, and x-default) with route-pair mapping
  * 5. Open Graph protocol tags (og:title, og:description, og:url, og:image, og:locale, og:locale:alternate, og:site_name, og:type)
  * 6. Twitter / X card tags (twitter:card, twitter:title, twitter:description, twitter:image, twitter:site, twitter:creator)
@@ -16,7 +16,7 @@ import React, { useEffect } from "react";
 import { contact } from "../../data/contact";
 import { JsonLd } from "./JsonLd";
 
-export const CANONICAL_DOMAIN = "https://skbagheltravels.in";
+export const CANONICAL_DOMAIN = "https://agraskbagheltourandtravels.com";
 export const DEFAULT_OG_IMAGE = `${CANONICAL_DOMAIN}/assets/brand/og-banner.webp`;
 
 export interface HreflangAlternate {

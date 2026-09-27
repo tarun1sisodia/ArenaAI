@@ -4,9 +4,9 @@ ArenaAI is a single repository with three independently deployable applications.
 
 | Application | Root directory | Production platform | Domain | Build command | Output |
 |---|---|---|---|---|---|
-| Customer site | `react/` | Cloudflare Pages | `skbagheltravels.in` | `npm ci && npm run build` | `dist` |
-| Admin panel | `admin/` | Cloudflare Pages | `admin.skbagheltravels.in` | `npm ci && npm run build` | `dist` |
-| Backend API | `backend/` | Render Docker service | `api.skbagheltravels.in` | Dockerfile | Port `4000` |
+| Customer site | `react/` | Cloudflare Pages | `agraskbagheltourandtravels.com` | `npm ci && npm run build` | `dist` |
+| Admin panel | `admin/` | Cloudflare Pages | `admin.agraskbagheltourandtravels.com` | `npm ci && npm run build` | `dist` |
+| Backend API | `backend/` | Render Docker service | `api.agraskbagheltourandtravels.com` | Dockerfile | Port `4000` |
 
 `main` is the production branch. `design/homepage` is the integration branch. The normal release path is: feature branch → pull request into `design/homepage` → validation → pull request into `main` → provider auto-deploy from `main`.
 
@@ -56,16 +56,16 @@ curl -fsS https://<render-service>.onrender.com/ready
 ### Add the API custom domain
 
 1. In Render, open the service's **Settings → Custom Domains → Add Custom Domain**.
-2. Enter `api.skbagheltravels.in` and copy the DNS target Render gives you.
+2. Enter `api.agraskbagheltourandtravels.com` and copy the DNS target Render gives you.
 3. In Cloudflare DNS, create the requested CNAME record. Start with the proxy disabled if Render's domain verification requires direct DNS; enable the orange-cloud proxy only after TLS and routing are confirmed.
 4. Wait for Render TLS issuance and verify:
 
 ```bash
-curl -fsS https://api.skbagheltravels.in/health
-curl -fsS https://api.skbagheltravels.in/ready
+curl -fsS https://api.agraskbagheltourandtravels.com/health
+curl -fsS https://api.agraskbagheltourandtravels.com/ready
 ```
 
-The API must allow CORS from `https://skbagheltravels.in`, `https://www.skbagheltravels.in`, and `https://admin.skbagheltravels.in`.
+The API must allow CORS from `https://agraskbagheltourandtravels.com`, `https://www.agraskbagheltourandtravels.com`, and `https://admin.agraskbagheltourandtravels.com`.
 
 ### Render free-tier wake-up limitation
 
@@ -88,10 +88,10 @@ The monitor below sends a request every five minutes, which reduces idle sleep w
 9. Under **Advanced settings**:
    - **Non-production branch deploy command:** leave as `npx wrangler versions upload` (Cloudflare's default for preview-branch builds).
    - **Path:** leave as `/`. This is the route prefix for the Pages worker — `/` means the project handles all paths from root. It is not the same as the Root directory setting above.
-10. Add the production variable `VITE_API_BASE_URL=https://api.skbagheltravels.in` under **Settings → Environment variables → Production**.
+10. Add the production variable `VITE_API_BASE_URL=https://api.agraskbagheltourandtravels.com` under **Settings → Environment variables → Production**.
 11. Deploy. Cloudflare Pages should show the generated site preview URL.
-12. Add `skbagheltravels.in` and `www.skbagheltravels.in` under **Custom domains**. Cloudflare will create or request the required DNS records.
-13. Confirm the site loads at `https://skbagheltravels.in/`, the Hindi routes load, and the booking flow can reach the API.
+12. Add `agraskbagheltourandtravels.com` and `www.agraskbagheltourandtravels.com` under **Custom domains**. Cloudflare will create or request the required DNS records.
+13. Confirm the site loads at `https://agraskbagheltourandtravels.com/`, the Hindi routes load, and the booking flow can reach the API.
 
 The same settings are recorded in [`react/cloudflare-pages.toml`](../react/cloudflare-pages.toml). For a one-off manual deployment from a machine with Wrangler authenticated:
 
@@ -116,9 +116,9 @@ SPA deep-link routing (`react/wrangler.jsonc` → `not_found_handling: "404-page
 7. Under **Advanced settings**:
    - **Non-production branch deploy command:** leave as `npx wrangler versions upload` (Cloudflare's default for preview-branch builds).
    - **Path:** leave as `/`. This is the route prefix the Pages worker handles — `/` means all paths. It is **not** the same as the Root directory; do not change it to `/admin`.
-8. Add `VITE_API_BASE_URL=https://api.skbagheltravels.in` under the production environment variables.
+8. Add `VITE_API_BASE_URL=https://api.agraskbagheltourandtravels.com` under the production environment variables.
 9. Deploy and open the generated Pages URL.
-10. Add the custom domain `admin.skbagheltravels.in` under **Custom domains**.
+10. Add the custom domain `admin.agraskbagheltourandtravels.com` under **Custom domains**.
 11. Confirm the admin login route, deep links such as `/bookings`, and API requests work over HTTPS.
 
 The same settings are recorded in [`admin/cloudflare-pages.toml`](../admin/cloudflare-pages.toml). For a one-off manual deployment:
@@ -136,14 +136,14 @@ The current admin login is a frontend demonstration flow. Before production use,
 Use this order to avoid deploying frontends that point at an unavailable API:
 
 1. Deploy Render and verify `/health` and `/ready` on the Render hostname.
-2. Add and verify `api.skbagheltravels.in`.
+2. Add and verify `api.agraskbagheltourandtravels.com`.
 3. Set `VITE_API_BASE_URL` in both Pages projects.
-4. Deploy the customer Pages project and add `skbagheltravels.in`.
-5. Deploy the admin Pages project and add `admin.skbagheltravels.in`.
+4. Deploy the customer Pages project and add `agraskbagheltourandtravels.com`.
+5. Deploy the admin Pages project and add `admin.agraskbagheltourandtravels.com`.
 6. Run the complete public check:
 
 ```bash
-HEALTHCHECK_URLS="https://api.skbagheltravels.in/health,https://skbagheltravels.in/,https://admin.skbagheltravels.in/" npm run healthcheck
+HEALTHCHECK_URLS="https://api.agraskbagheltourandtravels.com/health,https://agraskbagheltourandtravels.com/,https://admin.agraskbagheltourandtravels.com/" npm run healthcheck
 ```
 
 The API is the authority for fares, booking state, payments, and admin permissions. Never put database, payment, webhook, or service-role secrets in Cloudflare or Vite variables.

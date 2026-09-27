@@ -1,4 +1,4 @@
-# Launch checklist — gate before skbagheltravels.in goes live
+# Launch checklist — gate before agraskbagheltourandtravels.com goes live
 
 Everything below must be true **before** pointing DNS / sharing the site.
 Derived from audit `06_AUDIT_REPORT.md` (2026-09-01). Do not skip — several

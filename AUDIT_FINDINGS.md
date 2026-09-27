@@ -275,12 +275,12 @@ Every finding is documented with reproduction, impact, evidence, and remediation
 - **Files:** `react/src/config.ts`, `react/scripts/generate-sitemap.ts`, `react/src/components/seo/SeoHead.tsx`
 - **Function/Endpoint:** Canonical domain configuration
 - **Expected behavior:** Canonical domain is consistent across all client configurations, metadata headers, sitemaps, and Schema.org structured data.
-- **Actual behavior:** `react/src/config.ts` line 29 declares `domain: "https://agraskbagheltourandtravels.com"`. However, `generate-sitemap.ts`, `SeoHead.tsx`, `robots.txt`, `sitemap.xml`, and all JSON-LD schemas declare `https://skbagheltravels.in`.
+- **Actual behavior:** `react/src/config.ts` line 29 declares `domain: "https://agraskbagheltourandtravels.com"`. However, `generate-sitemap.ts`, `SeoHead.tsx`, `robots.txt`, `sitemap.xml`, and all JSON-LD schemas declare `https://agraskbagheltourandtravels.com`.
 - **Reproduction:** Inspect `react/src/config.ts` line 29 vs `react/src/components/seo/SeoHead.tsx` line 19.
 - **Impact:** Any component referencing `siteConfig.domain` generates URLs inconsistent with the canonical domain indexable by search engines.
 - **Evidence:** `react/src/config.ts` line 29 vs `react/src/components/seo/SeoHead.tsx` line 19.
 - **Status:** RESOLVED
-- **Resolution:** Updated `siteConfig.domain` in `react/src/config.ts` to canonical domain `https://skbagheltravels.in`.
+- **Resolution:** Updated `siteConfig.domain` in `react/src/config.ts` to canonical domain `https://agraskbagheltourandtravels.com`.
 
 ---
 
@@ -340,7 +340,7 @@ Every finding is documented with reproduction, impact, evidence, and remediation
 - **Area:** Admin Frontend / Missing Environment Variable Integration
 - **Files:** `admin/cloudflare-pages.toml`, `admin/src/`
 - **Function/Endpoint:** `VITE_API_BASE_URL` configuration
-- **Expected behavior:** The admin application reads `VITE_API_BASE_URL` from environment variables to target the Fastify backend API (`https://api.skbagheltravels.in`) across local dev, preview, and production deployments.
+- **Expected behavior:** The admin application reads `VITE_API_BASE_URL` from environment variables to target the Fastify backend API (`https://api.agraskbagheltourandtravels.com`) across local dev, preview, and production deployments.
 - **Actual behavior:** `admin/cloudflare-pages.toml` instructs developers to set `VITE_API_BASE_URL`, but `import.meta.env` is never referenced anywhere in `admin/src/`. The application has no environment configuration file or runtime mechanism to locate the backend server.
 - **Reproduction:** Search for `import.meta.env` or `VITE_API_BASE_URL` in `admin/src`.
 - **Impact:** Deploying the admin desk to Cloudflare Pages with `VITE_API_BASE_URL` configured in dashboard variables has zero effect because the codebase does not read it.
@@ -385,15 +385,15 @@ Every finding is documented with reproduction, impact, evidence, and remediation
 - **Area:** Backend API / Deployment & CORS Configuration
 - **Files:** `backend/src/config/env.ts`, `backend/.env.example`, `docs/DEPLOYMENT.md`
 - **Function/Endpoint:** `corsOriginList(env)` / `CORS_ORIGINS` default configuration
-- **Expected behavior:** In `docs/DEPLOYMENT.md`, the production domain for the admin panel is specified as `https://admin.skbagheltravels.in`. The backend `CORS_ORIGINS` configuration allows requests from all first-party application hosts by default.
+- **Expected behavior:** In `docs/DEPLOYMENT.md`, the production domain for the admin panel is specified as `https://admin.agraskbagheltourandtravels.com`. The backend `CORS_ORIGINS` configuration allows requests from all first-party application hosts by default.
 - **Actual behavior:** `backend/src/config/env.ts` line 9 and `backend/.env.example` line 8 declare:
-  `CORS_ORIGINS=http://localhost:5173,http://localhost:3000,https://skbagheltravels.in`
-  The admin production domain `https://admin.skbagheltravels.in` is completely missing from the allowed origins list.
-- **Reproduction:** In a browser, initiate a cross-origin `fetch("https://api.skbagheltravels.in/api/v1/ops/admin/bookings")` from origin `https://admin.skbagheltravels.in`. Fastify's CORS handler rejects with `Origin https://admin.skbagheltravels.in not allowed`.
-- **Impact:** When deployed to production, all operations desk API requests from `https://admin.skbagheltravels.in` are blocked by CORS in the browser unless an operator manually sets a custom environment variable on the server.
+  `CORS_ORIGINS=http://localhost:5173,http://localhost:3000,https://agraskbagheltourandtravels.com`
+  The admin production domain `https://admin.agraskbagheltourandtravels.com` is completely missing from the allowed origins list.
+- **Reproduction:** In a browser, initiate a cross-origin `fetch("https://api.agraskbagheltourandtravels.com/api/v1/ops/admin/bookings")` from origin `https://admin.agraskbagheltourandtravels.com`. Fastify's CORS handler rejects with `Origin https://admin.agraskbagheltourandtravels.com not allowed`.
+- **Impact:** When deployed to production, all operations desk API requests from `https://admin.agraskbagheltourandtravels.com` are blocked by CORS in the browser unless an operator manually sets a custom environment variable on the server.
 - **Evidence:** `backend/src/config/env.ts` line 9; `docs/DEPLOYMENT.md` line 8.
 - **Status:** RESOLVED
-- **Resolution:** Added `https://admin.skbagheltravels.in` to `CORS_ORIGINS` in `backend/src/config/env.ts` and `backend/.env.example`.
+- **Resolution:** Added `https://admin.agraskbagheltourandtravels.com` to `CORS_ORIGINS` in `backend/src/config/env.ts` and `backend/.env.example`.
 
 ---
 

@@ -3,6 +3,7 @@ import type { SupportedLanguage } from "../config";
 import { contact } from "../data/contact";
 import { WhatsAppIcon } from "../components/icons";
 import { InstantRouteCalculator } from "../components/routes/InstantRouteCalculator";
+import { Pagination } from "../components/ui/Pagination";
 
 export interface RoutesPageProps {
   language?: SupportedLanguage;
@@ -206,6 +207,26 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
   const [selectedFilter, setSelectedFilter] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [currentPage, setCurrentPage] = useState(() => {
+    if (typeof window !== "undefined") {
+      const page = Number(new URLSearchParams(window.location.search).get("page"));
+      return page > 0 ? page : 1;
+    }
+    return 1;
+  });
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.set("page", String(newPage));
+      window.history.pushState({}, "", url.toString());
+      const section = document.getElementById("routes-directory");
+      if (section) {
+        section.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+  };
 
   const filteredRoutes = useMemo(() => {
     return PRIMARY_ROUTES.filter((route) => {
@@ -303,7 +324,10 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
                 <button
                   key={tab.id}
                   type="button"
-                  onClick={() => setSelectedFilter(tab.id)}
+                  onClick={() => {
+                    setSelectedFilter(tab.id);
+                    setCurrentPage(1);
+                  }}
                   className={`px-3 py-1.5 rounded-full font-label-caps text-xs uppercase tracking-wider transition-all font-bold ${selectedFilter === tab.id
                       ? "bg-ink-charcoal text-white shadow-xs"
                       : "bg-surface-container text-on-surface hover:bg-surface-container-high"
@@ -321,7 +345,10 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
               <input
                 type="text"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setCurrentPage(1);
+                }}
                 placeholder="Search corridor or city..."
                 className="w-full pl-8 pr-3 py-1.5 rounded-lg bg-surface-container-lowest border border-border-warm/60 text-on-surface text-xs focus:outline-none focus:border-primary"
               />
@@ -331,7 +358,7 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
       </section>
 
       {/* 2. COMPREHENSIVE ROUTE DIRECTORY (CARDS -20% Compact) */}
-      <section className="w-full bg-surface py-6 sm:py-8">
+      <section id="routes-directory" className="w-full bg-surface py-6 sm:py-8">
         <div className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5">
             {filteredRoutes.map((route) => (
@@ -433,51 +460,15 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
             ))}
           </div>
         </div>
-        {(() => {
-          const totalPages = 980;
-
-          const search =
-            typeof window !== "undefined" ? window.location.search : "";
-
-          const path =
-            typeof window !== "undefined" ? window.location.pathname : "";
-
-          const currentPage = Math.min(
-            Math.max(Number(new URLSearchParams(search).get("page")) || 1, 1),
-            totalPages
-          );
-
-          const prevPage = Math.max(1, currentPage - 1);
-          const nextPage = Math.min(totalPages, currentPage + 1);
-
-          return (
-            <div className="mt-6 flex items-center justify-center gap-6">
-              <a
-                aria-disabled={currentPage <= 1}
-                className={`inline-flex items-center gap-1 font-label-lg text-label-lg font-semibold text-primary transition-colors hover:text-primary-container ${currentPage <= 1 ? "pointer-events-none opacity-40" : ""
-                  }`}
-                href={`${path}?page=${prevPage}`}
-              >
-                <span className="material-symbols-outlined text-[16px]">west</span>
-                <span>Back</span>
-              </a>
-
-              <span className="font-label-lg text-label-lg text-primary">
-                Page {currentPage} / {totalPages}
-              </span>
-
-              <a
-                aria-disabled={currentPage >= totalPages}
-                className={`inline-flex items-center gap-1 font-label-lg text-label-lg font-semibold text-primary transition-colors hover:text-primary-container ${currentPage >= totalPages ? "pointer-events-none opacity-40" : ""
-                  }`}
-                href={`${path}?page=${nextPage}`}
-              >
-                <span>Next</span>
-                <span className="material-symbols-outlined text-[16px]">east</span>
-              </a>
-            </div>
-          );
-        })()}
+        <Pagination
+          totalItems={searchQuery || selectedFilter !== "all" ? filteredRoutes.length : 982}
+          itemsPerPage={10}
+          currentPage={currentPage}
+          onPageChange={handlePageChange}
+          className="mt-6"
+          showFirstLastButtons={true}
+          pageButtonLimit={5}
+        />
       </section>
 
       {/* 3. OUTSTATION BILLING PRINCIPLES (Compact -20%) */}
