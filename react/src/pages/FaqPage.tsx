@@ -269,12 +269,13 @@ export function FaqPage({ language = "en" }: FaqPageProps) {
               href="https://wa.me/919876543210"
               target="_blank"
               rel="noreferrer"
+              style={{ color: "#ffffff" }}
               className="p-3.5 rounded-xl bg-black text-white hover:bg-neutral-900 border border-white/10 transition-all flex flex-col items-center text-center shadow-xs active:scale-[0.98]"
             >
               <div className="w-8 h-8 rounded-full bg-neutral-800 flex items-center justify-center mb-2">
-                <WhatsAppIcon className="w-5 h-5 shrink-0" />
+                <WhatsAppIcon className="w-5 h-5 shrink-0 text-white" />
               </div>
-              <h4 className="font-title-md text-xs font-bold text-white">WhatsApp</h4>
+              <h4 className="font-title-md text-xs font-bold text-white" style={{ color: "#ffffff" }}>WhatsApp</h4>
               <p className="text-[10.5px] text-[#25D366] font-bold mt-0.5">Instant Response</p>
             </a>
 

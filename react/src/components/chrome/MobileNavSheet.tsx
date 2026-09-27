@@ -117,10 +117,11 @@ export function MobileNavSheet({
               href={`https://wa.me/${contact.whatsapp}?text=Hello%20SK%20Baghel%20Travels`}
               target="_blank"
               rel="noopener noreferrer"
+              style={{ color: "#ffffff" }}
               className="flex items-center justify-center gap-1.5 py-2.5 rounded-lg bg-black text-white font-label-lg text-label-lg hover:bg-neutral-900 transition-colors shadow-sm border border-white/10 active:scale-[0.98]"
             >
-              <WhatsAppIcon className="w-[18px] h-[18px] shrink-0" />
-              <span>WhatsApp</span>
+              <WhatsAppIcon className="w-[18px] h-[18px] shrink-0 text-white" />
+              <span className="text-white" style={{ color: "#ffffff" }}>WhatsApp</span>
             </a>
           </div>
 

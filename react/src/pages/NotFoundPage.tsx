@@ -83,10 +83,11 @@ export function NotFoundPage({ language = "en" }: NotFoundPageProps) {
                   href="https://wa.me/919876543210"
                   target="_blank"
                   rel="noreferrer"
+                  style={{ color: "#ffffff" }}
                   className="px-4 py-2.5 rounded-lg bg-black hover:bg-neutral-900 border border-white/10 text-white text-sm font-semibold transition-colors flex items-center gap-2 shadow-xs active:scale-[0.98]"
                 >
-                  <WhatsAppIcon className="w-[18px] h-[18px] shrink-0" />
-                  <span>WhatsApp</span>
+                  <WhatsAppIcon className="w-[18px] h-[18px] shrink-0 text-white" />
+                  <span className="text-white font-semibold" style={{ color: "#ffffff" }}>WhatsApp</span>
                 </a>
               </div>
             </div>

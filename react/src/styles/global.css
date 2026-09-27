@@ -11740,17 +11740,41 @@ html.dark .page-loader__bar-fill {
 
 .pkg-wa-btn {
   padding: 12px 18px;
-}
-
-.button-whatsapp {
   background: #000000;
   color: #FFFFFF !important;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.button-whatsapp,
+.btn-whatsapp,
+.wa-button,
+a.button-whatsapp,
+a[class*="bg-black"][href*="wa.me"],
+a[class*="bg-[#000000]"][href*="wa.me"],
+a[class*="bg-neutral-900"][href*="wa.me"],
+a[class*="bg-success-jade"][href*="wa.me"] {
+  color: #FFFFFF !important;
   font-weight: 600;
 }
 
-.button-whatsapp:hover {
-  background: #171717;
+.button-whatsapp span,
+.btn-whatsapp span,
+.wa-button span,
+a.button-whatsapp span,
+a[class*="bg-black"][href*="wa.me"] span,
+a[class*="bg-[#000000]"][href*="wa.me"] span,
+a[class*="bg-neutral-900"][href*="wa.me"] span,
+a[class*="bg-success-jade"][href*="wa.me"] span {
+  color: #FFFFFF !important;
+}
+
+.button-whatsapp:hover,
+.btn-whatsapp:hover,
+.wa-button:hover,
+a.button-whatsapp:hover,
+a[class*="bg-black"][href*="wa.me"]:hover,
+a[class*="bg-[#000000]"][href*="wa.me"]:hover,
+a[class*="bg-neutral-900"][href*="wa.me"]:hover,
+a[class*="bg-success-jade"][href*="wa.me"]:hover {
   color: #FFFFFF !important;
 }
 

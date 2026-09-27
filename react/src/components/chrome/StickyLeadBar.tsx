@@ -51,13 +51,14 @@ export function StickyLeadBar({ currentPath }: StickyLeadBarProps) {
 
       <a
         className="flex-1 flex flex-col items-center justify-center py-1.5 rounded-lg bg-black text-white font-label-caps text-[11px] font-semibold hover:bg-neutral-900 transition-colors shadow-xs border border-white/10"
+        style={{ color: "#ffffff" }}
         href={`https://wa.me/${contact.whatsapp}?text=Hello%20SK%20Baghel%20Travels`}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="WhatsApp"
       >
-        <WhatsAppIcon className="w-[18px] h-[18px] shrink-0" />
-        <span className="mt-0.5">WhatsApp</span>
+        <WhatsAppIcon className="w-[18px] h-[18px] shrink-0 text-white" />
+        <span className="mt-0.5 text-white" style={{ color: "#ffffff" }}>WhatsApp</span>
       </a>
 
       <a

@@ -4,6 +4,8 @@ import { WhatsAppIcon } from "../icons/WhatsAppIcon";
 import { contact } from "../../data/contact";
 import { getIndicativeBrowseFare } from "../../fares";
 import { loadRoutesManifest } from "../../services/catalogManifest";
+import { LocationCombobox } from "../search/LocationCombobox";
+import type { LocationSuggestion } from "../../hooks/useLocationIQ";
 
 export interface CompressedRouteItem {
   o: string;        // Origin
@@ -29,6 +31,13 @@ export interface InstantRouteCalculatorProps {
   className?: string;
 }
 
+function cleanCityName(raw: string): string {
+  if (!raw) return "";
+  const beforeParen = raw.split("(")[0]?.trim() || raw.trim();
+  const firstSegment = beforeParen.split(",")[0]?.trim() || beforeParen;
+  return firstSegment.toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
 export function InstantRouteCalculator({
   initialOrigin = "Agra",
   initialDestination = "Delhi",
@@ -40,6 +49,16 @@ export function InstantRouteCalculator({
   const [destInput, setDestInput] = useState(initialDestination);
   const [selectedTier, setSelectedTier] = useState<VehicleTier>("sedan");
   const [isLoading, setIsLoading] = useState(true);
+
+  // Sync initial query params if present in URL
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const qFrom = params.get("from") || params.get("origin");
+    const qTo = params.get("to") || params.get("destination") || params.get("dest");
+    if (qFrom) setOriginInput(qFrom);
+    if (qTo) setDestInput(qTo);
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -58,39 +77,44 @@ export function InstantRouteCalculator({
     };
   }, []);
 
-  const { origins, destinations } = useMemo(() => {
-    if (!manifest) return { origins: [], destinations: [] };
-    const oSet = new Set<string>();
-    const dSet = new Set<string>();
-    for (const item of Object.values(manifest)) {
-      if (item.o) oSet.add(item.o);
-      if (item.d) dSet.add(item.d);
-    }
-    return {
-      origins: Array.from(oSet).sort((a, b) => a.localeCompare(b)),
-      destinations: Array.from(dSet).sort((a, b) => a.localeCompare(b)),
-    };
-  }, [manifest]);
-
   const matchedEntry = useMemo(() => {
     if (!manifest) return null;
-    const cleanO = originInput.trim().toLowerCase();
-    const cleanD = destInput.trim().toLowerCase();
-    if (!cleanO || !cleanD) return null;
+    const rawO = originInput.trim();
+    const rawD = destInput.trim();
+    if (!rawO || !rawD) return null;
 
+    const cleanO = rawO.toLowerCase();
+    const cleanD = rawD.toLowerCase();
+    const normO = cleanCityName(rawO);
+    const normD = cleanCityName(rawD);
+
+    // 1. Exact match on raw names
     for (const [slug, item] of Object.entries(manifest)) {
       if (item.o.toLowerCase() === cleanO && item.d.toLowerCase() === cleanD) return { slug, ...item };
     }
+    // 2. Normalized city token match
+    if (normO && normD) {
+      for (const [slug, item] of Object.entries(manifest)) {
+        const itemNormO = cleanCityName(item.o);
+        const itemNormD = cleanCityName(item.d);
+        if (itemNormO === normO && itemNormD === normD) {
+          return { slug, ...item };
+        }
+      }
+    }
+    // 3. Substring match
     for (const [slug, item] of Object.entries(manifest)) {
+      const itemOLower = item.o.toLowerCase();
+      const itemDLower = item.d.toLowerCase();
       if (
-        (item.o.toLowerCase().includes(cleanO) || cleanO.includes(item.o.toLowerCase())) &&
-        (item.d.toLowerCase().includes(cleanD) || cleanD.includes(item.d.toLowerCase()))
+        (itemOLower.includes(cleanO) || cleanO.includes(itemOLower) || (normO && itemOLower.includes(normO))) &&
+        (itemDLower.includes(cleanD) || cleanD.includes(itemDLower) || (normD && itemDLower.includes(normD)))
       ) {
         return { slug, ...item };
       }
     }
-    // Fallback: slug search
-    const slugKey = `${cleanO.replace(/\s+/g, "-")}-to-${cleanD.replace(/\s+/g, "-")}`;
+    // 4. Fallback slug search
+    const slugKey = `${normO || cleanO.replace(/\s+/g, "-")}-to-${normD || cleanD.replace(/\s+/g, "-")}`;
     for (const [slug, item] of Object.entries(manifest)) {
       if (slug.includes(slugKey)) {
         return { slug, ...item };
@@ -139,6 +163,8 @@ export function InstantRouteCalculator({
   const isGroupVehicle = Boolean(indicativeQuote?.alwaysRoundTrip);
   const billableKm = indicativeQuote?.billedKm ?? (matchedEntry ? matchedEntry.km : 0);
 
+  const hasSearchedPair = Boolean(originInput.trim() && destInput.trim());
+
   return (
     <div
       className={`w-full bg-surface-container-lowest border border-border-warm rounded-xl p-space-md lg:p-space-lg shadow-[0_4px_24px_-4px_rgba(24,29,39,0.06)] ${className}`}
@@ -146,64 +172,42 @@ export function InstantRouteCalculator({
       {/* Header Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm mb-space-md border-b border-border-warm pb-space-sm">
         <div>
-          <span className={EDITORIAL_TYPOGRAPHY.eyebrowSandstone}>0ms In-Memory Corridor Engine</span>
-          <h3 className={`${EDITORIAL_TYPOGRAPHY.sectionH2} mt-0.5`}>Instant Outstation Fare Calculator</h3>
+          <span className={EDITORIAL_TYPOGRAPHY.eyebrowSandstone}>LocationIQ Search &amp; 0ms Corridor Engine</span>
+          <h3 className={`${EDITORIAL_TYPOGRAPHY.sectionH2} mt-0.5`}>Instant Outstation Route &amp; Fare Discovery</h3>
         </div>
         <div className="flex items-center gap-1.5 font-body-sm text-xs text-on-surface-variant">
           <span className="w-2 h-2 rounded-full bg-success-jade animate-pulse" />
-          <span className="font-semibold text-ink-slate">982 Outstation Routes</span>
+          <span className="font-semibold text-ink-slate">982 Outstation Corridors</span>
         </div>
       </div>
 
-      {/* Inputs */}
+      {/* LocationIQ Search Inputs */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-space-md mb-space-md">
         <div>
-          <label htmlFor="instant-calc-origin" className="block font-label-lg text-xs font-bold text-ink-slate mb-1">
-            Pickup Origin
+          <label className="block font-label-lg text-xs font-bold text-ink-slate mb-1">
+            Pickup Origin City / Airport
           </label>
-          <div className="relative">
-            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-terracotta-sandstone pointer-events-none">
-              trip_origin
-            </span>
-            <input
-              id="instant-calc-origin"
-              type="text"
-              list="instant-calc-origins-datalist"
-              value={originInput}
-              onChange={(e) => setOriginInput(e.target.value)}
-              className="w-full pl-9 pr-space-md py-2.5 rounded-lg border border-border-warm bg-surface font-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20"
-              placeholder="e.g. Agra, Delhi NCR"
-            />
-            <datalist id="instant-calc-origins-datalist">
-              {origins.map((city) => (
-                <option key={city} value={city} />
-              ))}
-            </datalist>
-          </div>
+          <LocationCombobox
+            id="instant-calc-origin"
+            value={originInput}
+            onChange={(val) => setOriginInput(val)}
+            placeholder="Search pickup city, airport, landmark..."
+            label="Pickup Origin"
+            triggerIcon="trip_origin"
+          />
         </div>
         <div>
-          <label htmlFor="instant-calc-dest" className="block font-label-lg text-xs font-bold text-ink-slate mb-1">
-            Drop-off Destination
+          <label className="block font-label-lg text-xs font-bold text-ink-slate mb-1">
+            Drop-off Destination City / Hub
           </label>
-          <div className="relative">
-            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-gold-accent pointer-events-none">
-              location_on
-            </span>
-            <input
-              id="instant-calc-dest"
-              type="text"
-              list="instant-calc-dest-datalist"
-              value={destInput}
-              onChange={(e) => setDestInput(e.target.value)}
-              className="w-full pl-9 pr-space-md py-2.5 rounded-lg border border-border-warm bg-surface font-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20"
-              placeholder="e.g. Mathura, Jaipur"
-            />
-            <datalist id="instant-calc-dest-datalist">
-              {destinations.map((city) => (
-                <option key={city} value={city} />
-              ))}
-            </datalist>
-          </div>
+          <LocationCombobox
+            id="instant-calc-dest"
+            value={destInput}
+            onChange={(val) => setDestInput(val)}
+            placeholder="Search destination city, airport, landmark..."
+            label="Drop-off Destination"
+            triggerIcon="location_on"
+          />
         </div>
       </div>
 
@@ -239,7 +243,7 @@ export function InstantRouteCalculator({
         </div>
       </div>
 
-      {/* 0ms Result Calculation Dock */}
+      {/* Result Calculation Dock or Empty Fallback */}
       {matchedEntry ? (
         <div className="bg-sandstone-wash/80 border border-border-warm rounded-lg p-space-md transition-all">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-space-md mb-space-sm">
@@ -298,19 +302,44 @@ export function InstantRouteCalculator({
               )}`}
               target="_blank"
               rel="noopener noreferrer"
+              style={{ color: "#ffffff" }}
               className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#000000] border border-white/15 text-[#ffffff] font-label-lg text-xs font-semibold hover:bg-neutral-900 transition-colors shadow-xs"
             >
-              <WhatsAppIcon className="w-3.5 h-3.5 fill-current" />
-              <span>WhatsApp Concierge</span>
+              <WhatsAppIcon className="w-3.5 h-3.5 fill-current text-white" />
+              <span className="text-white font-semibold" style={{ color: "#ffffff" }}>WhatsApp Concierge</span>
             </a>
             <a
-              href={`/book.html?from=${encodeURIComponent(matchedEntry.o)}&to=${encodeURIComponent(matchedEntry.d)}&vehicle=${selectedTier === "hatchback" ? "sedan" : selectedTier}&trip=one-way`}
-              className="inline-flex items-center gap-1 px-3 py-2 rounded-lg bg-sandstone-wash text-primary border border-primary/25 font-label-lg text-xs font-semibold hover:bg-sandstone-wash/60 transition-colors ml-auto"
+              href={`/book?from=${encodeURIComponent(matchedEntry.o)}&to=${encodeURIComponent(matchedEntry.d)}&vehicle=${selectedTier === "hatchback" ? "sedan" : selectedTier}&trip=one-way`}
+              className="inline-flex items-center gap-1 px-3.5 py-2 rounded-lg bg-primary text-white font-label-lg text-xs font-semibold hover:bg-primary-container transition-colors ml-auto shadow-xs active:scale-[0.98]"
             >
               <span>Direct Booking Form</span>
               <span className="material-symbols-outlined text-[14px]">chevron_right</span>
             </a>
           </div>
+        </div>
+      ) : hasSearchedPair ? (
+        <div className="p-space-lg text-center bg-surface-container-low rounded-xl border border-dashed border-border-warm flex flex-col items-center justify-center gap-2">
+          <div className="w-12 h-12 rounded-full bg-sandstone-wash text-terracotta-sandstone flex items-center justify-center mb-0.5">
+            <span className="material-symbols-outlined text-[26px]">explore_off</span>
+          </div>
+          <h4 className="font-title-lg text-title-lg text-ink-charcoal font-bold">
+            There is no route available, sorry.
+          </h4>
+          <p className="font-body-sm text-xs text-on-surface-variant max-w-md mx-auto leading-relaxed">
+            We could not find a scheduled direct corridor between <strong>{originInput}</strong> and <strong>{destInput}</strong> in our standard catalog. Our 24/7 operations desk can create a customized private charter quotation for you.
+          </p>
+          <a
+            href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
+              `Hello SK Baghel Travels, I am looking for a custom route from ${originInput} to ${destInput}. Please provide availability and fare quotation.`
+            )}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: "#ffffff" }}
+            className="mt-space-sm inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-black text-white text-xs font-semibold hover:bg-neutral-900 border border-white/10 shadow-xs active:scale-[0.98] transition-all"
+          >
+            <WhatsAppIcon className="w-4 h-4 fill-current text-white" />
+            <span className="text-white font-semibold" style={{ color: "#ffffff" }}>Request Custom Route via WhatsApp Concierge</span>
+          </a>
         </div>
       ) : (
         <div className="p-space-md text-center font-body-sm text-xs text-on-surface-variant bg-surface rounded-lg border border-dashed border-border-warm">
@@ -319,4 +348,6 @@ export function InstantRouteCalculator({
       )}
     </div>
   );
+}
+
 }

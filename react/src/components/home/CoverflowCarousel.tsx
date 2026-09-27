@@ -108,12 +108,13 @@ export function CoverflowCarousel() {
           <div className="coverflow-actions">
             <a
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-black hover:bg-neutral-900 border border-white/10 text-white font-title-md text-xs font-semibold shadow-xs transition-all active:scale-[0.98]"
+              style={{ color: "#ffffff" }}
               href={waUrl}
               target="_blank"
               rel="noreferrer"
             >
-              <WhatsAppIcon className="w-4 h-4 shrink-0" />
-              <span>WhatsApp Inquiry</span>
+              <WhatsAppIcon className="w-4 h-4 shrink-0 text-white" />
+              <span className="text-white" style={{ color: "#ffffff" }}>WhatsApp Inquiry</span>
             </a>
             <a
               className="button button-outline button-light"

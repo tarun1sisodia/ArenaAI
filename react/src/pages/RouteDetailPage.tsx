@@ -257,12 +257,13 @@ export function RouteDetailPage({ route }: RouteDetailPageProps) {
                   </a>
                   <a
                     className="inline-flex items-center justify-center gap-space-xs bg-black text-white hover:bg-neutral-900 border border-white/10 px-5 py-3.5 rounded text-label-lg font-label-lg shadow-sm transition-all duration-200 active:scale-[0.98]"
+                    style={{ color: "#ffffff" }}
                     href={whatsappUrl}
                     rel="noopener noreferrer"
                     target="_blank"
                   >
-                    <WhatsAppIcon className="w-5 h-5 shrink-0" />
-                    <span>WhatsApp</span>
+                    <WhatsAppIcon className="w-5 h-5 shrink-0 text-white" />
+                    <span className="text-white" style={{ color: "#ffffff" }}>WhatsApp</span>
                   </a>
                 </div>
               </div>
