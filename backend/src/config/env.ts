@@ -72,12 +72,15 @@ export function loadEnv(source: NodeJS.ProcessEnv = process.env): Env {
       // Need at least one way to verify JWTs
       missing.push("SUPABASE_JWT_SECRET or SUPABASE_URL for JWT verification");
     }
-    // Payment secrets: require webhook secret when key is set
-    if (env.RAZORPAY_KEY_ID && !env.RAZORPAY_KEY_SECRET) {
-      missing.push("RAZORPAY_KEY_SECRET required when RAZORPAY_KEY_ID is set");
+    // Payment provider: Razorpay is mandatory in production; test HMAC fallback prohibited
+    if (!env.RAZORPAY_KEY_ID || env.RAZORPAY_KEY_ID.startsWith("rzp_test_local")) {
+      missing.push("RAZORPAY_KEY_ID is mandatory in production (local dummy prohibited)");
     }
-    if (env.RAZORPAY_KEY_ID && !env.RAZORPAY_WEBHOOK_SECRET) {
-      missing.push("RAZORPAY_WEBHOOK_SECRET required when RAZORPAY_KEY_ID is set");
+    if (!env.RAZORPAY_KEY_SECRET) {
+      missing.push("RAZORPAY_KEY_SECRET is mandatory in production");
+    }
+    if (!env.RAZORPAY_WEBHOOK_SECRET) {
+      missing.push("RAZORPAY_WEBHOOK_SECRET is mandatory in production");
     }
     if (env.ALLOW_TEST_AUTH) missing.push("ALLOW_TEST_AUTH must be false in production");
     // Validate CORS origins are HTTPS in production

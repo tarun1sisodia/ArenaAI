@@ -14,24 +14,23 @@ Merged into the root operating specification:
 - GEO/entity consistency rules
 - Lifecycle acceptance tests
 
-### `927069b` — Live flow safety and operating specification
+### Phase 1 — Step 1.1: Production Payment Provider Enforcement
 
 Implemented:
 
-- Fail-closed admin role claim check
-- Production API fallback to Render backend
-- Payment checkout failure no longer becomes success
-- Development-only payment simulation
-- Database readiness HTTP 503
-- Full admin/customer/backend audit and 70-operation specification
+- Mandatory Razorpay credentials (`RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, `RAZORPAY_WEBHOOK_SECRET`) enforced in `backend/src/config/env.ts` when `NODE_ENV === "production"`.
+- Test/dummy credentials (`rzp_test_local*`) strictly prohibited in production.
+- `createRazorpayAdapter` in `backend/src/providers/adapters/razorpay.ts` throws immediately if HMAC fallback is attempted with `isProduction: true`.
+- Created comprehensive unit test suite in `backend/tests/unit/payment-provider-production.test.ts` (5 tests passing).
+- Verified with full monorepo typecheck (`react`, `admin`, `backend`).
 
-## Current expected webhook route
+## Current webhook route
 
 ```text
 https://client-juj4.onrender.com/api/v1/payments/webhooks/razorpay
 ```
 
-The Razorpay webhook secret must exactly match Render's `RAZORPAY_WEBHOOK_SECRET`. Never store the secret here.
+The Razorpay webhook secret must exactly matches Render's `RAZORPAY_WEBHOOK_SECRET`. Never store the secret here.
 
 ## Current verification baseline
 

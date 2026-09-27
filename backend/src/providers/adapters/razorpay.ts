@@ -14,11 +14,19 @@ type RazorpayOptions = {
   keyId: string;
   keySecret: string;
   webhookSecret: string;
+  isProduction?: boolean;
   fetchImpl?: typeof fetch;
 };
 
 export function createRazorpayAdapter(options: RazorpayOptions): PaymentProvider {
-  if (!options.keySecret || options.keyId.startsWith("rzp_test_local") || !options.keyId) {
+  const isTestOrLocal = !options.keySecret || options.keyId.startsWith("rzp_test_local") || !options.keyId;
+
+  if (isTestOrLocal) {
+    if (options.isProduction) {
+      throw new Error(
+        "Razorpay credentials (RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET, RAZORPAY_WEBHOOK_SECRET) are mandatory in production. Test HMAC adapter is strictly prohibited.",
+      );
+    }
     return createHmacPaymentAdapter({
       name: "razorpay",
       webhookSecret: options.webhookSecret || options.keySecret || "whsec_razorpay_test",

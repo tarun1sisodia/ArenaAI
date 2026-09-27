@@ -12,6 +12,7 @@ import {
   type ServerFareBreakdown,
   type BackendTripType,
 } from "../../services/api";
+import { loadRazorpayScript } from "./razorpay";
 import { WhatsAppIcon } from "../../components/icons";
 import { TripSelectionStep, type SelectableTrip } from "./TripSelectionStep";
 import { BookingAssistant, type QuickPick } from "./BookingAssistant";
@@ -503,6 +504,7 @@ export function BookingPage() {
 
     setIsSubmitting(true);
     setSubmitError(null);
+    let modalOpened = false;
 
     try {
       const cleanPhone = formatInquiryPhone(phone);
@@ -528,11 +530,7 @@ export function BookingPage() {
         localPackageKey: bookingMode === "local" ? localPackageKey : undefined,
       });
 
-      setConfirmedTicketId(draft.ticketId);
-      setConfirmedBookingId(draft.bookingId);
-
       const targetAmount = paymentChoice === "full" ? serverFare.totalFare : serverFare.advanceAmount;
-      setAmountPaid(targetAmount);
 
       // Attempt to initiate real checkout
       try {
@@ -543,19 +541,83 @@ export function BookingPage() {
           provider: "razorpay",
           currency: "INR",
         });
-        if (checkout.checkoutUrl) window.location.assign(checkout.checkoutUrl);
+
+        if (checkout.checkoutUrl) {
+          window.location.assign(checkout.checkoutUrl);
+          return;
+        }
+
+        if (checkout.providerOrderId) {
+          const rzpKey = checkout.publicClientToken || checkout.keyId;
+          const rzpLoaded = await loadRazorpayScript();
+          if (!rzpLoaded || !window.Razorpay) {
+            throw new Error("Unable to load secure Razorpay checkout modal. Please check your connection or ad-blocker.");
+          }
+          if (!rzpKey) {
+            throw new Error("Payment gateway key missing from server response. Please contact support.");
+          }
+
+          const rzp = new window.Razorpay({
+            key: rzpKey,
+            order_id: checkout.providerOrderId,
+            amount: checkout.amountMinor,
+            currency: checkout.currency || "INR",
+            name: "SK Baghel Tour & Travels",
+            description: `Trip Booking #${draft.ticketId}`,
+            image: `${window.location.origin}/assets/brand/favicon.svg`,
+            prefill: {
+              name: cleanName,
+              contact: cleanPhone,
+              email: email.trim() || undefined,
+            },
+            theme: {
+              color: "#8B1E1E",
+            },
+            modal: {
+              ondismiss: () => {
+                setIsSubmitting(false);
+                setSubmitError(
+                  "Payment window was closed. Your booking request is safely saved as a draft. Click 'Authorize & Pay' to retry.",
+                );
+              },
+            },
+            handler: (_response) => {
+              setConfirmedTicketId(draft.ticketId);
+              setConfirmedBookingId(draft.bookingId);
+              setAmountPaid(targetAmount);
+              setIsSubmitting(false);
+              window.scrollTo({ top: 0, behavior: "smooth" });
+              setStep(isDirectFunnel ? 3 : 4);
+            },
+          });
+
+          rzp.on("payment.failed", (response: any) => {
+            setIsSubmitting(false);
+            setSubmitError(`Payment failed: ${response?.error?.description || "Card/UPI transaction was declined."}`);
+          });
+
+          rzp.open();
+          modalOpened = true;
+          return;
+        }
+
+        // Fallback for non-modal / offline provider responses
+        setConfirmedTicketId(draft.ticketId);
+        setConfirmedBookingId(draft.bookingId);
+        setAmountPaid(targetAmount);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        setStep(isDirectFunnel ? 3 : 4);
       } catch (payErr) {
         setSubmitError(payErr instanceof Error ? payErr.message : "Payment checkout could not be started. Please try again.");
         return;
       }
-
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      setStep(isDirectFunnel ? 3 : 4);
     } catch (err: any) {
       console.error("Booking submission error:", err);
       setSubmitError(err?.message || "Failed to create booking draft. Please check your contact details.");
     } finally {
-      setIsSubmitting(false);
+      if (!modalOpened) {
+        setIsSubmitting(false);
+      }
     }
   };
 

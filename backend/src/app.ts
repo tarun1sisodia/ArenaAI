@@ -261,6 +261,7 @@ function createPaymentProviders(env: Env): PaymentProviderRegistry {
       keyId: env.RAZORPAY_KEY_ID,
       keySecret: env.RAZORPAY_KEY_SECRET,
       webhookSecret: env.RAZORPAY_WEBHOOK_SECRET || env.RAZORPAY_KEY_SECRET,
+      isProduction: env.NODE_ENV === "production",
     }),
   };
 }

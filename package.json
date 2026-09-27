@@ -23,6 +23,8 @@
     "admin:build": "npm --prefix admin run build",
     "admin:preview": "npm --prefix admin run preview",
     "admin:typecheck": "npm --prefix admin run typecheck",
+    "freellmapi:install": "npm install --prefix ./freellmapi",
+    "freellmapi:dev": "npm --prefix ./freellmapi run dev",
     "backend:dev": "npm --prefix backend run dev",
     "backend:build": "npm --prefix backend run build",
     "backend:start": "npm --prefix backend run start",

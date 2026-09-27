@@ -127,13 +127,48 @@ export interface CreateCheckoutPayload {
 
 export interface CreateCheckoutResponse {
   paymentId: string;
+  ticketId?: string;
   provider: string;
   status: string;
   amountMinor: number;
   currency: string;
   providerOrderId?: string;
+  publicClientToken?: string;
   keyId?: string;
   checkoutUrl?: string;
+  expiresAt?: string;
+}
+
+export interface PaymentStatusResponse {
+  paymentId: string;
+  ticketId: string;
+  status: "pending" | "authorized" | "captured" | "failed" | "refunded";
+  reconciliationStatus: "pending" | "reconciled" | "discrepancy";
+  provider: string;
+  currency: string;
+  amountMinor: number;
+  bookingStatus: string;
+}
+
+export async function getPaymentStatus(
+  paymentId: string,
+  guestAccessToken: string,
+): Promise<PaymentStatusResponse> {
+  const baseUrl = getApiBaseUrl();
+  const res = await fetch(
+    `${baseUrl}/api/v1/payments/${encodeURIComponent(paymentId)}/status?token=${encodeURIComponent(guestAccessToken)}`,
+    {
+      headers: {
+        "x-booking-token": guestAccessToken,
+      },
+    },
+  );
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const msg = json?.error?.message || `Failed to fetch payment status (status ${res.status})`;
+    throw new Error(msg);
+  }
+  return json.data as PaymentStatusResponse;
 }
 
 export async function createDraftBooking(
