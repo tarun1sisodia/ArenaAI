@@ -167,12 +167,31 @@ Implemented:
 - **Step 2.2 & 2.7:** Prioritize live manifest route over static fallback in `react/src/app/App.tsx` (`activeRoute = manifestRoute || matchedRoute`), hydrating route pages and details dynamically.
 - **Tests & Verification:** Updated integration suite `backend/tests/integration/catalog-manifest-f4.test.ts` (6 passing tests). Verified full monorepo with `npm run verify` (typechecks x3, 20 test files / 125 tests, SEO tests, and builds x3 green).
 
+### Phase 3 — Step 3.1: Secure LocationIQ Backend Proxy, Caching & Client Convergence
+
+Implemented:
+
+- **Backend Location Proxy (`backend/src/modules/locations/`):**
+  - Verified server-held token architecture: client never directly requires `LOCATIONIQ_TOKEN`; requests are routed via `GET /api/v1/locations/autocomplete`.
+  - Rate limiting enforced at 60 req/min per IP via `@fastify/rate-limit`.
+  - Query sanitization: bounded length (2–80 chars), rejection of XSS/script payloads.
+  - Suggestion output sanitization: HTML tags stripped, `displayName` bounded to 200 characters, maximum 8 items returned.
+  - Dual storage caching in `locationCache` (PostgreSQL `location_cache` JSONB table and in-memory Map) with 30-day bounded TTL.
+  - Graceful static catalog fallback (`createStaticGeocodingProvider(CURATED_PLACES)`) when LocationIQ token is unset or upstream network times out.
+- **Frontend Hook Convergence (`react/src/hooks/useLocationIQ.ts`):**
+  - Enhanced backend proxy response parsing to seamlessly handle both standard backend `{ source, suggestions }` envelopes and raw array formats.
+  - Correctly maps `displayName`, `subtitle`, `placeId`, and coordinate pairs (`latitude`/`lat`, `longitude`/`lon`).
+- **Test Coverage & Verification:**
+  - Created unit test suite `backend/tests/unit/location-proxy.test.ts` (5 tests passing) covering input rejection, static fallback, 30-day cache hits, output sanitization & bounds, and upstream failure handling.
+  - Ran `react/scripts/test-locationiq.ts` (24 assertions green).
+  - Verified full monorepo with `npm run verify` (typechecks x3, 21 test files / 130 tests passing, SEO tests, and builds x3 green).
+
 ## Known next work (Phase 3 — secure integrations)
 
-- Step 3.1: Implement backend LocationIQ proxy route with server-held secret, debounce, cache, IP/user rate limits, and bounded response size.
 - Step 3.2: High-entropy token or OTP recovery for booking status retrieval (`/api/v1/bookings/status`).
 - Step 3.3: Magic-byte and MIME validation for media file uploads.
 - Step 3.4: Compensating object-store cleanup.
 - Step 3.5: Split staff roles into content, pricing, dispatch, finance, review, audit, and security.
 
 See `docs/agent/00_CONTEXT_HANDOFF.md` and section 8 of the root operating specification.
+

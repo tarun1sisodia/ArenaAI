@@ -149,33 +149,62 @@ export async function fetchLocationIQSuggestions(
     if (response.ok) {
       const resData = (await response.json()) as {
         success?: boolean;
-        data?: Array<{
-          placeId: string;
-          name: string;
-          displayName: string;
-          city: string;
-          state: string;
-          latitude: number;
-          longitude: number;
-        }>;
+        data?:
+          | {
+              source?: string;
+              suggestions?: Array<{
+                placeId: string;
+                name?: string;
+                displayName?: string;
+                city?: string | null;
+                state?: string | null;
+                latitude?: number | null;
+                longitude?: number | null;
+                lat?: number | null;
+                lon?: number | null;
+              }>;
+            }
+          | Array<{
+              placeId: string;
+              name?: string;
+              displayName?: string;
+              city?: string | null;
+              state?: string | null;
+              latitude?: number | null;
+              longitude?: number | null;
+              lat?: number | null;
+              lon?: number | null;
+            }>;
       };
-      const items = Array.isArray(resData?.data) ? resData.data : [];
+      const rawData = resData?.data;
+      const items = Array.isArray(rawData)
+        ? rawData
+        : rawData && typeof rawData === "object" && "suggestions" in rawData && Array.isArray((rawData as any).suggestions)
+          ? (rawData as any).suggestions
+          : [];
+
       if (items.length > 0) {
-        return items.map((place) => ({
-          id: `location-${place.placeId}`,
-          name: place.name || place.displayName,
-          subtitle: place.displayName || `${place.city || ""}, ${place.state || ""}`.trim(),
-          code: "IQ",
-          isLocationIQ: true,
-          lat: typeof place.latitude === "number" ? place.latitude : undefined,
-          lon: typeof place.longitude === "number" ? place.longitude : undefined,
-          raw: {
-            place_id: place.placeId,
-            lat: String(place.latitude),
-            lon: String(place.longitude),
-            display_name: place.displayName,
-          },
-        }));
+        return items.map((place: any) => {
+          const latVal = typeof place.latitude === "number" ? place.latitude : (typeof place.lat === "number" ? place.lat : undefined);
+          const lonVal = typeof place.longitude === "number" ? place.longitude : (typeof place.lon === "number" ? place.lon : undefined);
+          const nameVal = place.name || (place.displayName ? place.displayName.split(",")[0].trim() : "Location");
+          const subtitleVal = place.displayName || `${place.city || ""}, ${place.state || ""}`.trim();
+          return {
+            id: `location-${place.placeId}`,
+            name: nameVal,
+            subtitle: subtitleVal,
+            code: "IQ",
+            isLocationIQ: true,
+            lat: latVal,
+            lon: lonVal,
+            raw: {
+              place_id: place.placeId,
+              lat: String(latVal ?? ""),
+              lon: String(lonVal ?? ""),
+              display_name: place.displayName || nameVal,
+            },
+          };
+        });
       }
     }
   } catch (err: unknown) {
