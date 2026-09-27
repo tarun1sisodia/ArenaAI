@@ -63,6 +63,7 @@
 | 2026-09-14 | Purged drivers & vehicles from database and backend codebase per client instructions; 100% test pass | Antigravity AI |
 | 2026-09-15 | Phase H1: Added HTTP/3 Alt-Svc, Timing-Allow-Origin, Link preload headers, verification suite | Antigravity AI |
 | 2026-09-15 | Phase H2: Applied migration 0012 (partial/covering/trigram indexes), added poolConfig for PgBouncer port 6543, ConcurrencyError optimistic locking & row locks | Antigravity AI |
+| 2026-09-27 | Live catalog: migration 0018 (type → text + trip commercial fields + inline media), public `GET /api/v1/catalog` (+type/tripType filters), `GET /api/v1/media/:id` immutable serve, `GET /api/v1/fleet`; admin CRUD for name/price/distance/availability/stops/tripType; gallery policy (place = multi-image, others = 1 cover) enforced server-side; audit logging on catalog update + media delete; 6 new integration tests (67 total green) | Arena Agent |
 
 
 ## References

@@ -9,4 +9,8 @@ export async function registerFareRoutes(
     config: { rateLimit: { max: 60, timeWindow: "1 minute" } },
     handler: controller.calculate,
   });
+  app.get("/api/v1/fleet", {
+    config: { rateLimit: { max: 60, timeWindow: "1 minute" } },
+    handler: controller.fleet,
+  });
 }

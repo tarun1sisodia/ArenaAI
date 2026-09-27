@@ -1,6 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { contact } from "../../data/contact";
 import { WhatsAppIcon } from "../icons/WhatsAppIcon";
+import {
+  fetchPublishedCatalog,
+  resolveCatalogMediaUrl,
+  type PublicCatalogItem,
+} from "../../services/catalog";
 
 export interface FamousPlace {
   id: string;
@@ -215,12 +220,76 @@ export const FAMOUS_PLACES: FamousPlace[] = [
   },
 ];
 
+/**
+ * Maps a published catalog `place` item (Famous Places & Monuments vertical,
+ * managed from the Catalog CMS with a multi-image gallery) onto the richer
+ * static FamousPlace shape used by this section.
+ */
+function catalogPlaceToFamousPlace(item: PublicCatalogItem): FamousPlace {
+  const text = `${item.title} ${item.routeSummary} ${item.stops.join(" ")}`.toLowerCase();
+  const category: FamousPlace["category"] = /mathura|vrindavan|braj|gokul|nandgaon|barsana/.test(text)
+    ? "braj"
+    : /jaipur|delhi|gwalior|lucknow|varanasi|ayodhya|rishikesh|himachal|shimla|manali|outstation/.test(text)
+      ? "outstation"
+      : "heritage";
+  return {
+    id: item.slug,
+    name: item.title,
+    category,
+    categoryBadge: "Verified Destination",
+    subtitle: item.shortDescription,
+    description: item.description,
+    distance: item.distanceKm !== null && item.distanceKm !== undefined ? `${item.distanceKm} km from Agra` : "Around Agra",
+    driveTime: item.durationText || "Half day visit",
+    bestTime: "Sunrise & early morning",
+    recommendedVehicle: "Sedan or Innova Crysta",
+    highlights: item.stops.slice(0, 3),
+    images:
+      item.gallery.length > 0
+        ? item.gallery
+            .filter((g) => g.mediaType === "image")
+            .map((g) => ({
+              url: resolveCatalogMediaUrl(g.url),
+              caption: g.caption ?? g.altText,
+              alt: g.altText,
+            }))
+        : [],
+  };
+}
+
 export function FamousPlacesSection() {
   const [activeCategory, setActiveCategory] = useState<"all" | "heritage" | "braj" | "outstation">("all");
   const [activeImageIndices, setActiveImageIndices] = useState<Record<string, number>>({});
   const [modalImage, setModalImage] = useState<{ url: string; title: string; caption: string } | null>(null);
+  // Static list first (SSG baseline), then merge places published through the
+  // Catalog CMS — the backend is the single source of truth for new monuments.
+  const [places, setPlaces] = useState<FamousPlace[]>(FAMOUS_PLACES);
 
-  const filteredPlaces = FAMOUS_PLACES.filter(
+  useEffect(() => {
+    let isMounted = true;
+    fetchPublishedCatalog({ type: "place" })
+      .then((items) => {
+        if (!isMounted || items.length === 0) return;
+        setPlaces((prev) => {
+          const byId = new Map(prev.map((p) => [p.id, p]));
+          for (const item of items) {
+            const mapped = catalogPlaceToFamousPlace(item);
+            const existing = byId.get(mapped.id);
+            // Prefer the CMS gallery when it has images; otherwise keep static art.
+            byId.set(mapped.id, existing && mapped.images.length === 0 ? existing : { ...existing, ...mapped });
+          }
+          return [...byId.values()];
+        });
+      })
+      .catch(() => {
+        /* static list remains the fallback */
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const filteredPlaces = places.filter(
     (p) => activeCategory === "all" || p.category === activeCategory
   );
 

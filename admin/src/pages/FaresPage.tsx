@@ -9,8 +9,16 @@ import { Dialog } from "@/components/ui/Dialog";
 import { Input } from "@/components/ui/Input";
 import { Table, TBody, THead, TD, TH, TRow } from "@/components/ui/Table";
 import { fetchAdminFareRules, updateAdminFareRules } from "@/lib/api";
-import { can, type AdminUser, type FareRuleset } from "@/lib/types";
-import { formatINR } from "@/lib/utils";
+import { can, type AdminUser, type FareRuleset, type VehicleTier } from "@/lib/types";
+import { cn, formatINR } from "@/lib/utils";
+
+interface EditableVehicle {
+  tier: VehicleTier;
+  name: string;
+  seats: number;
+  perKm: number;
+  active: boolean;
+}
 
 export function FaresPage({ user }: { user: AdminUser }) {
   const reduce = useReducedMotion();
@@ -32,38 +40,44 @@ export function FaresPage({ user }: { user: AdminUser }) {
     minKmPerDay: 300,
     nightAllowanceCab: 300,
     nightAllowanceTempo: 500,
-    sedan: 10,
-    ertiga: 14,
-    innova: 18,
-    tempo: 25,
-    urbania: 34,
   });
+  const [editVehicles, setEditVehicles] = useState<EditableVehicle[]>([]);
 
   const handleOpenEdit = () => {
     if (!rs) return;
-    const sedanRule = rs.rules.find((r) => r.vehicleTier === "sedan");
-    const ertigaRule = rs.rules.find((r) => r.vehicleTier === "ertiga");
-    const innovaRule = rs.rules.find((r) => r.vehicleTier === "innova-crysta");
-    const tempoRule = rs.rules.find((r) => r.vehicleTier === "tempo-traveller" || r.vehicleTier === "tempo-traveller-12");
-    const urbaniaRule = rs.rules.find((r) => r.vehicleTier === "urbania");
-
     setEditForm({
-      minKmPerDay: sedanRule?.minDailyKm ?? 300,
+      minKmPerDay: rs.rules.find((r) => r.vehicleTier === "sedan")?.minDailyKm ?? 300,
       nightAllowanceCab: 300,
       nightAllowanceTempo: 500,
-      sedan: sedanRule?.perKm ?? 10,
-      ertiga: ertigaRule?.perKm ?? 14,
-      innova: innovaRule?.perKm ?? 18,
-      tempo: tempoRule?.perKm ?? 25,
-      urbania: urbaniaRule?.perKm ?? 34,
     });
+    setEditVehicles(
+      rs.rules.map((r) => ({
+        tier: r.vehicleTier,
+        name: r.label.replace(/\s*\([0-9]+-seater\)\s*$/, "").trim(),
+        seats: r.seats,
+        perKm: r.perKm,
+        active: r.active !== false,
+      })),
+    );
     setSaveError(null);
     setSaveSuccess(null);
     setIsEditOpen(true);
   };
 
+  const handleVehicleChange = (tier: VehicleTier, patch: Partial<EditableVehicle>) => {
+    setEditVehicles((prev) => prev.map((v) => (v.tier === tier ? { ...v, ...patch } : v)));
+  };
+
   const handleSaveFares = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (editVehicles.some((v) => !v.name.trim())) {
+      setSaveError("Every vehicle needs a display name.");
+      return;
+    }
+    if (editVehicles.some((v) => !(v.perKm > 0) || !(v.seats > 0))) {
+      setSaveError("Per-km rate and seats must be positive numbers for every vehicle.");
+      return;
+    }
     setSaving(true);
     setSaveError(null);
     setSaveSuccess(null);
@@ -75,16 +89,16 @@ export function FaresPage({ user }: { user: AdminUser }) {
           nightAllowanceCab: Number(editForm.nightAllowanceCab),
           nightAllowanceTempo: Number(editForm.nightAllowanceTempo),
         },
-        vehicles: [
-          { tier: "sedan", name: "Sedan (Dzire / Etios)", seats: 4, perKm: Number(editForm.sedan) },
-          { tier: "ertiga", name: "Maruti Ertiga", seats: 6, perKm: Number(editForm.ertiga) },
-          { tier: "innova-crysta", name: "Innova Crysta", seats: 7, perKm: Number(editForm.innova) },
-          { tier: "tempo-traveller", name: "Tempo Traveller", seats: 12, perKm: Number(editForm.tempo) },
-          { tier: "urbania", name: "Force Urbania Luxury", seats: 15, perKm: Number(editForm.urbania) },
-        ],
+        vehicles: editVehicles.map((v) => ({
+          tier: v.tier,
+          name: v.name.trim(),
+          seats: Number(v.seats),
+          perKm: Number(v.perKm),
+          active: v.active,
+        })),
       });
 
-      setSaveSuccess("Fare rules updated successfully! Synchronized across backend and customer apps.");
+      setSaveSuccess("Fleet and fare rules updated! Synchronized across backend and customer apps.");
       setReloadKey((k) => k + 1);
       setTimeout(() => {
         setIsEditOpen(false);
@@ -138,10 +152,10 @@ export function FaresPage({ user }: { user: AdminUser }) {
     <div>
       <PageHeader
         eyebrow="Commercial"
-        title="Fare Rules"
-        description="Server-authoritative pricing — rates configured here govern all new customer bookings and desk reservations."
+        title="Fleet & Fare Rules"
+        description="Full desk control of the fleet — names, seats, per-km rates and availability. Changes flow to the customer site automatically."
         actions={
-          <div className="flex items-center gap-2.5">
+          <div className="flex flex-wrap items-center gap-2.5">
             {rs ? (
               <Badge tone="gold" className="px-3 py-1.5">
                 <Compass className="h-3.5 w-3.5" /> Ruleset {rs.version}
@@ -149,7 +163,7 @@ export function FaresPage({ user }: { user: AdminUser }) {
             ) : undefined}
             {canEdit && (
               <Button variant="gold" size="sm" onClick={handleOpenEdit} disabled={!rs || loading}>
-                <Edit3 className="mr-1.5 h-3.5 w-3.5" /> Modify Fares
+                <Edit3 className="mr-1.5 h-3.5 w-3.5" /> Edit Fleet & Fares
               </Button>
             )}
           </div>
@@ -209,43 +223,53 @@ export function FaresPage({ user }: { user: AdminUser }) {
           <Card className="overflow-hidden">
             <CardHeader className="flex-row items-center justify-between">
               <div>
-                <CardTitle>Per-km rate table</CardTitle>
+                <CardTitle>Fleet & per-km rate table</CardTitle>
                 <CardDescription>Effective from {rs.effectiveFrom} · version {rs.version}</CardDescription>
               </div>
-              <Badge tone="teal"><ShieldCheck className="h-3 w-3" /> Locked by agreement</Badge>
+              <Badge tone="teal"><ShieldCheck className="h-3 w-3" /> Server-authoritative</Badge>
             </CardHeader>
-            <Table>
-              <THead>
-                <TRow>
-                  <TH>Vehicle tier</TH>
-                  <TH className="text-right">Seats</TH>
-                  <TH className="text-right">Per km</TH>
-                  <TH className="text-right">Min daily km</TH>
-                  <TH className="text-right">Night / hr</TH>
-                  <TH className="text-right">Driver / day</TH>
-                </TRow>
-              </THead>
-              <TBody>
-                {rs.rules.map((r, i) => (
-                  <motion.tr
-                    key={r.vehicleTier}
-                    initial={reduce ? { opacity: 1 } : { opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.15 + i * 0.06, duration: 0.3 }}
-                    className="transition-colors hover:bg-gold-wash/50"
-                  >
-                    <TD className="text-[13px] font-medium">{r.label}</TD>
-                    <TD className="text-right font-mono text-[13px]">{r.seats}</TD>
-                    <TD className="text-right font-display text-[15px] font-semibold text-gold-text">
-                      {formatINR(r.perKm)}
-                    </TD>
-                    <TD className="text-right font-mono text-[13px]">{r.minDailyKm}</TD>
-                    <TD className="text-right font-mono text-[13px]">{formatINR(r.nightChargePerHour)}</TD>
-                    <TD className="text-right font-mono text-[13px]">{formatINR(r.driverAllowance)}</TD>
-                  </motion.tr>
-                ))}
-              </TBody>
-            </Table>
+            <div className="overflow-x-auto">
+              <Table>
+                <THead>
+                  <TRow>
+                    <TH>Vehicle</TH>
+                    <TH className="text-right">Seats</TH>
+                    <TH className="text-right">Per km</TH>
+                    <TH className="text-right">Min daily km</TH>
+                    <TH className="text-right">Night / hr</TH>
+                    <TH className="text-right">Driver / day</TH>
+                    <TH className="text-center">Availability</TH>
+                  </TRow>
+                </THead>
+                <TBody>
+                  {rs.rules.map((r, i) => (
+                    <motion.tr
+                      key={r.vehicleTier}
+                      initial={reduce ? { opacity: 1 } : { opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.15 + i * 0.06, duration: 0.3 }}
+                      className={cn("transition-colors hover:bg-gold-wash/50", r.active === false && "opacity-60")}
+                    >
+                      <TD className="text-[13px] font-medium">{r.label}</TD>
+                      <TD className="text-right font-mono text-[13px]">{r.seats}</TD>
+                      <TD className="text-right font-display text-[15px] font-semibold text-gold-text">
+                        {formatINR(r.perKm)}
+                      </TD>
+                      <TD className="text-right font-mono text-[13px]">{r.minDailyKm}</TD>
+                      <TD className="text-right font-mono text-[13px]">{formatINR(r.nightChargePerHour)}</TD>
+                      <TD className="text-right font-mono text-[13px]">{formatINR(r.driverAllowance)}</TD>
+                      <TD className="text-center">
+                        {r.active === false ? (
+                          <Badge tone="neutral">Off fleet</Badge>
+                        ) : (
+                          <Badge tone="success">Available</Badge>
+                        )}
+                      </TD>
+                    </motion.tr>
+                  ))}
+                </TBody>
+              </Table>
+            </div>
           </Card>
 
           <Card className="mt-4">
@@ -272,12 +296,13 @@ export function FaresPage({ user }: { user: AdminUser }) {
         </>
       )}
 
-      {/* Modify Fare Rules Modal */}
+      {/* Modify Fleet & Fare Rules Modal */}
       <Dialog
         open={isEditOpen}
         onClose={() => !saving && setIsEditOpen(false)}
-        title="Modify Authoritative Fare Rules"
-        description="Update server-authoritative rates. Changes take effect immediately for all subsequent customer bookings and manual dispatches while preserving past booking snapshots."
+        title="Edit Fleet & Fare Rules"
+        description="Update vehicle names, seats, per-km rates and availability. Changes take effect immediately for the customer site and all subsequent bookings while preserving past booking snapshots."
+        className="sm:max-w-2xl"
       >
         <form onSubmit={handleSaveFares} className="space-y-4">
           {saveError && (
@@ -335,69 +360,80 @@ export function FaresPage({ user }: { user: AdminUser }) {
           </div>
 
           <div className="border-t border-rule pt-3">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-ink-faint">
-              Per-Kilometer Base Rates (₹/km)
+            <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-ink-faint">
+              Fleet — names, seats, ₹/km rate and availability
             </p>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <div>
-                <label className="mb-1 block text-xs text-ink">Sedan (Dzire / Etios · 4 Seats)</label>
-                <Input
-                  type="number"
-                  min="5"
-                  max="100"
-                  required
-                  value={editForm.sedan}
-                  onChange={(e) => setEditForm((f) => ({ ...f, sedan: Number(e.target.value) }))}
-                />
-              </div>
-              <div>
-                <label className="mb-1 block text-xs text-ink">Maruti Ertiga (6 Seats)</label>
-                <Input
-                  type="number"
-                  min="8"
-                  max="150"
-                  required
-                  value={editForm.ertiga}
-                  onChange={(e) => setEditForm((f) => ({ ...f, ertiga: Number(e.target.value) }))}
-                />
-              </div>
-              <div>
-                <label className="mb-1 block text-xs text-ink">Innova Crysta (7 Seats)</label>
-                <Input
-                  type="number"
-                  min="10"
-                  max="200"
-                  required
-                  value={editForm.innova}
-                  onChange={(e) => setEditForm((f) => ({ ...f, innova: Number(e.target.value) }))}
-                />
-              </div>
-              <div>
-                <label className="mb-1 block text-xs text-ink">Tempo Traveller (12 Seats)</label>
-                <Input
-                  type="number"
-                  min="15"
-                  max="300"
-                  required
-                  value={editForm.tempo}
-                  onChange={(e) => setEditForm((f) => ({ ...f, tempo: Number(e.target.value) }))}
-                />
-              </div>
-              <div className="sm:col-span-2">
-                <label className="mb-1 block text-xs text-ink">Force Urbania Luxury (15 Seats)</label>
-                <Input
-                  type="number"
-                  min="20"
-                  max="400"
-                  required
-                  value={editForm.urbania}
-                  onChange={(e) => setEditForm((f) => ({ ...f, urbania: Number(e.target.value) }))}
-                />
-              </div>
+            <p className="mb-3 text-[11px] leading-relaxed text-ink-soft">
+              Deactivating a vehicle hides it from the customer site's live fleet (shown as "on request") without
+              touching existing bookings.
+            </p>
+            <div className="space-y-3">
+              {editVehicles.map((v) => (
+                <fieldset
+                  key={v.tier}
+                  className="rounded-md border border-hairline bg-surface-2/40 p-3"
+                >
+                  <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-12 sm:items-end">
+                    <div className="sm:col-span-5">
+                      <label className="mb-1 block text-[11px] font-semibold text-ink" htmlFor={`v-name-${v.tier}`}>
+                        Display name
+                      </label>
+                      <Input
+                        id={`v-name-${v.tier}`}
+                        value={v.name}
+                        required
+                        maxLength={60}
+                        onChange={(e) => handleVehicleChange(v.tier, { name: e.target.value })}
+                        placeholder="e.g. Innova Crysta"
+                      />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <label className="mb-1 block text-[11px] font-semibold text-ink" htmlFor={`v-seats-${v.tier}`}>
+                        Seats
+                      </label>
+                      <Input
+                        id={`v-seats-${v.tier}`}
+                        type="number"
+                        min="1"
+                        max="60"
+                        required
+                        inputMode="numeric"
+                        value={v.seats}
+                        onChange={(e) => handleVehicleChange(v.tier, { seats: Number(e.target.value) })}
+                      />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <label className="mb-1 block text-[11px] font-semibold text-ink" htmlFor={`v-perkm-${v.tier}`}>
+                        ₹ / km
+                      </label>
+                      <Input
+                        id={`v-perkm-${v.tier}`}
+                        type="number"
+                        min="1"
+                        max="400"
+                        step="0.5"
+                        required
+                        inputMode="decimal"
+                        value={v.perKm}
+                        onChange={(e) => handleVehicleChange(v.tier, { perKm: Number(e.target.value) })}
+                      />
+                    </div>
+                    <label className="flex cursor-pointer items-center gap-2 rounded-sm px-1 py-2 text-xs font-medium text-ink sm:col-span-3 sm:justify-self-end">
+                      <input
+                        type="checkbox"
+                        checked={v.active}
+                        onChange={(e) => handleVehicleChange(v.tier, { active: e.target.checked })}
+                        className="h-4 w-4 accent-gold"
+                      />
+                      {v.active ? "On fleet" : "Off fleet"}
+                    </label>
+                  </div>
+                </fieldset>
+              ))}
             </div>
           </div>
 
-          <div className="mt-5 flex justify-end gap-2 border-t border-rule pt-3">
+          <div className="sticky bottom-0 mt-5 flex justify-end gap-2 border-t border-rule bg-surface pt-3">
             <Button
               type="button"
               variant="outline"
@@ -407,7 +443,7 @@ export function FaresPage({ user }: { user: AdminUser }) {
               Cancel
             </Button>
             <Button type="submit" variant="gold" disabled={saving}>
-              {saving ? "Saving…" : "Save New Rates"}
+              {saving ? "Saving…" : "Save Fleet & Rates"}
             </Button>
           </div>
         </form>

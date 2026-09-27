@@ -12,9 +12,12 @@ import type {
   AuditEntry,
   Booking,
   BookingStatus,
+  CatalogAvailability,
   CatalogCategory,
   CatalogItem,
+  CatalogMedia,
   CatalogStatus,
+  CatalogTripType,
   FareRuleset,
   Inquiry,
   InquiryStatus,
@@ -205,7 +208,7 @@ export async function fetchAdminFareRules(): Promise<FareRuleset> {
   const outstation = data.outstation || {};
   const vehicles = Array.isArray(data.vehicles) ? data.vehicles : [];
 
-  const rules = vehicles.map((v: any) => ({
+  const rules = vehicles.map((v: any) => ({ 
     vehicleTier: (v.tier || v.id) as VehicleTier,
     label: `${v.name || v.id} (${v.seats}-seater)`,
     seats: Number(v.seats) || 4,
@@ -213,6 +216,7 @@ export async function fetchAdminFareRules(): Promise<FareRuleset> {
     minDailyKm: Number(outstation.minKmPerDay) || 300,
     nightChargePerHour: Number(v.perKm) >= 25 ? 90 : 50,
     driverAllowance: Number(v.seats) >= 12 ? (Number(outstation.nightAllowanceTempo) || 500) : (Number(outstation.nightAllowanceCab) || 300),
+    active: v.active !== false,
   }));
 
   const startHour = String(outstation.nightStartHour ?? 22).padStart(2, "0");
@@ -271,13 +275,57 @@ function mapCatalogItem(c: any): CatalogItem {
       .split(/[,·|]/)
       .map((s: string) => s.trim())
       .filter(Boolean),
+    distanceKm: c.distanceKm === null || c.distanceKm === undefined ? null : Number(c.distanceKm),
+    availability: (c.availability as CatalogAvailability) || "available",
+    seatsLeft: c.seatsLeft === null || c.seatsLeft === undefined ? null : Number(c.seatsLeft),
+    stops: Array.isArray(c.stops) ? c.stops : [],
+    tripType: (c.tripType as CatalogTripType | null) ?? null,
   };
 }
 
-export async function fetchAdminCatalog(): Promise<CatalogItem[]> {
-  const json = await apiFetch(`/api/v1/ops/admin/catalog`);
+function mapCatalogMedia(m: any): CatalogMedia {
+  return {
+    id: m.id,
+    catalogItemId: m.catalogItemId || "",
+    mediaType: (m.mediaType as "image" | "video") || "image",
+    altText: m.altText || "",
+    caption: m.caption ?? null,
+    sortOrder: Number(m.sortOrder) || 0,
+    status: (m.status as CatalogStatus) || "draft",
+    url: m.url || m.storagePath || "",
+    mimeType: m.mimeType ?? null,
+    sizeBytes: m.sizeBytes === null || m.sizeBytes === undefined ? null : Number(m.sizeBytes),
+    createdAt: m.createdAt || new Date().toISOString(),
+  };
+}
+
+/** Absolute URL a browser can load for a catalog media entry. */
+export function resolveMediaSrc(url: string): string {
+  if (!url) return "";
+  if (/^https?:\/\//.test(url)) return url;
+  if (url.startsWith("/api/v1/media/")) return `${env.API_BASE_URL}${url}`;
+  return url;
+}
+
+export async function fetchAdminCatalog(filter?: {
+  type?: CatalogCategory | "all";
+  status?: CatalogStatus | "all";
+  q?: string;
+}): Promise<CatalogItem[]> {
+  const params = new URLSearchParams();
+  if (filter?.type && filter.type !== "all") params.set("type", filter.type);
+  if (filter?.status && filter.status !== "all") params.set("status", filter.status);
+  if (filter?.q?.trim()) params.set("q", filter.q.trim());
+  const qs = params.toString();
+  const json = await apiFetch(`/api/v1/ops/admin/catalog${qs ? `?${qs}` : ""}`);
   const items = json?.data?.items || json?.data || [];
   return Array.isArray(items) ? items.map(mapCatalogItem) : [];
+}
+
+export async function fetchAdminCatalogItem(id: string): Promise<{ item: CatalogItem; media: CatalogMedia[] }> {
+  const json = await apiFetch(`/api/v1/ops/admin/catalog/${encodeURIComponent(id)}`);
+  const data = json?.data ?? {};
+  return { item: mapCatalogItem(data), media: Array.isArray(data.media) ? data.media.map(mapCatalogMedia) : [] };
 }
 
 export async function setCatalogItemStatus(id: string, action: "publish" | "archive"): Promise<CatalogItem> {
@@ -297,6 +345,11 @@ export async function createAdminCatalogItem(payload: {
   durationText: string;
   routeSummary: string;
   startingPriceInr: number;
+  distanceKm?: number | null;
+  availability?: CatalogAvailability;
+  seatsLeft?: number | null;
+  stops?: string[];
+  tripType?: CatalogTripType | null;
 }): Promise<CatalogItem> {
   const json = await apiFetch(`/api/v1/ops/admin/catalog`, {
     method: "POST",
@@ -319,6 +372,11 @@ export async function updateAdminCatalogItem(
     durationText: string;
     routeSummary: string;
     startingPriceInr: number;
+    distanceKm: number | null;
+    availability: CatalogAvailability;
+    seatsLeft: number | null;
+    stops: string[];
+    tripType: CatalogTripType | null;
     status: CatalogStatus;
   }>,
 ): Promise<CatalogItem> {
@@ -327,6 +385,51 @@ export async function updateAdminCatalogItem(
     body: JSON.stringify(payload),
   });
   return mapCatalogItem(json?.data ?? { id });
+}
+
+/* ── Catalog media (image manager) ────────────────────────────────────────── */
+
+export async function uploadCatalogMedia(
+  catalogItemId: string,
+  payload: {
+    dataBase64: string;
+    mimeType: "image/webp" | "image/jpeg" | "image/png" | "image/avif";
+    altText: string;
+    caption?: string;
+    sortOrder?: number;
+  },
+): Promise<CatalogMedia> {
+  const json = await apiFetch(`/api/v1/ops/admin/catalog/${encodeURIComponent(catalogItemId)}/media`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+  return mapCatalogMedia(json?.data ?? {});
+}
+
+export async function attachCatalogMediaByPath(
+  catalogItemId: string,
+  payload: { storagePath: string; altText: string; caption?: string; sortOrder?: number },
+): Promise<CatalogMedia> {
+  const json = await apiFetch(`/api/v1/ops/admin/catalog/${encodeURIComponent(catalogItemId)}/media`, {
+    method: "POST",
+    body: JSON.stringify({ ...payload, mediaType: "image" }),
+  });
+  return mapCatalogMedia(json?.data ?? {});
+}
+
+export async function updateCatalogMedia(
+  mediaId: string,
+  payload: Partial<{ altText: string; caption: string | null; sortOrder: number; status: CatalogStatus }>,
+): Promise<CatalogMedia> {
+  const json = await apiFetch(`/api/v1/ops/admin/media/${encodeURIComponent(mediaId)}`, {
+    method: "PATCH",
+    body: JSON.stringify(payload),
+  });
+  return mapCatalogMedia(json?.data ?? { id: mediaId });
+}
+
+export async function deleteCatalogMedia(mediaId: string): Promise<void> {
+  await apiFetch(`/api/v1/ops/admin/media/${encodeURIComponent(mediaId)}`, { method: "DELETE" });
 }
 
 export async function updateAdminFareRules(updates: any): Promise<FareRuleset> {

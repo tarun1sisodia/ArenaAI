@@ -124,8 +124,24 @@ export function FaqPage({ language = "en" }: FaqPageProps) {
     });
   }, [activeCategory, searchQuery]);
 
+  // FAQPage JSON-LD (AEO): exposes every Q&A to Google's rich results and
+  // AI answer engines. Built from the full dataset (not the filtered view).
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: FAQS_DATA.map((faq) => ({
+      "@type": "Question",
+      name: faq.q,
+      acceptedAnswer: { "@type": "Answer", text: faq.a },
+    })),
+  };
+
   return (
     <div className="bg-surface font-body-md text-body-md text-on-surface antialiased min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       {/* 1. HERO SECTION */}
       <section className="relative bg-surface-container-low px-margin-mobile md:px-margin pt-space-xl pb-space-2xl overflow-hidden border-b border-border-warm/60">
         <div className="max-w-[1280px] mx-auto relative z-10 flex flex-col space-y-space-md">

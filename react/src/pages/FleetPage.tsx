@@ -1,7 +1,8 @@
-import { useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import type { SupportedLanguage } from "../config";
 import { contact } from "../data/contact";
 import { WhatsAppIcon } from "../components/icons";
+import { fetchLiveFleet, type PublicFleetVehicle } from "../services/catalog";
 
 export interface FleetPageProps {
   language?: SupportedLanguage;
@@ -199,13 +200,63 @@ const FLEET_FAQS = [
   },
 ];
 
+/** fleet tier (API) → static FleetVehicle id */
+const TIER_TO_ID: Record<string, string> = {
+  sedan: "sedan",
+  ertiga: "ertiga",
+  "innova-crysta": "innova",
+  innova: "innova",
+  "tempo-traveller": "tempo",
+  tempo: "tempo",
+  urbania: "urbania",
+};
+
 export function FleetPage({ language = "en" }: FleetPageProps) {
   const [activeCategory, setActiveCategory] = useState<"all" | "sedan" | "mpv" | "suv" | "group">("all");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  // Live fleet from the admin "Fleet & Fare Rules" editor — names, seats,
+  // per-km rates and availability flow through automatically.
+  const [liveFleet, setLiveFleet] = useState<PublicFleetVehicle[]>([]);
+
+  useEffect(() => {
+    let isMounted = true;
+    fetchLiveFleet()
+      .then((fleet) => {
+        if (isMounted) setLiveFleet(fleet);
+      })
+      .catch(() => {
+        /* static fleet remains the fallback */
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const fleet = useMemo(() => {
+    if (liveFleet.length === 0) return FLEET_DATA;
+    return FLEET_DATA.map((veh) => {
+      const live = liveFleet.find((v) => TIER_TO_ID[v.tier] === veh.id || TIER_TO_ID[v.id] === veh.id);
+      if (!live) return veh;
+      return {
+        ...veh,
+        name: live.name || veh.name,
+        rates: {
+          ...veh.rates,
+          outstationPerKm: live.perKm > 0 ? live.perKm : veh.rates.outstationPerKm,
+        },
+        specs: {
+          ...veh.specs,
+          seats: live.seats > 0 ? `${live.seats} Pax + Chauffeur` : veh.specs.seats,
+        },
+        // Deactivated vehicles stay visible but are clearly marked "on request".
+        highlightBadge: live.active ? veh.highlightBadge : "ON REQUEST • DESK CONFIRMATION",
+      };
+    });
+  }, [liveFleet]);
 
   const filteredVehicles = useMemo(() => {
-    if (activeCategory === "all") return FLEET_DATA;
-    return FLEET_DATA.filter((v) => v.category === activeCategory);
+    if (activeCategory === "all") return fleet;
+    return fleet.filter((v) => v.category === activeCategory);
   }, [activeCategory]);
 
   return (

@@ -56,11 +56,36 @@ export const USER_ROLES = [
 ] as const;
 export type UserRole = (typeof USER_ROLES)[number];
 
-export const CATALOG_TYPES = ["ride", "tour", "package"] as const;
+export const CATALOG_TYPES = ["ride", "tour", "package", "route", "vehicle", "place"] as const;
 export type CatalogType = (typeof CATALOG_TYPES)[number];
 
 export const CONTENT_STATUSES = ["draft", "published", "archived"] as const;
 export type ContentStatus = (typeof CONTENT_STATUSES)[number];
+
+/**
+ * Commercial availability of a catalog item as managed by the operations desk.
+ * - available: bookable normally
+ * - limited: bookable but with constrained capacity (`seatsLeft` carries the count)
+ * - unavailable: paused / sold out — hidden from customer booking CTAs
+ */
+export const CATALOG_AVAILABILITY = ["available", "limited", "unavailable"] as const;
+export type CatalogAvailability = (typeof CATALOG_AVAILABILITY)[number];
+
+/**
+ * Gallery policy (client-confirmed rule):
+ * - `place` items ("Famous Places & Monuments") carry a MULTI-image gallery.
+ * - every other category (ride / tour / package / route / vehicle) uses exactly ONE cover image.
+ */
+export const CATALOG_MEDIA_LIMITS = { place: 12, default: 1 } as const;
+
+export function catalogMediaLimit(type: CatalogType): number {
+  return type === "place" ? CATALOG_MEDIA_LIMITS.place : CATALOG_MEDIA_LIMITS.default;
+}
+
+/** Inline (DB-backed) media upload constraints. */
+export const MEDIA_MAX_BYTES = 2_500_000;
+export const MEDIA_MIME_TYPES = ["image/webp", "image/jpeg", "image/png", "image/avif"] as const;
+export type MediaMimeType = (typeof MEDIA_MIME_TYPES)[number];
 
 export const REVIEW_STATUSES = [
   "draft",
@@ -197,6 +222,15 @@ export type CatalogItemRecord = {
   durationText: string;
   routeSummary: string;
   startingPriceInr: number;
+  /** Distance benchmark in km (outstation routes / excursion corridors). */
+  distanceKm: number | null;
+  availability: CatalogAvailability;
+  /** Optional seat/vehicle count driving "only N left" urgency signals. */
+  seatsLeft: number | null;
+  /** Ordered intermediate stops between origin and destination. */
+  stops: string[];
+  /** Customer-facing trip classification (one-way / round-trip / local-tour / airport-transfer). */
+  tripType: TripType | null;
   version: number;
   createdBy: string | null;
   updatedBy: string | null;
@@ -208,6 +242,11 @@ export type CatalogItemRecord = {
 export type CatalogMediaRecord = {
   id: string;
   catalogItemId: string;
+  /**
+   * Public URL or asset path of the media. For DB-backed uploads this is the
+   * API serve route (`/api/v1/media/:id`); for path-referenced media it is the
+   * asset path (e.g. `/assets/places/taj-mahal.webp`).
+   */
   storagePath: string;
   mediaType: "image" | "video";
   altText: string;
@@ -216,6 +255,12 @@ export type CatalogMediaRecord = {
   status: ContentStatus;
   sourceType: "admin_upload" | "customer_upload" | "supplier";
   copyrightOwner: string | null;
+  /** MIME type when the bytes are stored inline (uploads). */
+  mimeType: string | null;
+  /** Base64-encoded image bytes when stored inline (uploads). */
+  contentBase64: string | null;
+  /** Decoded size of the inline upload in bytes. */
+  sizeBytes: number | null;
   createdBy: string | null;
   approvedBy: string | null;
   publishedAt: string | null;

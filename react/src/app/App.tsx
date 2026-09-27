@@ -15,6 +15,7 @@ const PrivacyPage = lazy(() => import("../pages/PrivacyPage").then((m) => ({ def
 const NotFoundPage = lazy(() => import("../pages/NotFoundPage").then((m) => ({ default: m.NotFoundPage })));
 const RouteDetailPage = lazy(() => import("../pages/RouteDetailPage").then((m) => ({ default: m.RouteDetailPage })));
 const PackageDetailPage = lazy(() => import("../pages/PackageDetailPage").then((m) => ({ default: m.PackageDetailPage })));
+const LivePackageDetailPage = lazy(() => import("../pages/LivePackageDetailPage").then((m) => ({ default: m.LivePackageDetailPage })));
 const VehicleDetailPage = lazy(() => import("../pages/VehicleDetailPage").then((m) => ({ default: m.VehicleDetailPage })));
 const BookingPage = lazy(() => import("../features/booking/BookingPage").then((m) => ({ default: m.BookingPage })));
 const MarketingPage = lazy(() => import("../pages/MarketingPage").then((m) => ({ default: m.MarketingPage })));
@@ -265,6 +266,14 @@ export function App({ pathname: propPathname }: AppProps = {}) {
     return p.endsWith(`/${item.slug}`) || p.endsWith(item.slug);
   });
 
+  // Live catalog detail: any /packages/<slug> that is not a static package is
+  // resolved against the backend catalog at runtime (single source of trips).
+  const livePackageSlug =
+    !matchedPackage &&
+    /\/packages\/[a-z0-9-]+/i.test(pathname.replace(/\.html$/, ""))
+      ? (pathname.replace(/\/$/, "").replace(/\.html$/, "").match(/\/packages\/([a-z0-9-]+)/i)?.[1] ?? null)
+      : null;
+
   const matchedVehicle =
     (pathname.includes("/vehicles/") || pathname.includes("/fleet/")) &&
     vehicles.find((item) => {
@@ -280,6 +289,7 @@ export function App({ pathname: propPathname }: AppProps = {}) {
     Boolean(activeRoute) ||
     Boolean(matchedPackage) ||
     Boolean(matchedVehicle) ||
+    Boolean(livePackageSlug) ||
     packages.some((item) => pathname.endsWith(item.slug) || pathname.endsWith(item.slug + "/"));
 
   const is404 =
@@ -320,6 +330,8 @@ export function App({ pathname: propPathname }: AppProps = {}) {
             <RouteDetailPage language={language} route={activeRoute} />
           ) : matchedPackage ? (
             <PackageDetailPage language={language} pkg={matchedPackage} />
+          ) : livePackageSlug ? (
+            <LivePackageDetailPage slug={livePackageSlug} />
           ) : matchedVehicle ? (
             <VehicleDetailPage language={language} vehicle={matchedVehicle} />
           ) : section === "services" ? (
