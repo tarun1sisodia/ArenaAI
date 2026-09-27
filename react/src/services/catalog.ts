@@ -56,6 +56,10 @@ export interface PublicFleetVehicle {
   active: boolean;
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === "object";
+}
+
 /** Absolute, browser-loadable URL for a catalog media entry. */
 export function resolveCatalogMediaUrl(url: string | null | undefined): string {
   if (!url) return "";
@@ -82,14 +86,18 @@ function normalizeItem(raw: Record<string, unknown>): PublicCatalogItem {
   const gallery = Array.isArray(raw.gallery)
     ? (raw.gallery as Record<string, unknown>[])
         .filter((g) => g && typeof g === "object")
-        .map((g) => ({
-          id: String(g.id ?? ""),
-          mediaType: (g.mediaType as "image" | "video") ?? "image",
-          altText: String(g.altText ?? ""),
-          caption: g.caption ? String(g.caption) : null,
-          sortOrder: Number(g.sortOrder) || 0,
-          url: String(g.url ?? ""),
-        }))
+        .map((g) => {
+          const url = typeof g.url === "string" ? g.url.trim() : "";
+          return {
+            id: String(g.id ?? ""),
+            mediaType: (g.mediaType as "image" | "video") ?? "image",
+            altText: String(g.altText ?? ""),
+            caption: g.caption ? String(g.caption) : null,
+            sortOrder: Number(g.sortOrder) || 0,
+            url,
+          };
+        })
+        .filter((g) => Boolean(g.url))
         .sort((a, b) => a.sortOrder - b.sortOrder)
     : [];
   return {
@@ -128,7 +136,7 @@ export async function fetchPublishedCatalog(
   if (filter.tripType) params.set("tripType", filter.tripType);
   const qs = params.toString();
   const data = await getJson<unknown[]>(`/api/v1/catalog${qs ? `?${qs}` : ""}`);
-  return (Array.isArray(data) ? data : []).map((raw) => normalizeItem(raw as Record<string, unknown>));
+  return (Array.isArray(data) ? data : []).filter(isRecord).map(normalizeItem);
 }
 
 /** Published catalog item by slug (used by dynamic detail pages). */

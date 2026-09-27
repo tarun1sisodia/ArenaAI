@@ -23,14 +23,5 @@
 /robots.txt
   Cache-Control: public, max-age=3600
 
-# H1 (Network & Transport): Early Hints fuel. Preload the homepage LCP image —
-# this href must match the HeroBentoGrid fetchPriority="high" <img src> exactly
-# (no srcset in markup yet) so the preload is reused, not double-downloaded.
-# Cloudflare turns these Link headers into 103 Early Hints once the toggle is ON.
-# Ownership passes to H7 (SmartImage/AVIF) — update these hrefs when markup changes.
-/
-  Link: </assets/packages/taj-dawn.webp>; rel=preload; as=image; fetchpriority=high
-/en/
-  Link: </assets/packages/taj-dawn.webp>; rel=preload; as=image; fetchpriority=high
-/hi/
-  Link: </assets/packages/taj-dawn.webp>; rel=preload; as=image; fetchpriority=high
+# Do not preload a fixed image here. The current homepage chooses its first
+# image at runtime, so a fixed Early Hints preload would waste bandwidth.

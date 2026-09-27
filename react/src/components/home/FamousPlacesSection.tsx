@@ -225,13 +225,26 @@ export const FAMOUS_PLACES: FamousPlace[] = [
  * managed from the Catalog CMS with a multi-image gallery) onto the richer
  * static FamousPlace shape used by this section.
  */
-function catalogPlaceToFamousPlace(item: PublicCatalogItem): FamousPlace {
+function catalogPlaceToFamousPlace(item: PublicCatalogItem): FamousPlace | null {
   const text = `${item.title} ${item.routeSummary} ${item.stops.join(" ")}`.toLowerCase();
   const category: FamousPlace["category"] = /mathura|vrindavan|braj|gokul|nandgaon|barsana/.test(text)
     ? "braj"
     : /jaipur|delhi|gwalior|lucknow|varanasi|ayodhya|rishikesh|himachal|shimla|manali|outstation/.test(text)
       ? "outstation"
       : "heritage";
+  const images = item.gallery
+    .filter((g) => g.mediaType === "image" && Boolean(g.url))
+    .map((g) => ({
+      url: resolveCatalogMediaUrl(g.url),
+      caption: g.caption ?? g.altText,
+      alt: g.altText,
+    }))
+    .filter((image) => Boolean(image.url));
+
+  // Ignore malformed CMS places rather than allowing one bad record to crash
+  // the entire homepage.
+  if (images.length === 0) return null;
+
   return {
     id: item.slug,
     name: item.title,
@@ -244,16 +257,7 @@ function catalogPlaceToFamousPlace(item: PublicCatalogItem): FamousPlace {
     bestTime: "Sunrise & early morning",
     recommendedVehicle: "Sedan or Innova Crysta",
     highlights: item.stops.slice(0, 3),
-    images:
-      item.gallery.length > 0
-        ? item.gallery
-            .filter((g) => g.mediaType === "image")
-            .map((g) => ({
-              url: resolveCatalogMediaUrl(g.url),
-              caption: g.caption ?? g.altText,
-              alt: g.altText,
-            }))
-        : [],
+    images,
   };
 }
 
@@ -274,6 +278,7 @@ export function FamousPlacesSection() {
           const byId = new Map(prev.map((p) => [p.id, p]));
           for (const item of items) {
             const mapped = catalogPlaceToFamousPlace(item);
+            if (!mapped) continue;
             const existing = byId.get(mapped.id);
             // Prefer the CMS gallery when it has images; otherwise keep static art.
             byId.set(mapped.id, existing && mapped.images.length === 0 ? existing : { ...existing, ...mapped });
@@ -343,6 +348,7 @@ export function FamousPlacesSection() {
         {filteredPlaces.map((place) => {
           const currentImgIdx = activeImageIndices[place.id] || 0;
           const activeImg = place.images[currentImgIdx] || place.images[0];
+          if (!activeImg) return null;
 
           return (
             <article
