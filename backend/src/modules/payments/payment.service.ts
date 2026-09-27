@@ -4,23 +4,15 @@ import type { Clock } from "../../shared/clock.js";
 import { toIso } from "../../shared/clock.js";
 import { AppError, Errors } from "../../shared/errors.js";
 import { newId, sha256Hex, timingSafeEqualString } from "../../shared/ids.js";
-import { convertInrPaiseToMinor, rupeesToPaise } from "../../shared/money.js";
+import { rupeesToPaise } from "../../shared/money.js";
 import { assertTransition } from "../../shared/stateMachine.js";
 import type {
-  Currency,
-  PaymentProviderName,
   PaymentRecord,
 } from "../../types/domain.js";
 import type { PaymentProviderRegistry } from "../../providers/PaymentProvider.js";
 import { assertBookingPayable } from "../bookings/booking.service.js";
 import type { createNotificationService } from "../notifications/notification.service.js";
 import type { CreatePaymentCheckoutRequest } from "./payment.schema.js";
-
-const ALLOWED: Record<PaymentProviderName, Currency[]> = {
-  razorpay: ["INR"],
-  paypal: ["USD", "EUR", "GBP"],
-  card: ["INR", "USD", "EUR", "GBP"],
-};
 
 // Allowed return/cancel URL origins - must be from our CORS list or relative
 function isAllowedReturnUrl(url: string, allowedOrigins: string[]): boolean {
@@ -75,7 +67,6 @@ export function createPaymentService(deps: {
           throw Errors.notFound("BOOKING_NOT_FOUND", "The booking could not be found or verified.");
         }
         assertBookingPayable(booking);
-        assertProviderCurrency(input.provider, input.currency);
 
         // Double-check idempotency inside transaction
         const insideExisting = await trx.payments.getByIdempotencyKey(input.idempotencyKey);
@@ -88,27 +79,22 @@ export function createPaymentService(deps: {
           return toPublicCheckout(open);
         }
 
-        const inrPaise = rupeesToPaise(booking.advanceAmount);
-        if (!Number.isFinite(inrPaise) || inrPaise <= 0) {
+        // Razorpay is INR only — amount is always in paise
+        const amountMinor = rupeesToPaise(booking.advanceAmount);
+        if (!Number.isFinite(amountMinor) || amountMinor <= 0) {
           throw new AppError("INVALID_AMOUNT", "Invalid booking amount.", 500);
         }
 
-        const amountMinor = convertInrPaiseToMinor(inrPaise, input.currency, {
-          USD: deps.env.FX_USD_PER_INR,
-          EUR: deps.env.FX_EUR_PER_INR,
-          GBP: deps.env.FX_GBP_PER_INR,
-        });
-
-        const adapter = deps.providers[input.provider];
+        const adapter = deps.providers["razorpay"];
         if (!adapter) {
-          throw new AppError("UNSUPPORTED_PROVIDER", `Payment provider ${input.provider} not configured.`, 400);
+          throw new AppError("UNSUPPORTED_PROVIDER", "Razorpay payment provider not configured.", 400);
         }
 
         const checkout = await adapter.createCheckout({
           bookingId: booking.id,
           ticketId: booking.ticketId,
           amountMinor,
-          currency: input.currency,
+          currency: "INR",
           customerName: booking.customerName,
           customerPhone: booking.customerPhone,
           customerEmail: booking.customerEmail,
@@ -130,15 +116,15 @@ export function createPaymentService(deps: {
         const payment: PaymentRecord = {
           id: newId(),
           bookingId: booking.id,
-          provider: input.provider,
+          provider: "razorpay",
           providerOrderId: checkout.providerOrderId,
           providerPaymentId: null,
           checkoutSessionId: checkout.checkoutSessionId,
           checkoutUrl: checkout.checkoutUrl,
           publicClientToken: checkout.publicClientToken,
           amountMinor: checkout.amountMinor,
-          currency: checkout.currency,
-          inrAmountPaise: inrPaise,
+          currency: "INR",
+          inrAmountPaise: amountMinor,
           status: "pending",
           paymentMethod: null,
           feeMinor: 0,
@@ -185,7 +171,7 @@ export function createPaymentService(deps: {
     },
 
     async reconcileWebhook(input: {
-      provider: PaymentProviderName;
+      provider: "razorpay";
       rawBody: Buffer;
       headers: Record<string, string | string[] | undefined>;
     }) {
@@ -428,15 +414,6 @@ export function createPaymentService(deps: {
   };
 }
 
-function assertProviderCurrency(provider: PaymentProviderName, currency: Currency): void {
-  if (!ALLOWED[provider].includes(currency)) {
-    throw new AppError(
-      "UNSUPPORTED_PAYMENT_OPTION",
-      `${provider} does not accept ${currency}.`,
-      400,
-    );
-  }
-}
 
 function toPublicCheckout(payment: PaymentRecord, ticketId?: string) {
   return {

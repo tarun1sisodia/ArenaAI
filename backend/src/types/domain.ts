@@ -44,10 +44,10 @@ export const PAYMENT_STATUSES = [
 ] as const;
 export type PaymentStatus = (typeof PAYMENT_STATUSES)[number];
 
-export const PAYMENT_PROVIDERS = ["razorpay", "paypal", "card"] as const;
+export const PAYMENT_PROVIDERS = ["razorpay"] as const;
 export type PaymentProviderName = (typeof PAYMENT_PROVIDERS)[number];
 
-export const CURRENCIES = ["INR", "USD", "EUR", "GBP"] as const;
+export const CURRENCIES = ["INR"] as const;
 export type Currency = (typeof CURRENCIES)[number];
 
 export const USER_ROLES = [

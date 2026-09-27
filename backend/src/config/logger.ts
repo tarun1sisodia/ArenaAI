@@ -21,8 +21,6 @@ const SECRET_KEYS = [
   "providerOrderId",
   "providerPaymentId",
   "x-razorpay-signature",
-  "paypal-transmission-sig",
-  "x-card-signature",
 ];
 
 function redactPaths(): string[] {
@@ -30,8 +28,6 @@ function redactPaths(): string[] {
     "req.headers.authorization",
     "req.headers.cookie",
     "req.headers[\"x-razorpay-signature\"]",
-    "req.headers[\"paypal-transmission-sig\"]",
-    "req.headers[\"x-card-signature\"]",
     "req.headers[\"x-booking-token\"]",
   ];
   for (const key of SECRET_KEYS) {

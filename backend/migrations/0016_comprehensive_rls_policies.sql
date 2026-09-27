@@ -36,7 +36,7 @@ CREATE POLICY catalog_media_public_read ON catalog_item_media
 DROP POLICY IF EXISTS promo_codes_public_read ON promo_codes;
 CREATE POLICY promo_codes_public_read ON promo_codes
     FOR SELECT
-    USING (active = true);
+    USING (is_active = true);
 
 -- Public / Anonymous insert capability for inquiries (contact & lead forms)
 DROP POLICY IF EXISTS inquiries_anon_insert ON inquiries;
