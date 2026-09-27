@@ -904,7 +904,7 @@ export function CatalogPage({ user }: { user: AdminUser }) {
               <Input
                 id="form-price"
                 type="number"
-                min="100"
+                min="1"
                 inputMode="numeric"
                 value={formPrice}
                 onChange={(e) => setFormPrice(Number(e.target.value))}

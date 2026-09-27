@@ -2,6 +2,10 @@
 
 ## 2026-09-27
 
+### Catalog test-price allowance
+
+The admin catalog starting-fare input now accepts values from ₹1. The backend already accepted positive values. This is for Razorpay Test Mode/catalog-flow testing only; it does not bypass server-authoritative fare calculation, payment verification, or production payment-provider safeguards.
+
 ### `0d6bd95` — SEO/AEO/GEO lifecycle governance
 
 Merged into the root operating specification:
