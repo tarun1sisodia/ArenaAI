@@ -11,9 +11,10 @@ import {
 } from "../../types/domain.js";
 import { CATALOG_RAW_DATA, VEHICLES } from "../fares/fare.catalogue.js";
 import type { AttachMediaSchema, CreateCatalogSchema, PublicCatalogQuerySchema, UpdateCatalogSchema, UpdateMediaSchema } from "./catalog.schema.js";
+import { mediaObjectPath, type MediaStorage } from "./media.storage.js";
 import type { z } from "zod";
 
-export function createCatalogService(deps: { db: Repositories; clock: Clock }) {
+export function createCatalogService(deps: { db: Repositories; clock: Clock; mediaStorage?: MediaStorage | null }) {
   let manifestVersion = 1;
   let lastRegeneratedAt = toIso(deps.clock.now());
   let cachedManifest: any = null;
@@ -368,10 +369,42 @@ export function createCatalogService(deps: { db: Repositories; clock: Clock }) {
       const inline = Boolean(input.dataBase64);
       const sizeBytes = inline ? Buffer.from(input.dataBase64 as string, "base64").length : null;
 
+      // Uploaded bytes go to the configured object store (S3 protocol or the
+      // Supabase Storage SDK, bucket default "documents") when one is
+      // configured. Either way they're served back through
+      // /api/v1/media/:id — this backend fetches the bytes from the bucket
+      // on demand, so the bucket can stay private and there's never a
+      // public/presigned URL to expire. Without storage credentials (local
+      // dev / tests) we fall back to storing the bytes inline in Postgres.
+      let storagePath: string;
+      let contentBase64: string | null = null;
+      if (inline && deps.mediaStorage) {
+        const buffer = Buffer.from(input.dataBase64 as string, "base64");
+        const objectPath = mediaObjectPath(item.id, mediaId, input.mimeType ?? null);
+        try {
+          await deps.mediaStorage.upload({
+            path: objectPath,
+            buffer,
+            mimeType: input.mimeType as string,
+          });
+        } catch (err) {
+          throw Errors.unavailable(
+            "MEDIA_STORAGE_ERROR",
+            err instanceof Error ? err.message : "Could not upload the image to storage.",
+          );
+        }
+        storagePath = `/api/v1/media/${mediaId}`;
+      } else if (inline) {
+        storagePath = `/api/v1/media/${mediaId}`;
+        contentBase64 = input.dataBase64 as string;
+      } else {
+        storagePath = input.storagePath as string;
+      }
+
       return deps.db.media.create({
         id: mediaId,
         catalogItemId: item.id,
-        storagePath: inline ? `/api/v1/media/${mediaId}` : (input.storagePath as string),
+        storagePath,
         mediaType: input.mediaType,
         altText: input.altText,
         caption: input.caption ?? null,
@@ -382,7 +415,7 @@ export function createCatalogService(deps: { db: Repositories; clock: Clock }) {
         sourceType: "admin_upload",
         copyrightOwner: null,
         mimeType: inline ? (input.mimeType as string) : null,
-        contentBase64: inline ? (input.dataBase64 as string) : null,
+        contentBase64,
         sizeBytes,
         createdBy: actor.id,
         approvedBy: actor.id,
@@ -410,6 +443,13 @@ export function createCatalogService(deps: { db: Repositories; clock: Clock }) {
       const item = await deps.db.media.getById(id);
       if (!item) throw Errors.notFound("CATALOG_NOT_FOUND", "Media not found.");
       const now = toIso(deps.clock.now());
+      // Bucket-backed uploads (mimeType set but nothing inlined) also need the
+      // object removed from storage so the "documents" bucket doesn't fill up
+      // with orphaned files.
+      if (deps.mediaStorage && item.mimeType && !item.contentBase64 && item.sourceType === "admin_upload") {
+        const objectPath = mediaObjectPath(item.catalogItemId, item.id, item.mimeType);
+        await deps.mediaStorage.remove(objectPath).catch(() => undefined);
+      }
       await deps.db.media.delete(id);
       await deps.db.audit.append({
         id: newId(),
@@ -427,15 +467,28 @@ export function createCatalogService(deps: { db: Repositories; clock: Clock }) {
       return { deleted: true, id };
     },
 
-    /** Raw inline media bytes for the public serve route. */
+    /** Raw media bytes for the public serve route — inline DB bytes, or a
+     *  live fetch from the configured object store bucket. */
     async getMediaContent(id: string) {
       const item = await deps.db.media.getById(id);
-      if (!item || !item.contentBase64 || !item.mimeType) return null;
-      return {
-        buffer: Buffer.from(item.contentBase64, "base64"),
-        mimeType: item.mimeType,
-        updatedAt: item.createdAt,
-      };
+      if (!item || !item.mimeType) return null;
+      if (item.contentBase64) {
+        return {
+          buffer: Buffer.from(item.contentBase64, "base64"),
+          mimeType: item.mimeType,
+          updatedAt: item.createdAt,
+        };
+      }
+      if (deps.mediaStorage && item.storagePath === `/api/v1/media/${item.id}`) {
+        const objectPath = mediaObjectPath(item.catalogItemId, item.id, item.mimeType);
+        try {
+          const buffer = await deps.mediaStorage.download(objectPath);
+          return { buffer, mimeType: item.mimeType, updatedAt: item.createdAt };
+        } catch {
+          return null;
+        }
+      }
+      return null;
     },
   };
 }

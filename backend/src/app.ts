@@ -25,6 +25,7 @@ import { createBookingService } from "./modules/bookings/booking.service.js";
 import { createCatalogController } from "./modules/catalog/catalog.controller.js";
 import { registerCatalogRoutes } from "./modules/catalog/catalog.routes.js";
 import { createCatalogService } from "./modules/catalog/catalog.service.js";
+import { createMediaStorage } from "./modules/catalog/media.storage.js";
 import { createFareController } from "./modules/fares/fare.controller.js";
 import { registerFareRoutes } from "./modules/fares/fare.routes.js";
 import { createFareService } from "./modules/fares/fare.service.js";
@@ -185,7 +186,15 @@ export async function buildApp(options: AppOptions): Promise<BuiltApp> {
   const bookingService = createBookingService({ db, clock, fareVersion: env.FARE_RULES_VERSION });
   const paymentService = createPaymentService({ db, clock, env, providers, notifications });
   const adminService = createAdminService({ db, clock });
-  const catalogService = createCatalogService({ db, clock });
+  const mediaStorage = createMediaStorage(env);
+  app.log.info(
+    mediaStorage
+      ? `Catalog media uploads → "${mediaStorage.bucket}" bucket via ${
+          mediaStorage.backend === "s3" ? "S3 protocol" : "Supabase Storage SDK"
+        }`
+      : "Catalog media uploads → inline DB storage (no S3_* or SUPABASE_SERVICE_ROLE_KEY configured)",
+  );
+  const catalogService = createCatalogService({ db, clock, mediaStorage });
   const reviewService = createReviewService({ db, clock });
   const locationService = createLocationService({ db, clock, geocoding });
   const inquiryService = createInquiryService({ db, clock });
