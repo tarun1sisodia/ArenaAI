@@ -142,7 +142,7 @@ zero.
 
 The original static HTML/CSS/JS site (Python SSG generator, `book.html` app,
 GitHub Pages hosting) was retired when the React platform moved into `react/`.
-Documents from that era remain under `docs/` for reference
+Documents from that era remain under `docs/project/` for reference
 (`02_PROJECT_CONTEXT.md`, `03_PHASE_PLAN.md`, `04_PROGRESS_TRACKER.md`, `PRD.md`
 and friends); wherever they disagree with this file or `docs/DEPLOYMENT.md`, the
 monorepo commands here win.

@@ -565,7 +565,7 @@ When implementing backend steps:
 - [`API.md`](API.md) — Canonical API Contract Specification
 - [`MODELS.md`](MODELS.md) — Canonical Data Models Specification
 - [`PLAN.md`](PLAN.md) — Phased Implementation Plan
-- [`PROGRESS.md`](PROGRESS.md) — Living Implementation Tracker
+- [`PROGRESS.md`](docs/project/PROGRESS.md) — Living Implementation Tracker
 - [`BUGS.md`](BUGS.md) — Risk and Defect Register
 - [`docs/PAYMENT_SYSTEM.md`](docs/PAYMENT_SYSTEM.md) — Razorpay Zero-Miss Payment Gateway Specification
 - [`.agents/rules/PAYMENT_AGENT_RULES.md`](.agents/rules/PAYMENT_AGENT_RULES.md) — Financial Security Rules
