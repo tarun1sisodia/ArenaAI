@@ -432,14 +432,237 @@ These changes do not claim that the full source-of-truth migration is complete. 
 
 ---
 
-## 11. Final acceptance definition
+## 11. SEO, AEO, GEO and content lifecycle governance
+
+### 11.1 Core policy
+
+> **Archive operationally; never erase editorially by default.**
+
+Trips, routes, packages, verticals, fleet pages, images and other public content must have a lifecycle state. The admin must not delete a page solely because it is unavailable for booking. Stable URLs, useful content, backlinks, search history and entity relationships must be preserved unless the page is genuinely obsolete, legally incorrect, duplicative or permanently irrelevant.
+
+The customer must never be able to archive, delete, publish, unpublish, redirect or alter operational content.
+
+### 11.2 Required lifecycle states
+
+```text
+draft → published → paused → archived → retired
+```
+
+| State | Public URL | Indexable | Sitemap | Bookable | Required behavior |
+|---|---:|---:|---:|---:|---|
+| `draft` | No | No | No | No | Admin-only preview; never exposed through public APIs |
+| `published` | Yes | Yes | Yes | Yes | Current title, content, media, availability and live booking CTA |
+| `paused` | Yes | Usually yes | Usually yes | No | Preserve page; show unavailable/seasonal notice and alternatives |
+| `archived` | Yes | Usually yes | Yes if useful | No | Preserve URL and useful content; remove booking CTA; show current alternatives |
+| `retired` | Redirect or 410 | Depends | No | No | Only for obsolete, duplicate, legally incorrect or permanently irrelevant content |
+
+The database model must retain the content record and include fields equivalent to:
+
+```ts
+{
+  status: "draft" | "published" | "paused" | "archived" | "retired",
+  slug: string,
+  publishedAt: string | null,
+  pausedAt: string | null,
+  archivedAt: string | null,
+  retiredAt: string | null,
+  replacementItemId: string | null,
+  redirectTarget: string | null,
+  lastReviewedAt: string | null,
+  indexPolicy: "index" | "noindex",
+  bookable: boolean
+}
+```
+
+`status`, `indexPolicy`, and `bookable` must be derived and validated by the backend. The frontend must not be trusted to set a contradictory combination such as `archived + bookable=true` or `draft + index=true`.
+
+### 11.3 Stable URL policy
+
+1. Preserve successful URLs even when price, availability or editorial content changes.
+2. Treat the slug as the public identity of the content entity, not as a disposable sales record.
+3. Do not redirect discontinued content to the homepage.
+4. Use a 301 redirect only when the replacement satisfies substantially the same search intent.
+5. Use 410 only after checking organic traffic, backlinks, Search Console data and replacement relevance.
+6. If a page remains useful but is no longer sold, keep its canonical URL self-referencing and render an unavailable informational page.
+
+Examples:
+
+```text
+/packages/taj-mahal-sunrise-tour
+/routes/agra-to-delhi
+/fleet/innova-crysta
+```
+
+These URLs should remain stable while the underlying operational status changes.
+
+### 11.4 Archived and paused page requirements
+
+An archived or paused page must not become an empty shell. It should contain:
+
+- Original or still-accurate title
+- Clear availability notice
+- Accurate destination/service intent
+- Current alternatives and related active pages
+- Related routes, fleet choices and enquiry CTA
+- Useful FAQs
+- Appropriate images and alt text
+- Last reviewed date
+- No stale current price presented as bookable
+- No active `Book Now` action that creates a booking for the unavailable item
+
+Recommended customer presentation:
+
+```text
+This exact package is currently unavailable.
+Explore current alternatives with live vehicle availability and server-calculated pricing.
+[Explore current options] [Ask the travel desk]
+```
+
+For an archived package, structured data must not claim `InStock`. Use `OutOfStock` where an offer is still represented, or omit `Offer` entirely when no current price is valid.
+
+### 11.5 Admin lifecycle commands
+
+The admin CMS must expose explicit actions instead of a generic destructive delete:
+
+```text
+Save Draft
+Publish
+Pause Sales
+Archive
+Restore
+Replace With New Version
+Redirect To Replacement
+Retire Permanently
+```
+
+Before archiving, show impact information where available:
+
+- Organic visits in the last 90 days
+- Search Console impressions/clicks
+- Ranking keywords
+- Referring domains/backlinks
+- Existing replacement candidates
+- Number of internal links
+
+Before retirement, require an explicit reason and one selected outcome:
+
+```text
+Preserve as unavailable informational page
+301 redirect to selected replacement
+Return 410 Gone
+```
+
+Every lifecycle mutation must be role-checked, audited with before/after state, and reflected in the public catalog/manifest policy.
+
+### 11.6 SEO requirements
+
+Every important route, package, vertical and fleet page must have:
+
+- Stable self-referencing canonical URL unless a documented replacement redirect applies
+- Unique title and meta description
+- Breadcrumbs and contextual internal links
+- Accurate availability language
+- Server-rendered or prerendered title, summary, destination and basic itinerary
+- Valid image URLs and descriptive alt text
+- `lastReviewedAt` or equivalent freshness signal
+- No contradictory static price after a backend price change
+
+Sitemap rules:
+
+- Include published content.
+- Include paused content when it remains useful.
+- Include archived content when it remains a useful search landing page.
+- Exclude drafts, private admin records, thin duplicates, retired 404/410 URLs and content intentionally removed for legal/accuracy reasons.
+- Use truthful `lastmod`; do not touch every URL during every deployment.
+- Keep separate sitemaps where useful: pages, routes, packages, fleet and images.
+
+The generated sitemap must be derived from lifecycle state and canonical URL policy, not simply from every database record.
+
+### 11.7 AEO requirements
+
+Answer-oriented pages must expose concise, crawlable answers in HTML for:
+
+- What is included?
+- What is the duration?
+- Is the trip currently available?
+- What vehicles are available?
+- What is the current pricing rule or starting-price qualification?
+- Can the trip be customized?
+- How does booking work?
+- What happens if the package is paused or archived?
+
+Use appropriate Schema.org types:
+
+- `TouristTrip`
+- `Product`
+- `Service`
+- `Offer`
+- `FAQPage`
+- `BreadcrumbList`
+- `ImageObject`
+- `LocalBusiness`
+
+Do not mark archived, paused or unavailable content as in stock. Do not publish historical prices as current offers. If no valid current offer exists, omit the offer or clearly mark it unavailable.
+
+Important answer content must not exist only after a client-side fetch. Runtime hydration may refresh values, but initial HTML must remain useful to crawlers and answer systems.
+
+### 11.8 GEO and entity consistency requirements
+
+Maintain consistent business identity across the website, Google Business Profile, social profiles and relevant citations:
+
+- Business name
+- Phone number
+- Address and service area
+- Official domain
+- Booking/contact details
+- Core services and operating geography
+
+Build clear internal entity relationships:
+
+```text
+SK Baghel Tour & Travels
+  ├── operates in Agra
+  ├── offers private vehicles
+  ├── serves routes from Agra
+  ├── offers tours and packages
+  └── provides booking and support
+```
+
+Link related pages logically: route → fleet → booking; package → stops → route; archived item → current replacement. Keep availability, contact, service area and business facts consistent so search engines and generative systems do not receive contradictory signals.
+
+### 11.9 Source-of-truth and cache rules for SEO
+
+1. Backend catalog/fare/media state is authoritative.
+2. Static SSG data is an editorial/SEO baseline only.
+3. Customer hydration must reconcile static pages with live published state.
+4. A live API failure must show a stale/unavailable indicator rather than silently presenting an old operational price.
+5. Manifest clients must use ETags, bounded local cache TTL, schema validation and freshness metadata.
+6. Archived content must remain accessible through the same URL while it has SEO/AEO/GEO value.
+7. Public APIs must exclude drafts and retired content and must apply the same status rules to catalog, manifest, media and structured data.
+
+### 11.10 Lifecycle acceptance tests
+
+- Publishing a new item makes it appear in the public catalog, canonical page, structured data and sitemap after the documented cache window.
+- Pausing an item keeps its URL and useful content live but removes booking capability.
+- Archiving an item preserves its URL, canonical, useful content and alternatives but removes bookability.
+- An archived item is represented as unavailable or has no current offer; it is never marked `InStock`.
+- Retiring an item requires an audited reason and produces either a relevant 301 or intentional 410.
+- Archiving removes an item from normal live-booking listings while preserving the informational page where policy allows.
+- A replacement redirect is used only when search intent is substantially equivalent.
+- Static SSG content cannot override a newer backend title, media, availability or price.
+- Admin lifecycle changes survive restart and are consistent across multiple backend instances.
+- Sitemap output contains no drafts and no accidental private/admin URLs.
+
+---
+
+## 12. Final acceptance definition
 
 The implementation is ready for production when all statements below are true:
 
 - Admin mutations are persisted in PostgreSQL and survive restart/second instance.
 - Customer operational views read the same published catalog/fleet/fare revision as the admin backend.
 - A published catalog/media update appears in customer pages without a frontend redeploy, within the documented cache window.
-- Archived/unpublished content is absent from all public catalog/manifest/media responses.
+- Draft and retired content is absent from public catalog/manifest/media responses; paused and archived content follows the SEO lifecycle policy above and is never bookable.
 - All final fare totals and distances are server-calculated from active versioned rules.
 - Customer can create a booking but cannot mutate operational records.
 - Payment failure cannot produce a confirmed/paid customer state.
@@ -447,5 +670,6 @@ The implementation is ready for production when all statements below are true:
 - Image upload is validated by content, not only declared MIME.
 - LocationIQ secrets remain server-side and provider calls are rate-limited/cached.
 - Readiness fails when PostgreSQL is unavailable, migrations are applied, and CI is green.
+- Stable high-value URLs are preserved, sitemap/canonical rules are truthful, and archived pages retain useful SEO/AEO/GEO content without stale booking claims.
 
 **Current recommendation:** deploy the partial safety fixes only after the production API base and explicit admin role claim are confirmed, then implement Phase 1 before accepting real customer payments.
