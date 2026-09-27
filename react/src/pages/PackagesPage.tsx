@@ -4,6 +4,7 @@ import { contact } from "../data/contact";
 import { packages as staticPackages, type TourPackage } from "../data";
 import { WhatsAppIcon } from "../components/icons";
 import { Pagination } from "../components/ui/Pagination";
+import { LiveCatalogSection } from "../components/catalog/LiveCatalogSection";
 import { loadPublishedPackages } from "../services/catalogManifest";
 
 interface PackagesPageProps {
@@ -815,6 +816,10 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
           />
         )}
       </section>
+
+      {/* LIVE CATALOG — trips published from the operations desk appear here
+          automatically (single source of trips with the backend CMS). */}
+      <LiveCatalogSection />
 
       {/* PACKAGE COMPARISON & FLEET DECISION MATRIX (Compact -20%) */}
       <section className="bg-surface-container-low py-8 sm:py-10 border-t border-b border-border-warm/60">

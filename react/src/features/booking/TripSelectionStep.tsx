@@ -13,8 +13,11 @@ import { BookingAssistant, type QuickPick } from "./BookingAssistant";
  * Shown right after the customer selects their fleet (either on this page or
  * preselected from the Fleet page). Lists EVERY bookable trip from the live
  * catalog (the single source of trips) with a search bar, trip-type filters,
- * live availability, and per-vehicle pricing. The SK Concierge assistant sits
- * alongside to guide the choice and can hand off to a human agent.
+ * and live availability. Selecting a trip configures the underlying booking
+ * engine (mode / package / route), and the desk's authoritative server fare is
+ * quoted for the current vehicle — the client never computes money (rule F3).
+ * The SK Concierge assistant sits alongside to guide the choice and can hand
+ * off to a human agent.
  */
 
 export interface SelectableTrip {
@@ -26,7 +29,8 @@ export interface SelectableTrip {
   duration: string;
   distanceKm: number | null;
   stops: string[];
-  basePrice: number;
+  /** Desk-published starting price (display data, not a client computation). */
+  fromPrice: number;
   image: string | null;
   tripType: PublicTripType;
   availability: PublicAvailability;
@@ -39,7 +43,11 @@ interface TripSelectionStepProps {
   onSelect: (trip: SelectableTrip) => void;
   vehicleName: string;
   vehicleImage: string;
-  vehiclePriceOffset: number;
+  /** Authoritative server quote for the current selection + vehicle. */
+  serverTotalFare: number | null;
+  serverAdvanceAmount: number | null;
+  quoteLoading: boolean;
+  quoteError: string | null;
   onContinue: () => void;
   onChangeVehicle: () => void;
   onQuickPick: (pick: QuickPick, trips: SelectableTrip[]) => void;
@@ -71,7 +79,10 @@ export function TripSelectionStep({
   onSelect,
   vehicleName,
   vehicleImage,
-  vehiclePriceOffset,
+  serverTotalFare,
+  serverAdvanceAmount,
+  quoteLoading,
+  quoteError,
   onContinue,
   onChangeVehicle,
   onQuickPick,
@@ -94,7 +105,7 @@ export function TripSelectionStep({
   }, [trips, search, typeFilter]);
 
   const selectedTrip = trips.find((t) => t.key === selectedKey) ?? null;
-  const selectedTotal = selectedTrip ? selectedTrip.basePrice + vehiclePriceOffset : null;
+  const inr = (v: number) => `₹${v.toLocaleString("en-IN")}`;
 
   return (
     <div className="flex flex-col gap-space-xl">
@@ -201,7 +212,6 @@ export function TripSelectionStep({
           {filteredTrips.map((trip) => {
             const isSelected = trip.key === selectedKey;
             const badge = AVAILABILITY_BADGE[trip.availability];
-            const tripTotal = trip.basePrice + vehiclePriceOffset;
             return (
               <button
                 key={trip.key}
@@ -232,10 +242,10 @@ export function TripSelectionStep({
                     </h3>
                     <div className="text-right shrink-0">
                       <span className="font-price-display text-price-display text-primary font-bold">
-                        ₹{tripTotal.toLocaleString("en-IN")}
+                        {inr(trip.fromPrice)}
                       </span>
                       <span className="block font-label-caps text-label-caps uppercase tracking-wider text-secondary">
-                        in your {vehicleName.split(" ")[0]}
+                        starting from
                       </span>
                     </div>
                   </div>
@@ -280,7 +290,7 @@ export function TripSelectionStep({
                 </div>
                 <div className="self-center shrink-0 hidden sm:flex w-6 h-6 rounded-full border-2 border-border-warm items-center justify-center sm:mr-1" aria-hidden="true">
                   <span
-                    className={`w-3 h-3 rounded-full transition-all ${isSelected ? "bg-primary border-primary" : "border-border-warm"}`}
+                    className={`w-3 h-3 rounded-full transition-all ${isSelected ? "bg-primary" : "bg-transparent"}`}
                   />
                 </div>
               </button>
@@ -294,44 +304,58 @@ export function TripSelectionStep({
             step={2}
             vehicleName={vehicleName}
             tripName={selectedTrip?.name ?? null}
-            totalFare={selectedTotal}
-            advanceAmount={selectedTotal !== null ? Math.round(selectedTotal * 0.28) : null}
+            totalFare={serverTotalFare}
+            advanceAmount={serverAdvanceAmount}
             tripCount={trips.length}
             onQuickPick={(pick) => onQuickPick(pick, trips)}
           />
 
           <div className="bg-surface-container-lowest rounded-xl border border-border-warm shadow-sm p-space-md flex flex-col gap-2.5">
             <span className="font-label-caps text-label-caps uppercase tracking-wider text-secondary font-bold">
-              Trip Summary
+              Trip Summary — Desk Quoted
             </span>
             {selectedTrip ? (
               <>
                 <div className="flex justify-between items-start gap-2 font-body-md text-body-md">
                   <span className="text-on-surface-variant">{selectedTrip.name}</span>
                   <span className="font-title-md text-title-md text-ink-charcoal font-semibold text-right shrink-0">
-                    ₹{selectedTrip.basePrice.toLocaleString("en-IN")}
+                    from {inr(selectedTrip.fromPrice)}
                   </span>
                 </div>
                 <div className="flex justify-between items-center font-body-md text-body-md text-on-surface-variant">
-                  <span>{vehicleName} adjustment</span>
-                  <span className={vehiclePriceOffset > 0 ? "text-success-jade font-medium" : ""}>
-                    {vehiclePriceOffset > 0 ? `+₹${vehiclePriceOffset.toLocaleString("en-IN")}` : "₹0 (Base)"}
+                  <span>{vehicleName}</span>
+                  <span className="font-label-caps text-label-caps uppercase tracking-wider text-secondary">
+                    included
                   </span>
                 </div>
                 <div className="pt-space-xs border-t border-border-warm flex items-baseline justify-between">
-                  <span className="font-title-lg text-title-lg text-ink-midnight font-bold">Total</span>
-                  <span className="font-price-display text-price-display text-primary font-bold">
-                    ₹{(selectedTotal ?? 0).toLocaleString("en-IN")}
+                  <span className="font-title-lg text-title-lg text-ink-midnight font-bold">
+                    {quoteLoading ? "Quoting…" : "Exact Fare"}
                   </span>
+                  {quoteLoading ? (
+                    <span className="material-symbols-outlined text-[20px] animate-spin text-secondary" aria-hidden="true">
+                      progress_activity
+                    </span>
+                  ) : quoteError ? (
+                    <span className="font-body-sm text-body-sm text-terracotta-sandstone text-right max-w-[180px]">
+                      Quote unavailable — the desk will confirm on WhatsApp
+                    </span>
+                  ) : serverTotalFare !== null ? (
+                    <span className="font-price-display text-price-display text-primary font-bold">
+                      {inr(serverTotalFare)}
+                    </span>
+                  ) : null}
                 </div>
-                <p className="font-body-sm text-body-sm text-on-surface-variant">
-                  Reserve with a 28% advance of ₹{Math.round((selectedTotal ?? 0) * 0.28).toLocaleString("en-IN")} —
-                  balance to the chauffeur after the trip.
-                </p>
+                {serverAdvanceAmount !== null && !quoteLoading && !quoteError && (
+                  <p className="font-body-sm text-body-sm text-on-surface-variant">
+                    Reserve with the advance token of <strong>{inr(serverAdvanceAmount)}</strong> — balance to the
+                    chauffeur after the trip. Tolls, parking &amp; chauffeur allowance included.
+                  </p>
+                )}
               </>
             ) : (
               <p className="font-body-md text-body-md text-on-surface-variant">
-                Select a trip from the list to see your total.
+                Select a trip from the list and the desk engine will quote your exact fare.
               </p>
             )}
             <button
