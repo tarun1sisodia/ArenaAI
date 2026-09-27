@@ -19,15 +19,14 @@ async def generate_route_or_package(
         context_slice=context_slice,
         task_input=route_details,
         output_format=ROUTE_CATALOG_TEMPLATE_DEFAULTS["output_format"],
+        code_language="json",
     )
-
-    prompt = template.build_prompt()
 
     response = await client.chat.completions.create(
         model=FAST_WORKER_MODEL,
         messages=[
-            {"role": "system", "content": "You are a specialized Route & Tour Catalog Data Engineer. Follow the provided template and rules strictly."},
-            {"role": "user", "content": prompt},
+            {"role": "system", "content": template.build_system_prompt()},
+            {"role": "user", "content": template.build_user_prompt()},
         ],
         temperature=0.2,
     )

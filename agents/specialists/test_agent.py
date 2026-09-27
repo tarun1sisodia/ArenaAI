@@ -19,15 +19,14 @@ async def generate_unit_tests(
         context_slice=code_context,
         task_input=task_description,
         output_format=TEST_TEMPLATE_DEFAULTS["output_format"],
+        code_language="typescript",
     )
-
-    prompt = template.build_prompt()
 
     response = await client.chat.completions.create(
         model=FAST_WORKER_MODEL,
         messages=[
-            {"role": "system", "content": "You are a Specialist QA Automation Engineer. Follow the provided template strictly."},
-            {"role": "user", "content": prompt},
+            {"role": "system", "content": template.build_system_prompt()},
+            {"role": "user", "content": template.build_user_prompt()},
         ],
         temperature=0.2,
     )
