@@ -108,7 +108,10 @@ export async function buildApp(options: AppOptions): Promise<BuiltApp> {
       if (origins.includes(origin)) {
         cb(null, true);
       } else {
-        cb(new Error(`Origin ${origin} not allowed`), false);
+        // Do not throw here: Fastify would turn a normal cross-origin denial
+        // into a misleading HTTP 500. Returning false omits CORS headers and
+        // lets the browser enforce the same-origin policy safely.
+        cb(null, false);
       }
     },
     credentials: true,

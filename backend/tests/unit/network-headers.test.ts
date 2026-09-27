@@ -39,4 +39,40 @@ describe("Network & Transport Protocol Headers (Technique 1)", () => {
     expect(response.headers["alt-svc"]).toBe('h3=":443"; ma=86400');
     expect(response.headers["timing-allow-origin"]).toBeUndefined();
   });
+
+  it("allows the deployed admin Worker origin during CORS preflight", async () => {
+    const { app } = await createTestApp();
+
+    const response = await app.inject({
+      method: "OPTIONS",
+      url: "/api/v1/health",
+      headers: {
+        origin: "https://skbagheltravels-admin.coccoder999.workers.dev",
+        "access-control-request-method": "GET",
+        "access-control-request-headers": "accept,authorization",
+      },
+    });
+
+    expect(response.statusCode).toBe(204);
+    expect(response.headers["access-control-allow-origin"]).toBe(
+      "https://skbagheltravels-admin.coccoder999.workers.dev",
+    );
+    expect(response.headers["access-control-allow-credentials"]).toBe("true");
+  });
+
+  it("denies an unknown origin without returning an internal server error", async () => {
+    const { app } = await createTestApp();
+
+    const response = await app.inject({
+      method: "OPTIONS",
+      url: "/api/v1/health",
+      headers: {
+        origin: "https://attacker.example",
+        "access-control-request-method": "GET",
+      },
+    });
+
+    expect(response.statusCode).not.toBe(500);
+    expect(response.headers["access-control-allow-origin"]).toBeUndefined();
+  });
 });

@@ -20,7 +20,7 @@ services:
       - key: DATABASE_URL
         sync: false
       - key: CORS_ORIGINS
-        value: https://agraskbagheltourandtravels.com,https://www.agraskbagheltourandtravels.com,https://admin.agraskbagheltourandtravels.com
+        value: https://agraskbagheltourandtravels.com,https://www.agraskbagheltourandtravels.com,https://admin.agraskbagheltourandtravels.com,https://skbagheltravels-admin.coccoder999.workers.dev,https://skbagheltravels-customer.coccoder999.workers.dev
       - key: ALLOW_TEST_AUTH
         value: "false"
       - key: API_BASE_URL
