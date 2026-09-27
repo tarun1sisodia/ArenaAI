@@ -14,7 +14,7 @@ export function getApiBaseUrl(): string {
   ) {
     return "http://localhost:4000";
   }
-  return "https://api.agraskbagheltourandtravels.com";
+  return "https://client-juj4.onrender.com";
 }
 
 export type BackendTripType = "one-way" | "round-trip" | "local-tour" | "airport-transfer";
@@ -247,4 +247,3 @@ export async function createInquiry(
 
   return json.data as CreateInquiryResponse;
 }
-

@@ -10,7 +10,7 @@ export const env = {
         window.location.hostname === "127.0.0.1" ||
         window.location.hostname === "0.0.0.0")
       ? "http://localhost:4000"
-      : "https://api.agraskbagheltourandtravels.com"),
+      : "https://client-juj4.onrender.com"),
   SUPABASE_URL: (import.meta.env.VITE_SUPABASE_URL as string | undefined)?.replace(/\/+$/, "") || "",
   SUPABASE_ANON_KEY: (import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined) || "",
   IS_DEV: Boolean(import.meta.env.DEV),

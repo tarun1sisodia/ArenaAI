@@ -536,15 +536,17 @@ export function BookingPage() {
 
       // Attempt to initiate real checkout
       try {
-        await createPaymentCheckout({
+        const checkout = await createPaymentCheckout({
           ticketId: draft.ticketId,
           guestAccessToken: draft.guestAccessToken,
           idempotencyKey: (typeof crypto !== "undefined" && crypto.randomUUID) ? crypto.randomUUID() : `idemp-${Date.now()}`,
           provider: "razorpay",
           currency: "INR",
         });
+        if (checkout.checkoutUrl) window.location.assign(checkout.checkoutUrl);
       } catch (payErr) {
-        console.warn("Payment checkout initiation note (simulating test mode):", payErr);
+        setSubmitError(payErr instanceof Error ? payErr.message : "Payment checkout could not be started. Please try again.");
+        return;
       }
 
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -557,8 +559,9 @@ export function BookingPage() {
     }
   };
 
-  // Quick fallback simulation for instant test mode
+  // Test-only helper. It is intentionally unreachable in production UI.
   const handleSimulatePayment = () => {
+    if (!import.meta.env.DEV || import.meta.env.VITE_ENABLE_PAYMENT_SIMULATION !== "true") return;
     const mockTicket = `AGR-${new Date().toISOString().slice(0, 10).replace(/-/g, "")}-${Math.floor(1000 + Math.random() * 9000)}`;
     setConfirmedTicketId(mockTicket);
     setConfirmedBookingId(`book-${Date.now()}`);
@@ -1502,13 +1505,15 @@ export function BookingPage() {
                     </span>
                   </button>
 
-                  <button
-                    type="button"
-                    onClick={handleSimulatePayment}
-                    className="w-full py-2 px-3 rounded-lg bg-surface-container-low hover:bg-surface-container text-ink-slate font-label-lg text-xs font-semibold transition-colors border border-border-warm"
-                  >
-                    Simulate Payment Authorization (Instant Test Mode)
-                  </button>
+                  {import.meta.env.DEV && import.meta.env.VITE_ENABLE_PAYMENT_SIMULATION === "true" && (
+                    <button
+                      type="button"
+                      onClick={handleSimulatePayment}
+                      className="w-full py-2 px-3 rounded-lg bg-surface-container-low hover:bg-surface-container text-ink-slate font-label-lg text-xs font-semibold transition-colors border border-border-warm"
+                    >
+                      Simulate Payment Authorization (Development Only)
+                    </button>
+                  )}
                 </div>
               </form>
             </div>

@@ -1,5 +1,6 @@
 import type { TourPackage } from "../data";
 import { packages as staticPackages } from "../data";
+import { getApiBaseUrl } from "./api";
 
 export interface CompressedRoute {
   o: string;              // Origin
@@ -52,7 +53,7 @@ export async function fetchCatalogManifest(): Promise<CatalogManifestData | null
 
     // 2. Try fetching latest manifest from backend authoritative endpoint
     try {
-      const apiBase = (typeof import.meta !== "undefined" && import.meta.env?.VITE_API_BASE_URL) || "http://localhost:4000";
+      const apiBase = getApiBaseUrl();
       const headers: Record<string, string> = { Accept: "application/json" };
 
       const controller = new AbortController();

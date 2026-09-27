@@ -81,8 +81,9 @@ export async function loginWithCredentials(
       const user = data.user;
       const role = user?.app_metadata?.role;
 
-      // Restrict access: Only super_admin role can access the operations desk
-      if (role && role !== "super_admin") {
+      // Restrict access: only an explicit server-assigned super_admin claim may enter.
+      // Missing metadata must never be promoted by the client to an admin role.
+      if (role !== "super_admin") {
         throw new Error("Access denied: insufficient privileges for the operations desk.");
       }
 

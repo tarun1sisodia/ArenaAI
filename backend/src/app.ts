@@ -203,9 +203,12 @@ export async function buildApp(options: AppOptions): Promise<BuiltApp> {
   const inquiryService = createInquiryService({ db, clock });
 
   const healthHandler = async () => ({ success: true, data: { status: "ok", version: env.FARE_RULES_VERSION } });
-  const readyHandler = async () => {
+  const readyHandler = async (_request: unknown, reply: { code: (statusCode: number) => { send: (payload: unknown) => unknown } }) => {
     const ok = await db.healthCheck();
-    return { success: true, data: { status: ok ? "ready" : "degraded", store: env.DATABASE_URL ? "postgres" : "memory" } };
+    if (!ok) {
+      return reply.code(503).send({ success: false, error: { code: "DB_NOT_READY", message: "Database is not ready." } });
+    }
+    return { success: true, data: { status: "ready", store: env.DATABASE_URL ? "postgres" : "memory" } };
   };
 
   app.get("/health", healthHandler);
