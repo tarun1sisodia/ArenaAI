@@ -10,7 +10,7 @@ export const CalculateFareSchema = z
     destinationName: z.string().trim().min(2).max(120),
     pickupDatetime: IsoDatetimeSchema,
     returnDatetime: IsoDatetimeSchema.optional(),
-    distanceKm: z.number().positive().max(5000).finite(),
+    distanceKm: z.number().positive().max(5000).finite().optional(),
     promoCode: z
       .string()
       .trim()

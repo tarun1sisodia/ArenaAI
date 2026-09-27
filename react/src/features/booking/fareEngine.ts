@@ -9,6 +9,8 @@ import {
   applyPromo,
   formatInr,
   findRoute,
+  getIndicativeBrowseFare,
+  localTomorrow,
   type CalcFareParams,
   type FareQuote,
   type LocalPackageKey,
@@ -22,6 +24,7 @@ export type { LocalPackageKey };
 export {
   calcFare,
   localPackages,
+  localTomorrow,
   NIGHT_ALLOWANCE,
   NIGHT_ALLOWANCE_TEMPO,
   advanceOf,
@@ -30,4 +33,5 @@ export {
   applyPromo,
   formatInr,
   findRoute,
+  getIndicativeBrowseFare,
 };

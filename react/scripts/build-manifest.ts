@@ -89,6 +89,7 @@ export function buildRouteCatalogAndManifest(): void {
 
   // 2. Emit react/src/data/generated-catalog.json
   const getRate = (id: string) => VEHICLES.find((v) => v.id === id)?.perKm ?? 10;
+  const isAlwaysRoundTrip = (id: string) => Boolean(VEHICLES.find((v) => v.id === id)?.alwaysRoundTrip);
 
   const catalogPayload = {
     routes: allRoutesList,
@@ -100,6 +101,7 @@ export function buildRouteCatalogAndManifest(): void {
         seats: 4,
         bags: 2,
         ac: true,
+        alwaysRoundTrip: isAlwaysRoundTrip("sedan"),
         tags: ["4+1 SEATS", "AC", "2 BAGS"],
         blurb: "Everyday comfort for city rides, Yamuna Expressway drops, and local sightseeing.",
         perKm: getRate("sedan"),
@@ -115,6 +117,7 @@ export function buildRouteCatalogAndManifest(): void {
         seats: 6,
         bags: 3,
         ac: true,
+        alwaysRoundTrip: isAlwaysRoundTrip("ertiga"),
         tags: ["6+1 SEATS", "AC", "3 BAGS"],
         blurb: "A little more room for families without stepping up to a large SUV.",
         perKm: getRate("ertiga"),
@@ -130,6 +133,7 @@ export function buildRouteCatalogAndManifest(): void {
         seats: 6,
         bags: 4,
         ac: true,
+        alwaysRoundTrip: isAlwaysRoundTrip("innova"),
         tags: ["6+1 SEATS", "AC", "4 BAGS"],
         blurb: "The outstation favourite — plush pushback seats, smooth suspension, and a quiet cabin.",
         perKm: getRate("innova"),
@@ -145,6 +149,7 @@ export function buildRouteCatalogAndManifest(): void {
         seats: 12,
         bags: 8,
         ac: true,
+        alwaysRoundTrip: isAlwaysRoundTrip("tempo"),
         tags: ["12+1 SEATS", "AC", "LUGGAGE BAY"],
         blurb: "Spacious pushback seats, luggage bay, individual AC vents, and ice-box for group travel.",
         perKm: getRate("tempo"),
@@ -160,6 +165,7 @@ export function buildRouteCatalogAndManifest(): void {
         seats: 16,
         bags: 10,
         ac: true,
+        alwaysRoundTrip: isAlwaysRoundTrip("urbania"),
         tags: ["16 SEATS", "PREMIUM", "AC"],
         blurb: "Chauffeur-grade luxury executive travel with airplane-style cabin styling and sealed acoustics.",
         perKm: getRate("urbania"),

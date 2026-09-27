@@ -1,11 +1,33 @@
-import { applyPromo, calculateFare } from "./fare.engine.js";
+import { applyPromo, calculateFare, findRoute } from "./fare.engine.js";
 import { isGroupExceptionVehicle } from "./fare.catalogue.js";
-import type { FareEngineInput, FareEngineResult } from "./fare.types.js";
+import type { CalculateFareInput, FareEngineInput, FareEngineResult } from "./fare.types.js";
 import type { Repositories } from "../../db/types.js";
 
 export function createFareService(fareVersion: string, db?: Repositories) {
   return {
-    async calculate(input: FareEngineInput): Promise<FareEngineResult> {
+    async calculate(input: CalculateFareInput): Promise<FareEngineResult> {
+      // Derive distanceKm from catalogue if omitted by client
+      let distanceKm = input.distanceKm;
+      if (!distanceKm || !Number.isFinite(distanceKm) || distanceKm <= 0) {
+        if (input.packageId) {
+          distanceKm = 100;
+        } else if (input.localPackageKey === "8hr-80km") {
+          distanceKm = 80;
+        } else if (input.localPackageKey === "12hr-120km") {
+          distanceKm = 120;
+        } else if (input.localPackageKey === "airport-transfer" || input.tripType === "airport-transfer") {
+          distanceKm = 20;
+        } else {
+          const route = findRoute(input.originName, input.destinationName);
+          distanceKm = route.km;
+        }
+      }
+      const engineInput: FareEngineInput = {
+        ...input,
+        distanceKm,
+        fareVersion,
+      };
+
       // If DB available and promo code provided, validate against DB for expiry, active, redemption limits
       let lookup: ((code: string) => { discount: number; minTotal: number; desc: string; isActive?: boolean; validFrom?: string | null; validTo?: string | null; maxRedemptions?: number | null; redemptionCount?: number } | null) | undefined;
       if (db && input.promoCode) {
@@ -26,7 +48,7 @@ export function createFareService(fareVersion: string, db?: Repositories) {
       // Temporarily set global lookup via closure in finalize - we need to pass lookup to engine
       // Since calculateFare calls applyPromo internally, we monkey-patch by calling applyPromo separately if lookup exists
       // Instead, we calculate base fare without promo, then apply promo with DB lookup
-      const resultWithoutPromoLookup = calculateFare({ ...input, fareVersion, promoCode: undefined });
+      const resultWithoutPromoLookup = calculateFare({ ...engineInput, promoCode: undefined });
       if (!input.promoCode || isGroupExceptionVehicle(input.vehicleTier)) return resultWithoutPromoLookup;
 
       // Re-apply promo with DB validation
@@ -46,8 +68,23 @@ export function createFareService(fareVersion: string, db?: Repositories) {
         promoValid: promoEval.valid,
       };
     },
-    calculateSync(input: FareEngineInput): FareEngineResult {
-      return calculateFare({ ...input, fareVersion });
+    calculateSync(input: CalculateFareInput): FareEngineResult {
+      let distanceKm = input.distanceKm;
+      if (!distanceKm || !Number.isFinite(distanceKm) || distanceKm <= 0) {
+        if (input.packageId) {
+          distanceKm = 100;
+        } else if (input.localPackageKey === "8hr-80km") {
+          distanceKm = 80;
+        } else if (input.localPackageKey === "12hr-120km") {
+          distanceKm = 120;
+        } else if (input.localPackageKey === "airport-transfer" || input.tripType === "airport-transfer") {
+          distanceKm = 20;
+        } else {
+          const route = findRoute(input.originName, input.destinationName);
+          distanceKm = route.km;
+        }
+      }
+      return calculateFare({ ...input, distanceKm, fareVersion });
     },
   };
 }

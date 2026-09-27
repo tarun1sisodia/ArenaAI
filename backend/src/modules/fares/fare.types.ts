@@ -14,6 +14,10 @@ export type FareEngineInput = {
   fareVersion?: string;
 };
 
+export type CalculateFareInput = Omit<FareEngineInput, "distanceKm"> & {
+  distanceKm?: number;
+};
+
 export type PromoEvaluation = {
   valid: boolean;
   discount: number;

@@ -19269,6 +19269,7 @@
       "seats": 4,
       "bags": 2,
       "ac": true,
+      "alwaysRoundTrip": false,
       "tags": [
         "4+1 SEATS",
         "AC",
@@ -19292,6 +19293,7 @@
       "seats": 6,
       "bags": 3,
       "ac": true,
+      "alwaysRoundTrip": false,
       "tags": [
         "6+1 SEATS",
         "AC",
@@ -19315,6 +19317,7 @@
       "seats": 6,
       "bags": 4,
       "ac": true,
+      "alwaysRoundTrip": false,
       "tags": [
         "6+1 SEATS",
         "AC",
@@ -19337,6 +19340,7 @@
       "seats": 12,
       "bags": 8,
       "ac": true,
+      "alwaysRoundTrip": true,
       "tags": [
         "12+1 SEATS",
         "AC",
@@ -19362,6 +19366,7 @@
       "seats": 16,
       "bags": 10,
       "ac": true,
+      "alwaysRoundTrip": true,
       "tags": [
         "16 SEATS",
         "PREMIUM",

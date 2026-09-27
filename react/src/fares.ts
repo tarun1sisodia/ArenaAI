@@ -284,11 +284,78 @@ export type FareQuote = {
   nightFee: number;
   roundMultiplier: boolean;
   promo: PromoResult;
+  isIndicative?: boolean;
 };
 
 /**
- * Core pure calculation engine: evaluates route, package, or local tier pricing with
- * 300 km/day outstation rules, night allowance, promotional discounts, and advance deposit.
+ * Shared indicative browse-time fare helper for display purposes (cards, calculators).
+ * Conforms to backend catalogue & Force vehicle round-trip rule (no 300km floor).
+ * Final binding fares are calculated exclusively by POST /api/v1/fares/calculate.
+ */
+export function getIndicativeBrowseFare(
+  entry: {
+    km: number;
+    fh?: number;
+    fs?: number;
+    fe?: number;
+    fi?: number;
+    ft?: number;
+    fu?: number;
+    fares?: Partial<Record<VehicleId, number>>;
+  },
+  vehicleId: VehicleId,
+  tripType: "one-way" | "round" = "one-way"
+): {
+  total: number;
+  advance: number;
+  remaining: number;
+  billedKm: number;
+  alwaysRoundTrip: boolean;
+  isIndicative: true;
+} {
+  const vehicle = vehicleLookup(vehicleId) || vehicles[0];
+  const isForce = Boolean(vehicle.alwaysRoundTrip);
+  const distanceKm = entry.km || 100;
+  const billedKm = isForce ? (tripType === "round" ? distanceKm : distanceKm * 2) : distanceKm;
+
+  let base = 0;
+  if (entry.fares && entry.fares[vehicleId]) {
+    base = entry.fares[vehicleId]!;
+  } else if (vehicleId === "sedan" && entry.fs) {
+    base = entry.fs;
+  } else if (vehicleId === "ertiga" && entry.fe) {
+    base = entry.fe;
+  } else if (vehicleId === "innova" && entry.fi) {
+    base = entry.fi;
+  } else if (vehicleId === "tempo" && entry.ft) {
+    base = entry.ft;
+  } else if (vehicleId === "urbania" && entry.fu) {
+    base = entry.fu;
+  } else {
+    base = billedKm * vehicle.perKm;
+  }
+
+  let total = base;
+  if (isForce) {
+    total = base + 500; // Driver allowance ₹500
+  } else if (tripType === "round") {
+    total = Math.round(base * 1.85);
+  }
+
+  const advance = advanceOf(total);
+  return {
+    total,
+    advance,
+    remaining: total - advance,
+    billedKm,
+    alwaysRoundTrip: isForce,
+    isIndicative: true,
+  };
+}
+
+/**
+ * Lightweight indicative browse quote helper.
+ * Final binding fares must be retrieved via calculateServerFare() from services/api.
  */
 export function calcFare(params: CalcFareParams): FareQuote | null {
   const {
@@ -299,28 +366,14 @@ export function calcFare(params: CalcFareParams): FareQuote | null {
     tripType = "one-way",
     packageId,
     localPackageKey,
-    time,
-    promoCode,
   } = params;
 
-  // 1. Tour Package Calculation
+  const vehicle = vehicleLookup(vehicleId) || vehicles[0];
+
   if (packageId) {
     const pack = packageLookup(packageId);
     if (!pack) return null;
-    const vehicle = vehicleLookup(vehicleId) || vehicles[0];
-    const upgradeSurplus =
-      vehicle.id === "sedan"
-        ? 0
-        : vehicle.id === "ertiga"
-        ? 800
-        : vehicle.id === "innova"
-        ? 1800
-        : vehicle.id === "tempo"
-        ? 3500
-        : 5500;
-    let total = pack.from + upgradeSurplus;
-    const promo = applyPromo(promoCode, total);
-    total = promo.finalTotal;
+    const total = pack.from;
     const advance = advanceOf(total);
     return {
       total,
@@ -334,17 +387,14 @@ export function calcFare(params: CalcFareParams): FareQuote | null {
       pack,
       nightFee: 0,
       roundMultiplier: false,
-      promo,
+      promo: { valid: false, discount: 0, finalTotal: total },
+      isIndicative: true,
     };
   }
 
-  // 2. Local Sightseeing & Airport Transfer Package Tier
   if (localPackageKey && localPackages[localPackageKey]) {
     const lp = localPackages[localPackageKey];
-    const vehicle = vehicleLookup(vehicleId) || vehicles[0];
-    let total = lp.fares[vehicle.id] ?? lp.fares.sedan;
-    const promo = applyPromo(promoCode, total);
-    total = promo.finalTotal;
+    const total = lp.fares[vehicle.id] ?? lp.fares.sedan;
     const advance = advanceOf(total);
     return {
       total,
@@ -357,52 +407,38 @@ export function calcFare(params: CalcFareParams): FareQuote | null {
       vehicle,
       nightFee: 0,
       roundMultiplier: false,
-      promo,
+      promo: { valid: false, discount: 0, finalTotal: total },
+      isIndicative: true,
     };
   }
 
-  // 3. One-Way or Round-Trip Route Calculation
   const route = routeId ? routeLookup(routeId) : from && to ? findRoute(from, to) : null;
-  const vehicle = vehicleLookup(vehicleId);
-  if (!route || !vehicle) return null;
+  if (!route) return null;
 
-  let total = route.fares[vehicle.id];
-  if (total == null) return null;
+  const indicative = getIndicativeBrowseFare(
+    { km: route.km, fares: route.fares },
+    vehicleId,
+    tripType
+  );
 
-  let roundMultiplier = false;
-  if (tripType === "round" && route.kind !== "local") {
-    // Minimum 300 KM/day outstation rule or 1.85x base rate
-    const minDayKmTotal = Math.round(outstationRules.minKmPerDay * vehicle.perKm);
-    const standardRound = Math.round(total * 1.85);
-    total = Math.max(standardRound, Math.min(minDayKmTotal, standardRound));
-    roundMultiplier = true;
-  }
-
-  // Night allowance: pickups between 20:00 and 06:00 add flat driver allowance
-  const nightFee =
-    route.kind !== "local" && isNightTime(time) ? getNightAllowance(vehicle.id) : 0;
-  total += nightFee;
-
-  const promo = applyPromo(promoCode, total);
-  total = promo.finalTotal;
-  const advance = advanceOf(total);
   const origin = cityLookup(route.from);
   const dest = cityLookup(route.to);
 
   return {
-    total,
-    advance,
-    remaining: total - advance,
+    total: indicative.total,
+    advance: indicative.advance,
+    remaining: indicative.remaining,
     label: route.kind === "local" ? (route.localLabel ?? `${origin.name} Local Tour`) : `${origin.name} → ${dest.name}`,
     duration: route.duration,
     km: route.km,
     tripType: route.kind === "local" ? "local" : tripType,
-    nightFee,
-    roundMultiplier,
+    nightFee: 0,
+    roundMultiplier: indicative.alwaysRoundTrip,
     vehicle,
     route,
     origin,
     dest,
-    promo,
+    promo: { valid: false, discount: 0, finalTotal: indicative.total },
+    isIndicative: true,
   };
 }

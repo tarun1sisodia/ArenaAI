@@ -23,6 +23,7 @@ export type Vehicle = {
   models: readonly string[];
   image: string;
   suitable: string;
+  alwaysRoundTrip?: boolean;
 };
 
 export type Route = {

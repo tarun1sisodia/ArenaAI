@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { EDITORIAL_TYPOGRAPHY } from "../layout/EditorialPageTemplate";
 import { WhatsAppIcon } from "../icons/WhatsAppIcon";
 import { contact } from "../../data/contact";
+import { getIndicativeBrowseFare } from "../../fares";
 
 export interface CompressedRouteItem {
   o: string;        // Origin
@@ -120,38 +121,23 @@ export function InstantRouteCalculator({
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
-  // Commercial Billing Engine
-  const activeFare = useMemo(() => {
-    if (!matchedEntry) return 0;
-
-    // Group Vehicle Logic: Billed for Both Sides (Round-Trip) with 300km/Day Minimum + Driver Allowance
-    const calcGroupVehicle = (perKmRate: number) => {
-      const roundTripKm = matchedEntry.km * 2;
-      const billableKm = Math.max(roundTripKm, 300); // 300km Minimum Rule
-      const driverAllowance = 500;
-      return billableKm * perKmRate + driverAllowance;
-    };
-
-    switch (selectedTier) {
-      case "hatchback":
-        return matchedEntry.fh || matchedEntry.fs;
-      case "sedan":
-        return matchedEntry.fs;
-      case "ertiga":
-        return matchedEntry.fe || Math.round(matchedEntry.fs * 1.35);
-      case "innova":
-        return matchedEntry.fi || Math.round(matchedEntry.fs * 1.85);
-      case "tempo":
-        return matchedEntry.ft ? calcGroupVehicle(matchedEntry.ft) : Math.round(matchedEntry.fi * 1.5);
-      case "urbania":
-        return matchedEntry.fu ? calcGroupVehicle(matchedEntry.fu) : Math.round(matchedEntry.fi * 1.8);
-      default:
-        return matchedEntry.fs;
+  // Indicative Browse Engine (Shared Rule Module)
+  const indicativeQuote = useMemo(() => {
+    if (!matchedEntry) return null;
+    const tier = selectedTier === "hatchback" ? "sedan" : selectedTier;
+    const quote = getIndicativeBrowseFare(matchedEntry, tier, "one-way");
+    if (selectedTier === "hatchback") {
+      return {
+        ...quote,
+        total: matchedEntry.fh || Math.round(quote.total * 0.85),
+      };
     }
+    return quote;
   }, [matchedEntry, selectedTier]);
 
-  const isGroupVehicle = selectedTier === "tempo" || selectedTier === "urbania";
-  const billableKm = matchedEntry ? Math.max(matchedEntry.km * 2, 300) : 0;
+  const activeFare = indicativeQuote?.total ?? 0;
+  const isGroupVehicle = Boolean(indicativeQuote?.alwaysRoundTrip);
+  const billableKm = indicativeQuote?.billedKm ?? (matchedEntry ? matchedEntry.km : 0);
 
   return (
     <div
@@ -280,14 +266,14 @@ export function InstantRouteCalculator({
 
             <div className="text-left sm:text-right shrink-0">
               <span className="block font-body-sm text-xs text-on-surface-variant">
-                {isGroupVehicle ? "Group Fare (Round-Trip Billing)" : "All-Inclusive Fixed Fare"}
+                {isGroupVehicle ? "Indicative Group Fare (Round-Trip Billed)" : "Indicative One-Way Fare"}
               </span>
               <span className={EDITORIAL_TYPOGRAPHY.price}>₹{activeFare.toLocaleString("en-IN")}</span>
 
               {/* Transparent Breakdown for Tempo / Urbania */}
               {isGroupVehicle && (
                 <span className="block font-body-sm text-[10px] text-on-surface-variant mt-0.5 font-medium">
-                  Min 300km/Day · {billableKm}km billable · +₹500 Driver
+                  Round-trip billed · {billableKm} km · +₹500 Driver
                 </span>
               )}
             </div>
@@ -308,7 +294,7 @@ export function InstantRouteCalculator({
             </a>
             <a
               href={`https://wa.me/${contact.phone.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(
-                `Hello SK Baghel Travels, I would like to book a ${selectedTier.toUpperCase()} for ${matchedEntry.o} to ${matchedEntry.d} (${matchedEntry.km} km). Estimated Fare: ₹${activeFare}.`
+                `Hello SK Baghel Travels, I would like to book a ${selectedTier.toUpperCase()} for ${matchedEntry.o} to ${matchedEntry.d} (${matchedEntry.km} km). Indicative Fare: ₹${activeFare}.`
               )}`}
               target="_blank"
               rel="noopener noreferrer"
@@ -318,7 +304,7 @@ export function InstantRouteCalculator({
               <span>WhatsApp Concierge</span>
             </a>
             <a
-              href="/book.html"
+              href={`/book.html?from=${encodeURIComponent(matchedEntry.o)}&to=${encodeURIComponent(matchedEntry.d)}&vehicle=${selectedTier === "hatchback" ? "sedan" : selectedTier}&trip=one-way`}
               className="inline-flex items-center gap-1 px-3 py-2 rounded-lg bg-sandstone-wash text-primary border border-primary/25 font-label-lg text-xs font-semibold hover:bg-sandstone-wash/60 transition-colors ml-auto"
             >
               <span>Direct Booking Form</span>

@@ -40,6 +40,22 @@ describe("API contract", () => {
       currency: "INR",
       fareVersion: "2026-09-13",
     });
+    const okWithoutDistance = await app.inject({
+      method: "POST",
+      url: "/api/v1/fares/calculate",
+      payload: {
+        tripType: "one-way",
+        vehicleTier: "sedan",
+        originName: "Agra",
+        destinationName: "Delhi",
+        pickupDatetime: new Date(Date.now() + 17 * 24 * 60 * 60 * 1000).toISOString(),
+      },
+    });
+    expect(okWithoutDistance.statusCode).toBe(200);
+    expect(okWithoutDistance.json().success).toBe(true);
+    expect(okWithoutDistance.json().data.distanceKm).toBe(230);
+    expect(okWithoutDistance.json().data.totalFare).toBeGreaterThan(0);
+
     await app.close();
   });
 
