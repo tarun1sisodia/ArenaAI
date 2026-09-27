@@ -17,3 +17,5 @@ GATEWAY_API_KEY = os.getenv("FREELLM_API_KEY", "")
 # Default models
 SUPERVISOR_MODEL = os.getenv("SUPERVISOR_MODEL", "gemini-3.6-flash")
 FAST_WORKER_MODEL = os.getenv("FAST_WORKER_MODEL", "auto")
+AWS_BEARER_TOKEN_BEDROCK = os.getenv("AWS_BEARER_TOKEN_BEDROCK", "")
+BEDROCK_MODEL = os.getenv("BEDROCK_MODEL", "qwen.qwen3-coder-next")

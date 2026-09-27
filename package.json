@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "SK Baghel Tour & Travels \u2014 monorepo for the customer site (react/), operations desk (admin/) and API (backend/).",
+  "description": "SK Baghel Tour & Travels — monorepo for the customer site (react/), operations desk (admin/) and API (backend/).",
   "engines": {
     "node": ">=22"
   },
@@ -38,6 +38,7 @@
     "beacon:stop": "beacon stop"
   },
   "dependencies": {
+    "ai-visibility": "^0.10.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },
