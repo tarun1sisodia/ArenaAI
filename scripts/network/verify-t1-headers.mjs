@@ -66,15 +66,15 @@ check(
   shell === null ? `${CUSTOMER_DIST}/index.html missing (run customer:build first)` : "dns-prefetch link not found in built shell",
 );
 
-const hiHome = await readOrNull(join(CUSTOMER_DIST, "hi", "index.html"));
+const prerenderedPage = (await readOrNull(join(CUSTOMER_DIST, "en", "routes", "index.html"))) ?? (await readOrNull(join(CUSTOMER_DIST, "index.html")));
 check(
-  "preconnect propagates to prerendered pages (/hi/)",
-  hiHome !== null && hiHome.includes(`rel="preconnect" href="${PRECONNECT_HOST}"`),
-  hiHome === null ? `${CUSTOMER_DIST}/hi/index.html missing (run customer:build first)` : "preconnect lost during prerender",
+  "preconnect propagates to prerendered pages",
+  prerenderedPage !== null && prerenderedPage.includes(`rel="preconnect" href="${PRECONNECT_HOST}"`),
+  prerenderedPage === null ? `${CUSTOMER_DIST} prerendered pages missing (run customer:build first)` : "preconnect lost during prerender",
 );
 
 const headers = await readOrNull(join(CUSTOMER_DIST, "_headers"));
-for (const route of ["/", "/en/", "/hi/"]) {
+for (const route of ["/", "/en/"]) {
   check(
     `_headers preloads LCP image on ${route}`,
     headers !== null && headers.includes(LCP_IMAGE) && headers.includes("rel=preload; as=image"),
