@@ -349,5 +349,3 @@ export function InstantRouteCalculator({
     </div>
   );
 }
-
-}
