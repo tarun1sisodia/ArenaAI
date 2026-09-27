@@ -74,7 +74,15 @@ Implemented:
   - Added `GET /api/v1/ops/admin/fare-rules/versions`.
   - Added audit log logging when a fare rule version is activated.
 - Created unit test suite `backend/tests/unit/fare-rules-versioning.test.ts` (3 tests passing) verifying unique-active invariant, inactive draft versions, version rollback/activation, and audit logging.
-- Verified with full `npm run verify` (typechecks x3, 17 test files / 108 tests passing, builds x3).
+### Phase 1 — Step 1.5: End-to-End Booking & Payment State Lifecycle Tests
+
+Implemented:
+
+- Created comprehensive integration test suite `backend/tests/integration/booking-payment-lifecycle.test.ts`:
+  - Verified payment failure webhook leaves booking unconfirmed, transitions payment status to `failed`, and prevents voucher generation.
+  - Verified security boundaries: requests lacking `guestAccessToken` or supplying an invalid token cannot read booking or payment status (strictly prohibiting phone-only or ticketId-only access).
+  - Verified refund webhook execution and state reflection on payment and booking models.
+- Verified with full `npm run verify` (typechecks x3, 18 test files / 111 tests passing, builds x3).
 
 ## Current webhook route
 
@@ -92,10 +100,10 @@ The Razorpay webhook secret must exactly matches Render's `RAZORPAY_WEBHOOK_SECR
 - Focused backend network-header and catalog-manifest tests passed.
 - Dynamic DB fare rule and catalog sync tests passed.
 - Unique-active fare rule invariant and version activation tests passed.
+- Booking and payment end-to-end lifecycle and token security tests passed (18 test files / 111 tests).
 
 ## Known next work
 
-- Step 1.5: Add end-to-end booking and payment state lifecycle tests.
 - Step 1.6: Lock down device registration ownership.
 - Step 1.7: Run migrations in Render release/predeploy phase.
 - Step 1.8: Make `/ready` the deployment health check and verify its non-2xx behavior.
