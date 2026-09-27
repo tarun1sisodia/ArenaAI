@@ -6,4 +6,4 @@ Disallow: /404.html
 Disallow: /design-guide/
 
 # Sitemaps
-Sitemap: https://skbagheltravels.in/sitemap.xml
+Sitemap: https://agraskbagheltourandtravels.com/sitemap.xml

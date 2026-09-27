@@ -6,8 +6,9 @@
   "scripts": {
     "dev": "vite",
     "react:dev": "vite",
-    "build": "tsc --noEmit && vite build && node --experimental-strip-types scripts/prerender.ts",
-    "react:build": "tsc --noEmit && vite build && node --experimental-strip-types scripts/prerender.ts",
+    "build": "tsc --noEmit && node --experimental-strip-types scripts/build-manifest.ts && vite build && node --experimental-strip-types scripts/prerender.ts",
+    "react:build": "tsc --noEmit && node --experimental-strip-types scripts/build-manifest.ts && vite build && node --experimental-strip-types scripts/prerender.ts",
+    "manifest": "node --experimental-strip-types scripts/build-manifest.ts",
     "prerender": "node --experimental-strip-types scripts/prerender.ts",
     "sitemap": "node --experimental-strip-types scripts/generate-sitemap.ts",
     "typecheck": "tsc --noEmit",

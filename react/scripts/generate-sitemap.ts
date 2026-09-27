@@ -19,7 +19,7 @@ const __filename = fileURLToPath(import.meta.url);
 const scriptsDir = dirname(__filename);
 const reactRoot = join(scriptsDir, "..");
 
-export const CANONICAL_DOMAIN = "https://skbagheltravels.in";
+export const CANONICAL_DOMAIN = "https://agraskbagheltourandtravels.com";
 
 export interface SitemapEntry {
   path: string;
