@@ -40,13 +40,17 @@ export function createRazorpayAdapter(options: RazorpayOptions): PaymentProvider
   }
 
   const fetchImpl = options.fetchImpl ?? fetch;
+  const keyId = (options.keyId || "").trim().replace(/^['"]|['"]$/g, "");
+  const keySecret = (options.keySecret || "").trim().replace(/^['"]|['"]$/g, "");
+  const webhookSecret = (options.webhookSecret || "").trim().replace(/^['"]|['"]$/g, "");
+
   return {
     name: "razorpay",
     async createCheckout(command: CreateCheckoutCommand): Promise<CheckoutResult> {
       if (!Number.isFinite(command.amountMinor) || command.amountMinor <= 0) {
         throw new Error("Invalid amountMinor for Razorpay");
       }
-      const auth = Buffer.from(`${options.keyId}:${options.keySecret}`).toString("base64");
+      const auth = Buffer.from(`${keyId}:${keySecret}`).toString("base64");
       const response = await fetchImpl("https://api.razorpay.com/v1/orders", {
         method: "POST",
         headers: {
@@ -66,7 +70,10 @@ export function createRazorpayAdapter(options: RazorpayOptions): PaymentProvider
       });
       if (!response.ok) {
         const text = await response.text().catch(() => "");
-        throw new Error(`Razorpay order failed: ${response.status} ${text.slice(0, 200)}`);
+        const keyPrefix = keyId ? `${keyId.slice(0, 8)}...` : "none";
+        throw new Error(
+          `Razorpay order failed: ${response.status} ${text.slice(0, 200)} [Key: ${keyPrefix}, KeyLen: ${keyId.length}, SecretLen: ${keySecret.length}]`,
+        );
       }
       const body = (await response.json()) as { id: string; amount: number; currency: string };
       if (!body.id || !Number.isFinite(body.amount) || body.amount !== command.amountMinor) {
@@ -80,7 +87,7 @@ export function createRazorpayAdapter(options: RazorpayOptions): PaymentProvider
         providerOrderId: body.id,
         checkoutSessionId: body.id,
         checkoutUrl: null,
-        publicClientToken: options.keyId,
+        publicClientToken: keyId,
         amountMinor: body.amount,
         currency: body.currency as Currency,
         expiresAt: expires.toISOString(),
@@ -93,12 +100,12 @@ export function createRazorpayAdapter(options: RazorpayOptions): PaymentProvider
         for (const [k, v] of Object.entries(headers)) {
           if (k.toLowerCase() === "x-razorpay-signature") {
             const sig = Array.isArray(v) ? v[0] : v;
-            if (sig) return verifyHmacSha256Hex(options.webhookSecret, rawBody, String(sig));
+            if (sig) return verifyHmacSha256Hex(webhookSecret, rawBody, String(sig));
           }
         }
         return false;
       }
-      return verifyHmacSha256Hex(options.webhookSecret, rawBody, signature);
+      return verifyHmacSha256Hex(webhookSecret, rawBody, signature);
     },
     parseEvent(rawBody) {
       let payload: RazorpayWebhook;

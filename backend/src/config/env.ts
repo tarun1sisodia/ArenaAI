@@ -38,9 +38,9 @@ const EnvSchema = z.object({
 
   MONGODB_URI: z.string().optional().default(""),
 
-  RAZORPAY_KEY_ID: z.string().optional().default(""),
-  RAZORPAY_KEY_SECRET: z.string().optional().default(""),
-  RAZORPAY_WEBHOOK_SECRET: z.string().optional().default(""),
+  RAZORPAY_KEY_ID: z.string().trim().optional().default(""),
+  RAZORPAY_KEY_SECRET: z.string().trim().optional().default(""),
+  RAZORPAY_WEBHOOK_SECRET: z.string().trim().optional().default(""),
 
   LOCATIONIQ_TOKEN: z.string().optional().default(""),
 
