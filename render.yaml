@@ -33,6 +33,16 @@ services:
         sync: false
       - key: SUPABASE_JWT_SECRET
         sync: false
+      - key: CATALOG_MEDIA_BUCKET
+        value: documents
+      - key: S3_ENDPOINT
+        sync: false
+      - key: S3_REGION
+        sync: false
+      - key: S3_ACCESS_KEY_ID
+        sync: false
+      - key: S3_SECRET_ACCESS_KEY
+        sync: false
       - key: RAZORPAY_KEY_ID
         sync: false
       - key: RAZORPAY_KEY_SECRET
