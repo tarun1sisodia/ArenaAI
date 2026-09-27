@@ -1,6 +1,7 @@
 import type { Clock } from "../../shared/clock.js";
 import { toIso } from "../../shared/clock.js";
 import { Errors } from "../../shared/errors.js";
+import { newId } from "../../shared/ids.js";
 import type { FareRuleRecord, InquiryListFilter, PaymentListFilter, Repositories } from "../../db/types.js";
 import { maskEmail, maskPhone } from "../../shared/privacy.js";
 import type { BookingRecord, InquiryStatus } from "../../types/domain.js";
@@ -136,9 +137,12 @@ export function createAdminService(deps: { db: Repositories; clock?: Clock }) {
 
     async updateFareRules(actor: any, updates: any, _ip?: string) {
       const now = new Date().toISOString();
-      const versionStr = updates.version || `ruleset-${now.slice(0, 10)}-${Date.now().toString(36)}`;
+      // fare_rules.version is VARCHAR(20) and both fare/audit IDs are UUIDs
+      // in PostgreSQL. Keep generated values within those database contracts;
+      // the memory repository does not enforce either constraint.
+      const versionStr = updates.version || `r${Date.now().toString(36)}`;
       const record: FareRuleRecord = {
-        id: `fr_${Date.now().toString(36)}`,
+        id: newId(),
         version: versionStr,
         config: updates,
         effectiveFrom: updates.effectiveFrom || now,
@@ -150,7 +154,7 @@ export function createAdminService(deps: { db: Repositories; clock?: Clock }) {
 
       if (deps.db.audit) {
         await deps.db.audit.append({
-          id: `audit_${Date.now().toString(36)}`,
+          id: newId(),
           action: "update_fare_rules",
           actorId: actor?.id || "super_admin",
           actorRole: (actor?.role as any) || "super_admin",

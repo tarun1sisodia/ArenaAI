@@ -57,7 +57,7 @@ export const AdminPaymentQuerySchema = z.object({
 });
 
 export const AdminUpdateFareRulesSchema = z.object({
-  version: z.string().max(50).optional(),
+  version: z.string().max(20).optional(),
   effectiveFrom: z.string().max(50).optional(),
   outstation: z
     .object({
@@ -86,4 +86,3 @@ export const AdminUpdateFareRulesSchema = z.object({
   notes: z.array(z.string()).optional(),
   dynamicConfig: z.record(z.any()).optional(),
 });
-
