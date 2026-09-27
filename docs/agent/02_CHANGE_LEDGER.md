@@ -14,7 +14,7 @@ Merged into the root operating specification:
 - GEO/entity consistency rules
 - Lifecycle acceptance tests
 
-### Phase 1 — Step 1.1: Production Payment Provider Enforcement
+### Phase 1 — Step 1.1: Production Payment Provider Enforcement & Client Checkout Modal
 
 Implemented:
 
@@ -22,7 +22,10 @@ Implemented:
 - Test/dummy credentials (`rzp_test_local*`) strictly prohibited in production.
 - `createRazorpayAdapter` in `backend/src/providers/adapters/razorpay.ts` throws immediately if HMAC fallback is attempted with `isProduction: true`.
 - Created comprehensive unit test suite in `backend/tests/unit/payment-provider-production.test.ts` (5 tests passing).
-- Verified with full monorepo typecheck (`react`, `admin`, `backend`).
+- Created `react/src/features/booking/razorpay.ts` with dynamic script loader (`https://checkout.razorpay.com/v1/checkout.js`) and TypeScript definitions.
+- Wired official Razorpay Standard Checkout modal in `react/src/features/booking/BookingPage.tsx` (`handleSubmitBooking`).
+- Transition to Confirmed Voucher Step 4 is gated on verified modal `handler` callback or server verification.
+- Verified with full `npm run verify` (typecheck x3, backend test suites, build x3).
 
 ## Current webhook route
 
