@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import type { SupportedLanguage } from "../config";
 import { contact } from "../data/contact";
 import { WhatsAppIcon } from "../components/icons";
+import { InstantRouteCalculator } from "../components/routes/InstantRouteCalculator";
 
 export interface RoutesPageProps {
   language?: SupportedLanguage;
@@ -23,6 +24,7 @@ interface RouteItem {
     ertiga: number;
     crysta: number;
     tempo: number;
+    urbania: number;
   };
 }
 
@@ -43,6 +45,7 @@ const PRIMARY_ROUTES: RouteItem[] = [
       ertiga: 4800,
       crysta: 6499,
       tempo: 9500,
+      urbania: 11500,
     },
   },
   {
@@ -61,6 +64,7 @@ const PRIMARY_ROUTES: RouteItem[] = [
       ertiga: 4800,
       crysta: 6499,
       tempo: 9800,
+      urbania: 11800,
     },
   },
   {
@@ -79,6 +83,7 @@ const PRIMARY_ROUTES: RouteItem[] = [
       ertiga: 2900,
       crysta: 3800,
       tempo: 5800,
+      urbania: 7200,
     },
   },
   {
@@ -97,6 +102,7 @@ const PRIMARY_ROUTES: RouteItem[] = [
       ertiga: 4200,
       crysta: 5400,
       tempo: 8200,
+      urbania: 9800,
     },
   },
   {
@@ -115,6 +121,7 @@ const PRIMARY_ROUTES: RouteItem[] = [
       ertiga: 7500,
       crysta: 9800,
       tempo: 14500,
+      urbania: 17500,
     },
   },
   {
@@ -133,6 +140,7 @@ const PRIMARY_ROUTES: RouteItem[] = [
       ertiga: 8800,
       crysta: 11500,
       tempo: 16800,
+      urbania: 19800,
     },
   },
   {
@@ -151,6 +159,7 @@ const PRIMARY_ROUTES: RouteItem[] = [
       ertiga: 2900,
       crysta: 3800,
       tempo: 5800,
+      urbania: 7200,
     },
   },
   {
@@ -169,6 +178,7 @@ const PRIMARY_ROUTES: RouteItem[] = [
       ertiga: 10500,
       crysta: 13800,
       tempo: 19800,
+      urbania: 23500,
     },
   },
 ];
@@ -277,6 +287,9 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
             </div>
           </div>
 
+          {/* 0ms In-Memory Route Calculator across all 982 corridors */}
+          <InstantRouteCalculator className="mb-space-xl" />
+
           {/* Search & Filter Bar (Compact -20%) */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mb-space-md">
             <div className="flex flex-wrap items-center gap-1.5 overflow-x-auto">
@@ -291,11 +304,10 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
                   key={tab.id}
                   type="button"
                   onClick={() => setSelectedFilter(tab.id)}
-                  className={`px-3 py-1.5 rounded-full font-label-caps text-xs uppercase tracking-wider transition-all font-bold ${
-                    selectedFilter === tab.id
+                  className={`px-3 py-1.5 rounded-full font-label-caps text-xs uppercase tracking-wider transition-all font-bold ${selectedFilter === tab.id
                       ? "bg-ink-charcoal text-white shadow-xs"
                       : "bg-surface-container text-on-surface hover:bg-surface-container-high"
-                  }`}
+                    }`}
                 >
                   {tab.label}
                 </button>
@@ -359,30 +371,36 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
                     {route.description}
                   </p>
 
-                  {/* Fare Grid (Compact -20%) */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 mb-3 p-2 rounded-lg bg-surface-container-low border border-border-warm/40 text-center">
+                  {/* Fare Grid (5-column: Sedan, Ertiga, Innova, Tempo, Urbania) */}
+                  <div className="grid grid-cols-3 sm:grid-cols-5 gap-1.5 mb-3 p-2 rounded-lg bg-surface-container-low border border-border-warm/40 text-center">
                     <div className="p-0.5">
                       <span className="font-label-caps text-[9px] text-secondary uppercase block font-semibold">Sedan</span>
-                      <span className="font-price-display text-base text-primary font-bold">
+                      <span className="font-price-display text-sm sm:text-base text-primary font-bold">
                         ₹{route.fares.sedan.toLocaleString("en-IN")}
                       </span>
                     </div>
                     <div className="p-0.5">
                       <span className="font-label-caps text-[9px] text-secondary uppercase block font-semibold">Ertiga</span>
-                      <span className="font-price-display text-base text-ink-charcoal font-bold">
+                      <span className="font-price-display text-sm sm:text-base text-ink-charcoal font-bold">
                         ₹{route.fares.ertiga.toLocaleString("en-IN")}
                       </span>
                     </div>
                     <div className="p-0.5">
                       <span className="font-label-caps text-[9px] text-secondary uppercase block font-semibold">Innova</span>
-                      <span className="font-price-display text-base text-ink-charcoal font-bold">
+                      <span className="font-price-display text-sm sm:text-base text-ink-charcoal font-bold">
                         ₹{route.fares.crysta.toLocaleString("en-IN")}
                       </span>
                     </div>
                     <div className="p-0.5">
                       <span className="font-label-caps text-[9px] text-secondary uppercase block font-semibold">Tempo</span>
-                      <span className="font-price-display text-base text-ink-charcoal font-bold">
+                      <span className="font-price-display text-sm sm:text-base text-ink-charcoal font-bold">
                         ₹{route.fares.tempo.toLocaleString("en-IN")}
+                      </span>
+                    </div>
+                    <div className="p-0.5">
+                      <span className="font-label-caps text-[9px] text-secondary uppercase block font-semibold">Urbania</span>
+                      <span className="font-price-display text-sm sm:text-base text-ink-charcoal font-bold">
+                        ₹{route.fares.urbania.toLocaleString("en-IN")}
                       </span>
                     </div>
                   </div>
@@ -415,6 +433,51 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
             ))}
           </div>
         </div>
+        {(() => {
+          const totalPages = 980;
+
+          const search =
+            typeof window !== "undefined" ? window.location.search : "";
+
+          const path =
+            typeof window !== "undefined" ? window.location.pathname : "";
+
+          const currentPage = Math.min(
+            Math.max(Number(new URLSearchParams(search).get("page")) || 1, 1),
+            totalPages
+          );
+
+          const prevPage = Math.max(1, currentPage - 1);
+          const nextPage = Math.min(totalPages, currentPage + 1);
+
+          return (
+            <div className="mt-6 flex items-center justify-center gap-6">
+              <a
+                aria-disabled={currentPage <= 1}
+                className={`inline-flex items-center gap-1 font-label-lg text-label-lg font-semibold text-primary transition-colors hover:text-primary-container ${currentPage <= 1 ? "pointer-events-none opacity-40" : ""
+                  }`}
+                href={`${path}?page=${prevPage}`}
+              >
+                <span className="material-symbols-outlined text-[16px]">west</span>
+                <span>Back</span>
+              </a>
+
+              <span className="font-label-lg text-label-lg text-primary">
+                Page {currentPage} / {totalPages}
+              </span>
+
+              <a
+                aria-disabled={currentPage >= totalPages}
+                className={`inline-flex items-center gap-1 font-label-lg text-label-lg font-semibold text-primary transition-colors hover:text-primary-container ${currentPage >= totalPages ? "pointer-events-none opacity-40" : ""
+                  }`}
+                href={`${path}?page=${nextPage}`}
+              >
+                <span>Next</span>
+                <span className="material-symbols-outlined text-[16px]">east</span>
+              </a>
+            </div>
+          );
+        })()}
       </section>
 
       {/* 3. OUTSTATION BILLING PRINCIPLES (Compact -20%) */}
