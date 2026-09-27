@@ -4,7 +4,8 @@ services:
     runtime: docker
     rootDir: backend
     dockerfilePath: ./Dockerfile
-    healthCheckPath: /health
+    healthCheckPath: /ready
+    preDeployCommand: node dist/db/migrate.js
     autoDeploy: true
     # Only trigger a new Render deploy when backend code or this file changes.
     # Changes to react/ or admin/ will not cause a backend redeploy.

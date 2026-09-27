@@ -97,6 +97,37 @@ Implemented:
 - Created unit test suite `backend/tests/unit/device-registration-auth.test.ts` (9 tests passing) validating anonymous registration, user ownership enforcement, booking ownership enforcement with guestAccessToken, and privileged role override.
 - Verified with full `npm run verify` (typechecks x3, 19 test files / 120 tests passing, builds x3).
 
+### Phase 1 — Step 1.7: Run Migrations in Render Release Phase & Docker Entrypoint
+
+Implemented:
+
+- Created compiled migration runner in `backend/src/db/migrate.ts` (`dist/db/migrate.js`), executable directly with pure Node 22 without requiring development dependencies (`tsx`).
+- Updated `backend/scripts/migrate.ts` to delegate to `runMigrations`.
+- Created `backend/scripts/docker-entrypoint.sh`:
+  - When `DATABASE_URL` is set, runs `node dist/db/migrate.js` idempotently prior to booting the Fastify server.
+  - Aborts container boot immediately with code 1 if migrations fail, preventing the API from starting against an incompatible schema.
+- Updated `backend/Dockerfile`:
+  - Included `scripts/docker-entrypoint.sh` with executable permissions as the container `ENTRYPOINT`.
+  - Updated `HEALTHCHECK` to probe `/ready`.
+- Updated `render.yaml`:
+  - Configured `preDeployCommand: node dist/db/migrate.js` for zero-downtime database migrations during Render release/predeploy phase.
+
+### Phase 1 — Step 1.8: Deployment Readiness Health Check (/ready) & Failure Hardening
+
+Implemented:
+
+- Updated `render.yaml` to set `healthCheckPath: /ready` (replacing shallow `/health`).
+- Updated `backend/Dockerfile` to set `HEALTHCHECK ... /ready`.
+- Updated `backend/src/db/postgres.ts`:
+  - Wrapped `pool.query("select 1 as ok")` in `try / catch` in `healthCheck()` to return `false` gracefully without unhandled exceptions when PostgreSQL connection pool fails.
+- Hardened `readyHandler` in `backend/src/app.ts`:
+  - Returns HTTP 503 `DB_NOT_READY` if `db.healthCheck()` returns `false` or throws.
+  - Returns HTTP 503 `DB_NOT_CONFIGURED` if running in production mode (`NODE_ENV === "production"`) without `DATABASE_URL`.
+  - Returns HTTP 200 `{ success: true, data: { status: "ready", store: ... } }` only when the database is fully reachable.
+- Updated `docs/DEPLOYMENT.md` to document `/ready` health check and `preDeployCommand`.
+- Created unit test suite `backend/tests/unit/ready-healthcheck.test.ts` (3 tests passing) verifying 200 on healthy DB and 503 on degraded / failed DB.
+- Verified with full `npm run verify` (typechecks x3, 20 test files / 123 tests passing, builds x3).
+
 ## Current webhook route
 
 ```text
@@ -114,12 +145,18 @@ The Razorpay webhook secret must exactly matches Render's `RAZORPAY_WEBHOOK_SECR
 - Dynamic DB fare rule and catalog sync tests passed.
 - Unique-active fare rule invariant and version activation tests passed.
 - Booking and payment end-to-end lifecycle and token security tests passed.
-- Device registration ownership lockdown and test auth UUID validation tests passed (19 test files / 120 tests).
+- Device registration ownership lockdown and test auth UUID validation tests passed.
+- Pre-deploy migrations and deployment readiness (/ready) non-2xx tests passed (20 test files / 123 tests).
+- Phase 1 release blockers complete.
 
-## Known next work
+## Known next work (Phase 2 — source-of-truth convergence)
 
-- Step 1.7: Run migrations in Render release/predeploy phase.
-- Step 1.8: Make `/ready` the deployment health check and verify its non-2xx behavior.
-
+- Step 2.1: Add a canonical catalog route model containing route identity, coordinates/places, distance, duration, availability and fare references.
+- Step 2.2: Remove static route matches as authoritative data.
+- Step 2.3: Build manifest from published database records only, or persist editorial route records with publication state.
+- Step 2.4: Replace hard-coded generic package image with published media cover.
+- Step 2.5: Add durable manifest revision/ETag metadata.
+- Step 2.6: Add customer bounded cache TTL, ETag and stale banner.
+- Step 2.7: Hydrate home, route, package and fleet cards through shared live selectors.
 
 See `docs/agent/00_CONTEXT_HANDOFF.md` and section 8 of the root operating specification. The most important engineering task is making database fare rules and catalog routes the single production source used by public fare calculation and booking.

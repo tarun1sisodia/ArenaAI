@@ -143,8 +143,12 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
 
   const repos: Repositories = {
     async healthCheck() {
-      const result = await pool.query("select 1 as ok");
-      return result.rowCount === 1;
+      try {
+        const result = await pool.query("select 1 as ok");
+        return result.rowCount === 1;
+      } catch {
+        return false;
+      }
     },
     async transaction(fn) {
       const client = await pool.connect();

@@ -77,7 +77,7 @@ If an earlier project already exists under a legacy name (`arenaai`, `skb-admin`
 
 ## 2. Deploy the backend API on Render
 
-The checked-in [`render.yaml`](../render.yaml) is the source of truth for the Render service. It uses [`backend/Dockerfile`](../backend/Dockerfile), listens on port `4000`, and checks `/health`.
+The checked-in [`render.yaml`](../render.yaml) is the source of truth for the Render service. It uses [`backend/Dockerfile`](../backend/Dockerfile), listens on port `4000`, runs `preDeployCommand: node dist/db/migrate.js` for zero-downtime database migrations, and checks `/ready`.
 
 ### Create the Render service
 
@@ -86,7 +86,7 @@ The checked-in [`render.yaml`](../render.yaml) is the source of truth for the Re
 3. Select the `main` branch for production.
 4. Render detects `render.yaml`; review the service named `skb-baghel-api`.
 5. Create the Blueprint. Render builds the Docker image from `backend/Dockerfile` and starts `node dist/server.js`.
-6. In the service settings, confirm the health check path is `/health` and the exposed application port is `4000`.
+6. In the service settings, confirm the health check path is `/ready` and the exposed application port is `4000`.
 7. Add every `sync: false` variable from `render.yaml` in Render's **Environment** page. At minimum, production needs `DATABASE_URL`, `API_BASE_URL`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_JWT_SECRET`, `CORS_ORIGINS`, and the provider credentials used by the enabled payment/notification features.
 8. Keep `NODE_ENV=production` and `ALLOW_TEST_AUTH=false`. Never upload `.env` to GitHub.
 9. Deploy and wait until Render reports the service as **Live**.

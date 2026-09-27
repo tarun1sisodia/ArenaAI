@@ -209,11 +209,18 @@ export async function buildApp(options: AppOptions): Promise<BuiltApp> {
 
   const healthHandler = async () => ({ success: true, data: { status: "ok", version: env.FARE_RULES_VERSION } });
   const readyHandler = async (_request: unknown, reply: { code: (statusCode: number) => { send: (payload: unknown) => unknown } }) => {
-    const ok = await db.healthCheck();
-    if (!ok) {
-      return reply.code(503).send({ success: false, error: { code: "DB_NOT_READY", message: "Database is not ready." } });
+    try {
+      const ok = await db.healthCheck();
+      if (!ok) {
+        return reply.code(503).send({ success: false, error: { code: "DB_NOT_READY", message: "Database is not ready." } });
+      }
+      if (env.NODE_ENV === "production" && !env.DATABASE_URL) {
+        return reply.code(503).send({ success: false, error: { code: "DB_NOT_CONFIGURED", message: "Production database URL is required." } });
+      }
+      return reply.code(200).send({ success: true, data: { status: "ready", store: env.DATABASE_URL ? "postgres" : "memory" } });
+    } catch {
+      return reply.code(503).send({ success: false, error: { code: "DB_NOT_READY", message: "Database health check failed." } });
     }
-    return { success: true, data: { status: "ready", store: env.DATABASE_URL ? "postgres" : "memory" } };
   };
 
   app.get("/health", healthHandler);

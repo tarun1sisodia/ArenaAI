@@ -35,8 +35,11 @@ COPY --from=prod-deps --chown=skb:skb /app/node_modules ./node_modules
 COPY --from=build --chown=skb:skb /app/dist ./dist
 COPY --chown=skb:skb package.json ./
 COPY --chown=skb:skb migrations ./migrations
+COPY --chown=skb:skb scripts/docker-entrypoint.sh ./entrypoint.sh
+RUN chmod +x ./entrypoint.sh
 USER skb
 EXPOSE 4000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD wget -qO- http://127.0.0.1:4000/health || exit 1
+  CMD wget -qO- http://127.0.0.1:4000/ready || exit 1
+ENTRYPOINT ["./entrypoint.sh"]
 CMD ["node", "dist/server.js"]
