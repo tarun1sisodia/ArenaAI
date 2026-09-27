@@ -29,6 +29,11 @@ export type Route = {
   id: string;
   from: string;
   to: string;
+  origin?: string;
+  destination?: string;
+  corridor?: string;
+  pricingModel?: string;
+  toll?: 0 | 1;
   km: number;
   duration: string;
   kind: "one-way" | "local";
@@ -126,95 +131,11 @@ export const cities: readonly City[] = [
   { id: "gwalior", name: "Gwalior", code: "GWL" },
   { id: "lucknow", name: "Lucknow", code: "LKO" },
 ];
+import catalog from "./data/generated-catalog.json";
 
-export const vehicles: readonly Vehicle[] = [
-  {
-    id: "sedan",
-    name: "Sedan",
-    klass: "Dzire class",
-    seats: 4,
-    bags: 2,
-    ac: true,
-    tags: ["4+1 SEATS", "AC", "2 BAGS"],
-    blurb: "Everyday comfort for city rides, Yamuna Expressway drops, and local sightseeing.",
-    perKm: 10,
-    rateRange: "₹10–₹12/km",
-    models: ["Maruti Suzuki Dzire", "Toyota Etios", "Hyundai Aura", "Wagon R / Tiago (Hatchback ₹10/km)"],
-    image: "/assets/fleet/sedan-480.webp",
-    suitable: "Couples, airport transfers, 1–4 passengers",
-  },
-  {
-    id: "ertiga",
-    name: "Ertiga",
-    klass: "6+1 MPV",
-    seats: 6,
-    bags: 3,
-    ac: true,
-    tags: ["6+1 SEATS", "AC", "3 BAGS"],
-    blurb: "A little more room for families without stepping up to a large SUV.",
-    perKm: 14,
-    rateRange: "₹14–₹16/km",
-    models: ["Maruti Suzuki Ertiga", "Toyota Rumion", "Renault Triber"],
-    image: "/assets/fleet/ertiga-480.webp",
-    suitable: "Families, 5–6 passengers",
-  },
-  {
-    id: "innova",
-    name: "Innova Crysta",
-    klass: "6+1 SUV",
-    seats: 6,
-    bags: 4,
-    ac: true,
-    tags: ["6+1 SEATS", "AC", "4 BAGS"],
-    blurb: "The outstation favourite — plush pushback seats, smooth suspension, and a quiet cabin.",
-    perKm: 18,
-    rateRange: "₹18–₹23/km",
-    models: ["Toyota Innova Crysta", "Toyota Innova Hycross", "Toyota Fortuner VIP (₹35/km)"],
-    image: "/assets/fleet/innova-480.webp",
-    suitable: "Longer routes, elders, 4–6 passengers",
-  },
-  {
-    id: "tempo",
-    name: "Tempo Traveller",
-    klass: "12–17 seater",
-    seats: 12,
-    bags: 8,
-    ac: true,
-    tags: ["12+1 SEATS", "AC", "LUGGAGE BAY"],
-    blurb: "Spacious pushback seats, luggage bay, individual AC vents, and ice-box for group travel.",
-    perKm: 25,
-    rateRange: "₹22–₹34/km",
-    models: ["9-Seater Maharaja", "12-Seater Standard", "16-Seater Executive", "20-Seater Deluxe", "26-Seater Tourer"],
-    image: "/assets/fleet/tempo-480.webp",
-    suitable: "Family tours, pilgrimage groups, 7–12 passengers",
-  },
-  {
-    id: "urbania",
-    name: "Urbania",
-    klass: "Premium van",
-    seats: 16,
-    bags: 10,
-    ac: true,
-    tags: ["16 SEATS", "PREMIUM", "AC"],
-    blurb: "Chauffeur-grade luxury executive travel with airplane-style cabin styling and sealed acoustics.",
-    perKm: 34,
-    rateRange: "₹34–₹38/km",
-    models: ["Force Urbania 9-Seater VIP", "12-Seater Luxury Cabin", "17-Seater Royal Van"],
-    image: "/assets/fleet/urbania-480.webp",
-    suitable: "Wedding parties, corporate delegations, 13–16 passengers",
-  },
-];
+export const vehicles: readonly Vehicle[] = catalog.vehicles as unknown as readonly Vehicle[];
+export const routes: readonly Route[] = catalog.routes as unknown as readonly Route[];
 
-export const routes: readonly Route[] = [
-  { id: "agra-delhi", from: "agra", to: "delhi", km: 230, duration: "3h 30m", kind: "one-way", fares: { sedan: 3499, ertiga: 4499, innova: 6499, tempo: 9500, urbania: 14000 } },
-  { id: "delhi-agra", from: "delhi", to: "agra", km: 230, duration: "3h 30m", kind: "one-way", fares: { sedan: 3499, ertiga: 4499, innova: 6499, tempo: 9500, urbania: 14000 } },
-  { id: "agra-jaipur", from: "agra", to: "jaipur", km: 240, duration: "4h 30m", kind: "one-way", fares: { sedan: 3499, ertiga: 4999, innova: 6999, tempo: 11000, urbania: 16000 } },
-  { id: "agra-mathura", from: "agra", to: "mathura", km: 55, duration: "1h 15m", kind: "one-way", fares: { sedan: 2200, ertiga: 2800, innova: 3800, tempo: 5500, urbania: 8000 } },
-  { id: "agra-gwalior", from: "agra", to: "gwalior", km: 120, duration: "2h 30m", kind: "one-way", fares: { sedan: 3000, ertiga: 3800, innova: 5500, tempo: 7500, urbania: 11000 } },
-  { id: "delhi-jaipur", from: "delhi", to: "jaipur", km: 270, duration: "5h", kind: "one-way", fares: { sedan: 5000, ertiga: 6200, innova: 8800, tempo: 12000, urbania: 17500 } },
-  { id: "agra-lucknow", from: "agra", to: "lucknow", km: 335, duration: "6h", kind: "one-way", fares: { sedan: 7000, ertiga: 8500, innova: 12000, tempo: 16000, urbania: 22000 } },
-  { id: "agra-local", from: "agra", to: "agra", km: 80, duration: "8h", kind: "local", localLabel: "Agra sightseeing (8h / 80km)", fares: { sedan: 1900, ertiga: 2600, innova: 2850, tempo: 5500, urbania: 7500 } },
-];
 
 export const routeGuidance: Readonly<Record<string, RouteGuidanceItem>> = {
   "agra-delhi": {
