@@ -127,17 +127,25 @@ export function createCatalogController(service: ReturnType<typeof createCatalog
       return sendSuccess(reply, data);
     },
 
-    /** PUBLIC — serves inline (DB-backed) media bytes with immutable caching. */
+    /** PUBLIC — serves inline (DB-backed) media bytes with immutable caching.
+     *  SEC-004: enforces public visibility — only serves when media and parent
+     *  catalog item are published. Authenticated staff can preview draft media.
+     */
     async serveMedia(request: FastifyRequest, reply: FastifyReply) {
       const params = MediaIdParamSchema.parse(request.params);
-      const content = await service.getMediaContent(params.id);
+      const isStaffOrAdmin = Boolean(request.user);
+      const content = await service.getMediaContent(params.id, { allowUnpublished: isStaffOrAdmin });
       if (!content) {
         reply.code(404);
         return reply.send({ error: { code: "MEDIA_NOT_FOUND", message: "Media not found." } });
       }
       reply.header("content-type", content.mimeType);
       reply.header("content-length", content.buffer.length);
-      reply.header("cache-control", "public, max-age=31536000, immutable");
+      if (content.isPublished) {
+        reply.header("cache-control", "public, max-age=31536000, immutable");
+      } else {
+        reply.header("cache-control", "private, no-cache, no-store");
+      }
       reply.header("x-content-type-options", "nosniff");
       return reply.send(content.buffer);
     },

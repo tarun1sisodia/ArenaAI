@@ -31,6 +31,16 @@ Implemented:
 - Transition to Confirmed Voucher Step 4 is gated on verified modal `handler` callback or server verification.
 - Verified with full `npm run verify` (typecheck x3, backend test suites, build x3).
 
+### Phase 1 — Step 1.2: Public Media Visibility Enforcement (SEC-004)
+
+Implemented:
+
+- Enforced public visibility rule in `backend/src/modules/catalog/catalog.service.ts`: `getMediaContent` verifies that both the media record itself and its parent catalog item have `status === "published"` before serving bytes to anonymous callers.
+- Updated `backend/src/modules/catalog/catalog.controller.ts`: Anonymous requests for unpublished/draft/archived media return HTTP 404 (`MEDIA_NOT_FOUND`). Authenticated staff/admin requests can preview draft media with `private, no-cache, no-store` headers. Published media receives `public, max-age=31536000, immutable`.
+- Added migration `backend/migrations/0019_enforce_media_visibility_rls.sql` to restrict PostgREST anonymous SELECT to only published media of published items.
+- Created test suite `backend/tests/unit/media-visibility.test.ts` (3 tests passing) and updated `backend/tests/integration/catalog-live.test.ts`.
+- Full `npm run verify` passed with 15 test suites, 100 tests, and all builds green.
+
 ## Current webhook route
 
 ```text

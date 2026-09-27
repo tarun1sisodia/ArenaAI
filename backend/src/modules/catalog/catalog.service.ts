@@ -468,22 +468,34 @@ export function createCatalogService(deps: { db: Repositories; clock: Clock; med
     },
 
     /** Raw media bytes for the public serve route — inline DB bytes, or a
-     *  live fetch from the configured object store bucket. */
-    async getMediaContent(id: string) {
+     *  live fetch from the configured object store bucket.
+     *  SEC-004: verifies that the media and its parent catalog item are published
+     *  unless allowUnpublished is explicitly true (for authenticated staff preview).
+     */
+    async getMediaContent(id: string, options?: { allowUnpublished?: boolean }) {
       const item = await deps.db.media.getById(id);
       if (!item || !item.mimeType) return null;
+
+      const parent = await deps.db.catalog.getById(item.catalogItemId);
+      const isPublished = item.status === "published" && Boolean(parent && parent.status === "published");
+
+      if (!options?.allowUnpublished && !isPublished) {
+        return null;
+      }
+
       if (item.contentBase64) {
         return {
           buffer: Buffer.from(item.contentBase64, "base64"),
           mimeType: item.mimeType,
           updatedAt: item.createdAt,
+          isPublished,
         };
       }
       if (deps.mediaStorage && item.storagePath === `/api/v1/media/${item.id}`) {
         const objectPath = mediaObjectPath(item.catalogItemId, item.id, item.mimeType);
         try {
           const buffer = await deps.mediaStorage.download(objectPath);
-          return { buffer, mimeType: item.mimeType, updatedAt: item.createdAt };
+          return { buffer, mimeType: item.mimeType, updatedAt: item.createdAt, isPublished };
         } catch {
           return null;
         }

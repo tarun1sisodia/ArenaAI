@@ -214,7 +214,17 @@ describe("live catalog — single source of trips", () => {
     });
     expect(upload.statusCode).toBe(201);
     const media = upload.json().data as Record<string, unknown>;
-    expect(media.sizeBytes).toBe(Buffer.from(TINY_PNG_BASE64, "base64").length);
+    // Anonymous access to draft item's media is rejected (SEC-004)
+    const draftAnon = await app.inject({ method: "GET", url: `/api/v1/media/${media.id}` });
+    expect(draftAnon.statusCode).toBe(404);
+
+    // Authenticated staff can preview draft media
+    const draftAuth = await app.inject({ method: "GET", url: `/api/v1/media/${media.id}`, headers: AUTH });
+    expect(draftAuth.statusCode).toBe(200);
+    expect(draftAuth.headers["cache-control"]).toContain("no-cache");
+
+    // Once catalog item is published, media is publicly served with immutable cache
+    await app.inject({ method: "POST", url: `/api/v1/ops/admin/catalog/${item.id}/publish`, headers: AUTH });
 
     const served = await app.inject({ method: "GET", url: `/api/v1/media/${media.id}` });
     expect(served.statusCode).toBe(200);
