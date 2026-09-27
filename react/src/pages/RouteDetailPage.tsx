@@ -378,7 +378,7 @@ export function RouteDetailPage({ route }: RouteDetailPageProps) {
 
                   <a
                     className="mt-space-md w-full inline-flex items-center justify-center gap-1 bg-terracotta-sandstone text-on-primary py-2.5 rounded text-label-lg font-label-lg shadow-sm hover:bg-terracotta-sunlit transition-all text-center"
-                    href={`/book/?route=${route.id}&vehicle=${vSlug}&step=2`}
+                    href={`/book/?route=${route.id}&vehicle=${vSlug}&step=3`}
                   >
                     <span>Select {v.name.split(" ")[0]}</span>
                     <span className="material-symbols-outlined text-[16px]">arrow_forward</span>

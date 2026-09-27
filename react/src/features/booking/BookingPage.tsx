@@ -2,10 +2,13 @@ import { useState, useMemo, useEffect } from "react";
 import { contact } from "../../data/contact";
 import { packages, routes, vehicles, type VehicleId, type TourPackage } from "../../data/catalogue";
 import { calcFare, advanceOf, formatInr, localPackages, type LocalPackageKey } from "./fareEngine";
-import { createDraftBooking, type BackendTripType, type BackendVehicleTier } from "../../services/api";
+import { createDraftBooking, mapVehicleTier, type BackendTripType } from "../../services/api";
+import { fetchPublishedCatalog, type PublicCatalogItem } from "../../services/catalog";
 import { WhatsAppIcon } from "../../components/icons";
+import { TripSelectionStep, type SelectableTrip } from "./TripSelectionStep";
+import { BookingAssistant, type QuickPick } from "./BookingAssistant";
 
-type BookingStep = 1 | 2 | 3;
+type BookingStep = 1 | 2 | 3 | 4;
 
 interface VehicleOption {
   id: VehicleId;
@@ -90,12 +93,19 @@ const tomorrowDateString = () => {
 };
 
 export function BookingPage() {
-  // Step State: 1 = Choose Car, 2 = Universal Booking & Billing, 3 = Confirmation Voucher
+  // Step State: 1 = Choose Vehicle, 2 = Choose Trip, 3 = Booking & Billing Form,
+  // 4 = Confirmation Voucher
   const [step, setStep] = useState<BookingStep>(1);
 
   // Selected tour package or fallback
   const [packageSlug, setPackageSlug] = useState<string>("taj-mahal-sunrise-tour");
   const [selectedVehicleId, setSelectedVehicleId] = useState<VehicleId>("innova");
+
+  // Live catalog trips (single source of trips with the operations desk) and
+  // the currently selected live trip slug. A live selection overrides the
+  // curated static package of the same slug.
+  const [liveTrips, setLiveTrips] = useState<PublicCatalogItem[]>([]);
+  const [selectedLiveSlug, setSelectedLiveSlug] = useState<string | null>(null);
 
   // Form Fields State
   const [fullName, setFullName] = useState<string>("Jonathan Sterling");
@@ -141,6 +151,7 @@ export function BookingPage() {
       const match = packages.find((p) => p.slug === qPkg || p.id === qPkg);
       if (match) {
         setPackageSlug(match.slug);
+        setSelectedLiveSlug(null);
       }
     }
     const qVeh = params.get("vehicle") as VehicleId | null;
@@ -148,14 +159,36 @@ export function BookingPage() {
       setSelectedVehicleId(qVeh);
     }
     const qStep = params.get("step");
-    if (qStep === "2") {
+    // Step map: 1 = vehicle, 2 = choose trip, 3 = booking form, 4 = confirmation.
+    if (qStep === "1") {
+      setStep(1);
+    } else if (qStep === "2") {
       setStep(2);
     } else if (qStep === "3") {
       setStep(3);
+    } else if (qStep === "4") {
+      setStep(4);
     }
   }, []);
 
-  // Matched package
+  // Load every published trip from the live catalog (single source of trips).
+  // Non-trip verticals (famous places, fleet specs) are not bookable itineraries.
+  useEffect(() => {
+    let isMounted = true;
+    fetchPublishedCatalog()
+      .then((items) => {
+        if (!isMounted) return;
+        setLiveTrips(items.filter((i) => i.type !== "place" && i.type !== "vehicle"));
+      })
+      .catch(() => {
+        /* curated static packages remain the fallback */
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  // Matched package (curated static fallback)
   const matchedPackage = useMemo<TourPackage>(() => {
     return (
       packages.find((p) => p.slug === packageSlug || p.id === packageSlug) ||
@@ -163,6 +196,99 @@ export function BookingPage() {
       packages[0]
     );
   }, [packageSlug]);
+
+  // Every bookable trip: curated static packages + live desk catalog, deduped
+  // by slug with the live (CMS-managed) version winning.
+  const availableTrips = useMemo<SelectableTrip[]>(() => {
+    const curated: SelectableTrip[] = packages.map((p) => ({
+      key: `curated:${p.slug}`,
+      source: "curated" as const,
+      slug: p.slug,
+      name: p.name,
+      blurb: p.blurb,
+      duration: p.duration,
+      distanceKm: null,
+      stops: [...p.places],
+      basePrice: p.from,
+      image: p.image,
+      tripType: "local-tour" as const,
+      availability: "available" as const,
+      seatsLeft: null,
+    }));
+    const live: SelectableTrip[] = liveTrips.map((t) => ({
+      key: `live:${t.slug}`,
+      source: "live" as const,
+      slug: t.slug,
+      name: t.title,
+      blurb: t.shortDescription,
+      duration: t.durationText || "Full day",
+      distanceKm: t.distanceKm,
+      stops: t.stops,
+      basePrice: t.startingPriceInr,
+      image: t.coverImage?.url ?? null,
+      tripType: t.tripType ?? "local-tour",
+      availability: t.availability,
+      seatsLeft: t.seatsLeft,
+    }));
+    const liveSlugs = new Set(live.map((t) => t.slug));
+    return [...live, ...curated.filter((t) => !liveSlugs.has(t.slug))];
+  }, [liveTrips]);
+
+  // The trip the customer is booking — a live selection wins over the curated package.
+  const selectedTrip = useMemo<SelectableTrip>(() => {
+    const live = availableTrips.find((t) => t.source === "live" && t.slug === selectedLiveSlug);
+    if (live) return live;
+    return (
+      availableTrips.find((t) => t.source === "curated" && t.slug === packageSlug) ??
+      availableTrips.find((t) => t.source === "curated") ?? {
+        key: "curated:fallback",
+        source: "curated" as const,
+        slug: matchedPackage.slug,
+        name: matchedPackage.name,
+        blurb: matchedPackage.blurb,
+        duration: matchedPackage.duration,
+        distanceKm: null,
+        stops: [...matchedPackage.places],
+        basePrice: matchedPackage.from,
+        image: matchedPackage.image,
+        tripType: "local-tour" as const,
+        availability: "available" as const,
+        seatsLeft: null,
+      }
+    );
+  }, [availableTrips, selectedLiveSlug, packageSlug, matchedPackage]);
+
+  function handleSelectTrip(trip: SelectableTrip) {
+    if (trip.source === "live") {
+      setSelectedLiveSlug(trip.slug);
+    } else {
+      setSelectedLiveSlug(null);
+      setPackageSlug(trip.slug);
+    }
+  }
+
+  // Concierge quick picks — deterministic smart suggestions over the pool.
+  function handleQuickPick(pick: QuickPick, trips: SelectableTrip[]) {
+    if (trips.length === 0) return;
+    let chosen: SelectableTrip | undefined;
+    switch (pick) {
+      case "popular":
+        chosen = trips.find((t) => /same day|agra sightseeing|taj mahal/i.test(t.name)) ?? trips[0];
+        break;
+      case "family":
+        chosen =
+          trips.find((t) => /mathura|vrindavan|family/i.test(t.name)) ??
+          [...trips].sort((a, b) => b.stops.length - a.stops.length)[0];
+        break;
+      case "budget":
+        chosen = [...trips].sort((a, b) => a.basePrice - b.basePrice)[0];
+        break;
+      case "sunrise":
+        chosen = trips.find((t) => /sunrise|dawn/i.test(t.name)) ?? trips[0];
+        break;
+    }
+    if (chosen) handleSelectTrip(chosen);
+  }
 
   // Selected vehicle details
   const selectedVehicle = useMemo<VehicleOption>(() => {
@@ -173,7 +299,7 @@ export function BookingPage() {
   }, [selectedVehicleId]);
 
   // Price calculations
-  const baseTourPrice = matchedPackage.from;
+  const baseTourPrice = selectedTrip.basePrice;
   const vehicleOffset = selectedVehicle.priceOffset;
   const totalGrossPrice = baseTourPrice + vehicleOffset;
   const advanceAmount = Math.round(totalGrossPrice * 0.28);
@@ -182,10 +308,16 @@ export function BookingPage() {
   // Amount authorized on checkout
   const amountToCharge = paymentChoice === "full" ? totalGrossPrice : advanceAmount;
 
-  // Handle proceed to Step 2
+  // Handle proceed from vehicle selection to trip selection
   const handleProceedToStep2 = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
     setStep(2);
+  };
+
+  // Handle proceed from trip selection to the booking form
+  const handleProceedToStep3 = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    setStep(3);
   };
 
   // Handle final checkout submission
@@ -194,20 +326,50 @@ export function BookingPage() {
     setIsSubmitting(true);
 
     try {
-      // Attempt backend booking draft creation if available
+      // Generate a local reference immediately so the customer always has one
       const generatedId = Math.floor(10000 + Math.random() * 90000).toString();
-      setBookingRef(`#SKB-${matchedPackage.slug.toUpperCase().slice(0, 7)}-${generatedId}`);
+      setBookingRef(`#SKB-${selectedTrip.slug.toUpperCase().slice(0, 7)}-${generatedId}`);
       setInvoiceNumber(`INV-2026-${generatedId}`);
+
+      // Register the booking with the operations desk (draft ticket). When the
+      // desk API is reachable we show its ticket reference on the voucher; if
+      // not, the local reference above stands and the desk follows up on WhatsApp.
+      try {
+        const pickupDatetime = new Date(`${tourDate}T${pickupTime}:00`);
+        const destinationName = selectedTrip.tripType === "one-way" || selectedTrip.tripType === "round-trip"
+          ? selectedTrip.stops[selectedTrip.stops.length - 1] ?? "Agra"
+          : "Agra";
+        const draft = await createDraftBooking({
+          tripType: selectedTrip.tripType as BackendTripType,
+          vehicleTier: mapVehicleTier(selectedVehicleId),
+          originName: "Agra",
+          destinationName,
+          pickupAddress: pickupInstruction,
+          dropAddress: dropInstruction,
+          pickupDatetime: Number.isNaN(pickupDatetime.getTime())
+            ? new Date().toISOString()
+            : pickupDatetime.toISOString(),
+          customerName: fullName,
+          customerPhone: phone.replace(/[^\d+]/g, ""),
+          customerEmail: email,
+          specialNotes: `${selectedTrip.name} (${selectedTrip.source === "live" ? "live catalog" : "curated package"}) • ${guestCount} guest(s)${hasPet ? ` • pet: ${petType} ${petSize}` : ""}`,
+        });
+        if (draft && draft.ticketId) {
+          setBookingRef(draft.ticketId);
+        }
+      } catch (deskError) {
+        console.warn("Desk draft booking unavailable, using local reference:", deskError);
+      }
 
       // Simulate network authorization latency for realistic UX
       await new Promise((resolve) => setTimeout(resolve, 800));
 
       window.scrollTo({ top: 0, behavior: "smooth" });
-      setStep(3);
+      setStep(4);
     } catch (err) {
       console.error("Booking submission error:", err);
       // Fallback transition so user is never blocked
-      setStep(3);
+      setStep(4);
     } finally {
       setIsSubmitting(false);
     }
@@ -223,12 +385,18 @@ export function BookingPage() {
             <span className="material-symbols-outlined text-[14px]">chevron_right</span>
             <a className="hover:text-primary transition-colors" href="/en/packages/">Packages</a>
             <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-            <a className="hover:text-primary transition-colors" href={`/en/packages/${matchedPackage.slug}`}>
-              {matchedPackage.name}
+            <a className="hover:text-primary transition-colors" href={`/en/packages/${selectedTrip.slug}`}>
+              {selectedTrip.name}
             </a>
             <span className="material-symbols-outlined text-[14px]">chevron_right</span>
             <span className="text-primary font-semibold">
-              {step === 1 ? "Step 1: Choose Vehicle" : step === 2 ? "Step 2: Universal Booking Form" : "Confirmation"}
+              {step === 1
+                ? "Step 1: Choose Vehicle"
+                : step === 2
+                  ? "Step 2: Choose Your Trip"
+                  : step === 3
+                    ? "Step 3: Booking Form"
+                    : "Confirmation"}
             </span>
           </nav>
           <div className="hidden sm:flex items-center gap-2 text-[12px] text-secondary">
@@ -239,9 +407,9 @@ export function BookingPage() {
       </div>
 
       <div className="max-w-[1280px] mx-auto px-gutter py-space-xl flex flex-col gap-space-xl">
-        {/* HORIZONTAL PROGRESS TRACKER (3 Steps) */}
+        {/* HORIZONTAL PROGRESS TRACKER (4 Steps) */}
         <section className="w-full bg-surface-container-low rounded-xl p-space-md shadow-sm border border-border-warm/60">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-space-sm">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-space-sm">
             {/* Step 1 */}
             <div
               className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${step === 1
@@ -287,7 +455,7 @@ export function BookingPage() {
                   {step === 2 ? "Step 2 • Active" : step > 2 ? "Step 2 • Completed" : "Step 2 • Upcoming"}
                 </span>
                 <span className="font-title-md text-title-md text-ink-charcoal font-semibold truncate">
-                  Billing &amp; Date Logistics
+                  Choose Your Trip
                 </span>
               </div>
             </div>
@@ -295,21 +463,47 @@ export function BookingPage() {
             {/* Step 3 */}
             <div
               className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${step === 3
+                  ? "bg-surface-container-lowest shadow-sm border border-border-warm"
+                  : "bg-surface-container-lowest/50 opacity-85"
+                }`}
+            >
+              <div
+                className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${step > 3
+                    ? "bg-success-jade text-on-primary"
+                    : step === 3
+                      ? "bg-primary text-on-primary"
+                      : "bg-surface-container-highest text-secondary"
+                  }`}
+              >
+                {step > 3 ? <span className="material-symbols-outlined text-[20px]">check</span> : "3"}
+              </div>
+              <div className="flex flex-col min-w-0">
+                <span className="font-label-caps text-label-caps uppercase text-secondary tracking-wider">
+                  {step === 3 ? "Step 3 • Active" : step > 3 ? "Step 3 • Completed" : "Step 3 • Upcoming"}
+                </span>
+                <span className="font-title-md text-title-md text-ink-charcoal font-semibold truncate">
+                  Billing &amp; Date Logistics
+                </span>
+              </div>
+            </div>
+
+            {/* Step 4 */}
+            <div
+              className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${step === 4
                   ? "bg-ink-charcoal text-ivory-surface shadow-md"
                   : "bg-surface-container-lowest/50 opacity-75"
                 }`}
             >
               <div
-                className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${step === 3 ? "bg-terracotta-sandstone text-on-primary" : "bg-surface-container-highest text-secondary"
-                  }`}
+                className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${step === 4 ? "bg-terracotta-sandstone text-on-primary" : "bg-surface-container-highest text-secondary"}`}
               >
                 <span className="material-symbols-outlined text-[20px]">verified</span>
               </div>
               <div className="flex flex-col min-w-0">
-                <span className={`font-label-caps text-label-caps uppercase tracking-wider ${step === 3 ? "text-gold-accent" : "text-secondary"}`}>
-                  {step === 3 ? "Step 3 • Issued" : "Step 3 • Final Step"}
+                <span className={`font-label-caps text-label-caps uppercase tracking-wider ${step === 4 ? "text-gold-accent" : "text-secondary"}`}>
+                  {step === 4 ? "Step 4 • Issued" : "Step 4 • Final Step"}
                 </span>
-                <span className={`font-title-md text-title-md truncate font-semibold ${step === 3 ? "text-ivory-surface" : "text-on-surface-variant"}`}>
+                <span className={`font-title-md text-title-md truncate font-semibold ${step === 4 ? "text-ivory-surface" : "text-on-surface-variant"}`}>
                   Transit Voucher &amp; Confirmation
                 </span>
               </div>
@@ -332,7 +526,7 @@ export function BookingPage() {
                     Select Your Chauffeur &amp; Vehicle Tier
                   </h1>
                   <p className="font-body-lg text-body-lg text-on-surface-variant mt-space-xs leading-relaxed">
-                    {matchedPackage.name} — Handcrafted private expedition with sanitized commercial AC transit, licensed ASI historian guide, and 5-star palace breakfast.
+                    Currently matched to <span className="font-semibold text-ink-midnight">{selectedTrip.name}</span> — you will confirm or change this trip on the next step. Sanitized commercial AC transit, licensed ASI historian guide, and 5-star palace breakfast included.
                   </p>
                 </div>
                 {/* Live Quick Stats Badge Panel */}
@@ -344,7 +538,7 @@ export function BookingPage() {
                   <div className="w-px h-8 bg-surface-container-highest"></div>
                   <div className="flex flex-col">
                     <span className="font-label-caps text-label-caps uppercase text-secondary">Duration</span>
-                    <span className="font-title-md text-title-md text-ink-charcoal font-semibold">{matchedPackage.duration}</span>
+                    <span className="font-title-md text-title-md text-ink-charcoal font-semibold">{selectedTrip.duration}</span>
                   </div>
                   <div className="w-px h-8 bg-surface-container-highest"></div>
                   <div className="flex flex-col">
@@ -501,10 +695,10 @@ export function BookingPage() {
                   <div className="bg-surface-container-low p-space-md rounded-xl flex flex-col gap-space-xs border border-border-warm/60">
                     <span className="font-label-caps text-label-caps uppercase text-secondary font-bold">Tour Experience</span>
                     <div className="font-title-md text-title-md text-ink-charcoal font-semibold leading-snug">
-                      {matchedPackage.name}
+                      {selectedTrip.name}
                     </div>
                     <p className="font-body-sm text-body-sm text-on-surface-variant">
-                      Includes Yamuna Expressway direct entry, dawn Taj gate bypass coordination &amp; 5-star palace breakfast.
+                      {selectedTrip.blurb}
                     </p>
                   </div>
 
@@ -593,7 +787,7 @@ export function BookingPage() {
                     className="w-full py-3.5 px-space-md rounded-xl bg-terracotta-sandstone text-on-primary font-label-lg text-label-lg font-semibold hover:bg-terracotta-sunlit transition-all shadow-md flex items-center justify-center gap-2 group cursor-pointer"
                     type="button"
                   >
-                    <span>Continue to Date &amp; Pickup (Step 2)</span>
+                    <span>Continue to Choose Your Trip (Step 2)</span>
                     <span className="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">
                       arrow_forward
                     </span>
@@ -603,7 +797,7 @@ export function BookingPage() {
                   <a
                     className="flex items-center justify-center gap-2 py-2.5 px-space-sm rounded-lg bg-black hover:bg-neutral-900 border border-white/10 text-white font-label-lg text-label-lg transition-colors text-center active:scale-[0.98]"
                     href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
-                      `Hello SK Baghel Travels, I am interested in custom delegation for ${matchedPackage.name} with ${selectedVehicle.name}.`
+                      `Hello SK Baghel Travels, I am interested in custom delegation for ${selectedTrip.name} with ${selectedVehicle.name}.`
                     )}`}
                     rel="noopener noreferrer"
                     target="_blank"
@@ -633,8 +827,26 @@ export function BookingPage() {
           </div>
         )}
 
-        {/* STEP 2: UNIVERSAL BILLING & BOOKING FORM SCREEN */}
+        {/* STEP 2: CHOOSE YOUR TRIP (fleet-first flow) */}
         {step === 2 && (
+          <TripSelectionStep
+            trips={availableTrips}
+            selectedKey={selectedTrip.key}
+            onSelect={handleSelectTrip}
+            vehicleName={selectedVehicle.name}
+            vehicleImage={selectedVehicle.image}
+            vehiclePriceOffset={selectedVehicle.priceOffset}
+            onContinue={handleProceedToStep3}
+            onChangeVehicle={() => {
+              window.scrollTo({ top: 0, behavior: "smooth" });
+              setStep(1);
+            }}
+            onQuickPick={handleQuickPick}
+          />
+        )}
+
+        {/* STEP 3: UNIVERSAL BILLING & BOOKING FORM SCREEN */}
+        {step === 3 && (
           <div className="max-w-4xl mx-auto w-full flex flex-col gap-space-md">
             <div className="w-full bg-surface-container-lowest rounded-xl shadow-md border border-border-warm overflow-hidden">
               {/* Form Card Header */}
@@ -648,10 +860,10 @@ export function BookingPage() {
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
-                    onClick={() => setStep(1)}
+                    onClick={() => setStep(2)}
                     className="text-xs text-secondary-container hover:text-ivory-surface underline mr-2"
                   >
-                    ← Change Vehicle
+                    ← Change Trip / Vehicle
                   </button>
                   <span className="font-label-caps text-label-caps text-surface-variant tracking-wider bg-ink-slate px-2.5 py-1 rounded">
                     Official Gateway
@@ -1038,7 +1250,7 @@ export function BookingPage() {
                 {/* Billing Summary Box */}
                 <div className="bg-surface-container-lowest rounded-xl p-space-sm md:p-space-md flex flex-col gap-2 shadow-sm border border-border-warm">
                   <div className="flex justify-between items-center text-body-md font-body-md text-on-surface-variant pb-1.5 border-b border-border-warm">
-                    <span>{matchedPackage.name} ({selectedVehicle.name})</span>
+                    <span>{selectedTrip.name} ({selectedVehicle.name})</span>
                     <span className="font-price-display text-title-md text-ink-charcoal font-semibold">
                       ₹{totalGrossPrice.toLocaleString("en-IN")}
                     </span>
@@ -1164,11 +1376,23 @@ export function BookingPage() {
                 </div>
               </form>
             </div>
+
+            {/* SK Concierge — booking agent available while you pay */}
+            <div className="max-w-2xl w-full mx-auto">
+              <BookingAssistant
+                step={3}
+                vehicleName={selectedVehicle.name}
+                tripName={selectedTrip.name}
+                totalFare={totalGrossPrice}
+                advanceAmount={advanceAmount}
+                tourDate={tourDate}
+              />
+            </div>
           </div>
         )}
 
-        {/* STEP 3: BOOKING CONFIRMED & TRANSIT VOUCHER SCREEN */}
-        {step === 3 && (
+        {/* STEP 4: BOOKING CONFIRMED & TRANSIT VOUCHER SCREEN */}
+        {step === 4 && (
           <div className="flex flex-col gap-space-2xl">
             {/* Hero Confirmation Banner */}
             <div className="relative bg-surface-container-lowest rounded-xl p-space-xl lg:p-space-2xl shadow-sm border border-border-warm flex flex-col md:flex-row items-start md:items-center justify-between gap-space-xl overflow-hidden">
@@ -1272,6 +1496,14 @@ export function BookingPage() {
                         <span className="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1">
                           <span className="material-symbols-outlined text-[16px] text-terracotta-sandstone">airline_seat_recline_extra</span>
                           {selectedVehicle.subtitle}
+                        </span>
+                      </div>
+                      <div className="flex flex-col gap-1 sm:col-span-2 border-t border-border-warm/60 pt-space-xs">
+                        <span className="font-label-caps text-label-caps text-secondary uppercase font-bold">Booked Trip</span>
+                        <span className="font-title-md text-title-md text-on-surface font-semibold">{selectedTrip.name}</span>
+                        <span className="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1">
+                          <span className="material-symbols-outlined text-[16px] text-terracotta-sandstone">route</span>
+                          {selectedTrip.duration} • {selectedTrip.stops.length > 0 ? selectedTrip.stops.join(" · ") : "Direct transfer"} • Total ₹{totalGrossPrice.toLocaleString("en-IN")}
                         </span>
                       </div>
                     </div>

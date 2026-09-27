@@ -513,7 +513,7 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                     </a>
                     <a
                       className="w-full sm:w-auto px-4 py-2 rounded-lg bg-terracotta-sandstone hover:bg-terracotta-sunlit text-on-primary font-label-lg text-xs inline-flex items-center justify-center gap-1.5 shadow-xs transition-all shrink-0 font-semibold"
-                      href={`/book?vehicle=${veh.id}`}
+                      href={`/book?vehicle=${veh.id}&step=2`}
                     >
                       <span>Book {veh.name.split(" ")[0]}</span>
                       <span className="material-symbols-outlined text-[15px]">arrow_forward</span>
@@ -565,7 +565,7 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                   <td className="py-2.5 px-3.5 align-middle text-right whitespace-nowrap">
                     <a
                       className="inline-block px-2.5 py-1 rounded bg-terracotta-sandstone hover:bg-terracotta-sunlit text-on-primary font-label-caps text-[9.5px] tracking-wider transition-all shadow-xs font-bold"
-                      href="/book?vehicle=sedan"
+                      href="/book?vehicle=sedan&step=2"
                     >
                       Select Sedan
                     </a>
@@ -583,7 +583,7 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                   <td className="py-2.5 px-3.5 align-middle text-right whitespace-nowrap">
                     <a
                       className="inline-block px-2.5 py-1 rounded bg-terracotta-sandstone hover:bg-terracotta-sunlit text-on-primary font-label-caps text-[9.5px] tracking-wider transition-all shadow-xs font-bold"
-                      href="/book?vehicle=ertiga"
+                      href="/book?vehicle=ertiga&step=2"
                     >
                       Select MPV
                     </a>
@@ -601,7 +601,7 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                   <td className="py-2.5 px-3.5 align-middle text-right whitespace-nowrap">
                     <a
                       className="inline-block px-2.5 py-1 rounded bg-terracotta-sandstone hover:bg-terracotta-sunlit text-on-primary font-label-caps text-[9.5px] tracking-wider transition-all shadow-xs font-bold"
-                      href="/book?vehicle=innova"
+                      href="/book?vehicle=innova&step=2"
                     >
                       Select Crysta
                     </a>
@@ -619,7 +619,7 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                   <td className="py-2.5 px-3.5 align-middle text-right whitespace-nowrap">
                     <a
                       className="inline-block px-2.5 py-1 rounded bg-terracotta-sandstone hover:bg-terracotta-sunlit text-on-primary font-label-caps text-[9.5px] tracking-wider transition-all shadow-xs font-bold"
-                      href="/book?vehicle=tempo"
+                      href="/book?vehicle=tempo&step=2"
                     >
                       Select Minibus
                     </a>
@@ -637,7 +637,7 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                   <td className="py-2.5 px-3.5 align-middle text-right whitespace-nowrap">
                     <a
                       className="inline-block px-2.5 py-1 rounded bg-terracotta-sandstone hover:bg-terracotta-sunlit text-on-primary font-label-caps text-[9.5px] tracking-wider transition-all shadow-xs font-bold"
-                      href="/book?vehicle=urbania"
+                      href="/book?vehicle=urbania&step=2"
                     >
                       Select Urbania
                     </a>
