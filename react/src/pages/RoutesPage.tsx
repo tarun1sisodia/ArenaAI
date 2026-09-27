@@ -5,6 +5,7 @@ import { WhatsAppIcon } from "../components/icons";
 import { InstantRouteCalculator } from "../components/routes/InstantRouteCalculator";
 import { Pagination } from "../components/ui/Pagination";
 import { loadRoutesManifest } from "../services/catalogManifest";
+import { routes as staticCatalogRoutes, type Route as CatalogueRoute } from "../data/catalogue";
 
 export interface RoutesPageProps {
   language?: SupportedLanguage;
@@ -51,160 +52,56 @@ interface ManifestRouteData {
   toll: 1 | 0;
 }
 
-const PRIMARY_ROUTES: RouteItem[] = [
-  {
-    id: "agra-delhi",
-    name: "Agra → Delhi NCR & IGI Airport",
-    category: "expressway",
-    categoryBadge: "EXPRESSWAY CORRIDOR",
-    distanceKm: 230,
-    duration: "3h 30m",
-    highway: "Yamuna Expressway (6-Lane Access-Controlled)",
-    description: "Point-to-point drop directly to Delhi IGI Airport Terminal 1, 2, 3 or any hotel/residence across Delhi, Noida, or Gurugram.",
-    tollNote: "Yamuna Expressway Toll included in one-way fare",
-    stateTaxNote: "Delhi/Haryana entry tax included",
+function mapCatalogueRoute(item: CatalogueRoute): RouteItem {
+  const isLocal = item.kind === "local" || item.pricingModel === "day120";
+  const isTempo = item.pricingModel === "tempo";
+  let category: RouteCategory = "expressway";
+  const cLower = (item.corridor || "").toLowerCase();
+  if (cLower.includes("expressway") || cLower.includes("delhi") || cLower.includes("gurgaon") || cLower.includes("noida")) {
+    category = "expressway";
+  } else if (cLower.includes("jaipur") || cLower.includes("golden") || cLower.includes("rajasthan")) {
+    category = "golden-triangle";
+  } else if (cLower.includes("mathura") || cLower.includes("vrindavan") || cLower.includes("haridwar") || cLower.includes("ayodhya") || cLower.includes("ganga")) {
+    category = "pilgrimage";
+  } else if (cLower.includes("lucknow") || cLower.includes("gwalior") || cLower.includes("heritage")) {
+    category = "heritage";
+  } else if (isLocal) {
+    category = "local";
+  } else if (isTempo) {
+    category = "tempo";
+  }
+
+  const origin = item.origin || (item.from ? item.from.replace(/-/g, " ") : "Agra");
+  const destination = item.destination || (item.to ? item.to.replace(/-/g, " ") : "Outstation");
+
+  return {
+    id: item.id,
+    name: `${origin} → ${destination}`,
+    origin,
+    destination,
+    category,
+    categoryBadge: item.corridor ? item.corridor.replace("->", "→") : (isLocal ? "LOCAL 120KM PACKAGE" : "OUTSTATION CORRIDOR"),
+    distanceKm: item.km > 0 ? item.km : 180,
+    duration: item.duration || "4h 00m",
+    highway: item.corridor || "Direct Highway Corridor",
+    description: isLocal
+      ? `Dedicated 120 km full-day local & outstation chauffeur service connecting ${origin} to ${destination}.`
+      : isTempo
+      ? `Spacious 9-26 seater Tempo Traveller & Force Urbania group rental connecting ${origin} to ${destination}.`
+      : `Point-to-point AC outstation cab directly connecting ${origin} to ${destination} with transparent pricing.`,
+    tollNote: item.toll === 1 ? "Highway tolls included in one-way fare" : "Tolls as per actuals",
+    stateTaxNote: "Interstate commercial permits clear",
+    pricingModel: item.pricingModel,
     fares: {
-      sedan: 3499,
-      ertiga: 4800,
-      crysta: 6499,
-      tempo: 9500,
-      urbania: 11500,
+      sedan: item.fares?.sedan || 2500,
+      ertiga: item.fares?.ertiga || 3200,
+      crysta: item.fares?.innova || 4500,
+      tempo: item.fares?.tempo || 9500,
+      urbania: item.fares?.urbania || 14000,
     },
-  },
-  {
-    id: "agra-jaipur",
-    name: "Agra → Jaipur (Pink City)",
-    category: "golden-triangle",
-    categoryBadge: "GOLDEN TRIANGLE",
-    distanceKm: 240,
-    duration: "4h 30m",
-    highway: "NH-21 via Bharatpur & Dausa Corridor",
-    description: "The classic heritage trail connecting Agra to Jaipur. Optional stopover at Fatehpur Sikri or Chand Baori Stepwell en route.",
-    tollNote: "Highway tolls included in one-way fare",
-    stateTaxNote: "Rajasthan state passenger tax included",
-    fares: {
-      sedan: 3499,
-      ertiga: 4800,
-      crysta: 6499,
-      tempo: 9800,
-      urbania: 11800,
-    },
-  },
-  {
-    id: "agra-mathura",
-    name: "Agra → Mathura & Vrindavan",
-    category: "pilgrimage",
-    categoryBadge: "PILGRIMAGE EXPRESS",
-    distanceKm: 55,
-    duration: "1h 15m",
-    highway: "NH-19 (Delhi-Agra Highway)",
-    description: "Short pilgrimage circuit tailored around temple prayer timings. Doorstep drops to Krishna Janmabhoomi, Banke Bihari, and Prem Mandir.",
-    tollNote: "Toll included in one-way fare",
-    stateTaxNote: "Within Uttar Pradesh (Zero interstate tax)",
-    fares: {
-      sedan: 2200,
-      ertiga: 2900,
-      crysta: 3800,
-      tempo: 5800,
-      urbania: 7200,
-    },
-  },
-  {
-    id: "agra-gwalior",
-    name: "Agra → Gwalior Fort & Palace",
-    category: "heritage",
-    categoryBadge: "HERITAGE DAY-TRIP",
-    distanceKm: 120,
-    duration: "2h 30m",
-    highway: "NH-44 via Dholpur & Chambal Corridor",
-    description: "Majestic day excursion or one-way drop to Gwalior Fort, Jai Vilas Palace, and Scindia Museum with scenic Chambal river crossing.",
-    tollNote: "Highway tolls included",
-    stateTaxNote: "Madhya Pradesh state tax included",
-    fares: {
-      sedan: 3000,
-      ertiga: 4200,
-      crysta: 5400,
-      tempo: 8200,
-      urbania: 9800,
-    },
-  },
-  {
-    id: "agra-lucknow",
-    name: "Agra → Lucknow (City of Nawabs)",
-    category: "heritage",
-    categoryBadge: "CAPITAL EXPRESSWAY",
-    distanceKm: 335,
-    duration: "4h 45m",
-    highway: "Agra-Lucknow Expressway (Greenfield 6-Lane)",
-    description: "Flawless high-speed transit directly on the 302-km greenfield expressway connecting Agra to Uttar Pradesh's capital city.",
-    tollNote: "Agra-Lucknow expressway toll included",
-    stateTaxNote: "Within Uttar Pradesh (Zero interstate tax)",
-    fares: {
-      sedan: 5800,
-      ertiga: 7500,
-      crysta: 9800,
-      tempo: 14500,
-      urbania: 17500,
-    },
-  },
-  {
-    id: "agra-haridwar",
-    name: "Agra → Haridwar & Rishikesh",
-    category: "pilgrimage",
-    categoryBadge: "SACRED GANGA CORRIDOR",
-    distanceKm: 385,
-    duration: "6h 30m",
-    highway: "Eastern Peripheral & Meerut-Haridwar Highway",
-    description: "Comfortable pilgrimage or adventure transit to the foothills of the Himalayas. Direct drops to Har Ki Pauri and Tapovan Rishikesh.",
-    tollNote: "Tolls included in one-way fare",
-    stateTaxNote: "Uttarakhand state entry permit included",
-    fares: {
-      sedan: 6800,
-      ertiga: 8800,
-      crysta: 11500,
-      tempo: 16800,
-      urbania: 19800,
-    },
-  },
-  {
-    id: "agra-bharatpur",
-    name: "Agra → Bharatpur Bird Sanctuary",
-    category: "golden-triangle",
-    categoryBadge: "WILDLIFE CORRIDOR",
-    distanceKm: 56,
-    duration: "1h 15m",
-    highway: "NH-21 via Fatehpur Sikri",
-    description: "Fast gateway transit to Keoladeo National Park (UNESCO World Heritage bird sanctuary). Ideal for morning birdwatching safaris.",
-    tollNote: "Highway tolls included",
-    stateTaxNote: "Rajasthan state passenger tax included",
-    fares: {
-      sedan: 2200,
-      ertiga: 2900,
-      crysta: 3800,
-      tempo: 5800,
-      urbania: 7200,
-    },
-  },
-  {
-    id: "agra-ayodhya",
-    name: "Agra → Ayodhya Dham (Ram Mandir)",
-    category: "pilgrimage",
-    categoryBadge: "DEVOTIONAL PILGRIMAGE",
-    distanceKm: 480,
-    duration: "6h 45m",
-    highway: "Agra-Lucknow Expressway & Purvanchal Link",
-    description: "Direct expressway journey to Shri Ram Janmabhoomi Mandir with smooth cruising on access-controlled expressways all the way.",
-    tollNote: "All expressway tolls included",
-    stateTaxNote: "Within Uttar Pradesh (Zero interstate tax)",
-    fares: {
-      sedan: 7900,
-      ertiga: 10500,
-      crysta: 13800,
-      tempo: 19800,
-      urbania: 23500,
-    },
-  },
-];
+  };
+}
+
 
 const ROUTE_FAQS = [
   {
@@ -254,7 +151,7 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
   }, []);
 
   const allRoutes = useMemo<RouteItem[]>(() => {
-    if (!manifest) return PRIMARY_ROUTES;
+    if (!manifest) return staticCatalogRoutes.map(mapCatalogueRoute);
     return Object.entries(manifest).map(([slug, item]) => {
       const isLocal = item.pm === "day120";
       const isTempo = item.pm === "tempo";
@@ -508,7 +405,11 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
                     </span>
                   </div>
 
-                  <h3 className="font-headline-md text-sm sm:text-base text-on-surface font-bold mb-1.5">{route.name}</h3>
+                  <h3 className="font-headline-md text-sm sm:text-base text-on-surface font-bold mb-1.5">
+                    <a href={`/en/${route.id}/`} className="hover:text-primary transition-colors">
+                      {route.name}
+                    </a>
+                  </h3>
 
                   <div className="flex items-center gap-3 font-body-sm text-[10.5px] text-on-surface-variant mb-2 flex-wrap">
                     <span className="flex items-center gap-1 font-medium">
@@ -550,13 +451,17 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
                       </span>
                     </div>
                     <div className="p-0.5">
-                      <span className="font-label-caps text-[9px] text-secondary uppercase block font-semibold">Tempo</span>
+                      <span className="font-label-caps text-[9px] text-secondary uppercase block font-semibold">
+                        Tempo <span className="text-[8px] text-terracotta-sandstone font-normal">(RT)</span>
+                      </span>
                       <span className="font-price-display text-sm sm:text-base text-ink-charcoal font-bold">
                         ₹{route.fares.tempo.toLocaleString("en-IN")}
                       </span>
                     </div>
                     <div className="p-0.5">
-                      <span className="font-label-caps text-[9px] text-secondary uppercase block font-semibold">Urbania</span>
+                      <span className="font-label-caps text-[9px] text-secondary uppercase block font-semibold">
+                        Urbania <span className="text-[8px] text-terracotta-sandstone font-normal">(RT)</span>
+                      </span>
                       <span className="font-price-display text-sm sm:text-base text-ink-charcoal font-bold">
                         ₹{route.fares.urbania.toLocaleString("en-IN")}
                       </span>
@@ -569,6 +474,13 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
                     {route.stateTaxNote}
                   </span>
                   <div className="flex items-center gap-2">
+                    <a
+                      className="px-2.5 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-caps text-xs transition-colors font-semibold inline-flex items-center gap-1"
+                      href={`/en/${route.id}/`}
+                    >
+                      <span>Details</span>
+                      <span className="material-symbols-outlined text-[13px]">info</span>
+                    </a>
                     <a
                       className="px-3 py-1.5 rounded-lg bg-black hover:bg-neutral-900 border border-white/10 text-white font-label-caps text-xs transition-colors font-bold inline-flex items-center gap-1.5 active:scale-[0.98]"
                       href={`https://wa.me/919876543210?text=Booking%20Route%20${encodeURIComponent(route.name)}`}

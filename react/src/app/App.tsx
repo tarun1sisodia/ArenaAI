@@ -56,7 +56,13 @@ export function getSeo(pathname: string, section: string, language: "en" | "hi",
   const route = routes.find((item) => {
     const from = item.from === "agra" && item.to === "agra" ? "agra-sightseeing" : `${item.from}-to-${item.to}`;
     const hindiFrom = item.from === "agra" && item.to === "agra" ? "agra-darshan" : `${item.from}-se-${item.to}`;
-    return path.includes(`${from}-taxi`) || path.includes(`${hindiFrom}-taxi`);
+    return (
+      path.includes(`${from}-taxi`) ||
+      path.includes(`${hindiFrom}-taxi`) ||
+      path.includes(`/${item.id}/`) ||
+      path.endsWith(`/${item.id}`) ||
+      path.replace(/\/$/, "").endsWith(`/${item.id}`)
+    );
   });
 
   if (vehicle) {
@@ -220,7 +226,13 @@ export function App({ pathname: propPathname }: AppProps = {}) {
 
   const matchedRoute = routes.find((item) => {
     const from = item.from === "agra" && item.to === "agra" ? "agra-sightseeing" : `${item.from}-to-${item.to}`;
-    return pathname.includes(`${from}-taxi`);
+    return (
+      pathname.includes(`${from}-taxi`) ||
+      pathname.includes(`/${item.id}/`) ||
+      pathname.endsWith(`/${item.id}`) ||
+      cleanPath.endsWith(`/${item.id}`) ||
+      section === item.id
+    );
   });
 
   const activeRoute = matchedRoute || manifestRoute;
