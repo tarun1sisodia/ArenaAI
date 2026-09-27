@@ -40,35 +40,12 @@ export function Header({
     }
   }, [onToggleMobileNav]);
 
-  const isHomePage =
-    activePath === "/" || activePath === "/en/" || activePath === "/index.html";
-
-  const [heroScrolledPast, setHeroScrolledPast] = useState(() => {
-    if (!isHomePage) return true;
-    if (typeof window !== "undefined") {
-      return sessionStorage.getItem("skb_hero_shown") === "true";
-    }
-    return false;
-  });
-
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-      const heroAlreadyShown =
-        typeof window !== "undefined" &&
-        sessionStorage.getItem("skb_hero_shown") === "true";
-
-      if (isHomePage && !heroAlreadyShown) {
-        // Show navigation bar only when the whole hero image has been scrolled past
-        setHeroScrolledPast(window.scrollY >= 1050);
-      } else {
-        setHeroScrolledPast(true);
-      }
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
     handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [isHomePage]);
+  }, []);
 
   const navLinks = [
     { label: "Home", href: "/" },
@@ -92,10 +69,7 @@ export function Header({
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 w-full z-50 transition-all duration-500 ease-out transform ${heroScrolledPast
-            ? "translate-y-0 opacity-100 pointer-events-auto"
-            : "-translate-y-full opacity-0 pointer-events-none"
-          } ${isScrolled
+        className={`fixed top-0 left-0 right-0 w-full z-50 ${isScrolled
             ? "bg-surface/95 backdrop-blur-xl shadow-[0_1px_12px_rgba(159,60,22,0.08)] border-b border-border-warm/60"
             : "bg-surface/90 backdrop-blur-md border-b border-border-warm/30 shadow-[0_1px_8px_rgba(0,0,0,0.03)]"
           }`}

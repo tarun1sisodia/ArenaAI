@@ -5,19 +5,9 @@ export { ThemeToggle } from "./chrome/ThemeToggle";
 export { MobileNavSheet } from "./chrome/MobileNavSheet";
 export { StickyLeadBar, StickyLeadBar as LeadBar } from "./chrome/StickyLeadBar";
 export { RadialDock } from "./chrome/RadialDock";
-export { PageLoader } from "./chrome/PageLoader";
 export { Footer } from "./chrome/Footer";
 export { SkipLink } from "./chrome/SkipLink";
 export { WhatsAppIcon } from "./icons/WhatsAppIcon";
-
-export function LoadingIndicator({ label = "Loading" }: { label?: string }) {
-  return (
-    <div className="loading-indicator" role="status" aria-live="polite">
-      <span className="loading-indicator__dot" aria-hidden="true" />
-      {label}
-    </div>
-  );
-}
 
 export function ErrorState({ message = "We could not load this section." }: { message?: string }) {
   return (

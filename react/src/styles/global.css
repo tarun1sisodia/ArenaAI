@@ -13,7 +13,7 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
 }
 
 body {
@@ -4555,7 +4555,6 @@ html.dark .lead-bar {
   box-shadow: 0 2px 8px rgba(229, 160, 68, 0.35);
 }
 
-.loading-indicator,
 .error-state {
   display: flex;
   align-items: center;
@@ -4564,14 +4563,6 @@ html.dark .lead-bar {
   border: 1px solid var(--border);
   border-radius: var(--radius);
 }
-
-.loading-indicator__dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--gold);
-}
-
 .error-state {
   flex-wrap: wrap;
   color: var(--error, #c62828);
@@ -4920,203 +4911,6 @@ html.dark .lead-bar {
 .about .social.booking .icon:hover {
   background-color: var(--gold, #E5A044);
   color: #121416;
-}
-
-/* ==========================================================================
-   LUXURY PAGE LOADER OVERLAY (Phase R4.7)
-   Non-blocking shining text curtain with 600ms minimum display, dismissing on real window load
-   ========================================================================== */
-.page-loader {
-  position: fixed;
-  inset: 0;
-  z-index: 2000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--bg, #ffffff);
-  opacity: 1;
-  transform: translateY(0);
-  transition: opacity var(--motion-medium, 400ms) cubic-bezier(0.16, 1, 0.3, 1),
-    transform var(--motion-medium, 400ms) cubic-bezier(0.16, 1, 0.3, 1);
-  pointer-events: auto;
-}
-
-.page-loader.is-hidden {
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(-8px);
-}
-
-.page-loader__content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  gap: 14px;
-}
-
-.page-loader__brand {
-  position: relative;
-  display: inline-flex;
-}
-
-.page-loader__text {
-  position: relative;
-  overflow: hidden;
-  color: var(--text, #0a0a0a);
-  font-family: var(--font-display, Fraunces, serif);
-  font-size: clamp(32px, 5.5vw, 56px);
-  font-weight: 600;
-  letter-spacing: -0.04em;
-  line-height: 1.1;
-  display: inline-block;
-  padding: 0 4px;
-}
-
-.page-loader__text::after {
-  content: "";
-  position: absolute;
-  inset: -20% auto -20% -40%;
-  width: 35%;
-  background: linear-gradient(105deg,
-      transparent 0%,
-      var(--gold-light, #f3c36c) 50%,
-      transparent 100%);
-  opacity: 0.85;
-  transform: translateX(-180%) skewX(-18deg);
-  animation: page-loader-shine 1.25s ease-in-out infinite;
-}
-
-@keyframes page-loader-shine {
-  to {
-    transform: translateX(560%) skewX(-18deg);
-  }
-}
-
-.page-loader.is-hidden .page-loader__text::after {
-  animation-play-state: paused;
-}
-
-.page-loader__meta {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-}
-
-.page-loader__tagline {
-  font-family: var(--font-mono, "Geist Mono", monospace);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--text-soft, #737373);
-  opacity: 0.9;
-}
-
-.page-loader__bar {
-  width: 56px;
-  height: 2px;
-  border-radius: 999px;
-  background: var(--gold-soft, rgba(229, 160, 68, 0.2));
-  overflow: hidden;
-  position: relative;
-}
-
-.page-loader__bar-fill {
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg,
-      transparent 0%,
-      var(--gold, #e5a044) 50%,
-      transparent 100%);
-  animation: page-loader-bar 1.25s ease-in-out infinite;
-  transform: translateX(-100%);
-}
-
-@keyframes page-loader-bar {
-  0% {
-    transform: translateX(-100%);
-  }
-
-  100% {
-    transform: translateX(100%);
-  }
-}
-
-/* Dark Mode Overrides (Solar Dusk) */
-[data-theme="dark"] .page-loader,
-html.dark .page-loader {
-  background: #141211;
-}
-
-[data-theme="dark"] .page-loader__text,
-html.dark .page-loader__text {
-  color: #FDFCFB;
-}
-
-[data-theme="dark"] .page-loader__tagline,
-html.dark .page-loader__tagline {
-  color: #B5AFA9;
-}
-
-[data-theme="dark"] .page-loader__text::after,
-html.dark .page-loader__text::after {
-  background: linear-gradient(105deg,
-      transparent 0%,
-      #FF8533 50%,
-      transparent 100%);
-}
-
-[data-theme="dark"] .page-loader__bar,
-html.dark .page-loader__bar {
-  background: rgba(247, 96, 2, 0.2);
-}
-
-[data-theme="dark"] .page-loader__bar-fill,
-html.dark .page-loader__bar-fill {
-  background: linear-gradient(90deg,
-      transparent 0%,
-      #F76002 50%,
-      transparent 100%);
-}
-
-@media (prefers-reduced-motion: reduce) {
-
-  *,
-  *::before,
-  *::after {
-    scroll-behavior: auto !important;
-    transition-duration: 0.01ms !important;
-    transform: none !important;
-  }
-
-  .about,
-  .about .logo,
-  .about .bg_links,
-  .about .social,
-  .about .social .icon {
-    transition: none !important;
-    transform: none !important;
-  }
-
-  .page-loader {
-    transition: none !important;
-  }
-
-  .page-loader__text::after {
-    animation: none !important;
-    opacity: 0 !important;
-  }
-
-  .page-loader__bar-fill {
-    animation: none !important;
-  }
-
-  .skip-link {
-    transition: none !important;
-  }
 }
 
 /* ==========================================================================

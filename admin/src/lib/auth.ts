@@ -2,6 +2,7 @@ import { env } from "./env";
 import type { AdminUser } from "./types";
 
 export const SESSION_KEY = "skb-admin-session";
+export const AUTH_EXPIRED_EVENT = "skb-admin-auth-expired";
 
 export interface LoginResult {
   user: AdminUser;
@@ -116,9 +117,44 @@ export async function loginWithCredentials(
 export function getStoredSession(): AdminUser | null {
   try {
     const raw = localStorage.getItem(SESSION_KEY);
-    return raw ? (JSON.parse(raw) as AdminUser) : null;
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Partial<AdminUser>;
+    if (
+      typeof parsed.id !== "string" ||
+      parsed.role !== "super_admin" ||
+      typeof parsed.email !== "string" ||
+      typeof parsed.name !== "string" ||
+      typeof parsed.token !== "string" ||
+      parsed.token.length < 20
+    ) {
+      clearSession();
+      return null;
+    }
+    return parsed as AdminUser;
   } catch {
+    clearSession();
     return null;
+  }
+}
+
+/**
+ * A localStorage entry is only a hint. The backend must accept the bearer
+ * token before the admin shell is rendered. This prevents a forged session
+ * object from briefly exposing the dashboard or its controls.
+ */
+export async function validateStoredSession(user: AdminUser): Promise<boolean> {
+  try {
+    const response = await fetch(`${env.API_BASE_URL}/api/v1/ops/admin/audit-logs?limit=1`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${user.token}`,
+      },
+      cache: "no-store",
+    });
+    return response.ok;
+  } catch {
+    return false;
   }
 }
 
@@ -128,6 +164,11 @@ export function saveSession(user: AdminUser): void {
 
 export function clearSession(): void {
   localStorage.removeItem(SESSION_KEY);
+}
+
+export function expireSession(): void {
+  clearSession();
+  window.dispatchEvent(new Event(AUTH_EXPIRED_EVENT));
 }
 
 export function getAuthHeaders(user?: AdminUser | null): Record<string, string> {

@@ -7,7 +7,7 @@
  * (possibly an empty list) or throws. Pages render their own empty/error states.
  */
 import { env } from "./env";
-import { getAuthHeaders } from "./auth";
+import { expireSession, getAuthHeaders } from "./auth";
 import type {
   AuditEntry,
   Booking,
@@ -44,6 +44,9 @@ async function apiFetch(path: string, init?: RequestInit): Promise<any> {
 
   const json = await res.json().catch(() => ({}));
   if (!res.ok) {
+    if (res.status === 401 || res.status === 403) {
+      expireSession();
+    }
     const message =
       json?.error?.message ||
       (res.status === 401

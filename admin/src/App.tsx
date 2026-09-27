@@ -12,7 +12,7 @@ const ReviewsPage = lazy(() => import("@/pages/ReviewsPage").then((m) => ({ defa
 const InquiriesPage = lazy(() => import("@/pages/InquiriesPage").then((m) => ({ default: m.InquiriesPage })));
 const FaresPage = lazy(() => import("@/pages/FaresPage").then((m) => ({ default: m.FaresPage })));
 const AuditPage = lazy(() => import("@/pages/AuditPage").then((m) => ({ default: m.AuditPage })));
-import { clearSession, getStoredSession, saveSession } from "@/lib/auth";
+import { AUTH_EXPIRED_EVENT, clearSession, getStoredSession, saveSession, validateStoredSession } from "@/lib/auth";
 import type { AdminUser } from "@/lib/types";
 
 function Root({ user, onLogin, onLogout }: { user: AdminUser | null; onLogin: (u: AdminUser) => void; onLogout: () => void }) {
@@ -66,10 +66,33 @@ function Root({ user, onLogin, onLogout }: { user: AdminUser | null; onLogin: (u
 }
 
 export default function App() {
-  const [user, setUser] = useState<AdminUser | null>(getStoredSession);
+  const [user, setUser] = useState<AdminUser | null>(null);
+  const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
     document.documentElement.lang = "en-IN";
+    const stored = getStoredSession();
+    if (!stored) {
+      setAuthChecked(true);
+      return;
+    }
+
+    let active = true;
+    validateStoredSession(stored).then((valid) => {
+      if (!active) return;
+      if (valid) setUser(stored);
+      else clearSession();
+      setAuthChecked(true);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleExpired = () => setUser(null);
+    window.addEventListener(AUTH_EXPIRED_EVENT, handleExpired);
+    return () => window.removeEventListener(AUTH_EXPIRED_EVENT, handleExpired);
   }, []);
 
   const login = useCallback((authedUser: AdminUser) => {
@@ -81,6 +104,8 @@ export default function App() {
     clearSession();
     setUser(null);
   }, []);
+
+  if (!authChecked) return null;
 
   return (
     <BrowserRouter>

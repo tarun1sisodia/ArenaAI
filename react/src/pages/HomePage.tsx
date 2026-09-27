@@ -5,10 +5,6 @@ import { packages, routes, vehicles } from "../data/catalogue";
 import { ReviewsMarquee } from "../components/home/ReviewsMarquee";
 import { FamousPlacesSection } from "../components/home/FamousPlacesSection";
 import { WhatsAppIcon } from "../components/icons";
-import { SmoothScrollHero } from "@/components/ui/smooth-scroll-hero";
-import { InitialLoader } from "@/components/ui/InitialLoader";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { ChevronDown, Sparkles } from "lucide-react";
 
 export interface HomePageProps {
   language?: SupportedLanguage;
@@ -21,52 +17,6 @@ export function HomePage({ language = "en" }: HomePageProps) {
   const [destination, setDestination] = useState("Delhi");
   const [selectedVehicle, setSelectedVehicle] = useState<"sedan" | "ertiga" | "innova" | "tempo" | "urbania">("sedan");
   const [couponCopied, setCouponCopied] = useState(false);
-
-  const [isClient, setIsClient] = useState(false);
-  const [showHeroAnimation, setShowHeroAnimation] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-    const heroAlreadyShown =
-      typeof window !== "undefined" &&
-      sessionStorage.getItem("skb_hero_shown") === "true";
-    if (!heroAlreadyShown) {
-      setShowHeroAnimation(true);
-    }
-  }, []);
-
-  const scrollHeight = 1200;
-  const { scrollY } = useScroll();
-  const contentOpacity = useTransform(
-    scrollY,
-    [scrollHeight * 0.7, scrollHeight],
-    [0, 1]
-  );
-  const contentY = useTransform(
-    scrollY,
-    [scrollHeight * 0.7, scrollHeight],
-    [30, 0]
-  );
-
-  // When hero scroll intro is shown, mark it as completed once scrolled past 850px
-  useEffect(() => {
-    if (showHeroAnimation) {
-      const handleScroll = () => {
-        if (window.scrollY >= 850) {
-          sessionStorage.setItem("skb_hero_shown", "true");
-        }
-      };
-      window.addEventListener("scroll", handleScroll, { passive: true });
-      return () => window.removeEventListener("scroll", handleScroll);
-    }
-  }, [showHeroAnimation]);
-
-  const handleSkipOrExplore = () => {
-    if (typeof window !== "undefined") {
-      sessionStorage.setItem("skb_hero_shown", "true");
-      window.scrollTo({ top: scrollHeight + 10, behavior: "smooth" });
-    }
-  };
 
   const [inquiryName, setInquiryName] = useState("");
   const [inquiryPhone, setInquiryPhone] = useState("");
@@ -139,58 +89,16 @@ export function HomePage({ language = "en" }: HomePageProps) {
 
   return (
     <div className="bg-surface font-body-md text-body-md text-on-surface antialiased min-h-screen">
-      {/* ── PRESTIGE 0-100 CAPITAL LOADING INTRO (Shown on first entry) ── */}
-      <InitialLoader />
 
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaGraph) }}
       />
 
-      {/* ── INTRODUCTORY SMOOTH SCROLL HERO (Shown once per session) ── */}
-      {showHeroAnimation && (
-        <SmoothScrollHero
-          scrollHeight={scrollHeight}
-          desktopImage="https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=2400&q=85"
-          mobileImage="https://images.unsplash.com/photo-1658313286353-81f8cf3a328a?auto=format&fit=crop&w=1200&q=85"
-          initialClipPercentage={25}
-          finalClipPercentage={75}
-        >
-          <div className="text-center px-4 max-w-2xl flex flex-col items-center">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-gold-accent/20 border border-gold-accent/40 text-gold-accent font-label-caps text-[10px] uppercase tracking-widest mb-3 backdrop-blur-md">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Agra Taxi &amp; Cab Service</span>
-            </div>
-            <h2 className="font-headline-hero text-headline-hero text-ivory-surface drop-shadow-md mb-2">
-              SK Baghel Tour &amp; Travels
-            </h2>
-            <p className="font-body-md text-ivory-surface/90 max-w-lg mb-6 leading-relaxed">
-              Agra to anywhere, in first-class comfort.
-            </p>
-            <button
-              type="button"
-              onClick={handleSkipOrExplore}
-              className="flex flex-col items-center gap-1.5 text-ivory-surface/80 hover:text-ivory-surface cursor-pointer group transition-colors"
-            >
-              <span className="font-label-caps text-[10px] uppercase tracking-widest font-semibold group-hover:underline">
-                Scroll to explore
-              </span>
-              <ChevronDown className="w-4 h-4 text-gold-accent animate-bounce" />
-            </button>
-          </div>
-        </SmoothScrollHero>
-      )}
-
-      {/* ── MAIN HOMEPAGE CONTENT (Reveals directly or via hero scroll) ── */}
-      <motion.div
-        style={{
-          opacity: showHeroAnimation && isClient ? contentOpacity : 1,
-          y: showHeroAnimation && isClient ? contentY : 0,
-        }}
-        className="w-full relative z-20"
-      >
+      {/* ── MAIN HOMEPAGE CONTENT ── */}
+      <div className="w-full relative z-20">
         {/* ── HERO ── Taj Mahal sunrise background, text left / booking dock right */}
-        <section className={`relative w-full ${showHeroAnimation ? "-mt-12 pt-16 sm:pt-24" : "pt-20 sm:pt-28"} pb-16 bg-ink-midnight text-on-primary overflow-hidden`}>
+        <section className="relative w-full pt-20 sm:pt-28 pb-16 bg-ink-midnight text-on-primary overflow-hidden">
           {/* Background image — Taj Mahal sunrise, 80% opacity, full contrast & brightness */}
           <div
             className="absolute inset-0 z-0 opacity-80 pointer-events-none bg-cover bg-[center_35%] contrast-105 brightness-100"
@@ -216,48 +124,20 @@ export function HomePage({ language = "en" }: HomePageProps) {
                   <span className="sr-only">Agra to anywhere, in first-class comfort.</span>
 
                   <div aria-hidden="true" className="select-none flex flex-col gap-1 w-full">
-                    {/* Animated "Agra to Anywhere" handwriting-style reveal in luminous white gradient */}
-                    <motion.div
+                    {/* Static, crawlable hero headline */}
+                    <div
                       className="text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)] drop-shadow-[0_4px_24px_rgba(0,0,0,0.6)] overflow-visible pb-0.5"
-                      initial="hidden"
-                      animate="visible"
-                      variants={{
-                        hidden: {},
-                        visible: {
-                          transition: {
-                            staggerChildren: 0.08,
-                          },
-                        },
-                      }}
                       aria-label={text}
                     >
                       {text.split("").map((letter, index) => (
-                        <motion.span
+                        <span
                           key={`${letter}-${index}`}
                           className="inline-block font-serif italic text-4xl sm:text-5xl md:text-6xl text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/80"
-                          variants={{
-                            hidden: {
-                              opacity: 0,
-                              y: 18,
-                              rotate: 8,
-                              clipPath: "inset(0 100% 0 0)",
-                            },
-                            visible: {
-                              opacity: 1,
-                              y: 0,
-                              rotate: 0,
-                              clipPath: "inset(0 0% 0 0)",
-                              transition: {
-                                duration: 0.45,
-                                ease: [0.16, 1, 0.3, 1],
-                              },
-                            },
-                          }}
                         >
                           {letter === " " ? "\u00A0" : letter}
-                        </motion.span>
+                        </span>
                       ))}
-                    </motion.div>
+                    </div>
 
                     {/* Static Line 2: in first-class comfort. in luminous light white/champagne */}
                     <div className="relative w-full max-w-[560px] mt-0.5">
@@ -454,11 +334,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
         </div>
 
         {/* ── POPULAR ROUTES ── Editorial horizontal rows, not a card grid */}
-        <motion.section
-          initial={isClient ? { opacity: 0, y: 24 } : false}
-          whileInView={isClient ? { opacity: 1, y: 0 } : undefined}
-          viewport={{ once: true, margin: "-40px" }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
+        <section
           className="w-full py-space-3xl max-w-[1280px] mx-auto px-margin-mobile lg:px-margin"
         >
           {/* Section header: centred, no eyebrow, no split-header */}
@@ -525,14 +401,10 @@ export function HomePage({ language = "en" }: HomePageProps) {
               <span className="material-symbols-outlined text-[16px]">east</span>
             </a>
           </div>
-        </motion.section>
+        </section>
 
         {/* ── SERVICES ── 2-col feature layout, NO numbered markers (content is not a sequence) */}
-        <motion.section
-          initial={isClient ? { opacity: 0, y: 24 } : false}
-          whileInView={isClient ? { opacity: 1, y: 0 } : undefined}
-          viewport={{ once: true, margin: "-40px" }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
+        <section
           className="w-full py-space-3xl bg-ink-midnight text-ivory-surface"
         >
           <div className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin">
@@ -610,14 +482,10 @@ export function HomePage({ language = "en" }: HomePageProps) {
               ))}
             </div>
           </div>
-        </motion.section>
+        </section>
 
         {/* ── FLEET ── 3-col grid with real images, proper card height (NOT 5-col cramped) */}
-        <motion.section
-          initial={isClient ? { opacity: 0, y: 24 } : false}
-          whileInView={isClient ? { opacity: 1, y: 0 } : undefined}
-          viewport={{ once: true, margin: "-40px" }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
+        <section
           className="w-full py-space-3xl max-w-[1280px] mx-auto px-margin-mobile lg:px-margin"
           id="fleet"
         >
@@ -699,14 +567,10 @@ export function HomePage({ language = "en" }: HomePageProps) {
               </span>
             </a>
           </div>
-        </motion.section>
+        </section>
 
         {/* ── TOUR PACKAGES ── 3-col card grid (different from routes & services above) */}
-        <motion.section
-          initial={isClient ? { opacity: 0, y: 24 } : false}
-          whileInView={isClient ? { opacity: 1, y: 0 } : undefined}
-          viewport={{ once: true, margin: "-40px" }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
+        <section
           className="w-full py-space-3xl bg-surface-container-low"
           id="tours"
         >
@@ -799,7 +663,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
               ))}
             </div>
           </div>
-        </motion.section>
+        </section>
 
         {/* ── FAMOUS PLACES & HERITAGE LANDMARKS ── Multi-image high-res Unsplash gallery */}
         <FamousPlacesSection />
@@ -808,17 +672,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
         <ReviewsMarquee />
 
         {/* ── BENEFITS + COUPON ── 21st.dev Modern Motion Bento Layout ── */}
-        <motion.section
-          initial={isClient ? "hidden" : false}
-          whileInView={isClient ? "visible" : undefined}
-          viewport={{ once: true, margin: "-40px" }}
-          variants={{
-            hidden: { opacity: 0 },
-            visible: {
-              opacity: 1,
-              transition: { staggerChildren: 0.08, delayChildren: 0.1 },
-            },
-          }}
+        <section
           className="w-full py-space-3xl max-w-[1280px] mx-auto px-margin-mobile lg:px-margin"
         >
           <div className="mb-space-xl">
@@ -831,7 +685,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
             </p>
           </div>
 
-          {/* 21st.dev style interactive motion bento grid */}
+          {/* Accessible benefit grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-space-md mb-space-xl">
             {[
               {
@@ -871,13 +725,8 @@ export function HomePage({ language = "en" }: HomePageProps) {
                 badge: "Taj Ganj Office",
               },
             ].map((item) => (
-              <motion.div
+              <div
                 key={item.title}
-                variants={{
-                  hidden: { opacity: 0, y: 16 },
-                  visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: "easeOut" } },
-                }}
-                whileHover={{ y: -4, transition: { duration: 0.2 } }}
                 className="p-5 rounded-xl border flex flex-col gap-3 group transition-all duration-300 bg-ink-charcoal text-ivory-surface border-border-warm/20 hover:border-gold-accent/40 shadow-sm hover:shadow-md"
               >
                 <div className="flex items-center justify-between">
@@ -894,13 +743,12 @@ export function HomePage({ language = "en" }: HomePageProps) {
                 <p className="font-body-sm text-[10.5px] leading-relaxed text-ivory-surface/75">
                   {item.desc}
                 </p>
-              </motion.div>
+              </div>
             ))}
           </div>
 
           {/* Promo coupon — interactive 21st.dev strip */}
-          <motion.div
-            whileHover={{ scale: 1.005 }}
+          <div
             className="bg-sandstone-wash rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-space-md border border-border-warm/60 shadow-xs hover:shadow-sm transition-all"
           >
             <div className="flex items-center gap-4">
@@ -935,16 +783,12 @@ export function HomePage({ language = "en" }: HomePageProps) {
                 )}
               </button>
             </div>
-          </motion.div>
-        </motion.section>
+          </div>
+        </section>
 
         {/* ── CONTACT / INQUIRY ── 2-col layout (same as hero split, but this is the CTA section) */}
         {/* Third eyebrow (3 of 3 allowed) */}
-        <motion.section
-          initial={isClient ? { opacity: 0, y: 24 } : false}
-          whileInView={isClient ? { opacity: 1, y: 0 } : undefined}
-          viewport={{ once: true, margin: "-40px" }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
+        <section
           className="w-full py-space-3xl bg-surface-container-low"
         >
           <div className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin">
@@ -1055,8 +899,8 @@ export function HomePage({ language = "en" }: HomePageProps) {
               </div>
             </div>
           </div>
-        </motion.section>
-      </motion.div>
+        </section>
+      </div>
     </div>
   );
 }
