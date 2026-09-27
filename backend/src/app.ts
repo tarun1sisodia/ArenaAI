@@ -239,8 +239,45 @@ export async function buildApp(options: AppOptions): Promise<BuiltApp> {
         fcmToken: z.string().min(1).max(500),
         userId: z.string().uuid().optional(),
         bookingId: z.string().uuid().optional(),
+        ticketId: z.string().optional(),
+        guestAccessToken: z.string().optional(),
       });
       const body = DeviceSchema.parse(request.body);
+
+      // Ownership enforcement:
+      // 1. If userId is provided, request must be authenticated and match userId (or staff/admin)
+      if (body.userId) {
+        if (!request.user) {
+          throw Errors.unauthorized("Authentication required to link device to user account.");
+        }
+        const isPrivileged = ["super_admin", "admin", "staff"].includes(request.user.role);
+        if (request.user.id !== body.userId && !isPrivileged) {
+          throw Errors.forbidden("Cannot register device token for another user account.");
+        }
+      }
+
+      // 2. If bookingId or ticketId is provided, ownership of that booking must be verified
+      let verifiedBookingId: string | null = null;
+      if (body.bookingId || body.ticketId) {
+        const booking = body.bookingId
+          ? await db.bookings.getById(body.bookingId)
+          : await db.bookings.getByTicketId(body.ticketId!);
+
+        if (!booking) {
+          throw Errors.notFound("BOOKING_NOT_FOUND", "Booking not found.");
+        }
+
+        const isPrivileged = request.user && ["super_admin", "admin", "staff"].includes(request.user.role);
+        const isOwnerUser = Boolean(request.user?.id && booking.userId === request.user.id);
+        const hasValidToken = Boolean(body.guestAccessToken && body.guestAccessToken === booking.guestAccessToken);
+
+        if (!isPrivileged && !isOwnerUser && !hasValidToken) {
+          throw Errors.forbidden("Proof of booking ownership (valid guestAccessToken or authenticated booking owner) is required.");
+        }
+
+        verifiedBookingId = booking.id;
+      }
+
       const now = toIso(clock.now());
       const record = await db.devices.register({
         id: newId(),
@@ -248,7 +285,7 @@ export async function buildApp(options: AppOptions): Promise<BuiltApp> {
         platform: body.platform,
         fcmToken: body.fcmToken,
         userId: body.userId || null,
-        bookingId: body.bookingId || null,
+        bookingId: verifiedBookingId,
         isActive: true,
         lastSeenAt: now,
         createdAt: now,

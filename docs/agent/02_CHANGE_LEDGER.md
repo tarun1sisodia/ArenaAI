@@ -84,6 +84,19 @@ Implemented:
   - Verified refund webhook execution and state reflection on payment and booking models.
 - Verified with full `npm run verify` (typechecks x3, 18 test files / 111 tests passing, builds x3).
 
+### Phase 1 — Step 1.6: Lock Down Device Registration Ownership (SEC-005)
+
+Implemented:
+
+- Updated `POST /api/v1/devices/register` in `backend/src/app.ts`:
+  - Strictly enforce ownership verification before linking a device token to a user account (`userId`) or booking (`bookingId` / `ticketId`).
+  - Anonymous device registration is preserved for device-only push tokens (`userId: null, bookingId: null`).
+  - If `userId` is provided, requests must be authenticated and the caller's ID must match the `userId` (unless caller has staff/admin role).
+  - If `bookingId` or `ticketId` is provided, caller must either provide a valid `guestAccessToken` matching the booking or be the authenticated owner/admin of the booking.
+- Fixed test auth role UUID padding in `backend/src/middlewares/authGuard.ts` to ensure 36-character standard UUID generation for test credentials.
+- Created unit test suite `backend/tests/unit/device-registration-auth.test.ts` (9 tests passing) validating anonymous registration, user ownership enforcement, booking ownership enforcement with guestAccessToken, and privileged role override.
+- Verified with full `npm run verify` (typechecks x3, 19 test files / 120 tests passing, builds x3).
+
 ## Current webhook route
 
 ```text
@@ -100,11 +113,11 @@ The Razorpay webhook secret must exactly matches Render's `RAZORPAY_WEBHOOK_SECR
 - Focused backend network-header and catalog-manifest tests passed.
 - Dynamic DB fare rule and catalog sync tests passed.
 - Unique-active fare rule invariant and version activation tests passed.
-- Booking and payment end-to-end lifecycle and token security tests passed (18 test files / 111 tests).
+- Booking and payment end-to-end lifecycle and token security tests passed.
+- Device registration ownership lockdown and test auth UUID validation tests passed (19 test files / 120 tests).
 
 ## Known next work
 
-- Step 1.6: Lock down device registration ownership.
 - Step 1.7: Run migrations in Render release/predeploy phase.
 - Step 1.8: Make `/ready` the deployment health check and verify its non-2xx behavior.
 

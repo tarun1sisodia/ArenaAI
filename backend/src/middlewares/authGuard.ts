@@ -26,7 +26,7 @@ export async function authenticateRequest(request: FastifyRequest, env: Env): Pr
       throw Errors.unauthorized("Unknown test role.");
     }
     return {
-      id: `00000000-0000-4000-a000-0000000000${USER_ROLES.indexOf(role)}`,
+      id: `00000000-0000-4000-a000-00000000000${USER_ROLES.indexOf(role)}`,
       role,
       email: `${role}@test.local`,
       phone: null,
