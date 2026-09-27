@@ -1,5 +1,5 @@
 import { AppError } from "../../shared/errors.js";
-import { calendarDaysInclusiveIst, hourInIst } from "../../shared/clock.js";
+import { hourInIst } from "../../shared/clock.js";
 import { advanceOf, roundRupees } from "../../shared/money.js";
 import type { TripType, VehicleTier } from "../../types/domain.js";
 import {
@@ -12,6 +12,7 @@ import {
   PACKAGES,
   PACKAGE_UPGRADES,
   ROUTES,
+  isGroupExceptionVehicle,
   nightAllowanceFor,
   slugifyPlace,
   toInternalVehicleId,
@@ -19,6 +20,7 @@ import {
   type FareByVehicle,
   type RouteFare,
 } from "./fare.catalogue.js";
+import { PricingEngineContext } from "./fare.strategy.js";
 import type { FareEngineInput, FareEngineResult, PromoEvaluation } from "./fare.types.js";
 
 export function isNightPickup(pickupDatetime: string): boolean {
@@ -266,7 +268,6 @@ export function calculateFare(input: FareEngineInput): FareEngineResult {
   const vehicleId = toInternalVehicleId(input.vehicleTier);
   const spec = vehicleSpec(input.vehicleTier);
   const catalogFare = route.fares[vehicleId];
-  const billedDistance = Math.max(input.distanceKm, route.km);
   const rules: string[] = [`route:${route.id}`];
 
   if (route.kind === "local") {
@@ -275,6 +276,7 @@ export function calculateFare(input: FareEngineInput): FareEngineResult {
       vehicleTier: input.vehicleTier,
       pickupDatetime: input.pickupDatetime,
       promoCode: input.promoCode,
+      allowPromo: !isGroupExceptionVehicle(input.vehicleTier),
       fareVersion,
       baseFare: catalogFare,
       nightAllowance: 0,
@@ -288,53 +290,32 @@ export function calculateFare(input: FareEngineInput): FareEngineResult {
     });
   }
 
-  let baseFare = catalogFare;
-  let roundMultiplierApplied = false;
-  let driverAllowance = 0;
-
-  if (input.tripType === "round-trip") {
-    const days = calendarDaysInclusiveIst(input.pickupDatetime, input.returnDatetime);
-    const minDayKmTotal = roundRupees(OUTSTATION_RULES.minKmPerDay * days * spec.perKm);
-    const actualRound = roundRupees(Math.max(billedDistance, route.km) * (days > 1 ? 1 : 2) * spec.perKm);
-    const standardRound = roundRupees(catalogFare * OUTSTATION_RULES.sameDayRoundMultiplier);
-    if (days > 1) {
-      baseFare = Math.max(minDayKmTotal, actualRound);
-      driverAllowance = 300 * days;
-      rules.push("outstation-300km-per-day", `days:${days}`);
-    } else {
-      baseFare = Math.max(standardRound, minDayKmTotal);
-      roundMultiplierApplied = true;
-      rules.push("same-day-round-1.85x", "outstation-300km-per-day");
-    }
-  } else if (
-    (vehicleId === "tempo" || vehicleId === "urbania") &&
-    !isCatalogCorridor(route.id)
-  ) {
-    const minOneWay = roundRupees(OUTSTATION_RULES.minKmPerDay * spec.perKm);
-    baseFare = Math.max(catalogFare, minOneWay);
-    rules.push("commercial-van-300km-minimum");
-  }
+  const pricingContext = PricingEngineContext.getInstance();
+  const strategy = pricingContext.getStrategy(input.vehicleTier);
+  const calculation = strategy.calculate(input, {
+    route,
+    vehicleId,
+    spec,
+    fareVersion,
+  });
 
   return finalize({
-    tripType: input.tripType,
+    tripType: calculation.effectiveTripType,
     vehicleTier: input.vehicleTier,
     pickupDatetime: input.pickupDatetime,
     promoCode: input.promoCode,
+    allowPromo: calculation.allowPromo,
     fareVersion,
-    baseFare,
+    baseFare: calculation.baseFare,
     nightAllowance: 0,
-    driverAllowance,
-    distanceKm: billedDistance,
+    driverAllowance: calculation.driverAllowance,
+    distanceKm: calculation.distanceKm,
     label: `${titleCase(input.originName)} → ${titleCase(input.destinationName)}`,
     duration: route.duration,
-    roundMultiplierApplied,
+    roundMultiplierApplied: calculation.roundMultiplierApplied,
     applyNight: true,
-    rules,
+    rules: [...rules, ...calculation.rules],
   });
-}
-
-function isCatalogCorridor(routeId: string): boolean {
-  return ROUTES.some((route) => route.id === routeId);
 }
 
 function finalize(args: {
@@ -342,6 +323,7 @@ function finalize(args: {
   vehicleTier: VehicleTier;
   pickupDatetime: string;
   promoCode?: string;
+  allowPromo?: boolean;
   fareVersion: string;
   baseFare: number;
   nightAllowance: number;
@@ -358,7 +340,8 @@ function finalize(args: {
   if (nightAllowance > 0) args.rules.push("night-allowance");
 
   const subtotal = args.baseFare + nightAllowance + args.driverAllowance;
-  const promo = applyPromo(args.promoCode, subtotal);
+  const promo =
+    args.allowPromo !== false ? applyPromo(args.promoCode, subtotal) : { valid: false, discount: 0, code: null };
   const totalFare = Math.max(1, subtotal - promo.discount);
   const advanceAmount = advanceOf(totalFare);
   // Ensure advance never exceeds total and respects minimum

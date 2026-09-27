@@ -7,6 +7,7 @@ import { maskEmail, maskPhone, phonesMatch, sanitizeText } from "../../shared/pr
 import { assertTransition } from "../../shared/stateMachine.js";
 import type { AuthUser, BookingRecord } from "../../types/domain.js";
 import { calculateFare, findRoute } from "../fares/fare.engine.js";
+import { isGroupExceptionVehicle } from "../fares/fare.catalogue.js";
 import type { CreateDraftBookingRequest } from "./booking.schema.js";
 
 export function createBookingService(deps: {
@@ -54,8 +55,8 @@ export function createBookingService(deps: {
         localPackageKey: input.localPackageKey,
         fareVersion: deps.fareVersion,
       });
-      // Re-evaluate promo with DB lookup if available
-      if (promoLookup && input.promoCode) {
+      // Re-evaluate promo with DB lookup if available and vehicle allows promo
+      if (promoLookup && input.promoCode && fare.promoValid !== false && !isGroupExceptionVehicle(input.vehicleTier)) {
         const { applyPromo } = await import("../fares/fare.engine.js");
         const subtotal = fare.baseFare + fare.nightAllowance + fare.driverAllowance;
         const promoEval = applyPromo(input.promoCode, subtotal, promoLookup);
@@ -107,7 +108,7 @@ export function createBookingService(deps: {
         ticketId,
         userId: null,
         guestAccessToken: newGuestAccessToken(),
-        tripType: input.tripType,
+        tripType: fare.tripType,
         vehicleTier: input.vehicleTier,
         originName: input.originName.trim(),
         destinationName: input.destinationName.trim(),

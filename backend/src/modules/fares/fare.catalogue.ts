@@ -201,15 +201,36 @@ export function slugifyPlace(value: string): string {
     .replace(/^-|-$/g, "");
 }
 
-export function toInternalVehicleId(tier: VehicleTier): InternalVehicleId {
-  switch (tier) {
-    case "innova-crysta":
-      return "innova";
-    case "tempo-traveller":
-      return "tempo";
-    default:
-      return tier;
+export function isGroupExceptionVehicle(tierOrName?: string | null): boolean {
+  if (!tierOrName) return false;
+  const clean = tierOrName.trim().toLowerCase();
+  return (
+    clean === "tempo" ||
+    clean === "tempo-traveller" ||
+    clean === "urbania" ||
+    clean === "force-urbania" ||
+    clean === "force-tempo" ||
+    clean.includes("force") ||
+    clean.includes("urbania") ||
+    clean.includes("tempo")
+  );
+}
+
+export function toInternalVehicleId(tier: string): InternalVehicleId {
+  const clean = (tier || "").trim().toLowerCase();
+  if (clean === "tempo-traveller" || clean.includes("tempo")) {
+    return "tempo";
   }
+  if (clean === "urbania" || clean.includes("urbania") || clean.includes("force")) {
+    return "urbania";
+  }
+  if (clean === "innova-crysta" || clean.includes("innova") || clean.includes("crysta")) {
+    return "innova";
+  }
+  if (clean === "ertiga" || clean.includes("ertiga")) {
+    return "ertiga";
+  }
+  return "sedan";
 }
 
 export function toVehicleTier(id: InternalVehicleId): VehicleTier {
@@ -223,7 +244,7 @@ export function toVehicleTier(id: InternalVehicleId): VehicleTier {
   }
 }
 
-export function vehicleSpec(tier: VehicleTier): VehicleSpec {
+export function vehicleSpec(tier: string): VehicleSpec {
   const id = toInternalVehicleId(tier);
   const found = VEHICLES.find((item) => item.id === id);
   if (!found) {
@@ -232,9 +253,10 @@ export function vehicleSpec(tier: VehicleTier): VehicleSpec {
   return found;
 }
 
-export function nightAllowanceFor(tier: VehicleTier): number {
+export function nightAllowanceFor(tier: string): number {
   const id = toInternalVehicleId(tier);
   return id === "tempo" || id === "urbania"
     ? OUTSTATION_RULES.nightAllowanceTempo
     : OUTSTATION_RULES.nightAllowanceCab;
 }
+

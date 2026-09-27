@@ -110,6 +110,99 @@ describe("calculateFare", () => {
     expect(fare.baseFare).toBeGreaterThanOrEqual(300 * 25);
   });
 
+  describe("Exception Vehicles (Force, Urbania, Tempo) Commercial Engine Rules", () => {
+    it("Rule 1 (Trip Type Override): forces round-trip even when user selects one-way", () => {
+      const fare = calculateFare({
+        tripType: "one-way",
+        vehicleTier: "tempo-traveller",
+        originName: "Agra",
+        destinationName: "Mathura",
+        pickupDatetime: pickupDay,
+        distanceKm: 55,
+      });
+      expect(fare.tripType).toBe("round-trip");
+      expect(fare.rules).toContain("forced-round-trip");
+      expect(fare.rules).toContain("commercial-group-vehicle-exception");
+    });
+
+    it("Rule 2 (Minimum Distance Override): floors at 300 km when 2x one-way distance is less than 300 km", () => {
+      // 55km one-way -> 110km round-trip -> floored to 300km
+      const fare = calculateFare({
+        tripType: "one-way",
+        vehicleTier: "tempo-traveller",
+        originName: "Agra",
+        destinationName: "Mathura",
+        pickupDatetime: pickupDay,
+        distanceKm: 55,
+      });
+      expect(fare.distanceKm).toBe(300);
+      expect(fare.baseFare).toBe(300 * 25); // ₹7,500
+      expect(fare.driverAllowance).toBe(500); // ₹500 daily driver allowance
+      expect(fare.totalFare).toBe(7500 + 500); // ₹8,000
+    });
+
+    it("Rule 2 (Distance Doubling): calculates 2x distance for deadhead return when 2x distance > 300 km", () => {
+      // 230km one-way (Agra to Delhi) -> 460km round-trip (> 300km)
+      const fare = calculateFare({
+        tripType: "one-way",
+        vehicleTier: "urbania",
+        originName: "Agra",
+        destinationName: "Delhi",
+        pickupDatetime: pickupDay,
+        distanceKm: 230,
+      });
+      expect(fare.distanceKm).toBe(460);
+      expect(fare.baseFare).toBe(460 * 34); // ₹15,640
+      expect(fare.driverAllowance).toBe(500);
+      expect(fare.totalFare).toBe(15640 + 500); // ₹16,140
+    });
+
+    it("Rule 3 (Locked Pricing Structure): ignores promo discounts on commercial group vans", () => {
+      const fare = calculateFare({
+        tripType: "one-way",
+        vehicleTier: "urbania",
+        originName: "Agra",
+        destinationName: "Delhi",
+        pickupDatetime: pickupDay,
+        distanceKm: 230,
+        promoCode: "ASTTCAR500OFF",
+      });
+      expect(fare.promoValid).toBe(false);
+      expect(fare.discountAmount).toBe(0);
+      expect(fare.totalFare).toBe(fare.baseFare + fare.driverAllowance);
+    });
+
+    it("Multi-Day commercial van rules: charges 300km/day and ₹500/day driver allowance", () => {
+      const fare = calculateFare({
+        tripType: "round-trip",
+        vehicleTier: "tempo-traveller",
+        originName: "Agra",
+        destinationName: "Jaipur",
+        pickupDatetime: pickupDay,
+        returnDatetime: "2026-10-03T18:00:00+05:30", // 3 days
+        distanceKm: 240, // 240 * 2 = 480km, but 3 days * 300 = 900km floor
+      });
+      expect(fare.distanceKm).toBe(900);
+      expect(fare.baseFare).toBe(900 * 25); // ₹22,500
+      expect(fare.driverAllowance).toBe(1500); // 3 * 500
+      expect(fare.totalFare).toBe(22500 + 1500); // ₹24,000
+    });
+
+    it("Vehicle naming variants: handles 'force-urbania' and 'force-tempo' safely", () => {
+      const urbaniaFare = calculateFare({
+        tripType: "one-way",
+        vehicleTier: "force-urbania" as any,
+        originName: "Agra",
+        destinationName: "Mathura",
+        pickupDatetime: pickupDay,
+        distanceKm: 55,
+      });
+      expect(urbaniaFare.tripType).toBe("round-trip");
+      expect(urbaniaFare.baseFare).toBe(300 * 34); // ₹10,200
+      expect(urbaniaFare.driverAllowance).toBe(500);
+    });
+  });
+
   it("uses local sightseeing package fares", () => {
     const fare = calculateFare({
       tripType: "local-tour",

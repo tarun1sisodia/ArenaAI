@@ -1,4 +1,5 @@
 import { applyPromo, calculateFare } from "./fare.engine.js";
+import { isGroupExceptionVehicle } from "./fare.catalogue.js";
 import type { FareEngineInput, FareEngineResult } from "./fare.types.js";
 import type { Repositories } from "../../db/types.js";
 
@@ -26,7 +27,7 @@ export function createFareService(fareVersion: string, db?: Repositories) {
       // Since calculateFare calls applyPromo internally, we monkey-patch by calling applyPromo separately if lookup exists
       // Instead, we calculate base fare without promo, then apply promo with DB lookup
       const resultWithoutPromoLookup = calculateFare({ ...input, fareVersion, promoCode: undefined });
-      if (!input.promoCode) return resultWithoutPromoLookup;
+      if (!input.promoCode || isGroupExceptionVehicle(input.vehicleTier)) return resultWithoutPromoLookup;
 
       // Re-apply promo with DB validation
       const promoEval = applyPromo(input.promoCode, resultWithoutPromoLookup.baseFare + resultWithoutPromoLookup.nightAllowance + resultWithoutPromoLookup.driverAllowance, lookup);
