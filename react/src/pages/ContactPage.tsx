@@ -186,12 +186,13 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
             </div>
             <a
               className="w-full inline-flex items-center justify-center gap-2 bg-black hover:bg-neutral-900 border border-white/10 text-white font-label-lg py-2.5 px-3 rounded-lg transition-colors text-center text-xs font-semibold shadow-xs active:scale-[0.98]"
+              style={{ color: "#ffffff" }}
               href="https://wa.me/919876543210"
               target="_blank"
               rel="noreferrer"
             >
-              <WhatsAppIcon className="w-4 h-4 shrink-0" />
-              <span>Chat on WhatsApp ↗</span>
+              <WhatsAppIcon className="w-4 h-4 shrink-0 text-white" />
+              <span className="text-white" style={{ color: "#ffffff" }}>Chat on WhatsApp ↗</span>
             </a>
           </div>
 

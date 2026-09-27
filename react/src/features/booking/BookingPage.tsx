@@ -99,8 +99,13 @@ const VEHICLE_OPTIONS: VehicleOption[] = [
 ];
 
 export function BookingPage() {
-  // Navigation & Step State: 1 = Route & Vehicle, 2 = Guest Details & Review, 3 = Confirmation Voucher
+  // Navigation & Step State
+  // For Route-First (3-step flow): 1 = Route & Vehicle, 2 = Guest Details & Review, 3 = Confirmation Voucher
+  // For Fleet-First (4-step flow): 1 = Vehicle Tier, 2 = Choose Your Trip, 3 = Guest Details & Review, 4 = Confirmation Voucher
   const [step, setStep] = useState<BookingStep>(1);
+
+  // Track if user came with a pre-selected route from homepage or query params
+  const [hasPreselectedRoute, setHasPreselectedRoute] = useState<boolean>(false);
 
   // Booking Mode & Route Parameters
   const [bookingMode, setBookingMode] = useState<BookingMode>("outstation");
@@ -111,9 +116,7 @@ export function BookingPage() {
   const [packageSlug, setPackageSlug] = useState<string>("taj-mahal-sunrise-tour");
   const [selectedVehicleId, setSelectedVehicleId] = useState<VehicleId>("sedan");
 
-  // Fleet-first trip selection (Step 2): every bookable trip from the live
-  // catalog merged with the curated packages. A selection here drives the
-  // underlying booking mode / package / route so the desk engine (F3) quotes it.
+  // Fleet-first trip selection (Step 2 in 4-step flow)
   const [liveTrips, setLiveTrips] = useState<PublicCatalogItem[]>([]);
   const [selectedTripKey, setSelectedTripKey] = useState<string | null>(null);
 
@@ -168,8 +171,7 @@ export function BookingPage() {
     );
   }, [packageSlug]);
 
-  // Every bookable trip for Step 2: curated static packages + live desk catalog,
-  // deduped by slug with the live (CMS-managed) version winning.
+  // Every bookable trip for Fleet-First Step 2: curated static packages + live desk catalog
   const availableTrips = useMemo<SelectableTrip[]>(() => {
     const curated: SelectableTrip[] = packages.map((pkg) => ({
       key: `curated:${pkg.slug}`,
@@ -205,13 +207,12 @@ export function BookingPage() {
     return [...live, ...curated.filter((t) => !liveSlugs.has(t.slug))];
   }, [liveTrips]);
 
-  // The trip currently selected on Step 2 (live selection wins over the curated default).
+  // The trip currently selected on Step 2 (fleet-first)
   const selectedTrip = useMemo<SelectableTrip | null>(() => {
     if (selectedTripKey) {
       const found = availableTrips.find((t) => t.key === selectedTripKey);
       if (found) return found;
     }
-    // Default: whatever the ?package= deep link matched, else the first curated trip.
     return (
       availableTrips.find((t) => t.source === "curated" && t.slug === packageSlug) ??
       availableTrips.find((t) => t.source === "curated") ??
@@ -219,8 +220,7 @@ export function BookingPage() {
     );
   }, [availableTrips, selectedTripKey, packageSlug]);
 
-  // Selecting a trip configures the authoritative booking engine (F3):
-  // the desk's fare calculation then quotes the exact amount for this vehicle.
+  // Selecting a trip in fleet-first mode
   function handleSelectTrip(trip: SelectableTrip) {
     setSelectedTripKey(trip.key);
     if (trip.source === "curated") {
@@ -245,7 +245,6 @@ export function BookingPage() {
       }
       case "local-tour":
       default: {
-        // Curated package with the same slug? Book it as a package.
         if (packages.some((pkg) => pkg.slug === trip.slug)) {
           setBookingMode("package");
           setPackageSlug(trip.slug);
@@ -258,7 +257,7 @@ export function BookingPage() {
     }
   }
 
-  // Concierge quick picks — deterministic smart suggestions over the pool.
+  // Concierge quick picks
   function handleQuickPick(pick: QuickPick, trips: SelectableTrip[]) {
     if (trips.length === 0) return;
     let chosen: SelectableTrip | undefined;
@@ -298,12 +297,17 @@ export function BookingPage() {
     }
 
     const qFrom = params.get("from");
+    const qTo = params.get("to");
+    if (qFrom && qTo) {
+      setHasPreselectedRoute(true);
+      setBookingMode("outstation");
+    }
+
     if (qFrom) {
       const matchCity = cities.find((c) => c.id === qFrom.toLowerCase());
       setOriginName(matchCity ? matchCity.name : qFrom);
     }
 
-    const qTo = params.get("to");
     if (qTo) {
       const matchCity = cities.find((c) => c.id === qTo.toLowerCase());
       setDestinationName(matchCity ? matchCity.name : qTo);
@@ -335,15 +339,13 @@ export function BookingPage() {
     }
 
     const qStep = params.get("step");
-    // 1 = route & vehicle, 2 = choose trip, 3 = guest details, 4 = voucher
     if (qStep === "1") setStep(1);
     else if (qStep === "2") setStep(2);
     else if (qStep === "3") setStep(3);
     else if (qStep === "4") setStep(4);
   }, []);
 
-  // Load every published trip from the live catalog (single source of trips).
-  // Non-trip verticals (famous places, fleet specs) are not bookable itineraries.
+  // Load published trips from live catalog
   useEffect(() => {
     let isMounted = true;
     fetchPublishedCatalog()
@@ -358,6 +360,10 @@ export function BookingPage() {
       isMounted = false;
     };
   }, []);
+
+  // Determine if this booking uses the direct 3-step funnel (Route-First or Package-First)
+  // vs the 4-step Fleet-First funnel
+  const isDirectFunnel = hasPreselectedRoute || bookingMode === "package";
 
   // Compute ISO datetimes for server calculation and submission
   const pickupDatetimeIso = useMemo(() => {
@@ -470,19 +476,24 @@ export function BookingPage() {
     setActivePromoCode(clean);
   };
 
-  // Step 1 (route & vehicle) -> Step 2 (choose your trip)
-  const handleProceedToStep2 = () => {
+  // Step transitions
+  const handleProceedFromStep1 = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
-    setStep(2);
+    if (isDirectFunnel) {
+      // In direct funnel: proceed straight to Guest Details Form (Step 2)
+      setStep(2);
+    } else {
+      // In fleet-first funnel: proceed to Choose Trip (Step 2)
+      setStep(2);
+    }
   };
 
-  // Step 2 (choose your trip) -> Step 3 (guest details & fare review)
-  const handleProceedToStep3 = () => {
+  const handleProceedFromFleetStep2 = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
     setStep(3);
   };
 
-  // Step 2: Final Checkout & Draft Booking Submission
+  // Final Checkout & Draft Booking Submission
   const handleSubmitBooking = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!serverFare) {
@@ -537,7 +548,7 @@ export function BookingPage() {
       }
 
       window.scrollTo({ top: 0, behavior: "smooth" });
-      setStep(4);
+      setStep(isDirectFunnel ? 3 : 4);
     } catch (err: any) {
       console.error("Booking submission error:", err);
       setSubmitError(err?.message || "Failed to create booking draft. Please check your contact details.");
@@ -553,8 +564,13 @@ export function BookingPage() {
     setConfirmedBookingId(`book-${Date.now()}`);
     setAmountPaid(paymentChoice === "full" ? (serverFare?.totalFare ?? 2500) : (serverFare?.advanceAmount ?? 700));
     window.scrollTo({ top: 0, behavior: "smooth" });
-    setStep(4);
+    setStep(isDirectFunnel ? 3 : 4);
   };
+
+  // Is current view rendering the Guest Details form?
+  const isGuestFormStep = isDirectFunnel ? step === 2 : step === 3;
+  // Is current view rendering the Confirmed Voucher?
+  const isVoucherStep = isDirectFunnel ? step === 3 : step === 4;
 
   return (
     <div className="flex flex-col w-full bg-surface min-h-screen">
@@ -568,12 +584,18 @@ export function BookingPage() {
             <span className="material-symbols-outlined text-[14px]">chevron_right</span>
             <span className="text-primary font-semibold">
               {step === 1
-                ? "Step 1: Route & Vehicle Tier"
-                : step === 2
-                  ? "Step 2: Choose Your Trip"
-                  : step === 3
-                    ? "Step 3: Guest Details & Review"
-                    : "Step 4: Confirmed Voucher"}
+                ? hasPreselectedRoute
+                  ? "Step 1: Outstation Route & Vehicle"
+                  : "Step 1: Select Vehicle Tier"
+                : isGuestFormStep
+                ? isDirectFunnel
+                  ? "Step 2: Guest Details & Review"
+                  : "Step 3: Guest Details & Review"
+                : isVoucherStep
+                ? isDirectFunnel
+                  ? "Step 3: Confirmed Voucher"
+                  : "Step 4: Confirmed Voucher"
+                : "Step 2: Choose Your Trip"}
             </span>
           </nav>
           <div className="hidden sm:flex items-center gap-2 text-[12px] text-secondary">
@@ -584,172 +606,290 @@ export function BookingPage() {
       </div>
 
       <div className="max-w-[1280px] mx-auto px-gutter py-space-xl flex flex-col gap-space-xl">
-        {/* HORIZONTAL PROGRESS TRACKER (4 Steps) */}
-        <section className="w-full bg-surface-container-low rounded-xl p-space-md shadow-sm border border-border-warm/60">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-space-sm">
-            {/* Step 1 */}
-            <div
-              onClick={() => step > 1 && setStep(1)}
-              className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${
-                step === 1
-                  ? "bg-surface-container-lowest shadow-sm border border-border-warm ring-1 ring-primary/20"
-                  : "bg-surface-container-lowest/50 opacity-85 cursor-pointer hover:bg-surface-container-lowest"
-              }`}
-            >
+        {/* HORIZONTAL PROGRESS TRACKER */}
+        {isDirectFunnel ? (
+          /* 3-STEP TRACKER (Route-First / Package-First) */
+          <section className="w-full bg-surface-container-low rounded-xl p-space-md shadow-sm border border-border-warm/60">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-space-sm">
+              {/* Step 1 */}
               <div
-                className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${
-                  step > 1 ? "bg-success-jade text-on-primary" : "bg-primary text-on-primary"
+                onClick={() => step > 1 && setStep(1)}
+                className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${
+                  step === 1
+                    ? "bg-surface-container-lowest shadow-sm border border-border-warm ring-1 ring-primary/20"
+                    : "bg-surface-container-lowest/50 opacity-85 cursor-pointer hover:bg-surface-container-lowest"
                 }`}
               >
-                {step > 1 ? <span className="material-symbols-outlined text-[20px]">check</span> : "1"}
+                <div
+                  className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${
+                    step > 1 ? "bg-success-jade text-on-primary" : "bg-primary text-on-primary"
+                  }`}
+                >
+                  {step > 1 ? <span className="material-symbols-outlined text-[20px]">check</span> : "1"}
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="font-label-caps text-label-caps uppercase text-terracotta-sandstone tracking-wider font-bold">
+                    {step === 1 ? "Step 1 • Active" : "Step 1 • Completed"}
+                  </span>
+                  <span className="font-title-md text-title-md text-ink-charcoal font-semibold truncate">
+                    {hasPreselectedRoute ? "Route & Vehicle" : "Tour & Vehicle"}
+                  </span>
+                </div>
               </div>
-              <div className="flex flex-col min-w-0">
-                <span className="font-label-caps text-label-caps uppercase text-terracotta-sandstone tracking-wider font-bold">
-                  {step === 1 ? "Step 1 • Active" : "Step 1 • Completed"}
-                </span>
-                <span className="font-title-md text-title-md text-ink-charcoal font-semibold truncate">
-                  Route &amp; Vehicle
-                </span>
-              </div>
-            </div>
 
-            {/* Step 2 */}
-            <div
-              onClick={() => step > 2 && setStep(2)}
-              className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${
-                step === 2
-                  ? "bg-surface-container-lowest shadow-sm border border-border-warm ring-1 ring-primary/20"
-                  : "bg-surface-container-lowest/50 opacity-85 cursor-pointer hover:bg-surface-container-lowest"
-              }`}
-            >
+              {/* Step 2 */}
               <div
-                className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${
-                  step > 2
-                    ? "bg-success-jade text-on-primary"
-                    : step === 2
-                    ? "bg-primary text-on-primary"
-                    : "bg-surface-container-highest text-secondary"
+                onClick={() => step === 3 && setStep(2)}
+                className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${
+                  step === 2
+                    ? "bg-surface-container-lowest shadow-sm border border-border-warm ring-1 ring-primary/20"
+                    : "bg-surface-container-lowest/50 opacity-85"
                 }`}
               >
-                {step > 2 ? <span className="material-symbols-outlined text-[20px]">check</span> : "2"}
+                <div
+                  className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${
+                    step > 2
+                      ? "bg-success-jade text-on-primary"
+                      : step === 2
+                      ? "bg-primary text-on-primary"
+                      : "bg-surface-container-highest text-secondary"
+                  }`}
+                >
+                  {step > 2 ? <span className="material-symbols-outlined text-[20px]">check</span> : "2"}
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="font-label-caps text-label-caps uppercase text-secondary tracking-wider font-bold">
+                    {step === 2 ? "Step 2 • Active" : step > 2 ? "Step 2 • Completed" : "Step 2 • Upcoming"}
+                  </span>
+                  <span className="font-title-md text-title-md text-ink-charcoal font-semibold truncate">
+                    Guest &amp; Fare Review
+                  </span>
+                </div>
               </div>
-              <div className="flex flex-col min-w-0">
-                <span className="font-label-caps text-label-caps uppercase text-secondary tracking-wider font-bold">
-                  {step === 2 ? "Step 2 • Active" : step > 2 ? "Step 2 • Completed" : "Step 2 • Upcoming"}
-                </span>
-                <span className="font-title-md text-title-md text-ink-charcoal font-semibold truncate">
-                  Choose Your Trip
-                </span>
-              </div>
-            </div>
 
-            {/* Step 3 */}
-            <div
-              onClick={() => step === 4 && setStep(3)}
-              className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${
-                step === 3
-                  ? "bg-surface-container-lowest shadow-sm border border-border-warm ring-1 ring-primary/20"
-                  : "bg-surface-container-lowest/50 opacity-85"
-              }`}
-            >
+              {/* Step 3 */}
               <div
-                className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${
-                  step > 3
-                    ? "bg-success-jade text-on-primary"
-                    : step === 3
-                    ? "bg-primary text-on-primary"
-                    : "bg-surface-container-highest text-secondary"
+                className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${
+                  step === 3
+                    ? "bg-ink-charcoal text-ivory-surface shadow-md"
+                    : "bg-surface-container-lowest/50 opacity-75"
                 }`}
               >
-                {step > 3 ? <span className="material-symbols-outlined text-[20px]">check</span> : "3"}
-              </div>
-              <div className="flex flex-col min-w-0">
-                <span className="font-label-caps text-label-caps uppercase text-secondary tracking-wider font-bold">
-                  {step === 3 ? "Step 3 • Active" : step > 3 ? "Step 3 • Completed" : "Step 3 • Upcoming"}
-                </span>
-                <span className="font-title-md text-title-md text-ink-charcoal font-semibold truncate">
-                  Guest &amp; Fare Review
-                </span>
+                <div
+                  className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${
+                    step === 3 ? "bg-terracotta-sandstone text-on-primary" : "bg-surface-container-highest text-secondary"
+                  }`}
+                >
+                  <span className="material-symbols-outlined text-[20px]">verified</span>
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className={`font-label-caps text-label-caps uppercase tracking-wider font-bold ${step === 3 ? "text-gold-accent" : "text-secondary"}`}>
+                    {step === 3 ? "Step 3 • Issued" : "Step 3 • Final Voucher"}
+                  </span>
+                  <span className={`font-title-md text-title-md truncate font-semibold ${step === 3 ? "text-ivory-surface" : "text-on-surface-variant"}`}>
+                    Confirmed Voucher
+                  </span>
+                </div>
               </div>
             </div>
+          </section>
+        ) : (
+          /* 4-STEP TRACKER (Fleet-First Flow) */
+          <section className="w-full bg-surface-container-low rounded-xl p-space-md shadow-sm border border-border-warm/60">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-space-sm">
+              {/* Step 1 */}
+              <div
+                onClick={() => step > 1 && setStep(1)}
+                className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${
+                  step === 1
+                    ? "bg-surface-container-lowest shadow-sm border border-border-warm ring-1 ring-primary/20"
+                    : "bg-surface-container-lowest/50 opacity-85 cursor-pointer hover:bg-surface-container-lowest"
+                }`}
+              >
+                <div
+                  className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${
+                    step > 1 ? "bg-success-jade text-on-primary" : "bg-primary text-on-primary"
+                  }`}
+                >
+                  {step > 1 ? <span className="material-symbols-outlined text-[20px]">check</span> : "1"}
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="font-label-caps text-label-caps uppercase text-terracotta-sandstone tracking-wider font-bold">
+                    {step === 1 ? "Step 1 • Active" : "Step 1 • Completed"}
+                  </span>
+                  <span className="font-title-md text-title-md text-ink-charcoal font-semibold truncate">
+                    Vehicle Tier
+                  </span>
+                </div>
+              </div>
 
-            {/* Step 4 */}
-            <div
-              className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${
-                step === 4
-                  ? "bg-ink-charcoal text-ivory-surface shadow-md"
-                  : "bg-surface-container-lowest/50 opacity-75"
-              }`}
-            >
+              {/* Step 2 */}
               <div
-                className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${
-                  step === 4 ? "bg-terracotta-sandstone text-on-primary" : "bg-surface-container-highest text-secondary"
+                onClick={() => step > 2 && setStep(2)}
+                className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${
+                  step === 2
+                    ? "bg-surface-container-lowest shadow-sm border border-border-warm ring-1 ring-primary/20"
+                    : "bg-surface-container-lowest/50 opacity-85 cursor-pointer hover:bg-surface-container-lowest"
                 }`}
               >
-                <span className="material-symbols-outlined text-[20px]">verified</span>
+                <div
+                  className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${
+                    step > 2
+                      ? "bg-success-jade text-on-primary"
+                      : step === 2
+                      ? "bg-primary text-on-primary"
+                      : "bg-surface-container-highest text-secondary"
+                  }`}
+                >
+                  {step > 2 ? <span className="material-symbols-outlined text-[20px]">check</span> : "2"}
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="font-label-caps text-label-caps uppercase text-secondary tracking-wider font-bold">
+                    {step === 2 ? "Step 2 • Active" : step > 2 ? "Step 2 • Completed" : "Step 2 • Upcoming"}
+                  </span>
+                  <span className="font-title-md text-title-md text-ink-charcoal font-semibold truncate">
+                    Choose Your Trip
+                  </span>
+                </div>
               </div>
-              <div className="flex flex-col min-w-0">
-                <span className={`font-label-caps text-label-caps uppercase tracking-wider font-bold ${step === 4 ? "text-gold-accent" : "text-secondary"}`}>
-                  {step === 4 ? "Step 4 • Issued" : "Step 4 • Final Voucher"}
-                </span>
-                <span className={`font-title-md text-title-md truncate font-semibold ${step === 4 ? "text-ivory-surface" : "text-on-surface-variant"}`}>
-                  Confirmed Voucher
-                </span>
+
+              {/* Step 3 */}
+              <div
+                onClick={() => step === 4 && setStep(3)}
+                className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${
+                  step === 3
+                    ? "bg-surface-container-lowest shadow-sm border border-border-warm ring-1 ring-primary/20"
+                    : "bg-surface-container-lowest/50 opacity-85"
+                }`}
+              >
+                <div
+                  className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${
+                    step > 3
+                      ? "bg-success-jade text-on-primary"
+                      : step === 3
+                      ? "bg-primary text-on-primary"
+                      : "bg-surface-container-highest text-secondary"
+                  }`}
+                >
+                  {step > 3 ? <span className="material-symbols-outlined text-[20px]">check</span> : "3"}
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="font-label-caps text-label-caps uppercase text-secondary tracking-wider font-bold">
+                    {step === 3 ? "Step 3 • Active" : step > 3 ? "Step 3 • Completed" : "Step 3 • Upcoming"}
+                  </span>
+                  <span className="font-title-md text-title-md text-ink-charcoal font-semibold truncate">
+                    Guest &amp; Fare Review
+                  </span>
+                </div>
+              </div>
+
+              {/* Step 4 */}
+              <div
+                className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${
+                  step === 4
+                    ? "bg-ink-charcoal text-ivory-surface shadow-md"
+                    : "bg-surface-container-lowest/50 opacity-75"
+                }`}
+              >
+                <div
+                  className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${
+                    step === 4 ? "bg-terracotta-sandstone text-on-primary" : "bg-surface-container-highest text-secondary"
+                  }`}
+                >
+                  <span className="material-symbols-outlined text-[20px]">verified</span>
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className={`font-label-caps text-label-caps uppercase tracking-wider font-bold ${step === 4 ? "text-gold-accent" : "text-secondary"}`}>
+                    {step === 4 ? "Step 4 • Issued" : "Step 4 • Final Voucher"}
+                  </span>
+                  <span className={`font-title-md text-title-md truncate font-semibold ${step === 4 ? "text-ivory-surface" : "text-on-surface-variant"}`}>
+                    Confirmed Voucher
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* STEP 1: ROUTE & VEHICLE SELECTION */}
         {step === 1 && (
           <div className="flex flex-col gap-space-xl">
             {/* TRIP MODE SELECTOR & CONFIGURATION HEADER */}
             <header className="bg-surface-container-lowest rounded-xl p-space-lg lg:p-space-xl shadow-sm border border-border-warm flex flex-col gap-space-md">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-space-sm">
-                <div>
-                  <span className="font-label-caps text-label-caps uppercase text-terracotta-sandstone tracking-widest font-bold">
-                    Authoritative Server Booking Engine
-                  </span>
-                  <h1 className="font-headline-lg text-headline-lg text-ink-midnight tracking-tight mt-0.5">
-                    Plan Your Ride &amp; Select Vehicle Tier
-                  </h1>
+              {hasPreselectedRoute ? (
+                /* PRE-SELECTED ROUTE HEADER (Clean, No Distracting Inputs) */
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-space-sm bg-sandstone-wash/80 p-space-md rounded-xl border border-border-warm/80">
+                  <div className="flex items-center gap-space-sm">
+                    <span className="w-11 h-11 rounded-full bg-primary text-white flex items-center justify-center shrink-0 shadow-xs">
+                      <span className="material-symbols-outlined text-[24px]">route</span>
+                    </span>
+                    <div>
+                      <span className="font-label-caps text-label-caps uppercase text-terracotta-sandstone tracking-widest font-bold">
+                        Authoritative Outstation Route
+                      </span>
+                      <h1 className="font-headline-sm text-headline-sm text-ink-midnight tracking-tight font-bold">
+                        {originName} → {destinationName}
+                      </h1>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 self-start md:self-auto">
+                    <a
+                      href={`/en/routes/?from=${encodeURIComponent(originName)}&to=${encodeURIComponent(destinationName)}`}
+                      className="inline-flex items-center gap-1 text-xs text-primary font-semibold hover:underline bg-surface px-3 py-1.5 rounded-lg border border-border-warm shadow-xs transition-colors"
+                    >
+                      <span>Change Route</span>
+                      <span className="material-symbols-outlined text-[14px]">open_in_new</span>
+                    </a>
+                  </div>
                 </div>
-                {/* Trip Mode Switcher */}
-                <div className="inline-flex p-1 bg-surface-container-low rounded-lg border border-border-warm/60 self-start md:self-auto">
-                  <button
-                    type="button"
-                    onClick={() => setBookingMode("outstation")}
-                    className={`px-3.5 py-1.5 rounded-md font-label-lg text-xs font-semibold transition-all ${
-                      bookingMode === "outstation" ? "bg-primary text-on-primary shadow-xs" : "text-ink-slate hover:text-ink-charcoal"
-                    }`}
-                  >
-                    Outstation Route
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setBookingMode("local")}
-                    className={`px-3.5 py-1.5 rounded-md font-label-lg text-xs font-semibold transition-all ${
-                      bookingMode === "local" ? "bg-primary text-on-primary shadow-xs" : "text-ink-slate hover:text-ink-charcoal"
-                    }`}
-                  >
-                    Local Tour / Transfer
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setBookingMode("package")}
-                    className={`px-3.5 py-1.5 rounded-md font-label-lg text-xs font-semibold transition-all ${
-                      bookingMode === "package" ? "bg-primary text-on-primary shadow-xs" : "text-ink-slate hover:text-ink-charcoal"
-                    }`}
-                  >
-                    Tour Package
-                  </button>
+              ) : (
+                /* GENERIC MODE SELECTOR HEADER (For direct /book visits) */
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-space-sm">
+                  <div>
+                    <span className="font-label-caps text-label-caps uppercase text-terracotta-sandstone tracking-widest font-bold">
+                      Authoritative Server Booking Engine
+                    </span>
+                    <h1 className="font-headline-lg text-headline-lg text-ink-midnight tracking-tight mt-0.5">
+                      Plan Your Ride &amp; Select Vehicle Tier
+                    </h1>
+                  </div>
+                  {/* Trip Mode Switcher */}
+                  <div className="inline-flex p-1 bg-surface-container-low rounded-lg border border-border-warm/60 self-start md:self-auto">
+                    <button
+                      type="button"
+                      onClick={() => setBookingMode("outstation")}
+                      className={`px-3.5 py-1.5 rounded-md font-label-lg text-xs font-semibold transition-all ${
+                        bookingMode === "outstation" ? "bg-primary text-on-primary shadow-xs" : "text-ink-slate hover:text-ink-charcoal"
+                      }`}
+                    >
+                      Outstation Route
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setBookingMode("local")}
+                      className={`px-3.5 py-1.5 rounded-md font-label-lg text-xs font-semibold transition-all ${
+                        bookingMode === "local" ? "bg-primary text-on-primary shadow-xs" : "text-ink-slate hover:text-ink-charcoal"
+                      }`}
+                    >
+                      Local Tour / Transfer
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setBookingMode("package")}
+                      className={`px-3.5 py-1.5 rounded-md font-label-lg text-xs font-semibold transition-all ${
+                        bookingMode === "package" ? "bg-primary text-on-primary shadow-xs" : "text-ink-slate hover:text-ink-charcoal"
+                      }`}
+                    >
+                      Tour Package
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Dynamic Trip Parameter Inputs */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-sm pt-space-xs border-t border-border-warm/60">
-                {/* Mode: Outstation */}
-                {bookingMode === "outstation" && (
+                {/* Outstation Mode (Only if NOT preselected route, to avoid redundancy) */}
+                {bookingMode === "outstation" && !hasPreselectedRoute && (
                   <>
                     <div className="flex flex-col gap-1">
                       <label htmlFor="origin-input" className="font-label-lg text-xs font-bold text-ink-slate">Pickup Origin City</label>
@@ -788,7 +928,23 @@ export function BookingPage() {
                   </>
                 )}
 
-                {/* Mode: Local */}
+                {/* Preselected Outstation: Trip Direction */}
+                {bookingMode === "outstation" && hasPreselectedRoute && (
+                  <div className="flex flex-col gap-1 sm:col-span-2">
+                    <label htmlFor="pre-triptype-select" className="font-label-lg text-xs font-bold text-ink-slate">Trip Direction</label>
+                    <select
+                      id="pre-triptype-select"
+                      value={tripType}
+                      onChange={(e) => setTripType(e.target.value as "one-way" | "round-trip")}
+                      className="px-3 py-2 rounded-lg border border-border-warm bg-surface font-body-md text-on-surface focus:ring-1 focus:ring-primary focus:outline-none"
+                    >
+                      <option value="one-way">One-Way Drop Corridor</option>
+                      <option value="round-trip">Round-Trip Return Journey</option>
+                    </select>
+                  </div>
+                )}
+
+                {/* Local Mode */}
                 {bookingMode === "local" && (
                   <div className="sm:col-span-2 lg:col-span-3 flex flex-col gap-1">
                     <label htmlFor="local-pkg-select" className="font-label-lg text-xs font-bold text-ink-slate">Select Local Rental Tier</label>
@@ -805,7 +961,7 @@ export function BookingPage() {
                   </div>
                 )}
 
-                {/* Mode: Package */}
+                {/* Package Mode */}
                 {bookingMode === "package" && (
                   <div className="sm:col-span-2 lg:col-span-3 flex flex-col gap-1">
                     <label htmlFor="package-select" className="font-label-lg text-xs font-bold text-ink-slate">Select Curated Heritage Tour</label>
@@ -825,7 +981,7 @@ export function BookingPage() {
                 )}
 
                 {/* Pickup Date & Time */}
-                <div className="flex flex-col gap-1">
+                <div className={`flex flex-col gap-1 ${hasPreselectedRoute ? "sm:col-span-2" : ""}`}>
                   <label htmlFor="pickup-date-input" className="font-label-lg text-xs font-bold text-ink-slate">Pickup Date &amp; Time</label>
                   <div className="flex gap-1.5">
                     <input
@@ -846,7 +1002,7 @@ export function BookingPage() {
                 </div>
               </div>
 
-              {/* CRITICAL BUSINESS RULE (F3 Requirement 4): Plain Sentence Banner for Force Vehicles */}
+              {/* Plain Sentence Banner for Force Vehicles */}
               {selectedVehicle.alwaysRoundTrip && (
                 <div className="w-full bg-sandstone-wash border border-primary/30 rounded-xl p-space-md flex items-start gap-space-sm mt-1">
                   <span className="material-symbols-outlined text-primary text-[24px] shrink-0 mt-0.5">
@@ -1047,12 +1203,12 @@ export function BookingPage() {
 
                   {/* Continue CTA Button */}
                   <button
-                    onClick={handleProceedToStep2}
+                    onClick={handleProceedFromStep1}
                     disabled={loadingFare || !serverFare}
                     className="w-full py-3.5 px-space-md rounded-xl bg-terracotta-sandstone text-on-primary font-label-lg text-label-lg font-semibold hover:bg-terracotta-sunlit disabled:opacity-50 transition-all shadow-md flex items-center justify-center gap-2 group cursor-pointer"
                     type="button"
                   >
-                    <span>Choose Your Trip (Step 2)</span>
+                    <span>{isDirectFunnel ? "Proceed to Guest Details (Step 2)" : "Choose Your Trip (Step 2)"}</span>
                     <span className="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">
                       arrow_forward
                     </span>
@@ -1060,14 +1216,15 @@ export function BookingPage() {
 
                   <a
                     className="flex items-center justify-center gap-2 py-2.5 px-space-sm rounded-lg bg-black hover:bg-neutral-900 border border-white/10 text-white font-label-lg text-label-lg transition-colors text-center"
+                    style={{ color: "#ffffff" }}
                     href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
                       `Hello SK Baghel Travels, query for ${effectiveOrigin} to ${effectiveDestination} with ${selectedVehicle.name}.`
                     )}`}
                     rel="noopener noreferrer"
                     target="_blank"
                   >
-                    <WhatsAppIcon className="w-4 h-4 shrink-0" />
-                    <span>WhatsApp Concierge Desk</span>
+                    <WhatsAppIcon className="w-4 h-4 shrink-0 text-white" />
+                    <span className="text-white font-semibold" style={{ color: "#ffffff" }}>WhatsApp Concierge Desk</span>
                   </a>
                 </div>
               </aside>
@@ -1075,8 +1232,8 @@ export function BookingPage() {
           </div>
         )}
 
-        {/* STEP 2: CHOOSE YOUR TRIP (fleet-first flow) */}
-        {step === 2 && (
+        {/* STEP 2 IN FLEET-FIRST FLOW: CHOOSE YOUR TRIP */}
+        {!isDirectFunnel && step === 2 && (
           <TripSelectionStep
             trips={availableTrips}
             selectedKey={selectedTrip?.key ?? ""}
@@ -1087,7 +1244,7 @@ export function BookingPage() {
             serverAdvanceAmount={serverFare?.advanceAmount ?? null}
             quoteLoading={loadingFare}
             quoteError={fareError}
-            onContinue={handleProceedToStep3}
+            onContinue={handleProceedFromFleetStep2}
             onChangeVehicle={() => {
               window.scrollTo({ top: 0, behavior: "smooth" });
               setStep(1);
@@ -1096,8 +1253,8 @@ export function BookingPage() {
           />
         )}
 
-        {/* STEP 3: GUEST DETAILS & FARE REVIEW */}
-        {step === 3 && (
+        {/* GUEST DETAILS & FARE REVIEW FORM (Step 2 in Direct Funnel, Step 3 in Fleet-First Funnel) */}
+        {isGuestFormStep && (
           <div className="max-w-4xl mx-auto w-full flex flex-col gap-space-md">
             <div className="w-full bg-surface-container-lowest rounded-xl shadow-md border border-border-warm overflow-hidden">
               {/* Header */}
@@ -1110,10 +1267,10 @@ export function BookingPage() {
                 </div>
                 <button
                   type="button"
-                  onClick={() => setStep(2)}
+                  onClick={() => setStep(isDirectFunnel ? 1 : 2)}
                   className="text-xs text-gold-accent hover:text-ivory-surface underline"
                 >
-                  ← Edit Trip / Vehicle
+                  ← {isDirectFunnel ? "Edit Vehicle / Route" : "Edit Trip / Vehicle"}
                 </button>
               </div>
 
@@ -1252,113 +1409,67 @@ export function BookingPage() {
                       <button
                         type="button"
                         onClick={handleApplyPromo}
-                        disabled={selectedVehicle.alwaysRoundTrip || !promoCodeInput.trim()}
-                        className="px-4 py-2 bg-ink-charcoal text-ivory-surface rounded-lg font-label-lg text-xs font-semibold hover:bg-ink-slate disabled:opacity-40"
+                        disabled={selectedVehicle.alwaysRoundTrip}
+                        className="px-4 py-2 rounded-lg bg-surface-container-high text-ink-charcoal font-semibold text-xs hover:bg-surface-container-highest transition-colors disabled:opacity-40"
                       >
                         Apply
                       </button>
                     </div>
                     {promoMessage && (
-                      <span className="font-body-sm text-xs text-primary font-medium mt-1">
+                      <span className={`text-[11px] font-medium ${serverFare?.promoValid ? "text-success-jade" : "text-terracotta-sandstone"}`}>
                         {promoMessage}
                       </span>
                     )}
                   </div>
                 </div>
 
-                {/* Final Server Verified Fare Summary Box */}
-                {serverFare && (
-                  <div className="p-space-md rounded-xl bg-surface-container-low border border-border-warm flex flex-col gap-space-sm">
-                    <div className="flex items-center justify-between border-b border-border-warm/60 pb-2">
-                      <span className="font-title-md text-ink-midnight font-bold">
-                        Authoritative Server Price Breakdown
-                      </span>
-                      <span className="font-label-caps text-[10px] text-success-jade bg-white px-2 py-0.5 rounded border border-success-jade/30">
-                        100% Server Verified
-                      </span>
-                    </div>
-
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-                      <div>
-                        <span className="text-secondary block">Base Fare</span>
-                        <span className="font-bold text-ink-charcoal">{formatInr(serverFare.baseFare)}</span>
-                      </div>
-                      <div>
-                        <span className="text-secondary block">Driver Allowance</span>
-                        <span className="font-bold text-ink-charcoal">{formatInr(serverFare.driverAllowance)}</span>
-                      </div>
-                      <div>
-                        <span className="text-secondary block">Night Allowance</span>
-                        <span className="font-bold text-ink-charcoal">{formatInr(serverFare.nightAllowance)}</span>
-                      </div>
-                      <div>
-                        <span className="text-secondary block">Discount</span>
-                        <span className="font-bold text-success-jade">-{formatInr(serverFare.discountAmount)}</span>
-                      </div>
-                    </div>
-
-                    <div className="pt-2 border-t border-border-warm/60 flex items-center justify-between">
-                      <div>
-                        <span className="font-title-md text-ink-midnight font-bold block">
-                          Total Payable: {formatInr(serverFare.totalFare)}
-                        </span>
-                        <span className="text-[11px] text-secondary">
-                          Advance required to lock vehicle: {formatInr(serverFare.advanceAmount)}
-                        </span>
-                      </div>
-                      <div className="text-right">
-                        <span className="text-[11px] text-secondary block">Balance on Drop-off:</span>
-                        <span className="font-bold text-terracotta-sandstone">{formatInr(serverFare.balanceAmount)}</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Payment Option: Partial vs Full */}
-                <div className="flex flex-col gap-2">
-                  <span className="font-title-md text-xs font-bold text-ink-charcoal">
-                    Select Advance Deposit Option
-                  </span>
+                {/* Payment Option Selection */}
+                <div className="flex flex-col gap-2 pt-2 border-t border-border-warm">
+                  <label className="font-title-md text-xs font-bold text-ink-charcoal">
+                    Select Advance Payment Settlement Mode
+                  </label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-space-sm">
+                    {/* Partial Option (28% advance) */}
                     <label
-                      onClick={() => setPaymentChoice("partial")}
-                      className={`cursor-pointer p-space-md rounded-xl border flex items-center justify-between transition-all ${
+                      className={`p-space-md rounded-xl border cursor-pointer transition-all ${
                         paymentChoice === "partial"
-                          ? "bg-sandstone-wash border-primary ring-1 ring-primary"
-                          : "bg-surface-container-lowest border-border-warm"
+                          ? "bg-sandstone-wash/80 border-primary ring-1 ring-primary/30"
+                          : "bg-surface-container-lowest border-border-warm hover:border-primary/40"
                       }`}
                     >
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-start gap-2">
                         <input
                           type="radio"
                           name="paymentChoice"
+                          value="partial"
                           checked={paymentChoice === "partial"}
                           onChange={() => setPaymentChoice("partial")}
                           className="accent-primary"
                         />
                         <div>
                           <span className="font-bold text-ink-midnight text-sm block">
-                            Pay Advance Token ({formatInr(serverFare?.advanceAmount ?? 500)})
+                            28% Advance Token ({formatInr(serverFare?.advanceAmount ?? 700)})
                           </span>
-                          <span className="text-xs text-secondary">
-                            Remaining balance payable directly to driver on arrival
+                          <span className="text-xs text-secondary font-medium">
+                            Balance ₹{(serverFare?.totalFare ?? 2500) - (serverFare?.advanceAmount ?? 700)} payable directly to chauffeur at destination
                           </span>
                         </div>
                       </div>
                     </label>
 
+                    {/* Full Option (100% total) */}
                     <label
-                      onClick={() => setPaymentChoice("full")}
-                      className={`cursor-pointer p-space-md rounded-xl border flex items-center justify-between transition-all ${
+                      className={`p-space-md rounded-xl border cursor-pointer transition-all ${
                         paymentChoice === "full"
-                          ? "bg-sandstone-wash border-primary ring-1 ring-primary"
-                          : "bg-surface-container-lowest border-border-warm"
+                          ? "bg-sandstone-wash/80 border-primary ring-1 ring-primary/30"
+                          : "bg-surface-container-lowest border-border-warm hover:border-primary/40"
                       }`}
                     >
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-start gap-2">
                         <input
                           type="radio"
                           name="paymentChoice"
+                          value="full"
                           checked={paymentChoice === "full"}
                           onChange={() => setPaymentChoice("full")}
                           className="accent-primary"
@@ -1402,7 +1513,7 @@ export function BookingPage() {
               </form>
             </div>
 
-            {/* SK Concierge — booking agent available while you pay */}
+            {/* SK Concierge */}
             <div className="max-w-2xl w-full mx-auto">
               <BookingAssistant
                 step={3}
@@ -1416,8 +1527,8 @@ export function BookingPage() {
           </div>
         )}
 
-        {/* STEP 4: OFFICIAL TRANSIT VOUCHER */}
-        {step === 4 && (
+        {/* OFFICIAL TRANSIT VOUCHER (Step 3 in Direct Funnel, Step 4 in Fleet-First Funnel) */}
+        {isVoucherStep && (
           <div className="max-w-4xl mx-auto w-full flex flex-col gap-space-lg">
             {/* Success Banner */}
             <div className="bg-success-jade/10 border border-success-jade/40 rounded-xl p-space-lg flex items-center justify-between gap-space-md">
@@ -1512,10 +1623,11 @@ export function BookingPage() {
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
+                style={{ color: "#ffffff" }}
                 className="flex-1 py-3 px-space-md rounded-xl bg-black text-white font-label-lg font-bold flex items-center justify-center gap-2 hover:bg-neutral-900 transition-colors shadow-sm"
               >
-                <WhatsAppIcon className="w-5 h-5 shrink-0" />
-                <span>Share Voucher on WhatsApp</span>
+                <WhatsAppIcon className="w-5 h-5 shrink-0 text-white" />
+                <span className="text-white" style={{ color: "#ffffff" }}>Share Voucher on WhatsApp</span>
               </a>
 
               <button

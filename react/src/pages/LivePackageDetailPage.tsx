@@ -243,9 +243,11 @@ export function LivePackageDetailPage({ slug }: LivePackageDetailPageProps) {
                 href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                style={{ color: "#ffffff" }}
                 className="flex-1 inline-flex items-center justify-center gap-2 h-11 rounded-xl bg-success-jade text-white font-label-lg text-sm font-semibold hover:opacity-90 transition-opacity"
               >
-                <WhatsAppIcon className="w-4 h-4" /> WhatsApp enquiry
+                <WhatsAppIcon className="w-4 h-4 text-white" />
+                <span className="text-white font-semibold" style={{ color: "#ffffff" }}>WhatsApp enquiry</span>
               </a>
               <a
                 href={`tel:${contact.phone}`}

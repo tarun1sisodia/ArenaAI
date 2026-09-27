@@ -566,12 +566,13 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
 
                 <a
                   className="w-full bg-black hover:bg-neutral-900 border border-white/10 text-white py-3 px-4 rounded-lg font-label-lg text-label-lg transition-colors flex items-center justify-center gap-2 mt-1 shadow-sm active:scale-[0.98]"
+                  style={{ color: "#ffffff" }}
                   href={whatsappUrl}
                   rel="noopener noreferrer"
                   target="_blank"
                 >
-                  <WhatsAppIcon className="w-[18px] h-[18px] shrink-0" />
-                  <span>Chat with Concierge on WhatsApp</span>
+                  <WhatsAppIcon className="w-[18px] h-[18px] shrink-0 text-white" />
+                  <span className="text-white" style={{ color: "#ffffff" }}>Chat with Concierge on WhatsApp</span>
                 </a>
               </div>
 

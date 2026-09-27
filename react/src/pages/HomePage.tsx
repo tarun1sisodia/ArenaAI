@@ -310,12 +310,13 @@ export function HomePage({ language = "en" }: HomePageProps) {
                 </a>
                 <a
                   className="inline-flex items-center gap-space-xs px-space-lg py-3 rounded-lg bg-black hover:bg-neutral-900 text-white font-label-lg text-label-lg shadow-md transition-all font-semibold active:scale-[0.98] border border-white/10"
+                  style={{ color: "#ffffff" }}
                   href={`https://wa.me/${contact.whatsapp}`}
                   target="_blank"
                   rel="noreferrer"
                 >
-                  <WhatsAppIcon className="w-[18px] h-[18px] shrink-0" />
-                  <span className="text-white">WhatsApp</span>
+                  <WhatsAppIcon className="w-[18px] h-[18px] shrink-0 text-white" />
+                  <span className="text-white font-semibold" style={{ color: "#ffffff" }}>WhatsApp</span>
                 </a>
               </div>
             </div>

@@ -134,13 +134,14 @@ export function ContactCard() {
           </div>
           <a
             className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-black hover:bg-neutral-900 border border-white/10 text-white font-label-lg text-xs font-semibold shadow-xs transition-all active:scale-[0.98]"
+            style={{ color: "#ffffff" }}
             href={`https://wa.me/${contact.whatsapp}`}
             target="_blank"
             rel="noreferrer"
             aria-label="Chat with SK Baghel on WhatsApp"
           >
-            <WhatsAppIcon className="w-4 h-4 shrink-0" />
-            <span>WhatsApp Desk ↗</span>
+            <WhatsAppIcon className="w-4 h-4 shrink-0 text-white" />
+            <span className="text-white" style={{ color: "#ffffff" }}>WhatsApp Desk ↗</span>
           </a>
         </div>
 
@@ -381,14 +382,15 @@ export function ContactCard() {
                   <div className="contact-success-actions">
                     <a
                       className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-black hover:bg-neutral-900 border border-white/10 text-white font-title-md text-xs font-semibold shadow-xs transition-all active:scale-[0.98]"
+                      style={{ color: "#ffffff" }}
                       href={`https://wa.me/${contact.whatsapp}?text=Hi%20SK%20Baghel,%20I%20just%20submitted%20an%20inquiry%20for%20${encodeURIComponent(
                         formData.name
                       )}.`}
                       target="_blank"
                       rel="noreferrer"
                     >
-                      <WhatsAppIcon className="w-4 h-4 shrink-0" />
-                      <span>Chat on WhatsApp</span>
+                      <WhatsAppIcon className="w-4 h-4 shrink-0 text-white" />
+                      <span className="text-white" style={{ color: "#ffffff" }}>Chat on WhatsApp</span>
                     </a>
                     <button
                       type="button"

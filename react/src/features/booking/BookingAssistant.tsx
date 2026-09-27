@@ -141,10 +141,13 @@ export function BookingAssistant({
           href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(whatsappContext)}`}
           target="_blank"
           rel="noopener noreferrer"
+          style={{ color: "#ffffff" }}
           className="w-full py-2.5 px-space-sm rounded-lg bg-success-jade text-white font-label-lg text-label-lg font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-sm active:scale-[0.98]"
         >
-          <WhatsAppIcon className="w-4 h-4 shrink-0" />
-          {step === 2 ? "Let our agent pick for me" : "Let our agent book this for me"}
+          <WhatsAppIcon className="w-4 h-4 shrink-0 text-white" />
+          <span className="text-white font-semibold" style={{ color: "#ffffff" }}>
+            {step === 2 ? "Let our agent pick for me" : "Let our agent book this for me"}
+          </span>
         </a>
         <p className="font-label-caps text-label-caps uppercase tracking-wider text-secondary text-center mt-1.5">
           24×7 Agra desk • replies in ~2 min
