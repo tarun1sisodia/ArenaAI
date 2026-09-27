@@ -90,7 +90,37 @@ export interface Payment {
 }
 
 export type CatalogStatus = "draft" | "published" | "archived";
-export type CatalogCategory = "ride" | "tour" | "package" | "route" | "vehicle";
+export type CatalogCategory = "ride" | "tour" | "package" | "route" | "vehicle" | "place";
+export type CatalogAvailability = "available" | "limited" | "unavailable";
+export type CatalogTripType = "one-way" | "round-trip" | "local-tour" | "airport-transfer";
+
+/**
+ * Gallery policy (client-confirmed rule): "Famous Places & Monuments" (place)
+ * items carry a multi-image gallery; every other category uses exactly one
+ * cover image.
+ */
+export const CATALOG_MEDIA_LIMITS: Record<CatalogCategory, number> = {
+  place: 12,
+  ride: 1,
+  tour: 1,
+  package: 1,
+  route: 1,
+  vehicle: 1,
+};
+
+export interface CatalogMedia {
+  id: string;
+  catalogItemId: string;
+  mediaType: "image" | "video";
+  altText: string;
+  caption: string | null;
+  sortOrder: number;
+  status: CatalogStatus;
+  url: string;
+  mimeType: string | null;
+  sizeBytes: number | null;
+  createdAt: string;
+}
 
 export interface CatalogItem {
   id: string;
@@ -103,6 +133,11 @@ export interface CatalogItem {
   status: CatalogStatus;
   updatedAt: string;
   places: string[];
+  distanceKm: number | null;
+  availability: CatalogAvailability;
+  seatsLeft: number | null;
+  stops: string[];
+  tripType: CatalogTripType | null;
 }
 
 export type ReviewStatus =
@@ -157,6 +192,7 @@ export interface FareRule {
   minDailyKm: number;
   nightChargePerHour: number;
   driverAllowance: number;
+  active: boolean;
 }
 
 export interface FareRuleset {

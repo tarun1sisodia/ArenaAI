@@ -479,11 +479,13 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
           await query(
             client,
             `update catalog_items set title=$2, short_description=$3, description=$4, status=$5, duration_text=$6,
-             route_summary=$7, starting_price_inr=$8, version=$9, updated_by=$10, published_at=$11, updated_at=$12
+             route_summary=$7, starting_price_inr=$8, distance_km=$9, availability=$10, seats_left=$11,
+             stops=$12, trip_type=$13, version=$14, updated_by=$15, published_at=$16, updated_at=$17
              where id=$1`,
             [
               record.id, record.title, record.shortDescription, record.description, record.status,
-              record.durationText, record.routeSummary, record.startingPriceInr, record.version,
+              record.durationText, record.routeSummary, record.startingPriceInr, record.distanceKm,
+              record.availability, record.seatsLeft, record.stops, record.tripType, record.version,
               record.updatedBy, record.publishedAt, record.updatedAt,
             ],
           );
@@ -523,11 +525,13 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
             client,
             `insert into catalog_item_media (
               id, catalog_item_id, storage_path, media_type, alt_text, caption, sort_order, status,
-              source_type, copyright_owner, created_by, approved_by, published_at, created_at
-            ) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)`,
+              source_type, copyright_owner, mime_type, content_base64, size_bytes,
+              created_by, approved_by, published_at, created_at
+            ) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)`,
             [
               record.id, record.catalogItemId, record.storagePath, record.mediaType, record.altText,
               record.caption, record.sortOrder, record.status, record.sourceType, record.copyrightOwner,
+              record.mimeType, record.contentBase64, record.sizeBytes,
               record.createdBy, record.approvedBy, record.publishedAt, record.createdAt,
             ],
           );
@@ -552,6 +556,9 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
             [catalogItemId],
           );
           return rows.map(mapMedia);
+        },
+        async delete(id: string) {
+          await query(client, "delete from catalog_item_media where id=$1", [id]);
         },
       },
       reviews: {
@@ -909,6 +916,11 @@ function mapCatalog(row: Record<string, unknown>): CatalogItemRecord {
     durationText: String(row.duration_text),
     routeSummary: String(row.route_summary),
     startingPriceInr: num(row.starting_price_inr),
+    distanceKm: row.distance_km === null || row.distance_km === undefined ? null : num(row.distance_km),
+    availability: (row.availability as CatalogItemRecord["availability"]) ?? "available",
+    seatsLeft: row.seats_left === null || row.seats_left === undefined ? null : num(row.seats_left),
+    stops: Array.isArray(row.stops) ? row.stops.map((s) => String(s)) : [],
+    tripType: (row.trip_type as CatalogItemRecord["tripType"]) ?? null,
     version: num(row.version),
     createdBy: row.created_by ? String(row.created_by) : null,
     updatedBy: row.updated_by ? String(row.updated_by) : null,
@@ -930,6 +942,9 @@ function mapMedia(row: Record<string, unknown>): CatalogMediaRecord {
     status: row.status as CatalogMediaRecord["status"],
     sourceType: row.source_type as CatalogMediaRecord["sourceType"],
     copyrightOwner: row.copyright_owner ? String(row.copyright_owner) : null,
+    mimeType: row.mime_type ? String(row.mime_type) : null,
+    contentBase64: row.content_base64 ? String(row.content_base64) : null,
+    sizeBytes: row.size_bytes === null || row.size_bytes === undefined ? null : num(row.size_bytes),
     createdBy: row.created_by ? String(row.created_by) : null,
     approvedBy: row.approved_by ? String(row.approved_by) : null,
     publishedAt: row.published_at ? new Date(String(row.published_at)).toISOString() : null,
@@ -1008,11 +1023,13 @@ async function insertCatalog(client: pg.Pool | PoolClient, record: CatalogItemRe
   await client.query(
     `insert into catalog_items (
       id, type, slug, title, short_description, description, status, duration_text, route_summary,
-      starting_price_inr, version, created_by, updated_by, published_at, created_at, updated_at
-    ) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)`,
+      starting_price_inr, distance_km, availability, seats_left, stops, trip_type, version,
+      created_by, updated_by, published_at, created_at, updated_at
+    ) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21)`,
     [
       record.id, record.type, record.slug, record.title, record.shortDescription, record.description,
-      record.status, record.durationText, record.routeSummary, record.startingPriceInr, record.version,
+      record.status, record.durationText, record.routeSummary, record.startingPriceInr,
+      record.distanceKm, record.availability, record.seatsLeft, record.stops, record.tripType, record.version,
       record.createdBy, record.updatedBy, record.publishedAt, record.createdAt, record.updatedAt,
     ],
   );

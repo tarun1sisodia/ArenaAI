@@ -10,5 +10,11 @@ export function createFareController(service: ReturnType<typeof createFareServic
       const fare = await service.calculate(body);
       return sendSuccess(reply, fare);
     },
+
+    /** PUBLIC — live fleet (single source with the admin fare-rules editor). */
+    async fleet(_request: FastifyRequest, reply: FastifyReply) {
+      const data = await service.getFleet();
+      return sendSuccess(reply, data);
+    },
   };
 }

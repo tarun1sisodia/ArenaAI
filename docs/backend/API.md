@@ -24,6 +24,7 @@ All request and response bodies use JSON unless an endpoint explicitly accepts a
 | Method | Endpoint | Purpose | Authentication |
 |---|---|---|---|
 | `POST` | `/fares/calculate` | Calculate a server-authoritative fare breakdown | None |
+| `GET` | `/fleet` | Live fleet (names, seats, ₹/km, availability) from the active fare rules | None |
 | `GET` | `/locations/autocomplete` | Return LocationIQ suggestions through the server proxy | None |
 | `POST` | `/bookings/draft` | Validate input, calculate fare, create a draft, and issue a ticket ID | None or guest token |
 | `POST` | `/payments/create-checkout` | Create a provider checkout for the persisted booking advance | Booking token |
@@ -44,8 +45,10 @@ All request and response bodies use JSON unless an endpoint explicitly accepts a
 
 | Method | Endpoint | Purpose | Authentication |
 |---|---|---|---|
+| `GET` | `/catalog` | Published catalog listing — the single source of trips for the customer site. Filters: `type` (`ride`/`tour`/`package`/`route`/`vehicle`/`place`), `tripType` (`one-way`/`round-trip`/`local-tour`/`airport-transfer`). Each item includes the commercial fields (price, distance km, availability, seats left, ordered stops, trip type) plus cover image and gallery | None |
 | `GET` | `/catalog/:slug` | Return a published ride, tour, or package with gallery media and reviews | None |
 | `GET` | `/catalog/:id/reviews` | Return published reviews and safe verification badges | None |
+| `GET` | `/media/:id` | Serve an inline (DB-backed) catalog image with `Cache-Control: public, max-age=31536000, immutable` | None |
 | `POST` | `/reviews` | Submit a customer review for moderation | Guest token or authenticated customer |
 
 Only catalog items, gallery assets, and reviews with public `published` status may be returned. Verification evidence and moderation notes are private.
@@ -54,13 +57,15 @@ Only catalog items, gallery assets, and reviews with public `published` status m
 
 | Method | Endpoint | Purpose | Required role |
 |---|---|---|---|
-| `GET` | `/ops/admin/catalog` | List rides, tours, and packages | Content editor or super admin |
-| `POST` | `/ops/admin/catalog` | Create a catalog item | Content editor or super admin |
+| `GET` | `/ops/admin/catalog` | List rides, tours, and packages (filters: `type`, `status`, `q`) | Content editor or super admin |
+| `GET` | `/ops/admin/catalog/:id` | Item detail with the full media list for the editor | Content editor or super admin |
+| `POST` | `/ops/admin/catalog` | Create a catalog item (name, price, distance km, availability, seats left, ordered stops, trip type, vertical) | Content editor or super admin |
 | `PATCH` | `/ops/admin/catalog/:id` | Update a draft or create a new content version | Content editor or super admin |
 | `POST` | `/ops/admin/catalog/:id/publish` | Publish approved catalog content | Super admin |
 | `POST` | `/ops/admin/catalog/:id/archive` | Archive a catalog item | Super admin |
-| `POST` | `/ops/admin/catalog/:id/media` | Associate a validated storage asset | Content editor or super admin |
-| `PATCH` | `/ops/admin/media/:id` | Update caption, order, or visibility | Content editor or super admin |
+| `POST` | `/ops/admin/catalog/:id/media` | Attach an image — inline upload (`dataBase64` + `mimeType`, ≤2.5 MB, WebP/JPEG/PNG/AVIF) or asset/URL reference (`storagePath`). Gallery policy: `place` items (Famous Places & Monuments) accept up to 12 images; every other category exactly one cover image | Content editor or super admin |
+| `PATCH` | `/ops/admin/media/:id` | Update caption, alt text, order (cover = 0), or visibility | Content editor or super admin |
+| `DELETE` | `/ops/admin/media/:id` | Remove an image (audited; frees the cover slot) | Content editor or super admin |
 | `GET` | `/ops/admin/reviews` | Filter reviews by moderation and verification state | Review moderator or super admin |
 | `POST` | `/ops/admin/reviews/:id/approve` | Approve a review | Review moderator or super admin |
 | `POST` | `/ops/admin/reviews/:id/reject` | Reject a review with a reason | Review moderator or super admin |

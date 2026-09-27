@@ -13,8 +13,11 @@ import {
   type BackendTripType,
 } from "../../services/api";
 import { WhatsAppIcon } from "../../components/icons";
+import { TripSelectionStep, type SelectableTrip } from "./TripSelectionStep";
+import { BookingAssistant, type QuickPick } from "./BookingAssistant";
+import { fetchPublishedCatalog, type PublicCatalogItem } from "../../services/catalog";
 
-type BookingStep = 1 | 2 | 3;
+type BookingStep = 1 | 2 | 3 | 4;
 type BookingMode = "outstation" | "local" | "package";
 
 interface VehicleOption {
@@ -108,6 +111,12 @@ export function BookingPage() {
   const [packageSlug, setPackageSlug] = useState<string>("taj-mahal-sunrise-tour");
   const [selectedVehicleId, setSelectedVehicleId] = useState<VehicleId>("sedan");
 
+  // Fleet-first trip selection (Step 2): every bookable trip from the live
+  // catalog merged with the curated packages. A selection here drives the
+  // underlying booking mode / package / route so the desk engine (F3) quotes it.
+  const [liveTrips, setLiveTrips] = useState<PublicCatalogItem[]>([]);
+  const [selectedTripKey, setSelectedTripKey] = useState<string | null>(null);
+
   // Datetime fields
   const [pickupDate, setPickupDate] = useState<string>(localTomorrow());
   const [pickupTime, setPickupTime] = useState<string>("06:00");
@@ -158,6 +167,119 @@ export function BookingPage() {
       packages[0]
     );
   }, [packageSlug]);
+
+  // Every bookable trip for Step 2: curated static packages + live desk catalog,
+  // deduped by slug with the live (CMS-managed) version winning.
+  const availableTrips = useMemo<SelectableTrip[]>(() => {
+    const curated: SelectableTrip[] = packages.map((pkg) => ({
+      key: `curated:${pkg.slug}`,
+      source: "curated" as const,
+      slug: pkg.slug,
+      name: pkg.name,
+      blurb: pkg.blurb,
+      duration: pkg.duration,
+      distanceKm: null,
+      stops: [...pkg.places],
+      fromPrice: pkg.from,
+      image: pkg.image,
+      tripType: "local-tour",
+      availability: "available",
+      seatsLeft: null,
+    }));
+    const live: SelectableTrip[] = liveTrips.map((t) => ({
+      key: `live:${t.slug}`,
+      source: "live" as const,
+      slug: t.slug,
+      name: t.title,
+      blurb: t.shortDescription,
+      duration: t.durationText || "Full day",
+      distanceKm: t.distanceKm,
+      stops: t.stops,
+      fromPrice: t.startingPriceInr,
+      image: t.coverImage?.url ?? null,
+      tripType: t.tripType ?? "local-tour",
+      availability: t.availability,
+      seatsLeft: t.seatsLeft,
+    }));
+    const liveSlugs = new Set(live.map((t) => t.slug));
+    return [...live, ...curated.filter((t) => !liveSlugs.has(t.slug))];
+  }, [liveTrips]);
+
+  // The trip currently selected on Step 2 (live selection wins over the curated default).
+  const selectedTrip = useMemo<SelectableTrip | null>(() => {
+    if (selectedTripKey) {
+      const found = availableTrips.find((t) => t.key === selectedTripKey);
+      if (found) return found;
+    }
+    // Default: whatever the ?package= deep link matched, else the first curated trip.
+    return (
+      availableTrips.find((t) => t.source === "curated" && t.slug === packageSlug) ??
+      availableTrips.find((t) => t.source === "curated") ??
+      null
+    );
+  }, [availableTrips, selectedTripKey, packageSlug]);
+
+  // Selecting a trip configures the authoritative booking engine (F3):
+  // the desk's fare calculation then quotes the exact amount for this vehicle.
+  function handleSelectTrip(trip: SelectableTrip) {
+    setSelectedTripKey(trip.key);
+    if (trip.source === "curated") {
+      setBookingMode("package");
+      setPackageSlug(trip.slug);
+      return;
+    }
+    switch (trip.tripType) {
+      case "airport-transfer":
+        setBookingMode("local");
+        setLocalPackageKey("airport-transfer");
+        break;
+      case "one-way":
+      case "round-trip": {
+        setBookingMode("outstation");
+        setTripType(trip.tripType);
+        const first = trip.stops[0]?.trim();
+        const last = trip.stops[trip.stops.length - 1]?.trim();
+        if (first) setOriginName(first);
+        if (last && last !== first) setDestinationName(last);
+        break;
+      }
+      case "local-tour":
+      default: {
+        // Curated package with the same slug? Book it as a package.
+        if (packages.some((pkg) => pkg.slug === trip.slug)) {
+          setBookingMode("package");
+          setPackageSlug(trip.slug);
+        } else {
+          setBookingMode("local");
+          setLocalPackageKey("8hr-80km");
+        }
+        break;
+      }
+    }
+  }
+
+  // Concierge quick picks — deterministic smart suggestions over the pool.
+  function handleQuickPick(pick: QuickPick, trips: SelectableTrip[]) {
+    if (trips.length === 0) return;
+    let chosen: SelectableTrip | undefined;
+    switch (pick) {
+      case "popular":
+        chosen = trips.find((t) => /same day|agra sightseeing|taj mahal/i.test(t.name)) ?? trips[0];
+        break;
+      case "family":
+        chosen =
+          trips.find((t) => /mathura|vrindavan|family/i.test(t.name)) ??
+          [...trips].sort((a, b) => b.stops.length - a.stops.length)[0];
+        break;
+      case "budget":
+        chosen = [...trips].sort((a, b) => a.fromPrice - b.fromPrice)[0];
+        break;
+      case "sunrise":
+        chosen = trips.find((t) => /sunrise|dawn/i.test(t.name)) ?? trips[0];
+        break;
+    }
+    if (chosen) handleSelectTrip(chosen);
+  }
 
   // Read URL query parameters on initial mount to pre-fill funnel
   useEffect(() => {
@@ -213,8 +335,28 @@ export function BookingPage() {
     }
 
     const qStep = params.get("step");
-    if (qStep === "2") setStep(2);
+    // 1 = route & vehicle, 2 = choose trip, 3 = guest details, 4 = voucher
+    if (qStep === "1") setStep(1);
+    else if (qStep === "2") setStep(2);
     else if (qStep === "3") setStep(3);
+    else if (qStep === "4") setStep(4);
+  }, []);
+
+  // Load every published trip from the live catalog (single source of trips).
+  // Non-trip verticals (famous places, fleet specs) are not bookable itineraries.
+  useEffect(() => {
+    let isMounted = true;
+    fetchPublishedCatalog()
+      .then((items) => {
+        if (!isMounted) return;
+        setLiveTrips(items.filter((i) => i.type !== "place" && i.type !== "vehicle"));
+      })
+      .catch(() => {
+        /* curated static packages remain the fallback */
+      });
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   // Compute ISO datetimes for server calculation and submission
@@ -328,10 +470,16 @@ export function BookingPage() {
     setActivePromoCode(clean);
   };
 
-  // Step 1 -> Step 2
+  // Step 1 (route & vehicle) -> Step 2 (choose your trip)
   const handleProceedToStep2 = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
     setStep(2);
+  };
+
+  // Step 2 (choose your trip) -> Step 3 (guest details & fare review)
+  const handleProceedToStep3 = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    setStep(3);
   };
 
   // Step 2: Final Checkout & Draft Booking Submission
@@ -389,7 +537,7 @@ export function BookingPage() {
       }
 
       window.scrollTo({ top: 0, behavior: "smooth" });
-      setStep(3);
+      setStep(4);
     } catch (err: any) {
       console.error("Booking submission error:", err);
       setSubmitError(err?.message || "Failed to create booking draft. Please check your contact details.");
@@ -405,7 +553,7 @@ export function BookingPage() {
     setConfirmedBookingId(`book-${Date.now()}`);
     setAmountPaid(paymentChoice === "full" ? (serverFare?.totalFare ?? 2500) : (serverFare?.advanceAmount ?? 700));
     window.scrollTo({ top: 0, behavior: "smooth" });
-    setStep(3);
+    setStep(4);
   };
 
   return (
@@ -419,7 +567,13 @@ export function BookingPage() {
             <span className="text-on-surface-variant">Booking</span>
             <span className="material-symbols-outlined text-[14px]">chevron_right</span>
             <span className="text-primary font-semibold">
-              {step === 1 ? "Step 1: Route & Vehicle Tier" : step === 2 ? "Step 2: Guest Details & Review" : "Step 3: Confirmed Voucher"}
+              {step === 1
+                ? "Step 1: Route & Vehicle Tier"
+                : step === 2
+                  ? "Step 2: Choose Your Trip"
+                  : step === 3
+                    ? "Step 3: Guest Details & Review"
+                    : "Step 4: Confirmed Voucher"}
             </span>
           </nav>
           <div className="hidden sm:flex items-center gap-2 text-[12px] text-secondary">
@@ -430,9 +584,9 @@ export function BookingPage() {
       </div>
 
       <div className="max-w-[1280px] mx-auto px-gutter py-space-xl flex flex-col gap-space-xl">
-        {/* HORIZONTAL PROGRESS TRACKER (3 Steps) */}
+        {/* HORIZONTAL PROGRESS TRACKER (4 Steps) */}
         <section className="w-full bg-surface-container-low rounded-xl p-space-md shadow-sm border border-border-warm/60">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-space-sm">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-space-sm">
             {/* Step 1 */}
             <div
               onClick={() => step > 1 && setStep(1)}
@@ -461,11 +615,11 @@ export function BookingPage() {
 
             {/* Step 2 */}
             <div
-              onClick={() => step === 3 && setStep(2)}
+              onClick={() => step > 2 && setStep(2)}
               className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${
                 step === 2
                   ? "bg-surface-container-lowest shadow-sm border border-border-warm ring-1 ring-primary/20"
-                  : "bg-surface-container-lowest/50 opacity-85"
+                  : "bg-surface-container-lowest/50 opacity-85 cursor-pointer hover:bg-surface-container-lowest"
               }`}
             >
               <div
@@ -484,31 +638,61 @@ export function BookingPage() {
                   {step === 2 ? "Step 2 • Active" : step > 2 ? "Step 2 • Completed" : "Step 2 • Upcoming"}
                 </span>
                 <span className="font-title-md text-title-md text-ink-charcoal font-semibold truncate">
-                  Guest &amp; Fare Review
+                  Choose Your Trip
                 </span>
               </div>
             </div>
 
             {/* Step 3 */}
             <div
+              onClick={() => step === 4 && setStep(3)}
               className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${
                 step === 3
+                  ? "bg-surface-container-lowest shadow-sm border border-border-warm ring-1 ring-primary/20"
+                  : "bg-surface-container-lowest/50 opacity-85"
+              }`}
+            >
+              <div
+                className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${
+                  step > 3
+                    ? "bg-success-jade text-on-primary"
+                    : step === 3
+                    ? "bg-primary text-on-primary"
+                    : "bg-surface-container-highest text-secondary"
+                }`}
+              >
+                {step > 3 ? <span className="material-symbols-outlined text-[20px]">check</span> : "3"}
+              </div>
+              <div className="flex flex-col min-w-0">
+                <span className="font-label-caps text-label-caps uppercase text-secondary tracking-wider font-bold">
+                  {step === 3 ? "Step 3 • Active" : step > 3 ? "Step 3 • Completed" : "Step 3 • Upcoming"}
+                </span>
+                <span className="font-title-md text-title-md text-ink-charcoal font-semibold truncate">
+                  Guest &amp; Fare Review
+                </span>
+              </div>
+            </div>
+
+            {/* Step 4 */}
+            <div
+              className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${
+                step === 4
                   ? "bg-ink-charcoal text-ivory-surface shadow-md"
                   : "bg-surface-container-lowest/50 opacity-75"
               }`}
             >
               <div
                 className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${
-                  step === 3 ? "bg-terracotta-sandstone text-on-primary" : "bg-surface-container-highest text-secondary"
+                  step === 4 ? "bg-terracotta-sandstone text-on-primary" : "bg-surface-container-highest text-secondary"
                 }`}
               >
                 <span className="material-symbols-outlined text-[20px]">verified</span>
               </div>
               <div className="flex flex-col min-w-0">
-                <span className={`font-label-caps text-label-caps uppercase tracking-wider font-bold ${step === 3 ? "text-gold-accent" : "text-secondary"}`}>
-                  {step === 3 ? "Step 3 • Issued" : "Step 3 • Final Voucher"}
+                <span className={`font-label-caps text-label-caps uppercase tracking-wider font-bold ${step === 4 ? "text-gold-accent" : "text-secondary"}`}>
+                  {step === 4 ? "Step 4 • Issued" : "Step 4 • Final Voucher"}
                 </span>
-                <span className={`font-title-md text-title-md truncate font-semibold ${step === 3 ? "text-ivory-surface" : "text-on-surface-variant"}`}>
+                <span className={`font-title-md text-title-md truncate font-semibold ${step === 4 ? "text-ivory-surface" : "text-on-surface-variant"}`}>
                   Confirmed Voucher
                 </span>
               </div>
@@ -868,7 +1052,7 @@ export function BookingPage() {
                     className="w-full py-3.5 px-space-md rounded-xl bg-terracotta-sandstone text-on-primary font-label-lg text-label-lg font-semibold hover:bg-terracotta-sunlit disabled:opacity-50 transition-all shadow-md flex items-center justify-center gap-2 group cursor-pointer"
                     type="button"
                   >
-                    <span>Proceed to Guest Details (Step 2)</span>
+                    <span>Choose Your Trip (Step 2)</span>
                     <span className="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">
                       arrow_forward
                     </span>
@@ -891,8 +1075,29 @@ export function BookingPage() {
           </div>
         )}
 
-        {/* STEP 2: GUEST DETAILS & FARE REVIEW */}
+        {/* STEP 2: CHOOSE YOUR TRIP (fleet-first flow) */}
         {step === 2 && (
+          <TripSelectionStep
+            trips={availableTrips}
+            selectedKey={selectedTrip?.key ?? ""}
+            onSelect={handleSelectTrip}
+            vehicleName={selectedVehicle.name}
+            vehicleImage={selectedVehicle.image}
+            serverTotalFare={serverFare?.totalFare ?? null}
+            serverAdvanceAmount={serverFare?.advanceAmount ?? null}
+            quoteLoading={loadingFare}
+            quoteError={fareError}
+            onContinue={handleProceedToStep3}
+            onChangeVehicle={() => {
+              window.scrollTo({ top: 0, behavior: "smooth" });
+              setStep(1);
+            }}
+            onQuickPick={handleQuickPick}
+          />
+        )}
+
+        {/* STEP 3: GUEST DETAILS & FARE REVIEW */}
+        {step === 3 && (
           <div className="max-w-4xl mx-auto w-full flex flex-col gap-space-md">
             <div className="w-full bg-surface-container-lowest rounded-xl shadow-md border border-border-warm overflow-hidden">
               {/* Header */}
@@ -905,10 +1110,10 @@ export function BookingPage() {
                 </div>
                 <button
                   type="button"
-                  onClick={() => setStep(1)}
+                  onClick={() => setStep(2)}
                   className="text-xs text-gold-accent hover:text-ivory-surface underline"
                 >
-                  ← Edit Route / Vehicle
+                  ← Edit Trip / Vehicle
                 </button>
               </div>
 
@@ -1196,11 +1401,23 @@ export function BookingPage() {
                 </div>
               </form>
             </div>
+
+            {/* SK Concierge — booking agent available while you pay */}
+            <div className="max-w-2xl w-full mx-auto">
+              <BookingAssistant
+                step={3}
+                vehicleName={selectedVehicle.name}
+                tripName={selectedTrip?.name ?? (bookingMode === "package" ? selectedPackage.name : null)}
+                totalFare={serverFare?.totalFare ?? null}
+                advanceAmount={serverFare?.advanceAmount ?? null}
+                tourDate={pickupDate}
+              />
+            </div>
           </div>
         )}
 
-        {/* STEP 3: OFFICIAL TRANSIT VOUCHER */}
-        {step === 3 && (
+        {/* STEP 4: OFFICIAL TRANSIT VOUCHER */}
+        {step === 4 && (
           <div className="max-w-4xl mx-auto w-full flex flex-col gap-space-lg">
             {/* Success Banner */}
             <div className="bg-success-jade/10 border border-success-jade/40 rounded-xl p-space-lg flex items-center justify-between gap-space-md">
@@ -1314,6 +1531,7 @@ export function BookingPage() {
                 onClick={() => {
                   setStep(1);
                   setConfirmedTicketId("");
+                  setSelectedTripKey(null);
                 }}
                 className="px-6 py-3 rounded-xl bg-surface-container-low text-ink-slate font-label-lg font-bold hover:bg-surface-container transition-colors"
               >

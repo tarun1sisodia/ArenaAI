@@ -405,6 +405,9 @@ export function createMemoryRepositories(nowIso = new Date().toISOString()): Rep
           .sort((a, b) => a.sortOrder - b.sortOrder)
           .map(clone);
       },
+      async delete(id) {
+        media.delete(id);
+      },
     },
     reviews: {
       async create(record) {
@@ -555,12 +558,14 @@ export function createMemoryRepositories(nowIso = new Date().toISOString()): Rep
         return [...devices.values()].filter((d) => d.userId === userId).map(clone);
       },
     },
-    fareRules: {
+      fareRules: {
       async getActive() {
+        let best: FareRuleRecord | null = null;
         for (const rule of fareRules.values()) {
-          if (rule.isActive) return clone(rule);
+          if (!rule.isActive) continue;
+          if (!best || rule.createdAt > best.createdAt) best = rule;
         }
-        return null;
+        return best ? clone(best) : null;
       },
       async save(record) {
         fareRules.set(record.id, clone(record));

@@ -110,6 +110,7 @@ export type Repositories = {
     update(record: CatalogMediaRecord): Promise<CatalogMediaRecord>;
     getById(id: string): Promise<CatalogMediaRecord | null>;
     listByCatalogItem(catalogItemId: string): Promise<CatalogMediaRecord[]>;
+    delete(id: string): Promise<void>;
   };
 
   reviews: {

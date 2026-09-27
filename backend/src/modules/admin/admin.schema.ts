@@ -75,7 +75,9 @@ export const AdminUpdateFareRulesSchema = z.object({
         tier: z.string(),
         name: z.string().optional(),
         seats: z.number().int().positive().optional(),
+        bags: z.number().int().nonnegative().optional(),
         perKm: z.number().positive(),
+        active: z.boolean().optional(),
       }),
     )
     .optional(),

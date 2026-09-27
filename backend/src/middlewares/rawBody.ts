@@ -10,8 +10,10 @@ export function registerRawBody(app: FastifyInstance): void {
       done(null, {});
       return;
     }
-    // Enforce max size already via bodyLimit, but double-check
-    if (buffer.length > 1_000_000) {
+    // Enforce max size already via bodyLimit (global 1MB, or the route-level
+    // override for inline media uploads), but double-check.
+    const limit = request.routeOptions.bodyLimit ?? 1_000_000;
+    if (buffer.length > limit) {
       done(new Error("Payload too large"), undefined);
       return;
     }

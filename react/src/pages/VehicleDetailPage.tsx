@@ -98,7 +98,7 @@ export function VehicleDetailPage({ vehicle }: VehicleDetailPageProps) {
     [vehicle]
   );
 
-  const bookingUrl = `/book/?vehicle=${vehicleSlug}&step=1`;
+  const bookingUrl = `/book/?vehicle=${vehicleSlug}&step=2`;
   const whatsappUrl = `https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(`Hello SK Baghel Desk, I would like to reserve the ${vehicle.name} for an upcoming journey.`)}`;
 
   return (
@@ -380,7 +380,7 @@ export function VehicleDetailPage({ vehicle }: VehicleDetailPageProps) {
               </div>
               <a
                 className="mt-space-lg w-full inline-flex items-center justify-center gap-space-xs bg-sandstone-wash text-terracotta-sandstone hover:bg-terracotta-sandstone hover:text-on-primary py-3 rounded text-label-lg font-label-lg transition-colors border border-border-warm"
-                href={`/book/?vehicle=${vehicleSlug}&type=local&step=1`}
+                href={`/book/?vehicle=${vehicleSlug}&type=local&step=2`}
               >
                 <span>Book Local Agra Cab</span>
                 <span className="material-symbols-outlined text-[16px]">arrow_forward</span>

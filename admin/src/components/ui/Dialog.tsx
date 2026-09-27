@@ -29,7 +29,7 @@ export function Dialog({ open, onClose, title, description, children, className 
   return (
     <AnimatePresence>
       {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-4">
           <motion.div
             key="backdrop"
             initial={{ opacity: 0 }}
@@ -49,28 +49,28 @@ export function Dialog({ open, onClose, title, description, children, className 
             exit={reduce ? { opacity: 0 } : { opacity: 0, y: 8, scale: 0.98 }}
             transition={{ type: "spring", stiffness: 380, damping: 32 }}
             className={cn(
-              "relative z-10 w-full max-w-lg rounded-md border border-hairline bg-surface shadow-pop",
+              // Mobile-first: full-width bottom sheet that never exceeds the viewport,
+              // with its own scrollable body so long forms stay usable on phones.
+              "relative z-10 flex max-h-[92dvh] w-full flex-col overflow-hidden rounded-t-xl border border-hairline bg-surface shadow-pop sm:max-h-[88vh] sm:rounded-md",
               className
             )}
           >
-            <div className="flex items-start justify-between gap-4 border-b border-hairline px-5 py-4">
-              <div>
-                <h2 className="font-display text-lg font-medium tracking-tight text-ink">
-                  {title}
-                </h2>
+            <div className="flex shrink-0 items-start justify-between gap-4 border-b border-hairline px-5 py-4">
+              <div className="min-w-0">
+                <h2 className="font-display text-lg font-medium tracking-tight text-ink">{title}</h2>
                 {description && (
-                  <p className="mt-0.5 text-[13px] text-ink-soft">{description}</p>
+                  <p className="mt-0.5 text-[13px] leading-snug text-ink-soft">{description}</p>
                 )}
               </div>
               <button
                 onClick={onClose}
                 aria-label="Close dialog"
-                className="rounded-sm p-1.5 text-ink-soft transition-colors hover:bg-surface-2 hover:text-ink"
+                className="shrink-0 rounded-sm p-1.5 text-ink-soft transition-colors hover:bg-surface-2 hover:text-ink"
               >
                 <X className="h-4 w-4" />
               </button>
             </div>
-            <div className="px-5 py-4">{children}</div>
+            <div className="overflow-y-auto overscroll-contain px-5 py-4">{children}</div>
           </motion.div>
         </div>
       )}

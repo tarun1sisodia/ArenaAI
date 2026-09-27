@@ -1,5 +1,24 @@
-import { useEffect, useState, type FormEvent } from "react";
-import { AlertTriangle, Archive, CheckCircle2, Clock, Globe, MapPin, PenSquare, Plus, RefreshCw, X } from "lucide-react";
+import { useCallback, useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
+import {
+  AlertTriangle,
+  Archive,
+  CheckCircle2,
+  Clock,
+  Globe,
+  ImageIcon,
+  ImagePlus,
+  Loader2,
+  MapPin,
+  PenSquare,
+  Plus,
+  RefreshCw,
+  Route as RouteIcon,
+  Search,
+  Star,
+  Trash2,
+  TrendingDown,
+  X,
+} from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import { PageHeader } from "@/components/admin/PageHeader";
 import { Card } from "@/components/ui/Card";
@@ -7,8 +26,31 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Dialog } from "@/components/ui/Dialog";
 import { Input, Label, Select } from "@/components/ui/Input";
-import { createAdminCatalogItem, fetchAdminCatalog, fetchCatalogManifestStatus, republishCatalogManifest, setCatalogItemStatus, updateAdminCatalogItem } from "@/lib/api";
-import { can, type AdminUser, type CatalogItem, type CatalogCategory, type CatalogStatus } from "@/lib/types";
+import {
+  attachCatalogMediaByPath,
+  createAdminCatalogItem,
+  deleteCatalogMedia,
+  fetchAdminCatalog,
+  fetchAdminCatalogItem,
+  fetchCatalogManifestStatus,
+  republishCatalogManifest,
+  resolveMediaSrc,
+  setCatalogItemStatus,
+  updateAdminCatalogItem,
+  updateCatalogMedia,
+  uploadCatalogMedia,
+} from "@/lib/api";
+import {
+  can,
+  CATALOG_MEDIA_LIMITS,
+  type AdminUser,
+  type CatalogAvailability,
+  type CatalogCategory,
+  type CatalogItem,
+  type CatalogMedia,
+  type CatalogStatus,
+  type CatalogTripType,
+} from "@/lib/types";
 import { cn, formatDate, formatINR } from "@/lib/utils";
 
 const CATEGORY_TONE: Record<CatalogCategory, "neutral" | "teal" | "gold"> = {
@@ -17,7 +59,45 @@ const CATEGORY_TONE: Record<CatalogCategory, "neutral" | "teal" | "gold"> = {
   package: "gold",
   route: "teal",
   vehicle: "neutral",
+  place: "teal",
 };
+
+const CATEGORY_LABEL: Record<CatalogCategory, string> = {
+  package: "Package (Heritage & Circuit Tour)",
+  tour: "Tour (Local Sightseeing)",
+  route: "Route (Outstation Drop/Round)",
+  ride: "Ride (Airport / City Transfer)",
+  vehicle: "Vehicle (Fleet Spec)",
+  place: "Famous Place & Monument (multi-image gallery)",
+};
+
+const TRIP_TYPE_OPTIONS: { value: CatalogTripType; label: string }[] = [
+  { value: "local-tour", label: "Local tour / sightseeing" },
+  { value: "one-way", label: "One-way outstation drop" },
+  { value: "round-trip", label: "Round-trip outstation" },
+  { value: "airport-transfer", label: "Airport / station transfer" },
+];
+
+const AVAILABILITY_OPTIONS: { value: CatalogAvailability; label: string }[] = [
+  { value: "available", label: "Available — bookable normally" },
+  { value: "limited", label: "Limited — only a few seats left" },
+  { value: "unavailable", label: "Unavailable / paused" },
+];
+
+const TYPE_FILTERS: { value: CatalogCategory | "all"; label: string }[] = [
+  { value: "all", label: "All verticals" },
+  { value: "package", label: "Packages" },
+  { value: "tour", label: "Tours" },
+  { value: "route", label: "Routes" },
+  { value: "ride", label: "Rides" },
+  { value: "vehicle", label: "Vehicles" },
+  { value: "place", label: "Places" },
+];
+
+const MAX_UPLOAD_BYTES = 2_500_000;
+const ACCEPTED_MIME = ["image/webp", "image/jpeg", "image/png", "image/avif"] as const;
+
+type UploadMode = "file" | "path";
 
 export function CatalogPage({ user }: { user: AdminUser }) {
   const reduce = useReducedMotion();
@@ -27,16 +107,33 @@ export function CatalogPage({ user }: { user: AdminUser }) {
   const [busyId, setBusyId] = useState<string | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
 
-  // Manifest status & Republish state
+  // Manifest status & republish state (site data regeneration control)
   const [manifestStatus, setManifestStatus] = useState<{ version: number; updatedAt: string; routeCount?: number; packageCount?: number } | null>(null);
   const [isRepublishing, setIsRepublishing] = useState(false);
   const [republishSuccess, setRepublishSuccess] = useState<string | null>(null);
+
+  // List filters (mobile-friendly chips + search)
+  const [statusFilter, setStatusFilter] = useState<CatalogStatus | "all">("all");
+  const [typeFilter, setTypeFilter] = useState<CatalogCategory | "all">("all");
+  const [search, setSearch] = useState("");
 
   // Dialog state for New / Edit Item
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<CatalogItem | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+
+  // Media manager state
+  const [media, setMedia] = useState<CatalogMedia[]>([]);
+  const [mediaLoading, setMediaLoading] = useState(false);
+  const [uploadMode, setUploadMode] = useState<UploadMode>("file");
+  const [uploadPath, setUploadPath] = useState("");
+  const [uploadAlt, setUploadAlt] = useState("");
+  const [uploadCaption, setUploadCaption] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
+  const [mediaError, setMediaError] = useState<string | null>(null);
+  const [busyMediaId, setBusyMediaId] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Form fields
   const [formTitle, setFormTitle] = useState("");
@@ -45,7 +142,12 @@ export function CatalogPage({ user }: { user: AdminUser }) {
   const [formSummary, setFormSummary] = useState("");
   const [formDuration, setFormDuration] = useState("8 hrs / 80 km");
   const [formPrice, setFormPrice] = useState<number>(1900);
+  const [formDistance, setFormDistance] = useState<string>("");
+  const [formAvailability, setFormAvailability] = useState<CatalogAvailability>("available");
+  const [formSeatsLeft, setFormSeatsLeft] = useState<string>("");
+  const [formTripType, setFormTripType] = useState<string>("local-tour");
   const [formPlaces, setFormPlaces] = useState("Taj Mahal, Agra Fort");
+  const [formStops, setFormStops] = useState("");
   const [formStatus, setFormStatus] = useState<CatalogStatus>("draft");
 
   const canEdit = can(user.role, "catalog:edit");
@@ -54,7 +156,7 @@ export function CatalogPage({ user }: { user: AdminUser }) {
   useEffect(() => {
     let isMounted = true;
     setLoadError(null);
-    fetchAdminCatalog()
+    fetchAdminCatalog({ status: statusFilter, type: typeFilter, q: search })
       .then((data) => {
         if (isMounted) setItems(data);
       })
@@ -74,8 +176,9 @@ export function CatalogPage({ user }: { user: AdminUser }) {
     return () => {
       isMounted = false;
     };
-  }, [reloadKey]);
+  }, [reloadKey, statusFilter, typeFilter, search]);
 
+  // Regenerate the public site manifest (routes + published packages) on demand.
   async function handleRepublish() {
     setIsRepublishing(true);
     setActionError(null);
@@ -83,7 +186,7 @@ export function CatalogPage({ user }: { user: AdminUser }) {
     try {
       const res = await republishCatalogManifest();
       setManifestStatus(res);
-      setRepublishSuccess(`Site data successfully regenerated (Manifest v${res.version}, ${res.routeCount} routes, ${res.packageCount} packages published).`);
+      setRepublishSuccess(`Site data regenerated (Manifest v${res.version}, ${res.routeCount} routes, ${res.packageCount} packages published).`);
     } catch (err) {
       setActionError(`Could not republish site data: ${err instanceof Error ? err.message : "Backend error"}`);
     } finally {
@@ -91,17 +194,51 @@ export function CatalogPage({ user }: { user: AdminUser }) {
     }
   }
 
-  function openCreate() {
-    setEditingItem(null);
+  const mediaLimit = CATALOG_MEDIA_LIMITS[formCategory];
+  const activeMedia = media.filter((m) => m.status !== "archived");
+  const mediaAtLimit = activeMedia.length >= mediaLimit;
+  const isPlaceGallery = formCategory === "place";
+
+  const loadMedia = useCallback(async (itemId: string) => {
+    setMediaLoading(true);
+    setMediaError(null);
+    try {
+      const detail = await fetchAdminCatalogItem(itemId);
+      setMedia(detail.media);
+      setEditingItem((prev) => (prev && prev.id === itemId ? detail.item : prev));
+    } catch (err) {
+      setMediaError(err instanceof Error ? err.message : "Could not load images for this item.");
+    } finally {
+      setMediaLoading(false);
+    }
+  }, []);
+
+  function resetForm() {
     setFormTitle("");
     setFormSlug("");
     setFormCategory("package");
     setFormSummary("");
     setFormDuration("8 hrs / 80 km");
     setFormPrice(1900);
+    setFormDistance("");
+    setFormAvailability("available");
+    setFormSeatsLeft("");
+    setFormTripType("local-tour");
     setFormPlaces("Taj Mahal, Agra Fort");
+    setFormStops("");
     setFormStatus("draft");
     setFormError(null);
+    setMedia([]);
+    setUploadMode("file");
+    setUploadPath("");
+    setUploadAlt("");
+    setUploadCaption("");
+    setMediaError(null);
+  }
+
+  function openCreate() {
+    setEditingItem(null);
+    resetForm();
     setIsDialogOpen(true);
   }
 
@@ -111,12 +248,24 @@ export function CatalogPage({ user }: { user: AdminUser }) {
     setFormSlug(item.slug);
     setFormCategory(item.category);
     setFormSummary(item.summary);
-    setFormDuration(item.duration);
+    setFormDuration(item.duration || "8 hrs / 80 km");
     setFormPrice(item.startingPrice);
+    setFormDistance(item.distanceKm !== null && item.distanceKm !== undefined ? String(item.distanceKm) : "");
+    setFormAvailability(item.availability || "available");
+    setFormSeatsLeft(item.seatsLeft !== null && item.seatsLeft !== undefined ? String(item.seatsLeft) : "");
+    setFormTripType(item.tripType || "local-tour");
     setFormPlaces(item.places.join(", "));
+    setFormStops(item.stops.join(", "));
     setFormStatus(item.status);
     setFormError(null);
+    setMedia([]);
+    setUploadMode("file");
+    setUploadPath("");
+    setUploadAlt("");
+    setUploadCaption("");
+    setMediaError(null);
     setIsDialogOpen(true);
+    void loadMedia(item.id);
   }
 
   async function handleSaveItem(e: FormEvent) {
@@ -125,6 +274,21 @@ export function CatalogPage({ user }: { user: AdminUser }) {
     const slug = formSlug.trim() || formTitle.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-");
     if (slug.length < 2) return setFormError("Valid slug is required.");
     if (formPrice <= 0) return setFormError("Starting price must be greater than zero.");
+    if (formAvailability === "limited" && formSeatsLeft.trim() && Number(formSeatsLeft) <= 0) {
+      return setFormError("Seats left must be a positive number when availability is limited.");
+    }
+
+    const distanceKm = formDistance.trim() ? Number(formDistance) : null;
+    if (distanceKm !== null && (Number.isNaN(distanceKm) || distanceKm < 0)) {
+      return setFormError("Distance must be a non-negative number of kilometres.");
+    }
+    const seatsLeft = formSeatsLeft.trim() ? Number(formSeatsLeft) : null;
+    const stops = formStops
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .slice(0, 24);
+    const tripType = formTripType ? (formTripType as CatalogTripType) : null;
 
     setIsSaving(true);
     setFormError(null);
@@ -139,9 +303,29 @@ export function CatalogPage({ user }: { user: AdminUser }) {
           durationText: formDuration.trim(),
           startingPriceInr: Number(formPrice),
           routeSummary: formPlaces.trim(),
+          distanceKm,
+          availability: formAvailability,
+          seatsLeft,
+          stops,
+          tripType,
           status: formStatus,
         });
-        setItems((prev) => prev.map((it) => (it.id === editingItem.id ? { ...it, ...updated, title: formTitle.trim(), summary: formSummary.trim(), duration: formDuration.trim(), startingPrice: Number(formPrice), places: formPlaces.split(",").map((s) => s.trim()).filter(Boolean) } : it)));
+        setItems((prev) =>
+          prev.map((it) =>
+            it.id === editingItem.id
+              ? {
+                  ...it,
+                  ...updated,
+                  title: formTitle.trim(),
+                  summary: formSummary.trim(),
+                  duration: formDuration.trim(),
+                  startingPrice: Number(formPrice),
+                  places: formPlaces.split(",").map((s) => s.trim()).filter(Boolean),
+                  stops,
+                }
+              : it,
+          ),
+        );
       } else {
         const created = await createAdminCatalogItem({
           title: formTitle.trim(),
@@ -151,8 +335,18 @@ export function CatalogPage({ user }: { user: AdminUser }) {
           durationText: formDuration.trim(),
           startingPriceInr: Number(formPrice),
           routeSummary: formPlaces.trim(),
+          distanceKm,
+          availability: formAvailability,
+          seatsLeft,
+          stops,
+          tripType,
         });
         setItems((prev) => [created, ...prev]);
+        setIsDialogOpen(false);
+        // Open straight into edit mode so the operator can attach images
+        // immediately — no developer, no second trip through the list.
+        openEdit(created);
+        return;
       }
       setIsDialogOpen(false);
     } catch (err) {
@@ -175,6 +369,116 @@ export function CatalogPage({ user }: { user: AdminUser }) {
     }
   }
 
+  /* ── Media (image) manager ─────────────────────────────────────────────── */
+
+  function handleFileChosen(e: ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!ACCEPTED_MIME.includes(file.type as (typeof ACCEPTED_MIME)[number])) {
+      setMediaError("Only WebP, JPEG, PNG or AVIF images are accepted.");
+      e.target.value = "";
+      return;
+    }
+    if (file.size > MAX_UPLOAD_BYTES) {
+      setMediaError(`Image is too large (${(file.size / 1024 / 1024).toFixed(1)} MB). Maximum is 2.5 MB.`);
+      e.target.value = "";
+      return;
+    }
+    if (!uploadAlt.trim()) {
+      setUploadAlt(file.name.replace(/\.[a-z0-9]+$/i, "").replace(/[-_]+/g, " ").slice(0, 120));
+    }
+    setMediaError(null);
+  }
+
+  async function handleUploadMedia(e: FormEvent) {
+    e.preventDefault();
+    if (!editingItem) return;
+    if (mediaAtLimit) {
+      return setMediaError(
+        isPlaceGallery
+          ? `This gallery is full (${mediaLimit} images). Remove one first.`
+          : "This category allows exactly one image. Remove the current cover first.",
+      );
+    }
+    const alt = uploadAlt.trim();
+    if (alt.length < 3) return setMediaError("Alt text (3+ characters) is required for accessibility and SEO.");
+
+    setIsUploading(true);
+    setMediaError(null);
+    try {
+      if (uploadMode === "path") {
+        const path = uploadPath.trim();
+        if (path.length < 3 || path.startsWith("/") === false) {
+          throw new Error("Enter a site asset path starting with / (e.g. /assets/places/taj-mahal.webp).");
+        }
+        await attachCatalogMediaByPath(editingItem.id, {
+          storagePath: path,
+          altText: alt,
+          caption: uploadCaption.trim() || undefined,
+          sortOrder: activeMedia.length,
+        });
+      } else {
+        const file = fileInputRef.current?.files?.[0];
+        if (!file) throw new Error("Choose an image file to upload.");
+        const dataBase64 = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            const result = String(reader.result ?? "");
+            resolve(result.slice(result.indexOf(",") + 1));
+          };
+          reader.onerror = () => reject(new Error("Could not read the selected file."));
+          reader.readAsDataURL(file);
+        });
+        await uploadCatalogMedia(editingItem.id, {
+          dataBase64,
+          mimeType: file.type as (typeof ACCEPTED_MIME)[number],
+          altText: alt,
+          caption: uploadCaption.trim() || undefined,
+          sortOrder: activeMedia.length,
+        });
+      }
+      setUploadAlt("");
+      setUploadCaption("");
+      setUploadPath("");
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      await loadMedia(editingItem.id);
+    } catch (err) {
+      setMediaError(err instanceof Error ? err.message : "Failed to attach image.");
+    } finally {
+      setIsUploading(false);
+    }
+  }
+
+  async function handleRemoveMedia(m: CatalogMedia) {
+    if (!editingItem) return;
+    setBusyMediaId(m.id);
+    setMediaError(null);
+    try {
+      await deleteCatalogMedia(m.id);
+      await loadMedia(editingItem.id);
+    } catch (err) {
+      setMediaError(err instanceof Error ? err.message : "Failed to remove image.");
+    } finally {
+      setBusyMediaId(null);
+    }
+  }
+
+  async function handleSetCover(m: CatalogMedia) {
+    if (!editingItem) return;
+    setBusyMediaId(m.id);
+    setMediaError(null);
+    try {
+      await updateCatalogMedia(m.id, { sortOrder: 0 });
+      const others = activeMedia.filter((x) => x.id !== m.id && x.sortOrder === 0);
+      await Promise.all(others.map((x, i) => updateCatalogMedia(x.id, { sortOrder: i + 1 })));
+      await loadMedia(editingItem.id);
+    } catch (err) {
+      setMediaError(err instanceof Error ? err.message : "Failed to set cover image.");
+    } finally {
+      setBusyMediaId(null);
+    }
+  }
+
   const counts = {
     draft: items.filter((i) => i.status === "draft").length,
     published: items.filter((i) => i.status === "published").length,
@@ -186,7 +490,7 @@ export function CatalogPage({ user }: { user: AdminUser }) {
       <PageHeader
         eyebrow="CMS"
         title="Catalog CMS"
-        description="Rides, tours and packages. Drafts are invisible to the public site until a super admin publishes them."
+        description="Rides, tours, packages and famous places. Published items appear on the customer site automatically — one catalog feeds both apps."
         actions={
           <div className="flex flex-wrap items-center gap-2">
             <Button
@@ -194,7 +498,7 @@ export function CatalogPage({ user }: { user: AdminUser }) {
               size="sm"
               onClick={handleRepublish}
               disabled={isRepublishing}
-              title={manifestStatus ? `Last published: ${formatDate(manifestStatus.updatedAt)}` : undefined}
+              title={manifestStatus ? `Manifest v${manifestStatus.version} • last published ${formatDate(manifestStatus.updatedAt)}` : "Regenerate public site data"}
             >
               <RefreshCw className={cn("h-3.5 w-3.5 mr-1.5", isRepublishing && "animate-spin")} />
               Republish site data
@@ -210,41 +514,64 @@ export function CatalogPage({ user }: { user: AdminUser }) {
         }
       />
 
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3 text-xs text-muted-foreground border-b border-border/50 pb-3">
-        <div>
-          <span>Manifest Version: </span>
-          <strong className="text-foreground">v{manifestStatus?.version ?? 1}</strong>
-          <span className="mx-2">·</span>
-          <span>Last regenerated: </span>
-          <strong className="text-foreground">
-            {manifestStatus?.updatedAt ? formatDate(manifestStatus.updatedAt) : "Recently"}
-          </strong>
-        </div>
+      {/* Manifest strip + republish feedback */}
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
+        <span>
+          {manifestStatus
+            ? `Public site manifest v${manifestStatus.version} • ${manifestStatus.routeCount ?? 0} routes • ${manifestStatus.packageCount ?? 0} packages • updated ${formatDate(manifestStatus.updatedAt)}`
+            : "Public site manifest status unavailable."}
+        </span>
+        {republishSuccess && <span className="text-emerald-600 dark:text-emerald-400">{republishSuccess}</span>}
       </div>
 
-      {republishSuccess && (
-        <div
-          className="mb-4 flex items-center gap-2.5 rounded-md border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-[13px] text-emerald-400"
-          role="status"
-        >
-          <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" />
-          <span className="flex-1">{republishSuccess}</span>
-          <button
-            type="button"
-            onClick={() => setRepublishSuccess(null)}
-            className="text-emerald-400 hover:text-white"
-          >
-            <X className="h-3.5 w-3.5" />
-          </button>
+      {/* Status + vertical filters + search */}
+      <div className="mb-4 space-y-2.5">
+        <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center">
+          <div className="relative flex-1">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ink-faint" />
+            <Input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search title or slug…"
+              className="pl-8"
+              aria-label="Search catalog items"
+            />
+          </div>
+          <div className="flex flex-wrap items-center gap-1.5">
+            {(["all", "draft", "published", "archived"] as const).map((k) => (
+              <button
+                key={k}
+                type="button"
+                onClick={() => setStatusFilter(k)}
+                className={cn(
+                  "rounded-full border px-2.5 py-1 font-mono text-[10px] uppercase tracking-wide transition-colors",
+                  statusFilter === k
+                    ? "border-ink bg-ink text-surface"
+                    : "border-hairline text-ink-soft hover:border-ink/30 hover:text-ink",
+                )}
+              >
+                {k === "all" ? `all · ${items.length}` : `${k} · ${counts[k]}`}
+              </button>
+            ))}
+          </div>
         </div>
-      )}
-
-      <div className="mb-5 flex flex-wrap gap-2">
-        {(Object.keys(counts) as (keyof typeof counts)[]).map((k) => (
-          <Badge key={k} tone={k === "published" ? "success" : k === "draft" ? "gold" : "neutral"}>
-            {k} · {counts[k]}
-          </Badge>
-        ))}
+        <div className="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1 [scrollbar-width:thin]">
+          {TYPE_FILTERS.map((f) => (
+            <button
+              key={f.value}
+              type="button"
+              onClick={() => setTypeFilter(f.value)}
+              className={cn(
+                "shrink-0 rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors",
+                typeFilter === f.value
+                  ? "border-gold bg-gold/10 text-ink"
+                  : "border-hairline text-ink-soft hover:border-ink/30 hover:text-ink",
+              )}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {loadError && (
@@ -275,7 +602,7 @@ export function CatalogPage({ user }: { user: AdminUser }) {
         <Card className="p-12 text-center">
           <p className="font-display text-lg text-ink">No catalog items yet</p>
           <p className="mx-auto mt-1.5 max-w-sm text-sm leading-relaxed text-ink-soft">
-            Items created in the backend CMS appear here. Click "New item" above to add your first travel package or ride.
+            Items created here appear on the customer site once published. Click "New item" above to add your first travel package or ride.
           </p>
         </Card>
       )}
@@ -290,11 +617,18 @@ export function CatalogPage({ user }: { user: AdminUser }) {
           >
             <Card className="flex h-full flex-col justify-between p-5 transition-shadow hover:shadow-pop">
               <div>
-                <div className="flex items-start justify-between gap-3">
+                <div className="flex flex-wrap items-start justify-between gap-2">
                   <Badge tone={CATEGORY_TONE[item.category]}>{item.category}</Badge>
-                  <Badge tone={item.status === "published" ? "success" : item.status === "draft" ? "gold" : "neutral"}>
-                    {item.status}
-                  </Badge>
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    {item.tripType && (
+                      <span className="inline-flex items-center gap-1 rounded-sm bg-surface-2 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wide text-ink-soft">
+                        <RouteIcon className="h-3 w-3" /> {item.tripType}
+                      </span>
+                    )}
+                    <Badge tone={item.status === "published" ? "success" : item.status === "draft" ? "gold" : "neutral"}>
+                      {item.status}
+                    </Badge>
+                  </div>
                 </div>
 
                 <h3 className="mt-3 font-display text-base font-semibold leading-snug tracking-tight text-ink">
@@ -314,10 +648,33 @@ export function CatalogPage({ user }: { user: AdminUser }) {
                     ))}
                   </div>
                 )}
+
+                <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1.5">
+                  {item.availability === "limited" && item.seatsLeft !== null && (
+                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-700">
+                      <TrendingDown className="h-3 w-3" /> Only {item.seatsLeft} left
+                    </span>
+                  )}
+                  {item.availability === "unavailable" && (
+                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-error">
+                      <AlertTriangle className="h-3 w-3" /> Paused
+                    </span>
+                  )}
+                  {item.distanceKm !== null && item.distanceKm !== undefined && (
+                    <span className="font-mono text-[10px] uppercase tracking-wide text-ink-faint">
+                      ~{item.distanceKm} km
+                    </span>
+                  )}
+                  {item.stops.length > 0 && (
+                    <span className="font-mono text-[10px] uppercase tracking-wide text-ink-faint">
+                      {item.stops.length} stop{item.stops.length === 1 ? "" : "s"}
+                    </span>
+                  )}
+                </div>
               </div>
 
               <div className="mt-5 space-y-3 border-t border-hairline pt-3">
-                <div className="flex items-baseline justify-between text-xs">
+                <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 text-xs">
                   <div>
                     <span className="text-ink-soft">From </span>
                     <span className="font-display text-base font-semibold text-ink">
@@ -335,24 +692,24 @@ export function CatalogPage({ user }: { user: AdminUser }) {
                   </span>
                 </div>
 
-                <div className="flex gap-2 pt-1">
+                <div className="flex flex-wrap gap-2 pt-1">
                   {canEdit && item.status !== "archived" && (
-                    <Button variant="secondary" size="sm" className="flex-1" onClick={() => openEdit(item)}>
+                    <Button variant="secondary" size="sm" className="min-w-0 flex-1" onClick={() => openEdit(item)}>
                       <PenSquare className="h-3.5 w-3.5 mr-1" /> Edit
                     </Button>
                   )}
                   {canPublish && item.status === "draft" && (
-                    <Button variant="gold" size="sm" className="flex-1" disabled={busyId === item.id} onClick={() => setStatus(item.id, "publish")}>
+                    <Button variant="gold" size="sm" className="min-w-0 flex-1" disabled={busyId === item.id} onClick={() => setStatus(item.id, "publish")}>
                       <CheckCircle2 className="h-3.5 w-3.5 mr-1" /> Publish
                     </Button>
                   )}
                   {canPublish && item.status === "published" && (
-                    <Button variant="outline" size="sm" className="flex-1" disabled={busyId === item.id} onClick={() => setStatus(item.id, "archive")}>
+                    <Button variant="outline" size="sm" className="min-w-0 flex-1" disabled={busyId === item.id} onClick={() => setStatus(item.id, "archive")}>
                       <Archive className="h-3.5 w-3.5 mr-1" /> Archive
                     </Button>
                   )}
                   {canPublish && item.status === "archived" && (
-                    <Button variant="outline" size="sm" className="flex-1" disabled={busyId === item.id} onClick={() => setStatus(item.id, "publish")}>
+                    <Button variant="outline" size="sm" className="min-w-0 flex-1" disabled={busyId === item.id} onClick={() => setStatus(item.id, "publish")}>
                       <Globe className="h-3.5 w-3.5 mr-1" /> Restore
                     </Button>
                   )}
@@ -373,8 +730,8 @@ export function CatalogPage({ user }: { user: AdminUser }) {
         open={isDialogOpen}
         onClose={() => !isSaving && setIsDialogOpen(false)}
         title={editingItem ? `Edit: ${editingItem.title}` : "Create New Catalog Item"}
-        description="Configure commercial details, pricing, routes, and publication status."
-        className="max-w-xl"
+        description="Name, price, distance, availability, stops and trip type — everything the customer site renders."
+        className="sm:max-w-2xl"
       >
         <form onSubmit={handleSaveItem} className="space-y-4">
           {formError && (
@@ -401,6 +758,7 @@ export function CatalogPage({ user }: { user: AdminUser }) {
                 value={formSlug}
                 onChange={(e) => setFormSlug(e.target.value)}
                 placeholder="e.g. taj-mahal-sunrise-tour"
+                inputMode="url"
               />
             </div>
           </div>
@@ -413,47 +771,93 @@ export function CatalogPage({ user }: { user: AdminUser }) {
                 value={formCategory}
                 onChange={(e) => setFormCategory(e.target.value as CatalogCategory)}
               >
-                <option value="package">Package (Heritage & Circuit Tour)</option>
-                <option value="tour">Tour (Local Sightseeing)</option>
-                <option value="route">Route (Outstation Drop/Round)</option>
-                <option value="ride">Ride (Airport / City Transfer)</option>
-                <option value="vehicle">Vehicle (Fleet Spec)</option>
+                {(Object.keys(CATEGORY_LABEL) as CatalogCategory[]).map((c) => (
+                  <option key={c} value={c}>
+                    {CATEGORY_LABEL[c]}
+                  </option>
+                ))}
               </Select>
             </div>
+            <div>
+              <Label htmlFor="form-triptype">Trip Type (customer view)</Label>
+              <Select
+                id="form-triptype"
+                value={formTripType}
+                onChange={(e) => setFormTripType(e.target.value)}
+              >
+                {TRIP_TYPE_OPTIONS.map((t) => (
+                  <option key={t.value} value={t.value}>
+                    {t.label}
+                  </option>
+                ))}
+              </Select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             <div>
               <Label htmlFor="form-price">Starting Fare (INR) *</Label>
               <Input
                 id="form-price"
                 type="number"
                 min="100"
+                inputMode="numeric"
                 value={formPrice}
                 onChange={(e) => setFormPrice(Number(e.target.value))}
                 required
               />
             </div>
-          </div>
-
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div>
+              <Label htmlFor="form-distance">Distance (km)</Label>
+              <Input
+                id="form-distance"
+                type="number"
+                min="0"
+                step="1"
+                inputMode="decimal"
+                value={formDistance}
+                onChange={(e) => setFormDistance(e.target.value)}
+                placeholder="e.g. 230"
+              />
+            </div>
             <div>
               <Label htmlFor="form-dur">Duration Text</Label>
               <Input
                 id="form-dur"
                 value={formDuration}
                 onChange={(e) => setFormDuration(e.target.value)}
-                placeholder="e.g. 8 hrs / 80 km or 3 Days"
+                placeholder="8 hrs / 80 km"
               />
             </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
-              <Label htmlFor="form-status">Initial Status</Label>
+              <Label htmlFor="form-avail">Availability</Label>
               <Select
-                id="form-status"
-                value={formStatus}
-                onChange={(e) => setFormStatus(e.target.value as CatalogStatus)}
-                disabled={!canPublish && formStatus === "draft"}
+                id="form-avail"
+                value={formAvailability}
+                onChange={(e) => setFormAvailability(e.target.value as CatalogAvailability)}
               >
-                <option value="draft">Draft (Private / Staging)</option>
-                {canPublish && <option value="published">Published (Live to Public)</option>}
+                {AVAILABILITY_OPTIONS.map((a) => (
+                  <option key={a.value} value={a.value}>
+                    {a.label}
+                  </option>
+                ))}
               </Select>
+            </div>
+            <div>
+              <Label htmlFor="form-seats">Seats / Vehicles Left {formAvailability === "limited" ? "*" : "(when limited)"}</Label>
+              <Input
+                id="form-seats"
+                type="number"
+                min="1"
+                inputMode="numeric"
+                value={formSeatsLeft}
+                onChange={(e) => setFormSeatsLeft(e.target.value)}
+                placeholder="e.g. 2"
+                disabled={formAvailability !== "limited"}
+              />
             </div>
           </div>
 
@@ -477,7 +881,194 @@ export function CatalogPage({ user }: { user: AdminUser }) {
             />
           </div>
 
-          <div className="flex justify-end gap-2.5 pt-3 border-t border-hairline">
+          <div>
+            <Label htmlFor="form-stops">Stops Between Trip (comma-separated, ordered)</Label>
+            <Input
+              id="form-stops"
+              value={formStops}
+              onChange={(e) => setFormStops(e.target.value)}
+              placeholder="e.g. Jewar Toll Plaza, Mathura Road, Fatehpur Sikri"
+            />
+          </div>
+
+          {editingItem && (
+            <div>
+              <Label htmlFor="form-status">Publication Status</Label>
+              <Select
+                id="form-status"
+                value={formStatus}
+                onChange={(e) => setFormStatus(e.target.value as CatalogStatus)}
+                disabled={!canPublish && formStatus === "draft"}
+              >
+                <option value="draft">Draft (Private / Staging)</option>
+                {canPublish && <option value="published">Published (Live to Public)</option>}
+                {canPublish && <option value="archived">Archived (Hidden)</option>}
+              </Select>
+            </div>
+          )}
+
+          {/* ── Image manager ─────────────────────────────────────────────── */}
+          {editingItem && canEdit && (
+            <section
+              aria-label="Image manager"
+              className="rounded-md border border-hairline bg-surface-2/40 p-3.5"
+            >
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <h3 className="inline-flex items-center gap-1.5 font-display text-sm font-semibold text-ink">
+                  <ImageIcon className="h-4 w-4 text-ink-faint" />
+                  Images
+                </h3>
+                <span
+                  className={cn(
+                    "font-mono text-[10px] uppercase tracking-wide",
+                    mediaAtLimit ? "text-error" : "text-ink-faint",
+                  )}
+                >
+                  {activeMedia.length}/{mediaLimit} {isPlaceGallery ? "gallery images" : "cover image"}
+                </span>
+              </div>
+              <p className="mt-1 text-[11px] leading-relaxed text-ink-soft">
+                {isPlaceGallery
+                  ? "Famous Places & Monuments support a multi-image gallery — the first image is the cover."
+                  : "This category uses a single cover image. Remove the current one to replace it."}
+              </p>
+
+              {mediaLoading ? (
+                <div className="flex items-center justify-center gap-2 py-6 text-xs text-ink-soft">
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" /> Loading images…
+                </div>
+              ) : (
+                activeMedia.length > 0 && (
+                  <ul className="mt-3 grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+                    {activeMedia.map((m, idx) => (
+                      <li key={m.id} className="group relative overflow-hidden rounded-md border border-hairline bg-surface">
+                        <div className="aspect-[4/3] w-full overflow-hidden bg-surface-2">
+                          <img
+                            src={resolveMediaSrc(m.url)}
+                            alt={m.altText}
+                            loading="lazy"
+                            className="h-full w-full object-cover"
+                          />
+                        </div>
+                        {idx === 0 && (
+                          <span className="absolute left-1.5 top-1.5 inline-flex items-center gap-1 rounded-sm bg-ink/80 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wide text-surface">
+                            <Star className="h-2.5 w-2.5" /> cover
+                          </span>
+                        )}
+                        <div className="flex items-center justify-between gap-1 px-1.5 py-1.5">
+                          <p className="min-w-0 flex-1 truncate text-[10px] text-ink-soft" title={m.altText}>
+                            {m.altText}
+                          </p>
+                          <div className="flex shrink-0 items-center gap-0.5">
+                            {idx !== 0 && (
+                              <button
+                                type="button"
+                                onClick={() => handleSetCover(m)}
+                                disabled={busyMediaId === m.id}
+                                aria-label={`Set ${m.altText} as cover image`}
+                                title="Set as cover"
+                                className="rounded-sm p-1 text-ink-soft hover:bg-surface-2 hover:text-ink disabled:opacity-40"
+                              >
+                                <Star className="h-3 w-3" />
+                              </button>
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveMedia(m)}
+                              disabled={busyMediaId === m.id}
+                              aria-label={`Remove ${m.altText}`}
+                              title="Remove image"
+                              className="rounded-sm p-1 text-ink-soft hover:bg-error-soft hover:text-error disabled:opacity-40"
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </button>
+                          </div>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )
+              )}
+
+              {mediaError && (
+                <p className="mt-2.5 rounded-sm border border-error/20 bg-error-soft px-2.5 py-1.5 text-[11px] text-error" role="alert">
+                  {mediaError}
+                </p>
+              )}
+
+              {!mediaAtLimit && (
+                <form onSubmit={handleUploadMedia} className="mt-3 space-y-2.5">
+                  <div className="flex gap-1.5" role="tablist" aria-label="Image source">
+                    {(["file", "path"] as const).map((mode) => (
+                      <button
+                        key={mode}
+                        type="button"
+                        role="tab"
+                        aria-selected={uploadMode === mode}
+                        onClick={() => setUploadMode(mode)}
+                        className={cn(
+                          "rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors",
+                          uploadMode === mode
+                            ? "border-ink bg-ink text-surface"
+                            : "border-hairline text-ink-soft hover:text-ink",
+                        )}
+                      >
+                        {mode === "file" ? "Upload file" : "Reference asset path"}
+                      </button>
+                    ))}
+                  </div>
+
+                  {uploadMode === "file" ? (
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/webp,image/jpeg,image/png,image/avif"
+                      onChange={handleFileChosen}
+                      aria-label="Choose an image to upload"
+                      className="w-full cursor-pointer rounded-md border border-hairline bg-surface px-3 py-2 text-xs text-ink-soft file:mr-3 file:rounded-sm file:border-0 file:bg-gold/15 file:px-2.5 file:py-1 file:text-[11px] file:font-medium file:text-ink"
+                    />
+                  ) : (
+                    <Input
+                      value={uploadPath}
+                      onChange={(e) => setUploadPath(e.target.value)}
+                      placeholder="/assets/places/agra-taj-mahal.webp"
+                      inputMode="url"
+                      aria-label="Asset path"
+                    />
+                  )}
+
+                  <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                    <Input
+                      value={uploadAlt}
+                      onChange={(e) => setUploadAlt(e.target.value)}
+                      placeholder="Alt text (required, e.g. Sunrise over the Taj Mahal)"
+                      aria-label="Image alt text"
+                    />
+                    <Input
+                      value={uploadCaption}
+                      onChange={(e) => setUploadCaption(e.target.value)}
+                      placeholder="Caption (optional)"
+                      aria-label="Image caption"
+                    />
+                  </div>
+
+                  <Button type="submit" variant="secondary" size="sm" disabled={isUploading} className="w-full sm:w-auto">
+                    {isUploading ? (
+                      <>
+                        <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" /> Attaching…
+                      </>
+                    ) : (
+                      <>
+                        <ImagePlus className="h-3.5 w-3.5 mr-1" /> {activeMedia.length === 0 ? "Add cover image" : "Add image"}
+                      </>
+                    )}
+                  </Button>
+                </form>
+              )}
+            </section>
+          )}
+
+          <div className="sticky bottom-0 flex justify-end gap-2.5 border-t border-hairline bg-surface pt-3">
             <Button
               type="button"
               variant="outline"

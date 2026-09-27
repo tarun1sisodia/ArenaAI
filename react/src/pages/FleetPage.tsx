@@ -1,7 +1,8 @@
-import { useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import type { SupportedLanguage } from "../config";
 import { contact } from "../data/contact";
 import { WhatsAppIcon } from "../components/icons";
+import { fetchLiveFleet, type PublicFleetVehicle } from "../services/catalog";
 
 export interface FleetPageProps {
   language?: SupportedLanguage;
@@ -199,13 +200,63 @@ const FLEET_FAQS = [
   },
 ];
 
+/** fleet tier (API) → static FleetVehicle id */
+const TIER_TO_ID: Record<string, string> = {
+  sedan: "sedan",
+  ertiga: "ertiga",
+  "innova-crysta": "innova",
+  innova: "innova",
+  "tempo-traveller": "tempo",
+  tempo: "tempo",
+  urbania: "urbania",
+};
+
 export function FleetPage({ language = "en" }: FleetPageProps) {
   const [activeCategory, setActiveCategory] = useState<"all" | "sedan" | "mpv" | "suv" | "group">("all");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  // Live fleet from the admin "Fleet & Fare Rules" editor — names, seats,
+  // per-km rates and availability flow through automatically.
+  const [liveFleet, setLiveFleet] = useState<PublicFleetVehicle[]>([]);
+
+  useEffect(() => {
+    let isMounted = true;
+    fetchLiveFleet()
+      .then((fleet) => {
+        if (isMounted) setLiveFleet(fleet);
+      })
+      .catch(() => {
+        /* static fleet remains the fallback */
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const fleet = useMemo(() => {
+    if (liveFleet.length === 0) return FLEET_DATA;
+    return FLEET_DATA.map((veh) => {
+      const live = liveFleet.find((v) => TIER_TO_ID[v.tier] === veh.id || TIER_TO_ID[v.id] === veh.id);
+      if (!live) return veh;
+      return {
+        ...veh,
+        name: live.name || veh.name,
+        rates: {
+          ...veh.rates,
+          outstationPerKm: live.perKm > 0 ? live.perKm : veh.rates.outstationPerKm,
+        },
+        specs: {
+          ...veh.specs,
+          seats: live.seats > 0 ? `${live.seats} Pax + Chauffeur` : veh.specs.seats,
+        },
+        // Deactivated vehicles stay visible but are clearly marked "on request".
+        highlightBadge: live.active ? veh.highlightBadge : "ON REQUEST • DESK CONFIRMATION",
+      };
+    });
+  }, [liveFleet]);
 
   const filteredVehicles = useMemo(() => {
-    if (activeCategory === "all") return FLEET_DATA;
-    return FLEET_DATA.filter((v) => v.category === activeCategory);
+    if (activeCategory === "all") return fleet;
+    return fleet.filter((v) => v.category === activeCategory);
   }, [activeCategory]);
 
   return (
@@ -462,7 +513,7 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                     </a>
                     <a
                       className="w-full sm:w-auto px-4 py-2 rounded-lg bg-terracotta-sandstone hover:bg-terracotta-sunlit text-on-primary font-label-lg text-xs inline-flex items-center justify-center gap-1.5 shadow-xs transition-all shrink-0 font-semibold"
-                      href={`/book?vehicle=${veh.id}`}
+                      href={`/book?vehicle=${veh.id}&step=2`}
                     >
                       <span>Book {veh.name.split(" ")[0]}</span>
                       <span className="material-symbols-outlined text-[15px]">arrow_forward</span>
@@ -514,7 +565,7 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                   <td className="py-2.5 px-3.5 align-middle text-right whitespace-nowrap">
                     <a
                       className="inline-block px-2.5 py-1 rounded bg-terracotta-sandstone hover:bg-terracotta-sunlit text-on-primary font-label-caps text-[9.5px] tracking-wider transition-all shadow-xs font-bold"
-                      href="/book?vehicle=sedan"
+                      href="/book?vehicle=sedan&step=2"
                     >
                       Select Sedan
                     </a>
@@ -532,7 +583,7 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                   <td className="py-2.5 px-3.5 align-middle text-right whitespace-nowrap">
                     <a
                       className="inline-block px-2.5 py-1 rounded bg-terracotta-sandstone hover:bg-terracotta-sunlit text-on-primary font-label-caps text-[9.5px] tracking-wider transition-all shadow-xs font-bold"
-                      href="/book?vehicle=ertiga"
+                      href="/book?vehicle=ertiga&step=2"
                     >
                       Select MPV
                     </a>
@@ -550,7 +601,7 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                   <td className="py-2.5 px-3.5 align-middle text-right whitespace-nowrap">
                     <a
                       className="inline-block px-2.5 py-1 rounded bg-terracotta-sandstone hover:bg-terracotta-sunlit text-on-primary font-label-caps text-[9.5px] tracking-wider transition-all shadow-xs font-bold"
-                      href="/book?vehicle=innova"
+                      href="/book?vehicle=innova&step=2"
                     >
                       Select Crysta
                     </a>
@@ -568,7 +619,7 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                   <td className="py-2.5 px-3.5 align-middle text-right whitespace-nowrap">
                     <a
                       className="inline-block px-2.5 py-1 rounded bg-terracotta-sandstone hover:bg-terracotta-sunlit text-on-primary font-label-caps text-[9.5px] tracking-wider transition-all shadow-xs font-bold"
-                      href="/book?vehicle=tempo"
+                      href="/book?vehicle=tempo&step=2"
                     >
                       Select Minibus
                     </a>
@@ -586,7 +637,7 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                   <td className="py-2.5 px-3.5 align-middle text-right whitespace-nowrap">
                     <a
                       className="inline-block px-2.5 py-1 rounded bg-terracotta-sandstone hover:bg-terracotta-sunlit text-on-primary font-label-caps text-[9.5px] tracking-wider transition-all shadow-xs font-bold"
-                      href="/book?vehicle=urbania"
+                      href="/book?vehicle=urbania&step=2"
                     >
                       Select Urbania
                     </a>

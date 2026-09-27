@@ -1,10 +1,55 @@
 import { applyPromo, calculateFare, findRoute } from "./fare.engine.js";
-import { isGroupExceptionVehicle } from "./fare.catalogue.js";
+import { isGroupExceptionVehicle, VEHICLES } from "./fare.catalogue.js";
 import type { CalculateFareInput, FareEngineInput, FareEngineResult } from "./fare.types.js";
 import type { Repositories } from "../../db/types.js";
 
+export type PublicFleetVehicle = {
+  id: string;
+  tier: string;
+  name: string;
+  seats: number;
+  bags: number;
+  perKm: number;
+  active: boolean;
+};
+
 export function createFareService(fareVersion: string, db?: Repositories) {
   return {
+    /**
+     * PUBLIC — the live fleet read from the active fare rules. The customer
+     * site merges this over its static fleet so desk-side vehicle edits
+     * (name / seats / per-km rate / availability) appear without a deploy.
+     */
+    async getFleet(): Promise<{ version: string; vehicles: PublicFleetVehicle[] }> {
+      const base: PublicFleetVehicle[] = VEHICLES.map((v) => ({
+        id: v.id,
+        tier: v.tier,
+        name: v.name,
+        seats: v.seats,
+        bags: v.bags,
+        perKm: v.perKm,
+        active: true,
+      }));
+      if (!db) return { version: fareVersion, vehicles: base };
+      const rule = await db.fareRules.getActive();
+      const cfgVehicles = rule && Array.isArray((rule.config as Record<string, unknown>).vehicles)
+        ? ((rule.config as Record<string, unknown>).vehicles as Array<Record<string, unknown>>)
+        : [];
+      const vehicles = base.map((v) => {
+        const override = cfgVehicles.find((ov) => ov.tier === v.tier || ov.id === v.tier);
+        if (!override) return v;
+        return {
+          ...v,
+          name: typeof override.name === "string" && override.name.trim() ? override.name.trim() : v.name,
+          seats: typeof override.seats === "number" && override.seats > 0 ? Math.floor(override.seats) : v.seats,
+          bags: typeof override.bags === "number" && override.bags >= 0 ? Math.floor(override.bags) : v.bags,
+          perKm: typeof override.perKm === "number" && override.perKm > 0 ? override.perKm : v.perKm,
+          active: typeof override.active === "boolean" ? override.active : v.active,
+        };
+      });
+      return { version: rule?.version ?? fareVersion, vehicles };
+    },
+
     async calculate(input: CalculateFareInput): Promise<FareEngineResult> {
       // Derive distanceKm from catalogue if omitted by client
       let distanceKm = input.distanceKm;
