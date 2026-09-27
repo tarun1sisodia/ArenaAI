@@ -14,6 +14,10 @@ export interface PricingStrategyContext {
   vehicleId: InternalVehicleId;
   spec: VehicleSpec;
   fareVersion: string;
+  hasCustomRate?: boolean;
+  minKmPerDay?: number;
+  sameDayRoundMultiplier?: number;
+  driverAllowance?: number;
 }
 
 export interface PricingCalculationResult {
@@ -48,20 +52,25 @@ export class StandardVehiclePricingStrategy implements PricingStrategy {
   calculate(input: FareEngineInput, ctx: PricingStrategyContext): PricingCalculationResult {
     const catalogFare = ctx.route.fares[ctx.vehicleId];
     const billedDistance = Math.max(input.distanceKm, ctx.route.km);
+    const baseOneWayFare = ctx.hasCustomRate ? roundRupees(billedDistance * ctx.spec.perKm) : catalogFare;
     const rules: string[] = [];
+
+    const minKmPerDay = ctx.minKmPerDay ?? OUTSTATION_RULES.minKmPerDay;
+    const sameDayRoundMultiplier = ctx.sameDayRoundMultiplier ?? OUTSTATION_RULES.sameDayRoundMultiplier;
 
     if (input.tripType === "round-trip") {
       const days = calendarDaysInclusiveIst(input.pickupDatetime, input.returnDatetime);
-      const minDayKmTotal = roundRupees(OUTSTATION_RULES.minKmPerDay * days * ctx.spec.perKm);
+      const minDayKmTotal = roundRupees(minKmPerDay * days * ctx.spec.perKm);
       const actualRound = roundRupees(Math.max(billedDistance, ctx.route.km) * (days > 1 ? 1 : 2) * ctx.spec.perKm);
-      const standardRound = roundRupees(catalogFare * OUTSTATION_RULES.sameDayRoundMultiplier);
+      const standardRound = roundRupees(baseOneWayFare * sameDayRoundMultiplier);
+      const dailyDriverAllowance = ctx.driverAllowance !== undefined ? ctx.driverAllowance * days : 300 * days;
 
       if (days > 1) {
-        rules.push("outstation-300km-per-day", `days:${days}`);
+        rules.push(`outstation-${minKmPerDay}km-per-day`, `days:${days}`);
         return {
           effectiveTripType: "round-trip",
           baseFare: Math.max(minDayKmTotal, actualRound),
-          driverAllowance: 300 * days,
+          driverAllowance: dailyDriverAllowance,
           distanceKm: billedDistance,
           billedKm: billedDistance,
           alwaysRoundTrip: false,
@@ -70,7 +79,7 @@ export class StandardVehiclePricingStrategy implements PricingStrategy {
           allowPromo: true,
         };
       } else {
-        rules.push("same-day-round-1.85x", "outstation-300km-per-day");
+        rules.push(`same-day-round-${sameDayRoundMultiplier}x`, `outstation-${minKmPerDay}km-per-day`);
         return {
           effectiveTripType: "round-trip",
           baseFare: Math.max(standardRound, minDayKmTotal),
@@ -88,7 +97,7 @@ export class StandardVehiclePricingStrategy implements PricingStrategy {
     // Default: Standard point-to-point / one-way
     return {
       effectiveTripType: input.tripType,
-      baseFare: catalogFare,
+      baseFare: baseOneWayFare,
       driverAllowance: 0,
       distanceKm: billedDistance,
       billedKm: billedDistance,
@@ -135,8 +144,8 @@ export class GroupCommercialVehicleStrategy implements PricingStrategy {
     // Rule 3: Fixed-rate pricing structure (billed km * perKm rate)
     const baseFare = roundRupees(billedKm * ctx.spec.perKm);
 
-    // Rule 4: Driver Allowance — strictly ₹500/day
-    const driverAllowance = 500 * days;
+    // Rule 4: Driver Allowance — strictly ₹500/day unless configured
+    const driverAllowance = (ctx.driverAllowance !== undefined ? ctx.driverAllowance : 500) * days;
 
     const rules: string[] = [
       "commercial-group-vehicle-exception",

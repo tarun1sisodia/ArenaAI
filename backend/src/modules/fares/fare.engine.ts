@@ -202,15 +202,33 @@ export function calculateFare(input: FareEngineInput): FareEngineResult {
     throw new AppError("PROMO_NOT_ALLOWED", "Group commercial vehicles cannot use promo codes.", 400);
   }
 
+  // Check vehicle availability from overrides
+  const vehicleOverride = input.ruleOverrides?.vehicles?.find(
+    (v) => v.tier === input.vehicleTier || (v as any).id === input.vehicleTier
+  );
+  if (vehicleOverride?.active === false) {
+    throw new AppError("VEHICLE_UNAVAILABLE", `Vehicle tier "${input.vehicleTier}" is currently not available for booking.`, 400);
+  }
+
+  let spec = vehicleSpec(input.vehicleTier);
+  let hasCustomRate = false;
+  if (vehicleOverride && typeof vehicleOverride.perKm === "number" && vehicleOverride.perKm > 0 && vehicleOverride.perKm !== spec.perKm) {
+    spec = { ...spec, perKm: vehicleOverride.perKm };
+    hasCustomRate = true;
+  }
+
   const fareVersion = input.fareVersion ?? FARE_RULES_VERSION_DEFAULT;
   const pack = packageByIdOrSlug(input.packageId);
-  if (pack) {
+  const packageBasePrice = input.ruleOverrides?.packageBasePrice ?? pack?.from;
+  const packageName = input.ruleOverrides?.packageName ?? pack?.name;
+  const packageDuration = input.ruleOverrides?.packageDuration ?? pack?.duration;
+
+  if (pack || input.ruleOverrides?.packageBasePrice !== undefined) {
     if (isGroupExceptionVehicle(input.vehicleTier)) {
-      const spec = vehicleSpec(input.vehicleTier);
       const days = Math.max(1, calendarDaysInclusiveIst(input.pickupDatetime, input.returnDatetime));
       const billedKm = input.tripType === "round-trip" ? input.distanceKm : input.distanceKm * 2;
       const baseFare = roundRupees(billedKm * spec.perKm);
-      const driverAllowance = 500 * days;
+      const driverAllowance = (input.ruleOverrides?.driverAllowance !== undefined ? input.ruleOverrides.driverAllowance : 500) * days;
       return finalize({
         tripType: "round-trip",
         vehicleTier: input.vehicleTier,
@@ -224,14 +242,16 @@ export function calculateFare(input: FareEngineInput): FareEngineResult {
         distanceKm: input.distanceKm,
         billedKm,
         alwaysRoundTrip: true,
-        label: pack.name,
-        duration: pack.duration,
+        label: packageName ?? "Tour Package",
+        duration: packageDuration ?? "Tour Package",
         roundMultiplierApplied: false,
         applyNight: false,
         rules: ["package-tour-force-rule", "commercial-group-vehicle-exception", "forced-round-trip"],
+        ruleOverrides: input.ruleOverrides,
       });
     }
 
+    const basePrice = packageBasePrice ?? 0;
     return finalize({
       tripType: input.tripType,
       vehicleTier: input.vehicleTier,
@@ -239,17 +259,18 @@ export function calculateFare(input: FareEngineInput): FareEngineResult {
       promoCode: input.promoCode,
       allowPromo: true,
       fareVersion,
-      baseFare: pack.from + PACKAGE_UPGRADES[toInternalVehicleId(input.vehicleTier)],
+      baseFare: basePrice + PACKAGE_UPGRADES[toInternalVehicleId(input.vehicleTier)],
       nightAllowance: 0,
       driverAllowance: 0,
       distanceKm: input.distanceKm,
       billedKm: input.distanceKm,
       alwaysRoundTrip: false,
-      label: pack.name,
-      duration: pack.duration,
+      label: packageName ?? "Tour Package",
+      duration: packageDuration ?? "Tour Package",
       roundMultiplierApplied: false,
       applyNight: false,
       rules: ["package-fixed", "vehicle-upgrade"],
+      ruleOverrides: input.ruleOverrides,
     });
   }
 
@@ -276,6 +297,7 @@ export function calculateFare(input: FareEngineInput): FareEngineResult {
       roundMultiplierApplied: false,
       applyNight: false,
       rules: ["local-package", key],
+      ruleOverrides: input.ruleOverrides,
     });
   }
 
@@ -306,12 +328,12 @@ export function calculateFare(input: FareEngineInput): FareEngineResult {
       roundMultiplierApplied: false,
       applyNight: true,
       rules: ["airport-transfer", key],
+      ruleOverrides: input.ruleOverrides,
     });
   }
 
   const route = findRoute(input.originName, input.destinationName);
   const vehicleId = toInternalVehicleId(input.vehicleTier);
-  const spec = vehicleSpec(input.vehicleTier);
   const catalogFare = route.fares[vehicleId];
   const rules: string[] = [`route:${route.id}`];
 
@@ -335,6 +357,7 @@ export function calculateFare(input: FareEngineInput): FareEngineResult {
       roundMultiplierApplied: false,
       applyNight: false,
       rules: [...rules, "local-route"],
+      ruleOverrides: input.ruleOverrides,
     });
   }
 
@@ -345,6 +368,10 @@ export function calculateFare(input: FareEngineInput): FareEngineResult {
     vehicleId,
     spec,
     fareVersion,
+    hasCustomRate,
+    minKmPerDay: input.ruleOverrides?.minKmPerDay,
+    sameDayRoundMultiplier: input.ruleOverrides?.sameDayRoundMultiplier,
+    driverAllowance: input.ruleOverrides?.driverAllowance,
   });
 
   return finalize({
@@ -365,6 +392,7 @@ export function calculateFare(input: FareEngineInput): FareEngineResult {
     roundMultiplierApplied: calculation.roundMultiplierApplied,
     applyNight: true,
     rules: [...rules, ...calculation.rules],
+    ruleOverrides: input.ruleOverrides,
   });
 }
 
@@ -386,9 +414,13 @@ function finalize(args: {
   roundMultiplierApplied: boolean;
   applyNight: boolean;
   rules: string[];
+  ruleOverrides?: import("./fare.types.js").FareRuleOverrides;
 }): FareEngineResult {
+  const standardNight = isGroupExceptionVehicle(args.vehicleTier)
+    ? (args.ruleOverrides?.nightAllowanceTempo ?? nightAllowanceFor(args.vehicleTier))
+    : (args.ruleOverrides?.nightAllowanceCab ?? nightAllowanceFor(args.vehicleTier));
   const nightAllowance =
-    args.applyNight && isNightPickup(args.pickupDatetime) ? nightAllowanceFor(args.vehicleTier) : args.nightAllowance;
+    args.applyNight && isNightPickup(args.pickupDatetime) ? standardNight : args.nightAllowance;
   if (nightAllowance > 0) args.rules.push("night-allowance");
 
   const subtotal = args.baseFare + nightAllowance + args.driverAllowance;

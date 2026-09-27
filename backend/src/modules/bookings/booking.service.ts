@@ -10,10 +10,13 @@ import { calculateFare, findRoute } from "../fares/fare.engine.js";
 import { isGroupExceptionVehicle } from "../fares/fare.catalogue.js";
 import type { CreateDraftBookingRequest } from "./booking.schema.js";
 
+import type { createFareService } from "../fares/fare.service.js";
+
 export function createBookingService(deps: {
   db: Repositories;
   clock: Clock;
   fareVersion: string;
+  fareService?: ReturnType<typeof createFareService>;
 }) {
   return {
     async createDraft(input: CreateDraftBookingRequest): Promise<{
@@ -21,53 +24,83 @@ export function createBookingService(deps: {
       guestAccessToken: string;
     }> {
       // Server-authoritative fare calculation - client totals are ignored
-      // Validate promo against DB if present
-      let promoLookup: ((code: string) => { discount: number; minTotal: number; desc: string; isActive?: boolean; validFrom?: string | null; validTo?: string | null; maxRedemptions?: number | null; redemptionCount?: number } | null) | undefined;
-      if (input.promoCode) {
-        const promo = await deps.db.promos.getByCode(input.promoCode);
-        if (promo) {
-          promoLookup = () => ({
-            discount: promo.discountAmount,
-            minTotal: promo.minTotal,
-            desc: promo.description,
-            isActive: promo.isActive,
-            validFrom: promo.validFrom,
-            validTo: promo.validTo,
-            maxRedemptions: promo.maxRedemptions,
-            redemptionCount: promo.redemptionCount,
-          });
+      let fare: import("../fares/fare.types.js").FareEngineResult;
+      if (deps.fareService) {
+        fare = await deps.fareService.calculate({
+          tripType: input.tripType,
+          vehicleTier: input.vehicleTier,
+          originName: input.originName,
+          destinationName: input.destinationName,
+          pickupDatetime: input.pickupDatetime,
+          returnDatetime: input.returnDatetime,
+          promoCode: input.promoCode,
+          packageId: input.packageId,
+          localPackageKey: input.localPackageKey,
+        });
+      } else {
+        // Fallback for isolated test environments without fareService
+        let promoLookup:
+          | ((code: string) => {
+              discount: number;
+              minTotal: number;
+              desc: string;
+              isActive?: boolean;
+              validFrom?: string | null;
+              validTo?: string | null;
+              maxRedemptions?: number | null;
+              redemptionCount?: number;
+            } | null)
+          | undefined;
+        if (input.promoCode) {
+          const promo = await deps.db.promos.getByCode(input.promoCode);
+          if (promo) {
+            promoLookup = () => ({
+              discount: promo.discountAmount,
+              minTotal: promo.minTotal,
+              desc: promo.description,
+              isActive: promo.isActive,
+              validFrom: promo.validFrom,
+              validTo: promo.validTo,
+              maxRedemptions: promo.maxRedemptions,
+              redemptionCount: promo.redemptionCount,
+            });
+          }
         }
-      }
-      // SEC-005: server derives distance from route catalogue/estimator, ignoring any client-supplied value
-      const serverRoute = findRoute(input.originName, input.destinationName);
-      const serverDistanceKm = serverRoute.km;
+        // SEC-005: server derives distance from route catalogue/estimator, ignoring any client-supplied value
+        const serverRoute = findRoute(input.originName, input.destinationName);
+        const serverDistanceKm = serverRoute.km;
 
-      const fare = calculateFare({
-        tripType: input.tripType,
-        vehicleTier: input.vehicleTier,
-        originName: input.originName,
-        destinationName: input.destinationName,
-        pickupDatetime: input.pickupDatetime,
-        returnDatetime: input.returnDatetime,
-        distanceKm: serverDistanceKm,
-        promoCode: input.promoCode,
-        packageId: input.packageId,
-        localPackageKey: input.localPackageKey,
-        fareVersion: deps.fareVersion,
-      });
-      // Re-evaluate promo with DB lookup if available and vehicle allows promo
-      if (promoLookup && input.promoCode && fare.promoValid !== false && !isGroupExceptionVehicle(input.vehicleTier)) {
-        const { applyPromo } = await import("../fares/fare.engine.js");
-        const subtotal = fare.baseFare + fare.nightAllowance + fare.driverAllowance;
-        const promoEval = applyPromo(input.promoCode, subtotal, promoLookup);
-        if (!promoEval.valid) {
-          // If promo invalid per DB (expired, limit reached), override fare to show invalid
-          fare.promoValid = false;
-          fare.discountAmount = 0;
-          const { advanceOf } = await import("../../shared/money.js");
-          fare.totalFare = subtotal;
-          fare.advanceAmount = advanceOf(fare.totalFare);
-          fare.balanceAmount = fare.totalFare - fare.advanceAmount;
+        fare = calculateFare({
+          tripType: input.tripType,
+          vehicleTier: input.vehicleTier,
+          originName: input.originName,
+          destinationName: input.destinationName,
+          pickupDatetime: input.pickupDatetime,
+          returnDatetime: input.returnDatetime,
+          distanceKm: serverDistanceKm,
+          promoCode: input.promoCode,
+          packageId: input.packageId,
+          localPackageKey: input.localPackageKey,
+          fareVersion: deps.fareVersion,
+        });
+
+        if (
+          promoLookup &&
+          input.promoCode &&
+          fare.promoValid !== false &&
+          !isGroupExceptionVehicle(input.vehicleTier)
+        ) {
+          const { applyPromo } = await import("../fares/fare.engine.js");
+          const subtotal = fare.baseFare + fare.nightAllowance + fare.driverAllowance;
+          const promoEval = applyPromo(input.promoCode, subtotal, promoLookup);
+          if (!promoEval.valid) {
+            fare.promoValid = false;
+            fare.discountAmount = 0;
+            const { advanceOf } = await import("../../shared/money.js");
+            fare.totalFare = subtotal;
+            fare.advanceAmount = advanceOf(fare.totalFare);
+            fare.balanceAmount = fare.totalFare - fare.advanceAmount;
+          }
         }
       }
 

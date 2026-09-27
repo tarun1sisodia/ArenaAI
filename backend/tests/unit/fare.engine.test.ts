@@ -95,7 +95,7 @@ describe("calculateFare", () => {
       distanceKm: 240,
     });
     expect(fare.baseFare).toBeGreaterThanOrEqual(3 * 300 * 14);
-    expect(fare.rules.some((rule) => rule.includes("300km"))).toBe(true);
+    expect(fare.rules.some((rule: string) => rule.includes("300km"))).toBe(true);
   });
 
   it("charges exactly 2x distance for tempo outside corridors without 300km floor", () => {

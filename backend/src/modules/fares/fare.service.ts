@@ -1,7 +1,14 @@
 import { applyPromo, calculateFare, findRoute } from "./fare.engine.js";
 import { isGroupExceptionVehicle, VEHICLES } from "./fare.catalogue.js";
-import type { CalculateFareInput, FareEngineInput, FareEngineResult } from "./fare.types.js";
+import type {
+  CalculateFareInput,
+  FareEngineInput,
+  FareEngineResult,
+  FareRuleOverrides,
+  FareVehicleOverride,
+} from "./fare.types.js";
 import type { Repositories } from "../../db/types.js";
+import { Errors } from "../../shared/errors.js";
 
 export type PublicFleetVehicle = {
   id: string;
@@ -67,14 +74,74 @@ export function createFareService(fareVersion: string, db?: Repositories) {
           distanceKm = route.km;
         }
       }
+
+      // Load active fare rules if DB is available
+      const activeRule = db ? await db.fareRules.getActive() : null;
+      const effectiveVersion = activeRule?.version ?? fareVersion;
+      const cfg = (activeRule?.config as Record<string, unknown>) || {};
+      const outstationCfg =
+        typeof cfg.outstation === "object" && cfg.outstation !== null
+          ? (cfg.outstation as Record<string, unknown>)
+          : {};
+
+      // Check package in db.catalog if packageId provided
+      let packageBasePrice: number | undefined;
+      let packageName: string | undefined;
+      let packageDuration: string | undefined;
+      if (db && input.packageId) {
+        const catalogItem =
+          (await db.catalog.getById(input.packageId)) ??
+          (await db.catalog.getBySlug(input.packageId));
+        if (catalogItem) {
+          if (catalogItem.status !== "published") {
+            throw Errors.notFound("CATALOG_ITEM_NOT_FOUND", "Package is not available for booking.");
+          }
+          if (typeof catalogItem.startingPriceInr === "number" && catalogItem.startingPriceInr > 0) {
+            packageBasePrice = catalogItem.startingPriceInr;
+          }
+          packageName = catalogItem.title;
+          packageDuration = catalogItem.durationText;
+        }
+      }
+
+      const ruleOverrides: FareRuleOverrides = {
+        vehicles: Array.isArray(cfg.vehicles) ? (cfg.vehicles as FareVehicleOverride[]) : undefined,
+        minKmPerDay: typeof outstationCfg.minKmPerDay === "number" ? outstationCfg.minKmPerDay : undefined,
+        sameDayRoundMultiplier:
+          typeof outstationCfg.sameDayRoundMultiplier === "number"
+            ? outstationCfg.sameDayRoundMultiplier
+            : undefined,
+        nightAllowanceCab:
+          typeof outstationCfg.nightAllowanceCab === "number" ? outstationCfg.nightAllowanceCab : undefined,
+        nightAllowanceTempo:
+          typeof outstationCfg.nightAllowanceTempo === "number" ? outstationCfg.nightAllowanceTempo : undefined,
+        driverAllowance:
+          typeof outstationCfg.driverAllowance === "number" ? outstationCfg.driverAllowance : undefined,
+        packageBasePrice,
+        packageName,
+        packageDuration,
+      };
+
       const engineInput: FareEngineInput = {
         ...input,
         distanceKm,
-        fareVersion,
+        fareVersion: effectiveVersion,
+        ruleOverrides,
       };
 
       // If DB available and promo code provided, validate against DB for expiry, active, redemption limits
-      let lookup: ((code: string) => { discount: number; minTotal: number; desc: string; isActive?: boolean; validFrom?: string | null; validTo?: string | null; maxRedemptions?: number | null; redemptionCount?: number } | null) | undefined;
+      let lookup:
+        | ((code: string) => {
+            discount: number;
+            minTotal: number;
+            desc: string;
+            isActive?: boolean;
+            validFrom?: string | null;
+            validTo?: string | null;
+            maxRedemptions?: number | null;
+            redemptionCount?: number;
+          } | null)
+        | undefined;
       if (db && input.promoCode) {
         const promo = await db.promos.getByCode(input.promoCode);
         if (promo) {
@@ -90,15 +157,22 @@ export function createFareService(fareVersion: string, db?: Repositories) {
           });
         }
       }
-      // Temporarily set global lookup via closure in finalize - we need to pass lookup to engine
-      // Since calculateFare calls applyPromo internally, we monkey-patch by calling applyPromo separately if lookup exists
-      // Instead, we calculate base fare without promo, then apply promo with DB lookup
+
       const resultWithoutPromoLookup = calculateFare({ ...engineInput, promoCode: undefined });
       if (!input.promoCode || isGroupExceptionVehicle(input.vehicleTier)) return resultWithoutPromoLookup;
 
       // Re-apply promo with DB validation
-      const promoEval = applyPromo(input.promoCode, resultWithoutPromoLookup.baseFare + resultWithoutPromoLookup.nightAllowance + resultWithoutPromoLookup.driverAllowance, lookup);
-      const subtotal = resultWithoutPromoLookup.baseFare + resultWithoutPromoLookup.nightAllowance + resultWithoutPromoLookup.driverAllowance;
+      const promoEval = applyPromo(
+        input.promoCode,
+        resultWithoutPromoLookup.baseFare +
+          resultWithoutPromoLookup.nightAllowance +
+          resultWithoutPromoLookup.driverAllowance,
+        lookup,
+      );
+      const subtotal =
+        resultWithoutPromoLookup.baseFare +
+        resultWithoutPromoLookup.nightAllowance +
+        resultWithoutPromoLookup.driverAllowance;
       const totalFare = Math.max(1, subtotal - promoEval.discount);
       const { advanceOf } = await import("../../shared/money.js");
       const advanceAmount = advanceOf(totalFare);

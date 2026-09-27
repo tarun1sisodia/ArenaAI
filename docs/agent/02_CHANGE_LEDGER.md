@@ -41,6 +41,19 @@ Implemented:
 - Created test suite `backend/tests/unit/media-visibility.test.ts` (3 tests passing) and updated `backend/tests/integration/catalog-live.test.ts`.
 - Full `npm run verify` passed with 15 test suites, 100 tests, and all builds green.
 
+### Phase 1 — Step 1.3: Active DB Fare Engine Integration & Dynamic Catalog Sync
+
+Implemented:
+
+- Updated `backend/src/modules/fares/fare.types.ts`: Added `FareVehicleOverride`, `FareRuleOverrides`, and optional `ruleOverrides` in `FareEngineInput`.
+- Updated `backend/src/modules/fares/fare.strategy.ts`: Added dynamic overrides support (`hasCustomRate`, `minKmPerDay`, `sameDayRoundMultiplier`, `driverAllowance`) to `PricingStrategyContext`, dynamically scaling one-way and round-trip fares when rates are updated by admin desk.
+- Updated `backend/src/modules/fares/fare.engine.ts`: In `calculateFare`, verified vehicle availability against active DB overrides (`AppError("VEHICLE_UNAVAILABLE")` if deactivated), resolved dynamic package pricing and duration, and applied night allowance overrides.
+- Updated `backend/src/modules/fares/fare.service.ts`: In `calculate(input)`, actively queried `db.fareRules.getActive()` and resolved package records from `db.catalog`, passing active overrides directly into the fare engine.
+- Updated `backend/src/modules/bookings/booking.service.ts`: Accepted `fareService` in `deps` and delegated `createDraft` fare calculation directly to `deps.fareService.calculate(input)`.
+- Updated `backend/src/app.ts`: Passed `fareService` into `createBookingService`.
+- Created comprehensive test suite `backend/tests/unit/fare-db-sync.test.ts` (5 tests passing) verifying dynamic rates, vehicle deactivation, package starting prices, draft item blocking, and booking draft delegation.
+- Verified with full `npm run verify` (typechecks x3, 16 test files / 105 tests passing, builds x3).
+
 ## Current webhook route
 
 ```text
@@ -55,7 +68,15 @@ The Razorpay webhook secret must exactly matches Render's `RAZORPAY_WEBHOOK_SECR
 - Admin typecheck/build passed after auth hardening.
 - Backend typecheck/build passed.
 - Focused backend network-header and catalog-manifest tests passed.
+- Dynamic DB fare rule and catalog sync tests passed.
 
 ## Known next work
+
+- Step 1.4: Add active-version transaction and unique-active database invariant.
+- Step 1.5: Add end-to-end booking and payment state lifecycle tests.
+- Step 1.6: Lock down device registration ownership.
+- Step 1.7: Run migrations in Render release/predeploy phase.
+- Step 1.8: Make `/ready` the deployment health check and verify its non-2xx behavior.
+
 
 See `docs/agent/00_CONTEXT_HANDOFF.md` and section 8 of the root operating specification. The most important engineering task is making database fare rules and catalog routes the single production source used by public fare calculation and booking.

@@ -186,7 +186,12 @@ export async function buildApp(options: AppOptions): Promise<BuiltApp> {
     paymentTemplate: env.WHATSAPP_TEMPLATE_PAYMENT,
   });
   const fareService = createFareService(env.FARE_RULES_VERSION, db);
-  const bookingService = createBookingService({ db, clock, fareVersion: env.FARE_RULES_VERSION });
+  const bookingService = createBookingService({
+    db,
+    clock,
+    fareVersion: env.FARE_RULES_VERSION,
+    fareService,
+  });
   const paymentService = createPaymentService({ db, clock, env, providers, notifications });
   const adminService = createAdminService({ db, clock });
   const mediaStorage = createMediaStorage(env);
