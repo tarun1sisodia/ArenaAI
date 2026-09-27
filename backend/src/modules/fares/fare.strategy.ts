@@ -21,6 +21,8 @@ export interface PricingCalculationResult {
   baseFare: number;
   driverAllowance: number;
   distanceKm: number;
+  billedKm: number;
+  alwaysRoundTrip: boolean;
   roundMultiplierApplied: boolean;
   rules: string[];
   allowPromo: boolean;
@@ -61,6 +63,8 @@ export class StandardVehiclePricingStrategy implements PricingStrategy {
           baseFare: Math.max(minDayKmTotal, actualRound),
           driverAllowance: 300 * days,
           distanceKm: billedDistance,
+          billedKm: billedDistance,
+          alwaysRoundTrip: false,
           roundMultiplierApplied: false,
           rules,
           allowPromo: true,
@@ -72,6 +76,8 @@ export class StandardVehiclePricingStrategy implements PricingStrategy {
           baseFare: Math.max(standardRound, minDayKmTotal),
           driverAllowance: 0,
           distanceKm: billedDistance,
+          billedKm: billedDistance,
+          alwaysRoundTrip: false,
           roundMultiplierApplied: true,
           rules,
           allowPromo: true,
@@ -85,6 +91,8 @@ export class StandardVehiclePricingStrategy implements PricingStrategy {
       baseFare: catalogFare,
       driverAllowance: 0,
       distanceKm: billedDistance,
+      billedKm: billedDistance,
+      alwaysRoundTrip: false,
       roundMultiplierApplied: false,
       rules,
       allowPromo: true,
@@ -97,9 +105,13 @@ export class StandardVehiclePricingStrategy implements PricingStrategy {
  * 
  * BUSINESS RULES ENFORCED:
  * 1. Trip Type Override: Must ALWAYS be calculated and charged as a Round Trip, regardless of the user's booking selection.
- * 2. Minimum Distance Override: The minimum billable distance is strictly 300 kilometers per day (or 2x one-way distance).
- * 3. Pricing Structure: Locked fixed-rate pricing on both ends (base fare and per-km rate are fixed, zero dynamic surge or variable discounts).
- * 4. Driver Allowance: Daily driver allowance of ₹500/day.
+ * 2. Force Distance Rule: Force Tempo Traveller and Force Urbania are ALWAYS charged as a round trip.
+ *    There is NO minimum-kilometre rule (NO 300 km floor).
+ *    If the customer asked for a round trip, billableDistance = roundTripKm (do not double twice).
+ *    If the customer asked for a one-way trip, billableDistance = oneWayKm * 2.
+ * 3. Pricing Structure: Locked fixed-rate pricing (billedKm * perKm rate).
+ * 4. Driver Allowance: Daily driver allowance of strictly ₹500/day.
+ * 5. Promo Codes: Zero promo discounts permitted on commercial group vehicles.
  */
 export class GroupCommercialVehicleStrategy implements PricingStrategy {
   readonly name = "GroupCommercialVehicleStrategy";
@@ -115,14 +127,13 @@ export class GroupCommercialVehicleStrategy implements PricingStrategy {
     // Calendar Days (minimum 1 day)
     const days = Math.max(1, calendarDaysInclusiveIst(input.pickupDatetime, input.returnDatetime));
 
-    // Rule 2: Minimum Distance Override — 300 KM per day minimum, doubled for round-trip return deadhead
-    const oneWayKm = Math.max(input.distanceKm, ctx.route.km);
-    const roundTripKm = oneWayKm * 2;
-    const minDayKmFloor = OUTSTATION_RULES.minKmPerDay * days; // 300 * days
-    const billableDistance = Math.max(roundTripKm, minDayKmFloor);
+    // Rule 2: Force rule — NO 300 km floor.
+    // If round-trip: billedKm = input.distanceKm (do not double twice)
+    // If one-way: billedKm = input.distanceKm * 2
+    const billedKm = input.tripType === "round-trip" ? input.distanceKm : input.distanceKm * 2;
 
-    // Rule 3: Fixed-rate pricing structure (billable km * perKm rate)
-    const baseFare = roundRupees(billableDistance * ctx.spec.perKm);
+    // Rule 3: Fixed-rate pricing structure (billed km * perKm rate)
+    const baseFare = roundRupees(billedKm * ctx.spec.perKm);
 
     // Rule 4: Driver Allowance — strictly ₹500/day
     const driverAllowance = 500 * days;
@@ -131,8 +142,7 @@ export class GroupCommercialVehicleStrategy implements PricingStrategy {
       "commercial-group-vehicle-exception",
       "forced-round-trip",
       `days:${days}`,
-      `billable-km:${billableDistance}`,
-      `min-km-floor:${minDayKmFloor}`,
+      `billable-km:${billedKm}`,
       `driver-allowance:${driverAllowance}`,
       "locked-fixed-rate-pricing",
     ];
@@ -141,10 +151,12 @@ export class GroupCommercialVehicleStrategy implements PricingStrategy {
       effectiveTripType,
       baseFare,
       driverAllowance,
-      distanceKm: billableDistance,
+      distanceKm: input.distanceKm,
+      billedKm,
+      alwaysRoundTrip: true,
       roundMultiplierApplied: false,
       rules,
-      allowPromo: false, // Rule 3: Zero promo discounts permitted on commercial group vehicles
+      allowPromo: false, // Rule 5: Zero promo discounts permitted on commercial group vehicles
     };
   }
 }

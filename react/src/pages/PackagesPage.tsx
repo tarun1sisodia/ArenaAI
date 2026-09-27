@@ -1,10 +1,10 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import type { SupportedLanguage } from "../config";
 import { contact } from "../data/contact";
-import { packages, type TourPackage } from "../data";
+import { packages as staticPackages, type TourPackage } from "../data";
 import { WhatsAppIcon } from "../components/icons";
 import { Pagination } from "../components/ui/Pagination";
-import { LiveCatalogSection } from "../components/catalog/LiveCatalogSection";
+import { loadPublishedPackages } from "../services/catalogManifest";
 
 interface PackagesPageProps {
   language?: SupportedLanguage;
@@ -329,6 +329,7 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
   // Category Filter State
   const [activeCategory, setActiveCategory] = useState<PackageFilterCategory>("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [packageList, setPackageList] = useState<TourPackage[]>(() => [...staticPackages]);
   const [currentPage, setCurrentPage] = useState(() => {
     if (typeof window !== "undefined") {
       const page = Number(new URLSearchParams(window.location.search).get("page"));
@@ -337,6 +338,20 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
     return 1;
   });
   const itemsPerPage = 6;
+
+  useEffect(() => {
+    let isMounted = true;
+    loadPublishedPackages()
+      .then((items) => {
+        if (isMounted && items && items.length > 0) {
+          setPackageList(items);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
@@ -353,21 +368,26 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
 
   // Enrich packages with metadata
   const enrichedPackages = useMemo<PackageCardData[]>(() => {
-    return packages.map((pkg) => {
-      const meta = PACKAGE_METADATA[pkg.id] || {
-        categories: ["sightseeing"],
+    return packageList.map((pkg) => {
+      const meta = PACKAGE_METADATA[pkg.id] || PACKAGE_METADATA[pkg.slug] || {
+        categories: [(pkg as any).category === "tour" ? "sightseeing" : "multiday"],
         badgeTag: "CURATED TOUR",
         badgeClass: "bg-primary text-on-primary",
-        durationBadge: pkg.duration,
+        durationBadge: pkg.duration || "1 Day",
         durationIcon: "schedule",
-        stops: [...pkg.places],
-        inclusions: [...pkg.includes].slice(0, 3),
+        stops: pkg.places && pkg.places.length > 0 ? [...pkg.places] : [pkg.name],
+        inclusions: pkg.includes && pkg.includes.length > 0 ? [...pkg.includes].slice(0, 3) : [
+          "Private AC vehicle",
+          "Dedicated verified chauffeur",
+          "All highway tolls & parking fees included",
+        ],
         vehiclePrices: [
+          { label: "Sedan", price: `₹${pkg.from}` },
           { label: "Ertiga", price: `₹${Math.round((pkg.from * 1.25) / 100) * 100}` },
           { label: "Innova", price: `₹${Math.round((pkg.from * 1.8) / 100) * 100}` },
         ],
-        suitedFor: "Sightseeing Travelers",
-        recommendedFleet: "Sedan / Innova",
+        suitedFor: "Travelers & Groups",
+        recommendedFleet: "Sedan / Ertiga / Innova",
       };
       return {
         pkg,
@@ -381,7 +401,7 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
         vehiclePrices: meta.vehiclePrices,
       };
     });
-  }, []);
+  }, [packageList]);
 
   // Filtered packages
   const filteredPackages = useMemo(() => {
@@ -444,15 +464,15 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
           },
         ],
       },
-      ...packages.map((pkg) => ({
+      ...packageList.map((pkg: TourPackage) => ({
         "@type": "TouristTrip",
         name: pkg.name,
         description: pkg.blurb,
         touristType: "Cultural, Heritage & Sightseeing",
         itinerary: {
           "@type": "ItemList",
-          numberOfItems: pkg.places.length,
-          itemListElement: pkg.places.map((place, idx) => ({
+          numberOfItems: pkg.places?.length ?? 0,
+          itemListElement: (pkg.places ?? []).map((place: string, idx: number) => ({
             "@type": "ListItem",
             position: idx + 1,
             name: place,
@@ -573,7 +593,7 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
               onClick={() => { setActiveCategory("all"); setCurrentPage(1); }}
               type="button"
             >
-              All Packages ({packages.length})
+              All Packages ({packageList.length})
             </button>
             <button
               className={`px-3 py-1.5 rounded-lg text-xs transition-all ${activeCategory === "sightseeing"
@@ -796,10 +816,6 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
         )}
       </section>
 
-      {/* LIVE CATALOG — trips published from the operations desk appear here
-          automatically (single source of trips with the backend CMS). */}
-      <LiveCatalogSection />
-
       {/* PACKAGE COMPARISON & FLEET DECISION MATRIX (Compact -20%) */}
       <section className="bg-surface-container-low py-8 sm:py-10 border-t border-b border-border-warm/60">
         <div className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin">
@@ -828,8 +844,8 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border-warm/50">
-                {packages.map((pkg, idx) => {
-                  const meta = PACKAGE_METADATA[pkg.id] || {
+                {packageList.map((pkg: TourPackage, idx: number) => {
+                  const meta = PACKAGE_METADATA[pkg.id] || PACKAGE_METADATA[pkg.slug] || {
                     suitedFor: "Sightseeing Travelers",
                     recommendedFleet: "Sedan / Innova",
                   };

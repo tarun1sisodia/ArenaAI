@@ -158,7 +158,7 @@ export function RouteDetailPage({ route }: RouteDetailPageProps) {
 
   const primaryFare = route.fares.sedan;
   const advanceToken = Math.round(primaryFare * 0.28);
-  const bookingUrl = `/book/?route=${route.id}&step=1`;
+  const bookingUrl = `/book?from=${encodeURIComponent(fromEn)}&to=${encodeURIComponent(toEn)}&vehicle=sedan&route=${encodeURIComponent(route.id)}`;
   const whatsappUrl = `https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(`Hello SK Baghel Desk, I would like to inquire about taxi booking from ${fromEn} to ${toEn}.`)}`;
 
   return (
@@ -334,6 +334,7 @@ export function RouteDetailPage({ route }: RouteDetailPageProps) {
               const fare = route.fares[v.id as VehicleId] || primaryFare;
               const token = Math.round(fare * 0.28);
               const vSlug = v.id === "innova" ? "innova-crysta" : v.id === "tempo" ? "tempo-traveller" : v.id;
+              const isForceVehicle = v.id === "tempo" || v.id === "urbania" || Boolean(v.alwaysRoundTrip);
 
               return (
                 <div
@@ -366,19 +367,26 @@ export function RouteDetailPage({ route }: RouteDetailPageProps) {
                     </div>
 
                     <div className="flex flex-col pt-1">
-                      <span className="text-[11px] font-label-caps text-secondary uppercase">All-Inclusive Fare</span>
+                      <span className="text-[11px] font-label-caps text-secondary uppercase">
+                        {isForceVehicle ? "Round-Trip Fare" : "All-Inclusive Fare"}
+                      </span>
                       <span className="font-headline-md text-headline-md text-terracotta-sandstone font-serif font-semibold">
                         ₹{fare.toLocaleString("en-IN")}
                       </span>
                       <span className="text-[11px] text-secondary">
                         ₹{token.toLocaleString("en-IN")} token to lock
                       </span>
+                      {isForceVehicle && (
+                        <div className="mt-1.5 p-1.5 rounded bg-primary/10 border border-primary/20 text-[10.5px] text-primary font-semibold leading-tight">
+                          This vehicle is always booked as a round trip.
+                        </div>
+                      )}
                     </div>
                   </div>
 
                   <a
                     className="mt-space-md w-full inline-flex items-center justify-center gap-1 bg-terracotta-sandstone text-on-primary py-2.5 rounded text-label-lg font-label-lg shadow-sm hover:bg-terracotta-sunlit transition-all text-center"
-                    href={`/book/?route=${route.id}&vehicle=${vSlug}&step=3`}
+                    href={`/book?from=${encodeURIComponent(fromEn)}&to=${encodeURIComponent(toEn)}&vehicle=${vSlug}&route=${encodeURIComponent(route.id)}`}
                   >
                     <span>Select {v.name.split(" ")[0]}</span>
                     <span className="material-symbols-outlined text-[16px]">arrow_forward</span>

@@ -12,6 +12,7 @@
  */
 
 import { mkdir, writeFile } from "node:fs/promises";
+import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -133,14 +134,43 @@ export function getSitemapEntries(): SitemapEntry[] {
   }
 
   // 6. Routes (English)
+  const existingPaths = new Set(entries.map((e) => e.path));
   for (const pair of routePairs) {
-    entries.push({
-      path: `/en/${pair.en}/`,
-      priority: 0.85,
-      changefreq: "weekly",
-      enPath: `/en/${pair.en}/`,
-    });
+    const p = `/en/${pair.en}/`;
+    if (!existingPaths.has(p)) {
+      existingPaths.add(p);
+      entries.push({
+        path: p,
+        priority: 0.85,
+        changefreq: "weekly",
+        enPath: p,
+      });
+    }
   }
+
+  try {
+    const catalogPath = join(reactRoot, "src", "data", "generated-catalog.json");
+    if (existsSync(catalogPath)) {
+      const catalogRaw = readFileSync(catalogPath, "utf-8");
+      const catalog = JSON.parse(catalogRaw);
+      if (Array.isArray(catalog.routes)) {
+        for (const r of catalog.routes) {
+          if (r.id) {
+            const p = `/en/${r.id}/`;
+            if (!existingPaths.has(p)) {
+              existingPaths.add(p);
+              entries.push({
+                path: p,
+                priority: 0.75,
+                changefreq: "weekly",
+                enPath: p,
+              });
+            }
+          }
+        }
+      }
+    }
+  } catch {}
 
   return entries;
 }

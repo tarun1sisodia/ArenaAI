@@ -24,6 +24,30 @@ export function createCatalogController(service: ReturnType<typeof createCatalog
       return sendSuccess(reply, data);
     },
 
+    /** PUBLIC — compressed routes manifest for the 982-route inventory (F4/F5). */
+    async getManifest(request: FastifyRequest, reply: FastifyReply) {
+      const { manifest, etag } = await service.getManifest();
+      const ifNoneMatch = request.headers["if-none-match"];
+      if (ifNoneMatch && ifNoneMatch === etag) {
+        return reply.status(304).send();
+      }
+      return reply
+        .header("Cache-Control", "public, max-age=60, stale-while-revalidate=300")
+        .header("ETag", etag)
+        .status(200)
+        .send({ status: "success", data: manifest });
+    },
+    async getManifestStatus(request: FastifyRequest, reply: FastifyReply) {
+      requireRole(request, CONTENT_ROLES);
+      const data = await service.getManifestStatus();
+      return sendSuccess(reply, data);
+    },
+    async republish(request: FastifyRequest, reply: FastifyReply) {
+      requireRole(request, CONTENT_ROLES);
+      const actor = requireUser(request);
+      const data = await service.republish(actor, request.requestId);
+      return sendSuccess(reply, data);
+    },
     async getPublished(request: FastifyRequest, reply: FastifyReply) {
       const params = CatalogSlugParamSchema.parse(request.params);
       const data = await service.getPublished(params.slug);

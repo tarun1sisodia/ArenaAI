@@ -10,7 +10,7 @@ export const CalculateFareSchema = z
     destinationName: z.string().trim().min(2).max(120),
     pickupDatetime: IsoDatetimeSchema,
     returnDatetime: IsoDatetimeSchema.optional(),
-    distanceKm: z.number().positive().max(5000).finite(),
+    distanceKm: z.number().positive().max(5000).finite().optional(),
     promoCode: z
       .string()
       .trim()
@@ -44,6 +44,8 @@ export const FareResponseSchema = z.object({
   label: z.string(),
   duration: z.string(),
   distanceKm: z.number().nonnegative(),
+  billedKm: z.number().nonnegative(),
+  alwaysRoundTrip: z.boolean(),
   tripType: z.enum(TRIP_TYPES),
   vehicleTier: z.enum(VEHICLE_TIERS),
   promoCode: z.string().nullable(),

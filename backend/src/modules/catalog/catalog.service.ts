@@ -9,10 +9,134 @@ import {
   type CatalogItemRecord,
   type CatalogMediaRecord,
 } from "../../types/domain.js";
+import { CATALOG_RAW_DATA, VEHICLES } from "../fares/fare.catalogue.js";
 import type { AttachMediaSchema, CreateCatalogSchema, PublicCatalogQuerySchema, UpdateCatalogSchema, UpdateMediaSchema } from "./catalog.schema.js";
 import type { z } from "zod";
 
 export function createCatalogService(deps: { db: Repositories; clock: Clock }) {
+  let manifestVersion = 1;
+  let lastRegeneratedAt = toIso(deps.clock.now());
+  let cachedManifest: any = null;
+  let cachedEtag = `W/"manifest-v1-${Date.now()}"`;
+
+  function bumpManifest() {
+    manifestVersion += 1;
+    lastRegeneratedAt = toIso(deps.clock.now());
+    cachedManifest = null;
+    cachedEtag = `W/"manifest-v${manifestVersion}-${new Date(lastRegeneratedAt).getTime()}"`;
+  }
+
+  function compileBaseRoutes(): Record<string, any> {
+    const routes: Record<string, any> = {};
+    for (const [slug, item] of Object.entries(CATALOG_RAW_DATA)) {
+      const fs = item.fares?.sedan ?? 2000;
+      const fe = item.fares?.ertiga ?? 2700;
+      const fi = item.fares?.innova ?? 3600;
+      const ft = item.fares?.tempo ?? 5500;
+      const fu = item.fares?.urbania ?? 7500;
+      const fh = item.hatchbackFare || Math.round(fs * 0.85);
+
+      routes[slug] = {
+        o: item.origin || item.from,
+        d: item.destination || item.to,
+        km: item.km,
+        m: item.durationMins || Math.round((item.km / 55) * 60),
+        fh,
+        fs,
+        fe,
+        fi,
+        ft,
+        fu,
+        pm: item.pricingModel || "oneway",
+        c: item.corridor || "Direct Highway Corridor",
+        toll: item.toll === 1 ? 1 : 0,
+      };
+    }
+    return routes;
+  }
+
+  async function buildManifest() {
+    const routes = compileBaseRoutes();
+    // Query ONLY published items from catalog database (Requirement: Do not return unpublished or archived items)
+    const allPublished = await deps.db.catalog.list({ status: "published" });
+
+    // Incorporate any database published routes
+    for (const item of allPublished) {
+      if ((item.type as string) === "ride" || (item.type as string) === "route") {
+        if (!routes[item.slug]) {
+          const startingPrice = item.startingPriceInr || 2000;
+          routes[item.slug] = {
+            o: item.routeSummary?.split("·")[0]?.trim() || item.title,
+            d: item.routeSummary?.split("·").slice(-1)[0]?.trim() || item.title,
+            km: 200,
+            m: 240,
+            fh: Math.round(startingPrice * 0.85),
+            fs: startingPrice,
+            fe: Math.round(startingPrice * 1.35),
+            fi: Math.round(startingPrice * 1.8),
+            ft: Math.round(startingPrice * 2.75),
+            fu: Math.round(startingPrice * 3.75),
+            pm: "oneway",
+            c: item.routeSummary || "Direct Highway Corridor",
+            toll: 1,
+          };
+        }
+      }
+    }
+
+    const packages = allPublished
+      .filter((item) => item.status === "published" && (item.type === "package" || item.type === "tour"))
+      .map((item) => ({
+        id: item.id,
+        slug: item.slug,
+        name: item.title,
+        title: item.title,
+        type: item.type,
+        category: item.type,
+        kicker: item.type === "package" ? "Tour Package" : "Day Tour",
+        duration: item.durationText || "1 day",
+        from: item.startingPriceInr,
+        startingPriceInr: item.startingPriceInr,
+        image: "/assets/packages/taj-dawn.webp",
+        places: (item.routeSummary || "")
+          .split(/[,·|]/)
+          .map((s) => s.trim())
+          .filter(Boolean),
+        blurb: item.shortDescription || item.description,
+        description: item.description,
+        includes: [
+          "Private AC vehicle",
+          "Professional chauffeur",
+          "All tolls, parking & state tax",
+          "Guide assistance",
+          "Bottled water",
+        ],
+        excludes: ["Monument tickets", "Meals"],
+        status: item.status,
+        updatedAt: item.updatedAt,
+      }));
+
+    const vehicles = VEHICLES.map((v) => ({
+      id: v.id,
+      tier: v.tier,
+      name: v.name,
+      seats: v.seats,
+      bags: v.bags,
+      perKm: v.perKm,
+      alwaysRoundTrip: Boolean(v.alwaysRoundTrip),
+    }));
+
+    return {
+      version: manifestVersion,
+      updatedAt: lastRegeneratedAt,
+      routeCount: Object.keys(routes).length,
+      packageCount: packages.length,
+      routes,
+      packages,
+      vehicles,
+    };
+  }
+
   return {
     /**
      * PUBLIC listing — the single source of trips for the customer site.
@@ -31,6 +155,46 @@ export function createCatalogService(deps: { db: Repositories; clock: Clock }) {
           return { ...publicCatalog(item), ...mediaSummary(media) };
         }),
       );
+    },
+
+    async getManifest() {
+      if (!cachedManifest) {
+        cachedManifest = await buildManifest();
+      }
+      return { manifest: cachedManifest, etag: cachedEtag };
+    },
+
+    async getManifestStatus() {
+      return {
+        version: manifestVersion,
+        updatedAt: lastRegeneratedAt,
+        routeCount: cachedManifest?.routeCount ?? Object.keys(compileBaseRoutes()).length,
+        packageCount: cachedManifest?.packageCount ?? 0,
+      };
+    },
+
+    async republish(actor: AuthUser, requestId: string) {
+      bumpManifest();
+      cachedManifest = await buildManifest();
+      await deps.db.audit.append({
+        id: newId(),
+        actorId: actor.id,
+        actorRole: actor.role,
+        resourceType: "catalog_manifest",
+        resourceId: "site_manifest",
+        action: "republish",
+        before: { version: manifestVersion - 1 },
+        after: { version: manifestVersion, updatedAt: lastRegeneratedAt },
+        reason: "Manual republish from admin panel",
+        requestId,
+        createdAt: lastRegeneratedAt,
+      });
+      return {
+        version: cachedManifest.version,
+        updatedAt: cachedManifest.updatedAt,
+        routeCount: cachedManifest.routeCount,
+        packageCount: cachedManifest.packageCount,
+      };
     },
 
     async getPublished(slug: string) {
@@ -62,7 +226,7 @@ export function createCatalogService(deps: { db: Repositories; clock: Clock }) {
 
     async create(input: z.infer<typeof CreateCatalogSchema>, actor: AuthUser) {
       const now = toIso(deps.clock.now());
-      return deps.db.catalog.create({
+      const created = await deps.db.catalog.create({
         id: newId(),
         type: input.type,
         slug: input.slug,
@@ -85,6 +249,8 @@ export function createCatalogService(deps: { db: Repositories; clock: Clock }) {
         createdAt: now,
         updatedAt: now,
       });
+      bumpManifest();
+      return created;
     },
 
     async update(id: string, input: z.infer<typeof UpdateCatalogSchema>, actor: AuthUser) {
@@ -116,6 +282,7 @@ export function createCatalogService(deps: { db: Repositories; clock: Clock }) {
         requestId: "",
         createdAt: now,
       });
+      bumpManifest();
       return updated;
     },
 
@@ -130,6 +297,7 @@ export function createCatalogService(deps: { db: Repositories; clock: Clock }) {
         version: item.version + 1,
         updatedAt: now,
       });
+      bumpManifest();
       await deps.db.audit.append({
         id: newId(),
         actorId: actor.id,
@@ -156,6 +324,7 @@ export function createCatalogService(deps: { db: Repositories; clock: Clock }) {
         version: item.version + 1,
         updatedAt: now,
       });
+      bumpManifest();
       await deps.db.audit.append({
         id: newId(),
         actorId: actor.id,

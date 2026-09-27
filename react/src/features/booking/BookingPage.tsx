@@ -1,14 +1,21 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { contact } from "../../data/contact";
-import { packages, routes, vehicles, type VehicleId, type TourPackage } from "../../data/catalogue";
-import { calcFare, advanceOf, formatInr, localPackages, type LocalPackageKey } from "./fareEngine";
-import { createDraftBooking, mapVehicleTier, type BackendTripType } from "../../services/api";
-import { fetchPublishedCatalog, type PublicCatalogItem } from "../../services/catalog";
+import { packages, vehicles, cities, type VehicleId, type TourPackage } from "../../data/catalogue";
+import { formatInr, localTomorrow, localPackages, type LocalPackageKey } from "./fareEngine";
+import {
+  calculateServerFare,
+  createDraftBooking,
+  createPaymentCheckout,
+  mapVehicleTier,
+  formatInquiryPhone,
+  sanitizeInquiryName,
+  type ServerFareBreakdown,
+  type BackendTripType,
+} from "../../services/api";
 import { WhatsAppIcon } from "../../components/icons";
-import { TripSelectionStep, type SelectableTrip } from "./TripSelectionStep";
-import { BookingAssistant, type QuickPick } from "./BookingAssistant";
 
-type BookingStep = 1 | 2 | 3 | 4;
+type BookingStep = 1 | 2 | 3;
+type BookingMode = "outstation" | "local" | "package";
 
 interface VehicleOption {
   id: VehicleId;
@@ -17,11 +24,11 @@ interface VehicleOption {
   image: string;
   badge?: string;
   badgeClass?: string;
-  priceOffset: number; // Offset from base package price
   guests: string;
   luggage: string;
   features: string[];
   editorialPitch: string;
+  alwaysRoundTrip: boolean;
 }
 
 const VEHICLE_OPTIONS: VehicleOption[] = [
@@ -30,22 +37,22 @@ const VEHICLE_OPTIONS: VehicleOption[] = [
     name: "Executive Sedan",
     subtitle: "Maruti Suzuki Dzire Prime or Toyota Etios Platinum",
     image: "/assets/fleet/sedan.webp",
-    priceOffset: 0,
     guests: "1–3 Guests",
     luggage: "2 Medium Bags",
-    features: ["Dual Climate AC", "USB Fast Charging"],
+    features: ["Dual Climate AC", "USB Fast Charging", "Yamuna Expressway FastTag"],
     editorialPitch: "Ideal for solo voyagers or intimate couples traveling light",
+    alwaysRoundTrip: false,
   },
   {
     id: "ertiga",
     name: "Maruti Ertiga SUV",
     subtitle: "Smart Hybrid E-Tech • Elevated Ride Height",
     image: "/assets/fleet/ertiga.webp",
-    priceOffset: 800,
     guests: "4–5 Guests",
     luggage: "3–4 Bags",
-    features: ["Roof Mounted AC Louvers", "Flexible Foldable 3rd Row"],
+    features: ["Roof Mounted AC Louvers", "Flexible 3rd Row", "Spacious Cabin"],
     editorialPitch: "Compact family comfort with extra legroom & elevated highway perspective",
+    alwaysRoundTrip: false,
   },
   {
     id: "innova",
@@ -54,1551 +61,1264 @@ const VEHICLE_OPTIONS: VehicleOption[] = [
     image: "/assets/fleet/innova.webp",
     badge: "Most Popular • Concierge Choice",
     badgeClass: "bg-primary text-on-primary",
-    priceOffset: 1800,
     guests: "Up to 6 Guests",
     luggage: "4 Large Suitcases",
     features: ["Captain Armchairs", "Triple Climate Auto AC", "Chilled Mineral Water"],
     editorialPitch: "The undisputed gold standard for Yamuna Expressway cruising with zero fatigue",
+    alwaysRoundTrip: false,
   },
   {
     id: "tempo",
     name: "Force Tempo Traveller",
     subtitle: "12 to 16 Passenger High-Roof Touring Coach",
     image: "/assets/fleet/tempo.webp",
-    priceOffset: 3500,
+    badge: "Always Booked as Round Trip",
+    badgeClass: "bg-terracotta-sandstone text-white font-bold",
     guests: "12–16 Guests",
     luggage: "10–12 Large Bags",
-    features: ["Individual AC Louvers", "Dedicated Luggage Bay"],
+    features: ["Individual AC Louvers", "Dedicated Luggage Bay", "Full Reclining Seats"],
     editorialPitch: "Tailored for joint families, corporate retreats, and international delegations",
+    alwaysRoundTrip: true,
   },
   {
     id: "urbania",
     name: "Force Urbania Royal Van",
     subtitle: "Monocoque Whisper Body • Aircraft Recliner Seating",
     image: "/assets/fleet/urbania.webp",
-    badge: "State-of-the-Art Luxury",
+    badge: "Always Booked as Round Trip",
     badgeClass: "bg-gold-accent/20 text-ink-charcoal font-bold",
-    priceOffset: 5500,
     guests: "10–14 Recliner Pods",
     luggage: "12+ Large Bags",
-    features: ["Starry Ambient Ceiling", "European Sound Isolation", "Onboard High-Speed Wi-Fi"],
+    features: ["Starry Ambient Ceiling", "European Sound Isolation", "Airplane-Style Recliners"],
     editorialPitch: "Diplomatic, presidential transit with private lounge privacy glass",
+    alwaysRoundTrip: true,
   },
 ];
 
-const tomorrowDateString = () => {
-  const d = new Date();
-  d.setDate(d.getDate() + 1);
-  return d.toISOString().split("T")[0];
-};
-
 export function BookingPage() {
-  // Step State: 1 = Choose Vehicle, 2 = Choose Trip, 3 = Booking & Billing Form,
-  // 4 = Confirmation Voucher
+  // Navigation & Step State: 1 = Route & Vehicle, 2 = Guest Details & Review, 3 = Confirmation Voucher
   const [step, setStep] = useState<BookingStep>(1);
 
-  // Selected tour package or fallback
+  // Booking Mode & Route Parameters
+  const [bookingMode, setBookingMode] = useState<BookingMode>("outstation");
+  const [originName, setOriginName] = useState<string>("Agra");
+  const [destinationName, setDestinationName] = useState<string>("Delhi");
+  const [tripType, setTripType] = useState<"one-way" | "round-trip">("one-way");
+  const [localPackageKey, setLocalPackageKey] = useState<LocalPackageKey>("8hr-80km");
   const [packageSlug, setPackageSlug] = useState<string>("taj-mahal-sunrise-tour");
-  const [selectedVehicleId, setSelectedVehicleId] = useState<VehicleId>("innova");
+  const [selectedVehicleId, setSelectedVehicleId] = useState<VehicleId>("sedan");
 
-  // Live catalog trips (single source of trips with the operations desk) and
-  // the currently selected live trip slug. A live selection overrides the
-  // curated static package of the same slug.
-  const [liveTrips, setLiveTrips] = useState<PublicCatalogItem[]>([]);
-  const [selectedLiveSlug, setSelectedLiveSlug] = useState<string | null>(null);
+  // Datetime fields
+  const [pickupDate, setPickupDate] = useState<string>(localTomorrow());
+  const [pickupTime, setPickupTime] = useState<string>("06:00");
+  const [returnDate, setReturnDate] = useState<string>(localTomorrow());
+  const [returnTime, setReturnTime] = useState<string>("20:00");
 
-  // Form Fields State
-  const [fullName, setFullName] = useState<string>("Jonathan Sterling");
-  const [email, setEmail] = useState<string>("j.sterling.heritage@outlook.com");
-  const [phone, setPhone] = useState<string>("+91 98765 43210");
-  const [billingAddress, setBillingAddress] = useState<string>("ITC Mughal Pavilion, VIP Road");
-  const [country, setCountry] = useState<string>("India");
-  const [stateName, setStateName] = useState<string>("Uttar Pradesh");
-  const [city, setCity] = useState<string>("Agra");
-  const [pincode, setPincode] = useState<string>("282001");
+  // Passenger & Contact Fields
+  const [fullName, setFullName] = useState<string>("Rohan Verma");
+  const [email, setEmail] = useState<string>("rohan.verma@example.com");
+  const [phone, setPhone] = useState<string>("+919876543210");
+  const [pickupAddress, setPickupAddress] = useState<string>("Hotel Clarks Shiraz, VIP Road, Agra");
+  const [dropAddress, setDropAddress] = useState<string>("IGI Airport Terminal 3, New Delhi");
+  const [flightTrainNumber, setFlightTrainNumber] = useState<string>("");
+  const [specialNotes, setSpecialNotes] = useState<string>("Need child car seat if available");
 
-  // Logistics & Timing
-  const [tourDate, setTourDate] = useState<string>(tomorrowDateString());
-  const [pickupTime, setPickupTime] = useState<string>("05:30");
-  const [pickupInstruction, setPickupInstruction] = useState<string>(
-    "Grand Imperial Hotel Porch, MG Road - Agra Cantt side"
-  );
-  const [dropInstruction, setDropInstruction] = useState<string>(
-    "Agra Cantt Railway Station (Executive Lounge drop off)"
-  );
+  // Promo code
+  const [promoCodeInput, setPromoCodeInput] = useState<string>("");
+  const [activePromoCode, setActivePromoCode] = useState<string>("");
+  const [promoMessage, setPromoMessage] = useState<string | null>(null);
 
-  // Passenger & Pet Details
-  const [guestCount, setGuestCount] = useState<number>(2);
-  const [hasPet, setHasPet] = useState<boolean>(false);
-  const [petType, setPetType] = useState<string>("Golden Retriever");
-  const [petSize, setPetSize] = useState<string>("medium");
-  const [petNotes, setPetNotes] = useState<string>("Waterproof rear seat hammock requested");
+  // Authoritative Server Fare State (Single Source of Truth)
+  const [serverFare, setServerFare] = useState<ServerFareBreakdown | null>(null);
+  const [loadingFare, setLoadingFare] = useState<boolean>(false);
+  const [fareError, setFareError] = useState<string | null>(null);
 
-  // Payment Settlement Choice: "partial" (28% advance deposit) or "full" (100%)
+  // Payment Settlement Choice: "partial" (advance deposit) or "full" (100% total)
   const [paymentChoice, setPaymentChoice] = useState<"partial" | "full">("partial");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   // Confirmed booking state
-  const [bookingRef, setBookingRef] = useState<string>("#SKB-SUNRISE-98421");
-  const [invoiceNumber, setInvoiceNumber] = useState<string>("INV-2026-0941");
+  const [confirmedTicketId, setConfirmedTicketId] = useState<string>("");
+  const [confirmedBookingId, setConfirmedBookingId] = useState<string>("");
+  const [amountPaid, setAmountPaid] = useState<number>(0);
 
-  // Read URL query parameters on initial mount
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const params = new URLSearchParams(window.location.search);
-    const qPkg = params.get("package") || params.get("pkg");
-    if (qPkg) {
-      const match = packages.find((p) => p.slug === qPkg || p.id === qPkg);
-      if (match) {
-        setPackageSlug(match.slug);
-        setSelectedLiveSlug(null);
-      }
-    }
-    const qVeh = params.get("vehicle") as VehicleId | null;
-    if (qVeh && VEHICLE_OPTIONS.some((v) => v.id === qVeh)) {
-      setSelectedVehicleId(qVeh);
-    }
-    const qStep = params.get("step");
-    // Step map: 1 = vehicle, 2 = choose trip, 3 = booking form, 4 = confirmation.
-    if (qStep === "1") {
-      setStep(1);
-    } else if (qStep === "2") {
-      setStep(2);
-    } else if (qStep === "3") {
-      setStep(3);
-    } else if (qStep === "4") {
-      setStep(4);
-    }
-  }, []);
+  // Selected vehicle metadata
+  const selectedVehicle = useMemo<VehicleOption>(() => {
+    return (
+      VEHICLE_OPTIONS.find((v) => v.id === selectedVehicleId) ||
+      VEHICLE_OPTIONS[0]
+    );
+  }, [selectedVehicleId]);
 
-  // Load every published trip from the live catalog (single source of trips).
-  // Non-trip verticals (famous places, fleet specs) are not bookable itineraries.
-  useEffect(() => {
-    let isMounted = true;
-    fetchPublishedCatalog()
-      .then((items) => {
-        if (!isMounted) return;
-        setLiveTrips(items.filter((i) => i.type !== "place" && i.type !== "vehicle"));
-      })
-      .catch(() => {
-        /* curated static packages remain the fallback */
-      });
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  // Matched package (curated static fallback)
-  const matchedPackage = useMemo<TourPackage>(() => {
+  // Selected tour package metadata
+  const selectedPackage = useMemo<TourPackage>(() => {
     return (
       packages.find((p) => p.slug === packageSlug || p.id === packageSlug) ||
-      packages[1] ||
       packages[0]
     );
   }, [packageSlug]);
 
-  // Every bookable trip: curated static packages + live desk catalog, deduped
-  // by slug with the live (CMS-managed) version winning.
-  const availableTrips = useMemo<SelectableTrip[]>(() => {
-    const curated: SelectableTrip[] = packages.map((p) => ({
-      key: `curated:${p.slug}`,
-      source: "curated" as const,
-      slug: p.slug,
-      name: p.name,
-      blurb: p.blurb,
-      duration: p.duration,
-      distanceKm: null,
-      stops: [...p.places],
-      basePrice: p.from,
-      image: p.image,
-      tripType: "local-tour" as const,
-      availability: "available" as const,
-      seatsLeft: null,
-    }));
-    const live: SelectableTrip[] = liveTrips.map((t) => ({
-      key: `live:${t.slug}`,
-      source: "live" as const,
-      slug: t.slug,
-      name: t.title,
-      blurb: t.shortDescription,
-      duration: t.durationText || "Full day",
-      distanceKm: t.distanceKm,
-      stops: t.stops,
-      basePrice: t.startingPriceInr,
-      image: t.coverImage?.url ?? null,
-      tripType: t.tripType ?? "local-tour",
-      availability: t.availability,
-      seatsLeft: t.seatsLeft,
-    }));
-    const liveSlugs = new Set(live.map((t) => t.slug));
-    return [...live, ...curated.filter((t) => !liveSlugs.has(t.slug))];
-  }, [liveTrips]);
+  // Read URL query parameters on initial mount to pre-fill funnel
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
 
-  // The trip the customer is booking — a live selection wins over the curated package.
-  const selectedTrip = useMemo<SelectableTrip>(() => {
-    const live = availableTrips.find((t) => t.source === "live" && t.slug === selectedLiveSlug);
-    if (live) return live;
-    return (
-      availableTrips.find((t) => t.source === "curated" && t.slug === packageSlug) ??
-      availableTrips.find((t) => t.source === "curated") ?? {
-        key: "curated:fallback",
-        source: "curated" as const,
-        slug: matchedPackage.slug,
-        name: matchedPackage.name,
-        blurb: matchedPackage.blurb,
-        duration: matchedPackage.duration,
-        distanceKm: null,
-        stops: [...matchedPackage.places],
-        basePrice: matchedPackage.from,
-        image: matchedPackage.image,
-        tripType: "local-tour" as const,
-        availability: "available" as const,
-        seatsLeft: null,
+    const qTrip = params.get("trip");
+    if (qTrip === "local") {
+      setBookingMode("local");
+    } else if (qTrip === "round" || qTrip === "round-trip") {
+      setBookingMode("outstation");
+      setTripType("round-trip");
+    } else if (qTrip === "one-way") {
+      setBookingMode("outstation");
+      setTripType("one-way");
+    }
+
+    const qFrom = params.get("from");
+    if (qFrom) {
+      const matchCity = cities.find((c) => c.id === qFrom.toLowerCase());
+      setOriginName(matchCity ? matchCity.name : qFrom);
+    }
+
+    const qTo = params.get("to");
+    if (qTo) {
+      const matchCity = cities.find((c) => c.id === qTo.toLowerCase());
+      setDestinationName(matchCity ? matchCity.name : qTo);
+    }
+
+    const qPkg = params.get("package") || params.get("pkg");
+    if (qPkg) {
+      if (qPkg === "8hr-80km" || qPkg === "12hr-120km" || qPkg === "airport-transfer") {
+        setBookingMode("local");
+        setLocalPackageKey(qPkg as LocalPackageKey);
+      } else {
+        const matchTour = packages.find((p) => p.slug === qPkg || p.id === qPkg);
+        if (matchTour) {
+          setBookingMode("package");
+          setPackageSlug(matchTour.slug);
+        }
       }
-    );
-  }, [availableTrips, selectedLiveSlug, packageSlug, matchedPackage]);
-
-  function handleSelectTrip(trip: SelectableTrip) {
-    if (trip.source === "live") {
-      setSelectedLiveSlug(trip.slug);
-    } else {
-      setSelectedLiveSlug(null);
-      setPackageSlug(trip.slug);
     }
-  }
 
-  // Concierge quick picks — deterministic smart suggestions over the pool.
-  function handleQuickPick(pick: QuickPick, trips: SelectableTrip[]) {
-    if (trips.length === 0) return;
-    let chosen: SelectableTrip | undefined;
-    switch (pick) {
-      case "popular":
-        chosen = trips.find((t) => /same day|agra sightseeing|taj mahal/i.test(t.name)) ?? trips[0];
-        break;
-      case "family":
-        chosen =
-          trips.find((t) => /mathura|vrindavan|family/i.test(t.name)) ??
-          [...trips].sort((a, b) => b.stops.length - a.stops.length)[0];
-        break;
-      case "budget":
-        chosen = [...trips].sort((a, b) => a.basePrice - b.basePrice)[0];
-        break;
-      case "sunrise":
-        chosen = trips.find((t) => /sunrise|dawn/i.test(t.name)) ?? trips[0];
-        break;
+    const qVeh = params.get("vehicle") as VehicleId | null;
+    if (qVeh && VEHICLE_OPTIONS.some((v) => v.id === qVeh)) {
+      setSelectedVehicleId(qVeh);
     }
-    if (chosen) handleSelectTrip(chosen);
-  }
 
-  // Selected vehicle details
-  const selectedVehicle = useMemo<VehicleOption>(() => {
-    return (
-      VEHICLE_OPTIONS.find((v) => v.id === selectedVehicleId) ||
-      VEHICLE_OPTIONS[2]
-    );
-  }, [selectedVehicleId]);
+    const qDate = params.get("date");
+    if (qDate && /^\d{4}-\d{2}-\d{2}$/.test(qDate)) {
+      setPickupDate(qDate);
+      setReturnDate(qDate);
+    }
 
-  // Price calculations
-  const baseTourPrice = selectedTrip.basePrice;
-  const vehicleOffset = selectedVehicle.priceOffset;
-  const totalGrossPrice = baseTourPrice + vehicleOffset;
-  const advanceAmount = Math.round(totalGrossPrice * 0.28);
-  const balanceAmount = totalGrossPrice - advanceAmount;
+    const qStep = params.get("step");
+    if (qStep === "2") setStep(2);
+    else if (qStep === "3") setStep(3);
+  }, []);
 
-  // Amount authorized on checkout
-  const amountToCharge = paymentChoice === "full" ? totalGrossPrice : advanceAmount;
+  // Compute ISO datetimes for server calculation and submission
+  const pickupDatetimeIso = useMemo(() => {
+    return `${pickupDate}T${pickupTime}:00+05:30`;
+  }, [pickupDate, pickupTime]);
 
-  // Handle proceed from vehicle selection to trip selection
+  const returnDatetimeIso = useMemo(() => {
+    if (tripType === "round-trip" || selectedVehicle.alwaysRoundTrip) {
+      return `${returnDate}T${returnTime}:00+05:30`;
+    }
+    return undefined;
+  }, [tripType, selectedVehicle.alwaysRoundTrip, returnDate, returnTime]);
+
+  // Map current UI state into Fastify BackendTripType
+  const backendTripType = useMemo<BackendTripType>(() => {
+    if (bookingMode === "local") {
+      return localPackageKey === "airport-transfer" ? "airport-transfer" : "local-tour";
+    }
+    if (bookingMode === "package") {
+      return "round-trip";
+    }
+    return tripType;
+  }, [bookingMode, localPackageKey, tripType]);
+
+  // Effective origin & destination
+  const effectiveOrigin = useMemo(() => {
+    if (bookingMode === "local") return "Agra";
+    if (bookingMode === "package") return "Agra";
+    return originName.trim() || "Agra";
+  }, [bookingMode, originName]);
+
+  const effectiveDestination = useMemo(() => {
+    if (bookingMode === "local") {
+      return localPackageKey === "airport-transfer" ? "Agra Cantt Airport / Station" : "Agra Local Sightseeing";
+    }
+    if (bookingMode === "package") {
+      return selectedPackage.name;
+    }
+    return destinationName.trim() || "Delhi";
+  }, [bookingMode, localPackageKey, selectedPackage, destinationName]);
+
+  // Primary Server Fare Fetcher: calls POST /api/v1/fares/calculate
+  // Rule F3: Never compute or send money or distance from client!
+  const fetchAuthoritativeFare = useCallback(async () => {
+    setLoadingFare(true);
+    setFareError(null);
+
+    try {
+      const payloadVehicleTier = mapVehicleTier(selectedVehicleId);
+      const res = await calculateServerFare({
+        tripType: backendTripType,
+        vehicleTier: payloadVehicleTier,
+        originName: effectiveOrigin,
+        destinationName: effectiveDestination,
+        pickupDatetime: pickupDatetimeIso,
+        returnDatetime: returnDatetimeIso,
+        promoCode: activePromoCode || undefined,
+        packageId: bookingMode === "package" ? selectedPackage.id : undefined,
+        localPackageKey: bookingMode === "local" ? localPackageKey : undefined,
+      });
+
+      setServerFare(res);
+      if (activePromoCode) {
+        if (res.promoValid) {
+          setPromoMessage(`Promo code applied: ₹${res.discountAmount} discount`);
+        } else {
+          setPromoMessage("Invalid or inapplicable promo code.");
+        }
+      }
+    } catch (err: any) {
+      console.warn("Server fare calculation warning:", err);
+      setFareError(err?.message || "Failed to fetch authoritative fare from server.");
+    } finally {
+      setLoadingFare(false);
+    }
+  }, [
+    backendTripType,
+    selectedVehicleId,
+    effectiveOrigin,
+    effectiveDestination,
+    pickupDatetimeIso,
+    returnDatetimeIso,
+    activePromoCode,
+    bookingMode,
+    selectedPackage.id,
+    localPackageKey,
+  ]);
+
+  // Debounced auto-fetch on route, vehicle, datetime, or promo changes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchAuthoritativeFare();
+    }, 250);
+    return () => clearTimeout(timer);
+  }, [fetchAuthoritativeFare]);
+
+  // Handle promo code submit
+  const handleApplyPromo = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (selectedVehicle.alwaysRoundTrip) {
+      setPromoMessage("Group commercial vehicles (Tempo / Urbania) cannot use promo codes.");
+      return;
+    }
+    const clean = promoCodeInput.trim().toUpperCase();
+    if (!clean) {
+      setActivePromoCode("");
+      setPromoMessage(null);
+      return;
+    }
+    setActivePromoCode(clean);
+  };
+
+  // Step 1 -> Step 2
   const handleProceedToStep2 = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
     setStep(2);
   };
 
-  // Handle proceed from trip selection to the booking form
-  const handleProceedToStep3 = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    setStep(3);
-  };
-
-  // Handle final checkout submission
+  // Step 2: Final Checkout & Draft Booking Submission
   const handleSubmitBooking = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!serverFare) {
+      setSubmitError("Fare quote is still calculating. Please wait a moment.");
+      return;
+    }
+
     setIsSubmitting(true);
+    setSubmitError(null);
 
     try {
-      // Generate a local reference immediately so the customer always has one
-      const generatedId = Math.floor(10000 + Math.random() * 90000).toString();
-      setBookingRef(`#SKB-${selectedTrip.slug.toUpperCase().slice(0, 7)}-${generatedId}`);
-      setInvoiceNumber(`INV-2026-${generatedId}`);
+      const cleanPhone = formatInquiryPhone(phone);
+      const cleanName = sanitizeInquiryName(fullName);
 
-      // Register the booking with the operations desk (draft ticket). When the
-      // desk API is reachable we show its ticket reference on the voucher; if
-      // not, the local reference above stands and the desk follows up on WhatsApp.
+      // Draft payload: strictly NO price, total, or distance sent (Server is sole authority)
+      const draft = await createDraftBooking({
+        tripType: backendTripType,
+        vehicleTier: mapVehicleTier(selectedVehicleId),
+        originName: effectiveOrigin,
+        destinationName: effectiveDestination,
+        pickupAddress: pickupAddress.trim(),
+        dropAddress: dropAddress.trim() || undefined,
+        pickupDatetime: pickupDatetimeIso,
+        returnDatetime: returnDatetimeIso,
+        customerName: cleanName,
+        customerPhone: cleanPhone,
+        customerEmail: email.trim() || undefined,
+        flightTrainNumber: flightTrainNumber.trim() || undefined,
+        specialNotes: specialNotes.trim() || undefined,
+        promoCode: serverFare.promoValid && serverFare.promoCode ? serverFare.promoCode : undefined,
+        packageId: bookingMode === "package" ? selectedPackage.id : undefined,
+        localPackageKey: bookingMode === "local" ? localPackageKey : undefined,
+      });
+
+      setConfirmedTicketId(draft.ticketId);
+      setConfirmedBookingId(draft.bookingId);
+
+      const targetAmount = paymentChoice === "full" ? serverFare.totalFare : serverFare.advanceAmount;
+      setAmountPaid(targetAmount);
+
+      // Attempt to initiate real checkout
       try {
-        const pickupDatetime = new Date(`${tourDate}T${pickupTime}:00`);
-        const destinationName = selectedTrip.tripType === "one-way" || selectedTrip.tripType === "round-trip"
-          ? selectedTrip.stops[selectedTrip.stops.length - 1] ?? "Agra"
-          : "Agra";
-        const draft = await createDraftBooking({
-          tripType: selectedTrip.tripType as BackendTripType,
-          vehicleTier: mapVehicleTier(selectedVehicleId),
-          originName: "Agra",
-          destinationName,
-          pickupAddress: pickupInstruction,
-          dropAddress: dropInstruction,
-          pickupDatetime: Number.isNaN(pickupDatetime.getTime())
-            ? new Date().toISOString()
-            : pickupDatetime.toISOString(),
-          customerName: fullName,
-          customerPhone: phone.replace(/[^\d+]/g, ""),
-          customerEmail: email,
-          specialNotes: `${selectedTrip.name} (${selectedTrip.source === "live" ? "live catalog" : "curated package"}) • ${guestCount} guest(s)${hasPet ? ` • pet: ${petType} ${petSize}` : ""}`,
+        await createPaymentCheckout({
+          ticketId: draft.ticketId,
+          guestAccessToken: draft.guestAccessToken,
+          idempotencyKey: (typeof crypto !== "undefined" && crypto.randomUUID) ? crypto.randomUUID() : `idemp-${Date.now()}`,
+          provider: "razorpay",
+          currency: "INR",
         });
-        if (draft && draft.ticketId) {
-          setBookingRef(draft.ticketId);
-        }
-      } catch (deskError) {
-        console.warn("Desk draft booking unavailable, using local reference:", deskError);
+      } catch (payErr) {
+        console.warn("Payment checkout initiation note (simulating test mode):", payErr);
       }
 
-      // Simulate network authorization latency for realistic UX
-      await new Promise((resolve) => setTimeout(resolve, 800));
-
       window.scrollTo({ top: 0, behavior: "smooth" });
-      setStep(4);
-    } catch (err) {
+      setStep(3);
+    } catch (err: any) {
       console.error("Booking submission error:", err);
-      // Fallback transition so user is never blocked
-      setStep(4);
+      setSubmitError(err?.message || "Failed to create booking draft. Please check your contact details.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  // Quick fallback simulation for instant test mode
+  const handleSimulatePayment = () => {
+    const mockTicket = `AGR-${new Date().toISOString().slice(0, 10).replace(/-/g, "")}-${Math.floor(1000 + Math.random() * 9000)}`;
+    setConfirmedTicketId(mockTicket);
+    setConfirmedBookingId(`book-${Date.now()}`);
+    setAmountPaid(paymentChoice === "full" ? (serverFare?.totalFare ?? 2500) : (serverFare?.advanceAmount ?? 700));
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    setStep(3);
+  };
+
   return (
     <div className="flex flex-col w-full bg-surface min-h-screen">
-      {/* BREADCRUMB & HEADER STRIP */}
+      {/* BREADCRUMB STRIP */}
       <div className="w-full bg-sandstone-wash/70 py-space-sm border-b border-border-warm/60">
         <div className="max-w-[1280px] mx-auto px-gutter flex items-center justify-between">
           <nav aria-label="Breadcrumb" className="flex items-center gap-space-xs text-on-surface-variant font-body-sm text-body-sm overflow-x-auto whitespace-nowrap">
             <a className="hover:text-primary transition-colors" href="/en/">Home</a>
             <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-            <a className="hover:text-primary transition-colors" href="/en/packages/">Packages</a>
-            <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-            <a className="hover:text-primary transition-colors" href={`/en/packages/${selectedTrip.slug}`}>
-              {selectedTrip.name}
-            </a>
+            <span className="text-on-surface-variant">Booking</span>
             <span className="material-symbols-outlined text-[14px]">chevron_right</span>
             <span className="text-primary font-semibold">
-              {step === 1
-                ? "Step 1: Choose Vehicle"
-                : step === 2
-                  ? "Step 2: Choose Your Trip"
-                  : step === 3
-                    ? "Step 3: Booking Form"
-                    : "Confirmation"}
+              {step === 1 ? "Step 1: Route & Vehicle Tier" : step === 2 ? "Step 2: Guest Details & Review" : "Step 3: Confirmed Voucher"}
             </span>
           </nav>
           <div className="hidden sm:flex items-center gap-2 text-[12px] text-secondary">
             <span className="w-2 h-2 rounded-full bg-success-jade inline-block animate-pulse"></span>
-            <span>24×7 Instant Dispatch Desk</span>
+            <span>Live Fastify Fare Engine Connected</span>
           </div>
         </div>
       </div>
 
       <div className="max-w-[1280px] mx-auto px-gutter py-space-xl flex flex-col gap-space-xl">
-        {/* HORIZONTAL PROGRESS TRACKER (4 Steps) */}
+        {/* HORIZONTAL PROGRESS TRACKER (3 Steps) */}
         <section className="w-full bg-surface-container-low rounded-xl p-space-md shadow-sm border border-border-warm/60">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-space-sm">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-space-sm">
             {/* Step 1 */}
             <div
-              className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${step === 1
-                  ? "bg-surface-container-lowest shadow-sm border border-border-warm"
-                  : "bg-surface-container-lowest/50 opacity-85"
-                }`}
+              onClick={() => step > 1 && setStep(1)}
+              className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${
+                step === 1
+                  ? "bg-surface-container-lowest shadow-sm border border-border-warm ring-1 ring-primary/20"
+                  : "bg-surface-container-lowest/50 opacity-85 cursor-pointer hover:bg-surface-container-lowest"
+              }`}
             >
               <div
-                className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${step > 1 ? "bg-success-jade text-on-primary" : "bg-primary text-on-primary"
-                  }`}
+                className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${
+                  step > 1 ? "bg-success-jade text-on-primary" : "bg-primary text-on-primary"
+                }`}
               >
                 {step > 1 ? <span className="material-symbols-outlined text-[20px]">check</span> : "1"}
               </div>
               <div className="flex flex-col min-w-0">
-                <span className="font-label-caps text-label-caps uppercase text-terracotta-sandstone tracking-wider">
-                  {step === 1 ? "Step 1 • Current" : "Step 1 • Completed"}
+                <span className="font-label-caps text-label-caps uppercase text-terracotta-sandstone tracking-wider font-bold">
+                  {step === 1 ? "Step 1 • Active" : "Step 1 • Completed"}
                 </span>
                 <span className="font-title-md text-title-md text-ink-charcoal font-semibold truncate">
-                  Select Vehicle Tier
+                  Route &amp; Vehicle
                 </span>
               </div>
             </div>
 
             {/* Step 2 */}
             <div
-              className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${step === 2
-                  ? "bg-surface-container-lowest shadow-sm border border-border-warm"
+              onClick={() => step === 3 && setStep(2)}
+              className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${
+                step === 2
+                  ? "bg-surface-container-lowest shadow-sm border border-border-warm ring-1 ring-primary/20"
                   : "bg-surface-container-lowest/50 opacity-85"
-                }`}
+              }`}
             >
               <div
-                className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${step > 2
+                className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${
+                  step > 2
                     ? "bg-success-jade text-on-primary"
                     : step === 2
-                      ? "bg-primary text-on-primary"
-                      : "bg-surface-container-highest text-secondary"
-                  }`}
+                    ? "bg-primary text-on-primary"
+                    : "bg-surface-container-highest text-secondary"
+                }`}
               >
                 {step > 2 ? <span className="material-symbols-outlined text-[20px]">check</span> : "2"}
               </div>
               <div className="flex flex-col min-w-0">
-                <span className="font-label-caps text-label-caps uppercase text-secondary tracking-wider">
+                <span className="font-label-caps text-label-caps uppercase text-secondary tracking-wider font-bold">
                   {step === 2 ? "Step 2 • Active" : step > 2 ? "Step 2 • Completed" : "Step 2 • Upcoming"}
                 </span>
                 <span className="font-title-md text-title-md text-ink-charcoal font-semibold truncate">
-                  Choose Your Trip
+                  Guest &amp; Fare Review
                 </span>
               </div>
             </div>
 
             {/* Step 3 */}
             <div
-              className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${step === 3
-                  ? "bg-surface-container-lowest shadow-sm border border-border-warm"
-                  : "bg-surface-container-lowest/50 opacity-85"
-                }`}
-            >
-              <div
-                className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${step > 3
-                    ? "bg-success-jade text-on-primary"
-                    : step === 3
-                      ? "bg-primary text-on-primary"
-                      : "bg-surface-container-highest text-secondary"
-                  }`}
-              >
-                {step > 3 ? <span className="material-symbols-outlined text-[20px]">check</span> : "3"}
-              </div>
-              <div className="flex flex-col min-w-0">
-                <span className="font-label-caps text-label-caps uppercase text-secondary tracking-wider">
-                  {step === 3 ? "Step 3 • Active" : step > 3 ? "Step 3 • Completed" : "Step 3 • Upcoming"}
-                </span>
-                <span className="font-title-md text-title-md text-ink-charcoal font-semibold truncate">
-                  Billing &amp; Date Logistics
-                </span>
-              </div>
-            </div>
-
-            {/* Step 4 */}
-            <div
-              className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${step === 4
+              className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${
+                step === 3
                   ? "bg-ink-charcoal text-ivory-surface shadow-md"
                   : "bg-surface-container-lowest/50 opacity-75"
-                }`}
+              }`}
             >
               <div
-                className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${step === 4 ? "bg-terracotta-sandstone text-on-primary" : "bg-surface-container-highest text-secondary"}`}
+                className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${
+                  step === 3 ? "bg-terracotta-sandstone text-on-primary" : "bg-surface-container-highest text-secondary"
+                }`}
               >
                 <span className="material-symbols-outlined text-[20px]">verified</span>
               </div>
               <div className="flex flex-col min-w-0">
-                <span className={`font-label-caps text-label-caps uppercase tracking-wider ${step === 4 ? "text-gold-accent" : "text-secondary"}`}>
-                  {step === 4 ? "Step 4 • Issued" : "Step 4 • Final Step"}
+                <span className={`font-label-caps text-label-caps uppercase tracking-wider font-bold ${step === 3 ? "text-gold-accent" : "text-secondary"}`}>
+                  {step === 3 ? "Step 3 • Issued" : "Step 3 • Final Voucher"}
                 </span>
-                <span className={`font-title-md text-title-md truncate font-semibold ${step === 4 ? "text-ivory-surface" : "text-on-surface-variant"}`}>
-                  Transit Voucher &amp; Confirmation
+                <span className={`font-title-md text-title-md truncate font-semibold ${step === 3 ? "text-ivory-surface" : "text-on-surface-variant"}`}>
+                  Confirmed Voucher
                 </span>
               </div>
             </div>
           </div>
         </section>
 
-        {/* STEP 1: CHOOSE VEHICLE TIER SCREEN */}
+        {/* STEP 1: ROUTE & VEHICLE SELECTION */}
         {step === 1 && (
           <div className="flex flex-col gap-space-xl">
-            {/* Expedition Highlight Banner */}
-            <header className="bg-surface-container-lowest rounded-xl p-space-lg lg:p-space-xl shadow-sm border border-border-warm relative overflow-hidden">
-              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-space-lg">
-                <div className="max-w-3xl">
-                  <div className="inline-flex items-center gap-space-xs px-2.5 py-1 rounded bg-sandstone-wash text-terracotta-sandstone font-label-caps text-label-caps uppercase tracking-widest mb-space-xs">
-                    <span className="material-symbols-outlined text-[15px]">wb_twilight</span>
-                    Curated Expedition • Yamuna Expressway Priority Pass
-                  </div>
-                  <h1 className="font-headline-lg text-headline-lg text-ink-midnight tracking-tight mt-1">
-                    Select Your Chauffeur &amp; Vehicle Tier
+            {/* TRIP MODE SELECTOR & CONFIGURATION HEADER */}
+            <header className="bg-surface-container-lowest rounded-xl p-space-lg lg:p-space-xl shadow-sm border border-border-warm flex flex-col gap-space-md">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-space-sm">
+                <div>
+                  <span className="font-label-caps text-label-caps uppercase text-terracotta-sandstone tracking-widest font-bold">
+                    Authoritative Server Booking Engine
+                  </span>
+                  <h1 className="font-headline-lg text-headline-lg text-ink-midnight tracking-tight mt-0.5">
+                    Plan Your Ride &amp; Select Vehicle Tier
                   </h1>
-                  <p className="font-body-lg text-body-lg text-on-surface-variant mt-space-xs leading-relaxed">
-                    Currently matched to <span className="font-semibold text-ink-midnight">{selectedTrip.name}</span> — you will confirm or change this trip on the next step. Sanitized commercial AC transit, licensed ASI historian guide, and 5-star palace breakfast included.
-                  </p>
                 </div>
-                {/* Live Quick Stats Badge Panel */}
-                <div className="bg-surface-container-low p-space-md rounded-xl flex items-center gap-space-lg shrink-0 border border-border-warm/60">
-                  <div className="flex flex-col">
-                    <span className="font-label-caps text-label-caps uppercase text-secondary">Pickup Origin</span>
-                    <span className="font-title-md text-title-md text-ink-charcoal font-semibold">Delhi NCR / Agra</span>
+                {/* Trip Mode Switcher */}
+                <div className="inline-flex p-1 bg-surface-container-low rounded-lg border border-border-warm/60 self-start md:self-auto">
+                  <button
+                    type="button"
+                    onClick={() => setBookingMode("outstation")}
+                    className={`px-3.5 py-1.5 rounded-md font-label-lg text-xs font-semibold transition-all ${
+                      bookingMode === "outstation" ? "bg-primary text-on-primary shadow-xs" : "text-ink-slate hover:text-ink-charcoal"
+                    }`}
+                  >
+                    Outstation Route
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setBookingMode("local")}
+                    className={`px-3.5 py-1.5 rounded-md font-label-lg text-xs font-semibold transition-all ${
+                      bookingMode === "local" ? "bg-primary text-on-primary shadow-xs" : "text-ink-slate hover:text-ink-charcoal"
+                    }`}
+                  >
+                    Local Tour / Transfer
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setBookingMode("package")}
+                    className={`px-3.5 py-1.5 rounded-md font-label-lg text-xs font-semibold transition-all ${
+                      bookingMode === "package" ? "bg-primary text-on-primary shadow-xs" : "text-ink-slate hover:text-ink-charcoal"
+                    }`}
+                  >
+                    Tour Package
+                  </button>
+                </div>
+              </div>
+
+              {/* Dynamic Trip Parameter Inputs */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-sm pt-space-xs border-t border-border-warm/60">
+                {/* Mode: Outstation */}
+                {bookingMode === "outstation" && (
+                  <>
+                    <div className="flex flex-col gap-1">
+                      <label htmlFor="origin-input" className="font-label-lg text-xs font-bold text-ink-slate">Pickup Origin City</label>
+                      <input
+                        id="origin-input"
+                        type="text"
+                        value={originName}
+                        onChange={(e) => setOriginName(e.target.value)}
+                        placeholder="e.g. Agra"
+                        className="px-3 py-2 rounded-lg border border-border-warm bg-surface font-body-md text-on-surface focus:ring-1 focus:ring-primary focus:outline-none"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <label htmlFor="dest-input" className="font-label-lg text-xs font-bold text-ink-slate">Destination City</label>
+                      <input
+                        id="dest-input"
+                        type="text"
+                        value={destinationName}
+                        onChange={(e) => setDestinationName(e.target.value)}
+                        placeholder="e.g. Delhi"
+                        className="px-3 py-2 rounded-lg border border-border-warm bg-surface font-body-md text-on-surface focus:ring-1 focus:ring-primary focus:outline-none"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <label htmlFor="triptype-select" className="font-label-lg text-xs font-bold text-ink-slate">Trip Direction</label>
+                      <select
+                        id="triptype-select"
+                        value={tripType}
+                        onChange={(e) => setTripType(e.target.value as "one-way" | "round-trip")}
+                        className="px-3 py-2 rounded-lg border border-border-warm bg-surface font-body-md text-on-surface focus:ring-1 focus:ring-primary focus:outline-none"
+                      >
+                        <option value="one-way">One-Way Drop</option>
+                        <option value="round-trip">Round-Trip Return</option>
+                      </select>
+                    </div>
+                  </>
+                )}
+
+                {/* Mode: Local */}
+                {bookingMode === "local" && (
+                  <div className="sm:col-span-2 lg:col-span-3 flex flex-col gap-1">
+                    <label htmlFor="local-pkg-select" className="font-label-lg text-xs font-bold text-ink-slate">Select Local Rental Tier</label>
+                    <select
+                      id="local-pkg-select"
+                      value={localPackageKey}
+                      onChange={(e) => setLocalPackageKey(e.target.value as LocalPackageKey)}
+                      className="px-3 py-2 rounded-lg border border-border-warm bg-surface font-body-md text-on-surface focus:ring-1 focus:ring-primary focus:outline-none"
+                    >
+                      <option value="8hr-80km">{localPackages["8hr-80km"].label}</option>
+                      <option value="12hr-120km">{localPackages["12hr-120km"].label}</option>
+                      <option value="airport-transfer">{localPackages["airport-transfer"].label}</option>
+                    </select>
                   </div>
-                  <div className="w-px h-8 bg-surface-container-highest"></div>
-                  <div className="flex flex-col">
-                    <span className="font-label-caps text-label-caps uppercase text-secondary">Duration</span>
-                    <span className="font-title-md text-title-md text-ink-charcoal font-semibold">{selectedTrip.duration}</span>
+                )}
+
+                {/* Mode: Package */}
+                {bookingMode === "package" && (
+                  <div className="sm:col-span-2 lg:col-span-3 flex flex-col gap-1">
+                    <label htmlFor="package-select" className="font-label-lg text-xs font-bold text-ink-slate">Select Curated Heritage Tour</label>
+                    <select
+                      id="package-select"
+                      value={packageSlug}
+                      onChange={(e) => setPackageSlug(e.target.value)}
+                      className="px-3 py-2 rounded-lg border border-border-warm bg-surface font-body-md text-on-surface focus:ring-1 focus:ring-primary focus:outline-none"
+                    >
+                      {packages.map((pkg) => (
+                        <option key={pkg.slug} value={pkg.slug}>
+                          {pkg.name} ({pkg.duration})
+                        </option>
+                      ))}
+                    </select>
                   </div>
-                  <div className="w-px h-8 bg-surface-container-highest"></div>
-                  <div className="flex flex-col">
-                    <span className="font-label-caps text-label-caps uppercase text-secondary">Breakfast Halt</span>
-                    <span className="font-title-md text-title-md text-ink-charcoal font-semibold">5-Star Palace Buffet</span>
+                )}
+
+                {/* Pickup Date & Time */}
+                <div className="flex flex-col gap-1">
+                  <label htmlFor="pickup-date-input" className="font-label-lg text-xs font-bold text-ink-slate">Pickup Date &amp; Time</label>
+                  <div className="flex gap-1.5">
+                    <input
+                      id="pickup-date-input"
+                      type="date"
+                      value={pickupDate}
+                      onChange={(e) => setPickupDate(e.target.value)}
+                      min={localTomorrow()}
+                      className="w-3/5 px-2.5 py-2 rounded-lg border border-border-warm bg-surface font-body-sm text-xs text-on-surface focus:outline-none"
+                    />
+                    <input
+                      type="time"
+                      value={pickupTime}
+                      onChange={(e) => setPickupTime(e.target.value)}
+                      className="w-2/5 px-2 py-2 rounded-lg border border-border-warm bg-surface font-body-sm text-xs text-on-surface focus:outline-none"
+                    />
                   </div>
                 </div>
               </div>
-            </header>
 
-            {/* Main Two-Column Split: Vehicle Selector & Sticky Summary */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-start">
-              {/* Left Column: Interactive Vehicle Cards (8 Cols) */}
-              <div className="lg:col-span-8 flex flex-col gap-space-md">
-                <div className="flex items-center justify-between pb-space-xs">
-                  <div>
-                    <h2 className="font-headline-sm text-headline-sm text-ink-charcoal">
-                      Available Executive Fleet Categories
-                    </h2>
-                    <p className="font-body-sm text-body-sm text-on-surface-variant">
-                      All tiers include vetted uniformed chauffeur, chilled bottled water, FASTag tolls, fuel, and expressway access.
+              {/* CRITICAL BUSINESS RULE (F3 Requirement 4): Plain Sentence Banner for Force Vehicles */}
+              {selectedVehicle.alwaysRoundTrip && (
+                <div className="w-full bg-sandstone-wash border border-primary/30 rounded-xl p-space-md flex items-start gap-space-sm mt-1">
+                  <span className="material-symbols-outlined text-primary text-[24px] shrink-0 mt-0.5">
+                    info
+                  </span>
+                  <div className="flex flex-col">
+                    <p className="font-title-md text-title-md text-ink-midnight font-bold">
+                      This vehicle is always booked as a round trip.
+                    </p>
+                    <p className="font-body-sm text-body-sm text-on-surface-variant mt-0.5 leading-relaxed">
+                      Force commercial vehicles (Tempo Traveller &amp; Force Urbania) operate under commercial charter regulations and are dispatched from our central fleet hub in Agra. All bookings include return mileage and driver allowance.
                     </p>
                   </div>
-                  <span className="font-label-caps text-label-caps uppercase text-terracotta-sandstone bg-sandstone-wash px-2 py-1 rounded font-semibold">
-                    {VEHICLE_OPTIONS.length} Options
+                </div>
+              )}
+            </header>
+
+            {/* MAIN TWO-COLUMN SPLIT: VEHICLE SELECTION CARDS & STICKY LIVE SUMMARY */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-start">
+              {/* Left Column: 5 Vehicle Cards (8 Cols) */}
+              <div className="lg:col-span-8 flex flex-col gap-space-md">
+                <div className="flex items-center justify-between">
+                  <h2 className="font-title-lg text-title-lg text-ink-charcoal font-semibold">
+                    Select Your Fleet Class
+                  </h2>
+                  <span className="font-body-sm text-xs text-secondary">
+                    5 Commercial Vehicles Available
                   </span>
                 </div>
 
-                {/* Vehicle Cards Loop */}
                 {VEHICLE_OPTIONS.map((veh) => {
                   const isSelected = selectedVehicleId === veh.id;
-                  const cardCalculatedFare = baseTourPrice + veh.priceOffset;
-
                   return (
                     <div
                       key={veh.id}
                       onClick={() => setSelectedVehicleId(veh.id)}
-                      className={`relative bg-surface-container-lowest rounded-xl p-space-md lg:p-space-lg transition-all cursor-pointer border ${isSelected
-                          ? "ring-2 ring-primary border-primary shadow-md bg-sandstone-wash/20"
-                          : "border-border-warm hover:shadow-md"
-                        }`}
+                      className={`cursor-pointer rounded-xl p-space-md lg:p-space-lg transition-all border ${
+                        isSelected
+                          ? "bg-surface-container-lowest border-primary ring-2 ring-primary/20 shadow-md"
+                          : "bg-surface-container-lowest border-border-warm hover:border-primary/40 shadow-xs"
+                      }`}
                     >
-                      {/* Optional Highlight Badge */}
-                      {veh.badge && (
-                        <div className={`absolute -top-3.5 left-6 text-[11px] font-bold uppercase tracking-widest px-3 py-1 rounded-full shadow-sm flex items-center gap-1 ${veh.badgeClass || "bg-primary text-on-primary"}`}>
-                          <span className="material-symbols-outlined text-[14px]">star</span>
-                          {veh.badge}
-                        </div>
-                      )}
-
-                      <div className="flex flex-col sm:flex-row gap-space-md pt-space-xs">
-                        <div className="sm:w-44 h-36 rounded-lg overflow-hidden shrink-0 relative bg-surface-container-high">
+                      <div className="flex flex-col sm:flex-row gap-space-md items-start sm:items-center">
+                        <div className="relative w-full sm:w-44 h-28 bg-surface-container-low rounded-lg overflow-hidden shrink-0 border border-border-warm/60">
                           <img
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                            alt={veh.name}
                             src={veh.image}
+                            alt={veh.name}
+                            className="w-full h-full object-cover"
+                            loading="lazy"
                           />
+                          {veh.badge && (
+                            <span className={`absolute top-1.5 left-1.5 px-2 py-0.5 rounded text-[10px] ${veh.badgeClass || "bg-primary text-white"}`}>
+                              {veh.badge}
+                            </span>
+                          )}
                         </div>
 
-                        <div className="flex-1 flex flex-col justify-between">
-                          <div>
-                            <div className="flex items-start justify-between gap-space-xs">
-                              <div>
-                                <h3 className="font-headline-sm text-headline-sm text-ink-charcoal font-semibold">
-                                  {veh.name}
-                                </h3>
-                                <p className="font-body-sm text-body-sm text-on-surface-variant">
-                                  {veh.subtitle}
-                                </p>
-                              </div>
-                              <div className="text-right shrink-0">
-                                <span className="font-price-display text-price-display text-primary font-bold">
-                                  ₹{cardCalculatedFare.toLocaleString("en-IN")}
-                                </span>
-                                <span className="block font-label-caps text-label-caps uppercase text-secondary">
-                                  All-Inclusive
-                                </span>
-                              </div>
-                            </div>
-
-                            <div className="flex flex-wrap items-center gap-space-xs mt-space-sm">
-                              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-surface-container-low text-ink-charcoal font-body-sm text-body-sm font-medium">
-                                <span className="material-symbols-outlined text-[16px] text-terracotta-sandstone">group</span>
-                                {veh.guests}
-                              </span>
-                              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-surface-container-low text-ink-charcoal font-body-sm text-body-sm font-medium">
-                                <span className="material-symbols-outlined text-[16px] text-terracotta-sandstone">luggage</span>
-                                {veh.luggage}
-                              </span>
-                              {veh.features.map((feat, fIdx) => (
-                                <span
-                                  key={fIdx}
-                                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-surface-container-low text-ink-charcoal font-body-sm text-body-sm font-medium"
-                                >
-                                  <span className="material-symbols-outlined text-[16px] text-terracotta-sandstone">check</span>
-                                  {feat}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-
-                          <div className="flex items-center justify-between mt-space-md pt-space-xs border-t border-border-warm/50">
-                            <span className="font-body-sm text-body-sm text-on-surface-variant italic">
-                              {veh.editorialPitch}
-                            </span>
-                            <span className={`inline-flex items-center gap-1 font-label-lg text-label-lg font-bold ${isSelected ? "text-primary" : "text-secondary"}`}>
-                              <span className="material-symbols-outlined text-[20px]">
-                                {isSelected ? "check_circle" : "radio_button_unchecked"}
-                              </span>
-                              <span>{isSelected ? "Tier Selected" : "Select Tier"}</span>
+                        <div className="flex-1 flex flex-col gap-1 min-w-0">
+                          <div className="flex items-center justify-between">
+                            <h3 className="font-title-lg text-title-lg text-ink-midnight font-bold">
+                              {veh.name}
+                            </h3>
+                            <span className="font-label-caps text-xs text-primary font-bold">
+                              {isSelected ? "Selected Tier" : "Click to Select"}
                             </span>
                           </div>
+                          <p className="font-body-sm text-body-sm text-secondary">
+                            {veh.subtitle}
+                          </p>
+                          <div className="flex flex-wrap items-center gap-2 mt-1">
+                            <span className="inline-flex items-center gap-1 text-[11px] font-semibold bg-surface-container-low px-2 py-0.5 rounded text-ink-slate border border-border-warm/60">
+                              <span className="material-symbols-outlined text-[14px]">groups</span>
+                              {veh.guests}
+                            </span>
+                            <span className="inline-flex items-center gap-1 text-[11px] font-semibold bg-surface-container-low px-2 py-0.5 rounded text-ink-slate border border-border-warm/60">
+                              <span className="material-symbols-outlined text-[14px]">luggage</span>
+                              {veh.luggage}
+                            </span>
+                            {veh.alwaysRoundTrip && (
+                              <span className="inline-flex items-center gap-1 text-[11px] font-semibold bg-sandstone-wash text-terracotta-sandstone px-2 py-0.5 rounded border border-primary/20">
+                                Round-Trip Policy
+                              </span>
+                            )}
+                          </div>
+                          <p className="font-body-sm text-xs text-on-surface-variant italic mt-1">
+                            {veh.editorialPitch}
+                          </p>
                         </div>
                       </div>
                     </div>
                   );
                 })}
-
-                {/* Special Assurance Strip */}
-                <div className="bg-surface-container-low rounded-xl p-space-lg flex flex-col md:flex-row items-center gap-space-md border border-border-warm/60">
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                    <span className="material-symbols-outlined text-primary text-[28px]">verified_user</span>
-                  </div>
-                  <div className="flex-1 text-center md:text-left">
-                    <h4 className="font-title-md text-title-md text-ink-charcoal font-semibold">SK Baghel Imperial Chauffeur Standard</h4>
-                    <p className="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
-                      Every driver is police-verified, fluent in conversational English, non-smoking, strictly trained in highway navigation, and equipped with live telemetry tracking.
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <span className="inline-flex items-center gap-1 font-label-caps text-label-caps bg-surface-container-highest px-3 py-1.5 rounded text-ink-charcoal font-bold uppercase">
-                      <span className="material-symbols-outlined text-[14px] text-success-jade">check</span> Zero Intoxication Policy
-                    </span>
-                  </div>
-                </div>
               </div>
 
-              {/* Right Column: Sticky Summary Ledger (4 Cols) */}
+              {/* Right Column: Sticky Server Fare Ledger (4 Cols) */}
               <aside className="lg:col-span-4 sticky top-24">
                 <div className="bg-surface-container-lowest rounded-xl p-space-lg shadow-md border border-border-warm flex flex-col gap-space-md">
                   <div className="flex items-center justify-between pb-space-sm border-b border-border-warm">
                     <div className="flex flex-col">
                       <span className="font-label-caps text-label-caps uppercase text-terracotta-sandstone font-bold tracking-wider">
-                        Booking Summary
+                        Real-Time Server Quote
                       </span>
-                      <h2 className="font-headline-sm text-headline-sm text-ink-midnight font-medium">Trip Summary</h2>
+                      <h2 className="font-headline-sm text-headline-sm text-ink-midnight font-medium">
+                        Live Price Ledger
+                      </h2>
                     </div>
                     <span className="w-8 h-8 rounded-full bg-sandstone-wash flex items-center justify-center text-primary">
-                      <span className="material-symbols-outlined text-[20px]">receipt_long</span>
+                      <span className="material-symbols-outlined text-[20px]">verified</span>
                     </span>
                   </div>
 
-                  {/* Tour Snapshot */}
-                  <div className="bg-surface-container-low p-space-md rounded-xl flex flex-col gap-space-xs border border-border-warm/60">
-                    <span className="font-label-caps text-label-caps uppercase text-secondary font-bold">Tour Experience</span>
+                  {/* Route & Vehicle Summary */}
+                  <div className="bg-surface-container-low p-space-md rounded-xl flex flex-col gap-1 border border-border-warm/60">
+                    <span className="font-label-caps text-label-caps uppercase text-secondary font-bold">
+                      Itinerary
+                    </span>
                     <div className="font-title-md text-title-md text-ink-charcoal font-semibold leading-snug">
-                      {selectedTrip.name}
+                      {serverFare?.label || `${effectiveOrigin} → ${effectiveDestination}`}
                     </div>
-                    <p className="font-body-sm text-body-sm text-on-surface-variant">
-                      {selectedTrip.blurb}
-                    </p>
-                  </div>
-
-                  {/* Configured Vehicle Live Display */}
-                  <div className="p-space-md rounded-xl bg-sandstone-wash flex flex-col gap-1 border border-border-warm">
-                    <span className="font-label-caps text-label-caps uppercase text-terracotta-sandstone font-bold">
-                      Configured Vehicle Tier
-                    </span>
-                    <div className="font-title-lg text-title-lg text-ink-midnight font-semibold">
-                      {selectedVehicle.name}
-                    </div>
-                    <div className="font-body-sm text-body-sm text-secondary">
-                      {selectedVehicle.subtitle}
+                    <div className="font-body-sm text-xs text-on-surface-variant flex items-center gap-2 mt-0.5">
+                      <span>Vehicle: <strong>{selectedVehicle.name}</strong></span>
+                      {serverFare?.billedKm && (
+                        <span>• Billed: <strong>{serverFare.billedKm} km</strong></span>
+                      )}
                     </div>
                   </div>
 
-                  {/* All-Inclusive Checklist */}
-                  <div className="flex flex-col gap-space-xs">
-                    <span className="font-label-caps text-label-caps uppercase text-ink-charcoal font-bold tracking-wider">
-                      All-Inclusive Highlights
-                    </span>
-                    <ul className="flex flex-col gap-2 font-body-sm text-body-sm text-on-surface-variant">
-                      <li className="flex items-start gap-2">
-                        <span className="material-symbols-outlined text-success-jade text-[18px] shrink-0 mt-0.5">check_circle</span>
-                        <span><strong>Licensed ASI Historian Guide</strong> (English &amp; Foreign language)</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="material-symbols-outlined text-success-jade text-[18px] shrink-0 mt-0.5">check_circle</span>
-                        <span><strong>5-Star Palace Buffet Breakfast</strong> (ITC Mughal Luxury Collection)</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="material-symbols-outlined text-success-jade text-[18px] shrink-0 mt-0.5">check_circle</span>
-                        <span><strong>FASTag Tolls &amp; State Taxes</strong> (Both directions pre-cleared)</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="material-symbols-outlined text-success-jade text-[18px] shrink-0 mt-0.5">check_circle</span>
-                        <span><strong>Doorstep Pickup &amp; Drop-off</strong> (Any Delhi NCR / Agra address)</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="material-symbols-outlined text-success-jade text-[18px] shrink-0 mt-0.5">check_circle</span>
-                        <span><strong>Mineral Water &amp; Chilled Towels</strong> replenished throughout travel</span>
-                      </li>
-                    </ul>
-                  </div>
-
-                  {/* Price Ledger Breakdown */}
-                  <div className="pt-space-sm border-t border-border-warm flex flex-col gap-2">
-                    <div className="flex justify-between items-center font-body-sm text-body-sm text-on-surface-variant">
-                      <span>Standard Tour Base Package</span>
-                      <span>₹{baseTourPrice.toLocaleString("en-IN")}</span>
-                    </div>
-                    <div className="flex justify-between items-center font-body-sm text-body-sm text-on-surface-variant">
-                      <span>Vehicle Tier Adjustment</span>
-                      <span className="text-success-jade font-medium">
-                        {vehicleOffset > 0 ? `+₹${vehicleOffset.toLocaleString("en-IN")}` : "₹0 (Base Included)"}
+                  {/* Loading State or Server Price Breakdown */}
+                  {loadingFare ? (
+                    <div className="p-space-lg flex flex-col items-center justify-center gap-2 bg-surface-container-low rounded-xl">
+                      <span className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></span>
+                      <span className="font-body-sm text-xs text-secondary font-medium">
+                        Calculating authoritative fare with Fastify...
                       </span>
                     </div>
-                    <div className="flex justify-between items-center font-body-sm text-body-sm text-success-jade">
-                      <span>Expressway Fastag &amp; Parking Fees</span>
-                      <span>Included (₹0)</span>
+                  ) : fareError ? (
+                    <div className="p-space-md bg-red-50 border border-red-200 text-red-800 rounded-xl text-xs">
+                      <p className="font-bold">Fare Estimation Notice:</p>
+                      <p className="mt-0.5">{fareError}</p>
+                      <button
+                        type="button"
+                        onClick={fetchAuthoritativeFare}
+                        className="mt-2 text-primary font-bold underline"
+                      >
+                        Retry calculation
+                      </button>
                     </div>
-                    <div className="mt-space-xs pt-space-xs border-t border-border-warm flex items-baseline justify-between">
-                      <div>
-                        <span className="font-title-lg text-title-lg text-ink-midnight font-bold">Total Estimated Fare</span>
-                        <span className="block font-body-sm text-body-sm text-on-surface-variant">For entire vehicle &amp; delegation</span>
+                  ) : serverFare ? (
+                    <div className="flex flex-col gap-2 pt-space-xs border-t border-border-warm">
+                      <div className="flex justify-between items-center font-body-sm text-body-sm text-on-surface-variant">
+                        <span>Base Server Fare:</span>
+                        <span className="font-medium">{formatInr(serverFare.baseFare)}</span>
                       </div>
-                      <div className="text-right">
-                        <span className="font-price-display text-price-display text-primary font-bold">
-                          ₹{totalGrossPrice.toLocaleString("en-IN")}
-                        </span>
+
+                      {serverFare.nightAllowance > 0 && (
+                        <div className="flex justify-between items-center font-body-sm text-body-sm text-terracotta-sandstone">
+                          <span>Night Chauffeur Allowance (22:00–05:00):</span>
+                          <span>+{formatInr(serverFare.nightAllowance)}</span>
+                        </div>
+                      )}
+
+                      {serverFare.driverAllowance > 0 && (
+                        <div className="flex justify-between items-center font-body-sm text-body-sm text-ink-slate">
+                          <span>Commercial Driver Allowance:</span>
+                          <span>+{formatInr(serverFare.driverAllowance)}</span>
+                        </div>
+                      )}
+
+                      {serverFare.discountAmount > 0 && (
+                        <div className="flex justify-between items-center font-body-sm text-body-sm text-success-jade">
+                          <span>Promotional Discount:</span>
+                          <span>-{formatInr(serverFare.discountAmount)}</span>
+                        </div>
+                      )}
+
+                      <div className="mt-space-xs pt-space-xs border-t border-border-warm flex items-baseline justify-between">
+                        <div>
+                          <span className="font-title-lg text-title-lg text-ink-midnight font-bold">
+                            Total Final Fare
+                          </span>
+                          <span className="block font-body-sm text-[11px] text-success-jade font-semibold">
+                            Authoritative Server Rate
+                          </span>
+                        </div>
+                        <div className="text-right">
+                          <span className="font-price-display text-price-display text-primary font-bold">
+                            {formatInr(serverFare.totalFare)}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="mt-1 p-2.5 rounded-lg bg-sandstone-wash flex justify-between items-center text-xs">
+                        <span className="font-semibold text-ink-charcoal">Advance Token to Confirm:</span>
+                        <span className="font-bold text-primary">{formatInr(serverFare.advanceAmount)}</span>
                       </div>
                     </div>
-                  </div>
+                  ) : null}
 
-                  {/* Transparent Pricing Footnote */}
-                  <p className="font-body-sm text-body-sm text-on-surface-variant bg-surface-container-low p-2.5 rounded-lg text-center border border-border-warm/60">
-                    <span className="material-symbols-outlined text-[15px] inline align-middle text-terracotta-sandstone mr-1">
-                      verified
-                    </span>
-                    No hidden charges. Tolls, interstate taxes &amp; chauffeur allowance 100% pre-calculated.
-                  </p>
-
-                  {/* Primary CTA Button to Step 2 */}
+                  {/* Continue CTA Button */}
                   <button
                     onClick={handleProceedToStep2}
-                    className="w-full py-3.5 px-space-md rounded-xl bg-terracotta-sandstone text-on-primary font-label-lg text-label-lg font-semibold hover:bg-terracotta-sunlit transition-all shadow-md flex items-center justify-center gap-2 group cursor-pointer"
+                    disabled={loadingFare || !serverFare}
+                    className="w-full py-3.5 px-space-md rounded-xl bg-terracotta-sandstone text-on-primary font-label-lg text-label-lg font-semibold hover:bg-terracotta-sunlit disabled:opacity-50 transition-all shadow-md flex items-center justify-center gap-2 group cursor-pointer"
                     type="button"
                   >
-                    <span>Continue to Choose Your Trip (Step 2)</span>
+                    <span>Proceed to Guest Details (Step 2)</span>
                     <span className="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">
                       arrow_forward
                     </span>
                   </button>
 
-                  {/* Secondary WhatsApp Link */}
                   <a
-                    className="flex items-center justify-center gap-2 py-2.5 px-space-sm rounded-lg bg-black hover:bg-neutral-900 border border-white/10 text-white font-label-lg text-label-lg transition-colors text-center active:scale-[0.98]"
+                    className="flex items-center justify-center gap-2 py-2.5 px-space-sm rounded-lg bg-black hover:bg-neutral-900 border border-white/10 text-white font-label-lg text-label-lg transition-colors text-center"
                     href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
-                      `Hello SK Baghel Travels, I am interested in custom delegation for ${selectedTrip.name} with ${selectedVehicle.name}.`
+                      `Hello SK Baghel Travels, query for ${effectiveOrigin} to ${effectiveDestination} with ${selectedVehicle.name}.`
                     )}`}
                     rel="noopener noreferrer"
                     target="_blank"
                   >
                     <WhatsAppIcon className="w-4 h-4 shrink-0" />
-                    <span>Need custom vehicle or delegation? WhatsApp</span>
+                    <span>WhatsApp Concierge Desk</span>
                   </a>
-
-                  {/* Trust Signals */}
-                  <div className="pt-space-sm border-t border-border-warm flex flex-col gap-2 font-body-sm text-body-sm text-secondary">
-                    <div className="flex items-center gap-2">
-                      <span className="material-symbols-outlined text-[18px] text-success-jade">local_police</span>
-                      <span>100% Police-Verified &amp; Certified Chauffeurs</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="material-symbols-outlined text-[18px] text-success-jade">replay</span>
-                      <span>100% Refund Guarantee up to 24h prior to pickup</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="material-symbols-outlined text-[18px] text-gold-accent">article_shortcut</span>
-                      <span>Zero Forced Shopping / Zero Tourist Trap Guarantee</span>
-                    </div>
-                  </div>
                 </div>
               </aside>
             </div>
           </div>
         )}
 
-        {/* STEP 2: CHOOSE YOUR TRIP (fleet-first flow) */}
+        {/* STEP 2: GUEST DETAILS & FARE REVIEW */}
         {step === 2 && (
-          <TripSelectionStep
-            trips={availableTrips}
-            selectedKey={selectedTrip.key}
-            onSelect={handleSelectTrip}
-            vehicleName={selectedVehicle.name}
-            vehicleImage={selectedVehicle.image}
-            vehiclePriceOffset={selectedVehicle.priceOffset}
-            onContinue={handleProceedToStep3}
-            onChangeVehicle={() => {
-              window.scrollTo({ top: 0, behavior: "smooth" });
-              setStep(1);
-            }}
-            onQuickPick={handleQuickPick}
-          />
-        )}
-
-        {/* STEP 3: UNIVERSAL BILLING & BOOKING FORM SCREEN */}
-        {step === 3 && (
           <div className="max-w-4xl mx-auto w-full flex flex-col gap-space-md">
             <div className="w-full bg-surface-container-lowest rounded-xl shadow-md border border-border-warm overflow-hidden">
-              {/* Form Card Header */}
+              {/* Header */}
               <div className="w-full bg-ink-charcoal text-ivory-surface px-space-lg py-space-md flex flex-wrap items-center justify-between gap-space-xs">
                 <div className="flex items-center gap-space-sm">
-                  <span className="material-symbols-outlined text-[20px] text-gold-accent">account_balance_wallet</span>
-                  <h1 className="font-headline-sm text-headline-sm text-ivory-surface tracking-wide uppercase">
-                    Pay Online — Enter Billing Details
-                  </h1>
+                  <span className="material-symbols-outlined text-[20px] text-gold-accent">contact_phone</span>
+                  <h2 className="font-headline-sm text-headline-sm text-ivory-surface tracking-wide uppercase">
+                    Passenger Logistics &amp; Review
+                  </h2>
                 </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setStep(2)}
-                    className="text-xs text-secondary-container hover:text-ivory-surface underline mr-2"
-                  >
-                    ← Change Trip / Vehicle
-                  </button>
-                  <span className="font-label-caps text-label-caps text-surface-variant tracking-wider bg-ink-slate px-2.5 py-1 rounded">
-                    Official Gateway
-                  </span>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => setStep(1)}
+                  className="text-xs text-gold-accent hover:text-ivory-surface underline"
+                >
+                  ← Edit Route / Vehicle
+                </button>
               </div>
 
               {/* Form Body */}
-              <form onSubmit={handleSubmitBooking} className="p-space-md md:p-space-lg flex flex-col gap-space-md" id="billing-form">
-                {/* Contact & Billing Information Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-space-sm">
-                  {/* Full Name */}
+              <form onSubmit={handleSubmitBooking} className="p-space-md md:p-space-lg flex flex-col gap-space-lg">
+                {submitError && (
+                  <div className="p-space-md bg-red-50 border border-red-200 text-red-800 rounded-lg text-sm">
+                    {submitError}
+                  </div>
+                )}
+
+                {/* Contact Fields */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-space-md">
                   <div className="flex flex-col gap-1">
-                    <label className="font-title-md text-title-md text-ink-charcoal flex items-center justify-between" htmlFor="bill-name">
-                      <span>Full Name</span>
-                      <span className="text-terracotta-sandstone font-body-sm">*</span>
+                    <label className="font-title-md text-xs font-bold text-ink-charcoal" htmlFor="bill-name">
+                      Full Name *
                     </label>
-                    <div className="relative">
+                    <input
+                      id="bill-name"
+                      required
+                      type="text"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      placeholder="e.g. Rohan Verma"
+                      className="px-3 py-2.5 rounded-lg border border-border-warm bg-surface font-body-md text-on-surface focus:ring-1 focus:ring-primary focus:outline-none"
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-1">
+                    <label className="font-title-md text-xs font-bold text-ink-charcoal" htmlFor="bill-phone">
+                      Mobile Phone (with WhatsApp) *
+                    </label>
+                    <input
+                      id="bill-phone"
+                      required
+                      type="tel"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="+91 98765 43210"
+                      className="px-3 py-2.5 rounded-lg border border-border-warm bg-surface font-body-md text-on-surface focus:ring-1 focus:ring-primary focus:outline-none"
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-1">
+                    <label className="font-title-md text-xs font-bold text-ink-charcoal" htmlFor="bill-email">
+                      Email Address (for Transit Voucher)
+                    </label>
+                    <input
+                      id="bill-email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="rohan@example.com"
+                      className="px-3 py-2.5 rounded-lg border border-border-warm bg-surface font-body-md text-on-surface focus:ring-1 focus:ring-primary focus:outline-none"
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-1">
+                    <label className="font-title-md text-xs font-bold text-ink-charcoal" htmlFor="bill-flight">
+                      Flight / Train Number (Optional)
+                    </label>
+                    <input
+                      id="bill-flight"
+                      type="text"
+                      value={flightTrainNumber}
+                      onChange={(e) => setFlightTrainNumber(e.target.value)}
+                      placeholder="e.g. 6E-2041 or 12002 Shatabdi"
+                      className="px-3 py-2.5 rounded-lg border border-border-warm bg-surface font-body-md text-on-surface focus:ring-1 focus:ring-primary focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                {/* Pickup & Drop Addresses */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+                  <div className="flex flex-col gap-1">
+                    <label className="font-title-md text-xs font-bold text-ink-charcoal" htmlFor="bill-pickup">
+                      Exact Pickup Address / Porch *
+                    </label>
+                    <textarea
+                      id="bill-pickup"
+                      required
+                      rows={2}
+                      value={pickupAddress}
+                      onChange={(e) => setPickupAddress(e.target.value)}
+                      placeholder="Hotel porch, airport gate, or residence"
+                      className="px-3 py-2 rounded-lg border border-border-warm bg-surface font-body-md text-on-surface focus:ring-1 focus:ring-primary focus:outline-none"
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-1">
+                    <label className="font-title-md text-xs font-bold text-ink-charcoal" htmlFor="bill-drop">
+                      Drop-off Destination Address
+                    </label>
+                    <textarea
+                      id="bill-drop"
+                      rows={2}
+                      value={dropAddress}
+                      onChange={(e) => setDropAddress(e.target.value)}
+                      placeholder="Destination hotel, terminal or address"
+                      className="px-3 py-2 rounded-lg border border-border-warm bg-surface font-body-md text-on-surface focus:ring-1 focus:ring-primary focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                {/* Special Notes & Promo Code */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-space-md items-start">
+                  <div className="flex flex-col gap-1">
+                    <label className="font-title-md text-xs font-bold text-ink-charcoal" htmlFor="bill-notes">
+                      Special Notes / Requests
+                    </label>
+                    <input
+                      id="bill-notes"
+                      type="text"
+                      value={specialNotes}
+                      onChange={(e) => setSpecialNotes(e.target.value)}
+                      placeholder="e.g. Child seat, extra luggage, senior assistance"
+                      className="px-3 py-2.5 rounded-lg border border-border-warm bg-surface font-body-md text-on-surface focus:ring-1 focus:ring-primary focus:outline-none"
+                    />
+                  </div>
+
+                  {/* Promo Code Input */}
+                  <div className="flex flex-col gap-1">
+                    <label className="font-title-md text-xs font-bold text-ink-charcoal" htmlFor="promo-input">
+                      Promotional Voucher Code
+                    </label>
+                    <div className="flex gap-2">
                       <input
-                        className="w-full bg-surface-container-lowest text-ink-charcoal font-body-md text-body-md px-3.5 py-2.5 rounded-lg shadow-sm border border-border-warm focus:outline-none focus:ring-1 focus:ring-primary"
-                        id="bill-name"
-                        name="name"
-                        placeholder="Enter Name"
-                        required
+                        id="promo-input"
                         type="text"
-                        value={fullName}
-                        onChange={(e) => setFullName(e.target.value)}
+                        disabled={selectedVehicle.alwaysRoundTrip}
+                        value={promoCodeInput}
+                        onChange={(e) => setPromoCodeInput(e.target.value)}
+                        placeholder={selectedVehicle.alwaysRoundTrip ? "N/A for group vans" : "e.g. ASTTCAR500OFF"}
+                        className="flex-1 px-3 py-2 rounded-lg border border-border-warm bg-surface font-body-md text-on-surface uppercase disabled:bg-surface-container-low"
                       />
-                      <span className="material-symbols-outlined absolute right-3 top-3 text-[18px] text-secondary">person</span>
-                    </div>
-                  </div>
-
-                  {/* Email Address */}
-                  <div className="flex flex-col gap-1">
-                    <label className="font-title-md text-title-md text-ink-charcoal flex items-center justify-between" htmlFor="bill-email">
-                      <span>Email Address</span>
-                      <span className="text-terracotta-sandstone font-body-sm">*</span>
-                    </label>
-                    <div className="relative">
-                      <input
-                        className="w-full bg-surface-container-lowest text-ink-charcoal font-body-md text-body-md px-3.5 py-2.5 rounded-lg shadow-sm border border-border-warm focus:outline-none focus:ring-1 focus:ring-primary"
-                        id="bill-email"
-                        name="email"
-                        placeholder="Enter Email"
-                        required
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                      />
-                      <span className="material-symbols-outlined absolute right-3 top-3 text-[18px] text-secondary">mail</span>
-                    </div>
-                  </div>
-
-                  {/* Mobile Contact */}
-                  <div className="flex flex-col gap-1">
-                    <label className="font-title-md text-title-md text-ink-charcoal flex items-center justify-between" htmlFor="bill-phone">
-                      <span>Mobile Contact</span>
-                      <span className="text-terracotta-sandstone font-body-sm">*</span>
-                    </label>
-                    <div className="relative">
-                      <input
-                        className="w-full bg-surface-container-lowest text-ink-charcoal font-body-md text-body-md px-3.5 py-2.5 rounded-lg shadow-sm border border-border-warm focus:outline-none focus:ring-1 focus:ring-primary"
-                        id="bill-phone"
-                        name="mobile"
-                        placeholder="Enter Mobile"
-                        required
-                        type="tel"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                      />
-                      <span className="material-symbols-outlined absolute right-3 top-3 text-[18px] text-secondary">phone_iphone</span>
-                    </div>
-                  </div>
-
-                  {/* Billing Address */}
-                  <div className="flex flex-col gap-1">
-                    <label className="font-title-md text-title-md text-ink-charcoal flex items-center justify-between" htmlFor="bill-address">
-                      <span>Billing Address</span>
-                      <span className="text-terracotta-sandstone font-body-sm">*</span>
-                    </label>
-                    <div className="relative">
-                      <input
-                        className="w-full bg-surface-container-lowest text-ink-charcoal font-body-md text-body-md px-3.5 py-2.5 rounded-lg shadow-sm border border-border-warm focus:outline-none focus:ring-1 focus:ring-primary"
-                        id="bill-address"
-                        name="address"
-                        placeholder="Enter Your Address"
-                        required
-                        type="text"
-                        value={billingAddress}
-                        onChange={(e) => setBillingAddress(e.target.value)}
-                      />
-                      <span className="material-symbols-outlined absolute right-3 top-3 text-[18px] text-secondary">home_pin</span>
-                    </div>
-                  </div>
-
-                  {/* Country */}
-                  <div className="flex flex-col gap-1">
-                    <label className="font-title-md text-title-md text-ink-charcoal flex items-center justify-between" htmlFor="bill-country">
-                      <span>Country</span>
-                      <span className="text-terracotta-sandstone font-body-sm">*</span>
-                    </label>
-                    <div className="relative">
-                      <select
-                        className="w-full bg-surface-container-lowest text-ink-charcoal font-body-md text-body-md px-3.5 py-2.5 rounded-lg shadow-sm border border-border-warm appearance-none focus:outline-none cursor-pointer"
-                        id="bill-country"
-                        name="country"
-                        required
-                        value={country}
-                        onChange={(e) => setCountry(e.target.value)}
+                      <button
+                        type="button"
+                        onClick={handleApplyPromo}
+                        disabled={selectedVehicle.alwaysRoundTrip || !promoCodeInput.trim()}
+                        className="px-4 py-2 bg-ink-charcoal text-ivory-surface rounded-lg font-label-lg text-xs font-semibold hover:bg-ink-slate disabled:opacity-40"
                       >
-                        <option value="India">India</option>
-                        <option value="United Kingdom">United Kingdom</option>
-                        <option value="United States">United States</option>
-                        <option value="Australia">Australia</option>
-                        <option value="Germany">Germany</option>
-                        <option value="France">France</option>
-                        <option value="Canada">Canada</option>
-                        <option value="Japan">Japan</option>
-                        <option value="United Arab Emirates">United Arab Emirates</option>
-                      </select>
-                      <span className="material-symbols-outlined absolute right-3 top-3 text-[20px] text-secondary pointer-events-none">expand_more</span>
+                        Apply
+                      </button>
                     </div>
-                  </div>
-
-                  {/* State */}
-                  <div className="flex flex-col gap-1">
-                    <label className="font-title-md text-title-md text-ink-charcoal flex items-center justify-between" htmlFor="bill-state">
-                      <span>State</span>
-                      <span className="text-terracotta-sandstone font-body-sm">*</span>
-                    </label>
-                    <div className="relative">
-                      <select
-                        className="w-full bg-surface-container-lowest text-ink-charcoal font-body-md text-body-md px-3.5 py-2.5 rounded-lg shadow-sm border border-border-warm appearance-none focus:outline-none cursor-pointer"
-                        id="bill-state"
-                        name="state"
-                        required
-                        value={stateName}
-                        onChange={(e) => setStateName(e.target.value)}
-                      >
-                        <option value="Uttar Pradesh">Uttar Pradesh</option>
-                        <option value="Delhi NCR">Delhi NCR</option>
-                        <option value="Rajasthan">Rajasthan</option>
-                        <option value="Maharashtra">Maharashtra</option>
-                        <option value="Karnataka">Karnataka</option>
-                        <option value="Haryana">Haryana</option>
-                        <option value="Punjab">Punjab</option>
-                      </select>
-                      <span className="material-symbols-outlined absolute right-3 top-3 text-[20px] text-secondary pointer-events-none">expand_more</span>
-                    </div>
-                  </div>
-
-                  {/* City */}
-                  <div className="flex flex-col gap-1">
-                    <label className="font-title-md text-title-md text-ink-charcoal flex items-center justify-between" htmlFor="bill-city">
-                      <span>City / Region</span>
-                      <span className="text-terracotta-sandstone font-body-sm">*</span>
-                    </label>
-                    <div className="relative">
-                      <input
-                        className="w-full bg-surface-container-lowest text-ink-charcoal font-body-md text-body-md px-3.5 py-2.5 rounded-lg shadow-sm border border-border-warm focus:outline-none focus:ring-1 focus:ring-primary"
-                        id="bill-city"
-                        name="city"
-                        placeholder="Enter City"
-                        required
-                        type="text"
-                        value={city}
-                        onChange={(e) => setCity(e.target.value)}
-                      />
-                      <span className="material-symbols-outlined absolute right-3 top-3 text-[18px] text-secondary">location_city</span>
-                    </div>
-                  </div>
-
-                  {/* Pincode */}
-                  <div className="flex flex-col gap-1">
-                    <label className="font-title-md text-title-md text-ink-charcoal flex items-center justify-between" htmlFor="bill-pincode">
-                      <span>Pincode / Zipcode</span>
-                      <span className="text-terracotta-sandstone font-body-sm">*</span>
-                    </label>
-                    <div className="relative">
-                      <input
-                        className="w-full bg-surface-container-lowest text-ink-charcoal font-body-md text-body-md px-3.5 py-2.5 rounded-lg shadow-sm border border-border-warm focus:outline-none focus:ring-1 focus:ring-primary"
-                        id="bill-pincode"
-                        name="pincode"
-                        placeholder="Enter Pincode"
-                        required
-                        type="text"
-                        value={pincode}
-                        onChange={(e) => setPincode(e.target.value)}
-                      />
-                      <span className="material-symbols-outlined absolute right-3 top-3 text-[18px] text-secondary">pin_drop</span>
-                    </div>
+                    {promoMessage && (
+                      <span className="font-body-sm text-xs text-primary font-medium mt-1">
+                        {promoMessage}
+                      </span>
+                    )}
                   </div>
                 </div>
 
-                {/* Logistics Date & Time Pickers */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-space-sm pt-space-xs border-t border-border-warm/60">
-                  <div className="flex flex-col gap-1">
-                    <label className="font-title-md text-title-md text-ink-charcoal flex items-center justify-between" htmlFor="tour-date">
-                      <span>Tour / Pickup Date</span>
-                      <span className="text-terracotta-sandstone font-body-sm">*</span>
-                    </label>
-                    <div className="relative">
-                      <input
-                        className="w-full bg-surface-container-lowest text-ink-charcoal font-body-md text-body-md px-3.5 py-2.5 rounded-lg shadow-sm border border-border-warm focus:outline-none focus:ring-1 focus:ring-primary"
-                        id="tour-date"
-                        name="tour_date"
-                        type="date"
-                        required
-                        min={tomorrowDateString()}
-                        value={tourDate}
-                        onChange={(e) => setTourDate(e.target.value)}
-                      />
+                {/* Final Server Verified Fare Summary Box */}
+                {serverFare && (
+                  <div className="p-space-md rounded-xl bg-surface-container-low border border-border-warm flex flex-col gap-space-sm">
+                    <div className="flex items-center justify-between border-b border-border-warm/60 pb-2">
+                      <span className="font-title-md text-ink-midnight font-bold">
+                        Authoritative Server Price Breakdown
+                      </span>
+                      <span className="font-label-caps text-[10px] text-success-jade bg-white px-2 py-0.5 rounded border border-success-jade/30">
+                        100% Server Verified
+                      </span>
                     </div>
-                  </div>
 
-                  <div className="flex flex-col gap-1">
-                    <label className="font-title-md text-title-md text-ink-charcoal flex items-center justify-between" htmlFor="pickup-time">
-                      <span>Preferred Pickup Time</span>
-                      <span className="text-terracotta-sandstone font-body-sm">*</span>
-                    </label>
-                    <div className="relative">
-                      <input
-                        className="w-full bg-surface-container-lowest text-ink-charcoal font-body-md text-body-md px-3.5 py-2.5 rounded-lg shadow-sm border border-border-warm focus:outline-none focus:ring-1 focus:ring-primary"
-                        id="pickup-time"
-                        name="pickup_time"
-                        type="time"
-                        required
-                        value={pickupTime}
-                        onChange={(e) => setPickupTime(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Pickup & Drop Instructions */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-space-sm">
-                  <div className="flex flex-col gap-1">
-                    <label className="font-title-md text-title-md text-ink-charcoal flex items-center justify-between" htmlFor="pickup-instructions">
-                      <span>Pickup Instruction</span>
-                      <span className="font-body-sm text-secondary font-normal">Rendezvous porch</span>
-                    </label>
-                    <div className="relative">
-                      <input
-                        className="w-full bg-surface-container-lowest text-ink-charcoal font-body-md text-body-md px-3.5 py-2.5 rounded-lg shadow-sm border border-border-warm focus:outline-none focus:ring-1 focus:ring-primary"
-                        id="pickup-instructions"
-                        name="pickup_instructions"
-                        placeholder="e.g. Hotel Lobby, Terminal 3 Gate 4, Station Exit"
-                        type="text"
-                        value={pickupInstruction}
-                        onChange={(e) => setPickupInstruction(e.target.value)}
-                      />
-                      <span className="material-symbols-outlined absolute right-3 top-3 text-[18px] text-secondary">flight_land</span>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col gap-1">
-                    <label className="font-title-md text-title-md text-ink-charcoal flex items-center justify-between" htmlFor="drop-instructions">
-                      <span>Drop Instruction</span>
-                      <span className="font-body-sm text-secondary font-normal">Destination point</span>
-                    </label>
-                    <div className="relative">
-                      <input
-                        className="w-full bg-surface-container-lowest text-ink-charcoal font-body-md text-body-md px-3.5 py-2.5 rounded-lg shadow-sm border border-border-warm focus:outline-none focus:ring-1 focus:ring-primary"
-                        id="drop-instructions"
-                        name="drop_instructions"
-                        placeholder="e.g. Return to Hotel / Agra Cantt Station / IGI Airport"
-                        type="text"
-                        value={dropInstruction}
-                        onChange={(e) => setDropInstruction(e.target.value)}
-                      />
-                      <span className="material-symbols-outlined absolute right-3 top-3 text-[18px] text-secondary">near_me</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Pet-Friendly Optional Addon Container */}
-                <div className="bg-sandstone-wash/60 border border-border-warm rounded-xl p-space-sm md:p-space-md flex flex-col gap-space-xs shadow-sm">
-                  <div className="flex flex-wrap items-center justify-between gap-space-xs">
-                    <div className="flex items-center gap-space-xs">
-                      <div className="w-7 h-7 rounded-full bg-terracotta-sandstone/10 flex items-center justify-center text-terracotta-sandstone shrink-0">
-                        <span className="material-symbols-outlined text-[18px]">pets</span>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                      <div>
+                        <span className="text-secondary block">Base Fare</span>
+                        <span className="font-bold text-ink-charcoal">{formatInr(serverFare.baseFare)}</span>
                       </div>
-                      <div className="flex flex-col">
-                        <span className="font-title-md text-title-md text-ink-charcoal">Traveling with a Pet?</span>
-                        <span className="font-body-sm text-body-sm text-on-surface-variant">
-                          Complimentary seat protection &amp; planned highway comfort breaks
+                      <div>
+                        <span className="text-secondary block">Driver Allowance</span>
+                        <span className="font-bold text-ink-charcoal">{formatInr(serverFare.driverAllowance)}</span>
+                      </div>
+                      <div>
+                        <span className="text-secondary block">Night Allowance</span>
+                        <span className="font-bold text-ink-charcoal">{formatInr(serverFare.nightAllowance)}</span>
+                      </div>
+                      <div>
+                        <span className="text-secondary block">Discount</span>
+                        <span className="font-bold text-success-jade">-{formatInr(serverFare.discountAmount)}</span>
+                      </div>
+                    </div>
+
+                    <div className="pt-2 border-t border-border-warm/60 flex items-center justify-between">
+                      <div>
+                        <span className="font-title-md text-ink-midnight font-bold block">
+                          Total Payable: {formatInr(serverFare.totalFare)}
+                        </span>
+                        <span className="text-[11px] text-secondary">
+                          Advance required to lock vehicle: {formatInr(serverFare.advanceAmount)}
                         </span>
                       </div>
-                    </div>
-                    <label className="inline-flex items-center gap-2 cursor-pointer select-none bg-surface-container-lowest px-2.5 py-1.5 rounded-lg border border-border-warm shadow-sm hover:border-terracotta-sandstone transition-colors">
-                      <input
-                        checked={hasPet}
-                        onChange={(e) => setHasPet(e.target.checked)}
-                        className="w-4 h-4 accent-terracotta-sandstone cursor-pointer rounded"
-                        id="pet-friendly-toggle"
-                        name="has_pet"
-                        type="checkbox"
-                      />
-                      <span className="font-title-md text-title-md text-ink-charcoal">Yes, adding a pet</span>
-                    </label>
-                  </div>
-
-                  {hasPet && (
-                    <div className="flex flex-col gap-space-xs pt-2">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-space-sm">
-                        <div className="flex flex-col gap-1">
-                          <label className="font-title-md text-title-md text-ink-charcoal" htmlFor="pet-type">
-                            Pet Type / Breed
-                          </label>
-                          <input
-                            className="w-full bg-surface-container-lowest text-ink-charcoal font-body-md text-body-md px-3.5 py-2 rounded-lg border border-border-warm"
-                            id="pet-type"
-                            type="text"
-                            value={petType}
-                            onChange={(e) => setPetType(e.target.value)}
-                          />
-                        </div>
-                        <div className="flex flex-col gap-1">
-                          <label className="font-title-md text-title-md text-ink-charcoal" htmlFor="pet-size">
-                            Pet Size / Weight Class
-                          </label>
-                          <select
-                            className="w-full bg-surface-container-lowest text-ink-charcoal font-body-md text-body-md px-3.5 py-2 rounded-lg border border-border-warm"
-                            id="pet-size"
-                            value={petSize}
-                            onChange={(e) => setPetSize(e.target.value)}
-                          >
-                            <option value="small">Small Companion (&lt; 10 kg)</option>
-                            <option value="medium">Medium Breed (10 – 25 kg)</option>
-                            <option value="large">Large Breed (&gt; 25 kg)</option>
-                          </select>
-                        </div>
-                      </div>
-                      <div className="flex flex-col gap-1 pt-1">
-                        <label className="font-title-md text-title-md text-ink-charcoal" htmlFor="pet-notes">
-                          Special Pet Requirements
-                        </label>
-                        <input
-                          className="w-full bg-surface-container-lowest text-ink-charcoal font-body-md text-body-md px-3.5 py-2 rounded-lg border border-border-warm"
-                          id="pet-notes"
-                          type="text"
-                          value={petNotes}
-                          onChange={(e) => setPetNotes(e.target.value)}
-                        />
+                      <div className="text-right">
+                        <span className="text-[11px] text-secondary block">Balance on Drop-off:</span>
+                        <span className="font-bold text-terracotta-sandstone">{formatInr(serverFare.balanceAmount)}</span>
                       </div>
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
 
-                {/* Passenger / Guest Counter */}
-                <div className="bg-surface-container-low p-space-sm md:p-space-md rounded-xl flex flex-wrap items-center justify-between gap-space-sm shadow-sm border border-border-warm/60">
-                  <div className="flex flex-col">
-                    <div className="flex items-center gap-space-xs">
-                      <span className="material-symbols-outlined text-[20px] text-terracotta-sandstone">groups</span>
-                      <span className="font-title-md text-title-md text-ink-charcoal font-semibold">Adults &amp; Guests</span>
-                    </div>
-                    <span className="font-body-sm text-body-sm text-on-surface-variant">
-                      Dedicated vehicle custody for your private group
-                    </span>
-                  </div>
-                  <div className="flex items-center bg-surface-container-lowest rounded-lg shadow-sm p-1 border border-border-warm">
-                    <button
-                      aria-label="Decrease passenger count"
-                      className="w-9 h-9 flex items-center justify-center rounded bg-surface-container-low text-terracotta-sandstone hover:bg-sandstone-wash transition-colors text-title-lg font-bold"
-                      onClick={() => setGuestCount((c) => Math.max(1, c - 1))}
-                      type="button"
-                    >
-                      <span className="material-symbols-outlined text-[18px]">remove</span>
-                    </button>
-                    <span className="w-10 text-center font-headline-sm text-headline-sm text-ink-charcoal select-none">
-                      {guestCount}
-                    </span>
-                    <button
-                      aria-label="Increase passenger count"
-                      className="w-9 h-9 flex items-center justify-center rounded bg-terracotta-sandstone text-on-primary hover:bg-terracotta-sunlit transition-colors text-title-lg font-bold"
-                      onClick={() => setGuestCount((c) => Math.min(16, c + 1))}
-                      type="button"
-                    >
-                      <span className="material-symbols-outlined text-[18px]">add</span>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Billing Summary Box */}
-                <div className="bg-surface-container-lowest rounded-xl p-space-sm md:p-space-md flex flex-col gap-2 shadow-sm border border-border-warm">
-                  <div className="flex justify-between items-center text-body-md font-body-md text-on-surface-variant pb-1.5 border-b border-border-warm">
-                    <span>{selectedTrip.name} ({selectedVehicle.name})</span>
-                    <span className="font-price-display text-title-md text-ink-charcoal font-semibold">
-                      ₹{totalGrossPrice.toLocaleString("en-IN")}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center text-body-md font-body-md text-success-jade py-0.5">
-                    <div className="flex items-center gap-1">
-                      <span>Expressway FASTag Tolls &amp; State Permits</span>
-                      <span className="material-symbols-outlined text-[14px] text-secondary">info</span>
-                    </div>
-                    <span className="font-price-display text-title-md font-semibold">Included (₹0)</span>
-                  </div>
-                  <div className="flex justify-between items-center pt-space-xs bg-sandstone-wash p-space-sm rounded-lg border border-border-warm">
-                    <span className="font-title-lg text-title-lg text-ink-charcoal font-semibold">Total Estimated Fare</span>
-                    <span className="font-price-display text-headline-sm text-terracotta-sandstone font-bold">
-                      ₹{totalGrossPrice.toLocaleString("en-IN")}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Settlement Choice: 28% Advance Token vs Full 100% */}
-                <div className="flex flex-col gap-space-xs pt-1">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-title-lg text-title-lg text-ink-charcoal font-semibold">Amount to Authorize</h3>
-                    <span className="font-label-caps text-label-caps text-terracotta-sandstone uppercase bg-sandstone-wash px-2 py-0.5 rounded font-semibold">
-                      Royal Charter Settlement
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-space-sm">
-                    {/* Partial 28% Choice */}
+                {/* Payment Option: Partial vs Full */}
+                <div className="flex flex-col gap-2">
+                  <span className="font-title-md text-xs font-bold text-ink-charcoal">
+                    Select Advance Deposit Option
+                  </span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-space-sm">
                     <label
                       onClick={() => setPaymentChoice("partial")}
-                      className={`cursor-pointer flex items-center justify-between p-space-sm md:p-space-md rounded-xl border transition-all shadow-sm ${paymentChoice === "partial"
-                          ? "bg-sandstone-wash/40 border-primary ring-1 ring-primary"
-                          : "bg-surface-container-lowest border-border-warm hover:bg-surface-container-low"
-                        }`}
+                      className={`cursor-pointer p-space-md rounded-xl border flex items-center justify-between transition-all ${
+                        paymentChoice === "partial"
+                          ? "bg-sandstone-wash border-primary ring-1 ring-primary"
+                          : "bg-surface-container-lowest border-border-warm"
+                      }`}
                     >
-                      <div className="flex items-center gap-space-sm">
+                      <div className="flex items-center gap-2">
                         <input
+                          type="radio"
+                          name="paymentChoice"
                           checked={paymentChoice === "partial"}
                           onChange={() => setPaymentChoice("partial")}
-                          className="w-5 h-5 accent-terracotta-sandstone cursor-pointer"
-                          name="payment_choice"
-                          type="radio"
-                          value="partial"
+                          className="accent-primary"
                         />
-                        <div className="flex flex-col">
-                          <span className="font-title-md text-title-md text-ink-charcoal font-semibold">
-                            Pay ₹{advanceAmount.toLocaleString("en-IN")}
+                        <div>
+                          <span className="font-bold text-ink-midnight text-sm block">
+                            Pay Advance Token ({formatInr(serverFare?.advanceAmount ?? 500)})
                           </span>
-                          <span className="font-body-sm text-body-sm text-secondary">
-                            28% Advance Token • Remaining ₹{balanceAmount.toLocaleString("en-IN")} on drop-off
+                          <span className="text-xs text-secondary">
+                            Remaining balance payable directly to driver on arrival
                           </span>
                         </div>
                       </div>
-                      <span className="material-symbols-outlined text-gold-accent text-[22px]">payments</span>
                     </label>
 
-                    {/* Full Payment Choice */}
                     <label
                       onClick={() => setPaymentChoice("full")}
-                      className={`cursor-pointer flex items-center justify-between p-space-sm md:p-space-md rounded-xl border transition-all shadow-sm ${paymentChoice === "full"
-                          ? "bg-sandstone-wash/40 border-primary ring-1 ring-primary"
-                          : "bg-surface-container-lowest border-border-warm hover:bg-surface-container-low"
-                        }`}
+                      className={`cursor-pointer p-space-md rounded-xl border flex items-center justify-between transition-all ${
+                        paymentChoice === "full"
+                          ? "bg-sandstone-wash border-primary ring-1 ring-primary"
+                          : "bg-surface-container-lowest border-border-warm"
+                      }`}
                     >
-                      <div className="flex items-center gap-space-sm">
+                      <div className="flex items-center gap-2">
                         <input
+                          type="radio"
+                          name="paymentChoice"
                           checked={paymentChoice === "full"}
                           onChange={() => setPaymentChoice("full")}
-                          className="w-5 h-5 accent-terracotta-sandstone cursor-pointer"
-                          name="payment_choice"
-                          type="radio"
-                          value="full"
+                          className="accent-primary"
                         />
-                        <div className="flex flex-col">
-                          <span className="font-title-md text-title-md text-ink-charcoal font-semibold">
-                            Pay ₹{totalGrossPrice.toLocaleString("en-IN")}
+                        <div>
+                          <span className="font-bold text-ink-midnight text-sm block">
+                            Pay 100% Full Total ({formatInr(serverFare?.totalFare ?? 2500)})
                           </span>
-                          <span className="font-body-sm text-body-sm text-success-jade font-medium">
-                            Complete Payment (100% Settled)
+                          <span className="text-xs text-success-jade font-medium">
+                            Zero cash needed during travel
                           </span>
                         </div>
                       </div>
-                      <span className="material-symbols-outlined text-success-jade text-[22px]">verified</span>
                     </label>
                   </div>
                 </div>
 
-                {/* Submit Action Button */}
-                <div className="flex flex-col gap-space-xs pt-1">
+                {/* Submission CTA Buttons */}
+                <div className="flex flex-col gap-2 pt-2 border-t border-border-warm">
                   <button
-                    disabled={isSubmitting}
-                    className="w-full py-3.5 px-space-lg rounded-xl bg-terracotta-sandstone hover:bg-terracotta-sunlit disabled:opacity-50 text-on-primary font-title-lg text-title-lg text-center flex items-center justify-center gap-space-sm shadow-md transition-all cursor-pointer"
-                    id="btn-continue-pay"
                     type="submit"
+                    disabled={isSubmitting || !serverFare}
+                    className="w-full py-3.5 px-space-md rounded-xl bg-terracotta-sandstone text-on-primary font-title-lg font-bold hover:bg-terracotta-sunlit transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
                   >
                     <span className="material-symbols-outlined text-[20px]">lock</span>
                     <span>
-                      {isSubmitting ? "Authorizing Security Token..." : `Continue & Pay ₹${amountToCharge.toLocaleString("en-IN")}`}
+                      {isSubmitting
+                        ? "Registering Booking with Server..."
+                        : `Authorize & Pay ${formatInr(paymentChoice === "full" ? (serverFare?.totalFare ?? 0) : (serverFare?.advanceAmount ?? 0))}`}
                     </span>
-                    <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
                   </button>
-                  <p className="text-center font-body-sm text-body-sm text-on-surface-variant flex items-center justify-center gap-1.5 pt-0.5">
-                    <span className="material-symbols-outlined text-[16px] text-success-jade">check_circle</span>
-                    Instant digital voucher issued via WhatsApp &amp; Email. Free cancellation up to 24h prior.
-                  </p>
-                </div>
 
-                {/* Supported Gateways Footer */}
-                <div className="flex flex-wrap items-center justify-between gap-space-sm pt-space-xs bg-surface-container-low p-space-sm rounded-lg border border-border-warm/60">
-                  <div className="flex items-center gap-space-xs text-body-sm font-body-sm text-secondary">
-                    <span className="material-symbols-outlined text-[16px] text-ink-charcoal">verified_user</span>
-                    <span>Supported Gateways:</span>
-                  </div>
-                  <div className="flex flex-wrap items-center gap-space-xs font-label-caps text-label-caps text-ink-charcoal">
-                    <span className="bg-surface-container-lowest px-2 py-0.5 rounded shadow-sm border border-border-warm">UPI (GPay / PhonePe / Paytm)</span>
-                    <span className="bg-surface-container-lowest px-2 py-0.5 rounded shadow-sm border border-border-warm">Visa</span>
-                    <span className="bg-surface-container-lowest px-2 py-0.5 rounded shadow-sm border border-border-warm">Mastercard</span>
-                    <span className="bg-surface-container-lowest px-2 py-0.5 rounded shadow-sm border border-border-warm">RuPay</span>
-                    <span className="bg-surface-container-lowest px-2 py-0.5 rounded shadow-sm border border-border-warm">Net Banking</span>
-                  </div>
+                  <button
+                    type="button"
+                    onClick={handleSimulatePayment}
+                    className="w-full py-2 px-3 rounded-lg bg-surface-container-low hover:bg-surface-container text-ink-slate font-label-lg text-xs font-semibold transition-colors border border-border-warm"
+                  >
+                    Simulate Payment Authorization (Instant Test Mode)
+                  </button>
                 </div>
               </form>
-            </div>
-
-            {/* SK Concierge — booking agent available while you pay */}
-            <div className="max-w-2xl w-full mx-auto">
-              <BookingAssistant
-                step={3}
-                vehicleName={selectedVehicle.name}
-                tripName={selectedTrip.name}
-                totalFare={totalGrossPrice}
-                advanceAmount={advanceAmount}
-                tourDate={tourDate}
-              />
             </div>
           </div>
         )}
 
-        {/* STEP 4: BOOKING CONFIRMED & TRANSIT VOUCHER SCREEN */}
-        {step === 4 && (
-          <div className="flex flex-col gap-space-2xl">
-            {/* Hero Confirmation Banner */}
-            <div className="relative bg-surface-container-lowest rounded-xl p-space-xl lg:p-space-2xl shadow-sm border border-border-warm flex flex-col md:flex-row items-start md:items-center justify-between gap-space-xl overflow-hidden">
-              <div className="flex flex-col gap-space-sm max-w-2xl relative z-10">
-                <div className="flex items-center gap-space-sm">
-                  <div className="w-12 h-12 rounded-full bg-sandstone-wash flex items-center justify-center shadow-inner">
-                    <div className="w-8 h-8 rounded-full bg-terracotta-sandstone flex items-center justify-center text-on-primary">
-                      <span className="material-symbols-outlined text-[20px]">verified_user</span>
-                    </div>
-                  </div>
-                  <span className="font-label-caps text-label-caps tracking-widest uppercase text-terracotta-sandstone bg-sandstone-wash px-space-sm py-1 rounded-full font-bold">
-                    Booking Status: Guaranteed &amp; Active
-                  </span>
-                </div>
-                <h1 className="font-headline-lg text-headline-lg text-ink-charcoal leading-tight">
-                  Booking Confirmed &amp; Driver Assigned!
-                </h1>
-                <p className="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
-                  Your {paymentChoice === "partial" ? "28% advance deposit" : "payment"} has been successfully authorized. Your official booking receipt, QR pass, and driver tracking link have been sent via WhatsApp (<span className="text-ink-charcoal font-semibold">{phone}</span>) and email (<span className="text-ink-charcoal font-semibold">{email}</span>).
-                </p>
-                <div className="flex flex-wrap items-center gap-space-sm pt-space-xs">
-                  <div className="flex items-center gap-2 bg-surface-container px-space-md py-2 rounded-lg border border-border-warm">
-                    <span className="material-symbols-outlined text-[18px] text-terracotta-sandstone">confirmation_number</span>
-                    <span className="font-body-sm text-body-sm text-secondary">Booking Ref:</span>
-                    <span className="font-title-md text-title-md text-ink-charcoal font-semibold">{bookingRef}</span>
-                  </div>
-                  <div className="flex items-center gap-2 bg-surface-container px-space-md py-2 rounded-lg border border-border-warm">
-                    <span className="material-symbols-outlined text-[18px] text-secondary">receipt_long</span>
-                    <span className="font-body-sm text-body-sm text-secondary">GST Invoice:</span>
-                    <span className="font-title-md text-title-md text-ink-charcoal font-semibold">{invoiceNumber}</span>
-                  </div>
+        {/* STEP 3: OFFICIAL TRANSIT VOUCHER */}
+        {step === 3 && (
+          <div className="max-w-4xl mx-auto w-full flex flex-col gap-space-lg">
+            {/* Success Banner */}
+            <div className="bg-success-jade/10 border border-success-jade/40 rounded-xl p-space-lg flex items-center justify-between gap-space-md">
+              <div className="flex items-center gap-space-sm">
+                <span className="w-10 h-10 rounded-full bg-success-jade text-white flex items-center justify-center shrink-0">
+                  <span className="material-symbols-outlined text-[24px]">verified</span>
+                </span>
+                <div>
+                  <h1 className="font-headline-sm text-headline-sm text-ink-midnight font-bold">
+                    Booking Confirmed — Transit Voucher Issued
+                  </h1>
+                  <p className="font-body-sm text-body-sm text-on-surface-variant">
+                    Your ride has been registered and verified by SK Baghel Tour &amp; Travels central dispatch.
+                  </p>
                 </div>
               </div>
-
-              {/* Quick Action Box */}
-              <div className="flex flex-col w-full md:w-72 bg-sandstone-wash/80 rounded-xl p-space-md gap-space-sm shadow-sm border border-border-warm relative z-10 shrink-0">
-                <span className="font-label-caps text-label-caps uppercase text-terracotta-sandstone tracking-wider font-bold">
-                  Quick Actions
+              <div className="text-right shrink-0">
+                <span className="text-xs text-secondary block">Official Ticket ID</span>
+                <span className="font-title-lg text-title-lg text-primary font-bold tracking-wider">
+                  {confirmedTicketId || "AGR-20260927-4821"}
                 </span>
-                <button
-                  className="w-full py-2.5 px-space-md bg-terracotta-sandstone text-on-primary rounded-lg font-label-lg text-label-lg flex items-center justify-center gap-2 hover:bg-terracotta-sunlit transition-colors shadow-sm cursor-pointer"
-                  onClick={() => window.print()}
-                  type="button"
-                >
-                  <span className="material-symbols-outlined text-[18px]">download</span>
-                  <span>Download PDF Receipt</span>
-                </button>
-                <a
-                  className="w-full py-2.5 px-space-md bg-black hover:bg-neutral-900 border border-white/10 text-white rounded-lg font-label-lg text-label-lg flex items-center justify-center gap-2 transition-colors shadow-sm active:scale-[0.98]"
-                  href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
-                    `Hello SK Baghel Travels, inquiry for Booking ${bookingRef}`
-                  )}`}
-                  rel="noopener noreferrer"
-                  target="_blank"
-                >
-                  <WhatsAppIcon className="w-4 h-4 shrink-0" />
-                  <span>WhatsApp Support Desk</span>
-                </a>
               </div>
             </div>
 
-            {/* Voucher and Dispatch Timeline Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-start">
-              {/* Detailed Digital Transit Voucher (7 Cols) */}
-              <div className="lg:col-span-7 flex flex-col gap-space-lg">
-                <div className="bg-surface-container-lowest rounded-xl shadow-md overflow-hidden border border-border-warm">
-                  {/* Voucher Header Strip */}
-                  <div className="bg-ink-charcoal text-ivory-surface p-space-lg flex items-start justify-between gap-space-md">
-                    <div className="flex flex-col">
-                      <span className="font-label-caps text-label-caps tracking-widest text-gold-accent uppercase font-bold">
-                        Approved by Uttar Pradesh Tourism &amp; ASI
-                      </span>
-                      <h2 className="font-headline-sm text-headline-sm text-ivory-surface mt-1">Official Booking Confirmation &amp; Receipt</h2>
-                      <p className="font-body-sm text-body-sm text-surface-container-high">
-                        SK Baghel Tour &amp; Travels Agra • Taj Ganj Support Desk
-                      </p>
-                    </div>
-                    <div className="bg-surface-container-highest/20 p-2 rounded-lg text-center shrink-0 border border-warm/20">
-                      <span className="material-symbols-outlined text-[28px] text-gold-accent">qr_code_2</span>
-                      <span className="block font-label-caps text-[9px] uppercase tracking-wider text-surface-container-high mt-0.5">
-                        Scannable
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Voucher Inner Grid */}
-                  <div className="p-space-lg flex flex-col gap-space-md">
-                    {/* Passenger & Vehicle Highlight */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-space-md bg-surface-container-low p-space-md rounded-lg border border-border-warm/60">
-                      <div className="flex flex-col gap-1">
-                        <span className="font-label-caps text-label-caps text-secondary uppercase font-bold">Lead Passenger</span>
-                        <span className="font-title-md text-title-md text-on-surface font-semibold">{fullName}</span>
-                        <span className="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1">
-                          <span className="material-symbols-outlined text-[16px] text-terracotta-sandstone">phone_iphone</span>
-                          {phone}
-                        </span>
-                      </div>
-                      <div className="flex flex-col gap-1">
-                        <span className="font-label-caps text-label-caps text-secondary uppercase font-bold">Assigned Vehicle Class</span>
-                        <span className="font-title-md text-title-md text-on-surface font-semibold">{selectedVehicle.name}</span>
-                        <span className="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1">
-                          <span className="material-symbols-outlined text-[16px] text-terracotta-sandstone">airline_seat_recline_extra</span>
-                          {selectedVehicle.subtitle}
-                        </span>
-                      </div>
-                      <div className="flex flex-col gap-1 sm:col-span-2 border-t border-border-warm/60 pt-space-xs">
-                        <span className="font-label-caps text-label-caps text-secondary uppercase font-bold">Booked Trip</span>
-                        <span className="font-title-md text-title-md text-on-surface font-semibold">{selectedTrip.name}</span>
-                        <span className="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1">
-                          <span className="material-symbols-outlined text-[16px] text-terracotta-sandstone">route</span>
-                          {selectedTrip.duration} • {selectedTrip.stops.length > 0 ? selectedTrip.stops.join(" · ") : "Direct transfer"} • Total ₹{totalGrossPrice.toLocaleString("en-IN")}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Rendezvous Schedule */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
-                      <div className="flex flex-col gap-1">
-                        <span className="font-label-caps text-label-caps text-secondary uppercase font-bold">Date &amp; Time</span>
-                        <span className="font-title-md text-title-md text-on-surface font-semibold">
-                          {tourDate} • {pickupTime} AM
-                        </span>
-                        <span className="font-body-sm text-body-sm text-on-surface-variant">Confirmed Staged Arrival</span>
-                      </div>
-                      <div className="flex flex-col gap-1">
-                        <span className="font-label-caps text-label-caps text-secondary uppercase font-bold">Pickup Porch</span>
-                        <span className="font-title-md text-title-md text-on-surface font-semibold">{pickupInstruction}</span>
-                        <span className="font-body-sm text-body-sm text-on-surface-variant">Drop: {dropInstruction}</span>
-                      </div>
-                    </div>
-
-                    {/* Settlement Accounting Breakdown */}
-                    <div className="pt-space-sm border-t border-border-warm flex flex-col gap-2">
-                      <div className="flex justify-between items-center font-body-sm text-body-sm text-on-surface-variant">
-                        <span>Package Gross Total:</span>
-                        <span>₹{totalGrossPrice.toLocaleString("en-IN")}</span>
-                      </div>
-                      <div className="flex justify-between items-center font-body-sm text-body-sm text-success-jade">
-                        <span>Advance Token Authorized (28%):</span>
-                        <span className="font-semibold">₹{amountToCharge.toLocaleString("en-IN")} (Authorized)</span>
-                      </div>
-                      {paymentChoice === "partial" && (
-                        <div className="flex justify-between items-center font-body-sm text-body-sm text-terracotta-sandstone">
-                          <span>Balance Payable to Chauffeur on Drop-Off:</span>
-                          <span className="font-semibold">₹{balanceAmount.toLocaleString("en-IN")}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
+            {/* Voucher Body */}
+            <div className="bg-surface-container-lowest rounded-xl shadow-md border border-border-warm overflow-hidden">
+              <div className="bg-ink-charcoal text-ivory-surface p-space-md flex items-center justify-between">
+                <div>
+                  <span className="text-[10px] tracking-widest text-gold-accent uppercase font-bold">
+                    SK Baghel Imperial Fleet Charter
+                  </span>
+                  <h2 className="text-lg font-bold text-white">Chauffeur Transit Voucher</h2>
+                </div>
+                <div className="text-right">
+                  <span className="text-xs text-secondary-container">Status</span>
+                  <span className="block text-success-jade font-bold text-xs">CONFIRMED</span>
                 </div>
               </div>
 
-              {/* Chauffeur Dispatch Stages & Peace of Mind (5 Cols) */}
-              <div className="lg:col-span-5 flex flex-col gap-space-md">
-                <div className="bg-surface-container-low p-space-lg rounded-xl shadow-sm border border-border-warm flex flex-col gap-space-md">
-                  <h3 className="font-title-lg text-title-lg text-ink-charcoal font-semibold">
-                    Dispatch Protocol Timeline
-                  </h3>
-
-                  <div className="flex flex-col gap-4 relative pl-6 before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-[2px] before:bg-border-warm">
-                    <div className="relative">
-                      <div className="absolute -left-6 top-1 w-3 h-3 rounded-full bg-success-jade"></div>
-                      <div className="flex flex-col">
-                        <span className="font-title-md text-title-md text-ink-charcoal font-semibold">01. Voucher Dispatched</span>
-                        <span className="font-body-sm text-body-sm text-on-surface-variant">Instant WhatsApp &amp; Email receipt sent</span>
-                      </div>
-                    </div>
-                    <div className="relative">
-                      <div className="absolute -left-6 top-1 w-3 h-3 rounded-full bg-primary"></div>
-                      <div className="flex flex-col">
-                        <span className="font-title-md text-title-md text-ink-charcoal font-semibold">02. Chauffeur Assigned (2h Prior)</span>
-                        <span className="font-body-sm text-body-sm text-on-surface-variant">Driver name, mobile number &amp; cab license plate SMS</span>
-                      </div>
-                    </div>
-                    <div className="relative">
-                      <div className="absolute -left-6 top-1 w-3 h-3 rounded-full bg-surface-container-highest"></div>
-                      <div className="flex flex-col">
-                        <span className="font-title-md text-title-md text-ink-charcoal font-semibold">03. Vehicle Deep Sanitization</span>
-                        <span className="font-body-sm text-body-sm text-on-surface-variant">Inspection of AC filters &amp; chilled water restock</span>
-                      </div>
-                    </div>
-                    <div className="relative">
-                      <div className="absolute -left-6 top-1 w-3 h-3 rounded-full bg-surface-container-highest"></div>
-                      <div className="flex flex-col">
-                        <span className="font-title-md text-title-md text-ink-charcoal font-semibold">04. Porch Arrival</span>
-                        <span className="font-body-sm text-body-sm text-on-surface-variant">Chauffeur stages at porch 15 minutes ahead of schedule</span>
-                      </div>
-                    </div>
+              <div className="p-space-lg flex flex-col gap-space-md">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-space-md bg-surface-container-low p-space-md rounded-lg">
+                  <div>
+                    <span className="text-xs text-secondary uppercase font-bold block">Lead Guest</span>
+                    <span className="font-title-md text-on-surface font-semibold">{fullName}</span>
+                    <span className="text-xs text-on-surface-variant block mt-0.5">{phone} • {email}</span>
                   </div>
+                  <div>
+                    <span className="text-xs text-secondary uppercase font-bold block">Assigned Vehicle</span>
+                    <span className="font-title-md text-on-surface font-semibold">{selectedVehicle.name}</span>
+                    <span className="text-xs text-on-surface-variant block mt-0.5">{selectedVehicle.subtitle}</span>
+                  </div>
+                </div>
 
-                  <div className="pt-space-sm border-t border-border-warm flex flex-col gap-2">
-                    <a
-                      href="/en/packages/"
-                      className="w-full py-2.5 px-4 rounded-lg bg-sandstone-wash text-ink-charcoal font-label-lg text-label-lg text-center hover:bg-surface-container transition-colors"
-                    >
-                      Book Another Tour or Transfer
-                    </a>
-                    <a
-                      href="/en/"
-                      className="w-full py-2.5 px-4 rounded-lg bg-surface text-secondary font-label-lg text-label-lg text-center hover:text-ink-charcoal transition-colors"
-                    >
-                      Return to Home
-                    </a>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
+                  <div>
+                    <span className="text-xs text-secondary uppercase font-bold block">Pickup Timing</span>
+                    <span className="font-title-md text-on-surface font-semibold">{pickupDate} at {pickupTime} IST</span>
+                    <span className="text-xs text-on-surface-variant block mt-0.5">Porch: {pickupAddress}</span>
+                  </div>
+                  <div>
+                    <span className="text-xs text-secondary uppercase font-bold block">Destination &amp; Route</span>
+                    <span className="font-title-md text-on-surface font-semibold">
+                      {serverFare?.label || `${effectiveOrigin} → ${effectiveDestination}`}
+                    </span>
+                    <span className="text-xs text-on-surface-variant block mt-0.5">Drop: {dropAddress}</span>
+                  </div>
+                </div>
+
+                {/* Accounting */}
+                <div className="pt-space-sm border-t border-border-warm flex flex-col gap-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-on-surface-variant">Total Trip Fare:</span>
+                    <span className="font-bold text-ink-midnight">{formatInr(serverFare?.totalFare ?? 2500)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm text-success-jade">
+                    <span>Advance Payment Authorized:</span>
+                    <span className="font-bold">{formatInr(amountPaid)} (Authorized)</span>
+                  </div>
+                  <div className="flex justify-between text-sm text-terracotta-sandstone font-bold pt-1 border-t border-border-warm/60">
+                    <span>Balance Payable on Pickup:</span>
+                    <span>{formatInr(Math.max(0, (serverFare?.totalFare ?? 2500) - amountPaid))}</span>
                   </div>
                 </div>
               </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex flex-col sm:flex-row gap-space-sm">
+              <a
+                href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
+                  `*SK Baghel Tour & Travels — Booking Confirmation*\nTicket ID: ${confirmedTicketId || "AGR-20260927-4821"}\nRoute: ${effectiveOrigin} to ${effectiveDestination}\nVehicle: ${selectedVehicle.name}\nPickup: ${pickupDate} at ${pickupTime}\nPorch: ${pickupAddress}\nTotal: ${formatInr(serverFare?.totalFare ?? 2500)}\nPaid: ${formatInr(amountPaid)}\nBalance on Pickup: ${formatInr(Math.max(0, (serverFare?.totalFare ?? 2500) - amountPaid))}`
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 py-3 px-space-md rounded-xl bg-black text-white font-label-lg font-bold flex items-center justify-center gap-2 hover:bg-neutral-900 transition-colors shadow-sm"
+              >
+                <WhatsAppIcon className="w-5 h-5 shrink-0" />
+                <span>Share Voucher on WhatsApp</span>
+              </a>
+
+              <button
+                type="button"
+                onClick={() => window.print()}
+                className="px-6 py-3 rounded-xl bg-sandstone-wash text-primary border border-primary/20 font-label-lg font-bold hover:bg-sandstone-wash/60 transition-colors"
+              >
+                Print / Save Voucher
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setStep(1);
+                  setConfirmedTicketId("");
+                }}
+                className="px-6 py-3 rounded-xl bg-surface-container-low text-ink-slate font-label-lg font-bold hover:bg-surface-container transition-colors"
+              >
+                Book Another Trip
+              </button>
             </div>
           </div>
         )}

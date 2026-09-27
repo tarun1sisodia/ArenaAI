@@ -11,6 +11,11 @@ export async function registerCatalogRoutes(
     config: { rateLimit: { max: 60, timeWindow: "1 minute" } },
     handler: controller.listPublished,
   });
+  // Compressed routes manifest for the 982-route inventory (F4/F5).
+  app.get("/api/v1/catalog/manifest", {
+    config: { rateLimit: { max: 120, timeWindow: "1 minute" } },
+    handler: controller.getManifest,
+  });
   app.get("/api/v1/catalog/:slug", {
     config: { rateLimit: { max: 60, timeWindow: "1 minute" } },
     handler: controller.getPublished,
@@ -22,6 +27,14 @@ export async function registerCatalogRoutes(
   });
 
   // ── Operations desk (admin) ───────────────────────────────────────────────
+  app.get("/api/v1/ops/admin/catalog/manifest/status", {
+    config: { rateLimit: { max: 60, timeWindow: "1 minute" } },
+    handler: controller.getManifestStatus,
+  });
+  app.post("/api/v1/ops/admin/catalog/republish", {
+    config: { rateLimit: { max: 20, timeWindow: "1 minute" } },
+    handler: controller.republish,
+  });
   app.get("/api/v1/ops/admin/catalog", {
     config: { rateLimit: { max: 60, timeWindow: "1 minute" } },
     handler: controller.listAdmin,

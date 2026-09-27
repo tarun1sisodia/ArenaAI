@@ -20,6 +20,60 @@ export function getApiBaseUrl(): string {
 export type BackendTripType = "one-way" | "round-trip" | "local-tour" | "airport-transfer";
 export type BackendVehicleTier = "sedan" | "ertiga" | "innova-crysta" | "tempo-traveller" | "urbania";
 
+export interface CalculateFarePayload {
+  tripType: BackendTripType;
+  vehicleTier: BackendVehicleTier;
+  originName: string;
+  destinationName: string;
+  pickupDatetime: string;
+  returnDatetime?: string;
+  promoCode?: string;
+  packageId?: string;
+  localPackageKey?: "8hr-80km" | "12hr-120km" | "airport-transfer";
+}
+
+export interface ServerFareBreakdown {
+  baseFare: number;
+  nightAllowance: number;
+  driverAllowance: number;
+  discountAmount: number;
+  totalFare: number;
+  advanceAmount: number;
+  balanceAmount: number;
+  currency: string;
+  fareVersion: string;
+  label: string;
+  duration: string;
+  distanceKm: number;
+  billedKm: number;
+  alwaysRoundTrip: boolean;
+  tripType: BackendTripType;
+  vehicleTier: BackendVehicleTier;
+  promoCode: string | null;
+  promoValid: boolean;
+  roundMultiplierApplied: boolean;
+  rules: string[];
+}
+
+export async function calculateServerFare(
+  payload: CalculateFarePayload,
+): Promise<ServerFareBreakdown> {
+  const baseUrl = getApiBaseUrl();
+  const res = await fetch(`${baseUrl}/api/v1/fares/calculate`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const msg = json?.error?.message || `Failed to calculate fare (status ${res.status})`;
+    throw new Error(msg);
+  }
+
+  return json.data as ServerFareBreakdown;
+}
+
 export interface CreateDraftBookingPayload {
   tripType: BackendTripType;
   vehicleTier: BackendVehicleTier;
@@ -36,6 +90,8 @@ export interface CreateDraftBookingPayload {
   flightTrainNumber?: string;
   specialNotes?: string;
   promoCode?: string;
+  packageId?: string;
+  localPackageKey?: "8hr-80km" | "12hr-120km" | "airport-transfer";
 }
 
 export interface CreateDraftBookingResponse {

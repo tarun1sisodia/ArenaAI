@@ -328,6 +328,29 @@ export async function fetchAdminCatalogItem(id: string): Promise<{ item: Catalog
   return { item: mapCatalogItem(data), media: Array.isArray(data.media) ? data.media.map(mapCatalogMedia) : [] };
 }
 
+export async function fetchCatalogManifestStatus(): Promise<{
+  version: number;
+  updatedAt: string;
+  routeCount: number;
+  packageCount: number;
+}> {
+  const json = await apiFetch(`/api/v1/ops/admin/catalog/manifest/status`);
+  return json?.data ?? { version: 1, updatedAt: new Date().toISOString(), routeCount: 0, packageCount: 0 };
+}
+
+export async function republishCatalogManifest(): Promise<{
+  version: number;
+  updatedAt: string;
+  routeCount: number;
+  packageCount: number;
+}> {
+  const json = await apiFetch(`/api/v1/ops/admin/catalog/republish`, {
+    method: "POST",
+    body: JSON.stringify({}),
+  });
+  return json?.data ?? { version: 1, updatedAt: new Date().toISOString(), routeCount: 0, packageCount: 0 };
+}
+
 export async function setCatalogItemStatus(id: string, action: "publish" | "archive"): Promise<CatalogItem> {
   const json = await apiFetch(`/api/v1/ops/admin/catalog/${encodeURIComponent(id)}/${action}`, {
     method: "POST",

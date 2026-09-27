@@ -11,6 +11,7 @@ import {
   MapPin,
   PenSquare,
   Plus,
+  RefreshCw,
   Route as RouteIcon,
   Search,
   Star,
@@ -31,6 +32,8 @@ import {
   deleteCatalogMedia,
   fetchAdminCatalog,
   fetchAdminCatalogItem,
+  fetchCatalogManifestStatus,
+  republishCatalogManifest,
   resolveMediaSrc,
   setCatalogItemStatus,
   updateAdminCatalogItem,
@@ -104,6 +107,11 @@ export function CatalogPage({ user }: { user: AdminUser }) {
   const [busyId, setBusyId] = useState<string | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
 
+  // Manifest status & republish state (site data regeneration control)
+  const [manifestStatus, setManifestStatus] = useState<{ version: number; updatedAt: string; routeCount?: number; packageCount?: number } | null>(null);
+  const [isRepublishing, setIsRepublishing] = useState(false);
+  const [republishSuccess, setRepublishSuccess] = useState<string | null>(null);
+
   // List filters (mobile-friendly chips + search)
   const [statusFilter, setStatusFilter] = useState<CatalogStatus | "all">("all");
   const [typeFilter, setTypeFilter] = useState<CatalogCategory | "all">("all");
@@ -158,10 +166,33 @@ export function CatalogPage({ user }: { user: AdminUser }) {
           setLoadError(err instanceof Error ? err.message : "Could not load catalog items from the backend.");
         }
       });
+
+    fetchCatalogManifestStatus()
+      .then((status) => {
+        if (isMounted) setManifestStatus(status);
+      })
+      .catch(() => {});
+
     return () => {
       isMounted = false;
     };
   }, [reloadKey, statusFilter, typeFilter, search]);
+
+  // Regenerate the public site manifest (routes + published packages) on demand.
+  async function handleRepublish() {
+    setIsRepublishing(true);
+    setActionError(null);
+    setRepublishSuccess(null);
+    try {
+      const res = await republishCatalogManifest();
+      setManifestStatus(res);
+      setRepublishSuccess(`Site data regenerated (Manifest v${res.version}, ${res.routeCount} routes, ${res.packageCount} packages published).`);
+    } catch (err) {
+      setActionError(`Could not republish site data: ${err instanceof Error ? err.message : "Backend error"}`);
+    } finally {
+      setIsRepublishing(false);
+    }
+  }
 
   const mediaLimit = CATALOG_MEDIA_LIMITS[formCategory];
   const activeMedia = media.filter((m) => m.status !== "archived");
@@ -461,15 +492,37 @@ export function CatalogPage({ user }: { user: AdminUser }) {
         title="Catalog CMS"
         description="Rides, tours, packages and famous places. Published items appear on the customer site automatically — one catalog feeds both apps."
         actions={
-          canEdit ? (
-            <Button variant="gold" size="sm" shine onClick={openCreate}>
-              <Plus className="h-3.5 w-3.5 mr-1" /> New item
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleRepublish}
+              disabled={isRepublishing}
+              title={manifestStatus ? `Manifest v${manifestStatus.version} • last published ${formatDate(manifestStatus.updatedAt)}` : "Regenerate public site data"}
+            >
+              <RefreshCw className={cn("h-3.5 w-3.5 mr-1.5", isRepublishing && "animate-spin")} />
+              Republish site data
             </Button>
-          ) : (
-            <Badge tone="neutral">Read-only for your role</Badge>
-          )
+            {canEdit ? (
+              <Button variant="gold" size="sm" shine onClick={openCreate}>
+                <Plus className="h-3.5 w-3.5 mr-1" /> New item
+              </Button>
+            ) : (
+              <Badge tone="neutral">Read-only for your role</Badge>
+            )}
+          </div>
         }
       />
+
+      {/* Manifest strip + republish feedback */}
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
+        <span>
+          {manifestStatus
+            ? `Public site manifest v${manifestStatus.version} • ${manifestStatus.routeCount ?? 0} routes • ${manifestStatus.packageCount ?? 0} packages • updated ${formatDate(manifestStatus.updatedAt)}`
+            : "Public site manifest status unavailable."}
+        </span>
+        {republishSuccess && <span className="text-emerald-600 dark:text-emerald-400">{republishSuccess}</span>}
+      </div>
 
       {/* Status + vertical filters + search */}
       <div className="mb-4 space-y-2.5">
