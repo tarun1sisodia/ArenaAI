@@ -106,6 +106,8 @@ export const AIRPORT_TRANSFERS: Record<string, { name: string; km: number; fares
 
 import catalogData from "./catalog.data.json" with { type: "json" };
 
+export const CATALOG_RAW_DATA = catalogData as Record<string, any>;
+
 export const ROUTES: readonly RouteFare[] = Object.values(catalogData).map((r: any) => ({
   id: r.id,
   from: r.from,

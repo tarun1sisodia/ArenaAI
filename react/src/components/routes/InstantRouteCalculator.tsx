@@ -3,6 +3,7 @@ import { EDITORIAL_TYPOGRAPHY } from "../layout/EditorialPageTemplate";
 import { WhatsAppIcon } from "../icons/WhatsAppIcon";
 import { contact } from "../../data/contact";
 import { getIndicativeBrowseFare } from "../../fares";
+import { loadRoutesManifest } from "../../services/catalogManifest";
 
 export interface CompressedRouteItem {
   o: string;        // Origin
@@ -42,11 +43,10 @@ export function InstantRouteCalculator({
 
   useEffect(() => {
     let isMounted = true;
-    fetch("/routes-manifest.json")
-      .then((res) => (res.ok ? res.json() : Promise.reject()))
-      .then((data: Record<string, CompressedRouteItem>) => {
+    loadRoutesManifest()
+      .then((data) => {
         if (isMounted) {
-          setManifest(data);
+          setManifest(data as any);
           setIsLoading(false);
         }
       })

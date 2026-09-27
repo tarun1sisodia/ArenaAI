@@ -4,6 +4,7 @@ import { contact } from "../data/contact";
 import { WhatsAppIcon } from "../components/icons";
 import { InstantRouteCalculator } from "../components/routes/InstantRouteCalculator";
 import { Pagination } from "../components/ui/Pagination";
+import { loadRoutesManifest } from "../services/catalogManifest";
 
 export interface RoutesPageProps {
   language?: SupportedLanguage;
@@ -240,10 +241,11 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
 
   useEffect(() => {
     let isMounted = true;
-    fetch("/routes-manifest.json")
-      .then((res) => (res.ok ? res.json() : Promise.reject()))
-      .then((data: Record<string, ManifestRouteData>) => {
-        if (isMounted) setManifest(data);
+    loadRoutesManifest()
+      .then((data) => {
+        if (isMounted && data && Object.keys(data).length > 0) {
+          setManifest(data as any);
+        }
       })
       .catch(() => {});
     return () => {

@@ -21,6 +21,7 @@ const MarketingPage = lazy(() => import("../pages/MarketingPage").then((m) => ({
 import { marketingHubs } from "./routes";
 import { SeoHead } from "../components/seo/SeoHead";
 import { packages, routes, vehicles, type Route } from "../data/catalogue";
+import { loadRoutesManifest } from "../services/catalogManifest";
 
 export function getMarketingPath(pathname: string) {
   const segments = pathname.split("/").filter(Boolean);
@@ -228,11 +229,10 @@ export function App({ pathname: propPathname }: AppProps = {}) {
     if (matchedRoute || isHome || isBooking || isMarketingHub) return;
     const cleanSection = section.replace(/\.html$/, "");
     let isMounted = true;
-    fetch("/routes-manifest.json")
-      .then((res) => (res.ok ? res.json() : null))
+    loadRoutesManifest()
       .then((data) => {
         if (!data || !isMounted) return;
-        const entry = data[cleanSection] || Object.entries(data).find(([k]) => pathname.includes(k))?.[1];
+        const entry = (data as any)[cleanSection] || Object.entries(data).find(([k]) => pathname.includes(k))?.[1] as any;
         if (entry) {
           const durationHrs = Math.floor(entry.m / 60);
           const durationMins = entry.m % 60;

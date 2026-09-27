@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { AlertTriangle, Archive, CheckCircle2, Clock, Globe, MapPin, PenSquare, Plus, X } from "lucide-react";
+import { AlertTriangle, Archive, CheckCircle2, Clock, Globe, MapPin, PenSquare, Plus, RefreshCw, X } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import { PageHeader } from "@/components/admin/PageHeader";
 import { Card } from "@/components/ui/Card";
@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Dialog } from "@/components/ui/Dialog";
 import { Input, Label, Select } from "@/components/ui/Input";
-import { createAdminCatalogItem, fetchAdminCatalog, setCatalogItemStatus, updateAdminCatalogItem } from "@/lib/api";
+import { createAdminCatalogItem, fetchAdminCatalog, fetchCatalogManifestStatus, republishCatalogManifest, setCatalogItemStatus, updateAdminCatalogItem } from "@/lib/api";
 import { can, type AdminUser, type CatalogItem, type CatalogCategory, type CatalogStatus } from "@/lib/types";
 import { cn, formatDate, formatINR } from "@/lib/utils";
 
@@ -26,6 +26,11 @@ export function CatalogPage({ user }: { user: AdminUser }) {
   const [actionError, setActionError] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
+
+  // Manifest status & Republish state
+  const [manifestStatus, setManifestStatus] = useState<{ version: number; updatedAt: string; routeCount?: number; packageCount?: number } | null>(null);
+  const [isRepublishing, setIsRepublishing] = useState(false);
+  const [republishSuccess, setRepublishSuccess] = useState<string | null>(null);
 
   // Dialog state for New / Edit Item
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -59,10 +64,32 @@ export function CatalogPage({ user }: { user: AdminUser }) {
           setLoadError(err instanceof Error ? err.message : "Could not load catalog items from the backend.");
         }
       });
+
+    fetchCatalogManifestStatus()
+      .then((status) => {
+        if (isMounted) setManifestStatus(status);
+      })
+      .catch(() => {});
+
     return () => {
       isMounted = false;
     };
   }, [reloadKey]);
+
+  async function handleRepublish() {
+    setIsRepublishing(true);
+    setActionError(null);
+    setRepublishSuccess(null);
+    try {
+      const res = await republishCatalogManifest();
+      setManifestStatus(res);
+      setRepublishSuccess(`Site data successfully regenerated (Manifest v${res.version}, ${res.routeCount} routes, ${res.packageCount} packages published).`);
+    } catch (err) {
+      setActionError(`Could not republish site data: ${err instanceof Error ? err.message : "Backend error"}`);
+    } finally {
+      setIsRepublishing(false);
+    }
+  }
 
   function openCreate() {
     setEditingItem(null);
@@ -161,15 +188,56 @@ export function CatalogPage({ user }: { user: AdminUser }) {
         title="Catalog CMS"
         description="Rides, tours and packages. Drafts are invisible to the public site until a super admin publishes them."
         actions={
-          canEdit ? (
-            <Button variant="gold" size="sm" shine onClick={openCreate}>
-              <Plus className="h-3.5 w-3.5 mr-1" /> New item
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleRepublish}
+              disabled={isRepublishing}
+              title={manifestStatus ? `Last published: ${formatDate(manifestStatus.updatedAt)}` : undefined}
+            >
+              <RefreshCw className={cn("h-3.5 w-3.5 mr-1.5", isRepublishing && "animate-spin")} />
+              Republish site data
             </Button>
-          ) : (
-            <Badge tone="neutral">Read-only for your role</Badge>
-          )
+            {canEdit ? (
+              <Button variant="gold" size="sm" shine onClick={openCreate}>
+                <Plus className="h-3.5 w-3.5 mr-1" /> New item
+              </Button>
+            ) : (
+              <Badge tone="neutral">Read-only for your role</Badge>
+            )}
+          </div>
         }
       />
+
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3 text-xs text-muted-foreground border-b border-border/50 pb-3">
+        <div>
+          <span>Manifest Version: </span>
+          <strong className="text-foreground">v{manifestStatus?.version ?? 1}</strong>
+          <span className="mx-2">·</span>
+          <span>Last regenerated: </span>
+          <strong className="text-foreground">
+            {manifestStatus?.updatedAt ? formatDate(manifestStatus.updatedAt) : "Recently"}
+          </strong>
+        </div>
+      </div>
+
+      {republishSuccess && (
+        <div
+          className="mb-4 flex items-center gap-2.5 rounded-md border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-[13px] text-emerald-400"
+          role="status"
+        >
+          <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" />
+          <span className="flex-1">{republishSuccess}</span>
+          <button
+            type="button"
+            onClick={() => setRepublishSuccess(null)}
+            className="text-emerald-400 hover:text-white"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      )}
 
       <div className="mb-5 flex flex-wrap gap-2">
         {(Object.keys(counts) as (keyof typeof counts)[]).map((k) => (
