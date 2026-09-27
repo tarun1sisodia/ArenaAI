@@ -149,14 +149,30 @@ The Razorpay webhook secret must exactly matches Render's `RAZORPAY_WEBHOOK_SECR
 - Pre-deploy migrations and deployment readiness (/ready) non-2xx tests passed (20 test files / 123 tests).
 - Phase 1 release blockers complete.
 
-## Known next work (Phase 2 — source-of-truth convergence)
+### Phase 2: Source-of-Truth Convergence & Dynamic Catalog Manifest
 
-- Step 2.1: Add a canonical catalog route model containing route identity, coordinates/places, distance, duration, availability and fare references.
-- Step 2.2: Remove static route matches as authoritative data.
-- Step 2.3: Build manifest from published database records only, or persist editorial route records with publication state.
-- Step 2.4: Replace hard-coded generic package image with published media cover.
-- Step 2.5: Add durable manifest revision/ETag metadata.
-- Step 2.6: Add customer bounded cache TTL, ETag and stale banner.
-- Step 2.7: Hydrate home, route, package and fleet cards through shared live selectors.
+Implemented:
 
-See `docs/agent/00_CONTEXT_HANDOFF.md` and section 8 of the root operating specification. The most important engineering task is making database fare rules and catalog routes the single production source used by public fare calculation and booking.
+- **Step 2.1 & 2.3:** Canonical route filtering and DB override in `backend/src/modules/catalog/catalog.service.ts`:
+  - Strictly excludes unpublished/draft or archived catalog routes from `/api/v1/catalog/manifest`.
+  - Published database routes override static baseline corridors with live DB starting price (`fs`), calculated vehicle tier fares, and stops (`routeSummary`).
+- **Step 2.4:** Dynamic package media cover resolution:
+  - Packages resolve published media cover images (`sortOrder: 0` or first published entry from `db.media.listByCatalogItem`) instead of generic static placeholder art.
+  - Manifest revision auto-increments upon media addition, modification, or deletion.
+- **Step 2.5 & 2.6:** Client bounded cache and ETag conditional validation in `react/src/services/catalogManifest.ts`:
+  - Implemented `CachedManifestEnvelope` with bounded 10-minute TTL (`CACHE_TTL_MS`).
+  - Sends `If-None-Match: etag` for conditional validation.
+  - Handles HTTP 304 Not Modified to refresh timestamp without body transmission.
+  - Marks cache with `isStale: true` when TTL expires and backend is offline.
+- **Step 2.2 & 2.7:** Prioritize live manifest route over static fallback in `react/src/app/App.tsx` (`activeRoute = manifestRoute || matchedRoute`), hydrating route pages and details dynamically.
+- **Tests & Verification:** Updated integration suite `backend/tests/integration/catalog-manifest-f4.test.ts` (6 passing tests). Verified full monorepo with `npm run verify` (typechecks x3, 20 test files / 125 tests, SEO tests, and builds x3 green).
+
+## Known next work (Phase 3 — secure integrations)
+
+- Step 3.1: Implement backend LocationIQ proxy route with server-held secret, debounce, cache, IP/user rate limits, and bounded response size.
+- Step 3.2: High-entropy token or OTP recovery for booking status retrieval (`/api/v1/bookings/status`).
+- Step 3.3: Magic-byte and MIME validation for media file uploads.
+- Step 3.4: Compensating object-store cleanup.
+- Step 3.5: Split staff roles into content, pricing, dispatch, finance, review, audit, and security.
+
+See `docs/agent/00_CONTEXT_HANDOFF.md` and section 8 of the root operating specification.

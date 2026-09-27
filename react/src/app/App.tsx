@@ -236,10 +236,10 @@ export function App({ pathname: propPathname }: AppProps = {}) {
     );
   });
 
-  const activeRoute = matchedRoute || manifestRoute;
+  const activeRoute = manifestRoute || matchedRoute;
 
   useEffect(() => {
-    if (matchedRoute || isHome || isBooking || isMarketingHub) return;
+    if (isHome || isBooking || isMarketingHub) return;
     const cleanSection = section.replace(/\.html$/, "");
     let isMounted = true;
     loadRoutesManifest()
@@ -250,11 +250,13 @@ export function App({ pathname: propPathname }: AppProps = {}) {
           const durationHrs = Math.floor(entry.m / 60);
           const durationMins = entry.m % 60;
           const durationStr = `${durationHrs}h${durationMins ? ` ${durationMins}m` : ""}`;
+          const base: Partial<Route> = matchedRoute || {};
           setManifestRoute({
-            id: cleanSection,
+            ...base,
+            id: matchedRoute?.id || cleanSection,
             from: entry.o,
             to: entry.d,
-            km: entry.km > 0 ? entry.km : 180,
+            km: entry.km > 0 ? entry.km : (matchedRoute?.km || 180),
             duration: durationStr,
             kind: entry.pm === "day120" ? "local" : "one-way",
             fares: {
@@ -264,7 +266,7 @@ export function App({ pathname: propPathname }: AppProps = {}) {
               tempo: entry.ft > 100 ? entry.ft : 9500,
               urbania: entry.fu > 100 ? entry.fu : 14000,
             },
-          });
+          } as Route);
         }
       })
       .catch(() => {});

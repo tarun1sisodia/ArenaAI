@@ -58,64 +58,82 @@ export function createCatalogService(deps: { db: Repositories; clock: Clock; med
 
   async function buildManifest() {
     const routes = compileBaseRoutes();
-    // Query ONLY published items from catalog database (Requirement: Do not return unpublished or archived items)
-    const allPublished = await deps.db.catalog.list({ status: "published" });
+    const allDbItems = await deps.db.catalog.list({});
 
-    // Incorporate any database published routes
-    for (const item of allPublished) {
+    // Incorporate database routes & exclusions
+    for (const item of allDbItems) {
       if ((item.type as string) === "ride" || (item.type as string) === "route") {
-        if (!routes[item.slug]) {
+        if (item.status !== "published") {
+          // Strictly exclude unpublished (draft) or archived routes from manifest
+          delete routes[item.slug];
+        } else {
+          // Published database route overrides static baseline
           const startingPrice = item.startingPriceInr || 2000;
+          const existing = routes[item.slug];
           routes[item.slug] = {
-            o: item.routeSummary?.split("·")[0]?.trim() || item.title,
-            d: item.routeSummary?.split("·").slice(-1)[0]?.trim() || item.title,
-            km: 200,
-            m: 240,
+            o: item.routeSummary?.split("·")[0]?.trim() || existing?.o || item.title,
+            d: item.routeSummary?.split("·").slice(-1)[0]?.trim() || existing?.d || item.title,
+            km: existing?.km ?? 200,
+            m: existing?.m ?? 240,
             fh: Math.round(startingPrice * 0.85),
             fs: startingPrice,
             fe: Math.round(startingPrice * 1.35),
             fi: Math.round(startingPrice * 1.8),
             ft: Math.round(startingPrice * 2.75),
             fu: Math.round(startingPrice * 3.75),
-            pm: "oneway",
-            c: item.routeSummary || "Direct Highway Corridor",
-            toll: 1,
+            pm: existing?.pm ?? "oneway",
+            c: item.routeSummary || existing?.c || "Direct Highway Corridor",
+            toll: existing?.toll ?? 1,
           };
         }
       }
     }
 
-    const packages = allPublished
-      .filter((item) => item.status === "published" && (item.type === "package" || item.type === "tour"))
-      .map((item) => ({
-        id: item.id,
-        slug: item.slug,
-        name: item.title,
-        title: item.title,
-        type: item.type,
-        category: item.type,
-        kicker: item.type === "package" ? "Tour Package" : "Day Tour",
-        duration: item.durationText || "1 day",
-        from: item.startingPriceInr,
-        startingPriceInr: item.startingPriceInr,
-        image: "/assets/packages/taj-dawn.webp",
-        places: (item.routeSummary || "")
-          .split(/[,·|]/)
-          .map((s) => s.trim())
-          .filter(Boolean),
-        blurb: item.shortDescription || item.description,
-        description: item.description,
-        includes: [
-          "Private AC vehicle",
-          "Professional chauffeur",
-          "All tolls, parking & state tax",
-          "Guide assistance",
-          "Bottled water",
-        ],
-        excludes: ["Monument tickets", "Meals"],
-        status: item.status,
-        updatedAt: item.updatedAt,
-      }));
+    const allPublished = allDbItems.filter((i) => i.status === "published");
+
+    const packages = await Promise.all(
+      allPublished
+        .filter((item) => item.type === "package" || item.type === "tour")
+        .map(async (item) => {
+          const media = (await deps.db.media.listByCatalogItem(item.id))
+            .filter((entry) => entry.status === "published")
+            .sort((a, b) => a.sortOrder - b.sortOrder || a.createdAt.localeCompare(b.createdAt));
+          const cover = media.find((m) => m.sortOrder === 0) || media[0];
+          const image = cover
+            ? (cover.storagePath || (cover.contentBase64 ? `/api/v1/media/${cover.id}` : null))
+            : "/assets/packages/taj-dawn.webp";
+
+          return {
+            id: item.id,
+            slug: item.slug,
+            name: item.title,
+            title: item.title,
+            type: item.type,
+            category: item.type,
+            kicker: item.type === "package" ? "Tour Package" : "Day Tour",
+            duration: item.durationText || "1 day",
+            from: item.startingPriceInr,
+            startingPriceInr: item.startingPriceInr,
+            image: image || "/assets/packages/taj-dawn.webp",
+            places: (item.routeSummary || "")
+              .split(/[,·|]/)
+              .map((s) => s.trim())
+              .filter(Boolean),
+            blurb: item.shortDescription || item.description,
+            description: item.description,
+            includes: [
+              "Private AC vehicle",
+              "Professional chauffeur",
+              "All tolls, parking & state tax",
+              "Guide assistance",
+              "Bottled water",
+            ],
+            excludes: ["Monument tickets", "Meals"],
+            status: item.status,
+            updatedAt: item.updatedAt,
+          };
+        }),
+    );
 
     const vehicles = VEHICLES.map((v) => ({
       id: v.id,
@@ -401,7 +419,7 @@ export function createCatalogService(deps: { db: Repositories; clock: Clock; med
         storagePath = input.storagePath as string;
       }
 
-      return deps.db.media.create({
+      const created = await deps.db.media.create({
         id: mediaId,
         catalogItemId: item.id,
         storagePath,
@@ -422,13 +440,15 @@ export function createCatalogService(deps: { db: Repositories; clock: Clock; med
         publishedAt: now,
         createdAt: now,
       });
+      bumpManifest();
+      return created;
     },
 
     async updateMedia(id: string, input: z.infer<typeof UpdateMediaSchema>, actor: AuthUser) {
       const item = await deps.db.media.getById(id);
       if (!item) throw Errors.notFound("CATALOG_NOT_FOUND", "Media not found.");
       const now = toIso(deps.clock.now());
-      return deps.db.media.update({
+      const updated = await deps.db.media.update({
         ...item,
         altText: input.altText ?? item.altText,
         caption: input.caption ?? item.caption,
@@ -437,6 +457,8 @@ export function createCatalogService(deps: { db: Repositories; clock: Clock; med
         approvedBy: input.status === "published" ? actor.id : item.approvedBy,
         publishedAt: input.status === "published" ? now : item.publishedAt,
       });
+      bumpManifest();
+      return updated;
     },
 
     async deleteMedia(id: string, actor: AuthUser, requestId: string) {
@@ -464,6 +486,7 @@ export function createCatalogService(deps: { db: Repositories; clock: Clock; med
         requestId: requestId ?? "",
         createdAt: now,
       });
+      bumpManifest();
       return { deleted: true, id };
     },
 

@@ -26,9 +26,18 @@ export interface CatalogManifestData {
   routes: Record<string, CompressedRoute>;
   packages: TourPackage[];
   vehicles: readonly any[];
+  etag?: string;
+  isStale?: boolean;
 }
 
-const CACHE_STORAGE_KEY = "arena_catalog_manifest_v2";
+interface CachedManifestEnvelope {
+  etag?: string;
+  cachedAt: number;
+  data: CatalogManifestData;
+}
+
+const CACHE_STORAGE_KEY = "arena_catalog_manifest_v3";
+const CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes bounded TTL
 
 let inMemoryManifest: CatalogManifestData | null = null;
 let fetchPromise: Promise<CatalogManifestData | null> | null = null;
@@ -38,23 +47,31 @@ export async function fetchCatalogManifest(): Promise<CatalogManifestData | null
   if (fetchPromise) return fetchPromise;
 
   fetchPromise = (async () => {
-    // 1. In browser, check localStorage for cached manifest
-    let localCached: CatalogManifestData | null = null;
+    // 1. In browser, check localStorage for cached manifest envelope
+    let localEnvelope: CachedManifestEnvelope | null = null;
     if (typeof window !== "undefined") {
       try {
         const raw = window.localStorage.getItem(CACHE_STORAGE_KEY);
         if (raw) {
-          localCached = JSON.parse(raw);
+          const parsed = JSON.parse(raw);
+          if (parsed && parsed.data) {
+            localEnvelope = parsed;
+          } else if (parsed && parsed.routes) {
+            localEnvelope = { cachedAt: 0, data: parsed };
+          }
         }
       } catch {
         // LocalStorage blocked or quota error
       }
     }
 
-    // 2. Try fetching latest manifest from backend authoritative endpoint
+    // 2. Try fetching latest manifest from backend authoritative endpoint with ETag
     try {
       const apiBase = getApiBaseUrl();
       const headers: Record<string, string> = { Accept: "application/json" };
+      if (localEnvelope?.etag) {
+        headers["If-None-Match"] = localEnvelope.etag;
+      }
 
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 4000);
@@ -65,8 +82,15 @@ export async function fetchCatalogManifest(): Promise<CatalogManifestData | null
       });
       clearTimeout(timeoutId);
 
-      if (res.status === 304 && localCached) {
-        inMemoryManifest = localCached;
+      // Handle 304 Not Modified
+      if (res.status === 304 && localEnvelope?.data) {
+        inMemoryManifest = { ...localEnvelope.data, isStale: false };
+        try {
+          window.localStorage.setItem(
+            CACHE_STORAGE_KEY,
+            JSON.stringify({ ...localEnvelope, cachedAt: Date.now() }),
+          );
+        } catch {}
         return inMemoryManifest;
       }
 
@@ -74,10 +98,16 @@ export async function fetchCatalogManifest(): Promise<CatalogManifestData | null
         const json = await res.json();
         const data = json?.data as CatalogManifestData;
         if (data && data.routes && typeof data.version === "number") {
+          const etag = res.headers.get("etag") ?? undefined;
+          data.etag = etag;
+          data.isStale = false;
           inMemoryManifest = data;
           if (typeof window !== "undefined") {
             try {
-              window.localStorage.setItem(CACHE_STORAGE_KEY, JSON.stringify(data));
+              window.localStorage.setItem(
+                CACHE_STORAGE_KEY,
+                JSON.stringify({ etag, cachedAt: Date.now(), data }),
+              );
             } catch {
               // Ignore quota issues
             }
@@ -89,9 +119,13 @@ export async function fetchCatalogManifest(): Promise<CatalogManifestData | null
       // API unreachable or timed out
     }
 
-    // 3. Fallback to localStorage if available
-    if (localCached) {
-      inMemoryManifest = localCached;
+    // 3. Fallback to localStorage if available (mark stale if expired)
+    if (localEnvelope?.data) {
+      const isStale = Date.now() - localEnvelope.cachedAt > CACHE_TTL_MS;
+      inMemoryManifest = {
+        ...localEnvelope.data,
+        isStale,
+      };
       return inMemoryManifest;
     }
 
@@ -109,6 +143,7 @@ export async function fetchCatalogManifest(): Promise<CatalogManifestData | null
             routes,
             packages: [...staticPackages],
             vehicles: [],
+            isStale: true,
           };
           return inMemoryManifest;
         }
