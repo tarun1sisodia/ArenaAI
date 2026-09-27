@@ -112,7 +112,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
         telephone: contact.phone,
         email: contact.email,
         image: "https://skbagheltravels.in/assets/brand/og-banner.webp",
-        priceRange: "₹₹",
+        priceRange: "₹",
         currenciesAccepted: "INR",
         paymentAccepted: "Cash, UPI, Credit Card",
         areaServed: ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"],
