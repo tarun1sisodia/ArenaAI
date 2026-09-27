@@ -141,12 +141,13 @@ export function createAdminService(deps: { db: Repositories; clock?: Clock }) {
       // in PostgreSQL. Keep generated values within those database contracts;
       // the memory repository does not enforce either constraint.
       const versionStr = updates.version || `r${Date.now().toString(36)}`;
+      const isActive = updates.isActive !== undefined ? Boolean(updates.isActive) : true;
       const record: FareRuleRecord = {
         id: newId(),
         version: versionStr,
         config: updates,
         effectiveFrom: updates.effectiveFrom || now,
-        isActive: true,
+        isActive,
         createdAt: now,
       };
 
@@ -169,6 +170,36 @@ export function createAdminService(deps: { db: Repositories; clock?: Clock }) {
       }
 
       return this.getFareRules();
+    },
+
+    async activateFareRules(actor: any, version: string) {
+      const target = await deps.db.fareRules.getByVersion(version);
+      if (!target) {
+        throw Errors.notFound("FARE_RULE_VERSION_NOT_FOUND", `Fare rule version "${version}" not found.`);
+      }
+      await deps.db.fareRules.activate(version);
+
+      if (deps.db.audit) {
+        await deps.db.audit.append({
+          id: newId(),
+          action: "activate_fare_rules",
+          actorId: actor?.id || "super_admin",
+          actorRole: (actor?.role as any) || "super_admin",
+          resourceType: "fare_rules",
+          resourceId: version,
+          before: null,
+          after: { version, isActive: true },
+          reason: `Fare rule version ${version} activated by ${actor?.email || actor?.id || "admin"}`,
+          requestId: `req_${Date.now().toString(36)}`,
+          createdAt: new Date().toISOString(),
+        });
+      }
+
+      return this.getFareRules();
+    },
+
+    async listFareRuleVersions() {
+      return deps.db.fareRules.listAll();
     },
   };
 }

@@ -165,7 +165,10 @@ export type Repositories = {
 
   fareRules: {
     getActive(): Promise<FareRuleRecord | null>;
+    getByVersion(version: string): Promise<FareRuleRecord | null>;
+    listAll(): Promise<FareRuleRecord[]>;
     save(record: FareRuleRecord): Promise<FareRuleRecord>;
+    activate(version: string): Promise<FareRuleRecord | null>;
   };
 };
 

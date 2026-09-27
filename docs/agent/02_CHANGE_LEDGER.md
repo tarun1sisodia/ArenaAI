@@ -54,6 +54,28 @@ Implemented:
 - Created comprehensive test suite `backend/tests/unit/fare-db-sync.test.ts` (5 tests passing) verifying dynamic rates, vehicle deactivation, package starting prices, draft item blocking, and booking draft delegation.
 - Verified with full `npm run verify` (typechecks x3, 16 test files / 105 tests passing, builds x3).
 
+### Phase 1 — Step 1.4: Active-Version Transaction & Unique-Active Database Invariant
+
+Implemented:
+
+- Created database migration `backend/migrations/0020_unique_active_fare_rule.sql`:
+  - Ranks existing active fare rules and cleans stale duplicates.
+  - Adds partial unique index `idx_fare_rules_unique_active ON fare_rules (is_active) WHERE is_active = true`.
+- Updated database repository contracts in `backend/src/db/types.ts`:
+  - Added `getByVersion(version: string)`, `listAll()`, and `activate(version: string)` to `fareRules` repository interface.
+- Updated `backend/src/db/postgres.ts`:
+  - Enforced transactional deactivation of prior active rules before saving a new active version.
+  - Added `activate(version)` transaction deactivating existing active rules and atomically activating target version with updated timestamps.
+  - Added `getByVersion` and `listAll`.
+- Updated `backend/src/db/memory.ts`:
+  - Enforced the exact same unique-active invariant on `save` and `activate`.
+- Updated admin endpoints in `backend/src/modules/admin/admin.routes.ts`, `admin.controller.ts`, `admin.service.ts`, and `admin.schema.ts`:
+  - Added `POST /api/v1/ops/admin/fare-rules/activate` (with `AdminActivateFareRuleSchema`).
+  - Added `GET /api/v1/ops/admin/fare-rules/versions`.
+  - Added audit log logging when a fare rule version is activated.
+- Created unit test suite `backend/tests/unit/fare-rules-versioning.test.ts` (3 tests passing) verifying unique-active invariant, inactive draft versions, version rollback/activation, and audit logging.
+- Verified with full `npm run verify` (typechecks x3, 17 test files / 108 tests passing, builds x3).
+
 ## Current webhook route
 
 ```text
@@ -69,10 +91,10 @@ The Razorpay webhook secret must exactly matches Render's `RAZORPAY_WEBHOOK_SECR
 - Backend typecheck/build passed.
 - Focused backend network-header and catalog-manifest tests passed.
 - Dynamic DB fare rule and catalog sync tests passed.
+- Unique-active fare rule invariant and version activation tests passed.
 
 ## Known next work
 
-- Step 1.4: Add active-version transaction and unique-active database invariant.
 - Step 1.5: Add end-to-end booking and payment state lifecycle tests.
 - Step 1.6: Lock down device registration ownership.
 - Step 1.7: Run migrations in Render release/predeploy phase.

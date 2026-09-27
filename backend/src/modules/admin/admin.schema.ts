@@ -86,3 +86,7 @@ export const AdminUpdateFareRulesSchema = z.object({
   notes: z.array(z.string()).optional(),
   dynamicConfig: z.record(z.any()).optional(),
 });
+
+export const AdminActivateFareRuleSchema = z.object({
+  version: z.string().min(1).max(20),
+});

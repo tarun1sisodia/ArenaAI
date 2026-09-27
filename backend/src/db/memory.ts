@@ -558,18 +558,59 @@ export function createMemoryRepositories(nowIso = new Date().toISOString()): Rep
         return [...devices.values()].filter((d) => d.userId === userId).map(clone);
       },
     },
-      fareRules: {
+    fareRules: {
       async getActive() {
-        let best: FareRuleRecord | null = null;
         for (const rule of fareRules.values()) {
-          if (!rule.isActive) continue;
-          if (!best || rule.createdAt > best.createdAt) best = rule;
+          if (rule.isActive) return clone(rule);
         }
-        return best ? clone(best) : null;
+        return null;
       },
-      async save(record) {
-        fareRules.set(record.id, clone(record));
-        return clone(record);
+      async getByVersion(version: string) {
+        for (const rule of fareRules.values()) {
+          if (rule.version === version) return clone(rule);
+        }
+        return null;
+      },
+      async listAll() {
+        return [...fareRules.values()]
+          .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+          .map(clone);
+      },
+      async save(record: FareRuleRecord) {
+        if (record.isActive) {
+          for (const existing of fareRules.values()) {
+            if (existing.id !== record.id && existing.isActive) {
+              existing.isActive = false;
+              existing.effectiveTo = record.effectiveFrom || new Date().toISOString();
+            }
+          }
+        }
+        let targetId = record.id;
+        for (const [id, rule] of fareRules.entries()) {
+          if (rule.version === record.version) {
+            targetId = id;
+            break;
+          }
+        }
+        fareRules.set(targetId, { ...clone(record), id: targetId });
+        return clone(fareRules.get(targetId)!);
+      },
+      async activate(version: string) {
+        const now = new Date().toISOString();
+        let target: FareRuleRecord | null = null;
+        for (const rule of fareRules.values()) {
+          if (rule.version === version) {
+            target = rule;
+          } else if (rule.isActive) {
+            rule.isActive = false;
+            rule.effectiveTo = now;
+          }
+        }
+        if (!target) return null;
+        target.isActive = true;
+        target.effectiveFrom = now;
+        target.effectiveTo = null;
+        return clone(target);
       },
     },
   };

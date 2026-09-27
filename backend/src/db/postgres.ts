@@ -870,18 +870,77 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
             createdAt: new Date(String(rows[0].created_at)).toISOString(),
           };
         },
+        async getByVersion(version: string) {
+          const rows = await query(client, "select * from fare_rules where version=$1 limit 1", [version]);
+          if (!rows[0]) return null;
+          return {
+            id: String(rows[0].id),
+            version: String(rows[0].version),
+            config: rows[0].config,
+            effectiveFrom: new Date(String(rows[0].effective_from)).toISOString(),
+            effectiveTo: rows[0].effective_to ? new Date(String(rows[0].effective_to)).toISOString() : null,
+            isActive: Boolean(rows[0].is_active),
+            createdAt: new Date(String(rows[0].created_at)).toISOString(),
+          };
+        },
+        async listAll() {
+          const rows = await query(client, "select * from fare_rules order by created_at desc");
+          return rows.map((r) => ({
+            id: String(r.id),
+            version: String(r.version),
+            config: r.config,
+            effectiveFrom: new Date(String(r.effective_from)).toISOString(),
+            effectiveTo: r.effective_to ? new Date(String(r.effective_to)).toISOString() : null,
+            isActive: Boolean(r.is_active),
+            createdAt: new Date(String(r.created_at)).toISOString(),
+          }));
+        },
         async save(record: FareRuleRecord) {
+          if (record.isActive) {
+            await query(
+              client,
+              "update fare_rules set is_active=false, effective_to=$1 where is_active=true and version != $2",
+              [record.effectiveFrom || new Date().toISOString(), record.version],
+            );
+          }
           await query(
             client,
             `insert into fare_rules (id, version, config, effective_from, effective_to, is_active, created_at)
              values ($1,$2,$3::jsonb,$4,$5,$6,$7)
-             on conflict (version) do update set config=excluded.config, is_active=excluded.is_active`,
+             on conflict (version) do update set
+               config=excluded.config,
+               is_active=excluded.is_active,
+               effective_from=excluded.effective_from,
+               effective_to=excluded.effective_to`,
             [
               record.id, record.version, JSON.stringify(record.config),
               record.effectiveFrom, record.effectiveTo || null, record.isActive, record.createdAt,
             ],
           );
           return record;
+        },
+        async activate(version: string) {
+          const now = new Date().toISOString();
+          await query(
+            client,
+            "update fare_rules set is_active=false, effective_to=$1 where is_active=true and version != $2",
+            [now, version],
+          );
+          const rows = await query(
+            client,
+            "update fare_rules set is_active=true, effective_from=$1, effective_to=null where version=$2 returning *",
+            [now, version],
+          );
+          if (!rows[0]) return null;
+          return {
+            id: String(rows[0].id),
+            version: String(rows[0].version),
+            config: rows[0].config,
+            effectiveFrom: new Date(String(rows[0].effective_from)).toISOString(),
+            effectiveTo: rows[0].effective_to ? new Date(String(rows[0].effective_to)).toISOString() : null,
+            isActive: Boolean(rows[0].is_active),
+            createdAt: new Date(String(rows[0].created_at)).toISOString(),
+          };
         },
       },
     };

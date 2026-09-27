@@ -49,4 +49,14 @@ export async function registerAdminRoutes(
     config: { rateLimit: { max: 30, timeWindow: "1 minute" } },
     handler: controller.updateFareRules,
   });
+
+  app.post("/api/v1/ops/admin/fare-rules/activate", {
+    config: { rateLimit: { max: 30, timeWindow: "1 minute" } },
+    handler: controller.activateFareRules,
+  });
+
+  app.get("/api/v1/ops/admin/fare-rules/versions", {
+    config: { rateLimit: { max: 60, timeWindow: "1 minute" } },
+    handler: controller.listFareRuleVersions,
+  });
 }

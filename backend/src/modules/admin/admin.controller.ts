@@ -5,6 +5,7 @@ import { ADMIN_ROLES, requireRole } from "../../middlewares/roleGuard.js";
 import type { createBookingService } from "../bookings/booking.service.js";
 import type { createPaymentService } from "../payments/payment.service.js";
 import {
+  AdminActivateFareRuleSchema,
   AdminBookingQuerySchema,
   AdminInquiryIdParamSchema,
   AdminInquiryQuerySchema,
@@ -90,6 +91,19 @@ export function createAdminController(
       const body = AdminUpdateFareRulesSchema.parse(request.body);
       const rules = await service.updateFareRules(actor, body, request.ip);
       return sendSuccess(reply, rules, 200);
+    },
+
+    async activateFareRules(request: FastifyRequest, reply: FastifyReply) {
+      const actor = requireRole(request, ADMIN_ROLES);
+      const body = AdminActivateFareRuleSchema.parse(request.body);
+      const rules = await service.activateFareRules(actor, body.version);
+      return sendSuccess(reply, rules, 200);
+    },
+
+    async listFareRuleVersions(request: FastifyRequest, reply: FastifyReply) {
+      requireRole(request, ADMIN_ROLES);
+      const versions = await service.listFareRuleVersions();
+      return sendSuccess(reply, versions);
     },
   };
 }
