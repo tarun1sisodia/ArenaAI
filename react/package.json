@@ -11,6 +11,7 @@
     "manifest": "node --experimental-strip-types scripts/build-manifest.ts",
     "prerender": "node --experimental-strip-types scripts/prerender.ts",
     "sitemap": "node --experimental-strip-types scripts/generate-sitemap.ts",
+    "test:seo": "node --experimental-strip-types scripts/test-seo-lifecycle.ts",
     "typecheck": "tsc --noEmit",
     "preview": "vite preview",
     "react:preview": "vite preview"

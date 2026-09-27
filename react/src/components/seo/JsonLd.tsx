@@ -68,6 +68,7 @@ export interface TouristTripSchemaOptions {
     price: number | string;
     priceCurrency?: string;
     validFrom?: string;
+    availability?: "InStock" | "LimitedAvailability" | "OutOfStock";
   };
 }
 
@@ -82,6 +83,7 @@ export interface ProductCarSchemaOptions {
     price: number | string;
     priceCurrency?: string;
     unitCode?: string;
+    availability?: "InStock" | "LimitedAvailability" | "OutOfStock";
   };
 }
 
@@ -289,7 +291,8 @@ export function buildTouristTripSchema(options: TouristTripSchemaOptions) {
             "@type": "Offer",
             price: options.offers.price,
             priceCurrency: options.offers.priceCurrency || "INR",
-            availability: "https://schema.org/InStock",
+            availability: `https://schema.org/${options.offers.availability || "InStock"}`,
+            ...(options.offers.validFrom ? { validFrom: options.offers.validFrom } : {}),
           },
         }
       : {}),
@@ -319,7 +322,7 @@ export function buildProductCarSchema(options: ProductCarSchemaOptions) {
             price: options.offers.price,
             priceCurrency: options.offers.priceCurrency || "INR",
             unitCode: options.offers.unitCode || "KMT",
-            availability: "https://schema.org/InStock",
+            availability: `https://schema.org/${options.offers.availability || "InStock"}`,
           },
         }
       : {}),

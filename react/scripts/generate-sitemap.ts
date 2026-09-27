@@ -4,7 +4,7 @@
  * Generates valid Schema-compliant XML sitemaps with:
  * 1. Fully-qualified canonical URLs for all indexable bilingual routes.
  * 2. Multi-language xhtml:link hreflang alternates (en-IN, hi-IN, x-default).
- * 3. Fresh lastmod timestamps (YYYY-MM-DD), crawl priorities (0.8 - 1.0), and change frequencies.
+ * 3. Source-owned lastmod timestamps (YYYY-MM-DD) when available, crawl priorities and change frequencies.
  * 4. Robots.txt directing crawlers to the sitemap while guarding noindex routes.
  *
  * Outputs to dist/react/sitemap.xml, react/dist/sitemap.xml, react/public/sitemap.xml,
@@ -26,6 +26,8 @@ export interface SitemapEntry {
   path: string;
   priority: number;
   changefreq: "daily" | "weekly" | "monthly";
+  /** Set only from a real content update timestamp, never from build time. */
+  lastmod?: string;
   enPath?: string;
   hiPath?: string;
 }
@@ -175,16 +177,15 @@ export function getSitemapEntries(): SitemapEntry[] {
   return entries;
 }
 
-export function generateSitemapXml(entries: SitemapEntry[], lastmodDate?: string): string {
-  const dateStr = lastmodDate || new Date().toISOString().split("T")[0];
-
+export function generateSitemapXml(entries: SitemapEntry[]): string {
   const xmlUrls = entries.map((entry) => {
     const loc = `${CANONICAL_DOMAIN}${entry.path}`;
     const enUrl = entry.enPath ? `${CANONICAL_DOMAIN}${entry.enPath}` : loc;
+    const lastmod = entry.lastmod;
 
     return `  <url>
     <loc>${loc}</loc>
-    <lastmod>${dateStr}</lastmod>
+    ${lastmod ? `<lastmod>${lastmod}</lastmod>` : ""}
     <changefreq>${entry.changefreq}</changefreq>
     <priority>${entry.priority.toFixed(2)}</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="${enUrl}" />
@@ -243,7 +244,7 @@ export async function generateSitemapAndRobots(): Promise<{
   }
 
   console.log(
-    `✅ Generated sitemap.xml (${entries.length} URLs with lastmod, priorities & xhtml:link alternates) ` +
+    `✅ Generated sitemap.xml (${entries.length} URLs with source-owned lastmod values where available, priorities & xhtml:link alternates) ` +
     `and robots.txt pointing to ${CANONICAL_DOMAIN}/sitemap.xml`
   );
 

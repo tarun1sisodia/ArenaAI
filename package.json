@@ -9,7 +9,7 @@
   },
   "scripts": {
     "install:all": "npm ci && npm --prefix react ci && npm --prefix admin ci && npm --prefix backend ci",
-    "verify": "npm run customer:typecheck && npm run admin:typecheck && npm run backend:typecheck && npm test && npm run build:all",
+    "verify": "npm run customer:typecheck && npm run admin:typecheck && npm run backend:typecheck && npm test && npm run customer:seo && npm run build:all",
     "typecheck": "npm run customer:typecheck && npm run admin:typecheck && npm run backend:typecheck",
     "dev": "npm --prefix react run dev",
     "dev:all": "node scripts/dev-all.mjs",
@@ -19,6 +19,7 @@
     "customer:build": "npm --prefix react run build",
     "customer:preview": "npm --prefix react run preview",
     "customer:typecheck": "npm --prefix react run typecheck",
+    "customer:seo": "npm --prefix react run test:seo",
     "admin:dev": "npm --prefix admin run dev",
     "admin:build": "npm --prefix admin run build",
     "admin:preview": "npm --prefix admin run preview",

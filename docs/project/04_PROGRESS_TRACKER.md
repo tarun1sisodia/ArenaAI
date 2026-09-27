@@ -97,6 +97,7 @@ this file at commit `2c02ee3`. The table below is the condensed record.
 | 2026-09-12 | Phase R5.26–R6.5 | SSG pre-renderer (75 routes + redirects), sitemap/robots generator, SEO head + JSON-LD factories, LocationIQ hook, ARIA 1.2 combobox, backend architecture merged on `design/homepage` |
 | 2026-09-13 | Backend | Fare engine, draft bookings, Razorpay/HMAC payment adapters, admin dispatch, catalog, reviews, inquiries, notifications, migrations, 38-test deterministic suite |
 | 2026-09-14 | Deployment monitoring | `scripts/healthcheck.mjs`, `.github/workflows/uptime.yml` (5-minute schedule), `npm run healthcheck`, step-by-step Render + Cloudflare Pages deploy guide in `docs/DEPLOYMENT.md` |
+| 2026-09-27 | Section 11 SEO lifecycle step | Live catalog structured data now omits invalid current offers for unavailable items, marks limited inventory with `LimitedAvailability`, exposes a last-reviewed freshness signal, and renders breadcrumb JSON-LD; sitemap generation no longer invents build-date `lastmod` values. Added `react/scripts/test-seo-lifecycle.ts` and committed main-push verification reports via `.github/workflows/main-monitor.yml` under `monitor-reports/`. |
 | 2026-09-14 | Phase D1 | Deployment standardization: CI contract + guards, admin SPA routing, build-hygiene fix, Docker hardening, Pages project naming, doc pack rewritten (this file included) |
 | 2026-09-25 | Phase M (M0–M2) | Master migration plan (`react/docs/MIGRATION_PLAN.md`), Tailwind CSS v4 setup, design tokens (`theme.css`), brand logo, luxury header with mobile nav sheet, footer with 28% advance guarantee, English-only mandate refactor |
 | 2026-09-25 | Phase M (M3) | Universal dynamic tour package template (`PackageDetailPage.tsx`) powered by `TourPackage` props (`taj_mahal_sunrise_guided_tour.html`), curated package catalogue (`PackagesPage.tsx` from `packages.html`) with interactive category tabs and decision matrix |
@@ -118,6 +119,7 @@ this file at commit `2c02ee3`. The table below is the condensed record.
 - [x] LocationIQ search with ARIA 1.2 combobox and offline fallback
 - [x] SEO head manager: canonicals, hreflang, OG/Twitter, geo tags, JSON-LD graph
 - [x] SSG pre-renderer + sitemap/robots generator wired into the build
+- [x] **Section 11 SEO lifecycle foundation** — truthful unavailable/limited structured-data offers, last-reviewed live catalog metadata, breadcrumbs, sitemap `lastmod` omission when no source timestamp exists, and regression coverage
 - [x] Real 404 page and legacy redirect stubs
 - [x] Fares and booking run on the local engine (mock, no server calls)
 - [x] Multi-service customer booking funnel (outstation, local packages, transfers, tour packages)

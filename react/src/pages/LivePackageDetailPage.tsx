@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { contact } from "../data/contact";
 import { WhatsAppIcon } from "../components/icons";
 import { NotFoundPage } from "./NotFoundPage";
+import { buildBreadcrumbSchema, buildTouristTripSchema, JsonLd } from "../components/seo/JsonLd";
+import { CANONICAL_DOMAIN } from "../components/seo/SeoHead";
 import {
   fetchCatalogItemBySlug,
   resolveCatalogMediaUrl,
@@ -82,38 +84,39 @@ export function LivePackageDetailPage({ slug }: LivePackageDetailPageProps) {
   }
 
   const whatsappUrl = `https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
-    `Hello SK Baghel Travels, I am interested in the ${item.title} (from ₹${item.startingPriceInr.toLocaleString("en-IN")}).`,
+    `Hello SK Baghel Travels, I am interested in the ${item.title}${item.availability === "unavailable" ? " (custom availability enquiry)" : ` (from ₹${item.startingPriceInr.toLocaleString("en-IN")})`}.`,
   )}`;
   const galleryImages = item.gallery.filter((g) => g.mediaType === "image");
   const active = galleryImages[Math.min(activeImage, Math.max(0, galleryImages.length - 1))];
   const heroSrc = active ? resolveCatalogMediaUrl(active.url) : null;
 
+  const canonicalUrl = `${CANONICAL_DOMAIN}/packages/${item.slug}/`;
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "TouristTrip",
-    name: item.title,
-    description: item.shortDescription,
-    url: `https://agraskbagheltourandtravels.com/packages/${item.slug}`,
-    touristType: item.tripType ? TRIP_TYPE_LABEL[item.tripType] : "Private tour",
-    itinerary: item.stops.map((stop) => ({ "@type": "ListItem", name: stop })),
-    provider: {
-      "@type": "LocalBusiness",
-      name: "SK Baghel Tour & Travels",
-      telephone: contact.phone,
-      address: { "@type": "PostalAddress", addressLocality: "Agra", addressRegion: "Uttar Pradesh", addressCountry: "IN" },
-    },
-    offers: {
-      "@type": "Offer",
-      price: item.startingPriceInr,
-      priceCurrency: "INR",
-      availability:
-        item.availability === "unavailable" ? "https://schema.org/OutOfStock" : "https://schema.org/InStock",
-    },
+    "@graph": [
+      buildTouristTripSchema({
+        id: `${canonicalUrl}#trip`,
+        name: item.title,
+        description: item.shortDescription,
+        image: item.coverImage ? resolveCatalogMediaUrl(item.coverImage.url) : undefined,
+        touristType: [item.tripType ? TRIP_TYPE_LABEL[item.tripType] : "Private tour"],
+        itinerary: item.stops.map((stop) => ({ name: stop, description: `Stop on ${item.title}` })),
+        ...(item.availability === "unavailable"
+          ? {}
+          : { offers: { price: item.startingPriceInr, priceCurrency: "INR", availability: item.availability === "limited" ? "LimitedAvailability" as const : "InStock" as const } }),
+      }),
+      buildBreadcrumbSchema([
+        { name: "Home", url: "/" },
+        { name: "Tour Packages", url: "/packages/" },
+        { name: item.title, url: canonicalUrl },
+      ]),
+    ],
+    dateModified: item.updatedAt || item.publishedAt || undefined,
   };
 
   return (
     <div className="flex flex-col w-full bg-surface">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <JsonLd schema={jsonLd} />
 
       {/* Hero */}
       <section className="w-full max-w-7xl mx-auto px-margin-mobile lg:px-margin pt-space-xl pb-space-lg">
@@ -198,6 +201,11 @@ export function LivePackageDetailPage({ slug }: LivePackageDetailPageProps) {
 
             <h1 className="font-headline-hero text-headline-hero text-on-surface leading-tight">{item.title}</h1>
             <p className="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">{item.shortDescription}</p>
+            {item.availability === "unavailable" && (
+              <p className="rounded-xl border border-border-warm bg-sandstone-wash px-4 py-3 font-body-sm text-body-sm text-on-surface-variant">
+                This exact trip is currently unavailable. Explore current alternatives or ask the travel desk for a custom itinerary.
+              </p>
+            )}
 
             <dl className="grid grid-cols-2 gap-3">
               {[
@@ -206,7 +214,7 @@ export function LivePackageDetailPage({ slug }: LivePackageDetailPageProps) {
                   ? { label: "Distance", value: `~${item.distanceKm} km`, icon: "route" }
                   : null,
                 { label: "Route", value: item.routeSummary, icon: "location_on" },
-                { label: "Published", value: item.publishedAt ? new Date(item.publishedAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "Live", icon: "verified" },
+                { label: "Last reviewed", value: (item.updatedAt || item.publishedAt) ? new Date(item.updatedAt || item.publishedAt || "").toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "Live", icon: "verified" },
               ]
                 .filter(Boolean)
                 .map((meta) => (
@@ -227,11 +235,15 @@ export function LivePackageDetailPage({ slug }: LivePackageDetailPageProps) {
             <div className="bg-surface-container-lowest rounded-xl border border-border-warm p-4 flex items-end justify-between gap-3">
               <div>
                 <span className="block font-label-caps text-label-caps uppercase tracking-wider text-on-surface-variant">
-                  Starting from
+                  {item.availability === "unavailable" ? "Availability" : "Starting from"}
                 </span>
-                <span className="font-title-md text-2xl font-bold text-on-surface">
-                  ₹{item.startingPriceInr.toLocaleString("en-IN")}
-                </span>
+                {item.availability === "unavailable" ? (
+                  <span className="font-title-md text-xl font-bold text-on-surface">Currently unavailable</span>
+                ) : (
+                  <span className="font-title-md text-2xl font-bold text-on-surface">
+                    ₹{item.startingPriceInr.toLocaleString("en-IN")}
+                  </span>
+                )}
                 <span className="block font-body-sm text-body-sm text-on-surface-variant mt-0.5">
                   28% advance reserves your vehicle
                 </span>
