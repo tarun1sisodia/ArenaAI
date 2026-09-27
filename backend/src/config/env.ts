@@ -112,7 +112,7 @@ export function resetEnvCache(): void {
 
 export function corsOriginList(env: Env): string[] {
   return env.CORS_ORIGINS.split(",")
-    .map((item) => item.trim())
+    .map((item) => item.trim().replace(/\/+$/, ""))
     .filter(Boolean)
     .filter((origin) => {
       // Basic validation: must be valid URL format
