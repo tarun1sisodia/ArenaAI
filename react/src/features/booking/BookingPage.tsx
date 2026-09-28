@@ -6,6 +6,7 @@ import {
   calculateServerFare,
   createDraftBooking,
   createPaymentCheckout,
+  getPaymentStatus,
   mapVehicleTier,
   formatInquiryPhone,
   sanitizeInquiryName,
@@ -146,8 +147,6 @@ export function BookingPage() {
   const [loadingFare, setLoadingFare] = useState<boolean>(false);
   const [fareError, setFareError] = useState<string | null>(null);
 
-  // Payment Settlement Choice: "partial" (advance deposit) or "full" (100% total)
-  const [paymentChoice, setPaymentChoice] = useState<"partial" | "full">("partial");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
@@ -530,8 +529,6 @@ export function BookingPage() {
         localPackageKey: bookingMode === "local" ? localPackageKey : undefined,
       });
 
-      const targetAmount = paymentChoice === "full" ? serverFare.totalFare : serverFare.advanceAmount;
-
       // Attempt to initiate real checkout
       try {
         const checkout = await createPaymentCheckout({
@@ -581,13 +578,36 @@ export function BookingPage() {
                 );
               },
             },
-            handler: (_response) => {
-              setConfirmedTicketId(draft.ticketId);
-              setConfirmedBookingId(draft.bookingId);
-              setAmountPaid(targetAmount);
-              setIsSubmitting(false);
-              window.scrollTo({ top: 0, behavior: "smooth" });
-              setStep(isDirectFunnel ? 3 : 4);
+            handler: async () => {
+              try {
+                // Razorpay's browser callback is not proof of payment. The backend
+                // webhook must first move both the payment and booking to confirmed.
+                let verified = null;
+                for (let attempt = 0; attempt < 8; attempt += 1) {
+                  const status = await getPaymentStatus(checkout.paymentId, draft.guestAccessToken);
+                  if (status.status === "captured" && status.bookingStatus === "paid_confirmed") {
+                    verified = status;
+                    break;
+                  }
+                  if (status.status === "failed" || status.status === "refunded") {
+                    throw new Error("The payment was not confirmed by the payment server.");
+                  }
+                  await new Promise((resolve) => window.setTimeout(resolve, 1500));
+                }
+                if (!verified) {
+                  setSubmitError("Payment received by Razorpay but still awaiting server verification. Please do not pay again; use your ticket to check status shortly.");
+                  return;
+                }
+                setConfirmedTicketId(draft.ticketId);
+                setConfirmedBookingId(draft.bookingId);
+                setAmountPaid(verified.amountMinor / 100);
+                window.scrollTo({ top: 0, behavior: "smooth" });
+                setStep(isDirectFunnel ? 3 : 4);
+              } catch (verificationError) {
+                setSubmitError(verificationError instanceof Error ? verificationError.message : "Payment verification is still pending. Please check your ticket status.");
+              } finally {
+                setIsSubmitting(false);
+              }
             },
           });
 
@@ -601,12 +621,7 @@ export function BookingPage() {
           return;
         }
 
-        // Fallback for non-modal / offline provider responses
-        setConfirmedTicketId(draft.ticketId);
-        setConfirmedBookingId(draft.bookingId);
-        setAmountPaid(targetAmount);
-        window.scrollTo({ top: 0, behavior: "smooth" });
-        setStep(isDirectFunnel ? 3 : 4);
+        throw new Error("Razorpay did not return a checkout order. The booking was saved, but payment was not started.");
       } catch (payErr) {
         setSubmitError(payErr instanceof Error ? payErr.message : "Payment checkout could not be started. Please try again.");
         return;
@@ -627,7 +642,7 @@ export function BookingPage() {
     const mockTicket = `AGR-${new Date().toISOString().slice(0, 10).replace(/-/g, "")}-${Math.floor(1000 + Math.random() * 9000)}`;
     setConfirmedTicketId(mockTicket);
     setConfirmedBookingId(`book-${Date.now()}`);
-    setAmountPaid(paymentChoice === "full" ? (serverFare?.totalFare ?? 2500) : (serverFare?.advanceAmount ?? 700));
+    setAmountPaid(serverFare?.advanceAmount ?? 700);
     window.scrollTo({ top: 0, behavior: "smooth" });
     setStep(isDirectFunnel ? 3 : 4);
   };
@@ -1488,67 +1503,18 @@ export function BookingPage() {
                   </div>
                 </div>
 
-                {/* Payment Option Selection */}
+                {/* Server-authoritative payment amount */}
                 <div className="flex flex-col gap-2 pt-2 border-t border-border-warm">
                   <label className="font-title-md text-xs font-bold text-ink-charcoal">
-                    Select Advance Payment Settlement Mode
+                    Advance payment
                   </label>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-space-sm">
-                    {/* Partial Option (28% advance) */}
-                    <label
-                      className={`p-space-md rounded-xl border cursor-pointer transition-all ${
-                        paymentChoice === "partial"
-                          ? "bg-sandstone-wash/80 border-primary ring-1 ring-primary/30"
-                          : "bg-surface-container-lowest border-border-warm hover:border-primary/40"
-                      }`}
-                    >
-                      <div className="flex items-start gap-2">
-                        <input
-                          type="radio"
-                          name="paymentChoice"
-                          value="partial"
-                          checked={paymentChoice === "partial"}
-                          onChange={() => setPaymentChoice("partial")}
-                          className="accent-primary"
-                        />
-                        <div>
-                          <span className="font-bold text-ink-midnight text-sm block">
-                            28% Advance Token ({formatInr(serverFare?.advanceAmount ?? 700)})
-                          </span>
-                          <span className="text-xs text-secondary font-medium">
-                            Balance ₹{(serverFare?.totalFare ?? 2500) - (serverFare?.advanceAmount ?? 700)} payable directly to chauffeur at destination
-                          </span>
-                        </div>
-                      </div>
-                    </label>
-
-                    {/* Full Option (100% total) */}
-                    <label
-                      className={`p-space-md rounded-xl border cursor-pointer transition-all ${
-                        paymentChoice === "full"
-                          ? "bg-sandstone-wash/80 border-primary ring-1 ring-primary/30"
-                          : "bg-surface-container-lowest border-border-warm hover:border-primary/40"
-                      }`}
-                    >
-                      <div className="flex items-start gap-2">
-                        <input
-                          type="radio"
-                          name="paymentChoice"
-                          value="full"
-                          checked={paymentChoice === "full"}
-                          onChange={() => setPaymentChoice("full")}
-                          className="accent-primary"
-                        />
-                        <div>
-                          <span className="font-bold text-ink-midnight text-sm block">
-                            Pay 100% Full Total ({formatInr(serverFare?.totalFare ?? 2500)})
-                          </span>
-                          <span className="text-xs text-success-jade font-medium">
-                            Zero cash needed during travel
-                          </span>
-                        </div>
-                      </div>
-                    </label>
+                  <div className="p-space-md rounded-xl border border-primary bg-sandstone-wash/80">
+                    <span className="font-bold text-ink-midnight text-sm block">
+                      28% Advance Token ({formatInr(serverFare?.advanceAmount ?? 700)})
+                    </span>
+                    <span className="text-xs text-secondary font-medium">
+                      The server locks this amount for Razorpay. Balance ₹{(serverFare?.totalFare ?? 2500) - (serverFare?.advanceAmount ?? 700)} is payable directly to the chauffeur at destination.
+                    </span>
                   </div>
                 </div>
 
@@ -1563,7 +1529,7 @@ export function BookingPage() {
                     <span>
                       {isSubmitting
                         ? "Registering Booking with Server..."
-                        : `Authorize & Pay ${formatInr(paymentChoice === "full" ? (serverFare?.totalFare ?? 0) : (serverFare?.advanceAmount ?? 0))}`}
+                        : `Authorize & Pay ${formatInr(serverFare?.advanceAmount ?? 0)}`}
                     </span>
                   </button>
 

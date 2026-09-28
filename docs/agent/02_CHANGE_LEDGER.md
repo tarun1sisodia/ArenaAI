@@ -2,6 +2,13 @@
 
 ## 2026-09-27
 
+### 2026-09-28 — Razorpay audit and production hardening
+
+- Added `docs/PAYMENT_RAZORPAY_AUDIT_2026-09-28.md` covering payment, database, admin, customer, deployment, and SEO/AEO/GEO controls.
+- Production now requires an `rzp_live_*` key; configured `rzp_test_*` keys use the real test API only outside production.
+- Customer voucher display now waits for backend webhook-backed `captured` and `paid_confirmed` status.
+- Production container startup now applies compiled migrations before starting the API.
+
 ### Catalog test-price allowance
 
 The admin catalog starting-fare input now accepts values from ₹1. The backend already accepted positive values. This is for Razorpay Test Mode/catalog-flow testing only; it does not bypass server-authoritative fare calculation, payment verification, or production payment-provider safeguards.
@@ -28,7 +35,7 @@ Implemented:
 - Created comprehensive unit test suite in `backend/tests/unit/payment-provider-production.test.ts` (5 tests passing).
 - Created `react/src/features/booking/razorpay.ts` with dynamic script loader (`https://checkout.razorpay.com/v1/checkout.js`) and TypeScript definitions.
 - Wired official Razorpay Standard Checkout modal in `react/src/features/booking/BookingPage.tsx` (`handleSubmitBooking`).
-- Transition to Confirmed Voucher Step 4 is gated on verified modal `handler` callback or server verification.
+- Transition to Confirmed Voucher Step 4 is gated on backend payment status after the modal callback; the browser callback alone is not trusted.
 - Verified with full `npm run verify` (typecheck x3, backend test suites, build x3).
 
 ### Phase 1 — Step 1.2: Public Media Visibility Enforcement (SEC-004)

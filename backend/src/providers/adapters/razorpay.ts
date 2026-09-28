@@ -19,30 +19,33 @@ type RazorpayOptions = {
 };
 
 export function createRazorpayAdapter(options: RazorpayOptions): PaymentProvider {
-  const isTestOrLocal = !options.keySecret || options.keyId.startsWith("rzp_test_local") || !options.keyId;
+  const keyId = (options.keyId || "").trim().replace(/^['"]|['"]$/g, "");
+  const keySecret = (options.keySecret || "").trim().replace(/^['"]|['"]$/g, "");
+  const webhookSecret = (options.webhookSecret || "").trim().replace(/^['"]|['"]$/g, "");
+  const isExplicitHmacTest = !options.isProduction && (!keyId || keyId.startsWith("rzp_test_local") || !keySecret);
 
-  if (isTestOrLocal) {
-    if (options.isProduction) {
-      throw new Error(
-        "Razorpay credentials (RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET, RAZORPAY_WEBHOOK_SECRET) are mandatory in production. Test HMAC adapter is strictly prohibited.",
-      );
-    }
+  if (options.isProduction && !/^rzp_live_[A-Za-z0-9_-]+$/.test(keyId)) {
+    throw new Error("Production Razorpay requires an rzp_live_ key. Test or local keys are prohibited.");
+  }
+
+  if (isExplicitHmacTest) {
     return createHmacPaymentAdapter({
       name: "razorpay",
-      webhookSecret: options.webhookSecret || options.keySecret || "whsec_razorpay_test",
-      publicKey: options.keyId,
+      webhookSecret: webhookSecret || keySecret || "whsec_razorpay_test",
+      publicKey: keyId,
       checkoutBaseUrl: "https://checkout.razorpay.com",
     });
   }
 
-  if (!options.webhookSecret) {
+  if (options.isProduction && (!keySecret || !webhookSecret)) {
+    throw new Error("Production Razorpay credentials and webhook secret are mandatory.");
+  }
+
+  if (!keySecret || !webhookSecret) {
     throw new Error("Razorpay webhook secret is required");
   }
 
   const fetchImpl = options.fetchImpl ?? fetch;
-  const keyId = (options.keyId || "").trim().replace(/^['"]|['"]$/g, "");
-  const keySecret = (options.keySecret || "").trim().replace(/^['"]|['"]$/g, "");
-  const webhookSecret = (options.webhookSecret || "").trim().replace(/^['"]|['"]$/g, "");
 
   return {
     name: "razorpay",
@@ -76,9 +79,9 @@ export function createRazorpayAdapter(options: RazorpayOptions): PaymentProvider
         );
       }
       const body = (await response.json()) as { id: string; amount: number; currency: string };
-      if (!body.id || !Number.isFinite(body.amount) || body.amount !== command.amountMinor) {
+      if (!body.id || !Number.isFinite(body.amount) || body.amount !== command.amountMinor || body.currency !== command.currency) {
         throw new Error(
-          `Invalid Razorpay order response: expected amount ${command.amountMinor}, got ${body?.amount}`,
+          `Invalid Razorpay order response: expected ${command.amountMinor} ${command.currency}, got ${body?.amount} ${body?.currency}`,
         );
       }
       const expires = new Date(Date.now() + 30 * 60 * 1000);
@@ -137,7 +140,7 @@ export function createRazorpayAdapter(options: RazorpayOptions): PaymentProvider
     },
     async refund(command: RefundCommand) {
       if (!command.providerPaymentId) throw new Error("providerPaymentId required");
-      const auth = Buffer.from(`${options.keyId}:${options.keySecret}`).toString("base64");
+      const auth = Buffer.from(`${keyId}:${keySecret}`).toString("base64");
       const response = await fetchImpl(`https://api.razorpay.com/v1/payments/${command.providerPaymentId}/refund`, {
         method: "POST",
         headers: {
@@ -184,6 +187,8 @@ type RazorpayPaymentEntity = {
 function mapRazorpayStatus(event: string, status?: string): NormalizedProviderEvent["status"] {
   if (event.includes("failed") || status === "failed") return "failed";
   if (event.includes("refund") || status === "refunded") return "refunded";
-  if (event === "payment.captured" || event === "order.paid" || status === "captured") return "captured";
+  // order.paid contains an order entity but may not contain the payment ID
+  // required for refunds. Confirm only from payment.captured or an entity status.
+  if (event === "payment.captured" || status === "captured") return "captured";
   return "pending";
 }

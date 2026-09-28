@@ -143,7 +143,7 @@ export interface PaymentStatusResponse {
   paymentId: string;
   ticketId: string;
   status: "pending" | "authorized" | "captured" | "failed" | "refunded";
-  reconciliationStatus: "pending" | "reconciled" | "discrepancy";
+  reconciliationStatus: "pending" | "matched" | "needs_review" | "reconciled" | "discrepancy";
   provider: string;
   currency: string;
   amountMinor: number;

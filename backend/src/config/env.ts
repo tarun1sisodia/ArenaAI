@@ -73,8 +73,8 @@ export function loadEnv(source: NodeJS.ProcessEnv = process.env): Env {
       missing.push("SUPABASE_JWT_SECRET or SUPABASE_URL for JWT verification");
     }
     // Payment provider: Razorpay is mandatory in production; test HMAC fallback prohibited
-    if (!env.RAZORPAY_KEY_ID || env.RAZORPAY_KEY_ID.startsWith("rzp_test_local")) {
-      missing.push("RAZORPAY_KEY_ID is mandatory in production (local dummy prohibited)");
+    if (!/^rzp_live_[A-Za-z0-9_-]+$/.test(env.RAZORPAY_KEY_ID)) {
+      missing.push("RAZORPAY_KEY_ID must be a valid rzp_live_ key in production");
     }
     if (!env.RAZORPAY_KEY_SECRET) {
       missing.push("RAZORPAY_KEY_SECRET is mandatory in production");

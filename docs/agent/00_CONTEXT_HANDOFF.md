@@ -46,11 +46,11 @@ Do not delete trips, routes, packages, verticals, fleet pages, or useful media m
 2. Make catalog route identity the same source used by fare and booking services.
 3. Persist manifest revision/ETag state across backend instances.
 4. Add server-side LocationIQ proxy with secret protection, caching and rate limits.
-5. Require real Razorpay credentials in production; prohibit fake/HMAC payment adapter outside test/development.
+5. Run one deployed Razorpay Test Mode transaction and confirm Render webhook logs; code now requires `rzp_live_*` in production and prohibits fake/HMAC payment outside explicit local/test mode.
 6. Validate uploaded image magic bytes, decoding, dimensions and decompression limits.
 7. Restrict public media to published media with published parent items.
 8. Lock down device registration ownership and strengthen booking lookup recovery.
-9. Run migrations in Render release/predeploy and keep `/ready` unhealthy when DB is unavailable.
+9. Confirm the new production container migration startup in Render and keep `/ready` unhealthy when DB is unavailable.
 10. Implement least-privilege admin roles and actor-correct audit records.
 
 ## Latest completed safety fixes
@@ -58,6 +58,8 @@ Do not delete trips, routes, packages, verticals, fleet pages, or useful media m
 - Customer/admin production API fallback targets the deployed Render backend.
 - Admin role check fails closed when the role claim is missing.
 - Payment checkout failure no longer proceeds to a success voucher.
+- Payment success now requires backend webhook-backed `captured` + `paid_confirmed` status; browser callbacks are not trusted.
+- Production Razorpay key format, order currency, and payment-event handling are hardened; compiled migrations run before the API starts.
 - Payment simulation is development-only and opt-in.
 - Backend `/ready` returns HTTP 503 when the database is not ready.
 - SEO/AEO/GEO lifecycle rules are part of the root operating specification.
