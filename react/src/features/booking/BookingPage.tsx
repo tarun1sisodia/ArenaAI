@@ -114,6 +114,7 @@ export function BookingPage() {
   const [bookingMode, setBookingMode] = useState<BookingMode>("outstation");
   const [originName, setOriginName] = useState<string>("Agra");
   const [destinationName, setDestinationName] = useState<string>("Delhi");
+  const [localPickupName, setLocalPickupName] = useState<string>("Agra");
   const [tripType, setTripType] = useState<"one-way" | "round-trip">("one-way");
   const [localPackageKey, setLocalPackageKey] = useState<LocalPackageKey>("8hr-80km");
   const [packageSlug, setPackageSlug] = useState<string>("taj-mahal-sunrise-tour");
@@ -337,6 +338,7 @@ export function BookingPage() {
     if (qFrom) {
       const matchCity = cities.find((c) => c.id === qFrom.toLowerCase());
       setOriginName(matchCity ? matchCity.name : qFrom);
+      setLocalPickupName(matchCity ? matchCity.name : qFrom);
     }
 
     if (qTo) {
@@ -368,6 +370,10 @@ export function BookingPage() {
       setPickupDate(qDate);
       setReturnDate(qDate);
     }
+    const qReturnDate = params.get("returnDate");
+    if (qReturnDate && /^\d{4}-\d{2}-\d{2}$/.test(qReturnDate)) setReturnDate(qReturnDate);
+    const qReturnTime = params.get("returnTime");
+    if (qReturnTime && /^\d{2}:\d{2}$/.test(qReturnTime)) setReturnTime(qReturnTime);
 
     const qStep = params.get("step");
     if (qStep === "1") setStep(1);
@@ -425,10 +431,10 @@ export function BookingPage() {
 
   // Effective origin & destination
   const effectiveOrigin = useMemo(() => {
-    if (bookingMode === "local") return "Agra";
+    if (bookingMode === "local") return localPickupName.trim() || "Agra";
     if (bookingMode === "package") return "Agra";
     return originName.trim() || "Agra";
-  }, [bookingMode, originName]);
+  }, [bookingMode, localPickupName, originName]);
 
   const effectiveDestination = useMemo(() => {
     if (bookingMode === "local") {
@@ -1014,8 +1020,9 @@ export function BookingPage() {
 
               {/* Dynamic Trip Parameter Inputs */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-sm pt-space-xs border-t border-border-warm/60">
-                {/* Outstation Mode (Only if NOT preselected route, to avoid redundancy) */}
-                {bookingMode === "outstation" && !hasPreselectedRoute && (
+                {/* Outstation Mode: keep both LocationIQ fields editable even
+                    when the homepage preselected an initial route. */}
+                {bookingMode === "outstation" && (
                   <>
                     <div className="flex flex-col gap-1">
                       <label htmlFor="origin-input" className="font-label-lg text-xs font-bold text-ink-slate">Pickup Origin City</label>
@@ -1056,25 +1063,22 @@ export function BookingPage() {
                   </>
                 )}
 
-                {/* Preselected Outstation: Trip Direction */}
-                {bookingMode === "outstation" && hasPreselectedRoute && (
-                  <div className="flex flex-col gap-1 sm:col-span-2">
-                    <label htmlFor="pre-triptype-select" className="font-label-lg text-xs font-bold text-ink-slate">Trip Direction</label>
-                    <select
-                      id="pre-triptype-select"
-                      value={tripType}
-                      onChange={(e) => setTripType(e.target.value as "one-way" | "round-trip")}
-                      className="px-3 py-2 rounded-lg border border-border-warm bg-surface font-body-md text-on-surface focus:ring-1 focus:ring-primary focus:outline-none"
-                    >
-                      <option value="one-way">One-Way Drop Corridor</option>
-                      <option value="round-trip">Round-Trip Return Journey</option>
-                    </select>
-                  </div>
-                )}
-
                 {/* Local Mode */}
                 {bookingMode === "local" && (
-                  <div className="sm:col-span-2 lg:col-span-3 flex flex-col gap-1">
+                  <>
+                    <div className="sm:col-span-2 flex flex-col gap-1">
+                      <label htmlFor="local-pickup-input" className="font-label-lg text-xs font-bold text-ink-slate">Pickup Location</label>
+                      <LocationCombobox
+                        id="local-pickup-input"
+                        value={localPickupName}
+                        onChange={(value) => setLocalPickupName(value)}
+                        placeholder="Search hotel, station, city..."
+                        label="Local tour pickup location"
+                        triggerIcon="trip_origin"
+                        showLocationIqBadge={false}
+                      />
+                    </div>
+                    <div className="sm:col-span-2 lg:col-span-2 flex flex-col gap-1">
                     <label htmlFor="local-pkg-select" className="font-label-lg text-xs font-bold text-ink-slate">Select Local Tour / Transfer</label>
                     <select
                       id="local-pkg-select"
@@ -1105,7 +1109,8 @@ export function BookingPage() {
                         </optgroup>
                       )}
                     </select>
-                  </div>
+                    </div>
+                  </>
                 )}
 
                 {/* Package Mode */}
@@ -1168,6 +1173,29 @@ export function BookingPage() {
                     />
                   </div>
                 </div>
+
+                {bookingMode === "outstation" && (tripType === "round-trip" || selectedVehicle.alwaysRoundTrip) && (
+                  <div className="flex flex-col gap-1 sm:col-span-2 lg:col-span-2">
+                    <label htmlFor="return-date-input" className="font-label-lg text-xs font-bold text-ink-slate">Return Date &amp; Time</label>
+                    <div className="flex gap-1.5">
+                      <input
+                        id="return-date-input"
+                        type="date"
+                        value={returnDate}
+                        min={pickupDate}
+                        onChange={(e) => setReturnDate(e.target.value)}
+                        className="w-3/5 px-2.5 py-2 rounded-lg border border-border-warm bg-surface font-body-sm text-xs text-on-surface focus:outline-none"
+                      />
+                      <input
+                        id="return-time-input"
+                        type="time"
+                        value={returnTime}
+                        onChange={(e) => setReturnTime(e.target.value)}
+                        className="w-2/5 px-2 py-2 rounded-lg border border-border-warm bg-surface font-body-sm text-xs text-on-surface focus:outline-none"
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Plain Sentence Banner for Force Vehicles */}

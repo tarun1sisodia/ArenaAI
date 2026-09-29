@@ -223,7 +223,7 @@ export function calculateFare(input: FareEngineInput): FareEngineResult {
   const packageName = input.ruleOverrides?.packageName ?? pack?.name;
   const packageDuration = input.ruleOverrides?.packageDuration ?? pack?.duration;
 
-  if (pack || input.ruleOverrides?.packageBasePrice !== undefined) {
+  if ((pack || input.ruleOverrides?.packageBasePrice !== undefined) && input.ruleOverrides?.catalogItemType !== "tour" && input.ruleOverrides?.catalogItemType !== "ride") {
     if (isGroupExceptionVehicle(input.vehicleTier)) {
       const days = Math.max(1, calendarDaysInclusiveIst(input.pickupDatetime, input.returnDatetime));
       const billedKm = input.tripType === "round-trip" ? input.distanceKm : input.distanceKm * 2;
@@ -270,6 +270,35 @@ export function calculateFare(input: FareEngineInput): FareEngineResult {
       roundMultiplierApplied: false,
       applyNight: false,
       rules: ["package-fixed", "vehicle-upgrade"],
+      ruleOverrides: input.ruleOverrides,
+    });
+  }
+
+  // Published local tours and transfers are catalog offerings, not heritage
+  // packages. Use their server-side desk price and distance, then apply the
+  // normal vehicle upgrade without exposing client-controlled pricing.
+  if ((input.ruleOverrides?.catalogItemType === "tour" || input.ruleOverrides?.catalogItemType === "ride") && input.ruleOverrides.packageBasePrice !== undefined) {
+    const isAirport = input.ruleOverrides.catalogItemType === "ride" || input.tripType === "airport-transfer";
+    const vehicleId = toInternalVehicleId(input.vehicleTier);
+    const isForce = isGroupExceptionVehicle(input.vehicleTier);
+    return finalize({
+      tripType: isAirport ? "airport-transfer" : "local-tour",
+      vehicleTier: input.vehicleTier,
+      pickupDatetime: input.pickupDatetime,
+      promoCode: input.promoCode,
+      allowPromo: !isForce,
+      fareVersion,
+      baseFare: input.ruleOverrides.packageBasePrice + PACKAGE_UPGRADES[vehicleId],
+      nightAllowance: 0,
+      driverAllowance: isForce ? 500 : 0,
+      distanceKm: input.ruleOverrides.catalogDistanceKm ?? input.distanceKm,
+      billedKm: input.ruleOverrides.catalogDistanceKm ?? input.distanceKm,
+      alwaysRoundTrip: isForce,
+      label: input.ruleOverrides.packageName ?? (isAirport ? "Airport / Station Transfer" : "Local Tour"),
+      duration: input.ruleOverrides.packageDuration ?? (isAirport ? "Point to Point" : "Full Day"),
+      roundMultiplierApplied: false,
+      applyNight: false,
+      rules: [isAirport ? "catalog-transfer" : "catalog-local-tour", "catalog-fixed", "vehicle-upgrade"],
       ruleOverrides: input.ruleOverrides,
     });
   }

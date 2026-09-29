@@ -58,10 +58,19 @@ export function createFareService(fareVersion: string, db?: Repositories) {
     },
 
     async calculate(input: CalculateFareInput): Promise<FareEngineResult> {
+      // Resolve a published catalog item once. This keeps catalog-backed local
+      // tours/transfers on the server-authoritative path without trusting
+      // client-supplied distance or price values.
+      const catalogItem = db && input.packageId
+        ? (await db.catalog.getById(input.packageId)) ?? (await db.catalog.getBySlug(input.packageId))
+        : null;
+
       // Derive distanceKm from catalogue if omitted by client
       let distanceKm = input.distanceKm;
       if (!distanceKm || !Number.isFinite(distanceKm) || distanceKm <= 0) {
-        if (input.packageId) {
+        if (catalogItem?.distanceKm && catalogItem.distanceKm > 0) {
+          distanceKm = catalogItem.distanceKm;
+        } else if (input.packageId) {
           distanceKm = 100;
         } else if (input.localPackageKey === "8hr-80km") {
           distanceKm = 80;
@@ -89,9 +98,6 @@ export function createFareService(fareVersion: string, db?: Repositories) {
       let packageName: string | undefined;
       let packageDuration: string | undefined;
       if (db && input.packageId) {
-        const catalogItem =
-          (await db.catalog.getById(input.packageId)) ??
-          (await db.catalog.getBySlug(input.packageId));
         if (catalogItem) {
           if (catalogItem.status !== "published") {
             throw Errors.notFound("CATALOG_ITEM_NOT_FOUND", "Package is not available for booking.");
@@ -120,6 +126,11 @@ export function createFareService(fareVersion: string, db?: Repositories) {
         packageBasePrice,
         packageName,
         packageDuration,
+        catalogItemType:
+          catalogItem?.type === "package" || catalogItem?.type === "tour" || catalogItem?.type === "ride"
+            ? catalogItem.type
+            : undefined,
+        catalogDistanceKm: catalogItem?.distanceKm ?? undefined,
       };
 
       const engineInput: FareEngineInput = {

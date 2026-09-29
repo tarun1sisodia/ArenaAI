@@ -19,6 +19,8 @@ export type FareRuleOverrides = {
   packageBasePrice?: number;
   packageName?: string;
   packageDuration?: string;
+  catalogItemType?: "package" | "tour" | "ride";
+  catalogDistanceKm?: number;
 };
 
 export type FareEngineInput = {
