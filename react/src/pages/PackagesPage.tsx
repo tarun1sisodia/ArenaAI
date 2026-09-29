@@ -582,7 +582,9 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
       </section>
 
       {/* FILTER & TAB NAVIGATION BAR (Compact -20%) */}
-      <section className="bg-surface-container py-3 border-b border-border-warm/60 sticky top-20 z-30 backdrop-blur-md bg-surface-container/95">
+      {/* The header is fixed at the shared --header height; matching it here avoids a
+          reserved-looking gap when this section enters its sticky state. */}
+      <section className="bg-surface-container py-3 border-b border-border-warm/60 sticky top-[var(--header)] z-30 backdrop-blur-md bg-surface-container/95">
         <div className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin flex flex-wrap items-center justify-between gap-space-md">
           {/* Filter Segmented Tabs */}
           <div className="inline-flex flex-wrap items-center gap-1.5 p-1 bg-surface-container-high rounded-xl">
