@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { packages, vehicles, type VehicleId } from "../../data/catalogue";
 import { LocationCombobox } from "../search/LocationCombobox";
-import { calcFare, findRoute, localTomorrow } from "../../fares";
+import { calcFare, localTomorrow } from "../../fares";
 
 const modes = [
   { id: "oneway", label: "One Way" },
@@ -21,7 +21,7 @@ const fleetIcons: Record<VehicleId, string> = {
 };
 
 function cleanLocation(value: string): string {
-  return value.trim().split(" (")[0].toLowerCase();
+  return value.trim().toLowerCase();
 }
 
 function formatDate(value: string): string {
@@ -126,20 +126,20 @@ export function HomeBookingWidget() {
           <div>
             <label htmlFor="home-pickup-date" className="home-booking-label">{mode === "local" ? "Tour Date" : "Pickup Date"}</label>
             <div className="home-booking-date-wrap">
-              <input id="home-pickup-date" type="date" value={pickupDate} min={localTomorrow()} onChange={(event) => setPickupDate(event.target.value)} className="home-booking-date" />
+              <input id="home-pickup-date" type="date" value={pickupDate} min={localTomorrow()} onChange={(event) => setPickupDate(event.target.value)} className="home-booking-date" aria-label="Pickup date" />
+              <span className={`home-booking-date-display ${pickupDate ? "has-value" : ""}`} aria-hidden="true">{pickupDate ? formatDate(pickupDate) : "Select date"}</span>
               <span className="material-symbols-outlined home-booking-field-icon" aria-hidden="true">calendar_today</span>
             </div>
-            <span className="home-booking-date-readable" aria-hidden="true">{formatDate(pickupDate)}</span>
             <FieldError>{errors.pickupDate}</FieldError>
           </div>
           {mode === "round" && (
             <div>
               <label htmlFor="home-return-date" className="home-booking-label">Return Date</label>
               <div className="home-booking-date-wrap">
-                <input id="home-return-date" type="date" value={returnDate} min={pickupDate || localTomorrow()} onChange={(event) => setReturnDate(event.target.value)} className="home-booking-date" />
+                <input id="home-return-date" type="date" value={returnDate} min={pickupDate || localTomorrow()} onChange={(event) => setReturnDate(event.target.value)} className="home-booking-date" aria-label="Return date" />
+                <span className={`home-booking-date-display ${returnDate ? "has-value" : ""}`} aria-hidden="true">{returnDate ? formatDate(returnDate) : "Select date"}</span>
                 <span className="material-symbols-outlined home-booking-field-icon" aria-hidden="true">calendar_today</span>
               </div>
-              <span className="home-booking-date-readable" aria-hidden="true">{formatDate(returnDate)}</span>
               <FieldError>{errors.returnDate}</FieldError>
             </div>
           )}

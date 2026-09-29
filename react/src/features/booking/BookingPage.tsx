@@ -101,6 +101,11 @@ const VEHICLE_OPTIONS: VehicleOption[] = [
   },
 ];
 
+function formatBookingDate(value: string): string {
+  if (!value) return "Select date";
+  const date = new Date(`${value}T00:00:00`);
+  return Number.isNaN(date.getTime()) ? "Select date" : date.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
+}
 export function BookingPage() {
   // Navigation & Step State
   // For Route-First (3-step flow): 1 = Route & Vehicle, 2 = Guest Details & Review, 3 = Confirmation Voucher
@@ -112,6 +117,7 @@ export function BookingPage() {
 
   // Booking Mode & Route Parameters
   const [bookingMode, setBookingMode] = useState<BookingMode>("outstation");
+  const [isLocalTourEntry, setIsLocalTourEntry] = useState(false);
   const [originName, setOriginName] = useState<string>("Agra");
   const [destinationName, setDestinationName] = useState<string>("Delhi");
   const [localPickupName, setLocalPickupName] = useState<string>("Agra");
@@ -133,13 +139,13 @@ export function BookingPage() {
   const [returnTime, setReturnTime] = useState<string>("20:00");
 
   // Passenger & Contact Fields
-  const [fullName, setFullName] = useState<string>("Rohan Verma");
-  const [email, setEmail] = useState<string>("rohan.verma@example.com");
-  const [phone, setPhone] = useState<string>("+919876543210");
-  const [pickupAddress, setPickupAddress] = useState<string>("Hotel Clarks Shiraz, VIP Road, Agra");
-  const [dropAddress, setDropAddress] = useState<string>("IGI Airport Terminal 3, New Delhi");
+  const [fullName, setFullName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [phone, setPhone] = useState<string>("");
+  const [pickupAddress, setPickupAddress] = useState<string>("");
+  const [dropAddress, setDropAddress] = useState<string>("");
   const [flightTrainNumber, setFlightTrainNumber] = useState<string>("");
-  const [specialNotes, setSpecialNotes] = useState<string>("Need child car seat if available");
+  const [specialNotes, setSpecialNotes] = useState<string>("");
 
   // Promo code
   const [promoCodeInput, setPromoCodeInput] = useState<string>("");
@@ -319,6 +325,7 @@ export function BookingPage() {
 
     const qTrip = params.get("trip");
     if (qTrip === "local") {
+      setIsLocalTourEntry(true);
       setBookingMode("local");
     } else if (qTrip === "round" || qTrip === "round-trip") {
       setBookingMode("outstation");
@@ -354,6 +361,8 @@ export function BookingPage() {
       } else {
         const matchTour = packages.find((p) => p.slug === qPkg || p.id === qPkg);
         if (matchTour) {
+          // Homepage Local Taxi selections use the existing package catalogue;
+          // keep the package fare/payment contract while preserving the local-tour UI intent.
           setBookingMode("package");
           setPackageSlug(matchTour.slug);
         }
@@ -948,7 +957,24 @@ export function BookingPage() {
           <div className="flex flex-col gap-space-xl">
             {/* TRIP MODE SELECTOR & CONFIGURATION HEADER */}
             <header className="bg-surface-container-lowest rounded-xl p-space-lg lg:p-space-xl shadow-sm border border-border-warm flex flex-col gap-space-md">
-              {hasPreselectedRoute ? (
+              {isLocalTourEntry ? (
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-space-sm bg-sandstone-wash/80 p-space-md rounded-xl border border-border-warm/80">
+                  <div className="flex items-center gap-space-sm min-w-0">
+                    <span className="w-11 h-11 rounded-full bg-primary text-white flex items-center justify-center shrink-0 shadow-xs">
+                      <span className="material-symbols-outlined text-[24px]">landscape</span>
+                    </span>
+                    <div className="min-w-0">
+                      <span className="font-label-caps text-label-caps uppercase text-terracotta-sandstone tracking-widest font-bold">
+                        Local Taxi Booking
+                      </span>
+                      <h1 className="font-headline-sm text-headline-sm text-ink-midnight tracking-tight font-bold truncate">
+                        {selectedPackage.name}
+                      </h1>
+                    </div>
+                  </div>
+                  <span className="text-xs text-on-surface-variant shrink-0">Tour date: {formatBookingDate(pickupDate)}</span>
+                </div>
+              ) : hasPreselectedRoute ? (
                 /* PRE-SELECTED ROUTE HEADER (Clean, No Distracting Inputs) */
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-space-sm bg-sandstone-wash/80 p-space-md rounded-xl border border-border-warm/80">
                   <div className="flex items-center gap-space-sm">
@@ -1116,7 +1142,7 @@ export function BookingPage() {
                 {/* Package Mode */}
                 {bookingMode === "package" && (
                   <div className="sm:col-span-2 lg:col-span-3 flex flex-col gap-1">
-                    <label htmlFor="package-select" className="font-label-lg text-xs font-bold text-ink-slate">Select Tour Package</label>
+                    <label htmlFor="package-select" className="font-label-lg text-xs font-bold text-ink-slate">{isLocalTourEntry ? "Selected Local Tour" : "Select Tour Package"}</label>
                     <select
                       id="package-select"
                       value={selectedPackageCatalogId ? `live:${selectedPackageCatalogId}` : `static:${packageSlug}`}
@@ -1478,6 +1504,15 @@ export function BookingPage() {
                   </div>
                 )}
 
+                {/* Clean prefilled booking summary — mirrors the homepage selection. */}
+                <div className="booking-prefill-summary grid grid-cols-2 sm:grid-cols-4 gap-space-sm rounded-lg border border-border-warm/70 bg-surface-container-low p-space-sm">
+                  <div><span className="booking-summary-label">Trip</span><strong>{isLocalTourEntry ? "Local Taxi" : bookingMode === "package" ? "Tour Package" : tripType === "round-trip" ? "Round Trip" : "One Way"}</strong></div>
+                  <div><span className="booking-summary-label">{isLocalTourEntry ? "Local Tour" : "From"}</span><strong>{isLocalTourEntry ? selectedPackage.name : originName}</strong></div>
+                  <div><span className="booking-summary-label">{isLocalTourEntry ? "Tour Date" : "To"}</span><strong>{isLocalTourEntry ? formatBookingDate(pickupDate) : destinationName}</strong></div>
+                  <div><span className="booking-summary-label">{isLocalTourEntry ? "Fare" : "Pickup"}</span><strong>{isLocalTourEntry ? (serverFare ? formatInr(serverFare.totalFare) : "Fare on request") : formatBookingDate(pickupDate)}</strong></div>
+                  {!isLocalTourEntry && tripType === "round-trip" && <div><span className="booking-summary-label">Return</span><strong>{formatBookingDate(returnDate)}</strong></div>}
+                  {!isLocalTourEntry && <div><span className="booking-summary-label">Vehicle</span><strong>{selectedVehicle.name}</strong></div>}
+                </div>
                 {/* Contact Fields */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-space-md">
                   <div className="flex flex-col gap-1">
