@@ -1,12 +1,10 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState } from "react";
 import type { SupportedLanguage } from "../config";
 import { contact } from "../data/contact";
-import { packages, routes, vehicles } from "../data/catalogue";
 import { ReviewsMarquee } from "../components/home/ReviewsMarquee";
 import { FamousPlacesSection } from "../components/home/FamousPlacesSection";
 import { WhatsAppIcon } from "../components/icons";
-import { LocationCombobox } from "../components/search/LocationCombobox";
-import { localPackages, localTomorrow, type LocalPackageKey } from "../fares";
+import { HomeBookingWidget } from "../components/home/HomeBookingWidget";
 
 export interface HomePageProps {
   language?: SupportedLanguage;
@@ -17,11 +15,6 @@ export function HomePage({ language = "en" }: HomePageProps) {
   const [tripType, setTripType] = useState<"oneway" | "round" | "local">("oneway");
   const [origin, setOrigin] = useState("Agra");
   const [destination, setDestination] = useState("Delhi");
-  const [localPickup, setLocalPickup] = useState("Agra");
-  const [localPackageKey, setLocalPackageKey] = useState<LocalPackageKey>("8hr-80km");
-  const [pickupDate, setPickupDate] = useState(localTomorrow());
-  const [returnDate, setReturnDate] = useState(localTomorrow());
-  const [returnTime, setReturnTime] = useState("20:00");
   const [selectedVehicle, setSelectedVehicle] = useState<"sedan" | "ertiga" | "innova" | "tempo" | "urbania">("sedan");
   const [couponCopied, setCouponCopied] = useState(false);
 
@@ -30,21 +23,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
   const [inquiryDate, setInquiryDate] = useState("");
   const [inquiryNotes, setInquiryNotes] = useState("");
 
-  const estimatedFare = useMemo(() => {
-    let base = 3499;
-    if (destination === "Jaipur") base = 3699;
-    if (destination === "Mathura") base = 2200;
-    if (destination === "Gwalior") base = 3000;
-    if (destination === "Lucknow") base = 5800;
-    const multiplier: Record<string, number> = {
-      sedan: 1, ertiga: 1.35, innova: 1.85, tempo: 2.7, urbania: 3.5,
-    };
-    if (tripType === "local") {
-      return localPackages[localPackageKey].fares[selectedVehicle] ?? localPackages[localPackageKey].fares.sedan;
-    }
-    const roundMultiplier = tripType === "round" ? 1.85 : 1;
-    return Math.round(base * (multiplier[selectedVehicle] || 1) * roundMultiplier);
-  }, [destination, localPackageKey, selectedVehicle, tripType]);
+
 
   const copyCoupon = () => {
     if (typeof navigator !== "undefined" && navigator.clipboard) {
@@ -210,164 +189,9 @@ export function HomePage({ language = "en" }: HomePageProps) {
               </div>
             </div>
 
-            {/* Right — fare booking dock */}
+            {/* Right — compact first-step booking widget */}
             <div className="lg:col-span-6 w-full flex justify-end">
-              <div className="w-full max-w-[430px] bg-surface-container-lowest text-on-surface rounded-xl p-4 shadow-xl border border-border-warm/40">
-                {/* Mode pills */}
-                <div className="grid grid-cols-3 gap-1 bg-surface-container p-1 rounded-lg mb-3 text-center font-label-caps text-label-caps">
-                  {(["oneway", "round", "local"] as const).map((mode) => (
-                    <button
-                      key={mode}
-                      type="button"
-                      onClick={() => setTripType(mode)}
-                      className={`py-1.5 rounded-md transition-all font-semibold text-[10.5px] tracking-wider ${tripType === mode
-                        ? "bg-primary text-white shadow-sm font-bold"
-                        : "text-on-surface-variant hover:text-on-surface hover:bg-sandstone-wash"
-                        }`}
-                    >
-                      {mode === "oneway" ? "One Way" : mode === "round" ? "Round Trip" : "Local Taxi"}
-                    </button>
-                  ))}
-                </div>
-
-                {/* LocationIQ-powered, mode-specific trip fields */}
-                {tripType === "local" ? (
-                  <div className="grid grid-cols-2 gap-2.5 mb-3">
-                    <div className="flex flex-col gap-1 col-span-2">
-                      <label className="font-label-caps text-[9.5px] text-on-surface-variant uppercase font-semibold">Pickup Location</label>
-                      <LocationCombobox
-                        id="home-local-pickup"
-                        value={localPickup}
-                        onChange={setLocalPickup}
-                        placeholder="Search hotel, station, city..."
-                        label="Local tour pickup location"
-                        triggerIcon="trip_origin"
-                        showLocationIqBadge={false}
-                      />
-                    </div>
-                    <label className="flex flex-col gap-1 col-span-2">
-                      <span className="font-label-caps text-[9.5px] text-on-surface-variant uppercase font-semibold">Local Service</span>
-                      <select
-                        id="home-local-service"
-                        className="w-full bg-surface-container-low rounded-lg px-2.5 py-2 font-title-md text-xs text-on-surface focus:outline-none border border-border-warm/40"
-                        value={localPackageKey}
-                        onChange={(e) => setLocalPackageKey(e.target.value as LocalPackageKey)}
-                      >
-                        {Object.values(localPackages).map((service) => (
-                          <option key={service.key} value={service.key}>{service.label}</option>
-                        ))}
-                      </select>
-                    </label>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-2 gap-2.5 mb-3">
-                    <div className="flex flex-col gap-1">
-                      <label className="font-label-caps text-[9.5px] text-on-surface-variant uppercase font-semibold">From</label>
-                      <LocationCombobox
-                        id="home-origin"
-                        value={origin}
-                        onChange={setOrigin}
-                        placeholder="Search pickup city..."
-                        label="Pickup origin city"
-                        triggerIcon="trip_origin"
-                        showLocationIqBadge={false}
-                      />
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <label className="font-label-caps text-[9.5px] text-on-surface-variant uppercase font-semibold">To</label>
-                      <LocationCombobox
-                        id="home-destination"
-                        value={destination}
-                        onChange={setDestination}
-                        placeholder="Search destination city..."
-                        label="Destination city"
-                        triggerIcon="location_on"
-                        showLocationIqBadge={false}
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {/* One-way needs only the travel date; round-trip adds a real
-                    return schedule; local tours use their pickup date. */}
-                <div className="grid grid-cols-2 gap-2.5 mb-3">
-                  <label className="flex flex-col gap-1">
-                    <span className="font-label-caps text-[9.5px] text-on-surface-variant uppercase font-semibold">{tripType === "round" ? "Outbound Date" : "Pickup Date"}</span>
-                    <input
-                      type="date"
-                      value={pickupDate}
-                      min={localTomorrow()}
-                      onChange={(e) => setPickupDate(e.target.value)}
-                      className="w-full bg-surface-container-low rounded-lg px-2.5 py-2 font-title-md text-xs text-on-surface focus:outline-none border border-border-warm/40"
-                    />
-                  </label>
-                  {tripType === "round" && (
-                    <label className="flex flex-col gap-1">
-                      <span className="font-label-caps text-[9.5px] text-on-surface-variant uppercase font-semibold">Return Date &amp; Time</span>
-                      <div className="flex gap-1">
-                        <input
-                          type="date"
-                          value={returnDate}
-                          min={pickupDate}
-                          onChange={(e) => setReturnDate(e.target.value)}
-                          className="w-3/5 bg-surface-container-low rounded-lg px-2 py-2 font-title-md text-xs text-on-surface focus:outline-none border border-border-warm/40"
-                        />
-                        <input
-                          type="time"
-                          value={returnTime}
-                          onChange={(e) => setReturnTime(e.target.value)}
-                          className="w-2/5 bg-surface-container-low rounded-lg px-2 py-2 font-title-md text-xs text-on-surface focus:outline-none border border-border-warm/40"
-                        />
-                      </div>
-                    </label>
-                  )}
-                </div>
-
-                {/* Vehicle class */}
-                <div className="mb-3">
-                  <label className="font-label-caps text-[9.5px] text-on-surface-variant uppercase mb-1 block font-semibold">Vehicle</label>
-                  <div className="grid grid-cols-5 gap-1.5">
-                    {(["sedan", "ertiga", "innova", "tempo", "urbania"] as const).map((v) => (
-                      <button
-                        key={v}
-                        type="button"
-                        onClick={() => setSelectedVehicle(v)}
-                        className={`flex flex-col items-center justify-center p-1.5 rounded-lg transition-all border text-[10px] ${selectedVehicle === v
-                          ? "bg-sandstone-wash border-primary text-primary font-bold shadow-sm"
-                          : "bg-surface-container-low border-transparent text-on-surface hover:bg-surface-container"
-                          }`}
-                      >
-                        <span className="material-symbols-outlined text-[18px]">
-                          {v === "innova" ? "airport_shuttle" : v === "tempo" ? "rv_hookup" : v === "urbania" ? "directions_bus" : "directions_car"}
-                        </span>
-                        <span className="font-title-md mt-0.5 capitalize">{v === "innova" ? "Crysta" : v.charAt(0).toUpperCase() + v.slice(1)}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Live fare + Book CTA */}
-                <div className="flex items-center justify-between mb-3 px-1">
-                  <div>
-                    <span className="font-label-caps text-[9px] text-on-surface-variant block uppercase">Estimated fare</span>
-                    <span className="font-price-display text-xl font-bold text-primary">₹{estimatedFare.toLocaleString("en-IN")}</span>
-                  </div>
-                  <a
-                    className="flex items-center gap-1.5 px-5 py-2.5 rounded-lg bg-primary hover:bg-primary-container text-white font-title-md text-xs transition-all shadow-md font-semibold active:scale-[0.98]"
-                    href={tripType === "local"
-                      ? `/book?trip=local&from=${encodeURIComponent(localPickup)}&pkg=${encodeURIComponent(localPackageKey)}&vehicle=${selectedVehicle}&date=${pickupDate}`
-                      : `/book?from=${encodeURIComponent(origin)}&to=${encodeURIComponent(destination)}&vehicle=${selectedVehicle}&trip=${tripType === "round" ? "round-trip" : "one-way"}&date=${pickupDate}${tripType === "round" ? `&returnDate=${returnDate}&returnTime=${returnTime}` : ""}`}
-                  >
-                    <span className="text-white">Book Now</span>
-                    <span className="material-symbols-outlined text-[15px] text-white">east</span>
-                  </a>
-                </div>
-
-                {/* Trust micro-strip — belongs here inside the dock, not in the hero copy column */}
-                <p className="font-label-caps text-[9px] text-on-surface-variant text-center leading-relaxed">
-                  Toll-inclusive · GST invoice · 28% advance only
-                </p>
-              </div>
+              <HomeBookingWidget />
             </div>
           </div>
         </section>

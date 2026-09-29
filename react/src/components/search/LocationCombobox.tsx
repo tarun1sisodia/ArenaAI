@@ -679,7 +679,9 @@ export function LocationCombobox({
         id={`${comboboxId}-btn`}
       >
         <span className="loc-pin" aria-hidden="true">
-          {triggerIcon}
+          {/^[a-z0-9_]+$/.test(triggerIcon) ? (
+            <span className="material-symbols-outlined">{triggerIcon}</span>
+          ) : triggerIcon}
         </span>
         <span className={`loc-value ${!value ? "is-empty" : ""}`}>
           {value || placeholder}
