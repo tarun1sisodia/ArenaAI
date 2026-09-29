@@ -49,15 +49,27 @@ async function runTests() {
       "Whitespace query must return empty array"
     );
 
-    // 3. Missing token returns empty
+    // 3. Missing browser token still uses the secure backend proxy.
+    // The proxy owns the LocationIQ credential, so no client token is needed.
+    const originalFetchBeforeProxyTest = globalThis.fetch;
+    globalThis.fetch = async () => {
+      return new Response(JSON.stringify({
+        success: true,
+        data: { source: "provider", suggestions: [] },
+      }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    };
     const noTokenResult = await fetchLocationIQSuggestions({
       query: "Delhi",
       token: "",
     });
+    globalThis.fetch = originalFetchBeforeProxyTest;
     assert.deepStrictEqual(
       noTokenResult,
       [],
-      "Missing token must return empty array"
+      "Missing browser token must still query the backend proxy"
     );
 
     // 4. Mock fetch for autocomplete suggestions parsing

@@ -392,7 +392,9 @@ export function useLocationIQ(
         debounceTimerRef.current = null;
       }
 
-      if (q.length < minQueryLength || !activeToken) {
+      // The secure backend proxy authenticates with its server-held token, so
+      // browser searches must work even when no client token is available.
+      if (q.length < minQueryLength) {
         setResults([]);
         setIsLoading(false);
         setError(null);
@@ -407,7 +409,7 @@ export function useLocationIQ(
       try {
         const items = await fetchLocationIQSuggestions({
           query: q,
-          token: activeToken,
+          token: activeToken || undefined,
           limit,
           countrycodes,
           signal: controller.signal,
@@ -442,7 +444,8 @@ export function useLocationIQ(
 
     const trimmed = query.trim();
 
-    if (trimmed.length < minQueryLength || !activeToken) {
+    // Keep the proxy path enabled without exposing or requiring a browser token.
+    if (trimmed.length < minQueryLength) {
       clearResults();
       return;
     }

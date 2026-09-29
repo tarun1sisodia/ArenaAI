@@ -78,6 +78,26 @@ const TRIP_TYPE_OPTIONS: { value: CatalogTripType; label: string }[] = [
   { value: "airport-transfer", label: "Airport / station transfer" },
 ];
 
+function tripTypeOptionsFor(category: CatalogCategory): { value: CatalogTripType; label: string }[] {
+  switch (category) {
+    case "package":
+      return TRIP_TYPE_OPTIONS.filter((option) => option.value === "local-tour" || option.value === "round-trip");
+    case "tour":
+      return TRIP_TYPE_OPTIONS.filter((option) => option.value === "local-tour");
+    case "route":
+      return TRIP_TYPE_OPTIONS.filter((option) => option.value === "one-way" || option.value === "round-trip");
+    case "ride":
+      return TRIP_TYPE_OPTIONS.filter((option) => option.value === "airport-transfer" || option.value === "local-tour");
+    case "vehicle":
+    case "place":
+      return [];
+  }
+}
+
+function defaultTripTypeFor(category: CatalogCategory): CatalogTripType | "" {
+  return tripTypeOptionsFor(category)[0]?.value ?? "";
+}
+
 const AVAILABILITY_OPTIONS: { value: CatalogAvailability; label: string }[] = [
   { value: "available", label: "Available — bookable normally" },
   { value: "limited", label: "Limited — only a few seats left" },
@@ -264,6 +284,14 @@ export function CatalogPage({ user }: { user: AdminUser }) {
     setIsDialogOpen(true);
   }
 
+  function handleFormCategoryChange(category: CatalogCategory) {
+    setFormCategory(category);
+    const options = tripTypeOptionsFor(category);
+    if (!options.some((option) => option.value === formTripType)) {
+      setFormTripType(defaultTripTypeFor(category));
+    }
+  }
+
   function openEdit(item: CatalogItem) {
     setEditingItem(item);
     setFormTitle(item.title);
@@ -275,7 +303,12 @@ export function CatalogPage({ user }: { user: AdminUser }) {
     setFormDistance(item.distanceKm !== null && item.distanceKm !== undefined ? String(item.distanceKm) : "");
     setFormAvailability(item.availability || "available");
     setFormSeatsLeft(item.seatsLeft !== null && item.seatsLeft !== undefined ? String(item.seatsLeft) : "");
-    setFormTripType(item.tripType || "local-tour");
+    const editTripTypeOptions = tripTypeOptionsFor(item.category);
+    setFormTripType(
+      item.tripType && editTripTypeOptions.some((option) => option.value === item.tripType)
+        ? item.tripType
+        : defaultTripTypeFor(item.category),
+    );
     setFormPlaces(item.places.join(", "));
     setFormStops(item.stops.join(", "));
     setFormStatus(item.status);
@@ -873,7 +906,7 @@ export function CatalogPage({ user }: { user: AdminUser }) {
               <Select
                 id="form-cat"
                 value={formCategory}
-                onChange={(e) => setFormCategory(e.target.value as CatalogCategory)}
+                onChange={(e) => handleFormCategoryChange(e.target.value as CatalogCategory)}
               >
                 {(Object.keys(CATEGORY_LABEL) as CatalogCategory[]).map((c) => (
                   <option key={c} value={c}>
@@ -888,8 +921,10 @@ export function CatalogPage({ user }: { user: AdminUser }) {
                 id="form-triptype"
                 value={formTripType}
                 onChange={(e) => setFormTripType(e.target.value)}
+                disabled={tripTypeOptionsFor(formCategory).length === 0}
               >
-                {TRIP_TYPE_OPTIONS.map((t) => (
+                {tripTypeOptionsFor(formCategory).length === 0 && <option value="">Not applicable to this vertical</option>}
+                {tripTypeOptionsFor(formCategory).map((t) => (
                   <option key={t.value} value={t.value}>
                     {t.label}
                   </option>

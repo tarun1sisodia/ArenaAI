@@ -3,6 +3,32 @@ import { contact } from "../../data/contact";
 import { prefetchDocument } from "../../app/prefetch";
 import { WhatsAppIcon } from "../icons/WhatsAppIcon";
 
+function SocialIcon({ name }: { name: "facebook" | "instagram" | "youtube" }) {
+  if (name === "facebook") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5 fill-current">
+        <path d="M13.7 21v-8h2.7l.4-3h-3.1V8.1c0-.9.3-1.6 1.6-1.6h1.7V3.8c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3V10H7.5v3h2.8v8h3.4Z" />
+      </svg>
+    );
+  }
+
+  if (name === "instagram") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5 fill-none stroke-current stroke-[1.8]">
+        <rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5" />
+        <circle cx="12" cy="12" r="4.1" />
+        <circle cx="17.5" cy="6.6" r="1" className="fill-current stroke-none" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5 fill-current">
+      <path d="M21.6 7.1a2.9 2.9 0 0 0-2-2C17.8 4.6 12 4.6 12 4.6s-5.8 0-7.6.5a2.9 2.9 0 0 0-2 2A30 30 0 0 0 1.9 12a30 30 0 0 0 .5 4.9 2.9 2.9 0 0 0 2 2c1.8.5 7.6.5 7.6.5s5.8 0 7.6-.5a2.9 2.9 0 0 0 2-2 30 30 0 0 0 .5-4.9 30 30 0 0 0-.5-4.9ZM10 15.5v-7l6 3.5-6 3.5Z" />
+    </svg>
+  );
+}
+
 export interface FooterProps {
   currentPath?: string;
   className?: string;
@@ -55,7 +81,7 @@ export function Footer({ className = "" }: FooterProps) {
               <p className="font-body-sm text-body-sm text-on-surface">
                 {contact.address}
               </p>
-              <div className="flex flex-col gap-1 pt-1 text-body-sm">
+            <div className="flex flex-col gap-1 pt-1 text-body-sm">
                 <a href={`tel:${contact.phone}`} className="inline-flex items-center gap-2 text-on-surface hover:text-primary transition-colors">
                   <span className="material-symbols-outlined text-primary text-[18px]">call</span>
                   <span>{contact.phoneDisplay}</span>
@@ -72,6 +98,43 @@ export function Footer({ className = "" }: FooterProps) {
                 >
                   <span className="material-symbols-outlined text-[16px]">map</span>
                   <span>View on Google Maps</span>
+                </a>
+              </div>
+            </div>
+            <div className="pt-space-xs">
+              <p className="font-label-caps text-label-caps text-primary uppercase font-bold tracking-wider mb-2">
+                Follow our travel desk
+              </p>
+              <div className="flex flex-wrap gap-2" aria-label="Social media links">
+                <a
+                  href="https://www.facebook.com/share/19Le5PLBDo/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="SK Baghel Tour & Travels on Facebook"
+                  title="Facebook"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border-warm bg-surface text-on-surface hover:border-primary hover:bg-primary hover:text-on-primary transition-colors"
+                >
+                  <SocialIcon name="facebook" />
+                </a>
+                <a
+                  href="https://www.instagram.com/agra_skbaghel_tourandtravels?stkn=dTZrMjU4bGYza3hx"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="SK Baghel Tour & Travels on Instagram"
+                  title="Instagram"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border-warm bg-surface text-on-surface hover:border-primary hover:bg-primary hover:text-on-primary transition-colors"
+                >
+                  <SocialIcon name="instagram" />
+                </a>
+                <a
+                  href="https://youtube.com/@agraskbaghel_tourandtravels?si=paXJ1oLHgGZvgXxN"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="SK Baghel Tour & Travels on YouTube"
+                  title="YouTube"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border-warm bg-surface text-on-surface hover:border-primary hover:bg-primary hover:text-on-primary transition-colors"
+                >
+                  <SocialIcon name="youtube" />
                 </a>
               </div>
             </div>

@@ -18,6 +18,7 @@ import { WhatsAppIcon } from "../../components/icons";
 import { TripSelectionStep, type SelectableTrip } from "./TripSelectionStep";
 import { BookingAssistant, type QuickPick } from "./BookingAssistant";
 import { fetchPublishedCatalog, type PublicCatalogItem } from "../../services/catalog";
+import { LocationCombobox } from "../../components/search/LocationCombobox";
 
 type BookingStep = 1 | 2 | 3 | 4;
 type BookingMode = "outstation" | "local" | "package";
@@ -116,6 +117,8 @@ export function BookingPage() {
   const [tripType, setTripType] = useState<"one-way" | "round-trip">("one-way");
   const [localPackageKey, setLocalPackageKey] = useState<LocalPackageKey>("8hr-80km");
   const [packageSlug, setPackageSlug] = useState<string>("taj-mahal-sunrise-tour");
+  const [selectedLocalCatalogId, setSelectedLocalCatalogId] = useState<string | null>(null);
+  const [selectedPackageCatalogId, setSelectedPackageCatalogId] = useState<string | null>(null);
   const [selectedVehicleId, setSelectedVehicleId] = useState<VehicleId>("sedan");
 
   // Fleet-first trip selection (Step 2 in 4-step flow)
@@ -170,6 +173,34 @@ export function BookingPage() {
       packages[0]
     );
   }, [packageSlug]);
+
+  // Published admin-managed offerings shown in the three service-mode controls.
+  // Unavailable items remain visible in admin but must not be bookable.
+  const localCatalogTrips = useMemo(
+    () =>
+      liveTrips.filter(
+        (item) =>
+          item.availability !== "unavailable" &&
+          (item.type === "tour" || item.type === "ride") &&
+          (item.tripType === "local-tour" || item.tripType === "airport-transfer" || item.tripType === null),
+      ),
+    [liveTrips],
+  );
+
+  const packageCatalogTrips = useMemo(
+    () => liveTrips.filter((item) => item.availability !== "unavailable" && item.type === "package"),
+    [liveTrips],
+  );
+
+  const selectedLocalCatalog = useMemo(
+    () => localCatalogTrips.find((item) => item.id === selectedLocalCatalogId) ?? null,
+    [localCatalogTrips, selectedLocalCatalogId],
+  );
+
+  const selectedPackageCatalog = useMemo(
+    () => packageCatalogTrips.find((item) => item.id === selectedPackageCatalogId) ?? null,
+    [packageCatalogTrips, selectedPackageCatalogId],
+  );
 
   // Every bookable trip for Fleet-First Step 2: curated static packages + live desk catalog
   const availableTrips = useMemo<SelectableTrip[]>(() => {
@@ -351,7 +382,7 @@ export function BookingPage() {
     fetchPublishedCatalog()
       .then((items) => {
         if (!isMounted) return;
-        setLiveTrips(items.filter((i) => i.type !== "place" && i.type !== "vehicle"));
+        setLiveTrips(items.filter((i) => i.type !== "place" && i.type !== "vehicle" && i.availability !== "unavailable"));
       })
       .catch(() => {
         /* curated static packages remain the fallback */
@@ -380,13 +411,17 @@ export function BookingPage() {
   // Map current UI state into Fastify BackendTripType
   const backendTripType = useMemo<BackendTripType>(() => {
     if (bookingMode === "local") {
-      return localPackageKey === "airport-transfer" ? "airport-transfer" : "local-tour";
+      return selectedLocalCatalog?.tripType === "airport-transfer" || localPackageKey === "airport-transfer"
+        ? "airport-transfer"
+        : "local-tour";
     }
     if (bookingMode === "package") {
-      return "round-trip";
+      return selectedPackageCatalog?.tripType === "one-way" || selectedPackageCatalog?.tripType === "local-tour"
+        ? selectedPackageCatalog.tripType
+        : "round-trip";
     }
     return tripType;
-  }, [bookingMode, localPackageKey, tripType]);
+  }, [bookingMode, localPackageKey, tripType, selectedLocalCatalog, selectedPackageCatalog]);
 
   // Effective origin & destination
   const effectiveOrigin = useMemo(() => {
@@ -397,13 +432,24 @@ export function BookingPage() {
 
   const effectiveDestination = useMemo(() => {
     if (bookingMode === "local") {
+      if (selectedLocalCatalog) return selectedLocalCatalog.routeSummary || selectedLocalCatalog.title;
       return localPackageKey === "airport-transfer" ? "Agra Cantt Airport / Station" : "Agra Local Sightseeing";
     }
     if (bookingMode === "package") {
+      if (selectedPackageCatalog) return selectedPackageCatalog.title;
       return selectedPackage.name;
     }
     return destinationName.trim() || "Delhi";
-  }, [bookingMode, localPackageKey, selectedPackage, destinationName]);
+  }, [bookingMode, localPackageKey, selectedPackage, destinationName, selectedLocalCatalog, selectedPackageCatalog]);
+
+  const selectedCatalogBookingId = useMemo(() => {
+    if (bookingMode === "local") return selectedLocalCatalog?.id;
+    if (bookingMode === "package") return selectedPackageCatalog?.id;
+    return undefined;
+  }, [bookingMode, selectedLocalCatalog, selectedPackageCatalog]);
+
+  const selectedPackageId = bookingMode === "package" ? selectedCatalogBookingId ?? selectedPackage.id : selectedCatalogBookingId;
+  const selectedLocalPackageKey = bookingMode === "local" && !selectedLocalCatalog ? localPackageKey : undefined;
 
   // Primary Server Fare Fetcher: calls POST /api/v1/fares/calculate
   // Rule F3: Never compute or send money or distance from client!
@@ -421,8 +467,8 @@ export function BookingPage() {
         pickupDatetime: pickupDatetimeIso,
         returnDatetime: returnDatetimeIso,
         promoCode: activePromoCode || undefined,
-        packageId: bookingMode === "package" ? selectedPackage.id : undefined,
-        localPackageKey: bookingMode === "local" ? localPackageKey : undefined,
+        packageId: selectedPackageId,
+        localPackageKey: selectedLocalPackageKey,
       });
 
       setServerFare(res);
@@ -448,8 +494,8 @@ export function BookingPage() {
     returnDatetimeIso,
     activePromoCode,
     bookingMode,
-    selectedPackage.id,
-    localPackageKey,
+    selectedPackageId,
+    selectedLocalPackageKey,
   ]);
 
   // Debounced auto-fetch on route, vehicle, datetime, or promo changes
@@ -525,8 +571,8 @@ export function BookingPage() {
         flightTrainNumber: flightTrainNumber.trim() || undefined,
         specialNotes: specialNotes.trim() || undefined,
         promoCode: serverFare.promoValid && serverFare.promoCode ? serverFare.promoCode : undefined,
-        packageId: bookingMode === "package" ? selectedPackage.id : undefined,
-        localPackageKey: bookingMode === "local" ? localPackageKey : undefined,
+        packageId: selectedPackageId,
+        localPackageKey: selectedLocalPackageKey,
       });
 
       // Attempt to initiate real checkout
@@ -973,24 +1019,26 @@ export function BookingPage() {
                   <>
                     <div className="flex flex-col gap-1">
                       <label htmlFor="origin-input" className="font-label-lg text-xs font-bold text-ink-slate">Pickup Origin City</label>
-                      <input
+                      <LocationCombobox
                         id="origin-input"
-                        type="text"
                         value={originName}
-                        onChange={(e) => setOriginName(e.target.value)}
-                        placeholder="e.g. Agra"
-                        className="px-3 py-2 rounded-lg border border-border-warm bg-surface font-body-md text-on-surface focus:ring-1 focus:ring-primary focus:outline-none"
+                        onChange={(value) => setOriginName(value)}
+                        placeholder="Search pickup city, airport, landmark..."
+                        label="Pickup Origin City"
+                        triggerIcon="trip_origin"
+                        showLocationIqBadge={false}
                       />
                     </div>
                     <div className="flex flex-col gap-1">
                       <label htmlFor="dest-input" className="font-label-lg text-xs font-bold text-ink-slate">Destination City</label>
-                      <input
+                      <LocationCombobox
                         id="dest-input"
-                        type="text"
                         value={destinationName}
-                        onChange={(e) => setDestinationName(e.target.value)}
-                        placeholder="e.g. Delhi"
-                        className="px-3 py-2 rounded-lg border border-border-warm bg-surface font-body-md text-on-surface focus:ring-1 focus:ring-primary focus:outline-none"
+                        onChange={(value) => setDestinationName(value)}
+                        placeholder="Search destination city, airport, landmark..."
+                        label="Destination City"
+                        triggerIcon="location_on"
+                        showLocationIqBadge={false}
                       />
                     </div>
                     <div className="flex flex-col gap-1">
@@ -1027,16 +1075,35 @@ export function BookingPage() {
                 {/* Local Mode */}
                 {bookingMode === "local" && (
                   <div className="sm:col-span-2 lg:col-span-3 flex flex-col gap-1">
-                    <label htmlFor="local-pkg-select" className="font-label-lg text-xs font-bold text-ink-slate">Select Local Rental Tier</label>
+                    <label htmlFor="local-pkg-select" className="font-label-lg text-xs font-bold text-ink-slate">Select Local Tour / Transfer</label>
                     <select
                       id="local-pkg-select"
-                      value={localPackageKey}
-                      onChange={(e) => setLocalPackageKey(e.target.value as LocalPackageKey)}
+                      value={selectedLocalCatalogId ? `live:${selectedLocalCatalogId}` : localPackageKey}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        if (value.startsWith("live:")) {
+                          setSelectedLocalCatalogId(value.slice(5));
+                        } else {
+                          setSelectedLocalCatalogId(null);
+                          setLocalPackageKey(value as LocalPackageKey);
+                        }
+                      }}
                       className="px-3 py-2 rounded-lg border border-border-warm bg-surface font-body-md text-on-surface focus:ring-1 focus:ring-primary focus:outline-none"
                     >
-                      <option value="8hr-80km">{localPackages["8hr-80km"].label}</option>
-                      <option value="12hr-120km">{localPackages["12hr-120km"].label}</option>
-                      <option value="airport-transfer">{localPackages["airport-transfer"].label}</option>
+                      <optgroup label="Standard local services">
+                        <option value="8hr-80km">{localPackages["8hr-80km"].label}</option>
+                        <option value="12hr-120km">{localPackages["12hr-120km"].label}</option>
+                        <option value="airport-transfer">{localPackages["airport-transfer"].label}</option>
+                      </optgroup>
+                      {localCatalogTrips.length > 0 && (
+                        <optgroup label="Published tours & transfers">
+                          {localCatalogTrips.map((item) => (
+                            <option key={item.id} value={`live:${item.id}`}>
+                              {item.title} — {item.durationText || "Custom itinerary"}
+                            </option>
+                          ))}
+                        </optgroup>
+                      )}
                     </select>
                   </div>
                 )}
@@ -1044,18 +1111,39 @@ export function BookingPage() {
                 {/* Package Mode */}
                 {bookingMode === "package" && (
                   <div className="sm:col-span-2 lg:col-span-3 flex flex-col gap-1">
-                    <label htmlFor="package-select" className="font-label-lg text-xs font-bold text-ink-slate">Select Curated Heritage Tour</label>
+                    <label htmlFor="package-select" className="font-label-lg text-xs font-bold text-ink-slate">Select Tour Package</label>
                     <select
                       id="package-select"
-                      value={packageSlug}
-                      onChange={(e) => setPackageSlug(e.target.value)}
+                      value={selectedPackageCatalogId ? `live:${selectedPackageCatalogId}` : `static:${packageSlug}`}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        if (value.startsWith("live:")) {
+                          const item = packageCatalogTrips.find((entry) => entry.id === value.slice(5));
+                          setSelectedPackageCatalogId(value.slice(5));
+                          if (item) setPackageSlug(item.slug);
+                        } else {
+                          setSelectedPackageCatalogId(null);
+                          setPackageSlug(value.slice(7));
+                        }
+                      }}
                       className="px-3 py-2 rounded-lg border border-border-warm bg-surface font-body-md text-on-surface focus:ring-1 focus:ring-primary focus:outline-none"
                     >
-                      {packages.map((pkg) => (
-                        <option key={pkg.slug} value={pkg.slug}>
-                          {pkg.name} ({pkg.duration})
-                        </option>
-                      ))}
+                      <optgroup label="Curated heritage packages">
+                        {packages.map((pkg) => (
+                          <option key={pkg.slug} value={`static:${pkg.slug}`}>
+                            {pkg.name} ({pkg.duration})
+                          </option>
+                        ))}
+                      </optgroup>
+                      {packageCatalogTrips.length > 0 && (
+                        <optgroup label="Published desk packages">
+                          {packageCatalogTrips.map((item) => (
+                            <option key={item.id} value={`live:${item.id}`}>
+                              {item.title} — {item.durationText || "Custom itinerary"}
+                            </option>
+                          ))}
+                        </optgroup>
+                      )}
                     </select>
                   </div>
                 )}
