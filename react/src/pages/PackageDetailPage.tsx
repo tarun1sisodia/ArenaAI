@@ -555,7 +555,7 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
                   href={bookStep1Url}
                   className="w-full bg-primary hover:bg-terracotta-sunlit text-on-primary py-3.5 px-4 rounded-lg font-title-md text-title-md transition-all shadow-md flex items-center justify-center gap-2 group text-center"
                 >
-                  <span>Book This Tour Now</span>
+                  <span>Book Now</span>
                   <span className="material-symbols-outlined text-[20px] group-hover:translate-x-1 transition-transform">
                     arrow_forward
                   </span>
@@ -848,7 +848,7 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
               className="px-6 py-3 rounded-lg bg-terracotta-sandstone hover:bg-terracotta-sunlit text-on-primary text-label-lg font-semibold shadow-md transition-all flex items-center gap-2"
               href={bookStep1Url}
             >
-              <span>Book Tour Now</span>
+              <span>Book Now</span>
               <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
             </a>
           </div>

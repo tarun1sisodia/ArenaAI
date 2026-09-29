@@ -252,6 +252,13 @@ export function LivePackageDetailPage({ slug }: LivePackageDetailPageProps) {
 
             <div className="flex flex-col sm:flex-row gap-2.5">
               <a
+                href={`/book.html?package=${encodeURIComponent(item.slug)}&step=1`}
+                className="flex-1 inline-flex items-center justify-center gap-2 h-11 rounded-xl bg-terracotta-sandstone text-on-primary font-label-lg text-sm font-semibold hover:bg-terracotta-sunlit transition-colors"
+              >
+                <span>Book Now</span>
+                <span className="material-symbols-outlined text-[18px]" aria-hidden="true">arrow_forward</span>
+              </a>
+              <a
                 href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"

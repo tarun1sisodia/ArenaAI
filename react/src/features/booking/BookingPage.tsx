@@ -17,7 +17,7 @@ import { loadRazorpayScript } from "./razorpay";
 import { WhatsAppIcon } from "../../components/icons";
 import { TripSelectionStep, type SelectableTrip } from "./TripSelectionStep";
 import { BookingAssistant, type QuickPick } from "./BookingAssistant";
-import { fetchPublishedCatalog, type PublicCatalogItem } from "../../services/catalog";
+import { fetchLiveFleet, fetchPublishedCatalog, type PublicCatalogItem, type PublicFleetVehicle } from "../../services/catalog";
 import { LocationCombobox } from "../../components/search/LocationCombobox";
 
 type BookingStep = 1 | 2 | 3 | 4;
@@ -130,6 +130,7 @@ export function BookingPage() {
 
   // Fleet-first trip selection (Step 2 in 4-step flow)
   const [liveTrips, setLiveTrips] = useState<PublicCatalogItem[]>([]);
+  const [liveFleet, setLiveFleet] = useState<PublicFleetVehicle[]>([]);
   const [selectedTripKey, setSelectedTripKey] = useState<string | null>(null);
 
   // Datetime fields
@@ -166,12 +167,27 @@ export function BookingPage() {
   const [amountPaid, setAmountPaid] = useState<number>(0);
 
   // Selected vehicle metadata
+  const fleetOptions = useMemo<VehicleOption[]>(() => {
+    const activeFleet = liveFleet.filter((vehicle) => vehicle.active);
+    if (activeFleet.length === 0) return VEHICLE_OPTIONS;
+    return activeFleet.map((vehicle) => {
+      const fallback = VEHICLE_OPTIONS.find((option) => option.id === vehicle.id) ??
+        VEHICLE_OPTIONS.find((option) => mapVehicleTier(option.id) === vehicle.tier) ??
+        VEHICLE_OPTIONS[0];
+      return {
+        ...fallback,
+        id: fallback.id,
+        name: vehicle.name || fallback.name,
+        guests: `${vehicle.seats} Seats`,
+        luggage: `${vehicle.bags} Bags`,
+        subtitle: `${vehicle.seats}-seat ${vehicle.name || fallback.name}`,
+        alwaysRoundTrip: fallback.alwaysRoundTrip,
+      };
+    });
+  }, [liveFleet]);
   const selectedVehicle = useMemo<VehicleOption>(() => {
-    return (
-      VEHICLE_OPTIONS.find((v) => v.id === selectedVehicleId) ||
-      VEHICLE_OPTIONS[0]
-    );
-  }, [selectedVehicleId]);
+    return fleetOptions.find((v) => v.id === selectedVehicleId) || fleetOptions[0] || VEHICLE_OPTIONS[0];
+  }, [fleetOptions, selectedVehicleId]);
 
   // Selected tour package metadata
   const selectedPackage = useMemo<TourPackage>(() => {
@@ -195,7 +211,7 @@ export function BookingPage() {
   );
 
   const packageCatalogTrips = useMemo(
-    () => liveTrips.filter((item) => item.availability !== "unavailable" && item.type === "package"),
+    () => liveTrips.filter((item) => item.availability !== "unavailable" && (item.type === "package" || item.type === "tour")),
     [liveTrips],
   );
 
@@ -394,14 +410,33 @@ export function BookingPage() {
   // Load published trips from live catalog
   useEffect(() => {
     let isMounted = true;
-    fetchPublishedCatalog()
-      .then((items) => {
-        if (!isMounted) return;
-        setLiveTrips(items.filter((i) => i.type !== "place" && i.type !== "vehicle" && i.availability !== "unavailable"));
-      })
-      .catch(() => {
-        /* curated static packages remain the fallback */
-      });
+    Promise.allSettled([fetchPublishedCatalog(), fetchLiveFleet()]).then(([tripsResult, fleetResult]) => {
+      if (!isMounted) return;
+      if (tripsResult.status === "fulfilled") {
+        const items = tripsResult.value;
+        const bookable = items.filter((i) => i.type !== "place" && i.type !== "vehicle" && i.availability !== "unavailable");
+        setLiveTrips(bookable);
+        const qPkg = new URLSearchParams(window.location.search).get("package") || new URLSearchParams(window.location.search).get("pkg");
+        const livePackage = qPkg ? bookable.find((item) => item.slug === qPkg || item.id === qPkg) : null;
+        if (livePackage) {
+          setBookingMode("package");
+          setSelectedPackageCatalogId(livePackage.id);
+          setPackageSlug(livePackage.slug);
+          setSelectedTripKey(`live:${livePackage.slug}`);
+        }
+      }
+      if (fleetResult.status === "fulfilled") {
+        setLiveFleet(fleetResult.value);
+        const current = fleetResult.value.find((vehicle) => vehicle.active && (vehicle.id === selectedVehicleId || vehicle.tier === mapVehicleTier(selectedVehicleId)));
+        if (!current) {
+          const first = fleetResult.value.find((vehicle) => vehicle.active);
+          if (first) {
+            const matching = VEHICLE_OPTIONS.find((option) => option.id === first.id || mapVehicleTier(option.id) === first.tier);
+            if (matching) setSelectedVehicleId(matching.id);
+          }
+        }
+      }
+    });
     return () => {
       isMounted = false;
     };
@@ -409,7 +444,7 @@ export function BookingPage() {
 
   // Determine if this booking uses the direct 3-step funnel (Route-First or Package-First)
   // vs the 4-step Fleet-First funnel
-  const isDirectFunnel = hasPreselectedRoute || bookingMode === "package";
+  const isDirectFunnel = hasPreselectedRoute;
 
   // Compute ISO datetimes for server calculation and submission
   const pickupDatetimeIso = useMemo(() => {
@@ -440,10 +475,14 @@ export function BookingPage() {
 
   // Effective origin & destination
   const effectiveOrigin = useMemo(() => {
-    if (bookingMode === "local") return localPickupName.trim() || "Agra";
-    if (bookingMode === "package") return "Agra";
-    return originName.trim() || "Agra";
-  }, [bookingMode, localPickupName, originName]);
+    if (bookingMode === "local") return localPickupName.trim();
+    if (bookingMode === "package") {
+      const routeParts = selectedPackageCatalog?.routeSummary.split("·").map((part) => part.trim()).filter(Boolean) ?? [];
+      const stops = selectedPackageCatalog?.stops ?? [];
+      return routeParts[0] || stops[0] || selectedPackage.places[0] || "";
+    }
+    return originName.trim();
+  }, [bookingMode, localPickupName, originName, selectedPackage, selectedPackageCatalog]);
 
   const effectiveDestination = useMemo(() => {
     if (bookingMode === "local") {
@@ -451,10 +490,11 @@ export function BookingPage() {
       return localPackageKey === "airport-transfer" ? "Agra Cantt Airport / Station" : "Agra Local Sightseeing";
     }
     if (bookingMode === "package") {
-      if (selectedPackageCatalog) return selectedPackageCatalog.title;
-      return selectedPackage.name;
+      const routeParts = selectedPackageCatalog?.routeSummary.split("·").map((part) => part.trim()).filter(Boolean) ?? [];
+      const stops = selectedPackageCatalog?.stops ?? [];
+      return routeParts.at(-1) || stops.at(-1) || selectedPackage.places.at(-1) || selectedPackage.name;
     }
-    return destinationName.trim() || "Delhi";
+    return destinationName.trim();
   }, [bookingMode, localPackageKey, selectedPackage, destinationName, selectedLocalCatalog, selectedPackageCatalog]);
 
   const selectedCatalogBookingId = useMemo(() => {
@@ -1255,13 +1295,15 @@ export function BookingPage() {
                   </span>
                 </div>
 
-                {VEHICLE_OPTIONS.map((veh) => {
+                {fleetOptions.map((veh) => {
                   const isSelected = selectedVehicleId === veh.id;
                   return (
-                    <div
+                    <button
                       key={veh.id}
+                      type="button"
+                      aria-pressed={isSelected}
                       onClick={() => setSelectedVehicleId(veh.id)}
-                      className={`cursor-pointer rounded-xl p-space-md lg:p-space-lg transition-all border ${
+                      className={`w-full text-left cursor-pointer rounded-xl p-space-md lg:p-space-lg transition-all border ${
                         isSelected
                           ? "bg-surface-container-lowest border-primary ring-2 ring-primary/20 shadow-md"
                           : "bg-surface-container-lowest border-border-warm hover:border-primary/40 shadow-xs"
@@ -1314,7 +1356,7 @@ export function BookingPage() {
                           </p>
                         </div>
                       </div>
-                    </div>
+                    </button>
                   );
                 })}
               </div>
@@ -1430,7 +1472,7 @@ export function BookingPage() {
                     className="w-full py-3.5 px-space-md rounded-xl bg-terracotta-sandstone text-on-primary font-label-lg text-label-lg font-semibold hover:bg-terracotta-sunlit disabled:opacity-50 transition-all shadow-md flex items-center justify-center gap-2 group cursor-pointer"
                     type="button"
                   >
-                    <span>{isDirectFunnel ? "Proceed to Guest Details (Step 2)" : "Choose Your Trip (Step 2)"}</span>
+                    <span>{isDirectFunnel ? "Proceed to Booking Form" : "Continue to Choose Your Trip"}</span>
                     <span className="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">
                       arrow_forward
                     </span>
@@ -1506,9 +1548,9 @@ export function BookingPage() {
 
                 {/* Clean prefilled booking summary — mirrors the homepage selection. */}
                 <div className="booking-prefill-summary grid grid-cols-2 sm:grid-cols-4 gap-space-sm rounded-lg border border-border-warm/70 bg-surface-container-low p-space-sm">
-                  <div><span className="booking-summary-label">Trip</span><strong>{isLocalTourEntry ? "Local Taxi" : bookingMode === "package" ? "Tour Package" : tripType === "round-trip" ? "Round Trip" : "One Way"}</strong></div>
-                  <div><span className="booking-summary-label">{isLocalTourEntry ? "Local Tour" : "From"}</span><strong>{isLocalTourEntry ? selectedPackage.name : originName}</strong></div>
-                  <div><span className="booking-summary-label">{isLocalTourEntry ? "Tour Date" : "To"}</span><strong>{isLocalTourEntry ? formatBookingDate(pickupDate) : destinationName}</strong></div>
+                  <div><span className="booking-summary-label">Trip</span><strong>{isLocalTourEntry ? "Local Taxi" : bookingMode === "package" ? selectedPackage.name : tripType === "round-trip" ? "Round Trip" : "One Way"}</strong></div>
+                  <div><span className="booking-summary-label">{isLocalTourEntry ? "Local Tour" : "From"}</span><strong>{isLocalTourEntry ? selectedPackage.name : effectiveOrigin || "Add pickup"}</strong></div>
+                  <div><span className="booking-summary-label">{isLocalTourEntry ? "Tour Date" : "To"}</span><strong>{isLocalTourEntry ? formatBookingDate(pickupDate) : effectiveDestination || "Add destination"}</strong></div>
                   <div><span className="booking-summary-label">{isLocalTourEntry ? "Fare" : "Pickup"}</span><strong>{isLocalTourEntry ? (serverFare ? formatInr(serverFare.totalFare) : "Fare on request") : formatBookingDate(pickupDate)}</strong></div>
                   {!isLocalTourEntry && tripType === "round-trip" && <div><span className="booking-summary-label">Return</span><strong>{formatBookingDate(returnDate)}</strong></div>}
                   {!isLocalTourEntry && <div><span className="booking-summary-label">Vehicle</span><strong>{selectedVehicle.name}</strong></div>}
