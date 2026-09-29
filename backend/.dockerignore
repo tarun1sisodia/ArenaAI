@@ -31,13 +31,16 @@ coverage
 .idea
 .DS_Store
 
-# Tests, docs and one-off scripts are not part of the runtime image
+# Tests, docs and one-off scripts are not part of the runtime image.
+# The production Dockerfile explicitly copies the migration entrypoint below.
 tests
 tests/**
 docs
 docs/**
-scripts
-scripts/**
+scripts/*.ts
+scripts/*.js
+scripts/*.mjs
+!scripts/docker-entrypoint.sh
 *.md
 SECURITY_HARDENING.md
 Dockerfile
