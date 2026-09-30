@@ -394,7 +394,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
               },
               {
                 id: "ertiga", label: "Ertiga MPV", sub: "Maruti Ertiga", note: "6-passenger seating for families with luggage",
-                seats: "6+1", luggage: "3 Large Bags", rate: "₹13/km", price: "₹4,800",
+                seats: "6+1", luggage: "3 Large Bags", rate: "₹14/km", price: "₹4,800",
                 img: "/assets/fleet/ertiga.webp",
               },
               {

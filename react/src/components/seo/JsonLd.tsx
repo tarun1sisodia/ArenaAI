@@ -6,7 +6,7 @@
  * 1. TaxiService & LocalBusiness (with verified Agra NAP, GeoCoordinates, and OpeningHours)
  * 2. BreadcrumbList (with 1-indexed ListItems and absolute canonical URLs)
  * 3. FAQPage (with Question & acceptedAnswer pairs for Rich Results)
- * 4. AggregateRating (4.9★ across 380+ reviews)
+ * 4. Optional AggregateRating (disabled until review authenticity is confirmed)
  * 5. TouristTrip (for private tour packages & itineraries)
  * 6. Product / Car (for vehicle fleet tiers & specifications)
  * 7. WebSite (with bilingual inLanguage & SearchAction)
@@ -167,7 +167,7 @@ export function buildLocalBusinessSchema(options?: LocalBusinessSchemaOptions) {
   const name = options?.name || "SK Baghel Tour & Travels";
   const url = options?.url || CANONICAL_DOMAIN;
   const image = options?.image || DEFAULT_OG_IMAGE;
-  const includeRating = options?.includeAggregateRating ?? true;
+  const includeRating = options?.includeAggregateRating ?? false;
 
   const node: Record<string, unknown> = {
     "@type": ["TravelAgency", "TaxiService", "LocalBusiness"],

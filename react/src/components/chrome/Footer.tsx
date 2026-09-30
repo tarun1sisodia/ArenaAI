@@ -39,8 +39,8 @@ export function Footer({ className = "" }: FooterProps) {
     { name: "Dzire Sedan (4+1)", rate: "From ₹10/km", href: "/fleet" },
     { name: "Maruti Ertiga MPV (6+1)", rate: "From ₹14/km", href: "/fleet" },
     { name: "Innova Crysta VIP (6+1)", rate: "From ₹18/km", href: "/fleet" },
-    { name: "Tempo Traveller (12–16s)", rate: "From ₹24/km", href: "/fleet" },
-    { name: "Force Urbania Luxury (16s)", rate: "From ₹32/km", href: "/fleet" },
+    { name: "Tempo Traveller (12–16s)", rate: "From ₹25/km", href: "/fleet" },
+    { name: "Force Urbania Luxury (16s)", rate: "From ₹34/km", href: "/fleet" },
   ];
 
   const routeLinks = [

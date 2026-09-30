@@ -15,6 +15,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { SEO_LANDING_SLUGS } from "../src/data/seoLandingSlugs.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const scriptsDir = dirname(__filename);
@@ -147,6 +148,14 @@ export function getSitemapEntries(): SitemapEntry[] {
         changefreq: "weekly",
         enPath: p,
       });
+    }
+  }
+
+  for (const slug of SEO_LANDING_SLUGS) {
+    const p = `/en/${slug}/`;
+    if (!existingPaths.has(p)) {
+      existingPaths.add(p);
+      entries.push({ path: p, priority: 0.9, changefreq: "weekly", enPath: p });
     }
   }
 

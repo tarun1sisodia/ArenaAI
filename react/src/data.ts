@@ -647,7 +647,7 @@ export const reviews: readonly Review[] = [
     role: "Corporate Travel Manager",
     rating: 5,
     avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80",
-    quote: "Regular vendor for our executives visiting Agra. Official GST invoices delivered instantly with pristine fleet.",
+    quote: "Regular vendor for our executives visiting Agra. Official booking receipts delivered instantly with pristine fleet.",
   },
   {
     name: "Marcus Vance",
@@ -910,7 +910,7 @@ export const promoCodes: Readonly<Record<string, PromoCode>> = {
 export const trustSignals = [
   "GOVT-REGISTERED FLEET",
   "VERIFIED DRIVERS",
-  "GST INVOICE",
+  "booking receipt INVOICE",
   "4.9/5 · 3,800+ GOOGLE REVIEWS",
   "24×7 ON-ROUTE SUPPORT",
   "PET-FRIENDLY VEHICLES AVAILABLE",

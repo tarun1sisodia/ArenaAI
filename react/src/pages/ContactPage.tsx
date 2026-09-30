@@ -25,8 +25,8 @@ const FAQ_ITEMS = [
     a: "No. When you provide your train number (e.g., Gatimaan Express, Shatabdi at Agra Cantt) or flight number (at Delhi IGI Airport), our dispatch team tracks real-time arrivals. Chauffeurs wait at the exit gate with zero delay penalty.",
   },
   {
-    q: "Do you issue official GST invoices for corporate expense claims?",
-    a: "Yes. Every booking includes a verified GST tax invoice ( ) with itemized kilometer logs, expressway tolls, and state passenger permits.",
+    q: "Do you issue official booking receipts for corporate expense claims?",
+    a: "Yes. Every booking includes a verified booking receipt tax invoice ( ) with itemized kilometer logs, expressway tolls, and state passenger permits.",
   },
 ];
 
@@ -41,7 +41,7 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
     tripTime: "",
     pickupLocation: "",
     notes: "",
-    gstRequired: false,
+    companyReceiptRequested: false,
   });
 
   const [submitted, setSubmitted] = useState(false);
@@ -60,7 +60,7 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
       formData.tripTime
     )}%0A- Pickup: ${encodeURIComponent(formData.pickupLocation)}%0A- Notes: ${encodeURIComponent(
       formData.notes
-    )}%0A- GST: ${formData.gstRequired ? "Yes" : "No"}`;
+    )}%0A- booking receipt: ${formData.companyReceiptRequested ? "Yes" : "No"}`;
 
     setTimeout(() => {
       window.open(`https://wa.me/919762817598?text=${text}`, "_blank");
@@ -110,7 +110,7 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
                 verified_user
               </span>
               <p className="text-ink-charcoal text-xs sm:text-sm font-medium whitespace-nowrap">
-                Official GST Billing &amp; Invoices
+                Official booking receipt Billing &amp; Invoices
               </p>
             </div>
             <div className="inline-flex items-center gap-2 rounded-lg bg-surface-container border border-border-warm px-3.5 py-1.5 shadow-xs">
@@ -200,7 +200,7 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
           <div className="bg-surface-container-lowest border border-border-warm rounded-xl p-3.5 sm:p-4.5 flex flex-col justify-between shadow-xs hover:shadow-sm transition-shadow relative overflow-hidden">
             <div className="absolute top-0 right-0">
               <span className="bg-secondary text-white font-label-caps text-[9px] px-2.5 py-0.5 rounded-bl uppercase tracking-wider font-semibold">
-                Corporate Rates &amp; GST
+                Corporate Rates &amp; booking receipt
               </span>
             </div>
             <div>
@@ -213,7 +213,7 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
               </p>
               <p className="text-on-surface-variant font-body-sm mb-2 text-[10px] break-all">dispatch@agraskbagheltourandtravels.com</p>
               <p className="text-on-surface-variant font-body-sm leading-relaxed mb-4 text-[10.5px]">
-                Multi-day Golden Triangle itineraries, wedding group transit in Tempo Travellers/Urbania, and B2B GST tax
+                Multi-day Golden Triangle itineraries, wedding group transit in Tempo Travellers/Urbania, and B2B booking receipt tax
                 invoices.
               </p>
             </div>

@@ -39,8 +39,8 @@ const FAQS_DATA: FaqItem[] = [
   {
     id: "fares-4",
     category: "fares",
-    q: "Can I receive an official GST invoice for corporate expense reimbursement?",
-    a: "Yes. We issue computerized GST tax invoices ( ) with your company legal name and GST number, delivered instantly via email or WhatsApp upon booking completion.",
+    q: "Can I receive an official booking receipt for corporate expense reimbursement?",
+    a: "Yes. We issue computerized booking receipts with your company legal name and tax details, delivered instantly via email or WhatsApp upon booking completion.",
   },
 
   // 2. Booking & Payment

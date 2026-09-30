@@ -13,7 +13,7 @@ export type SiteContact = {
   longitude: number;
   hours: string;
   mapsUrl: string;
-  gst: string;
+  companyReceipt: string;
 };
 
 export type SiteConfig = {
@@ -42,7 +42,7 @@ export const siteConfig: SiteConfig = {
     longitude: 78.0322,
     hours: "Bookings open 24×7",
     mapsUrl: "https://maps.google.com/?q=Taj+Ganj+Agra",
-    gst: "",
+    companyReceipt: "",
   },
 };
 
