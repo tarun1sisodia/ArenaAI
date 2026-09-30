@@ -218,7 +218,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
               </div>
               <div className="mt-3 pt-2 bg-sandstone-wash/50 p-2 rounded">
                 <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowSandstone} text-[8.5px] mb-0.5`}>Financial Safety</span>
-                <span className="font-body-sm text-[10.5px] text-ink-charcoal font-medium">GST Invoiced • No Cash Shakedowns</span>
+                <span className="font-body-sm text-[10.5px] text-ink-charcoal font-medium">booking receipt Invoiced • No Cash Shakedowns</span>
               </div>
             </div>
 

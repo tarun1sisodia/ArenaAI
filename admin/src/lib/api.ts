@@ -30,6 +30,7 @@ import type {
   ReviewStatus,
   TripType,
   VehicleTier,
+  RouteCatalogItem, RouteFleet, RouteTripType,
 } from "./types";
 
 async function apiFetch(path: string, init?: RequestInit): Promise<any> {
@@ -521,3 +522,30 @@ export async function actOnReview(
   });
   return { id: json?.data?.id ?? id, status: json?.data?.status ?? "pending_review" };
 }
+
+
+function mapRouteCatalogItem(value: any): RouteCatalogItem {
+  return {
+    id: value.id, tripType: value.tripType ?? value.trip_type, sourceCity: value.sourceCity ?? value.source_city,
+    sourceDetail: value.sourceDetail ?? value.source_detail ?? null, destinationCity: value.destinationCity ?? value.destination_city ?? null,
+    slug: value.slug, distanceKm: value.distanceKm ?? value.distance_km ?? null, durationText: value.durationText ?? value.duration_text ?? null,
+    availableFleets: value.availableFleets ?? value.available_fleets ?? [], faresInr: value.faresInr ?? value.fares_inr ?? {},
+    driverChargeInr: Number(value.driverChargeInr ?? value.driver_charge_inr ?? 0), nightHaltInr: Number(value.nightHaltInr ?? value.night_halt_inr ?? 0),
+    tollIncluded: Boolean(value.tollIncluded ?? value.toll_included), tollAmountInr: value.tollAmountInr ?? value.toll_amount_inr ?? null,
+    interstateCharges: value.interstateCharges ?? value.interstate_charges ?? [], minKmPerDay: Number(value.minKmPerDay ?? value.min_km_per_day ?? 300),
+    stops: value.stops ?? [], status: value.status, needsReview: Boolean(value.needsReview ?? value.needs_review), createdAt: value.createdAt ?? value.created_at, updatedAt: value.updatedAt ?? value.updated_at,
+  };
+}
+
+export async function fetchAdminRoutes(filter?: { tripType?: RouteTripType | "all"; status?: CatalogStatus | "all"; q?: string }): Promise<RouteCatalogItem[]> {
+  const params = new URLSearchParams(); if (filter?.tripType && filter.tripType !== "all") params.set("trip_type", filter.tripType); if (filter?.status && filter.status !== "all") params.set("status", filter.status); if (filter?.q?.trim()) params.set("q", filter.q.trim());
+  const json = await apiFetch(`/api/v1/ops/admin/route-catalog${params.toString() ? `?${params}` : ""}`); return (json?.data?.items ?? json?.data ?? []).map(mapRouteCatalogItem);
+}
+export async function fetchAdminRoute(id: string): Promise<RouteCatalogItem> { const json = await apiFetch(`/api/v1/ops/admin/route-catalog/${encodeURIComponent(id)}`); return mapRouteCatalogItem(json?.data); }
+export async function createAdminRoute(payload: Omit<RouteCatalogItem, "id" | "status" | "createdAt" | "updatedAt"> & { status?: never }): Promise<RouteCatalogItem> { const json = await apiFetch(`/api/v1/ops/admin/route-catalog`, { method: "POST", body: JSON.stringify({ trip_type: payload.tripType, source_city: payload.sourceCity, source_detail: payload.sourceDetail || undefined, destination_city: payload.destinationCity || undefined, slug: payload.slug, distance_km: payload.distanceKm ?? undefined, duration_text: payload.durationText || undefined, available_fleets: payload.availableFleets, fares_inr: payload.faresInr, driver_charge_inr: payload.driverChargeInr, night_halt_inr: payload.nightHaltInr, toll_included: payload.tollIncluded, toll_amount_inr: payload.tollAmountInr ?? undefined, interstate_charges: payload.interstateCharges, min_km_per_day: payload.minKmPerDay, stops: payload.stops, needs_review: payload.needsReview }) }); return mapRouteCatalogItem(json?.data); }
+export async function updateAdminRoute(id: string, payload: Partial<Omit<RouteCatalogItem, "id" | "status" | "createdAt" | "updatedAt">>): Promise<RouteCatalogItem> { const body: any = {}; for (const [key, value] of Object.entries(payload)) { const snake = key.replace(/[A-Z]/g, (m) => `_${m.toLowerCase()}`); body[snake] = value; } const json = await apiFetch(`/api/v1/ops/admin/route-catalog/${encodeURIComponent(id)}`, { method: "PATCH", body: JSON.stringify(body) }); return mapRouteCatalogItem(json?.data); }
+export async function publishAdminRoute(id: string): Promise<RouteCatalogItem> { const json = await apiFetch(`/api/v1/ops/admin/route-catalog/${encodeURIComponent(id)}/publish`, { method: "POST", body: "{}" }); return mapRouteCatalogItem(json?.data); }
+export async function archiveAdminRoute(id: string): Promise<RouteCatalogItem> { const json = await apiFetch(`/api/v1/ops/admin/route-catalog/${encodeURIComponent(id)}/archive`, { method: "POST", body: "{}" }); return mapRouteCatalogItem(json?.data); }
+export async function checkRouteSlug(slug: string): Promise<{ available: boolean }> { const json = await apiFetch(`/api/v1/ops/admin/route-catalog/slug-check?slug=${encodeURIComponent(slug)}`); return json?.data ?? { available: false }; }
+export async function suggestRouteFares(input: { tripType: RouteTripType; distanceKm: number }): Promise<Record<string, number>> { const json = await apiFetch(`/api/v1/ops/admin/route-catalog/suggest-fares`, { method: "POST", body: JSON.stringify({ trip_type: input.tripType, distance_km: input.distanceKm }) }); return json?.data ?? {}; }
+export async function fetchRouteFleets(): Promise<RouteFleet[]> { const json = await apiFetch(`/api/v1/route-catalog/fleets`); return json?.data ?? []; }

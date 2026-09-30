@@ -36,7 +36,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
   const handleInquirySubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const text = `Hello SK Baghel Travels, I would like to inquire about a cab:%0A- Name: ${encodeURIComponent(inquiryName)}%0A- Phone: ${encodeURIComponent(inquiryPhone)}%0A- Date: ${encodeURIComponent(inquiryDate)}%0A- Route: ${encodeURIComponent(origin)} to ${encodeURIComponent(destination)} (${tripType})%0A- Vehicle: ${encodeURIComponent(selectedVehicle)}%0A- Details: ${encodeURIComponent(inquiryNotes)}`;
-    window.open(`https://wa.me/919876543210?text=${text}`, "_blank");
+    window.open(`https://wa.me/919762817598?text=${text}`, "_blank");
   };
 
   const schemaGraph = {
@@ -171,10 +171,10 @@ export function HomePage({ language = "en" }: HomePageProps) {
               <div className="flex flex-wrap items-center gap-space-sm">
                 <a
                   className="inline-flex items-center gap-space-xs px-space-lg py-3 rounded-lg bg-primary hover:bg-primary-container text-white font-label-lg text-label-lg shadow-md transition-all font-semibold active:scale-[0.98]"
-                  href="tel:+919876543210"
+                  href="tel:+916395867598"
                 >
                   <span className="material-symbols-outlined text-[18px]">call</span>
-                  <span className="text-white">Call +91 98765 43210</span>
+                  <span className="text-white">Call +91 63958 67598</span>
                 </a>
                 <a
                   className="inline-flex items-center gap-space-xs px-space-lg py-3 rounded-lg bg-black hover:bg-neutral-900 text-white font-label-lg text-label-lg shadow-md transition-all font-semibold active:scale-[0.98] border border-white/10"
@@ -207,7 +207,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
             {[...Array(2)].flatMap(() => [
               { icon: "verified_user", title: "Govt-Registered", sub: "Tourist Vehicle Permit" },
               { icon: "badge", title: "Verified Chauffeurs", sub: "Police Background Check" },
-              { icon: "receipt_long", title: "GST Billing", sub: "Official GSTIN Invoices" },
+              { icon: "receipt_long", title: "Tax Invoice", sub: "Tax invoice available on request" },
               { icon: "star", title: "4.9 / 5 Rating", sub: "3,800+ Verified Trips" },
               { icon: "support_agent", title: "24×7 Dispatch", sub: "Live Agra Control Desk" },
             ]).map((item, idx) => (
@@ -394,7 +394,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
               },
               {
                 id: "ertiga", label: "Ertiga MPV", sub: "Maruti Ertiga", note: "6-passenger seating for families with luggage",
-                seats: "6+1", luggage: "3 Large Bags", rate: "₹13/km", price: "₹4,800",
+                seats: "6+1", luggage: "3 Large Bags", rate: "₹14/km", price: "₹4,800",
                 img: "/assets/fleet/ertiga.webp",
               },
               {
@@ -694,13 +694,13 @@ export function HomePage({ language = "en" }: HomePageProps) {
                   </p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-space-sm">
-                  <a className="p-3.5 rounded-xl bg-surface-container-lowest hover:bg-surface-container transition-all flex items-center gap-3 shadow-sm border border-border-warm/40" href="tel:+919876543210">
+                  <a className="p-3.5 rounded-xl bg-surface-container-lowest hover:bg-surface-container transition-all flex items-center gap-3 shadow-sm border border-border-warm/40" href="tel:+916395867598">
                     <div className="w-9 h-9 rounded-full bg-sandstone-wash flex items-center justify-center text-primary shrink-0">
                       <span className="material-symbols-outlined text-[18px]">call</span>
                     </div>
                     <div>
                       <span className="font-label-caps text-[9.5px] text-on-surface-variant block uppercase font-bold">Call 24×7</span>
-                      <span className="font-title-md text-[13px] text-on-surface font-bold">+91 98765 43210</span>
+                      <span className="font-title-md text-[13px] text-on-surface font-bold">+91 63958 67598</span>
                     </div>
                   </a>
                   <a className="p-3.5 rounded-xl bg-surface-container-lowest hover:bg-surface-container transition-all flex items-center gap-3 shadow-sm border border-border-warm/40" href={`https://wa.me/${contact.whatsapp}`} target="_blank" rel="noreferrer">
@@ -751,7 +751,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
                           required
                           value={inquiryPhone}
                           onChange={(e) => setInquiryPhone(e.target.value)}
-                          placeholder="+91 98765 43210"
+                          placeholder="+91 63958 67598"
                           className="w-full px-3 py-2 rounded-lg bg-surface-container-low border border-border-warm/50 text-on-surface focus:outline-none focus:border-primary text-xs"
                         />
                       </div>

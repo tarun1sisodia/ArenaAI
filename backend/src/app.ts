@@ -42,6 +42,9 @@ import { registerPaymentRoutes } from "./modules/payments/payment.routes.js";
 import { createPaymentService } from "./modules/payments/payment.service.js";
 import { createReviewController } from "./modules/reviews/review.controller.js";
 import { registerReviewRoutes } from "./modules/reviews/review.routes.js";
+import { createRouteCatalogController } from "./modules/route-catalog/route-catalog.controller.js";
+import { registerRouteCatalogRoutes } from "./modules/route-catalog/route-catalog.routes.js";
+import { createRouteCatalogService } from "./modules/route-catalog/route-catalog.service.js";
 import { createReviewService } from "./modules/reviews/review.service.js";
 import {
   createNoopEmail,
@@ -206,6 +209,7 @@ export async function buildApp(options: AppOptions): Promise<BuiltApp> {
   const reviewService = createReviewService({ db, clock });
   const locationService = createLocationService({ db, clock, geocoding });
   const inquiryService = createInquiryService({ db, clock });
+  const routeCatalogService = createRouteCatalogService({ db, clock });
 
   const healthHandler = async () => ({ success: true, data: { status: "ok", version: env.FARE_RULES_VERSION } });
   const readyHandler = async (_request: unknown, reply: { code: (statusCode: number) => { send: (payload: unknown) => unknown } }) => {
@@ -234,6 +238,7 @@ export async function buildApp(options: AppOptions): Promise<BuiltApp> {
   await registerPaymentRoutes(app, createPaymentController(paymentService));
   await registerCatalogRoutes(app, createCatalogController(catalogService));
   await registerReviewRoutes(app, createReviewController(reviewService));
+  await registerRouteCatalogRoutes(app, createRouteCatalogController(routeCatalogService));
   await registerInquiryRoutes(app, createInquiryController(inquiryService));
   await registerAdminRoutes(app, createAdminController(adminService, paymentService, bookingService));
 

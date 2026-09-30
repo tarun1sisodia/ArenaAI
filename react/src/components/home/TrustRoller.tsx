@@ -11,7 +11,7 @@
 const TRUST_CHIPS = [
   { icon: "🏛️", text: "Govt-registered fleet" },
   { icon: "✅", text: "Verified commercial drivers" },
-  { icon: "🧾", text: "Official GST invoice" },
+  { icon: "🧾", text: "Official booking receipt" },
   { icon: "⭐", text: "4.9/5 · 380+ trips" },
   { icon: "🕐", text: "15+ years in Agra" },
   { icon: "📞", text: "24×7 on-route support" },

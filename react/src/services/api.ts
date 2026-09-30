@@ -256,7 +256,7 @@ export function formatInquiryPhone(raw: string): string {
   if (digitsOnly.length >= 10 && digitsOnly.length <= 14) {
     return `+${digitsOnly}`;
   }
-  return cleaned || "+919876543210";
+  return cleaned || "+919762817598";
 }
 
 export function sanitizeInquiryName(raw: string): string {

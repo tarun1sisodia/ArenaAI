@@ -906,7 +906,7 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
               </div>
               <div>
                 <h3 className="font-title-lg text-sm sm:text-base text-ink-charcoal font-semibold">Always Included in Your Quote</h3>
-                <p className="font-body-sm text-[10px] text-on-surface-variant">Full contractual transparency backed by GST invoice</p>
+                <p className="font-body-sm text-[10px] text-on-surface-variant">Full contractual transparency backed by booking receipt</p>
               </div>
             </div>
             <ul className="flex flex-col gap-2.5 font-body-md text-xs text-on-surface">
@@ -1033,7 +1033,7 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
               </div>
               <h3 className="font-title-lg text-sm sm:text-base text-ink-charcoal font-semibold">28% Advance Deposit</h3>
               <p className="font-body-sm text-[10.5px] text-on-surface-variant">
-                Secure vehicle custody via UPI, Google Pay, or direct Bank Transfer. An instant booking voucher with full operator details and GST invoice is dispatched.
+                Secure vehicle custody via UPI, Google Pay, or direct Bank Transfer. An instant booking voucher with full operator details and booking receipt is dispatched.
               </p>
               <div className="font-label-caps text-[9.5px] text-success-jade mt-auto flex items-center gap-1 font-bold">
                 <span className="material-symbols-outlined text-[14px]">lock</span>

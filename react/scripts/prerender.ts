@@ -14,6 +14,7 @@ import { createServer } from "vite";
 import { renderToString } from "react-dom/server";
 import { createElement } from "react";
 import { generateSitemapAndRobots } from "./generate-sitemap.ts";
+import { SEO_LANDING_SLUGS } from "../src/data/seoLandingSlugs.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const scriptsDir = dirname(__filename);
@@ -120,6 +121,7 @@ const routesToRender: string[] = [
 
   // English Routes (8)
   ...routePairs.map((r) => `/en/${r}/`),
+  ...SEO_LANDING_SLUGS.map((slug) => `/en/${slug}/`),
 ];
 
 // Legacy HTML redirect stubs for backward compatibility
@@ -134,6 +136,10 @@ const legacyRedirects = [
   { from: "privacy.html", to: "/en/privacy/" },
   { from: "terms.html", to: "/en/terms/" },
   { from: "en/index.html", to: "/" },
+  { from: "en/agra-delhi/", to: "/en/agra-to-delhi-taxi/" },
+  { from: "en/vehicles/innova/", to: "/en/vehicles/innova-crysta/" },
+  { from: "en/vehicles/tempo/", to: "/en/vehicles/tempo-traveller/" },
+  { from: "en/15-btn-pac-agra-to-chandigarh-taxi-services/", to: "/en/agra-to-chandigarh-taxi/" },
 ];
 
 function generateRedirectHtml(targetUrl: string, canonicalDomain: string): string {
@@ -261,7 +267,7 @@ export async function prerender(): Promise<void> {
       // 4. Update noscript to accessible fallback notice
       html = html.replace(
         /<noscript>[\s\S]*?<\/noscript>/,
-        `<noscript><p class="skip-link" style="position:static;padding:12px;background:#fff3cd;color:#856404;margin:0;text-align:center;font-size:14px;">JavaScript is recommended for dynamic calculations and interactive booking. Call us 24×7 at <a href="tel:+919876543210" style="color:#b8941f;font-weight:700;">+91 98765 43210</a>.</p></noscript>`
+        `<noscript><p class="skip-link" style="position:static;padding:12px;background:#fff3cd;color:#856404;margin:0;text-align:center;font-size:14px;">JavaScript is recommended for dynamic calculations and interactive booking. Call us 24×7 at <a href="tel:+916395867598" style="color:#b8941f;font-weight:700;">+91 63958 67598</a>.</p></noscript>`
       );
 
       // 5. Ensure relative assets work correctly across directory depths if requested
@@ -287,9 +293,10 @@ export async function prerender(): Promise<void> {
     let redirectCount = 0;
     for (const item of legacyRedirects) {
       const redirectHtml = generateRedirectHtml(item.to, CANONICAL_DOMAIN);
-      const targetFile = join(dist, item.from);
-      await mkdir(dirname(targetFile), { recursive: true });
-      await writeFile(targetFile, redirectHtml, "utf8");
+      const targetFile = join(dist, item.from.endsWith("/") ? item.from.slice(0, -1) : item.from);
+      const redirectOutput = targetFile.endsWith(".html") ? targetFile : join(targetFile, "index.html");
+      await mkdir(dirname(redirectOutput), { recursive: true });
+      await writeFile(redirectOutput, redirectHtml, "utf8");
       redirectCount++;
     }
 

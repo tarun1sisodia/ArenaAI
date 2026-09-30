@@ -16,6 +16,8 @@ import { PackageDetailPage } from "../pages/PackageDetailPage";
 import { VehicleDetailPage } from "../pages/VehicleDetailPage";
 import { BookingPage } from "../features/booking/BookingPage";
 import { MarketingPage } from "../pages/MarketingPage";
+import { SeoLandingPage } from "../pages/SeoLandingPage";
+import { SEO_LANDING_SLUGS, type SeoLandingSlug } from "../data/seoLandingSlugs";
 import { marketingHubs } from "./routes";
 import { SeoHead } from "../components/seo/SeoHead";
 import { packages, routes, vehicles } from "../data/catalogue";
@@ -35,6 +37,16 @@ export interface SeoMetadata {
 }
 
 export function getSeo(pathname: string, section: string, language: "en" | "hi", isBooking: boolean): SeoMetadata {
+  if (SEO_LANDING_SLUGS.includes(section as SeoLandingSlug)) {
+    const labels: Record<string, string> = {
+      "tempo-traveller-on-rent-agra": "Tempo Traveller on Rent in Agra | 12–24 Seater, ₹25/km",
+      "same-day-agra-tour-from-delhi": "Same Day Agra Tour from Delhi | Private Car",
+      "delhi-to-agra-taxi": "Delhi to Agra Taxi | One-Way ₹3,499 | SK Baghel",
+      "taj-mahal-taxi-service": "Taj Mahal Taxi Service Agra | One-Day & Full-Day Cabs",
+    };
+    const title = labels[section] || `${section.replaceAll("-", " ")} | SK Baghel Tour & Travels`;
+    return { title, description: `${title}. Verified drivers, transparent fare confirmation and easy phone or WhatsApp booking.`, ogImage: "/assets/brand/og-banner.webp", keywords: [title, "Agra taxi", "Agra cab booking"] };
+  }
   if (isBooking) {
     return {
       title: "Book a ride | SK Baghel Tour & Travels",
@@ -88,7 +100,7 @@ export function getSeo(pathname: string, section: string, language: "en" | "hi",
   if (section === "home") {
     return {
       title: "Agra Taxi & Cab Booking | SK Baghel Tour & Travels",
-      description: "Book an Agra taxi, Tempo Traveller or Innova. Agra to Delhi from ₹3,500. Call or WhatsApp to confirm. Transparent fares, GST invoice.",
+      description: "Book an Agra taxi, Tempo Traveller or Innova. Agra to Delhi from ₹3,499. Call or WhatsApp to confirm. Transparent fares and clear booking terms.",
       ogImage: "/assets/brand/og-banner.webp",
       keywords: ["Agra taxi service", "Agra cab booking", "Agra to Delhi cab", "Tempo Traveller Agra", "Taj Mahal tours", "SK Baghel Travels"],
     };
@@ -142,7 +154,7 @@ export function getSeo(pathname: string, section: string, language: "en" | "hi",
   if (section === "contact") {
     return {
       title: "Contact Us — SK Baghel Tour & Travels Agra | 24×7 Travel Desk",
-      description: "Get in touch with our 24×7 Taj Ganj dispatch desk for outstation cabs, sunrise Taj Mahal tours, and luxury group travel in Agra. Call +91 98765 43210.",
+      description: "Get in touch with our 24×7 Taj Ganj dispatch desk for outstation cabs, sunrise Taj Mahal tours, and luxury group travel in Agra. Call +91 63958 67598.",
       ogImage: "/assets/brand/og-banner.webp",
       keywords: ["Contact SK Baghel Travels", "Agra taxi phone number", "Taj Ganj dispatch desk", "24x7 cab booking"],
     };
@@ -206,6 +218,7 @@ export function ServerApp({ pathname: propPathname }: AppProps = {}) {
     pathname === "/index.html" ||
     section === "home";
   const isMarketingHub = marketingHubs.includes(section as (typeof marketingHubs)[number]);
+  const isSeoLanding = SEO_LANDING_SLUGS.includes(section as SeoLandingSlug);
   const cleanPath = pathname.replace(/\/$/, "");
   const isBooking =
     cleanPath.endsWith("book.html") ||
@@ -242,6 +255,7 @@ export function ServerApp({ pathname: propPathname }: AppProps = {}) {
     Boolean(matchedRoute) ||
     Boolean(matchedPackage) ||
     Boolean(matchedVehicle) ||
+    isSeoLanding ||
     packages.some((item) => pathname.endsWith(item.slug) || pathname.endsWith(item.slug + "/"));
 
   const is404 =
@@ -283,6 +297,8 @@ export function ServerApp({ pathname: propPathname }: AppProps = {}) {
           <PackageDetailPage language={language} pkg={matchedPackage} />
         ) : matchedVehicle ? (
           <VehicleDetailPage language={language} vehicle={matchedVehicle} />
+        ) : isSeoLanding ? (
+          <SeoLandingPage slug={section as SeoLandingSlug} />
         ) : section === "services" ? (
           <ServicesPage language={language} />
         ) : section === "routes" ? (

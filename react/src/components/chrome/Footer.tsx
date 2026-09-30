@@ -39,8 +39,8 @@ export function Footer({ className = "" }: FooterProps) {
     { name: "Dzire Sedan (4+1)", rate: "From ₹10/km", href: "/fleet" },
     { name: "Maruti Ertiga MPV (6+1)", rate: "From ₹14/km", href: "/fleet" },
     { name: "Innova Crysta VIP (6+1)", rate: "From ₹18/km", href: "/fleet" },
-    { name: "Tempo Traveller (12–16s)", rate: "From ₹24/km", href: "/fleet" },
-    { name: "Force Urbania Luxury (16s)", rate: "From ₹32/km", href: "/fleet" },
+    { name: "Tempo Traveller (12–16s)", rate: "From ₹25/km", href: "/fleet" },
+    { name: "Force Urbania Luxury (16s)", rate: "From ₹34/km", href: "/fleet" },
   ];
 
   const routeLinks = [
@@ -207,7 +207,7 @@ export function Footer({ className = "" }: FooterProps) {
       <div className="border-t border-border-warm bg-surface-container/40">
         <div className="max-w-7xl mx-auto px-margin-mobile lg:px-margin py-space-md flex flex-col sm:flex-row items-center justify-between gap-space-sm text-center sm:text-left">
           <p className="font-body-sm text-body-sm text-on-surface-variant text-[13px]">
-            © {new Date().getFullYear()} SK Baghel Tour & Travels. All rights reserved. GSTIN: {contact.gst}.
+            © {new Date().getFullYear()} SK Baghel Tour & Travels. All rights reserved.
           </p>
           <div className="flex flex-wrap items-center gap-space-md font-body-sm text-body-sm text-[13px]">
             <a href="/privacy" className="hover:text-primary transition-colors">Privacy Policy</a>

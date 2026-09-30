@@ -1,135 +1,18 @@
 import type { SupportedLanguage } from "../../config";
+import { prices } from "../../data/prices";
 
-interface FleetSectionProps {
-  language?: SupportedLanguage;
-}
-
-interface FeaturedVehicle {
-  id: string;
-  slug: string;
-  indexTag: string;
-  category: string;
-  name: string;
-  blurb: string;
-  specs: string[];
-  startingFare: number;
-  image: string;
-  srcset: string;
-}
+interface FleetSectionProps { language?: SupportedLanguage; }
+interface FeaturedVehicle { id: string; slug: string; indexTag: string; category: string; name: string; blurb: string; specs: string[]; startingFare: number; image: string; srcset: string; }
 
 const FEATURED_VEHICLES: FeaturedVehicle[] = [
-  {
-    id: "sedan",
-    slug: "sedan",
-    indexTag: "01 / 05",
-    category: "SEDAN",
-    name: "Sedan (Dzire / Etios)",
-    blurb: "Everyday comfort for city rides, Yamuna Expressway drops, and local sightseeing.",
-    specs: ["4+1 Seats", "AC", "2 Large Bags"],
-    startingFare: 3499,
-    image: "/assets/fleet/sedan.webp",
-    srcset: "/assets/fleet/sedan-480.webp 480w, /assets/fleet/sedan-768.webp 768w, /assets/fleet/sedan.webp 1312w"
-  },
-  {
-    id: "innova",
-    slug: "innova-crysta",
-    indexTag: "03 / 05",
-    category: "INNOVA CRYSTA",
-    name: "Innova Crysta",
-    blurb: "The outstation favourite — plush pushback seats, smooth suspension, and a quiet cabin.",
-    specs: ["6+1 Seats", "Dual AC", "4 Large Bags"],
-    startingFare: 6499,
-    image: "/assets/fleet/innova.webp",
-    srcset: "/assets/fleet/innova-480.webp 480w, /assets/fleet/innova-768.webp 768w, /assets/fleet/innova.webp 1312w"
-  },
-  {
-    id: "tempo",
-    slug: "tempo-traveller",
-    indexTag: "04 / 05",
-    category: "TEMPO TRAVELLER",
-    name: "Tempo Traveller",
-    blurb: "Spacious pushback seats, luggage bay, individual AC vents, and ice-box for group travel.",
-    specs: ["12+1 Seats", "Rear AC", "Luggage Bay"],
-    startingFare: 9500,
-    image: "/assets/fleet/tempo.webp",
-    srcset: "/assets/fleet/tempo-480.webp 480w, /assets/fleet/tempo-768.webp 768w, /assets/fleet/tempo.webp 1312w"
-  }
+  { id: "sedan", slug: "sedan", indexTag: "01 / 05", category: "SEDAN", name: "Sedan (Dzire / Etios)", blurb: "Everyday comfort for city rides, Yamuna Expressway drops, and local sightseeing.", specs: ["4+1 Seats", "AC", "2 Large Bags"], startingFare: 3499, image: "/assets/fleet/sedan.webp", srcset: "/assets/fleet/sedan-480.webp 480w, /assets/fleet/sedan-768.webp 768w, /assets/fleet/sedan.webp 1312w" },
+  { id: "ertiga", slug: "ertiga", indexTag: "02 / 05", category: "ERTIGA", name: "Maruti Ertiga", blurb: "A flexible family MPV with room for six passengers and luggage.", specs: ["6+1 Seats", "AC", "3 Large Bags"], startingFare: prices.fleet_per_km.ertiga * 250, image: "/assets/fleet/ertiga.webp", srcset: "/assets/fleet/ertiga-480.webp 480w, /assets/fleet/ertiga-768.webp 768w, /assets/fleet/ertiga.webp 1312w" },
+  { id: "innova", slug: "innova-crysta", indexTag: "03 / 05", category: "INNOVA CRYSTA", name: "Innova Crysta", blurb: "The outstation favourite — plush pushback seats, smooth suspension, and a quiet cabin.", specs: ["6+1 Seats", "Dual AC", "4 Large Bags"], startingFare: 6499, image: "/assets/fleet/innova.webp", srcset: "/assets/fleet/innova-480.webp 480w, /assets/fleet/innova-768.webp 768w, /assets/fleet/innova.webp 1312w" },
+  { id: "tempo", slug: "tempo-traveller", indexTag: "04 / 05", category: "TEMPO TRAVELLER", name: "Tempo Traveller", blurb: "Spacious pushback seats, luggage bay, individual AC vents, and ice-box for group travel.", specs: ["12+1 Seats", "Rear AC", "Luggage Bay"], startingFare: 9500, image: "/assets/fleet/tempo.webp", srcset: "/assets/fleet/tempo-480.webp 480w, /assets/fleet/tempo-768.webp 768w, /assets/fleet/tempo.webp 1312w" },
+  { id: "urbania", slug: "urbania", indexTag: "05 / 05", category: "FORCE URBANIA", name: "Force Urbania", blurb: "Premium group travel with a quiet cabin and executive-style comfort.", specs: ["16 Seats", "Premium AC", "10 Large Bags"], startingFare: prices.fleet_per_km.urbania * 250, image: "/assets/fleet/urbania.webp", srcset: "/assets/fleet/urbania-480.webp 480w, /assets/fleet/urbania-768.webp 768w, /assets/fleet/urbania.webp 1312w" },
 ];
 
 export function FleetSection({ language = "en" }: FleetSectionProps) {
   const langPrefix = "/en";
-
-  return (
-    <section className="home-section fleet-section" aria-labelledby="fleet-heading">
-      <div className="container">
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow">Fleet</p>
-            <h2 id="fleet-heading">
-              Choose your comfort.
-              <br />
-              <i>Bring your people.</i>
-            </h2>
-          </div>
-          <a className="text-link" href={`${langPrefix}/fleet/`}>
-            Full fleet ↗
-          </a>
-        </div>
-
-        <div className="fleet-grid">
-          {FEATURED_VEHICLES.map((v) => (
-            <article className="vehicle-card" key={v.id}>
-              <div className="vehicle-photo">
-                <img
-                  src={v.image}
-                  srcSet={v.srcset}
-                  sizes="(max-width: 700px) calc(100vw - 32px), (max-width: 1120px) 50vw, 348px"
-                  alt={`${v.name} taxi in Agra`}
-                  width="480"
-                  height="300"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <div className="vehicle-photo-tag">
-                  <span>{v.indexTag}</span>
-                  <b>{v.category}</b>
-                </div>
-              </div>
-
-              <div className="vehicle-body">
-                <h3>{v.name}</h3>
-                <p>{v.blurb}</p>
-
-                <div className="vehicle-specs" aria-label="Vehicle features">
-                  {v.specs.map((spec, i) => (
-                    <span className="vehicle-spec-pill" key={i}>
-                      {spec}
-                    </span>
-                  ))}
-                </div>
-
-                <div className="vehicle-cta">
-                  <div className="vehicle-price">
-                    <span className="vehicle-price-label">
-                      Starting from
-                    </span>
-                    <span className="vehicle-price-val">
-                      ₹{v.startingFare.toLocaleString("en-IN")}
-                    </span>
-                  </div>
-                  <a
-                    className="vehicle-action-link"
-                    href={`${langPrefix}/vehicles/${v.slug}/`}
-                  >
-                    <span>Choose this car</span>
-                    <span aria-hidden="true"> ↗</span>
-                  </a>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
+  return <section className="home-section fleet-section" aria-labelledby="fleet-heading"><div className="container"><div className="section-heading"><div><p className="eyebrow">Fleet</p><h2 id="fleet-heading">Choose your comfort.<br /><i>Bring your people.</i></h2></div><a className="text-link" href={`${langPrefix}/fleet/`}>Full fleet ↗</a></div><div className="fleet-grid">{FEATURED_VEHICLES.map((v) => <article className="vehicle-card" key={v.id}><div className="vehicle-photo"><img src={v.image} srcSet={v.srcset} sizes="(max-width: 700px) calc(100vw - 32px), (max-width: 1120px) 50vw, 348px" alt={`${v.name} taxi in Agra`} width="480" height="300" loading="lazy" decoding="async" /><div className="vehicle-photo-tag"><span>{v.indexTag}</span><b>{v.category}</b></div></div><div className="vehicle-body"><h3>{v.name}</h3><p>{v.blurb}</p><div className="vehicle-specs" aria-label="Vehicle features">{v.specs.map((spec, i) => <span className="vehicle-spec-pill" key={i}>{spec}</span>)}</div><div className="vehicle-cta"><div className="vehicle-price"><span className="vehicle-price-label">Starting from</span><span className="vehicle-price-val">₹{v.startingFare.toLocaleString("en-IN")}</span></div><a className="vehicle-action-link" href={`${langPrefix}/vehicles/${v.slug}/`}><span>Choose this car</span><span aria-hidden="true"> ↗</span></a></div></div></article>)}</div></div></section>;
 }

@@ -296,7 +296,7 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
               <a
                 className="inline-flex items-center justify-center gap-2 bg-black hover:bg-neutral-900 border border-white/10 text-white font-label-lg text-xs px-4.5 py-2.5 rounded-lg shadow-xs transition-all whitespace-nowrap font-semibold active:scale-[0.98]"
                 style={{ color: "#ffffff" }}
-                href="https://wa.me/919876543210"
+                href="https://wa.me/919762817598"
                 target="_blank"
                 rel="noreferrer"
               >
@@ -346,9 +346,9 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                 <span className="material-symbols-outlined text-[18px]">receipt_long</span>
               </div>
               <div>
-                <h4 className="font-title-md text-[11.5px] text-ink-charcoal leading-snug font-bold">Official GST Billing</h4>
+                <h4 className="font-title-md text-[11.5px] text-ink-charcoal leading-snug font-bold">Official Tax Invoice</h4>
                 <p className="font-body-sm text-[9.5px] text-on-surface-variant mt-0.5">
-                  Instant GSTIN tax invoice for corporate &amp; family travel.
+                  Instant tax invoice for corporate &amp; family travel.
                 </p>
               </div>
             </div>
@@ -506,7 +506,7 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                     <a
                       className="w-full sm:w-auto px-3.5 py-2 rounded-lg bg-black hover:bg-neutral-900 border border-white/10 text-white font-label-lg text-xs inline-flex items-center justify-center gap-1.5 transition-colors shrink-0 font-semibold active:scale-[0.98]"
                       style={{ color: "#ffffff" }}
-                      href={`https://wa.me/919876543210?text=Inquiry%20for%20${encodeURIComponent(veh.name)}`}
+                      href={`https://wa.me/919762817598?text=Inquiry%20for%20${encodeURIComponent(veh.name)}`}
                       target="_blank"
                       rel="noreferrer"
                     >

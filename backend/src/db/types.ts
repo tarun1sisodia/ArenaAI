@@ -1,3 +1,4 @@
+import type { RouteCatalogRecord, RouteCatalogStatus, RouteCatalogTripType } from "./route-catalog-types.js";
 import type {
   AuditLogRecord,
   BookingRecord,
@@ -49,6 +50,8 @@ export type CatalogListFilter = {
   q?: string;
 };
 
+export type RouteCatalogListFilter = { tripType?: RouteCatalogTripType; status?: RouteCatalogStatus; q?: string; page?: number; limit?: number };
+
 export type ReviewListFilter = {
   status?: ReviewStatus;
   catalogItemId?: string;
@@ -95,6 +98,15 @@ export type Repositories = {
     getById(id: string): Promise<ProfileRecord | null>;
     getByRole(role: UserRole): Promise<ProfileRecord[]>;
     upsert(record: ProfileRecord): Promise<ProfileRecord>;
+  };
+
+  routeCatalog: {
+    create(record: RouteCatalogRecord): Promise<RouteCatalogRecord>;
+    update(record: RouteCatalogRecord): Promise<RouteCatalogRecord>;
+    getById(id: string): Promise<RouteCatalogRecord | null>;
+    getBySlug(slug: string): Promise<RouteCatalogRecord | null>;
+    list(filter: RouteCatalogListFilter): Promise<{ items: RouteCatalogRecord[]; total: number }>;
+    delete(id: string): Promise<void>;
   };
 
   catalog: {

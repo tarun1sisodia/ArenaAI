@@ -39,8 +39,8 @@ const FAQS_DATA: FaqItem[] = [
   {
     id: "fares-4",
     category: "fares",
-    q: "Can I receive an official GST invoice for corporate expense reimbursement?",
-    a: "Yes. We issue computerized GST tax invoices (GSTIN: 09ABCDE1234F1Z5) with your company legal name and GST number, delivered instantly via email or WhatsApp upon booking completion.",
+    q: "Can I receive an official booking receipt for corporate expense reimbursement?",
+    a: "Yes. We issue computerized booking receipts with your company legal name and tax details, delivered instantly via email or WhatsApp upon booking completion.",
   },
 
   // 2. Booking & Payment
@@ -255,18 +255,18 @@ export function FaqPage({ language = "en" }: FaqPageProps) {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <a
-              href="tel:+919876543210"
+              href="tel:+916395867598"
               className="p-3.5 rounded-xl bg-surface-container-lowest border border-border-warm/70 hover:border-primary transition-all flex flex-col items-center text-center shadow-xs"
             >
               <div className="w-8 h-8 rounded-full bg-sandstone-wash flex items-center justify-center text-primary mb-2">
                 <span className="material-symbols-outlined text-lg">phone_in_talk</span>
               </div>
               <h4 className="font-title-md text-xs font-bold text-ink-charcoal">Call 24×7 Desk</h4>
-              <p className="text-[10.5px] text-primary font-bold mt-0.5">+91 98765 43210</p>
+              <p className="text-[10.5px] text-primary font-bold mt-0.5">+91 63958 67598</p>
             </a>
 
             <a
-              href="https://wa.me/919876543210"
+              href="https://wa.me/919762817598"
               target="_blank"
               rel="noreferrer"
               style={{ color: "#ffffff" }}

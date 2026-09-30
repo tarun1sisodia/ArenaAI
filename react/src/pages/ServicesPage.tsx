@@ -331,7 +331,7 @@ export function ServicesPage({ language = "en" }: ServicesPageProps) {
                 </div>
                 <h3 className={`${EDITORIAL_TYPOGRAPHY.subH4} text-xs sm:text-[13px] mb-1`}>Upfront Inclusive Pricing</h3>
                 <p className={`${EDITORIAL_TYPOGRAPHY.compact} text-[9.5px] sm:text-[10px]`}>
-                  Every quoted fare itemizes GST, toll clearances, and fuel. What you agree upon is exactly what you pay—with zero
+                  Every quoted fare itemizes booking receipt, toll clearances, and fuel. What you agree upon is exactly what you pay—with zero
                   hidden roadside extras or tourist surcharges.
                 </p>
               </div>

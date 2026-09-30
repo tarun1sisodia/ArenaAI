@@ -31,6 +31,7 @@ import type {
   ReviewRecord,
   WebhookEventRecord,
 } from "../types/domain.js";
+import type { RouteCatalogRecord } from "./route-catalog-types.js";
 import type {
   BookingListFilter,
   CatalogListFilter,
@@ -55,6 +56,7 @@ export function createMemoryRepositories(nowIso = new Date().toISOString()): Rep
   const refundsByIdempotency = new Map<string, string>();
   const profiles = new Map<string, ProfileRecord>();
   const catalog = new Map<string, CatalogItemRecord>();
+  const routeCatalog = new Map<string, RouteCatalogRecord>();
   const catalogBySlug = new Map<string, string>();
   const media = new Map<string, CatalogMediaRecord>();
   const reviews = new Map<string, ReviewRecord>();
@@ -156,6 +158,7 @@ export function createMemoryRepositories(nowIso = new Date().toISOString()): Rep
           refundsByIdempotency: new Map(refundsByIdempotency),
           profiles: new Map(profiles),
           catalog: new Map(catalog),
+          routeCatalog: new Map(routeCatalog),
           catalogBySlug: new Map(catalogBySlug),
           media: new Map(media),
           reviews: new Map(reviews),
@@ -181,6 +184,7 @@ export function createMemoryRepositories(nowIso = new Date().toISOString()): Rep
           refundsByIdempotency.clear(); for (const [k, v] of snap.refundsByIdempotency) refundsByIdempotency.set(k, v);
           profiles.clear(); for (const [k, v] of snap.profiles) profiles.set(k, v);
           catalog.clear(); for (const [k, v] of snap.catalog) catalog.set(k, v);
+          routeCatalog.clear(); for (const [k, v] of snap.routeCatalog) routeCatalog.set(k, v);
           catalogBySlug.clear(); for (const [k, v] of snap.catalogBySlug) catalogBySlug.set(k, v);
           media.clear(); for (const [k, v] of snap.media) media.set(k, v);
           reviews.clear(); for (const [k, v] of snap.reviews) reviews.set(k, v);
@@ -353,6 +357,14 @@ export function createMemoryRepositories(nowIso = new Date().toISOString()): Rep
         profiles.set(record.id, clone(record));
         return clone(record);
       },
+    },
+    routeCatalog: {
+      async create(record) { if ([...routeCatalog.values()].some((item) => item.slug === record.slug)) throw new Error("duplicate route slug"); routeCatalog.set(record.id, clone(record)); return clone(record); },
+      async update(record) { routeCatalog.set(record.id, clone(record)); return clone(record); },
+      async getById(id) { const found = routeCatalog.get(id); return found ? clone(found) : null; },
+      async getBySlug(slug) { const found = [...routeCatalog.values()].find((item) => item.slug === slug); return found ? clone(found) : null; },
+      async list(filter) { let items = [...routeCatalog.values()]; if (filter.tripType) items = items.filter((item) => item.tripType === filter.tripType); if (filter.status) items = items.filter((item) => item.status === filter.status); if (filter.q) { const q = filter.q.toLowerCase(); items = items.filter((item) => item.sourceCity.toLowerCase().includes(q) || (item.destinationCity ?? "").toLowerCase().includes(q) || item.slug.includes(q)); } items.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)); const total = items.length; const page = filter.page ?? 1; const limit = filter.limit ?? 50; return { items: items.slice((page - 1) * limit, page * limit).map(clone), total }; },
+      async delete(id) { routeCatalog.delete(id); },
     },
     catalog: {
       async create(record) {

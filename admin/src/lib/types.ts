@@ -269,3 +269,16 @@ export const PERMISSIONS: Record<string, AdminRole[]> = {
 export function can(role: AdminRole, permission: string): boolean {
   return (PERMISSIONS[permission] ?? []).includes(role);
 }
+
+export type RouteTripType = "one-way" | "round-trip" | "local-tour";
+export interface InterstateCharge { state: string; amount_inr: number; note?: string }
+export interface RouteStop { name: string; halt_mins?: number }
+export interface RouteFleet { id: string; name: string; seats: number; bags: number; perKm: number }
+export interface RouteCatalogItem {
+  id: string; tripType: RouteTripType; sourceCity: string; sourceDetail: string | null;
+  destinationCity: string | null; slug: string; distanceKm: number | null; durationText: string | null;
+  availableFleets: string[]; faresInr: Record<string, number>; driverChargeInr: number;
+  nightHaltInr: number; tollIncluded: boolean; tollAmountInr: number | null;
+  interstateCharges: InterstateCharge[]; minKmPerDay: number; stops: RouteStop[];
+  status: CatalogStatus; needsReview: boolean; createdAt: string; updatedAt: string;
+}

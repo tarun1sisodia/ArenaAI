@@ -114,7 +114,7 @@ export function PrivacyPage({ language = "en" }: PrivacyPageProps) {
         <div id="info-collected" className="scroll-mt-28 space-y-2.5">
           <h2 className="font-headline-md text-sm sm:text-base font-bold text-ink-charcoal">1. Categories of Information We Collect</h2>
           <p className="text-[10.5px] sm:text-xs text-on-surface-variant leading-relaxed">
-            To coordinate high-precision pickups and issue verified GST invoices, we collect:
+            To coordinate high-precision pickups and issue verified booking receipts, we collect:
           </p>
           <ul className="list-disc pl-5 space-y-1 text-[10.5px] sm:text-xs text-on-surface-variant">
             <li>

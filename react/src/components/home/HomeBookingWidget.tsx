@@ -173,7 +173,7 @@ export function HomeBookingWidget() {
           Book Now <span className="material-symbols-outlined text-[17px]" aria-hidden="true">east</span>
         </a>
       </div>
-      <p className="mt-3 text-center text-[9px] leading-relaxed text-on-surface-variant">Toll-inclusive · GST invoice · 28% advance only</p>
+      <p className="mt-3 text-center text-[9px] leading-relaxed text-on-surface-variant">Toll-inclusive · booking receipt · 28% advance only</p>
     </div>
   );
 }

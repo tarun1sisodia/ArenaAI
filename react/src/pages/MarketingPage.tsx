@@ -41,7 +41,7 @@ const serviceCards = [
 const faqItems = [
   ["How does the advance payment work?", "You pay part of the fare after the car is confirmed. The rest is paid to the driver. This React demo never charges anyone."],
   ["Can I cancel?", "Free cancellation is available up to 24 hours before pickup for cabs. Multi-day tours follow their published refund schedule."],
-  ["Is GST included?", "Sample fares are shown transparently and a GST invoice is available on confirmed paid bookings."],
+  ["Is fare inclusions?", "Sample fares are shown transparently and a booking receipt is available on confirmed paid bookings."],
   ["What about night driving allowance?", "A ₹300 allowance applies to cars and ₹500 to Tempo Travellers for late-night departures, shown before confirmation."]
 ] as const;
 

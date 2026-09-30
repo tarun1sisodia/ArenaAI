@@ -19,6 +19,8 @@ const LivePackageDetailPage = lazy(() => import("../pages/LivePackageDetailPage"
 const VehicleDetailPage = lazy(() => import("../pages/VehicleDetailPage").then((m) => ({ default: m.VehicleDetailPage })));
 const BookingPage = lazy(() => import("../features/booking/BookingPage").then((m) => ({ default: m.BookingPage })));
 const MarketingPage = lazy(() => import("../pages/MarketingPage").then((m) => ({ default: m.MarketingPage })));
+const SeoLandingPage = lazy(() => import("../pages/SeoLandingPage").then((m) => ({ default: m.SeoLandingPage })));
+import { SEO_LANDING_SLUGS, type SeoLandingSlug } from "../data/seoLandingSlugs";
 import { marketingHubs } from "./routes";
 import { SeoHead } from "../components/seo/SeoHead";
 import { packages, routes, vehicles, type Route } from "../data/catalogue";
@@ -39,6 +41,10 @@ export interface SeoMetadata {
 }
 
 export function getSeo(pathname: string, section: string, language: "en" | "hi", isBooking: boolean): SeoMetadata {
+  if (SEO_LANDING_SLUGS.includes(section as SeoLandingSlug)) {
+    const title = `${section.replaceAll("-", " ")} | SK Baghel Tour & Travels`;
+    return { title, description: `${title}. Verified drivers, transparent fare confirmation and easy phone or WhatsApp booking.`, ogImage: "/assets/brand/og-banner.webp", keywords: [title, "Agra taxi", "Agra cab booking"] };
+  }
   if (isBooking) {
     return {
       title: "Book a ride | SK Baghel Tour & Travels",
@@ -98,7 +104,7 @@ export function getSeo(pathname: string, section: string, language: "en" | "hi",
   if (section === "home") {
     return {
       title: "Agra Taxi & Cab Booking | SK Baghel Tour & Travels",
-      description: "Book an Agra taxi, Tempo Traveller or Innova. Agra to Delhi from ₹3,500. Call or WhatsApp to confirm. Transparent fares, GST invoice.",
+      description: "Book an Agra taxi, Tempo Traveller or Innova. Agra to Delhi from ₹3,500. Call or WhatsApp to confirm. Transparent fares and clear booking terms.",
       ogImage: "/assets/brand/og-banner.webp",
       keywords: ["Agra taxi service", "Agra cab booking", "Agra to Delhi cab", "Tempo Traveller Agra", "Taj Mahal tours", "SK Baghel Travels"],
     };
@@ -152,7 +158,7 @@ export function getSeo(pathname: string, section: string, language: "en" | "hi",
   if (section === "contact") {
     return {
       title: "Contact Us — SK Baghel Tour & Travels Agra | 24×7 Travel Desk",
-      description: "Get in touch with our 24×7 Taj Ganj dispatch desk for outstation cabs, sunrise Taj Mahal tours, and luxury group travel in Agra. Call +91 98765 43210.",
+      description: "Get in touch with our 24×7 Taj Ganj dispatch desk for outstation cabs, sunrise Taj Mahal tours, and luxury group travel in Agra. Call +91 63958 67598.",
       ogImage: "/assets/brand/og-banner.webp",
       keywords: ["Contact SK Baghel Travels", "Agra taxi phone number", "Taj Ganj dispatch desk", "24x7 cab booking"],
     };
@@ -214,6 +220,7 @@ export function App({ pathname: propPathname }: AppProps = {}) {
     pathname === "/index.html" ||
     section === "home";
   const isMarketingHub = marketingHubs.includes(section as (typeof marketingHubs)[number]);
+  const isSeoLanding = SEO_LANDING_SLUGS.includes(section as SeoLandingSlug);
   const cleanPath = pathname.replace(/\/$/, "");
   const isBooking =
     cleanPath.endsWith("book.html") ||
@@ -303,6 +310,7 @@ export function App({ pathname: propPathname }: AppProps = {}) {
     Boolean(activeRoute) ||
     Boolean(matchedPackage) ||
     Boolean(matchedVehicle) ||
+    isSeoLanding ||
     Boolean(livePackageSlug) ||
     packages.some((item) => pathname.endsWith(item.slug) || pathname.endsWith(item.slug + "/"));
 
@@ -346,8 +354,10 @@ export function App({ pathname: propPathname }: AppProps = {}) {
             <PackageDetailPage language={language} pkg={matchedPackage} />
           ) : livePackageSlug ? (
             <LivePackageDetailPage slug={livePackageSlug} />
-          ) : matchedVehicle ? (
-            <VehicleDetailPage language={language} vehicle={matchedVehicle} />
+        ) : matchedVehicle ? (
+          <VehicleDetailPage language={language} vehicle={matchedVehicle} />
+        ) : isSeoLanding ? (
+          <SeoLandingPage slug={section as SeoLandingSlug} />
           ) : section === "services" ? (
             <ServicesPage language={language} />
           ) : section === "routes" ? (
