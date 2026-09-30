@@ -15,6 +15,7 @@ import type {
   WebhookEventRecord,
 } from "../types/domain.js";
 import type { DeviceRegistrationRecord, FareRuleRecord, InquiryListFilter, PaymentListFilter, Repositories } from "./types.js";
+import type { RouteCatalogRecord } from "./route-catalog-types.js";
 import { createPoolConfig } from "./poolConfig.js";
 import { ConcurrencyError } from "./concurrency.js";
 import { phonesMatch } from "../shared/privacy.js";
@@ -23,6 +24,11 @@ type PoolClient = pg.PoolClient;
 
 function num(value: unknown): number {
   return typeof value === "number" ? value : Number(value);
+}
+
+
+function mapRouteCatalog(row: Record<string, unknown>): RouteCatalogRecord {
+  return { id: String(row.id), tripType: row.trip_type as RouteCatalogRecord["tripType"], sourceCity: String(row.source_city), sourceDetail: row.source_detail ? String(row.source_detail) : null, destinationCity: row.destination_city ? String(row.destination_city) : null, slug: String(row.slug), distanceKm: row.distance_km === null ? null : num(row.distance_km), durationText: row.duration_text ? String(row.duration_text) : null, availableFleets: (row.available_fleets as string[]) ?? [], faresInr: (row.fares_inr as Record<string, number>) ?? {}, driverChargeInr: num(row.driver_charge_inr), nightHaltInr: num(row.night_halt_inr), tollIncluded: Boolean(row.toll_included), tollAmountInr: row.toll_amount_inr === null ? null : num(row.toll_amount_inr), interstateCharges: (row.interstate_charges as RouteCatalogRecord["interstateCharges"]) ?? [], minKmPerDay: num(row.min_km_per_day), stops: (row.stops as RouteCatalogRecord["stops"]) ?? [], status: row.status as RouteCatalogRecord["status"], needsReview: Boolean(row.needs_review), createdAt: new Date(String(row.created_at)).toISOString(), updatedAt: new Date(String(row.updated_at)).toISOString() };
 }
 
 function mapBooking(row: Record<string, unknown>): BookingRecord {
@@ -473,6 +479,29 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
           );
           return record;
         },
+      },
+      routeCatalog: {
+        async create(record: RouteCatalogRecord) {
+          await query(client, `insert into route_catalog (id, trip_type, source_city, source_detail, destination_city, slug, distance_km, duration_text, available_fleets, fares_inr, driver_charge_inr, night_halt_inr, toll_included, toll_amount_inr, interstate_charges, min_km_per_day, stops, status, needs_review, created_at, updated_at) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21)`, [record.id, record.tripType, record.sourceCity, record.sourceDetail, record.destinationCity, record.slug, record.distanceKm, record.durationText, record.availableFleets, JSON.stringify(record.faresInr), record.driverChargeInr, record.nightHaltInr, record.tollIncluded, record.tollAmountInr, JSON.stringify(record.interstateCharges), record.minKmPerDay, JSON.stringify(record.stops), record.status, record.needsReview, record.createdAt, record.updatedAt]);
+          return record;
+        },
+        async update(record: RouteCatalogRecord) {
+          await query(client, `update route_catalog set trip_type=$2, source_city=$3, source_detail=$4, destination_city=$5, distance_km=$6, duration_text=$7, available_fleets=$8, fares_inr=$9, driver_charge_inr=$10, night_halt_inr=$11, toll_included=$12, toll_amount_inr=$13, interstate_charges=$14, min_km_per_day=$15, stops=$16, status=$17, needs_review=$18, updated_at=$19 where id=$1`, [record.id, record.tripType, record.sourceCity, record.sourceDetail, record.destinationCity, record.distanceKm, record.durationText, record.availableFleets, JSON.stringify(record.faresInr), record.driverChargeInr, record.nightHaltInr, record.tollIncluded, record.tollAmountInr, JSON.stringify(record.interstateCharges), record.minKmPerDay, JSON.stringify(record.stops), record.status, record.needsReview, record.updatedAt]);
+          return record;
+        },
+        async getById(id: string) { const rows = await query(client, "select * from route_catalog where id=$1", [id]); return rows[0] ? mapRouteCatalog(rows[0]) : null; },
+        async getBySlug(slug: string) { const rows = await query(client, "select * from route_catalog where slug=$1", [slug]); return rows[0] ? mapRouteCatalog(rows[0]) : null; },
+        async list(filter) {
+          const clauses: string[] = []; const params: unknown[] = [];
+          if (filter.tripType) { params.push(filter.tripType); clauses.push(`trip_type=$${params.length}`); }
+          if (filter.status) { params.push(filter.status); clauses.push(`status=$${params.length}`); }
+          if (filter.q) { params.push(`%${filter.q}%`); clauses.push(`(source_city ilike $${params.length} or coalesce(destination_city,'') ilike $${params.length} or slug ilike $${params.length})`); }
+          const where = clauses.length ? `where ${clauses.join(" and ")}` : "";
+          const rows = await query(client, `select * from route_catalog ${where} order by updated_at desc`, params);
+          const page = filter.page ?? 1; const limit = filter.limit ?? 50; const total = rows.length;
+          return { items: rows.slice((page - 1) * limit, page * limit).map(mapRouteCatalog), total };
+        },
+        async delete(id: string) { await query(client, "delete from route_catalog where id=$1", [id]); },
       },
       catalog: {
         async create(record: CatalogItemRecord) {

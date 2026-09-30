@@ -27,7 +27,7 @@ export interface CompressedRoute {
   toll: 1 | 0;            // Toll inclusion: 1 = included, 0 = extra
 }
 
-export function buildRouteCatalogAndManifest(): void {
+export async function buildRouteCatalogAndManifest(): Promise<void> {
   // Read backend single-source-of-truth catalog
   const rawCatalog = readFileSync(backendCatalogPath, "utf-8");
   const catalogRoutes: Record<string, any> = JSON.parse(rawCatalog);
@@ -80,6 +80,46 @@ export function buildRouteCatalogAndManifest(): void {
         urbania: fu,
       },
     });
+  }
+
+  // Published admin routes become the customer site's source of truth on the
+  // next frontend rebuild. Static JSON remains the safe fallback for local
+  // builds and environments where the backend is not reachable.
+  const manifestUrl = process.env.ROUTE_CATALOG_MANIFEST_URL;
+  if (manifestUrl) {
+    try {
+      const response = await fetch(manifestUrl);
+      if (response.ok) {
+        const payload = await response.json() as { data?: Array<any> };
+        for (const item of payload.data ?? []) {
+          if (item.status !== "published") continue;
+          const fares = item.faresInr ?? item.fares_inr ?? {};
+          const routeSlug = String(item.slug);
+          const distanceKm = Number(item.distanceKm ?? item.distance_km ?? 0);
+          const durationText = String(item.durationText ?? item.duration_text ?? "");
+          const durationMins = Number(durationText.match(/(\d+(?:\.\d+)?)\s*h/i)?.[1] ?? 0) * 60 || Math.round((distanceKm / 55) * 60);
+          manifest[routeSlug] = {
+            o: item.sourceCity ?? item.source_city,
+            d: item.destinationCity ?? item.destination_city ?? "Local sightseeing",
+            km: distanceKm,
+            m: durationMins,
+            fh: Math.round(Number(fares.sedan ?? 2000) * 0.85),
+            fs: Number(fares.sedan ?? 2000),
+            fe: Number(fares.ertiga ?? 2800),
+            fi: Number(fares.innova ?? 3800),
+            ft: Number(fares.tempo ?? 5500),
+            fu: Number(fares.urbania ?? 7500),
+            pm: item.tripType === "round-trip" ? "day120" : item.tripType === "local-tour" ? "tour" : "oneway",
+            c: item.sourceDetail ?? "Direct Highway Corridor",
+            toll: item.tollIncluded === false ? 0 : 1,
+          };
+          allRoutesList.push({ id: routeSlug, from: item.sourceCity ?? item.source_city, to: item.destinationCity ?? item.destination_city ?? "Local sightseeing", origin: item.sourceCity ?? item.source_city, destination: item.destinationCity ?? item.destination_city ?? "Local sightseeing", km: distanceKm, duration: durationText, kind: item.tripType, pricingModel: item.tripType === "round-trip" ? "day120" : item.tripType === "local-tour" ? "tour" : "oneway", toll: item.tollIncluded === false ? 0 : 1, fares: { sedan: Number(fares.sedan ?? 2000), ertiga: Number(fares.ertiga ?? 2800), innova: Number(fares.innova ?? 3800), tempo: Number(fares.tempo ?? 5500), urbania: Number(fares.urbania ?? 7500) } });
+        }
+        console.log(`✅ [Manifest Builder] Merged published admin route catalog from ${manifestUrl}.`);
+      }
+    } catch (error) {
+      console.warn("⚠️ [Manifest Builder] Admin route catalog unavailable; using static catalog.", error);
+    }
   }
 
   // 1. Emit react/public/routes-manifest.json
@@ -182,4 +222,4 @@ export function buildRouteCatalogAndManifest(): void {
   console.log(`✅ [Manifest Builder] Emitted src/data/generated-catalog.json with ${allRoutesList.length} typed routes.`);
 }
 
-buildRouteCatalogAndManifest();
+await buildRouteCatalogAndManifest();

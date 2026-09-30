@@ -484,7 +484,7 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
                     <a
                       className="px-3 py-1.5 rounded-lg bg-black hover:bg-neutral-900 border border-white/10 text-white font-label-caps text-xs transition-colors font-bold inline-flex items-center gap-1.5 active:scale-[0.98]"
                       style={{ color: "#ffffff" }}
-                      href={`https://wa.me/919876543210?text=Booking%20Route%20${encodeURIComponent(route.name)}`}
+                      href={`https://wa.me/919762817598?text=Booking%20Route%20${encodeURIComponent(route.name)}`}
                       target="_blank"
                       rel="noreferrer"
                     >

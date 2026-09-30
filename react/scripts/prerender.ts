@@ -261,7 +261,7 @@ export async function prerender(): Promise<void> {
       // 4. Update noscript to accessible fallback notice
       html = html.replace(
         /<noscript>[\s\S]*?<\/noscript>/,
-        `<noscript><p class="skip-link" style="position:static;padding:12px;background:#fff3cd;color:#856404;margin:0;text-align:center;font-size:14px;">JavaScript is recommended for dynamic calculations and interactive booking. Call us 24×7 at <a href="tel:+919876543210" style="color:#b8941f;font-weight:700;">+91 98765 43210</a>.</p></noscript>`
+        `<noscript><p class="skip-link" style="position:static;padding:12px;background:#fff3cd;color:#856404;margin:0;text-align:center;font-size:14px;">JavaScript is recommended for dynamic calculations and interactive booking. Call us 24×7 at <a href="tel:+916395867598" style="color:#b8941f;font-weight:700;">+91 63958 67598</a>.</p></noscript>`
       );
 
       // 5. Ensure relative assets work correctly across directory depths if requested

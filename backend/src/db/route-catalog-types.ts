@@ -1,0 +1,25 @@
+export type RouteCatalogStatus = "draft" | "published" | "archived";
+export type RouteCatalogTripType = "one-way" | "round-trip" | "local-tour";
+export type RouteCatalogRecord = {
+  id: string;
+  tripType: RouteCatalogTripType;
+  sourceCity: string;
+  sourceDetail: string | null;
+  destinationCity: string | null;
+  slug: string;
+  distanceKm: number | null;
+  durationText: string | null;
+  availableFleets: string[];
+  faresInr: Record<string, number>;
+  driverChargeInr: number;
+  nightHaltInr: number;
+  tollIncluded: boolean;
+  tollAmountInr: number | null;
+  interstateCharges: Array<{ state: string; amount_inr: number; note?: string }>;
+  minKmPerDay: number;
+  stops: Array<{ name: string; halt_mins?: number }>;
+  status: RouteCatalogStatus;
+  needsReview: boolean;
+  createdAt: string;
+  updatedAt: string;
+};

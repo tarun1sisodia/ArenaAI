@@ -207,7 +207,7 @@ export function Footer({ className = "" }: FooterProps) {
       <div className="border-t border-border-warm bg-surface-container/40">
         <div className="max-w-7xl mx-auto px-margin-mobile lg:px-margin py-space-md flex flex-col sm:flex-row items-center justify-between gap-space-sm text-center sm:text-left">
           <p className="font-body-sm text-body-sm text-on-surface-variant text-[13px]">
-            © {new Date().getFullYear()} SK Baghel Tour & Travels. All rights reserved. GSTIN: {contact.gst}.
+            © {new Date().getFullYear()} SK Baghel Tour & Travels. All rights reserved.
           </p>
           <div className="flex flex-wrap items-center gap-space-md font-body-sm text-body-sm text-[13px]">
             <a href="/privacy" className="hover:text-primary transition-colors">Privacy Policy</a>

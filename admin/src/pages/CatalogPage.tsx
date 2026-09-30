@@ -52,6 +52,7 @@ import {
   type CatalogTripType,
 } from "@/lib/types";
 import { cn, formatDate, formatINR } from "@/lib/utils";
+import { RouteCatalogPanel } from "@/components/admin/RouteCatalogPanel";
 
 const CATEGORY_TONE: Record<CatalogCategory, "neutral" | "teal" | "gold"> = {
   ride: "neutral",
@@ -180,6 +181,7 @@ export function CatalogPage({ user }: { user: AdminUser }) {
   const [formPlaces, setFormPlaces] = useState("Taj Mahal, Agra Fort");
   const [formStops, setFormStops] = useState("");
   const [formStatus, setFormStatus] = useState<CatalogStatus>("draft");
+  const [activeCatalogTab, setActiveCatalogTab] = useState<"catalog" | "routes">("catalog");
 
   const canEdit = can(user.role, "catalog:edit");
   const canPublish = can(user.role, "catalog:publish");
@@ -651,6 +653,13 @@ export function CatalogPage({ user }: { user: AdminUser }) {
         }
       />
 
+      <div className="mb-5 flex gap-2 border-b border-hairline pb-2">
+        <button type="button" className={cn("rounded px-3 py-1.5 text-sm", activeCatalogTab === "catalog" ? "bg-ink text-surface" : "text-ink-soft")} onClick={() => setActiveCatalogTab("catalog")}>General catalog</button>
+        <button type="button" className={cn("rounded px-3 py-1.5 text-sm", activeCatalogTab === "routes" ? "bg-ink text-surface" : "text-ink-soft")} onClick={() => setActiveCatalogTab("routes")}>Routes</button>
+      </div>
+      {activeCatalogTab === "routes" ? <RouteCatalogPanel user={user} /> : null}
+
+      {activeCatalogTab === "catalog" && <>
       {/* Manifest strip + republish feedback */}
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
         <span>
@@ -1267,6 +1276,7 @@ export function CatalogPage({ user }: { user: AdminUser }) {
           </div>
         </form>
       </Dialog>
+      </>}
     </div>
   );
 }

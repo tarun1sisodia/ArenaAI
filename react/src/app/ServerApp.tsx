@@ -88,7 +88,7 @@ export function getSeo(pathname: string, section: string, language: "en" | "hi",
   if (section === "home") {
     return {
       title: "Agra Taxi & Cab Booking | SK Baghel Tour & Travels",
-      description: "Book an Agra taxi, Tempo Traveller or Innova. Agra to Delhi from ₹3,500. Call or WhatsApp to confirm. Transparent fares, GST invoice.",
+      description: "Book an Agra taxi, Tempo Traveller or Innova. Agra to Delhi from ₹3,499. Call or WhatsApp to confirm. Transparent fares and clear booking terms.",
       ogImage: "/assets/brand/og-banner.webp",
       keywords: ["Agra taxi service", "Agra cab booking", "Agra to Delhi cab", "Tempo Traveller Agra", "Taj Mahal tours", "SK Baghel Travels"],
     };
@@ -142,7 +142,7 @@ export function getSeo(pathname: string, section: string, language: "en" | "hi",
   if (section === "contact") {
     return {
       title: "Contact Us — SK Baghel Tour & Travels Agra | 24×7 Travel Desk",
-      description: "Get in touch with our 24×7 Taj Ganj dispatch desk for outstation cabs, sunrise Taj Mahal tours, and luxury group travel in Agra. Call +91 98765 43210.",
+      description: "Get in touch with our 24×7 Taj Ganj dispatch desk for outstation cabs, sunrise Taj Mahal tours, and luxury group travel in Agra. Call +91 63958 67598.",
       ogImage: "/assets/brand/og-banner.webp",
       keywords: ["Contact SK Baghel Travels", "Agra taxi phone number", "Taj Ganj dispatch desk", "24x7 cab booking"],
     };

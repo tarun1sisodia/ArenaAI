@@ -30,9 +30,9 @@ export const siteConfig: SiteConfig = {
   defaultLanguage: "en",
   supportedLanguages: ["en", "hi"],
   contact: {
-    phone: "+919876543210",
-    phoneDisplay: "+91 98765 43210",
-    whatsapp: "919876543210",
+    phone: "+919762817598",
+    phoneDisplay: "+91 63958 67598",
+    whatsapp: "919762817598",
     email: "bookings@agraskbagheltourandtravels.com",
     address: "Near Taj East Gate Road, Taj Ganj, Agra, Uttar Pradesh 282001",
     city: "Agra",
@@ -42,7 +42,7 @@ export const siteConfig: SiteConfig = {
     longitude: 78.0322,
     hours: "Bookings open 24×7",
     mapsUrl: "https://maps.google.com/?q=Taj+Ganj+Agra",
-    gst: "09ABCDE1234F1Z5",
+    gst: "",
   },
 };
 

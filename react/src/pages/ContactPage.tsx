@@ -10,7 +10,7 @@ export interface ContactPageProps {
 const FAQ_ITEMS = [
   {
     q: "How quickly will your dispatch team respond to my booking or inquiry?",
-    a: "Our 24×7 Taj Ganj dispatch team responds within 2 to 5 minutes on WhatsApp (+91 98765 43210) or direct phone call. Inquiries submitted via the form are confirmed within 15 minutes with a transparent fare breakdown.",
+    a: "Our 24×7 Taj Ganj dispatch team responds within 2 to 5 minutes on WhatsApp (+91 63958 67598) or direct phone call. Inquiries submitted via the form are confirmed within 15 minutes with a transparent fare breakdown.",
   },
   {
     q: "Can I book a cab for a 5:00 AM Taj Mahal sunrise tour on short notice?",
@@ -26,7 +26,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "Do you issue official GST invoices for corporate expense claims?",
-    a: "Yes. Every booking includes a verified GST tax invoice (GSTIN: 09ABCDE1234F1Z5) with itemized kilometer logs, expressway tolls, and state passenger permits.",
+    a: "Yes. Every booking includes a verified GST tax invoice ( ) with itemized kilometer logs, expressway tolls, and state passenger permits.",
   },
 ];
 
@@ -63,7 +63,7 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
     )}%0A- GST: ${formData.gstRequired ? "Yes" : "No"}`;
 
     setTimeout(() => {
-      window.open(`https://wa.me/919876543210?text=${text}`, "_blank");
+      window.open(`https://wa.me/919762817598?text=${text}`, "_blank");
     }, 400);
   };
 
@@ -102,7 +102,7 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
             <div className="inline-flex items-center gap-2 rounded-lg bg-surface-container border border-border-warm px-3.5 py-1.5 shadow-xs">
               <WhatsAppIcon className="w-4 h-4 shrink-0" />
               <p className="text-ink-charcoal text-xs sm:text-sm font-medium whitespace-nowrap">
-                Direct WhatsApp Travel Desk (+91 98765 43210)
+                Direct WhatsApp Travel Desk (+91 63958 67598)
               </p>
             </div>
             <div className="inline-flex items-center gap-2 rounded-lg bg-surface-container border border-border-warm px-3.5 py-1.5 shadow-xs">
@@ -149,7 +149,7 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
                 <span className="material-symbols-outlined text-lg">phone_in_talk</span>
               </div>
               <h3 className="font-headline-sm text-ink-charcoal text-base mb-1 font-semibold">Immediate Call Dispatch (24×7)</h3>
-              <p className="font-title-lg text-terracotta-sandstone mb-2 font-bold text-sm sm:text-base">+91 98765 43210</p>
+              <p className="font-title-lg text-terracotta-sandstone mb-2 font-bold text-sm sm:text-base">+91 63958 67598</p>
               <p className="text-on-surface-variant font-body-sm leading-relaxed mb-4 text-[10.5px]">
                 Immediate taxi allocation, late-night expressway emergencies, 3:00 AM airport pickups, and instant driver
                 assignment.
@@ -157,7 +157,7 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
             </div>
             <a
               className="w-full inline-flex items-center justify-center gap-1.5 bg-terracotta-sandstone hover:bg-primary text-white font-label-lg py-2 px-3 rounded-lg transition-colors text-center text-xs font-semibold shadow-xs"
-              href="tel:+919876543210"
+              href="tel:+916395867598"
             >
               <span className="material-symbols-outlined text-[16px]">call</span>
               <span>Call Dispatch Now</span>
@@ -178,7 +178,7 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
               <h3 className="font-headline-sm text-ink-charcoal text-base mb-1 font-semibold">
                 WhatsApp Desk (Fastest)
               </h3>
-              <p className="font-title-lg text-ink-charcoal mb-2 font-bold text-sm sm:text-base">+91 98765 43210</p>
+              <p className="font-title-lg text-ink-charcoal mb-2 font-bold text-sm sm:text-base">+91 63958 67598</p>
               <p className="text-on-surface-variant font-body-sm leading-relaxed mb-4 text-[10.5px]">
                 Send itinerary details, receive vehicle photos, driver credentials, live location tracking, and instant quote
                 cards with UPI advance links.
@@ -187,7 +187,7 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
             <a
               className="w-full inline-flex items-center justify-center gap-2 bg-black hover:bg-neutral-900 border border-white/10 text-white font-label-lg py-2.5 px-3 rounded-lg transition-colors text-center text-xs font-semibold shadow-xs active:scale-[0.98]"
               style={{ color: "#ffffff" }}
-              href="https://wa.me/919876543210"
+              href="https://wa.me/919762817598"
               target="_blank"
               rel="noreferrer"
             >

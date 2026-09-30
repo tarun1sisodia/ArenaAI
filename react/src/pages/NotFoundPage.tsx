@@ -80,7 +80,7 @@ export function NotFoundPage({ language = "en" }: NotFoundPageProps) {
                   <span>Return to Home</span>
                 </a>
                 <a
-                  href="https://wa.me/919876543210"
+                  href="https://wa.me/919762817598"
                   target="_blank"
                   rel="noreferrer"
                   style={{ color: "#ffffff" }}
@@ -118,7 +118,7 @@ export function NotFoundPage({ language = "en" }: NotFoundPageProps) {
                     <div className="absolute inset-0 bg-gradient-to-t from-ink-midnight/80 via-transparent to-transparent" />
                     <div className="absolute bottom-3 left-3 right-3 text-ivory-surface">
                       <span className="font-title-md text-xs font-semibold block">Agra Dispatch Station</span>
-                      <span className="font-body-sm text-[11px] text-surface-dim">Taj Ganj Control Room · +91 98765 43210</span>
+                      <span className="font-body-sm text-[11px] text-surface-dim">Taj Ganj Control Room · +91 63958 67598</span>
                     </div>
                   </div>
 
