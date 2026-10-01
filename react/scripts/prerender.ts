@@ -7,7 +7,7 @@
  */
 
 import { cp, mkdir, readFile, readdir, writeFile } from "node:fs/promises";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createServer } from "vite";
@@ -73,6 +73,32 @@ const packageRoutes = [
   "golden-triangle",
 ];
 
+function getPublishedPackageRoutes(): string[] {
+  const snapshotPath = join(reactRoot, "src", "data", "generated-published-catalog.json");
+  if (!existsSync(snapshotPath)) return [];
+  try {
+    const snapshot = JSON.parse(readFileSync(snapshotPath, "utf8")) as Array<{ type?: string; slug?: string }>;
+    return snapshot
+      .filter((item) => (item.type === "package" || item.type === "tour") && /^[a-z0-9-]{2,80}$/.test(item.slug ?? ""))
+      .map((item) => `/en/packages/${item.slug}/`);
+  } catch {
+    return [];
+  }
+}
+
+function getPublishedRoutePages(): string[] {
+  const snapshotPath = join(reactRoot, "src", "data", "generated-published-routes.json");
+  if (!existsSync(snapshotPath)) return [];
+  try {
+    const snapshot = JSON.parse(readFileSync(snapshotPath, "utf8")) as Array<{ slug?: string }>;
+    return snapshot
+      .filter((item) => /^[a-z0-9-]{2,80}$/.test(item.slug ?? ""))
+      .map((item) => `/en/${item.slug}/`);
+  } catch {
+    return [];
+  }
+}
+
 const routePairs = [
   "agra-to-delhi-taxi",
   "delhi-to-agra-taxi",
@@ -116,6 +142,8 @@ const routesToRender: string[] = [
 
   // Tour Packages (6)
   ...packageRoutes.map((p) => `/en/packages/${p}/`),
+  ...getPublishedPackageRoutes(),
+  ...getPublishedRoutePages(),
 
   // English Routes (8)
   ...routePairs.map((r) => `/en/${r}/`),

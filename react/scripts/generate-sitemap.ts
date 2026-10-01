@@ -12,6 +12,7 @@
  */
 
 import { mkdir, writeFile } from "node:fs/promises";
+import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { SEO_LANDING_SLUGS } from "../src/data/seoLandingSlugs.ts";
@@ -30,6 +31,51 @@ export interface SitemapEntry {
   lastmod?: string;
   enPath?: string;
   hiPath?: string;
+}
+
+function getPublishedCatalogEntries(): SitemapEntry[] {
+  const snapshotPath = join(reactRoot, "src", "data", "generated-published-catalog.json");
+  if (!existsSync(snapshotPath)) return [];
+  try {
+    const snapshot = JSON.parse(readFileSync(snapshotPath, "utf8")) as Array<{
+      type?: string;
+      slug?: string;
+      updatedAt?: string | null;
+      publishedAt?: string | null;
+    }>;
+    return snapshot
+      .filter((item) => (item.type === "package" || item.type === "tour") && /^[a-z0-9-]{2,80}$/.test(item.slug ?? ""))
+      .map((item) => ({
+        path: `/en/packages/${item.slug}/`,
+        hiPath: `/hi/packages/${item.slug}/`,
+        enPath: `/en/packages/${item.slug}/`,
+        priority: 0.85,
+        changefreq: "weekly" as const,
+        lastmod: (item.updatedAt || item.publishedAt || undefined)?.slice(0, 10),
+      }));
+  } catch {
+    return [];
+  }
+}
+
+function getPublishedRouteEntries(): SitemapEntry[] {
+  const snapshotPath = join(reactRoot, "src", "data", "generated-published-routes.json");
+  if (!existsSync(snapshotPath)) return [];
+  try {
+    const snapshot = JSON.parse(readFileSync(snapshotPath, "utf8")) as Array<{ slug?: string; updatedAt?: string | null }>;
+    return snapshot
+      .filter((item) => /^[a-z0-9-]{2,80}$/.test(item.slug ?? ""))
+      .map((item) => ({
+        path: `/en/${item.slug}/`,
+        hiPath: `/hi/${item.slug}/`,
+        enPath: `/en/${item.slug}/`,
+        priority: 0.85,
+        changefreq: "weekly" as const,
+        lastmod: item.updatedAt?.slice(0, 10),
+      }));
+  } catch {
+    return [];
+  }
 }
 
 // 9 Hubs
@@ -84,12 +130,14 @@ export function getSitemapEntries(): SitemapEntry[] {
       priority: 1.0,
       changefreq: "daily",
       enPath: "/",
+      hiPath: "/hi/",
     },
     {
       path: "/en/",
       priority: 0.9,
       changefreq: "daily",
       enPath: "/",
+      hiPath: "/hi/",
     },
   ];
 
@@ -100,6 +148,7 @@ export function getSitemapEntries(): SitemapEntry[] {
       priority: 0.9,
       changefreq: "weekly",
       enPath: `/en/${hub}/`,
+      hiPath: `/hi/${hub}/`,
     });
   }
 
@@ -110,6 +159,7 @@ export function getSitemapEntries(): SitemapEntry[] {
       priority: 0.85,
       changefreq: "weekly",
       enPath: `/en/vehicles/${veh}/`,
+      hiPath: `/hi/vehicles/${veh}/`,
     });
   }
 
@@ -120,6 +170,7 @@ export function getSitemapEntries(): SitemapEntry[] {
       priority: 0.85,
       changefreq: "weekly",
       enPath: `/en/packages/${pkg}/`,
+      hiPath: `/hi/packages/${pkg}/`,
     });
   }
 
@@ -134,6 +185,7 @@ export function getSitemapEntries(): SitemapEntry[] {
         priority: 0.85,
         changefreq: "weekly",
         enPath: p,
+        hiPath: `/hi/${pair.hi}/`,
       });
     }
   }
@@ -142,14 +194,25 @@ export function getSitemapEntries(): SitemapEntry[] {
     const p = `/en/${slug}/`;
     if (!existingPaths.has(p)) {
       existingPaths.add(p);
-      entries.push({ path: p, priority: 0.9, changefreq: "weekly", enPath: p });
+      entries.push({ path: p, priority: 0.9, changefreq: "weekly", enPath: p, hiPath: `/hi/${slug}/` });
     }
   }
 
-  // The generated catalog contains 963 locality identifiers, many of which are
-  // thin or redirect-only variants and are not rendered by prerender.ts. Never
-  // submit that internal catalog as an indexable sitemap expansion. A new
-  // programmatic route must be added to routesToRender and this allowlist first.
+  // Only catalog items that are included in the SSG snapshot are eligible for
+  // the sitemap. This keeps unpublished/draft items out and prevents the old
+  // locality inventory from becoming a thin-content indexation expansion.
+  for (const entry of getPublishedCatalogEntries()) {
+    if (!existingPaths.has(entry.path)) {
+      existingPaths.add(entry.path);
+      entries.push(entry);
+    }
+  }
+  for (const entry of getPublishedRouteEntries()) {
+    if (!existingPaths.has(entry.path)) {
+      existingPaths.add(entry.path);
+      entries.push(entry);
+    }
+  }
 
   return entries;
 }
@@ -166,6 +229,7 @@ export function generateSitemapXml(entries: SitemapEntry[]): string {
     <changefreq>${entry.changefreq}</changefreq>
     <priority>${entry.priority.toFixed(2)}</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="${enUrl}" />
+    ${entry.hiPath ? `<xhtml:link rel="alternate" hreflang="hi-IN" href="${CANONICAL_DOMAIN}${entry.hiPath}" />` : ""}
     <xhtml:link rel="alternate" hreflang="x-default" href="${enUrl}" />
   </url>`;
   }).join("\n");
