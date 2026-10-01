@@ -20,6 +20,7 @@
     "customer:preview": "npm --prefix react run preview",
     "customer:typecheck": "npm --prefix react run typecheck",
     "customer:seo": "npm --prefix react run test:seo",
+    "customer:seo:audit": "npm --prefix react run seo:audit",
     "admin:dev": "npm --prefix admin run dev",
     "admin:build": "npm --prefix admin run build",
     "admin:preview": "npm --prefix admin run preview",

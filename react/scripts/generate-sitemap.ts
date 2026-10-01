@@ -12,7 +12,6 @@
  */
 
 import { mkdir, writeFile } from "node:fs/promises";
-import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { SEO_LANDING_SLUGS } from "../src/data/seoLandingSlugs.ts";
@@ -54,8 +53,6 @@ const vehicleSlugs = [
   "tempo-traveller",
   "urbania",
 ];
-
-const vehicleAliases = ["innova", "tempo"];
 
 // 6 Tour Packages
 const packageSlugs = [
@@ -116,17 +113,7 @@ export function getSitemapEntries(): SitemapEntry[] {
     });
   }
 
-  // 4. Vehicle Aliases
-  for (const alias of vehicleAliases) {
-    entries.push({
-      path: `/en/vehicles/${alias}/`,
-      priority: 0.75,
-      changefreq: "monthly",
-      enPath: `/en/vehicles/${alias}/`,
-    });
-  }
-
-  // 5. Packages (English)
+  // 4. Packages (English)
   for (const pkg of packageSlugs) {
     entries.push({
       path: `/en/packages/${pkg}/`,
@@ -136,7 +123,7 @@ export function getSitemapEntries(): SitemapEntry[] {
     });
   }
 
-  // 6. Routes (English)
+  // 5. Routes (English)
   const existingPaths = new Set(entries.map((e) => e.path));
   for (const pair of routePairs) {
     const p = `/en/${pair.en}/`;
@@ -159,29 +146,10 @@ export function getSitemapEntries(): SitemapEntry[] {
     }
   }
 
-  try {
-    const catalogPath = join(reactRoot, "src", "data", "generated-catalog.json");
-    if (existsSync(catalogPath)) {
-      const catalogRaw = readFileSync(catalogPath, "utf-8");
-      const catalog = JSON.parse(catalogRaw);
-      if (Array.isArray(catalog.routes)) {
-        for (const r of catalog.routes) {
-          if (r.id) {
-            const p = `/en/${r.id}/`;
-            if (!existingPaths.has(p)) {
-              existingPaths.add(p);
-              entries.push({
-                path: p,
-                priority: 0.75,
-                changefreq: "weekly",
-                enPath: p,
-              });
-            }
-          }
-        }
-      }
-    }
-  } catch {}
+  // The generated catalog contains 963 locality identifiers, many of which are
+  // thin or redirect-only variants and are not rendered by prerender.ts. Never
+  // submit that internal catalog as an indexable sitemap expansion. A new
+  // programmatic route must be added to routesToRender and this allowlist first.
 
   return entries;
 }

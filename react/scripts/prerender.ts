@@ -14,6 +14,7 @@ import { createServer } from "vite";
 import { renderToString } from "react-dom/server";
 import { createElement } from "react";
 import { generateSitemapAndRobots } from "./generate-sitemap.ts";
+import { assertBuildSafeSeo, inspectSeoHtml } from "./seo-content-guardrails.ts";
 import { SEO_LANDING_SLUGS } from "../src/data/seoLandingSlugs.ts";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -60,8 +61,6 @@ const vehicleRoutes = [
   "tempo-traveller",
   "urbania",
 ];
-
-const vehicleAliases = ["innova", "tempo"];
 
 const packageRoutes = [
   "taj-mahal-sunrise-tour",
@@ -113,9 +112,6 @@ const routesToRender: string[] = [
   // Fleet / Vehicles (5)
   ...vehicleRoutes.map((v) => `/en/vehicles/${v}/`),
 
-  // Vehicle Aliases (2)
-  ...vehicleAliases.map((v) => `/en/vehicles/${v}/`),
-
   // Tour Packages (6)
   ...packageRoutes.map((p) => `/en/packages/${p}/`),
 
@@ -149,6 +145,7 @@ function generateRedirectHtml(targetUrl: string, canonicalDomain: string): strin
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
     <meta http-equiv="refresh" content="0; url=${targetUrl}" />
     <link rel="canonical" href="${fullCanonical}" />
     <title>Redirecting…</title>
@@ -273,6 +270,14 @@ export async function prerender(): Promise<void> {
       // 5. Ensure relative assets work correctly across directory depths if requested
       if (prefix) {
         html = html.replaceAll("./assets/", `${prefix}assets/`);
+      }
+
+      if (!isBooking && !is404) {
+        const quality = inspectSeoHtml(route, html, CANONICAL_DOMAIN);
+        for (const finding of quality.findings) {
+          console.warn(`⚠️ SEO ${finding.severity} [${finding.code}] ${finding.path}: ${finding.message}`);
+        }
+        if (process.env.SEO_STRICT === "1") assertBuildSafeSeo(quality);
       }
 
       // Determine output file path

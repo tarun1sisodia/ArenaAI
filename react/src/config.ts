@@ -30,7 +30,7 @@ export const siteConfig: SiteConfig = {
   defaultLanguage: "en",
   supportedLanguages: ["en", "hi"],
   contact: {
-    phone: "+919762817598",
+    phone: "+916395867598",
     phoneDisplay: "+91 63958 67598",
     whatsapp: "919762817598",
     email: "bookings@agraskbagheltourandtravels.com",
