@@ -3,18 +3,18 @@
  *
  * Provides:
  * 1. Typed LocationIQ API client (`fetchLocationIQSuggestions`) with autocomplete support.
- *    Primary path is the secure backend proxy (`/api/v1/locations/autocomplete`),
- *    which holds the token server-side; direct LocationIQ calls are a fallback.
+ *    The ONLY live path is the secure backend proxy (`/api/v1/locations/autocomplete`),
+ *    which holds the token server-side. The browser never calls LocationIQ directly.
  * 2. React hook (`useLocationIQ`) with 300ms debouncing, AbortController race prevention.
  * 3. Safe SSR execution with fallback to empty state when offline or headless.
  *
- * Security (2026-10-01): the access token is build-time configuration only
- * (`VITE_LOCATIONIQ_ACCESS_TOKEN`). There is no runtime token editing, no
- * localStorage persistence, and no UI that displays the token.
+ * Security (2026-10-02): there is intentionally no browser-side token at all —
+ * no build-time env token, no `window` global, no localStorage persistence,
+ * and no UI that displays or edits a token. Frontend bundles are public, so
+ * any token shipped to the browser would be exposed; the proxy holds it.
  */
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { getLocationIqAccessToken } from "../config";
 import { getApiBaseUrl } from "../services/api";
 
 /** Raw address object returned by LocationIQ Autocomplete API */
@@ -62,7 +62,6 @@ export interface LocationSuggestion {
 /** Options for fetching suggestions from LocationIQ */
 export interface FetchLocationIQParams {
   query: string;
-  token?: string;
   limit?: number;
   countrycodes?: string;
   signal?: AbortSignal;
@@ -78,8 +77,6 @@ export interface UseLocationIQOptions {
   limit?: number;
   /** Comma-separated ISO country codes. Defaults to "in" (India). */
   countrycodes?: string;
-  /** Explicit token override. Defaults to runtime token from config. */
-  token?: string;
   /** Whether autocomplete querying is enabled. Defaults to true. */
   enabled?: boolean;
   /** Callback fired when suggestions successfully arrive */
@@ -100,29 +97,20 @@ export interface UseLocationIQResult {
   isLoading: boolean;
   /** Error message if request failed, or null */
   error: string | null;
-  /** Active LocationIQ access token */
-  token: string;
-  /** Whether a non-empty LocationIQ access token is present */
-  hasToken: boolean;
+  /** Whether the last completed search returned live proxy (LocationIQ) results */
+  liveSearchAvailable: boolean;
   /** Imperative search method that bypasses the debounce delay */
   search: (overrideQuery?: string) => Promise<LocationSuggestion[]>;
   /** Clears the current results list and error message */
   clearResults: () => void;
 }
 
-/** Helper to generate a clean URL-friendly slug */
-function slugify(text: string): string {
-  return (
-    text
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/(^-|-$)/g, "") || "location"
-  );
-}
-
 /**
- * Low-level typed client function to query LocationIQ autocomplete API.
- * Handles HTTP errors, network aborts, and maps raw places into normalized suggestions.
+ * Low-level typed client function for location autocomplete.
+ * Queries the secure backend proxy (`/api/v1/locations/autocomplete`), which
+ * holds the LocationIQ token server-side, and maps the response into
+ * normalized suggestions. Returns an empty list when the proxy is
+ * unreachable, so callers fall back to the curated static destinations.
  */
 export async function fetchLocationIQSuggestions(
   params: FetchLocationIQParams
@@ -211,91 +199,11 @@ export async function fetchLocationIQSuggestions(
     ) {
       return [];
     }
-    // Fall back to direct LocationIQ query if backend is unreachable
+    // Proxy unreachable: return empty so callers fall back to the curated
+    // static destination list. The browser never calls LocationIQ directly.
   }
 
-  const token = (params.token || getLocationIqAccessToken()).trim();
-  if (!token) {
-    return [];
-  }
-
-  const limit = params.limit ?? 5;
-  const countrycodes = params.countrycodes ?? "in";
-
-  const searchParams = new URLSearchParams({
-    key: token,
-    q,
-    limit: String(limit),
-    countrycodes,
-    format: "json",
-    normalizecity: "1",
-  });
-
-  const endpoint = `https://api.locationiq.com/v1/autocomplete?${searchParams.toString()}`;
-
-  try {
-    const response = await fetch(endpoint, {
-      signal: params.signal,
-      headers: { Accept: "application/json" },
-    });
-
-    if (!response.ok) {
-      if (response.status === 401 || response.status === 403) {
-        throw new Error(
-          `LocationIQ authorization failed (${response.status}): Invalid or missing access token.`
-        );
-      }
-      if (response.status === 429) {
-        throw new Error(
-          "LocationIQ rate limit exceeded (429): Too many requests. Please try again later."
-        );
-      }
-      throw new Error(`LocationIQ request failed with HTTP ${response.status}`);
-    }
-
-    const data: unknown = await response.json();
-
-    if (!Array.isArray(data)) {
-      return [];
-    }
-
-    return (data as LocationIQRawPlace[]).map((place) => {
-      const parts = (place.display_name || "").split(",").map((s) => s.trim());
-      const primaryName = parts[0] || place.display_name || "Location";
-      const address = place.address;
-      const subtitle =
-        address && (address.city || address.state)
-          ? [address.city || address.suburb, address.state, address.postcode]
-              .filter(Boolean)
-              .join(", ")
-          : place.display_name;
-
-      const placeId = place.place_id || slugify(place.display_name);
-
-      return {
-        id: `locationiq-${placeId}`,
-        name: primaryName,
-        subtitle: subtitle || place.display_name,
-        code: "IQ",
-        isLocationIQ: true,
-        lat: place.lat ? Number(place.lat) : undefined,
-        lon: place.lon ? Number(place.lon) : undefined,
-        raw: place,
-      };
-    });
-  } catch (err: unknown) {
-    // Gracefully handle deliberate aborts from AbortController
-    if (
-      err instanceof DOMException &&
-      (err.name === "AbortError" || err.code === 20)
-    ) {
-      return [];
-    }
-    if (err instanceof Error && err.name === "AbortError") {
-      return [];
-    }
-    throw err;
-  }
+  return [];
 }
 
 /**
@@ -304,8 +212,8 @@ export async function fetchLocationIQSuggestions(
  * Features:
  * - 300ms debounced execution to reduce API consumption
  * - AbortController race condition prevention on rapid typing
- * - Build-time token configuration (VITE_LOCATIONIQ_ACCESS_TOKEN); the secure
- *   backend proxy is the primary path and holds the token server-side
+ * - Proxy-only live search: the secure backend endpoint authenticates with
+ *   its server-held token, so the browser needs (and holds) no token at all
  * - Imperative search override
  * - SSR safety
  */
@@ -318,7 +226,6 @@ export function useLocationIQ(
     minQueryLength = 2,
     limit = 5,
     countrycodes = "in",
-    token: explicitToken,
     enabled = true,
     onSuccess,
     onError,
@@ -328,25 +235,11 @@ export function useLocationIQ(
   const [results, setResults] = useState<LocationSuggestion[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  // Runtime token state
-  const [activeToken, setActiveToken] = useState<string>(() => {
-    return explicitToken || getLocationIqAccessToken();
-  });
-
-  // Track if activeToken has a non-empty value
-  const hasToken = Boolean(activeToken.trim());
+  const [liveSearchAvailable, setLiveSearchAvailable] = useState(false);
 
   // Refs for tracking in-flight requests and timers
   const abortControllerRef = useRef<AbortController | null>(null);
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  // Keep active token synchronized if options.token changes
-  useEffect(() => {
-    if (explicitToken !== undefined) {
-      setActiveToken(explicitToken);
-    }
-  }, [explicitToken]);
 
   // Clear results helper
   const clearResults = useCallback(() => {
@@ -359,6 +252,7 @@ export function useLocationIQ(
       debounceTimerRef.current = null;
     }
     setResults([]);
+    setLiveSearchAvailable(false);
     setError(null);
     setIsLoading(false);
   }, []);
@@ -394,7 +288,6 @@ export function useLocationIQ(
       try {
         const items = await fetchLocationIQSuggestions({
           query: q,
-          token: activeToken || undefined,
           limit,
           countrycodes,
           signal: controller.signal,
@@ -402,6 +295,7 @@ export function useLocationIQ(
 
         if (!controller.signal.aborted) {
           setResults(items);
+          setLiveSearchAvailable(items.some((item) => item.isLocationIQ));
           setIsLoading(false);
           onSuccess?.(items);
         }
@@ -417,7 +311,7 @@ export function useLocationIQ(
         return [];
       }
     },
-    [query, minQueryLength, activeToken, limit, countrycodes, onSuccess, onError]
+    [query, minQueryLength, limit, countrycodes, onSuccess, onError]
   );
 
   // Debounced effect reacting to query changes
@@ -448,7 +342,7 @@ export function useLocationIQ(
         clearTimeout(debounceTimerRef.current);
       }
     };
-  }, [query, activeToken, debounceMs, minQueryLength, enabled, search, clearResults]);
+  }, [query, debounceMs, minQueryLength, enabled, search, clearResults]);
 
   // Clean up on unmount
   useEffect(() => {
@@ -468,8 +362,7 @@ export function useLocationIQ(
     results,
     isLoading,
     error,
-    token: activeToken,
-    hasToken,
+    liveSearchAvailable,
     search,
     clearResults,
   };

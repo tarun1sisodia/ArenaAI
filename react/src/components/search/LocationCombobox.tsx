@@ -7,9 +7,10 @@
  * 3. Live LocationIQ address autocomplete with 300ms debounce via useLocationIQ hook.
  * 4. Full keyboard navigation (ArrowUp, ArrowDown, Enter, Escape).
  * 5. ARIA 1.2 combobox accessibility standards.
- * 6. Non-interactive LocationIQ status indicator. The access token is
- *    build-time configuration only (VITE_LOCATIONIQ_ACCESS_TOKEN) and is
- *    never displayed or editable in this UI (2026-10-01 security fix).
+ * 6. Non-interactive LocationIQ status indicator. Live search runs only
+ *    through the secure backend proxy, which holds the token server-side;
+ *    the browser holds no token and nothing is displayed or editable here
+ *    (2026-10-02 security fix).
  * 7. Clean White light mode and Solar Dusk dark mode design tokens compliance.
  */
 
@@ -388,16 +389,16 @@ export function LocationCombobox({
   const listboxRef = useRef<HTMLDivElement>(null);
 
   // Hook into typed LocationIQ engine.
-  // NOTE (2026-10-01): the access token is build-time configuration only
-  // (VITE_LOCATIONIQ_ACCESS_TOKEN). There is intentionally no UI to view or
-  // edit it — the backend proxy at /api/v1/locations/autocomplete is the
-  // primary path and holds the token server-side.
+  // NOTE (2026-10-02): live search runs only through the secure backend
+  // proxy at /api/v1/locations/autocomplete, which holds the token
+  // server-side. The browser holds no token; when the proxy returns no
+  // results the curated static destinations below are shown instead.
   const {
     query,
     setQuery,
     results: iqResults,
     isLoading,
-    hasToken,
+    liveSearchAvailable,
   } = useLocationIQ("", { debounceMs: 300, minQueryLength: 2, limit: 5 });
 
   // Filter static destinations based on user query
@@ -709,19 +710,19 @@ export function LocationCombobox({
               </span>
             )}
 
-            {/* LocationIQ status indicator (non-interactive).
-                The access token is build-time config only and is never
-                exposed or editable in this UI. */}
+            {/* LocationIQ status indicator (non-interactive). Live search
+                runs through the secure backend proxy; the browser holds no
+                token and nothing here can expose or edit one. */}
             {showLocationIqBadge && (
               <span
-                className={`loc-api-tag ${hasToken ? "is-active" : ""}`}
+                className={`loc-api-tag ${liveSearchAvailable ? "is-active" : ""}`}
                 title={
-                  hasToken
+                  liveSearchAvailable
                     ? "LocationIQ live search available"
                     : "LocationIQ live search unavailable — showing curated destinations"
                 }
               >
-                {hasToken ? "● LocationIQ Active" : "○ Curated List"}
+                {liveSearchAvailable ? "● LocationIQ Active" : "○ Curated List"}
               </span>
             )}
           </div>
