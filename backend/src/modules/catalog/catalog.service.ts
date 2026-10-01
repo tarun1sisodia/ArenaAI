@@ -14,6 +14,23 @@ import type { AttachMediaSchema, CreateCatalogSchema, PublicCatalogQuerySchema, 
 import { mediaObjectPath, type MediaStorage } from "./media.storage.js";
 import type { z } from "zod";
 
+async function requestFrontendRebuild(reason: string, manifestVersion: number): Promise<void> {
+  const hook = process.env.PAGES_DEPLOY_HOOK_URL?.trim();
+  if (!hook) return;
+  try {
+    const response = await fetch(hook, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ reason, manifestVersion }),
+      signal: AbortSignal.timeout(10_000),
+    });
+    if (!response.ok) console.warn(`[catalog] frontend rebuild hook returned HTTP ${response.status}`);
+  } catch (error) {
+    // The API publication is authoritative; a transient hook failure is retryable.
+    console.warn(`[catalog] frontend rebuild hook failed: ${error instanceof Error ? error.message : "unknown error"}`);
+  }
+}
+
 export function createCatalogService(deps: { db: Repositories; clock: Clock; mediaStorage?: MediaStorage | null }) {
   let manifestVersion = 1;
   let lastRegeneratedAt = toIso(deps.clock.now());
@@ -302,6 +319,7 @@ export function createCatalogService(deps: { db: Repositories; clock: Clock; med
         createdAt: now,
       });
       bumpManifest();
+      if (item.status === "published") void requestFrontendRebuild("catalog-update", manifestVersion);
       return updated;
     },
 
@@ -330,6 +348,7 @@ export function createCatalogService(deps: { db: Repositories; clock: Clock; med
         requestId,
         createdAt: now,
       });
+      void requestFrontendRebuild("catalog-publish", manifestVersion);
       return updated;
     },
 
@@ -357,6 +376,7 @@ export function createCatalogService(deps: { db: Repositories; clock: Clock; med
         requestId,
         createdAt: now,
       });
+      void requestFrontendRebuild("catalog-archive", manifestVersion);
       return updated;
     },
 
@@ -441,6 +461,7 @@ export function createCatalogService(deps: { db: Repositories; clock: Clock; med
         createdAt: now,
       });
       bumpManifest();
+      if (item.status === "published") void requestFrontendRebuild("catalog-media-add", manifestVersion);
       return created;
     },
 
@@ -458,6 +479,8 @@ export function createCatalogService(deps: { db: Repositories; clock: Clock; med
         publishedAt: input.status === "published" ? now : item.publishedAt,
       });
       bumpManifest();
+      const parent = await deps.db.catalog.getById(item.catalogItemId);
+      if (parent?.status === "published") void requestFrontendRebuild("catalog-media-update", manifestVersion);
       return updated;
     },
 
@@ -487,6 +510,8 @@ export function createCatalogService(deps: { db: Repositories; clock: Clock; med
         createdAt: now,
       });
       bumpManifest();
+      const parent = await deps.db.catalog.getById(item.catalogItemId);
+      if (parent?.status === "published") void requestFrontendRebuild("catalog-media-delete", manifestVersion);
       return { deleted: true, id };
     },
 
