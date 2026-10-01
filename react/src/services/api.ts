@@ -119,8 +119,8 @@ export interface CreateCheckoutPayload {
   ticketId: string;
   guestAccessToken: string;
   idempotencyKey: string;
-  provider?: "razorpay" | "paypal" | "card";
-  currency?: "INR" | "USD" | "EUR" | "GBP";
+  provider?: "razorpay";
+  currency?: "INR";
   returnUrl?: string;
   cancelUrl?: string;
 }
@@ -142,8 +142,8 @@ export interface CreateCheckoutResponse {
 export interface PaymentStatusResponse {
   paymentId: string;
   ticketId: string;
-  status: "pending" | "authorized" | "captured" | "failed" | "refunded";
-  reconciliationStatus: "pending" | "matched" | "needs_review" | "reconciled" | "discrepancy";
+  status: "pending" | "captured" | "failed" | "refunded" | "needs_review";
+  reconciliationStatus: "pending" | "matched" | "needs_review" | "duplicate";
   provider: string;
   currency: string;
   amountMinor: number;

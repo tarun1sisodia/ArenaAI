@@ -542,6 +542,10 @@ export function createMemoryRepositories(nowIso = new Date().toISOString()): Rep
         webhookEvents.set(event.eventId, clone(event));
         return { created: true, record: clone(event) };
       },
+      async markProcessed(eventId) {
+        const existing = webhookEvents.get(eventId);
+        if (existing) webhookEvents.set(eventId, { ...existing, processed: true });
+      },
       async hasEvent(eventId) {
         return webhookEvents.has(eventId);
       },

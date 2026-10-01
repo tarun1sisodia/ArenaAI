@@ -820,6 +820,9 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
           );
           return { created: true, record: event };
         },
+        async markProcessed(eventId: string) {
+          await query(client, "update raw_webhooks set processed=true where event_id=$1", [eventId]);
+        },
         async hasEvent(eventId: string) {
           const rows = await query(client, "select 1 from raw_webhooks where event_id=$1", [eventId]);
           return rows.length > 0;

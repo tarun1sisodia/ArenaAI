@@ -161,6 +161,7 @@ export type Repositories = {
 
   webhooks: {
     record(event: WebhookEventRecord): Promise<{ created: boolean; record: WebhookEventRecord }>;
+    markProcessed(eventId: string): Promise<void>;
     hasEvent(eventId: string): Promise<boolean>;
   };
 

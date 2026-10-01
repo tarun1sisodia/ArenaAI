@@ -169,6 +169,7 @@ describe("booking + payment vertical slice", () => {
     const payload = {
       eventId: "evt_mismatch",
       providerOrderId: checkout.providerOrderId,
+      providerPaymentId: "pay_mismatch",
       amountMinor: 100,
       currency: "INR",
       status: "captured",
@@ -181,6 +182,46 @@ describe("booking + payment vertical slice", () => {
       payload: signed.raw,
     });
     expect(res.json().data.status).toBe("needs_review");
+    const bookingRes = await app.inject({
+      method: "GET",
+      url: `/api/v1/bookings/${draft.ticketId}?token=${draft.guestAccessToken}`,
+    });
+    expect(bookingRes.json().data.status).toBe("pending_payment");
+    await app.close();
+  });
+
+  it("does not confirm from an order-level paid event without a payment id", async () => {
+    const { app } = await createTestApp();
+    const draftRes = await app.inject({ method: "POST", url: "/api/v1/bookings/draft", payload: sampleDraft });
+    const draft = draftRes.json().data as { ticketId: string; guestAccessToken: string };
+    const checkoutRes = await app.inject({
+      method: "POST",
+      url: "/api/v1/payments/create-checkout",
+      payload: {
+        ticketId: draft.ticketId,
+        guestAccessToken: draft.guestAccessToken,
+        idempotencyKey: "44444444-4444-4444-8444-444444444444",
+      },
+    });
+    const checkout = checkoutRes.json().data as { providerOrderId: string; amountMinor: number };
+    const payload = {
+      eventId: "evt_order_paid_without_payment",
+      eventType: "order.paid",
+      providerOrderId: checkout.providerOrderId,
+      amountMinor: checkout.amountMinor,
+      currency: "INR",
+      status: "captured",
+    };
+    const signed = signProviderBody("whsec_razorpay_test", payload);
+    const res = await app.inject({
+      method: "POST",
+      url: "/api/v1/payments/webhooks/razorpay",
+      headers: { "x-razorpay-signature": signed.signature, "content-type": "application/json" },
+      payload: signed.raw,
+    });
+    expect(res.statusCode).toBe(200);
+    expect(res.json().data.status).toBe("pending");
+
     const bookingRes = await app.inject({
       method: "GET",
       url: `/api/v1/bookings/${draft.ticketId}?token=${draft.guestAccessToken}`,

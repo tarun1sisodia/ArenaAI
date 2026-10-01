@@ -205,7 +205,7 @@ export function createPaymentService(deps: {
         processed: false,
         receivedAt: toIso(deps.clock.now()),
       });
-      if (!stored.created) {
+      if (!stored.created && stored.record.processed) {
         return { duplicate: true, status: "already_processed" as const };
       }
 
@@ -225,6 +225,7 @@ export function createPaymentService(deps: {
           failureReason: event.eventType,
           updatedAt: toIso(deps.clock.now()),
         });
+        await deps.db.webhooks.markProcessed(event.eventId);
         return { duplicate: false, status: "failed" as const };
       }
 
@@ -236,11 +237,21 @@ export function createPaymentService(deps: {
           reconciliationStatus: "matched",
           updatedAt: toIso(deps.clock.now()),
         });
+        await deps.db.webhooks.markProcessed(event.eventId);
         return { duplicate: false, status: "refunded" as const };
       }
 
       if (event.status !== "captured") {
+        await deps.db.webhooks.markProcessed(event.eventId);
         return { duplicate: false, status: "ignored" as const };
+      }
+
+      // An order-level event does not identify the captured payment needed for
+      // refunds and ledger linkage. Wait for payment.captured (or another
+      // event with a provider payment ID) before confirming the booking.
+      if (!event.providerPaymentId) {
+        await deps.db.webhooks.markProcessed(event.eventId);
+        return { duplicate: false, status: "pending" as const };
       }
 
       // Strict amount and currency check - prevents amount tampering
@@ -255,6 +266,7 @@ export function createPaymentService(deps: {
           failureReason: `amount/currency mismatch event=${event.amountMinor} ${event.currency} order=${payment.amountMinor} ${payment.currency}`,
           updatedAt: toIso(deps.clock.now()),
         });
+        await deps.db.webhooks.markProcessed(event.eventId);
         return { duplicate: false, status: "needs_review" as const };
       }
 
@@ -326,6 +338,7 @@ export function createPaymentService(deps: {
           }
         }
       }
+      await deps.db.webhooks.markProcessed(event.eventId);
       return { duplicate: false, status: "captured" as const };
     },
 

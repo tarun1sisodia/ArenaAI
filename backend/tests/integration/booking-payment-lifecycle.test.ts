@@ -171,6 +171,7 @@ describe("Booking & Payment End-to-End Lifecycle State Machine (Step 1.5)", () =
       eventId: "evt_capture_for_refund",
       eventType: "payment.captured",
       providerOrderId: checkout.providerOrderId,
+      providerPaymentId: "pay_capture_for_refund",
       amountMinor: checkout.amountMinor,
       currency: "INR",
       status: "captured",
