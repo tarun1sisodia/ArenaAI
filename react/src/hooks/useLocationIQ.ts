@@ -3,17 +3,18 @@
  *
  * Provides:
  * 1. Typed LocationIQ API client (`fetchLocationIQSuggestions`) with autocomplete support.
- * 2. React hook (`useLocationIQ`) with 300ms debouncing, AbortController race prevention,
- *    and runtime token injection via localStorage, URL params, or window globals.
+ *    Primary path is the secure backend proxy (`/api/v1/locations/autocomplete`),
+ *    which holds the token server-side; direct LocationIQ calls are a fallback.
+ * 2. React hook (`useLocationIQ`) with 300ms debouncing, AbortController race prevention.
  * 3. Safe SSR execution with fallback to empty state when offline or headless.
+ *
+ * Security (2026-10-01): the access token is build-time configuration only
+ * (`VITE_LOCATIONIQ_ACCESS_TOKEN`). There is no runtime token editing, no
+ * localStorage persistence, and no UI that displays the token.
  */
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  clearLocationIqAccessToken,
-  getLocationIqAccessToken,
-  setLocationIqAccessToken,
-} from "../config";
+import { getLocationIqAccessToken } from "../config";
 import { getApiBaseUrl } from "../services/api";
 
 /** Raw address object returned by LocationIQ Autocomplete API */
@@ -103,10 +104,6 @@ export interface UseLocationIQResult {
   token: string;
   /** Whether a non-empty LocationIQ access token is present */
   hasToken: boolean;
-  /** Runtime token updater that also persists to localStorage */
-  setToken: (token: string) => void;
-  /** Clears the runtime token from state and localStorage */
-  clearToken: () => void;
   /** Imperative search method that bypasses the debounce delay */
   search: (overrideQuery?: string) => Promise<LocationSuggestion[]>;
   /** Clears the current results list and error message */
@@ -307,7 +304,8 @@ export async function fetchLocationIQSuggestions(
  * Features:
  * - 300ms debounced execution to reduce API consumption
  * - AbortController race condition prevention on rapid typing
- * - Runtime token management (URL query params, window global, or localStorage)
+ * - Build-time token configuration (VITE_LOCATIONIQ_ACCESS_TOKEN); the secure
+ *   backend proxy is the primary path and holds the token server-side
  * - Imperative search override
  * - SSR safety
  */
@@ -349,19 +347,6 @@ export function useLocationIQ(
       setActiveToken(explicitToken);
     }
   }, [explicitToken]);
-
-  // Set token helper
-  const handleSetToken = useCallback((newToken: string) => {
-    const trimmed = newToken.trim();
-    setActiveToken(trimmed);
-    setLocationIqAccessToken(trimmed);
-  }, []);
-
-  // Clear token helper
-  const handleClearToken = useCallback(() => {
-    setActiveToken("");
-    clearLocationIqAccessToken();
-  }, []);
 
   // Clear results helper
   const clearResults = useCallback(() => {
@@ -485,8 +470,6 @@ export function useLocationIQ(
     error,
     token: activeToken,
     hasToken,
-    setToken: handleSetToken,
-    clearToken: handleClearToken,
     search,
     clearResults,
   };

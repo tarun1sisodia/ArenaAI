@@ -115,7 +115,7 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
             </div>
             <div className="inline-flex items-center gap-2 rounded-lg bg-surface-container border border-border-warm px-3.5 py-1.5 shadow-xs">
               <span className="material-symbols-outlined text-xs sm:text-sm text-terracotta-sandstone shrink-0">
-                location_on
+                pin_drop
               </span>
               <p className="text-ink-charcoal text-xs sm:text-sm font-medium whitespace-nowrap">
                 Taj Ganj Physical Garage (Near Taj East Gate Rd)
@@ -140,7 +140,7 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
           {/* Card 1: Immediate Call Dispatch (Compact -20%) */}
           <div className="bg-surface-container-lowest border border-border-warm rounded-xl p-3.5 sm:p-4.5 flex flex-col justify-between shadow-xs hover:shadow-sm transition-shadow relative overflow-hidden">
             <div className="absolute top-0 right-0">
-              <span className="bg-terracotta-sandstone text-white font-label-caps text-[9px] px-2.5 py-0.5 rounded-bl uppercase tracking-wider font-semibold">
+              <span className="bg-terracotta-deep text-white font-label-caps text-label-caps px-2.5 py-0.5 rounded-bl uppercase tracking-wider font-semibold">
                 Average Pick-up: 2 Rings
               </span>
             </div>
@@ -150,16 +150,16 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
               </div>
               <h3 className="font-headline-sm text-ink-charcoal text-base mb-1 font-semibold">Immediate Call Dispatch (24×7)</h3>
               <p className="font-title-lg text-terracotta-sandstone mb-2 font-bold text-sm sm:text-base">+91 63958 67598</p>
-              <p className="text-on-surface-variant font-body-sm leading-relaxed mb-4 text-[10.5px]">
+              <p className="text-on-surface-variant font-body-sm leading-relaxed mb-4 text-body-md">
                 Immediate taxi allocation, late-night expressway emergencies, 3:00 AM airport pickups, and instant driver
                 assignment.
               </p>
             </div>
             <a
-              className="w-full inline-flex items-center justify-center gap-1.5 bg-terracotta-sandstone hover:bg-primary text-white font-label-lg py-2 px-3 rounded-lg transition-colors text-center text-xs font-semibold shadow-xs"
+              className="w-full inline-flex items-center justify-center gap-1.5 bg-terracotta-deep hover:bg-primary text-white font-label-lg py-2 px-3 rounded-lg transition-colors text-center text-xs font-semibold shadow-xs"
               href="tel:+916395867598"
             >
-              <span className="material-symbols-outlined text-[16px]">call</span>
+              <span className="material-symbols-outlined text-icon-16">call</span>
               <span>Call Dispatch Now</span>
             </a>
           </div>
@@ -167,7 +167,7 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
           {/* Card 2: WhatsApp Desk (Compact -20%) */}
           <div className="bg-surface-container-lowest border border-border-warm rounded-xl p-3.5 sm:p-4.5 flex flex-col justify-between shadow-xs hover:shadow-sm transition-shadow relative overflow-hidden">
             <div className="absolute top-0 right-0">
-              <span className="bg-success-jade text-white font-label-caps text-[9px] px-2.5 py-0.5 rounded-bl uppercase tracking-wider font-semibold">
+              <span className="bg-success-jade text-white font-label-caps text-label-caps px-2.5 py-0.5 rounded-bl uppercase tracking-wider font-semibold">
                 Typical Reply: &lt; 5 mins
               </span>
             </div>
@@ -179,7 +179,7 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
                 WhatsApp Desk (Fastest)
               </h3>
               <p className="font-title-lg text-ink-charcoal mb-2 font-bold text-sm sm:text-base">+91 63958 67598</p>
-              <p className="text-on-surface-variant font-body-sm leading-relaxed mb-4 text-[10.5px]">
+              <p className="text-on-surface-variant font-body-sm leading-relaxed mb-4 text-body-md">
                 Send itinerary details, receive vehicle photos, driver credentials, live location tracking, and instant quote
                 cards with UPI advance links.
               </p>
@@ -199,7 +199,7 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
           {/* Card 3: Corporate & Tour Desk (Compact -20%) */}
           <div className="bg-surface-container-lowest border border-border-warm rounded-xl p-3.5 sm:p-4.5 flex flex-col justify-between shadow-xs hover:shadow-sm transition-shadow relative overflow-hidden">
             <div className="absolute top-0 right-0">
-              <span className="bg-secondary text-white font-label-caps text-[9px] px-2.5 py-0.5 rounded-bl uppercase tracking-wider font-semibold">
+              <span className="bg-secondary text-white font-label-caps text-label-caps px-2.5 py-0.5 rounded-bl uppercase tracking-wider font-semibold">
                 Corporate Rates &amp; booking receipt
               </span>
             </div>
@@ -211,8 +211,8 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
               <p className="font-title-md text-ink-charcoal mb-0.5 font-semibold text-xs break-all">
                 bookings@agraskbagheltourandtravels.com
               </p>
-              <p className="text-on-surface-variant font-body-sm mb-2 text-[10px] break-all">dispatch@agraskbagheltourandtravels.com</p>
-              <p className="text-on-surface-variant font-body-sm leading-relaxed mb-4 text-[10.5px]">
+              <p className="text-on-surface-variant font-body-sm mb-2 text-label-lg break-all">dispatch@agraskbagheltourandtravels.com</p>
+              <p className="text-on-surface-variant font-body-sm leading-relaxed mb-4 text-body-md">
                 Multi-day Golden Triangle itineraries, wedding group transit in Tempo Travellers/Urbania, and B2B booking receipt tax
                 invoices.
               </p>
@@ -221,7 +221,7 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
               className="w-full inline-flex items-center justify-center gap-1.5 bg-surface-container-high hover:bg-surface-container-highest text-ink-charcoal font-label-lg py-2 px-3 rounded-lg transition-colors border border-outline-variant text-center text-xs font-semibold"
               href="mailto:bookings@agraskbagheltourandtravels.com"
             >
-              <span className="material-symbols-outlined text-[16px]">mail</span>
+              <span className="material-symbols-outlined text-icon-16">mail</span>
               <span>Email Itinerary</span>
             </a>
           </div>
@@ -232,7 +232,7 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
         {/* 4. DISPATCH FAQS (Compact -20%) */}
         <div className="max-w-4xl mx-auto pt-6">
           <div className="text-center mb-6">
-            <span className="font-label-caps text-[9.5px] text-primary uppercase tracking-widest font-bold block mb-1">
+            <span className="font-label-caps text-body-sm text-primary uppercase tracking-widest font-bold block mb-1">
               Dispatch Questions
             </span>
             <h2 className="font-headline-lg text-headline-sm sm:text-headline-lg text-ink-charcoal font-semibold">
@@ -249,13 +249,13 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
                     onClick={() => setOpenFaq(isOpen ? null : index)}
                     className="w-full text-left p-3 sm:p-3.5 flex items-center justify-between gap-3 hover:bg-sandstone-wash/20 transition-colors"
                   >
-                    <span className="font-title-md text-xs sm:text-[13px] font-semibold text-ink-charcoal">{faq.q}</span>
-                    <span className="material-symbols-outlined text-primary text-[18px] shrink-0">
+                    <span className="font-title-md text-xs sm:text-title-lg font-semibold text-ink-charcoal">{faq.q}</span>
+                    <span className="material-symbols-outlined text-primary text-icon-18 shrink-0">
                       {isOpen ? "expand_less" : "expand_more"}
                     </span>
                   </button>
                   {isOpen && (
-                    <div className="p-3 sm:p-3.5 pt-0 text-on-surface-variant font-body-sm text-[10.5px] leading-relaxed border-t border-border-warm/40 mt-1">
+                    <div className="p-3 sm:p-3.5 pt-0 text-on-surface-variant font-body-sm text-body-md leading-relaxed border-t border-border-warm/40 mt-1">
                       {faq.a}
                     </div>
                   )}

@@ -374,7 +374,7 @@ export function FamousPlacesSection() {
 
                 {/* Top Badge: Category */}
                 <div className="absolute top-3 left-3 flex items-center gap-1.5">
-                  <span className="px-2.5 py-1 rounded-full bg-ink-midnight/80 text-white font-label-caps text-[9px] uppercase tracking-wider font-semibold backdrop-blur-md shadow-xs">
+                  <span className="px-2.5 py-1 rounded-full bg-ink-midnight/80 text-white font-label-caps text-label-caps uppercase tracking-wider font-semibold backdrop-blur-md shadow-xs">
                     {place.categoryBadge}
                   </span>
                 </div>
@@ -393,15 +393,15 @@ export function FamousPlacesSection() {
                   aria-label="View photo in high-resolution lightbox"
                   title="Expand high-res photo"
                 >
-                  <span className="material-symbols-outlined text-[17px]">zoom_in</span>
+                  <span className="material-symbols-outlined text-icon-17">zoom_in</span>
                 </button>
 
                 {/* Bottom Overlay: Photo Caption & Image Counter */}
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink-midnight/90 via-ink-midnight/40 to-transparent p-3 pt-6 flex items-end justify-between">
-                  <span className="text-[11px] text-white/95 font-medium truncate max-w-[75%] drop-shadow-xs">
+                  <span className="text-label-md text-white/95 font-medium truncate max-w-[75%] drop-shadow-xs">
                     {activeImg.caption}
                   </span>
-                  <span className="px-2 py-0.5 rounded bg-black/60 text-white text-[9.5px] font-mono tracking-wider backdrop-blur-xs font-semibold">
+                  <span className="px-2 py-0.5 rounded bg-black/60 text-white text-body-sm font-mono tracking-wider backdrop-blur-xs font-semibold">
                     {currentImgIdx + 1} / {place.images.length}
                   </span>
                 </div>
@@ -430,7 +430,7 @@ export function FamousPlacesSection() {
                     />
                   </button>
                 ))}
-                <span className="text-[10px] text-on-surface-variant font-label-caps ml-auto pr-1 shrink-0 font-medium">
+                <span className="text-label-lg text-on-surface-variant font-label-caps ml-auto pr-1 shrink-0 font-medium">
                   {place.images.length} Real Photos
                 </span>
               </div>
@@ -455,9 +455,9 @@ export function FamousPlacesSection() {
                 </p>
 
                 {/* Specs Strip */}
-                <div className="grid grid-cols-2 gap-2 bg-surface-container-low p-2.5 rounded-lg border border-border-warm/40 text-[10.5px]">
+                <div className="grid grid-cols-2 gap-2 bg-surface-container-low p-2.5 rounded-lg border border-border-warm/40 text-body-md">
                   <div>
-                    <span className="font-label-caps text-[9px] text-on-surface-variant uppercase block font-semibold">
+                    <span className="font-label-caps text-label-caps text-on-surface-variant uppercase block font-semibold">
                       Distance
                     </span>
                     <span className="font-title-md text-on-surface font-bold">
@@ -465,7 +465,7 @@ export function FamousPlacesSection() {
                     </span>
                   </div>
                   <div>
-                    <span className="font-label-caps text-[9px] text-on-surface-variant uppercase block font-semibold">
+                    <span className="font-label-caps text-label-caps text-on-surface-variant uppercase block font-semibold">
                       Cab Duration
                     </span>
                     <span className="font-title-md text-on-surface font-bold">
@@ -473,7 +473,7 @@ export function FamousPlacesSection() {
                     </span>
                   </div>
                   <div className="col-span-2 pt-1 border-t border-border-warm/40 flex items-center justify-between">
-                    <span className="text-on-surface-variant text-[10px]">
+                    <span className="text-on-surface-variant text-label-lg">
                       Best Visit: <strong className="text-on-surface">{place.bestTime}</strong>
                     </span>
                   </div>
@@ -484,7 +484,7 @@ export function FamousPlacesSection() {
                   {place.highlights.map((tag) => (
                     <span
                       key={tag}
-                      className="px-2 py-0.5 rounded bg-sandstone-wash text-on-surface-variant font-label-caps text-[9px] font-semibold"
+                      className="px-2 py-0.5 rounded bg-sandstone-wash text-on-surface-variant font-label-caps text-label-caps font-semibold"
                     >
                       {tag}
                     </span>
@@ -498,7 +498,7 @@ export function FamousPlacesSection() {
                     href={`/book?from=Agra&to=${encodeURIComponent(place.name)}`}
                   >
                     <span>Book Cab</span>
-                    <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
+                    <span className="material-symbols-outlined text-icon-14">arrow_forward</span>
                   </a>
 
                   {/* WhatsApp CTA in Pure Black with Real WhatsApp Icon */}
@@ -546,14 +546,14 @@ export function FamousPlacesSection() {
                 className="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/70 hover:bg-black text-white flex items-center justify-center transition-colors shadow-md"
                 aria-label="Close high-res preview"
               >
-                <span className="material-symbols-outlined text-[20px]">close</span>
+                <span className="material-symbols-outlined text-icon-20">close</span>
               </button>
             </div>
             <div className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface-container-lowest">
               <div>
-                <h4 className="font-title-md text-sm sm:text-base font-bold text-on-surface">
+                <h2 className="font-title-md text-sm sm:text-base font-bold text-on-surface">
                   {modalImage.title}
-                </h4>
+                </h2>
                 <p className="font-body-sm text-xs text-on-surface-variant mt-0.5">
                   {modalImage.caption}
                 </p>

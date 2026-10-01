@@ -150,12 +150,12 @@ export function BrandLogo({
       {/* Brand Wordmark & Subtitle */}
       <div className="flex flex-col">
         <span
-          className="font-headline-sm text-[13.5px] font-semibold tracking-wide text-ink-charcoal group-hover:text-primary transition-colors leading-none"
+          className="font-headline-sm text-headline-sm font-semibold tracking-wide text-ink-charcoal group-hover:text-primary transition-colors leading-none"
           aria-hidden="true"
         >
           {displayText}
         </span>
-        <span className="font-label-caps text-[7.5px] tracking-wider text-secondary uppercase font-semibold leading-none mt-0.5">
+        <span className="font-label-caps text-label-caps tracking-wider text-secondary uppercase font-semibold leading-none mt-0.5">
           {subtitle}
         </span>
       </div>

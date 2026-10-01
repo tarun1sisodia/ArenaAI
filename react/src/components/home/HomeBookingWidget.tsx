@@ -33,7 +33,7 @@ function formatDate(value: string): string {
 }
 
 function FieldError({ children }: { children?: string }) {
-  return children ? <p className="mt-1 text-[10px] text-error" role="alert">{children}</p> : null;
+  return children ? <p className="mt-1 text-label-lg text-error" role="alert">{children}</p> : null;
 }
 
 export function HomeBookingWidget() {
@@ -116,7 +116,7 @@ export function HomeBookingWidget() {
             </div>
             <div className="min-w-0">
               <label className="home-booking-label">To</label>
-              <LocationCombobox id="home-destination" value={destination} onChange={setDestination} placeholder="Search destination city..." label="Destination city" triggerIcon="location_on" showLocationIqBadge={false} />
+              <LocationCombobox id="home-destination" value={destination} onChange={setDestination} placeholder="Search destination city..." label="Destination city" triggerIcon="pin_drop" showLocationIqBadge={false} />
               <FieldError>{errors.destination}</FieldError>
             </div>
           </div>
@@ -170,10 +170,10 @@ export function HomeBookingWidget() {
           <strong className="home-booking-fare">{estimatedFare}</strong>
         </div>
         <a href={bookingHref()} onClick={(event) => { if (!validate()) { event.preventDefault(); document.getElementById("home-booking-widget")?.scrollIntoView({ behavior: "smooth", block: "center" }); } }} className="home-booking-cta">
-          Book Now <span className="material-symbols-outlined text-[17px]" aria-hidden="true">east</span>
+          Book Now <span className="material-symbols-outlined text-icon-17" aria-hidden="true">east</span>
         </a>
       </div>
-      <p className="mt-3 text-center text-[9px] leading-relaxed text-on-surface-variant">Toll-inclusive · booking receipt · 28% advance only</p>
+      <p className="mt-3 text-center text-label-caps leading-relaxed text-on-surface-variant">Toll-inclusive · booking receipt · 28% advance only</p>
     </div>
   );
 }

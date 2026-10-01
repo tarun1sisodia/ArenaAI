@@ -50,6 +50,16 @@ export function isReactMigrationEnabled(): boolean {
   return import.meta.env.VITE_REACT_MIGRATION_ENABLED !== "false";
 }
 
+/**
+ * Reads the LocationIQ access token from build-time / runtime configuration.
+ *
+ * SECURITY (2026-10-01): the token is configuration only — build-time env var
+ * `VITE_LOCATIONIQ_ACCESS_TOKEN` or the `window.LOCATIONIQ_ACCESS_TOKEN`
+ * global. There is intentionally NO localStorage persistence and NO UI to
+ * view or edit the token: the secure backend proxy
+ * (`/api/v1/locations/autocomplete`) is the primary search path and holds the
+ * real token server-side. A visitor must never be able to read or overwrite it.
+ */
 function readRuntimeToken(): string {
   const configured = import.meta.env.VITE_LOCATIONIQ_ACCESS_TOKEN?.trim();
   if (configured) return configured;
@@ -57,11 +67,8 @@ function readRuntimeToken(): string {
   if (typeof window === "undefined") return "";
 
   try {
-    const globalKey = (window as unknown as { LOCATIONIQ_ACCESS_TOKEN?: string }).LOCATIONIQ_ACCESS_TOKEN?.trim();
-    if (globalKey) return globalKey;
-
     return (
-      window.localStorage.getItem("locationiq_access_token")?.trim() || ""
+      (window as unknown as { LOCATIONIQ_ACCESS_TOKEN?: string }).LOCATIONIQ_ACCESS_TOKEN?.trim() || ""
     );
   } catch {
     return "";
@@ -70,22 +77,4 @@ function readRuntimeToken(): string {
 
 export function getLocationIqAccessToken(): string {
   return readRuntimeToken();
-}
-
-export function setLocationIqAccessToken(token: string): void {
-  if (typeof window === "undefined") return;
-  try {
-    const trimmed = token.trim();
-    if (trimmed) {
-      window.localStorage.setItem("locationiq_access_token", trimmed);
-    } else {
-      window.localStorage.removeItem("locationiq_access_token");
-    }
-  } catch {
-    // Ignore storage quota / access errors
-  }
-}
-
-export function clearLocationIqAccessToken(): void {
-  setLocationIqAccessToken("");
 }

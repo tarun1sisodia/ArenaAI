@@ -71,7 +71,7 @@ export function MobileNavSheet({
               onClick={onClose}
               aria-label="Close menu"
             >
-              <span className="material-symbols-outlined text-[20px]">close</span>
+              <span className="material-symbols-outlined text-icon-20">close</span>
             </button>
           </div>
 
@@ -92,7 +92,7 @@ export function MobileNavSheet({
                       : "text-on-surface hover:bg-sandstone-wash"
                   }`}
                 >
-                  <span className={`material-symbols-outlined text-[20px] ${active ? "text-on-primary-container" : "text-terracotta-sandstone"}`}>
+                  <span className={`material-symbols-outlined text-icon-20 ${active ? "text-on-primary-container" : "text-terracotta-sandstone"}`}>
                     {link.icon}
                   </span>
                   <span>{link.label}</span>
@@ -110,7 +110,7 @@ export function MobileNavSheet({
               href={`tel:${contact.phone}`}
               className="flex items-center justify-center gap-1.5 py-2.5 rounded-lg bg-surface-container text-on-surface font-label-lg text-label-lg hover:bg-surface-container-high transition-colors"
             >
-              <span className="material-symbols-outlined text-primary text-[18px]">call</span>
+              <span className="material-symbols-outlined text-primary text-icon-18">call</span>
               <span>Call Desk</span>
             </a>
             <a
@@ -125,7 +125,7 @@ export function MobileNavSheet({
             </a>
           </div>
 
-          <div className="text-center text-body-sm text-secondary text-[12px] pt-1">
+          <div className="text-center text-body-sm text-secondary text-body-lg pt-1">
             24×7 Taj Ganj Agra Dispatch • Transparent Fares
           </div>
         </div>

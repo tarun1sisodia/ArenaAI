@@ -76,7 +76,7 @@ export function RadialDock({ currentPath, className = "" }: RadialDockProps) {
       >
         <span className="icon">
           <span className="icon icon-call" aria-hidden="true">
-            <span className="material-symbols-outlined text-[18px]">call</span>
+            <span className="material-symbols-outlined text-icon-18">call</span>
           </span>
         </span>
       </a>

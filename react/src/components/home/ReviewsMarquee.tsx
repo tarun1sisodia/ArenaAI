@@ -40,21 +40,21 @@ function ReviewCard({ review }: ReviewCardProps) {
               {initials}
             </div>
             <div>
-              <h4 className="font-title-md text-[13px] font-bold text-on-surface leading-tight">
+              <h3 className="font-title-md text-title-lg font-bold text-on-surface leading-tight">
                 {review.name}
-              </h4>
-              <span className="font-label-caps text-[9px] text-on-surface-variant block mt-0.5">
+              </h3>
+              <span className="font-label-caps text-label-caps text-on-surface-variant block mt-0.5">
                 {review.role || review.place}
               </span>
             </div>
           </div>
-          <span className="px-2 py-0.5 rounded-full bg-success-jade/10 text-success-jade font-label-caps text-[8.5px] uppercase font-bold flex items-center gap-0.5 shrink-0">
-            <span className="material-symbols-outlined text-[11px]">verified</span>
+          <span className="px-2 py-0.5 rounded-full bg-success-jade/10 text-success-jade font-label-caps text-label-caps uppercase font-bold flex items-center gap-0.5 shrink-0">
+            <span className="material-symbols-outlined text-icon-11">verified</span>
             Verified
           </span>
         </div>
 
-        <p className="font-body-md text-[11.5px] italic text-on-surface-variant leading-relaxed line-clamp-3">
+        <p className="font-body-md text-title-md italic text-on-surface-variant leading-relaxed line-clamp-3">
           &ldquo;{review.quote}&rdquo;
         </p>
       </div>
@@ -68,14 +68,14 @@ function ReviewCard({ review }: ReviewCardProps) {
           {Array.from({ length: 5 }).map((_, i) => (
             <span
               key={i}
-              className="material-symbols-outlined text-[14px]"
+              className="material-symbols-outlined text-icon-14"
               aria-hidden="true"
             >
               star
             </span>
           ))}
         </div>
-        <span className="font-label-caps text-[8.5px] text-on-surface-variant/80 font-medium">
+        <span className="font-label-caps text-label-caps text-on-surface-variant/80 font-medium">
           {review.place}
         </span>
       </div>
@@ -98,8 +98,8 @@ export function ReviewsMarquee() {
       <div className="pointer-events-none absolute inset-y-0 right-0 w-16 sm:w-32 bg-gradient-to-l from-surface-container-low to-transparent z-10" />
 
       <div className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin mb-space-lg text-center">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-accent/15 text-gold-accent font-label-caps text-[10px] mb-2 font-bold">
-          <span className="material-symbols-outlined text-[15px]">hotel_class</span>
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-accent/15 text-gold-bronze font-label-caps text-label-lg mb-2 font-bold">
+          <span className="material-symbols-outlined text-icon-15">hotel_class</span>
           OUR TRAVELER REVIEWS
         </div>
         <h2 className="font-headline-lg text-headline-lg text-on-surface tracking-tight">

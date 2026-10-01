@@ -44,7 +44,7 @@ export function NotFoundPage({ language = "en" }: NotFoundPageProps) {
               {/* Instant Search / Recovery */}
               <div className="pt-2 max-w-lg space-y-3">
                 <div className="relative">
-                  <span className="material-symbols-outlined text-on-surface-variant absolute left-3.5 top-3 text-[20px]">
+                  <span className="material-symbols-outlined text-on-surface-variant absolute left-3.5 top-3 text-icon-20">
                     search
                   </span>
                   <input
@@ -76,7 +76,7 @@ export function NotFoundPage({ language = "en" }: NotFoundPageProps) {
                   href="/"
                   className="px-5 py-2.5 rounded-lg bg-primary hover:bg-primary-container text-white text-sm font-semibold transition-all shadow-sm flex items-center gap-1.5"
                 >
-                  <span className="material-symbols-outlined text-[18px]">home</span>
+                  <span className="material-symbols-outlined text-icon-18">home</span>
                   <span>Return to Home</span>
                 </a>
                 <a
@@ -95,12 +95,12 @@ export function NotFoundPage({ language = "en" }: NotFoundPageProps) {
             {/* Right: Architectural Plinth */}
             <div className="lg:col-span-5 relative">
               <div className="relative bg-surface-container-low rounded-2xl p-6 sm:p-8 overflow-hidden shadow-xl border border-border-warm/80">
-                <div className="absolute -right-4 -bottom-8 font-headline-hero text-[160px] font-bold text-primary/5 select-none leading-none pointer-events-none">
+                <div className="absolute -right-4 -bottom-8 font-headline-hero text-display-watermark font-bold text-primary/5 select-none leading-none pointer-events-none">
                   404
                 </div>
                 <div className="relative z-10 space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="px-2.5 py-1 rounded bg-primary text-white font-label-caps text-[10px] uppercase font-bold">
+                    <span className="px-2.5 py-1 rounded bg-primary text-white font-label-caps text-label-lg uppercase font-bold">
                       Central Dispatch Guarantee
                     </span>
                     <span className="text-xs text-success-jade font-semibold flex items-center gap-1">
@@ -118,7 +118,7 @@ export function NotFoundPage({ language = "en" }: NotFoundPageProps) {
                     <div className="absolute inset-0 bg-gradient-to-t from-ink-midnight/80 via-transparent to-transparent" />
                     <div className="absolute bottom-3 left-3 right-3 text-ivory-surface">
                       <span className="font-title-md text-xs font-semibold block">Agra Dispatch Station</span>
-                      <span className="font-body-sm text-[11px] text-surface-dim">Taj Ganj Control Room · +91 63958 67598</span>
+                      <span className="font-body-sm text-label-md text-surface-dim">Taj Ganj Control Room · +91 63958 67598</span>
                     </div>
                   </div>
 

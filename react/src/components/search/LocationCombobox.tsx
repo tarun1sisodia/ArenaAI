@@ -7,7 +7,9 @@
  * 3. Live LocationIQ address autocomplete with 300ms debounce via useLocationIQ hook.
  * 4. Full keyboard navigation (ArrowUp, ArrowDown, Enter, Escape).
  * 5. ARIA 1.2 combobox accessibility standards.
- * 6. Inline LocationIQ token management modal/badge.
+ * 6. Non-interactive LocationIQ status indicator. The access token is
+ *    build-time configuration only (VITE_LOCATIONIQ_ACCESS_TOKEN) and is
+ *    never displayed or editable in this UI (2026-10-01 security fix).
  * 7. Clean White light mode and Solar Dusk dark mode design tokens compliance.
  */
 
@@ -377,8 +379,6 @@ export function LocationCombobox({
   // Dropdown open / close state
   const [isOpen, setIsOpen] = useState(false);
   const [activeIdx, setActiveIdx] = useState(-1);
-  const [showTokenDialog, setShowTokenDialog] = useState(false);
-  const [tokenInputVal, setTokenInputVal] = useState("");
   const [statusMessage, setStatusMessage] = useState("");
 
   // Container refs for click-outside and focus management
@@ -387,16 +387,17 @@ export function LocationCombobox({
   const searchInputRef = useRef<HTMLInputElement>(null);
   const listboxRef = useRef<HTMLDivElement>(null);
 
-  // Hook into typed LocationIQ engine
+  // Hook into typed LocationIQ engine.
+  // NOTE (2026-10-01): the access token is build-time configuration only
+  // (VITE_LOCATIONIQ_ACCESS_TOKEN). There is intentionally no UI to view or
+  // edit it — the backend proxy at /api/v1/locations/autocomplete is the
+  // primary path and holds the token server-side.
   const {
     query,
     setQuery,
     results: iqResults,
     isLoading,
-    token,
     hasToken,
-    setToken,
-    clearToken,
   } = useLocationIQ("", { debounceMs: 300, minQueryLength: 2, limit: 5 });
 
   // Filter static destinations based on user query
@@ -468,7 +469,6 @@ export function LocationCombobox({
   const closeDropdown = useCallback(() => {
     setIsOpen(false);
     setActiveIdx(-1);
-    setShowTokenDialog(false);
   }, []);
 
   // Handle outside clicks to close dropdown
@@ -639,25 +639,6 @@ export function LocationCombobox({
     }
   };
 
-  // LocationIQ token management handlers
-  const handleOpenTokenDialog = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setTokenInputVal(token);
-    setShowTokenDialog((prev) => !prev);
-  };
-
-  const handleSaveToken = (e: React.FormEvent) => {
-    e.preventDefault();
-    setToken(tokenInputVal);
-    setShowTokenDialog(false);
-  };
-
-  const handleClearToken = () => {
-    clearToken();
-    setTokenInputVal("");
-    setShowTokenDialog(false);
-  };
-
   return (
     <div
       ref={containerRef}
@@ -728,69 +709,25 @@ export function LocationCombobox({
               </span>
             )}
 
-            {/* LocationIQ Token Status Badge */}
+            {/* LocationIQ status indicator (non-interactive).
+                The access token is build-time config only and is never
+                exposed or editable in this UI. */}
             {showLocationIqBadge && (
-              <button
-                type="button"
+              <span
                 className={`loc-api-tag ${hasToken ? "is-active" : ""}`}
-                onClick={handleOpenTokenDialog}
                 title={
                   hasToken
-                    ? "LocationIQ connected · Click to configure token"
-                    : "Add LocationIQ token for live address search"
+                    ? "LocationIQ live search available"
+                    : "LocationIQ live search unavailable — showing curated destinations"
                 }
               >
-                {hasToken ? "● LocationIQ Active" : "+ Add Token"}
-              </button>
+                {hasToken ? "● LocationIQ Active" : "○ Curated List"}
+              </span>
             )}
           </div>
 
-          {/* 2b. Inline Token Configuration Popover */}
-          {showTokenDialog && (
-            <div className="loc-token-box">
-              <form onSubmit={handleSaveToken} className="loc-token-form">
-                <div className="loc-token-title">
-                  LocationIQ Browser Access Token
-                </div>
-                <div className="loc-token-desc">
-                  Enables live address search along highways and Agra
-                  monuments. Stored privately in this browser.
-                </div>
-                <input
-                  type="text"
-                  className="loc-token-input"
-                  value={tokenInputVal}
-                  onChange={(e) => setTokenInputVal(e.target.value)}
-                  placeholder="Paste your pk.xxxxxxxxxx token"
-                  autoFocus
-                />
-                <div className="loc-token-actions">
-                  <button type="submit" className="loc-token-btn-save">
-                    Save
-                  </button>
-                  {hasToken && (
-                    <button
-                      type="button"
-                      className="loc-token-btn-clear"
-                      onClick={handleClearToken}
-                    >
-                      Clear
-                    </button>
-                  )}
-                  <button
-                    type="button"
-                    className="loc-token-btn-cancel"
-                    onClick={() => setShowTokenDialog(false)}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            </div>
-          )}
-
-          {/* 2c. Quick Popular Suggestion Pills */}
-          {quickTags.length > 0 && !showTokenDialog && (
+          {/* 2b. Quick Popular Suggestion Pills */}
+          {quickTags.length > 0 && (
             <div className="loc-quick-tags" aria-label="Popular Quick Picks">
               {quickTags.map((tag) => (
                 <button
