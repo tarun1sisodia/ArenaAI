@@ -274,13 +274,7 @@ export function RouteDetailPage({ route }: RouteDetailPageProps) {
               <div className="relative rounded-xl overflow-hidden shadow-xl bg-surface-container border border-border-warm/60">
                 <img
                   className="w-full h-[440px] object-cover"
-                  src={
-                    route.id.includes("delhi")
-                      ? "/assets/routes/expressway.webp"
-                      : route.id.includes("jaipur")
-                        ? "/assets/routes/jaipur-highway.webp"
-                        : "/assets/routes/agra-lucknow.webp"
-                  }
+                  src="/assets/hero/hero-highway.webp"
                   alt={`${fromEn} to ${toEn} highway corridor`}
                   loading="eager"
                   onError={(e) => {
