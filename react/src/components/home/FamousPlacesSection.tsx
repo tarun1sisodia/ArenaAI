@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { contact } from "../../data/contact";
 import { WhatsAppIcon } from "../icons/WhatsAppIcon";
+import { Icon } from "../icons/Icon";
 import {
   fetchPublishedCatalog,
   resolveCatalogMediaUrl,
@@ -26,6 +27,62 @@ export interface FamousPlace {
   }>;
 }
 
+const GALLERY_PREFIX = "/assets/places/gallery/";
+const GALLERY_SIZES = "(max-width: 640px) 480px, (max-width: 1100px) 960px, 1600px";
+
+/**
+ * Base path (without extension) for self-hosted gallery images, or null for
+ * remote/CMS URLs which keep a plain <img>.
+ */
+function galleryBase(url: string): string | null {
+  return url.startsWith(GALLERY_PREFIX) && url.endsWith(".jpg")
+    ? url.slice(0, -".jpg".length)
+    : null;
+}
+
+interface PlacePhotoProps {
+  url: string;
+  alt: string;
+  className?: string;
+  eager?: boolean;
+  onClick?: () => void;
+}
+
+/**
+ * AVIF-first responsive <picture> for self-hosted gallery images
+ * ({base}-480/960/1600.avif -> webp -> 1600w jpg fallback). Remote or CMS
+ * gallery URLs render as a plain lazy <img> so catalog overrides keep working.
+ */
+function PlacePhoto({ url, alt, className, eager, onClick }: PlacePhotoProps) {
+  const base = galleryBase(url);
+  const img = (
+    <img
+      src={base ? `${base}.jpg` : url}
+      alt={alt}
+      loading={eager ? "eager" : "lazy"}
+      decoding="async"
+      className={className}
+      onClick={onClick}
+    />
+  );
+  if (!base) return img;
+  return (
+    <picture>
+      <source
+        type="image/avif"
+        srcSet={`${base}-480.avif 480w, ${base}-960.avif 960w, ${base}-1600.avif 1600w`}
+        sizes={GALLERY_SIZES}
+      />
+      <source
+        type="image/webp"
+        srcSet={`${base}-480.webp 480w, ${base}-960.webp 960w, ${base}-1600.webp 1600w`}
+        sizes={GALLERY_SIZES}
+      />
+      {img}
+    </picture>
+  );
+}
+
 export const FAMOUS_PLACES: FamousPlace[] = [
   {
     id: "taj-mahal",
@@ -42,22 +99,22 @@ export const FAMOUS_PLACES: FamousPlace[] = [
     highlights: ["UNESCO World Heritage", "Pietra Dura Inlay", "Yamuna Reflection"],
     images: [
       {
-        url: "https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=1200&q=85",
+        url: "/assets/places/gallery/taj-mahal-01.jpg",
         caption: "Iconic reflection pool at golden dawn",
         alt: "Taj Mahal reflection pool at dawn in Agra",
       },
       {
-        url: "https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1200&q=85",
+        url: "/assets/places/gallery/taj-mahal-02.jpg",
         caption: "Intricate marble archways & minarets",
         alt: "Intricate marble archways and minarets of Taj Mahal",
       },
       {
-        url: "https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=1200&q=85",
-        caption: "Yamuna riverfront sunrise silhouette",
-        alt: "Taj Mahal sunrise silhouette from Yamuna river",
+        url: "/assets/places/gallery/taj-mahal-03.jpg",
+        caption: "Taj Mahal framed by the great gateway at golden hour",
+        alt: "Taj Mahal seen through the main gateway arch at golden hour",
       },
       {
-        url: "https://images.unsplash.com/photo-1658313286353-81f8cf3a328a?auto=format&fit=crop&w=1200&q=85",
+        url: "/assets/places/gallery/taj-mahal-04.jpg",
         caption: "Panoramic aerial perspective of the dome",
         alt: "Panoramic aerial view of the Taj Mahal dome and gardens",
       },
@@ -78,19 +135,19 @@ export const FAMOUS_PLACES: FamousPlace[] = [
     highlights: ["Emperor Akbar 1565", "Jahangiri Mahal", "Taj Viewpoint"],
     images: [
       {
-        url: "https://images.unsplash.com/photo-1592635196078-9fdc757f27f4?auto=format&fit=crop&w=1200&q=85",
-        caption: "Monumental red sandstone walls and bastion gate",
-        alt: "Agra Fort massive red sandstone walls and main gateway",
+        url: "/assets/places/gallery/agra-fort-01.jpg",
+        caption: "Moat and towering red sandstone ramparts",
+        alt: "Agra Fort moat and massive red sandstone walls",
       },
       {
-        url: "https://images.unsplash.com/photo-1585135497273-1a86b09fe70e?auto=format&fit=crop&w=1200&q=85",
-        caption: "Diwan-i-Am royal courtyard and pillared halls",
-        alt: "Agra Fort royal courtyard and red sandstone colonnades",
+        url: "/assets/places/gallery/agra-fort-02.jpg",
+        caption: "Manicured gardens and marble pavilions",
+        alt: "Gardens and white marble pavilions inside Agra Fort",
       },
       {
-        url: "https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=1200&q=85",
-        caption: "Classic Mughal arches overlooking the Yamuna",
-        alt: "Historic archway inside Agra Fort complex",
+        url: "/assets/places/gallery/agra-fort-03.jpg",
+        caption: "Royal courtyard with white marble palaces",
+        alt: "Marble palace courtyard inside Agra Fort",
       },
     ],
   },
@@ -109,19 +166,19 @@ export const FAMOUS_PLACES: FamousPlace[] = [
     highlights: ["54m Buland Darwaza", "Salim Chishti Shrine", "Panch Mahal"],
     images: [
       {
-        url: "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=1200&q=85",
-        caption: "Imperial courtyard and historic red pavilions",
-        alt: "Fatehpur Sikri ancient Mughal palace complex",
+        url: "/assets/places/gallery/fatehpur-sikri-01.jpg",
+        caption: "Buland Darwaza with visitors on the steps",
+        alt: "Tourists on the steps of Buland Darwaza at Fatehpur Sikri",
       },
       {
-        url: "https://images.unsplash.com/photo-1608958435020-e8a7109ba809?auto=format&fit=crop&w=1200&q=85",
-        caption: "Panch Mahal five-storey pillared architecture",
-        alt: "Panch Mahal five-storey palace at Fatehpur Sikri",
+        url: "/assets/places/gallery/fatehpur-sikri-02.jpg",
+        caption: "Jama Masjid courtyard facade",
+        alt: "Jama Masjid facade at Fatehpur Sikri",
       },
       {
-        url: "https://images.unsplash.com/photo-1596701062351-8c2c14d1fdd0?auto=format&fit=crop&w=1200&q=85",
-        caption: "Monumental gateway arches and heritage plaza",
-        alt: "Buland Darwaza grand entrance at Fatehpur Sikri",
+        url: "/assets/places/gallery/fatehpur-sikri-03.jpg",
+        caption: "Buland Darwaza rising above the grand steps",
+        alt: "Buland Darwaza viewed from the grand steps at Fatehpur Sikri",
       },
     ],
   },
@@ -140,19 +197,19 @@ export const FAMOUS_PLACES: FamousPlace[] = [
     highlights: ["Krishna Janmabhoomi", "Banke Bihari", "Prem Mandir Lighting"],
     images: [
       {
-        url: "https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&w=1200&q=85",
-        caption: "Prem Mandir illuminated with evening light show",
-        alt: "Prem Mandir temple illuminated at night in Vrindavan",
+        url: "/assets/places/gallery/mathura-vrindavan-01.jpg",
+        caption: "Prem Mandir in daylight",
+        alt: "Prem Mandir temple in Vrindavan during the day",
       },
       {
-        url: "https://images.unsplash.com/photo-1620619767323-b95a89183081?auto=format&fit=crop&w=1200&q=85",
-        caption: "Ancient temple sanctum and spiritual stone carvings",
-        alt: "Traditional temple sanctum and carvings in Mathura",
+        url: "/assets/places/gallery/mathura-vrindavan-02.jpg",
+        caption: "Prem Mandir glowing purple and gold at night",
+        alt: "Prem Mandir illuminated in purple and gold at night in Vrindavan",
       },
       {
-        url: "https://images.unsplash.com/photo-1566837945700-30057527ade0?auto=format&fit=crop&w=1200&q=85",
-        caption: "Sacred Yamuna riverfront ghats at sunset",
-        alt: "Evening prayers and ghats along the sacred Yamuna in Mathura",
+        url: "/assets/places/gallery/mathura-vrindavan-03.jpg",
+        caption: "Prem Mandir lit in tricolour at night",
+        alt: "Prem Mandir lit in saffron, white and green at night in Vrindavan",
       },
     ],
   },
@@ -171,19 +228,19 @@ export const FAMOUS_PLACES: FamousPlace[] = [
     highlights: ["Sunset Taj View", "Baby Taj Marble Inlay", "Quiet Charbagh"],
     images: [
       {
-        url: "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=1200&q=85",
-        caption: "Sunset vistas looking across the Yamuna river",
-        alt: "Mehtab Bagh gardens overlooking the Taj Mahal at sunset",
+        url: "/assets/places/gallery/mehtab-bagh-01.jpg",
+        caption: "Taj Mahal through the trees from Mehtab Bagh",
+        alt: "Taj Mahal seen through trees from Mehtab Bagh across the Yamuna",
       },
       {
-        url: "https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1200&q=85",
-        caption: "Itimad-ud-Daulah intricate marble lattice and inlays",
-        alt: "Intricate marble work of Baby Taj Itimad-ud-Daulah",
+        url: "/assets/places/gallery/mehtab-bagh-02.jpg",
+        caption: "Taj Mahal across the Mehtab Bagh gardens",
+        alt: "Taj Mahal viewed across the gardens of Mehtab Bagh",
       },
       {
-        url: "https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=1200&q=85",
-        caption: "Mirror reflections on water bodies at dusk",
-        alt: "Twilight reflection of heritage monuments in Agra",
+        url: "/assets/places/gallery/mehtab-bagh-03.jpg",
+        caption: "Red sandstone pavilion at Mehtab Bagh",
+        alt: "Red sandstone pavilion in the Mehtab Bagh garden",
       },
     ],
   },
@@ -202,19 +259,19 @@ export const FAMOUS_PLACES: FamousPlace[] = [
     highlights: ["Hawa Mahal", "Amber Fort Hilltop", "Royal City Palace"],
     images: [
       {
-        url: "https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=1200&q=85",
+        url: "/assets/places/gallery/jaipur-pink-city-01.jpg",
         caption: "Hawa Mahal (Palace of Winds) iconic pink facade",
         alt: "Hawa Mahal palace of winds in Jaipur",
       },
       {
-        url: "https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=1200&q=85",
+        url: "/assets/places/gallery/jaipur-pink-city-02.jpg",
         caption: "Amber Fort majestic hilltop palace reflection",
         alt: "Amber Fort towering over Maota Lake in Jaipur",
       },
       {
-        url: "https://images.unsplash.com/photo-1534766555764-ce878a5e3a2b?auto=format&fit=crop&w=1200&q=85",
-        caption: "City Palace courtyards and royal Rajput heritage",
-        alt: "Grand courtyards inside Jaipur City Palace",
+        url: "/assets/places/gallery/jaipur-pink-city-03.jpg",
+        caption: "Jal Mahal floating on Man Sagar Lake",
+        alt: "Jal Mahal water palace on Man Sagar Lake in Jaipur",
       },
     ],
   },
@@ -357,11 +414,9 @@ export function FamousPlacesSection() {
             >
               {/* Main Image Showcase Stage */}
               <div className="relative aspect-[16/10] w-full overflow-hidden bg-surface-container-high">
-                <img
-                  src={activeImg.url}
+                <PlacePhoto
+                  url={activeImg.url}
                   alt={activeImg.alt}
-                  loading="lazy"
-                  decoding="async"
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 cursor-pointer"
                   onClick={() =>
                     setModalImage({
@@ -393,7 +448,7 @@ export function FamousPlacesSection() {
                   aria-label="View photo in high-resolution lightbox"
                   title="Expand high-res photo"
                 >
-                  <span className="material-symbols-outlined text-icon-17">zoom_in</span>
+                  <Icon name="zoom_in" className="text-icon-17" />
                 </button>
 
                 {/* Bottom Overlay: Photo Caption & Image Counter */}
@@ -422,10 +477,9 @@ export function FamousPlacesSection() {
                     title={img.caption}
                     aria-label={`View photo ${idx + 1}: ${img.caption}`}
                   >
-                    <img
-                      src={img.url}
+                    <PlacePhoto
+                      url={img.url}
                       alt={img.alt}
-                      loading="lazy"
                       className="w-full h-full object-cover"
                     />
                   </button>
@@ -498,7 +552,7 @@ export function FamousPlacesSection() {
                     href={`/book?from=Agra&to=${encodeURIComponent(place.name)}`}
                   >
                     <span>Book Cab</span>
-                    <span className="material-symbols-outlined text-icon-14">arrow_forward</span>
+                    <Icon name="arrow_forward" className="text-icon-14" />
                   </a>
 
                   {/* WhatsApp CTA in Pure Black with Real WhatsApp Icon */}
@@ -535,10 +589,11 @@ export function FamousPlacesSection() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="relative aspect-[16/10] sm:aspect-[16/9] w-full bg-black">
-              <img
-                src={modalImage.url}
+              <PlacePhoto
+                url={modalImage.url}
                 alt={modalImage.caption}
                 className="w-full h-full object-contain"
+                eager
               />
               <button
                 type="button"
@@ -546,7 +601,7 @@ export function FamousPlacesSection() {
                 className="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/70 hover:bg-black text-white flex items-center justify-center transition-colors shadow-md"
                 aria-label="Close high-res preview"
               >
-                <span className="material-symbols-outlined text-icon-20">close</span>
+                <Icon name="close" className="text-icon-20" />
               </button>
             </div>
             <div className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface-container-lowest">

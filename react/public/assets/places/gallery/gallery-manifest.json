@@ -1,0 +1,416 @@
+{
+ "generated": "2026-10-01",
+ "dir": "react/public/assets/places/gallery",
+ "widths": [
+  480,
+  960,
+  1600
+ ],
+ "formats": [
+  "avif",
+  "webp",
+  "jpg"
+ ],
+ "fallback": "{name}.jpg is the 1600w JPEG master used when AVIF/WebP are unsupported",
+ "images": [
+  {
+   "file": "taj-mahal-01.jpg",
+   "place": "taj-mahal",
+   "caption": "Iconic reflection pool at golden dawn",
+   "alt": "Taj Mahal reflection pool at dawn in Agra",
+   "source": "Unsplash",
+   "sourceUrl": "https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=1200&q=85",
+   "license": "Unsplash License",
+   "photographer": "(photographer not recorded)",
+   "note": "Kept from previous remote gallery; self-hosted 2026-10-02",
+   "masterDimensions": "1600,1068",
+   "masterBytes": 209206,
+   "variants": [
+    "taj-mahal-01-480.avif",
+    "taj-mahal-01-480.webp",
+    "taj-mahal-01-960.avif",
+    "taj-mahal-01-960.webp",
+    "taj-mahal-01-1600.avif",
+    "taj-mahal-01-1600.webp"
+   ]
+  },
+  {
+   "file": "taj-mahal-02.jpg",
+   "place": "taj-mahal",
+   "caption": "Intricate marble archways & minarets",
+   "alt": "Intricate marble archways and minarets of Taj Mahal",
+   "source": "Unsplash",
+   "sourceUrl": "https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1200&q=85",
+   "license": "Unsplash License",
+   "photographer": "(photographer not recorded)",
+   "note": "Kept from previous remote gallery; self-hosted 2026-10-02",
+   "masterDimensions": "1600,1060",
+   "masterBytes": 311772,
+   "variants": [
+    "taj-mahal-02-480.avif",
+    "taj-mahal-02-480.webp",
+    "taj-mahal-02-960.avif",
+    "taj-mahal-02-960.webp",
+    "taj-mahal-02-1600.avif",
+    "taj-mahal-02-1600.webp"
+   ]
+  },
+  {
+   "file": "taj-mahal-03.jpg",
+   "place": "taj-mahal",
+   "caption": "Taj Mahal framed by the great gateway at golden hour",
+   "alt": "Taj Mahal seen through the main gateway arch at golden hour",
+   "source": "Wikimedia Commons",
+   "sourceUrl": "https://commons.wikimedia.org/wiki/File:Taj_Mahal_Agra_India_2025_06.jpg",
+   "license": "CC BY 4.0",
+   "photographer": "Philip Nalangan",
+   "note": "Replaces previous India Gate photo (wrong subject)",
+   "masterDimensions": "1600,2406",
+   "masterBytes": 539197,
+   "variants": [
+    "taj-mahal-03-480.avif",
+    "taj-mahal-03-480.webp",
+    "taj-mahal-03-960.avif",
+    "taj-mahal-03-960.webp",
+    "taj-mahal-03-1600.avif",
+    "taj-mahal-03-1600.webp"
+   ]
+  },
+  {
+   "file": "taj-mahal-04.jpg",
+   "place": "taj-mahal",
+   "caption": "Panoramic aerial perspective of the dome",
+   "alt": "Panoramic aerial view of the Taj Mahal dome and gardens",
+   "source": "Unsplash",
+   "sourceUrl": "https://images.unsplash.com/photo-1658313286353-81f8cf3a328a?auto=format&fit=crop&w=1200&q=85",
+   "license": "Unsplash License",
+   "photographer": "(photographer not recorded)",
+   "note": "Kept from previous remote gallery; self-hosted 2026-10-02",
+   "masterDimensions": "1600,2000",
+   "masterBytes": 578090,
+   "variants": [
+    "taj-mahal-04-480.avif",
+    "taj-mahal-04-480.webp",
+    "taj-mahal-04-960.avif",
+    "taj-mahal-04-960.webp",
+    "taj-mahal-04-1600.avif",
+    "taj-mahal-04-1600.webp"
+   ]
+  },
+  {
+   "file": "agra-fort-01.jpg",
+   "place": "agra-fort",
+   "caption": "Moat and towering red sandstone ramparts",
+   "alt": "Agra Fort moat and massive red sandstone walls",
+   "source": "Wikimedia Commons",
+   "sourceUrl": "https://commons.wikimedia.org/wiki/File:20191204_Moat_and_walls_of_Agra_Fort_0925_6582.jpg",
+   "license": "CC BY-SA 4.0",
+   "photographer": "Jakub Hałun",
+   "note": "Replaces mismatched previous photo",
+   "masterDimensions": "1600,1064",
+   "masterBytes": 427441,
+   "variants": [
+    "agra-fort-01-480.avif",
+    "agra-fort-01-480.webp",
+    "agra-fort-01-960.avif",
+    "agra-fort-01-960.webp",
+    "agra-fort-01-1600.avif",
+    "agra-fort-01-1600.webp"
+   ]
+  },
+  {
+   "file": "agra-fort-02.jpg",
+   "place": "agra-fort",
+   "caption": "Manicured gardens and marble pavilions",
+   "alt": "Gardens and white marble pavilions inside Agra Fort",
+   "source": "Wikimedia Commons",
+   "sourceUrl": "https://commons.wikimedia.org/wiki/File:20191204_Czerwony_Fort_w_Agrze_0934_6592.jpg",
+   "license": "CC BY-SA 4.0",
+   "photographer": "Jakub Hałun",
+   "note": "Replaces mismatched previous photo",
+   "masterDimensions": "1600,1064",
+   "masterBytes": 517030,
+   "variants": [
+    "agra-fort-02-480.avif",
+    "agra-fort-02-480.webp",
+    "agra-fort-02-960.avif",
+    "agra-fort-02-960.webp",
+    "agra-fort-02-1600.avif",
+    "agra-fort-02-1600.webp"
+   ]
+  },
+  {
+   "file": "agra-fort-03.jpg",
+   "place": "agra-fort",
+   "caption": "Royal courtyard with white marble palaces",
+   "alt": "Marble palace courtyard inside Agra Fort",
+   "source": "Wikimedia Commons",
+   "sourceUrl": "https://commons.wikimedia.org/wiki/File:Agra_03-2016_14_Agra_Fort.jpg",
+   "license": "Free Art License 1.3",
+   "photographer": "A.Savin",
+   "note": "Replaces previous photo duplicated from Jaipur set",
+   "masterDimensions": "1600,900",
+   "masterBytes": 379973,
+   "variants": [
+    "agra-fort-03-480.avif",
+    "agra-fort-03-480.webp",
+    "agra-fort-03-960.avif",
+    "agra-fort-03-960.webp",
+    "agra-fort-03-1600.avif",
+    "agra-fort-03-1600.webp"
+   ]
+  },
+  {
+   "file": "fatehpur-sikri-01.jpg",
+   "place": "fatehpur-sikri",
+   "caption": "Buland Darwaza with visitors on the steps",
+   "alt": "Tourists on the steps of Buland Darwaza at Fatehpur Sikri",
+   "source": "Wikimedia Commons",
+   "sourceUrl": "https://commons.wikimedia.org/wiki/File:Fatehpur_Sikri_near_Agra_2016-03_img08.jpg",
+   "license": "Free Art License 1.3",
+   "photographer": "A.Savin",
+   "note": "Replaces mismatched previous photo",
+   "masterDimensions": "1600,1000",
+   "masterBytes": 651689,
+   "variants": [
+    "fatehpur-sikri-01-480.avif",
+    "fatehpur-sikri-01-480.webp",
+    "fatehpur-sikri-01-960.avif",
+    "fatehpur-sikri-01-960.webp",
+    "fatehpur-sikri-01-1600.avif",
+    "fatehpur-sikri-01-1600.webp"
+   ]
+  },
+  {
+   "file": "fatehpur-sikri-02.jpg",
+   "place": "fatehpur-sikri",
+   "caption": "Jama Masjid courtyard facade",
+   "alt": "Jama Masjid facade at Fatehpur Sikri",
+   "source": "Wikimedia Commons",
+   "sourceUrl": "https://commons.wikimedia.org/wiki/File:Fatehpur_Sikri_near_Agra_2016-03_img05.jpg",
+   "license": "Free Art License 1.3",
+   "photographer": "A.Savin",
+   "note": "Replaces mismatched previous photo",
+   "masterDimensions": "1600,1600",
+   "masterBytes": 711695,
+   "variants": [
+    "fatehpur-sikri-02-480.avif",
+    "fatehpur-sikri-02-480.webp",
+    "fatehpur-sikri-02-960.avif",
+    "fatehpur-sikri-02-960.webp",
+    "fatehpur-sikri-02-1600.avif",
+    "fatehpur-sikri-02-1600.webp"
+   ]
+  },
+  {
+   "file": "fatehpur-sikri-03.jpg",
+   "place": "fatehpur-sikri",
+   "caption": "Buland Darwaza rising above the grand steps",
+   "alt": "Buland Darwaza viewed from the grand steps at Fatehpur Sikri",
+   "source": "Wikimedia Commons",
+   "sourceUrl": "https://commons.wikimedia.org/wiki/File:Fatehpur_Sikri_near_Agra_2016-03_img09.jpg",
+   "license": "Free Art License 1.3",
+   "photographer": "A.Savin",
+   "note": "Replaces mismatched previous photo",
+   "masterDimensions": "1600,1600",
+   "masterBytes": 682742,
+   "variants": [
+    "fatehpur-sikri-03-480.avif",
+    "fatehpur-sikri-03-480.webp",
+    "fatehpur-sikri-03-960.avif",
+    "fatehpur-sikri-03-960.webp",
+    "fatehpur-sikri-03-1600.avif",
+    "fatehpur-sikri-03-1600.webp"
+   ]
+  },
+  {
+   "file": "mathura-vrindavan-01.jpg",
+   "place": "mathura-vrindavan",
+   "caption": "Prem Mandir in daylight",
+   "alt": "Prem Mandir temple in Vrindavan during the day",
+   "source": "Wikimedia Commons",
+   "sourceUrl": "https://commons.wikimedia.org/wiki/File:Vrindavan_Prem_Mandir_4.jpg",
+   "license": "CC BY-SA 4.0",
+   "photographer": "Apurba Biswas",
+   "note": "Cropped ~5% from bottom to remove camera-app watermark; photographer credited here",
+   "masterDimensions": "1600,1140",
+   "masterBytes": 341130,
+   "variants": [
+    "mathura-vrindavan-01-480.avif",
+    "mathura-vrindavan-01-480.webp",
+    "mathura-vrindavan-01-960.avif",
+    "mathura-vrindavan-01-960.webp",
+    "mathura-vrindavan-01-1600.avif",
+    "mathura-vrindavan-01-1600.webp"
+   ]
+  },
+  {
+   "file": "mathura-vrindavan-02.jpg",
+   "place": "mathura-vrindavan",
+   "caption": "Prem Mandir glowing purple and gold at night",
+   "alt": "Prem Mandir illuminated in purple and gold at night in Vrindavan",
+   "source": "Wikimedia Commons",
+   "sourceUrl": "https://commons.wikimedia.org/wiki/File:Prem_Mandir_Vrindavan_IMG_20210731_201215.jpg",
+   "license": "CC BY-SA 4.0",
+   "photographer": "Mettle30",
+   "note": "Replaces mismatched previous photo",
+   "masterDimensions": "1600,1200",
+   "masterBytes": 347143,
+   "variants": [
+    "mathura-vrindavan-02-480.avif",
+    "mathura-vrindavan-02-480.webp",
+    "mathura-vrindavan-02-960.avif",
+    "mathura-vrindavan-02-960.webp",
+    "mathura-vrindavan-02-1600.avif",
+    "mathura-vrindavan-02-1600.webp"
+   ]
+  },
+  {
+   "file": "mathura-vrindavan-03.jpg",
+   "place": "mathura-vrindavan",
+   "caption": "Prem Mandir lit in tricolour at night",
+   "alt": "Prem Mandir lit in saffron, white and green at night in Vrindavan",
+   "source": "Wikimedia Commons",
+   "sourceUrl": "https://commons.wikimedia.org/wiki/File:Prem_mandir_Vrindavan.JPG",
+   "license": "CC BY-SA 3.0",
+   "photographer": "आशीष भटनागर (Ashish Bhatnagar)",
+   "note": "Replaces mismatched previous photo",
+   "masterDimensions": "1600,1062",
+   "masterBytes": 217175,
+   "variants": [
+    "mathura-vrindavan-03-480.avif",
+    "mathura-vrindavan-03-480.webp",
+    "mathura-vrindavan-03-960.avif",
+    "mathura-vrindavan-03-960.webp",
+    "mathura-vrindavan-03-1600.avif",
+    "mathura-vrindavan-03-1600.webp"
+   ]
+  },
+  {
+   "file": "mehtab-bagh-01.jpg",
+   "place": "mehtab-bagh",
+   "caption": "Taj Mahal through the trees from Mehtab Bagh",
+   "alt": "Taj Mahal seen through trees from Mehtab Bagh across the Yamuna",
+   "source": "Wikimedia Commons",
+   "sourceUrl": "https://commons.wikimedia.org/wiki/File:Mehtab_Bagh.jpg",
+   "license": "CC BY-SA 3.0",
+   "photographer": "Ansul",
+   "note": "Replaces previous photo duplicated from Taj Mahal set",
+   "masterDimensions": "1600,1200",
+   "masterBytes": 215167,
+   "variants": [
+    "mehtab-bagh-01-480.avif",
+    "mehtab-bagh-01-480.webp",
+    "mehtab-bagh-01-960.avif",
+    "mehtab-bagh-01-960.webp",
+    "mehtab-bagh-01-1600.avif",
+    "mehtab-bagh-01-1600.webp"
+   ]
+  },
+  {
+   "file": "mehtab-bagh-02.jpg",
+   "place": "mehtab-bagh",
+   "caption": "Taj Mahal across the Mehtab Bagh gardens",
+   "alt": "Taj Mahal viewed across the gardens of Mehtab Bagh",
+   "source": "Wikimedia Commons",
+   "sourceUrl": "https://commons.wikimedia.org/wiki/File:Mehtab_Bagh_on_the_river_bank,_facing_the_Taj-Agra-Uttar_Pradesh-_DSC_0002.jpg",
+   "license": "CC BY-SA 4.0",
+   "photographer": "Prabhat xlr8",
+   "note": "Replaces previous photo duplicated from Taj Mahal set",
+   "masterDimensions": "1600,1200",
+   "masterBytes": 360318,
+   "variants": [
+    "mehtab-bagh-02-480.avif",
+    "mehtab-bagh-02-480.webp",
+    "mehtab-bagh-02-960.avif",
+    "mehtab-bagh-02-960.webp",
+    "mehtab-bagh-02-1600.avif",
+    "mehtab-bagh-02-1600.webp"
+   ]
+  },
+  {
+   "file": "mehtab-bagh-03.jpg",
+   "place": "mehtab-bagh",
+   "caption": "Red sandstone pavilion at Mehtab Bagh",
+   "alt": "Red sandstone pavilion in the Mehtab Bagh garden",
+   "source": "Wikimedia Commons",
+   "sourceUrl": "https://commons.wikimedia.org/wiki/File:Mehtab_Bagh_on_the_river_bank_opposite_the_Taj_Mahal,_2.jpg",
+   "license": "CC BY-SA 3.0",
+   "photographer": "Andrew Gray",
+   "note": "Replaces previous photo duplicated from Taj Mahal set",
+   "masterDimensions": "1600,1062",
+   "masterBytes": 168724,
+   "variants": [
+    "mehtab-bagh-03-480.avif",
+    "mehtab-bagh-03-480.webp",
+    "mehtab-bagh-03-960.avif",
+    "mehtab-bagh-03-960.webp",
+    "mehtab-bagh-03-1600.avif",
+    "mehtab-bagh-03-1600.webp"
+   ]
+  },
+  {
+   "file": "jaipur-pink-city-01.jpg",
+   "place": "jaipur-pink-city",
+   "caption": "Hawa Mahal (Palace of Winds) iconic pink facade",
+   "alt": "Hawa Mahal palace of winds in Jaipur",
+   "source": "Unsplash",
+   "sourceUrl": "https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=1200&q=85",
+   "license": "Unsplash License",
+   "photographer": "(photographer not recorded)",
+   "note": "Kept from previous remote gallery; self-hosted 2026-10-02",
+   "masterDimensions": "1600,1068",
+   "masterBytes": 412242,
+   "variants": [
+    "jaipur-pink-city-01-480.avif",
+    "jaipur-pink-city-01-480.webp",
+    "jaipur-pink-city-01-960.avif",
+    "jaipur-pink-city-01-960.webp",
+    "jaipur-pink-city-01-1600.avif",
+    "jaipur-pink-city-01-1600.webp"
+   ]
+  },
+  {
+   "file": "jaipur-pink-city-02.jpg",
+   "place": "jaipur-pink-city",
+   "caption": "Amber Fort majestic hilltop palace reflection",
+   "alt": "Amber Fort towering over Maota Lake in Jaipur",
+   "source": "Unsplash",
+   "sourceUrl": "https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=1200&q=85",
+   "license": "Unsplash License",
+   "photographer": "(photographer not recorded)",
+   "note": "Kept from previous remote gallery; self-hosted 2026-10-02",
+   "masterDimensions": "1600,2846",
+   "masterBytes": 851587,
+   "variants": [
+    "jaipur-pink-city-02-480.avif",
+    "jaipur-pink-city-02-480.webp",
+    "jaipur-pink-city-02-960.avif",
+    "jaipur-pink-city-02-960.webp",
+    "jaipur-pink-city-02-1600.avif",
+    "jaipur-pink-city-02-1600.webp"
+   ]
+  },
+  {
+   "file": "jaipur-pink-city-03.jpg",
+   "place": "jaipur-pink-city",
+   "caption": "Jal Mahal floating on Man Sagar Lake",
+   "alt": "Jal Mahal water palace on Man Sagar Lake in Jaipur",
+   "source": "Wikimedia Commons",
+   "sourceUrl": "https://commons.wikimedia.org/wiki/File:Jal_Mahal_Palace_in_Jaipur,_20191218_1432_9252.jpg",
+   "license": "CC BY-SA 4.0",
+   "photographer": "Jakub Hałun",
+   "note": "Replaces previous unrelated photo",
+   "masterDimensions": "1600,1064",
+   "masterBytes": 217490,
+   "variants": [
+    "jaipur-pink-city-03-480.avif",
+    "jaipur-pink-city-03-480.webp",
+    "jaipur-pink-city-03-960.avif",
+    "jaipur-pink-city-03-960.webp",
+    "jaipur-pink-city-03-1600.avif",
+    "jaipur-pink-city-03-1600.webp"
+   ]
+  }
+ ]
+}
