@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { contact } from "../../data/contact";
-import { packages, vehicles, cities, type VehicleId, type TourPackage } from "../../data/catalogue";
+import { packages, vehicles, cities, routes, type VehicleId, type TourPackage, type Route } from "../../data/catalogue";
 import { formatInr, localTomorrow, localPackages, type LocalPackageKey } from "./fareEngine";
 import {
   calculateServerFare,
@@ -19,6 +19,49 @@ import { TripSelectionStep, type SelectableTrip } from "./TripSelectionStep";
 import { BookingAssistant, type QuickPick } from "./BookingAssistant";
 import { fetchLiveFleet, fetchPublishedCatalog, type PublicCatalogItem, type PublicFleetVehicle } from "../../services/catalog";
 import { LocationCombobox } from "../../components/search/LocationCombobox";
+
+interface UnsupportedRequest {
+  kind: "route" | "tour";
+  origin?: string;
+  destination?: string;
+  name?: string;
+  suggestions: Route[];
+}
+
+function normalizePlace(value: string): string {
+  return value.trim().toLowerCase().replace(/[^a-z0-9]+/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function cityIdForSearch(value: string): string | null {
+  const normalized = normalizePlace(value);
+  return cities.find((city) => normalized === city.id || normalized === normalizePlace(city.name))?.id ?? null;
+}
+
+function findSupportedRoute(origin: string, destination: string): Route | null {
+  const from = cityIdForSearch(origin);
+  const to = cityIdForSearch(destination);
+  if (!from || !to) return null;
+  return routes.find((route) => route.from === from && route.to === to) ?? null;
+}
+
+function supportedRouteSuggestions(origin: string, destination: string): Route[] {
+  const from = cityIdForSearch(origin);
+  const to = cityIdForSearch(destination);
+  const nearby = routes.filter((route) => (from && (route.from === from || route.to === from)) || (to && (route.from === to || route.to === to)));
+  return [...new Map([...nearby, ...routes].map((route) => [route.id, route])).values()].slice(0, 5);
+}
+
+function UnavailableBookingRequest({ request, selectedVehicleId }: { request: UnsupportedRequest | null; selectedVehicleId: VehicleId }) {
+  if (!request) {
+    return <section className="rounded-2xl border border-primary/30 bg-sandstone-wash/70 p-space-lg" role="status"><div className="flex items-center gap-3 text-on-surface-variant"><span className="w-7 h-7 border-2 border-primary border-t-transparent rounded-full animate-spin" aria-hidden="true" /><p className="font-body-md">Checking route availability before showing vehicles…</p></div></section>;
+  }
+  return <section className="rounded-2xl border border-primary/30 bg-sandstone-wash/70 p-space-lg md:p-space-xl" role="alert" aria-live="polite">
+    <div className="flex items-start gap-3"><span className="material-symbols-outlined text-[28px] text-primary" aria-hidden="true">route</span><div><p className="font-label-caps text-label-caps uppercase tracking-widest text-terracotta-sandstone font-bold">Route not in our catalogue</p><h2 className="font-headline-sm text-headline-sm text-ink-midnight font-bold mt-1">{request.kind === "route" ? `${request.origin} → ${request.destination} is not currently available` : "That tour is not currently available"}</h2><p className="font-body-md text-on-surface-variant mt-2 leading-relaxed">We do not have a published route, package, or trip for this search, so we have not shown vehicle availability. Our desk can still check a custom charter by phone or WhatsApp.</p></div></div>
+    <div className="flex flex-col sm:flex-row gap-2 mt-space-md"><a className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-white font-semibold" href={`tel:${contact.phone}`}><span className="material-symbols-outlined text-[18px]" aria-hidden="true">call</span>Call {contact.phoneDisplay}</a><a className="inline-flex items-center justify-center gap-2 rounded-xl bg-black px-4 py-3 text-white font-semibold" href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(`Hello SK Baghel Travels, please check a custom booking for ${request.origin ?? request.name ?? "my requested tour"}${request.destination ? ` to ${request.destination}` : ""}.`)}`} target="_blank" rel="noreferrer"><WhatsAppIcon className="w-4 h-4 shrink-0 text-white" />WhatsApp the desk</a></div>
+    {request.suggestions.length > 0 && <div className="mt-space-lg"><h3 className="font-title-lg text-title-lg text-ink-charcoal font-semibold">Try one of these supported routes</h3><div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3">{request.suggestions.map((route) => { const from = cities.find((city) => city.id === route.from)?.name ?? route.from; const to = cities.find((city) => city.id === route.to)?.name ?? route.to; return <a key={route.id} className="rounded-xl border border-border-warm bg-surface-container-lowest px-3 py-3 hover:border-primary transition-colors" href={`/book.html?from=${encodeURIComponent(route.from)}&to=${encodeURIComponent(route.to)}&vehicle=${selectedVehicleId}&trip=one-way`}><span className="block font-semibold text-ink-charcoal">{from} → {to}</span><span className="text-xs text-on-surface-variant">From {formatInr(route.fares.sedan)} by Sedan</span></a>; })}</div></div>}
+    <a className="inline-flex mt-space-md text-primary font-semibold hover:underline" href="/en/routes/">Browse all supported routes ↗</a>
+  </section>;
+}
 
 type BookingStep = 1 | 2 | 3 | 4;
 type BookingMode = "outstation" | "local" | "package";
@@ -113,7 +156,13 @@ export function BookingPage() {
   const [step, setStep] = useState<BookingStep>(1);
 
   // Track if user came with a pre-selected route from homepage or query params
-  const [hasPreselectedRoute, setHasPreselectedRoute] = useState<boolean>(false);
+  const [hasPreselectedRoute, setHasPreselectedRoute] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    const params = new URLSearchParams(window.location.search);
+    return Boolean(params.get("from") && params.get("to"));
+  });
+  const [queryReady, setQueryReady] = useState<boolean>(false);
+  const [unsupportedRequest, setUnsupportedRequest] = useState<UnsupportedRequest | null>(null);
 
   // Booking Mode & Route Parameters
   const [bookingMode, setBookingMode] = useState<BookingMode>("outstation");
@@ -165,6 +214,23 @@ export function BookingPage() {
   const [confirmedTicketId, setConfirmedTicketId] = useState<string>("");
   const [confirmedBookingId, setConfirmedBookingId] = useState<string>("");
   const [amountPaid, setAmountPaid] = useState<number>(0);
+
+  function updateRouteLocation(field: "origin" | "destination", value: string) {
+    const nextOrigin = field === "origin" ? value : originName;
+    const nextDestination = field === "destination" ? value : destinationName;
+    if (field === "origin") setOriginName(value);
+    else setDestinationName(value);
+    if (findSupportedRoute(nextOrigin, nextDestination)) {
+      setUnsupportedRequest(null);
+    } else {
+      setUnsupportedRequest({
+        kind: "route",
+        origin: nextOrigin,
+        destination: nextDestination,
+        suggestions: supportedRouteSuggestions(nextOrigin, nextDestination),
+      });
+    }
+  }
 
   // Selected vehicle metadata
   const fleetOptions = useMemo<VehicleOption[]>(() => {
@@ -356,6 +422,14 @@ export function BookingPage() {
     if (qFrom && qTo) {
       setHasPreselectedRoute(true);
       setBookingMode("outstation");
+      if (!findSupportedRoute(qFrom, qTo)) {
+        setUnsupportedRequest({
+          kind: "route",
+          origin: qFrom,
+          destination: qTo,
+          suggestions: supportedRouteSuggestions(qFrom, qTo),
+        });
+      }
     }
 
     if (qFrom) {
@@ -381,6 +455,8 @@ export function BookingPage() {
           // keep the package fare/payment contract while preserving the local-tour UI intent.
           setBookingMode("package");
           setPackageSlug(matchTour.slug);
+        } else {
+          setUnsupportedRequest({ kind: "tour", name: qPkg, suggestions: routes.slice(0, 5) });
         }
       }
     }
@@ -405,6 +481,7 @@ export function BookingPage() {
     else if (qStep === "2") setStep(2);
     else if (qStep === "3") setStep(3);
     else if (qStep === "4") setStep(4);
+    setQueryReady(true);
   }, []);
 
   // Load published trips from live catalog
@@ -445,6 +522,7 @@ export function BookingPage() {
   // Determine if this booking uses the direct 3-step funnel (Route-First or Package-First)
   // vs the 4-step Fleet-First funnel
   const isDirectFunnel = hasPreselectedRoute;
+  const isAvailabilityBlocked = Boolean(unsupportedRequest) || (hasPreselectedRoute && !queryReady);
 
   // Compute ISO datetimes for server calculation and submission
   const pickupDatetimeIso = useMemo(() => {
@@ -555,11 +633,16 @@ export function BookingPage() {
 
   // Debounced auto-fetch on route, vehicle, datetime, or promo changes
   useEffect(() => {
+    if (isAvailabilityBlocked) {
+      setServerFare(null);
+      setFareError(null);
+      return;
+    }
     const timer = setTimeout(() => {
       fetchAuthoritativeFare();
     }, 250);
     return () => clearTimeout(timer);
-  }, [fetchAuthoritativeFare]);
+  }, [fetchAuthoritativeFare, isAvailabilityBlocked]);
 
   // Handle promo code submit
   const handleApplyPromo = (e: React.FormEvent) => {
@@ -1282,7 +1365,9 @@ export function BookingPage() {
               )}
             </header>
 
-            {/* MAIN TWO-COLUMN SPLIT: VEHICLE SELECTION CARDS & STICKY LIVE SUMMARY */}
+            {isAvailabilityBlocked ? (
+              <UnavailableBookingRequest request={unsupportedRequest} selectedVehicleId={selectedVehicleId} />
+            ) : (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-start">
               {/* Left Column: 5 Vehicle Cards (8 Cols) */}
               <div className="lg:col-span-8 flex flex-col gap-space-md">
@@ -1493,6 +1578,7 @@ export function BookingPage() {
                 </div>
               </aside>
             </div>
+            )}
           </div>
         )}
 
