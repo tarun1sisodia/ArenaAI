@@ -1,4 +1,5 @@
 import { contact } from "../../data/contact";
+import { Icon } from "../../components/icons/Icon";
 import { WhatsAppIcon } from "../../components/icons";
 
 /**
@@ -58,7 +59,7 @@ export function BookingAssistant({
       <div className="bg-ink-charcoal text-ivory-surface px-space-md py-space-sm flex items-center gap-space-sm">
         <span className="relative flex shrink-0">
           <span className="w-9 h-9 rounded-full bg-gold-accent/20 border border-gold-accent/40 flex items-center justify-center">
-            <span className="material-symbols-outlined text-icon-20 text-gold-accent">support_agent</span>
+            <Icon name="support_agent" className="text-icon-20 text-gold-accent" />
           </span>
           <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-success-jade border-2 border-ink-charcoal animate-pulse" aria-hidden="true" />
         </span>
@@ -124,9 +125,7 @@ export function BookingAssistant({
                 "Zero forced shopping — monuments only",
               ].map((point) => (
                 <li key={point} className="flex items-start gap-1.5">
-                  <span className="material-symbols-outlined text-icon-15 text-success-jade shrink-0 mt-0.5" aria-hidden="true">
-                    check_circle
-                  </span>
+                  <Icon name="check_circle" className="text-icon-15 text-success-jade shrink-0 mt-0.5" aria-hidden="true" />
                   {point}
                 </li>
               ))}

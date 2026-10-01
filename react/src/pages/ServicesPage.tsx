@@ -1,4 +1,5 @@
 import type { SupportedLanguage } from "../config";
+import { Icon } from "../components/icons/Icon";
 import {
   PrimaryButton,
   WhatsAppButton,
@@ -157,7 +158,7 @@ export function ServicesPage({ language = "en" }: ServicesPageProps) {
             <a className="hover:text-primary transition-colors" href="/">
               Home
             </a>
-            <span className="material-symbols-outlined text-icon-14">chevron_right</span>
+            <Icon name="chevron_right" className="text-icon-14" />
             <span className="text-primary font-bold">Services</span>
           </nav>
 
@@ -259,9 +260,7 @@ export function ServicesPage({ language = "en" }: ServicesPageProps) {
                   <div className="space-y-1.5 mb-3 border-y border-border-warm/50 py-2">
                     {s.highlights.map((item) => (
                       <div key={item} className="flex items-start gap-1.5 text-on-surface font-body-sm text-body-md">
-                        <span className="material-symbols-outlined text-success-jade text-icon-15 shrink-0 mt-0.5">
-                          check_circle
-                        </span>
+                        <Icon name="check_circle" className="text-success-jade text-icon-15 shrink-0 mt-0.5" />
                         <span>{item}</span>
                       </div>
                     ))}
@@ -314,7 +313,7 @@ export function ServicesPage({ language = "en" }: ServicesPageProps) {
             <div className="p-3.5 sm:p-4 rounded-xl bg-surface-container-lowest border border-border-warm/50 shadow-xs flex flex-col justify-between">
               <div>
                 <div className="w-8 h-8 rounded-lg bg-sandstone-wash flex items-center justify-center text-primary mb-2.5">
-                  <span className="material-symbols-outlined text-icon-20">timer</span>
+                  <Icon name="timer" className="text-icon-20" />
                 </div>
                 <h3 className={`${EDITORIAL_TYPOGRAPHY.subH4} text-xs sm:text-title-lg mb-1`}>Punctuality Guarantee</h3>
                 <p className={`${EDITORIAL_TYPOGRAPHY.compact} text-body-sm sm:text-label-lg`}>
@@ -327,7 +326,7 @@ export function ServicesPage({ language = "en" }: ServicesPageProps) {
             <div className="p-3.5 sm:p-4 rounded-xl bg-surface-container-lowest border border-border-warm/50 shadow-xs flex flex-col justify-between">
               <div>
                 <div className="w-8 h-8 rounded-lg bg-sandstone-wash flex items-center justify-center text-primary mb-2.5">
-                  <span className="material-symbols-outlined text-icon-20">payments</span>
+                  <Icon name="payments" className="text-icon-20" />
                 </div>
                 <h3 className={`${EDITORIAL_TYPOGRAPHY.subH4} text-xs sm:text-title-lg mb-1`}>Upfront Inclusive Pricing</h3>
                 <p className={`${EDITORIAL_TYPOGRAPHY.compact} text-body-sm sm:text-label-lg`}>
@@ -340,7 +339,7 @@ export function ServicesPage({ language = "en" }: ServicesPageProps) {
             <div className="p-3.5 sm:p-4 rounded-xl bg-surface-container-lowest border border-border-warm/50 shadow-xs flex flex-col justify-between">
               <div>
                 <div className="w-8 h-8 rounded-lg bg-sandstone-wash flex items-center justify-center text-primary mb-2.5">
-                  <span className="material-symbols-outlined text-icon-20">badge</span>
+                  <Icon name="badge" className="text-icon-20" />
                 </div>
                 <h3 className={`${EDITORIAL_TYPOGRAPHY.subH4} text-xs sm:text-title-lg mb-1`}>Police-Verified Drivers</h3>
                 <p className={`${EDITORIAL_TYPOGRAPHY.compact} text-body-sm sm:text-label-lg`}>
@@ -353,7 +352,7 @@ export function ServicesPage({ language = "en" }: ServicesPageProps) {
             <div className="p-3.5 sm:p-4 rounded-xl bg-surface-container-lowest border border-border-warm/50 shadow-xs flex flex-col justify-between">
               <div>
                 <div className="w-8 h-8 rounded-lg bg-sandstone-wash flex items-center justify-center text-primary mb-2.5">
-                  <span className="material-symbols-outlined text-icon-20">sanitizer</span>
+                  <Icon name="sanitizer" className="text-icon-20" />
                 </div>
                 <h3 className={`${EDITORIAL_TYPOGRAPHY.subH4} text-xs sm:text-title-lg mb-1`}>Spotless Vehicles</h3>
                 <p className={`${EDITORIAL_TYPOGRAPHY.compact} text-body-sm sm:text-label-lg`}>

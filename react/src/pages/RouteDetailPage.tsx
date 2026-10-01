@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Icon, type IconName } from "../components/icons/Icon";
 import { contact } from "../data/contact";
 import {
   type Route,
@@ -168,13 +169,13 @@ export function RouteDetailPage({ route }: RouteDetailPageProps) {
         <div className="max-w-7xl mx-auto px-margin-mobile lg:px-margin flex items-center justify-between">
           <nav aria-label="Breadcrumb" className="flex items-center gap-space-xs text-body-sm font-body-sm text-on-surface-variant">
             <a className="hover:text-primary transition-colors" href="/">Home</a>
-            <span className="material-symbols-outlined text-icon-14 text-terracotta-sandstone">chevron_right</span>
+            <Icon name="chevron_right" className="text-icon-14 text-terracotta-sandstone" />
             <a className="hover:text-primary transition-colors" href="/routes/">Routes</a>
-            <span className="material-symbols-outlined text-icon-14 text-terracotta-sandstone">chevron_right</span>
+            <Icon name="chevron_right" className="text-icon-14 text-terracotta-sandstone" />
             <span className="text-terracotta-sandstone font-medium">{fromEn} to {toEn}</span>
           </nav>
           <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary-fixed text-primary text-label-caps font-label-caps uppercase tracking-wider">
-            <span className="material-symbols-outlined text-icon-14">speed</span>
+            <Icon name="speed" className="text-icon-14" />
             Expressway Corridor
           </span>
         </div>
@@ -187,7 +188,7 @@ export function RouteDetailPage({ route }: RouteDetailPageProps) {
             {/* Left Column: Corridor Specs & Booking Callout */}
             <div className="lg:col-span-7 flex flex-col gap-space-md">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary-fixed text-primary text-label-caps font-label-caps uppercase tracking-widest w-fit">
-                <span className="material-symbols-outlined text-icon-14">directions_car</span>
+                <Icon name="directions_car" className="text-icon-14" />
                 Doorstep Intercity Transit • Zero Return Penalties
               </span>
 
@@ -203,28 +204,28 @@ export function RouteDetailPage({ route }: RouteDetailPageProps) {
               {/* Highway Corridor Intelligence Strip */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-space-sm pt-space-xs">
                 <div className="flex items-center gap-2 p-space-sm rounded bg-surface-container-low border border-border-warm/40">
-                  <span className="material-symbols-outlined text-terracotta-sandstone text-icon-20">straighten</span>
+                  <Icon name="straighten" className="text-terracotta-sandstone text-icon-20" />
                   <div className="flex flex-col">
                     <span className="font-title-md text-headline-sm text-ink-charcoal font-semibold">{route.km} km</span>
                     <span className="text-label-md text-secondary">Verified Distance</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 p-space-sm rounded bg-surface-container-low border border-border-warm/40">
-                  <span className="material-symbols-outlined text-terracotta-sandstone text-icon-20">schedule</span>
+                  <Icon name="schedule" className="text-terracotta-sandstone text-icon-20" />
                   <div className="flex flex-col">
                     <span className="font-title-md text-headline-sm text-ink-charcoal font-semibold">{route.duration}</span>
                     <span className="text-label-md text-secondary">Est. Transit Time</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 p-space-sm rounded bg-surface-container-low border border-border-warm/40">
-                  <span className="material-symbols-outlined text-terracotta-sandstone text-icon-20">alt_route</span>
+                  <Icon name="alt_route" className="text-terracotta-sandstone text-icon-20" />
                   <div className="flex flex-col">
                     <span className="font-title-md text-headline-sm text-ink-charcoal font-semibold">Tolls Inc.</span>
                     <span className="text-label-md text-secondary">One-Way Drops</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 p-space-sm rounded bg-surface-container-low border border-border-warm/40">
-                  <span className="material-symbols-outlined text-terracotta-sandstone text-icon-20">verified</span>
+                  <Icon name="verified" className="text-terracotta-sandstone text-icon-20" />
                   <div className="flex flex-col">
                     <span className="font-title-md text-headline-sm text-ink-charcoal font-semibold">28% Token</span>
                     <span className="text-label-md text-secondary">Reserve to Lock</span>
@@ -252,7 +253,7 @@ export function RouteDetailPage({ route }: RouteDetailPageProps) {
                     className="inline-flex items-center justify-center gap-space-xs bg-terracotta-deep text-white px-6 py-3.5 rounded text-label-lg font-label-lg shadow-md hover:bg-terracotta-sunlit transition-all duration-200"
                     href={bookingUrl}
                   >
-                    <span className="material-symbols-outlined text-icon-20">calendar_month</span>
+                    <Icon name="calendar_month" className="text-icon-20" />
                     <span>Book This Route</span>
                   </a>
                   <a
@@ -296,11 +297,11 @@ export function RouteDetailPage({ route }: RouteDetailPageProps) {
               {/* Trust signals strip */}
               <div className="grid grid-cols-2 gap-space-sm pt-space-md">
                 <div className="flex items-center gap-2 p-space-sm rounded bg-surface-container-low border border-border-warm/40">
-                  <span className="material-symbols-outlined text-success-jade text-icon-20">verified</span>
+                  <Icon name="verified" className="text-success-jade text-icon-20" />
                   <span className="text-body-sm text-on-surface font-medium">100% Commercial Fleet</span>
                 </div>
                 <div className="flex items-center gap-2 p-space-sm rounded bg-surface-container-low border border-border-warm/40">
-                  <span className="material-symbols-outlined text-success-jade text-icon-20">car_repair</span>
+                  <Icon name="car_repair" className="text-success-jade text-icon-20" />
                   <span className="text-body-sm text-on-surface font-medium">45-Min Highway Replacement</span>
                 </div>
               </div>
@@ -384,7 +385,7 @@ export function RouteDetailPage({ route }: RouteDetailPageProps) {
                     href={`/book?from=${encodeURIComponent(fromEn)}&to=${encodeURIComponent(toEn)}&vehicle=${vSlug}&route=${encodeURIComponent(route.id)}`}
                   >
                     <span>Select {v.name.split(" ")[0]}</span>
-                    <span className="material-symbols-outlined text-icon-16">arrow_forward</span>
+                    <Icon name="arrow_forward" className="text-icon-16" />
                   </a>
                 </div>
               );
@@ -412,7 +413,7 @@ export function RouteDetailPage({ route }: RouteDetailPageProps) {
             <div className="bg-surface-container-low p-space-xl rounded-xl shadow-sm border border-border-warm/50 flex flex-col justify-between">
               <div className="flex flex-col gap-space-sm">
                 <div className="w-12 h-12 rounded-lg bg-sandstone-wash flex items-center justify-center text-terracotta-sandstone">
-                  <span className="material-symbols-outlined text-icon-26">road</span>
+                  <Icon name="road" className="text-icon-26" />
                 </div>
                 <h3 className="font-title-lg text-title-lg text-on-surface font-serif">Highway Infrastructure</h3>
                 <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
@@ -427,7 +428,7 @@ export function RouteDetailPage({ route }: RouteDetailPageProps) {
             <div className="bg-surface-container-low p-space-xl rounded-xl shadow-sm border border-border-warm/50 flex flex-col justify-between">
               <div className="flex flex-col gap-space-sm">
                 <div className="w-12 h-12 rounded-lg bg-sandstone-wash flex items-center justify-center text-terracotta-sandstone">
-                  <span className="material-symbols-outlined text-icon-26">wb_sunny</span>
+                  <Icon name="wb_sunny" className="text-icon-26" />
                 </div>
                 <h3 className="font-title-lg text-title-lg text-on-surface font-serif">Recommended Departure</h3>
                 <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
@@ -442,7 +443,7 @@ export function RouteDetailPage({ route }: RouteDetailPageProps) {
             <div className="bg-surface-container-low p-space-xl rounded-xl shadow-sm border border-border-warm/50 flex flex-col justify-between">
               <div className="flex flex-col gap-space-sm">
                 <div className="w-12 h-12 rounded-lg bg-sandstone-wash flex items-center justify-center text-terracotta-sandstone">
-                  <span className="material-symbols-outlined text-icon-26">restaurant</span>
+                  <Icon name="restaurant" className="text-icon-26" />
                 </div>
                 <h3 className="font-title-lg text-title-lg text-on-surface font-serif">Hygienic Rest Stops</h3>
                 <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
@@ -457,7 +458,7 @@ export function RouteDetailPage({ route }: RouteDetailPageProps) {
             <div className="bg-surface-container-low p-space-xl rounded-xl shadow-sm border border-border-warm/50 flex flex-col justify-between">
               <div className="flex flex-col gap-space-sm">
                 <div className="w-12 h-12 rounded-lg bg-sandstone-wash flex items-center justify-center text-terracotta-sandstone">
-                  <span className="material-symbols-outlined text-icon-26">receipt_long</span>
+                  <Icon name="receipt_long" className="text-icon-26" />
                 </div>
                 <h3 className="font-title-lg text-title-lg text-on-surface font-serif">Toll &amp; Tax Policy</h3>
                 <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
@@ -495,7 +496,7 @@ export function RouteDetailPage({ route }: RouteDetailPageProps) {
               >
                 <div className="flex flex-col gap-space-sm">
                   <div className="w-12 h-12 rounded-lg bg-sandstone-wash flex items-center justify-center text-terracotta-sandstone">
-                    <span className="material-symbols-outlined text-icon-26">{s.icon}</span>
+                    <Icon name={s.icon as IconName} className="text-icon-26" />
                   </div>
                   <h3 className="font-title-lg text-title-lg text-on-surface font-serif">{s.title}</h3>
                   <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">{s.desc}</p>
@@ -539,13 +540,7 @@ export function RouteDetailPage({ route }: RouteDetailPageProps) {
                     aria-expanded={isOpen}
                   >
                     <span className="font-title-md text-title-md text-ink-charcoal font-serif">{item.q}</span>
-                    <span
-                      className={`material-symbols-outlined text-terracotta-sandstone text-icon-22 transition-transform duration-200 shrink-0 ${
-                        isOpen ? "rotate-180" : ""
-                      }`}
-                    >
-                      keyboard_arrow_down
-                    </span>
+                    <Icon name="keyboard_arrow_down" className={`text-terracotta-sandstone text-icon-22 transition-transform duration-200 shrink-0 ${isOpen ? "rotate-180" : ""}`} />
                   </button>
                   {isOpen && (
                     <div className="px-space-lg pb-space-lg pt-0 text-body-md text-on-surface-variant leading-relaxed border-t border-border-warm/20">
@@ -580,14 +575,14 @@ export function RouteDetailPage({ route }: RouteDetailPageProps) {
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-space-xs bg-terracotta-deep text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded text-label-lg font-label-lg shadow-md hover:bg-terracotta-sunlit transition-all duration-200 text-center"
                 href={bookingUrl}
               >
-                <span className="material-symbols-outlined text-icon-20">calendar_today</span>
+                <Icon name="calendar_today" className="text-icon-20" />
                 <span>Book This Journey</span>
               </a>
               <a
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-space-xs bg-ink-charcoal text-ivory-surface px-6 py-3.5 sm:py-4 rounded text-label-lg font-label-lg shadow-sm hover:bg-ink-slate transition-all duration-200 text-center"
                 href={`tel:${contact.phone}`}
               >
-                <span className="material-symbols-outlined text-icon-20 text-terracotta-sunlit">phone_in_talk</span>
+                <Icon name="phone_in_talk" className="text-icon-20 text-terracotta-sunlit" />
                 <span>{contact.phoneDisplay}</span>
               </a>
             </div>

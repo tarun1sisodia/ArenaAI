@@ -1,4 +1,5 @@
 import React from "react";
+import { Icon } from "../components/icons/Icon";
 import { contact } from "../data/contact";
 import { WhatsAppIcon } from "../components/icons";
 import {
@@ -19,9 +20,9 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
         <div className="max-w-7xl mx-auto px-margin-mobile lg:px-margin flex items-center justify-between">
           <nav aria-label="Breadcrumb" className="flex items-center gap-space-xs text-body-sm font-body-sm text-on-surface-variant">
             <a className="hover:text-primary transition-colors" href="/">Home</a>
-            <span className="material-symbols-outlined text-icon-14 text-terracotta-sandstone">chevron_right</span>
+            <Icon name="chevron_right" className="text-icon-14 text-terracotta-sandstone" />
             <span className="text-on-surface font-semibold">Why Choose Us</span>
-            <span className="material-symbols-outlined text-icon-14 text-terracotta-sandstone">chevron_right</span>
+            <Icon name="chevron_right" className="text-icon-14 text-terracotta-sandstone" />
             <span className="text-terracotta-sandstone font-medium">The Baghel Standard</span>
           </nav>
         </div>
@@ -38,7 +39,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
             {/* Text Column */}
             <div className="lg:col-span-7 flex flex-col gap-space-md">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary-fixed text-primary font-label-caps text-body-sm uppercase tracking-widest w-fit font-bold">
-                <span className="material-symbols-outlined text-icon-14">verified</span>
+                <Icon name="verified" className="text-icon-14" />
                 Heritage Chauffeur Ethics Since 2009
               </span>
               <h1 className={EDITORIAL_TYPOGRAPHY.heroH1}>
@@ -129,7 +130,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between">
                   <span className="font-headline-md text-lg sm:text-xl font-serif text-terracotta-sandstone font-bold">01</span>
-                  <span className="material-symbols-outlined text-primary text-icon-22">do_not_disturb_on</span>
+                  <Icon name="do_not_disturb_on" className="text-primary text-icon-22" />
                 </div>
                 <h3 className={EDITORIAL_TYPOGRAPHY.subH4}>Zero Commission Traps Guarantee</h3>
                 <p className={EDITORIAL_TYPOGRAPHY.compact}>
@@ -149,7 +150,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between">
                   <span className="font-headline-md text-lg sm:text-xl font-serif text-terracotta-sandstone font-bold">02</span>
-                  <span className="material-symbols-outlined text-primary text-icon-22">flight_takeoff</span>
+                  <Icon name="flight_takeoff" className="text-primary text-icon-22" />
                 </div>
                 <h3 className={EDITORIAL_TYPOGRAPHY.subH4}>Punctual Doorstep &amp; Flight Tracking</h3>
                 <p className={EDITORIAL_TYPOGRAPHY.compact}>
@@ -169,7 +170,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between">
                   <span className="font-headline-md text-lg sm:text-xl font-serif text-terracotta-sandstone font-bold">03</span>
-                  <span className="material-symbols-outlined text-primary text-icon-22">badge</span>
+                  <Icon name="badge" className="text-primary text-icon-22" />
                 </div>
                 <h3 className={EDITORIAL_TYPOGRAPHY.subH4}>100% Yellow-Plate Commercial Fleet</h3>
                 <p className={EDITORIAL_TYPOGRAPHY.compact}>
@@ -189,7 +190,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between">
                   <span className="font-headline-md text-lg sm:text-xl font-serif text-terracotta-sandstone font-bold">04</span>
-                  <span className="material-symbols-outlined text-primary text-icon-22">person_apron</span>
+                  <Icon name="person_apron" className="text-primary text-icon-22" />
                 </div>
                 <h3 className={EDITORIAL_TYPOGRAPHY.subH4}>Chauffeur Etiquette &amp; Heritage Fluency</h3>
                 <p className={EDITORIAL_TYPOGRAPHY.compact}>
@@ -208,7 +209,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between">
                   <span className="font-headline-md text-lg sm:text-xl font-serif text-terracotta-sandstone font-bold">05</span>
-                  <span className="material-symbols-outlined text-primary text-icon-22">payments</span>
+                  <Icon name="payments" className="text-primary text-icon-22" />
                 </div>
                 <h3 className={EDITORIAL_TYPOGRAPHY.subH4}>Transparent 28% Advance &amp; Fare Lock</h3>
                 <p className={EDITORIAL_TYPOGRAPHY.compact}>
@@ -227,7 +228,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between">
                   <span className="font-headline-md text-lg sm:text-xl font-serif text-terracotta-sandstone font-bold">06</span>
-                  <span className="material-symbols-outlined text-primary text-icon-22">support_agent</span>
+                  <Icon name="support_agent" className="text-primary text-icon-22" />
                 </div>
                 <h3 className={EDITORIAL_TYPOGRAPHY.subH4}>24×7 Human Taj Ganj Dispatch Desk</h3>
                 <p className={EDITORIAL_TYPOGRAPHY.compact}>
@@ -269,17 +270,17 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                 </p>
                 <div className="flex flex-col gap-1.5 pt-1">
                   <div className="flex items-center gap-2 text-body-md">
-                    <span className="material-symbols-outlined text-gold-accent text-icon-16">speed</span>
+                    <Icon name="speed" className="text-gold-accent text-icon-16" />
                     <span className="text-ivory-surface font-medium">Governor Speed Cap:</span>
                     <span className="text-secondary-fixed-dim">Strictly calibrated to 80–100 km/h</span>
                   </div>
                   <div className="flex items-center gap-2 text-body-md">
-                    <span className="material-symbols-outlined text-gold-accent text-icon-16">local_drink</span>
+                    <Icon name="local_drink" className="text-gold-accent text-icon-16" />
                     <span className="text-ivory-surface font-medium">In-Cabin Hospitality:</span>
                     <span className="text-secondary-fixed-dim">Chilled sealed water, tissues &amp; mints</span>
                   </div>
                   <div className="flex items-center gap-2 text-body-md">
-                    <span className="material-symbols-outlined text-gold-accent text-icon-16">medical_services</span>
+                    <Icon name="medical_services" className="text-gold-accent text-icon-16" />
                     <span className="text-ivory-surface font-medium">Safety Equipment:</span>
                     <span className="text-secondary-fixed-dim">ISO-approved medical kit &amp; fire canister</span>
                   </div>
@@ -292,7 +293,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                   <div className="bg-ink-slate p-2.5 sm:p-3 rounded-lg flex flex-col gap-1 border border-white/5">
                     <div className="flex items-center justify-between">
                       <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowGold} text-label-caps`}>Mechanical Systems</span>
-                      <span className="material-symbols-outlined text-success-jade text-icon-16">check_circle</span>
+                      <Icon name="check_circle" className="text-success-jade text-icon-16" />
                     </div>
                     <h4 className={EDITORIAL_TYPOGRAPHY.subH4Dark}>Braking &amp; Tread Depth</h4>
                     <p className={EDITORIAL_TYPOGRAPHY.compactDark}>
@@ -302,7 +303,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                   <div className="bg-ink-slate p-2.5 sm:p-3 rounded-lg flex flex-col gap-1 border border-white/5">
                     <div className="flex items-center justify-between">
                       <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowGold} text-label-caps`}>Atmospheric Purity</span>
-                      <span className="material-symbols-outlined text-success-jade text-icon-16">check_circle</span>
+                      <Icon name="check_circle" className="text-success-jade text-icon-16" />
                     </div>
                     <h4 className={EDITORIAL_TYPOGRAPHY.subH4Dark}>Dual-Zone AC Sanitization</h4>
                     <p className={EDITORIAL_TYPOGRAPHY.compactDark}>
@@ -312,7 +313,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                   <div className="bg-ink-slate p-2.5 sm:p-3 rounded-lg flex flex-col gap-1 border border-white/5">
                     <div className="flex items-center justify-between">
                       <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowGold} text-label-caps`}>Navigational Rigor</span>
-                      <span className="material-symbols-outlined text-success-jade text-icon-16">check_circle</span>
+                      <Icon name="check_circle" className="text-success-jade text-icon-16" />
                     </div>
                     <h4 className={EDITORIAL_TYPOGRAPHY.subH4Dark}>Redundant GPS Telematics</h4>
                     <p className={EDITORIAL_TYPOGRAPHY.compactDark}>
@@ -322,7 +323,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                   <div className="bg-ink-slate p-2.5 sm:p-3 rounded-lg flex flex-col gap-1 border border-white/5">
                     <div className="flex items-center justify-between">
                       <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowGold} text-label-caps`}>Guest Ergonomics</span>
-                      <span className="material-symbols-outlined text-success-jade text-icon-16">check_circle</span>
+                      <Icon name="check_circle" className="text-success-jade text-icon-16" />
                     </div>
                     <h4 className={EDITORIAL_TYPOGRAPHY.subH4Dark}>Power Port Validation</h4>
                     <p className={EDITORIAL_TYPOGRAPHY.compactDark}>
@@ -334,7 +335,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                 {/* Visual Fleet Cutout Strip */}
                 <div className="mt-2.5 bg-ink-slate/60 p-2 sm:p-2.5 rounded-lg flex flex-wrap items-center justify-between gap-2 text-body-md border border-white/5">
                   <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-terracotta-sunlit text-icon-16">airline_seat_recline_normal</span>
+                    <Icon name="airline_seat_recline_normal" className="text-terracotta-sunlit text-icon-16" />
                     <span className="text-ivory-surface">
                       Toyota Innova Crysta • Dzire Executive • Urbania 10-Seater • Tempo Traveller
                     </span>
@@ -371,7 +372,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                   <th className="py-2.5 px-4 font-title-md text-xs font-bold">Standard Criteria</th>
                   <th className="py-2.5 px-4 font-title-md text-xs font-bold text-terracotta-sandstone bg-sandstone-wash">
                     <span className="flex items-center gap-1">
-                      <span className="material-symbols-outlined text-terracotta-sandstone text-icon-16">stars</span>
+                      <Icon name="stars" className="text-terracotta-sandstone text-icon-16" />
                       SK Baghel Tour &amp; Travels
                     </span>
                   </th>
@@ -385,7 +386,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                   <td className="py-2.5 px-4 font-medium text-ink-charcoal">Vehicle Model Guarantee</td>
                   <td className="py-2.5 px-4 font-semibold text-success-jade bg-sandstone-wash/30">
                     <div className="flex items-center gap-1">
-                      <span className="material-symbols-outlined text-icon-16">check_circle</span>
+                      <Icon name="check_circle" className="text-icon-16" />
                       Exact Model Reserved (e.g. Crysta ZX)
                     </div>
                   </td>
@@ -397,7 +398,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                   <td className="py-2.5 px-4 font-medium text-ink-charcoal">Unsolicited Commission Stops</td>
                   <td className="py-2.5 px-4 font-semibold text-success-jade bg-sandstone-wash/30">
                     <div className="flex items-center gap-1">
-                      <span className="material-symbols-outlined text-icon-16">verified_user</span>
+                      <Icon name="verified_user" className="text-icon-16" />
                       Strict Zero Tolerance (Cash penalty)
                     </div>
                   </td>
@@ -409,7 +410,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                   <td className="py-2.5 px-4 font-medium text-ink-charcoal">Yamuna Toll &amp; State Taxes</td>
                   <td className="py-2.5 px-4 font-semibold text-success-jade bg-sandstone-wash/30">
                     <div className="flex items-center gap-1">
-                      <span className="material-symbols-outlined text-icon-16">check_circle</span>
+                      <Icon name="check_circle" className="text-icon-16" />
                       Bundled &amp; Stated Upfront
                     </div>
                   </td>
@@ -421,7 +422,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                   <td className="py-2.5 px-4 font-medium text-ink-charcoal">Driver Verification</td>
                   <td className="py-2.5 px-4 font-semibold text-success-jade bg-sandstone-wash/30">
                     <div className="flex items-center gap-1">
-                      <span className="material-symbols-outlined text-icon-16">check_circle</span>
+                      <Icon name="check_circle" className="text-icon-16" />
                       Police ID + 7+ Yrs Golden Triangle
                     </div>
                   </td>
@@ -433,7 +434,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                   <td className="py-2.5 px-4 font-medium text-ink-charcoal">Chauffeur Contact Time</td>
                   <td className="py-2.5 px-4 font-semibold text-success-jade bg-sandstone-wash/30">
                     <div className="flex items-center gap-1">
-                      <span className="material-symbols-outlined text-icon-16">check_circle</span>
+                      <Icon name="check_circle" className="text-icon-16" />
                       Assigned 18–24 Hours Prior
                     </div>
                   </td>
@@ -445,7 +446,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                   <td className="py-2.5 px-4 font-medium text-ink-charcoal">Cancellation &amp; Reschedule</td>
                   <td className="py-2.5 px-4 font-semibold text-success-jade bg-sandstone-wash/30">
                     <div className="flex items-center gap-1">
-                      <span className="material-symbols-outlined text-icon-16">check_circle</span>
+                      <Icon name="check_circle" className="text-icon-16" />
                       Free Reschedule up to 12 Hours
                     </div>
                   </td>
@@ -471,7 +472,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
               </h2>
             </div>
             <div className="flex items-center gap-1 text-label-md font-body-sm text-secondary">
-              <span className="material-symbols-outlined text-gold-accent text-icon-18">star</span>
+              <Icon name="star" className="text-gold-accent text-icon-18" />
               <span className="font-semibold text-ink-charcoal">4.92 / 5.0 Aggregate</span>
               <span>across Google &amp; TripAdvisor</span>
             </div>
@@ -484,9 +485,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                 <div className="flex items-center justify-between text-gold-accent">
                   <div className="flex gap-0.5">
                     {[...Array(5)].map((_, i) => (
-                      <span key={i} className="material-symbols-outlined text-icon-16" style={{ fontVariationSettings: '"FILL" 1' }}>
-                        star
-                      </span>
+                      <Icon name="star" className="text-icon-16" key={i} />
                     ))}
                   </div>
                   <span className="text-label-lg text-secondary font-mono">Delhi ⇄ Agra Same-Day</span>
@@ -503,7 +502,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                     <span className="text-label-lg text-secondary">Geneva, Switzerland</span>
                   </div>
                   <div className="flex items-center gap-1 bg-surface-container px-2 py-0.5 rounded text-success-jade text-label-lg font-medium">
-                    <span className="material-symbols-outlined text-success-jade text-icon-15">verified</span>
+                    <Icon name="verified" className="text-success-jade text-icon-15" />
                     <span>Verified Guest</span>
                   </div>
                 </div>
@@ -516,9 +515,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                 <div className="flex items-center justify-between text-gold-accent">
                   <div className="flex gap-0.5">
                     {[...Array(5)].map((_, i) => (
-                      <span key={i} className="material-symbols-outlined text-icon-16" style={{ fontVariationSettings: '"FILL" 1' }}>
-                        star
-                      </span>
+                      <Icon name="star" className="text-icon-16" key={i} />
                     ))}
                   </div>
                   <span className="text-label-lg text-secondary font-mono">Mathura-Vrindavan Circuit</span>
@@ -535,7 +532,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                     <span className="text-label-lg text-secondary">Greater Kailash, New Delhi</span>
                   </div>
                   <div className="flex items-center gap-1 bg-surface-container px-2 py-0.5 rounded text-success-jade text-label-lg font-medium">
-                    <span className="material-symbols-outlined text-success-jade text-icon-15">verified</span>
+                    <Icon name="verified" className="text-success-jade text-icon-15" />
                     <span>Verified Guest</span>
                   </div>
                 </div>
@@ -548,9 +545,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                 <div className="flex items-center justify-between text-gold-accent">
                   <div className="flex gap-0.5">
                     {[...Array(5)].map((_, i) => (
-                      <span key={i} className="material-symbols-outlined text-icon-16" style={{ fontVariationSettings: '"FILL" 1' }}>
-                        star
-                      </span>
+                      <Icon name="star" className="text-icon-16" key={i} />
                     ))}
                   </div>
                   <span className="text-label-lg text-secondary font-mono">Golden Triangle 4-Day</span>
@@ -567,7 +562,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                     <span className="text-label-lg text-secondary">Melbourne, Australia</span>
                   </div>
                   <div className="flex items-center gap-1 bg-surface-container px-2 py-0.5 rounded text-success-jade text-label-lg font-medium">
-                    <span className="material-symbols-outlined text-success-jade text-icon-15">verified</span>
+                    <Icon name="verified" className="text-success-jade text-icon-15" />
                     <span>Verified Guest</span>
                   </div>
                 </div>
@@ -595,14 +590,14 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
                 <div className="bg-surface-container-lowest p-2.5 sm:p-3 rounded flex items-start gap-2 shadow-xs border border-border-warm/50">
-                  <span className="material-symbols-outlined text-terracotta-sandstone mt-0.5 text-icon-18">pin_drop</span>
+                  <Icon name="pin_drop" className="text-terracotta-sandstone mt-0.5 text-icon-18" />
                   <div className="flex flex-col">
                     <span className="font-title-md text-xs text-on-surface font-serif font-bold">Taj Ganj Station</span>
                     <span className="text-label-lg text-secondary">{contact.address}</span>
                   </div>
                 </div>
                 <div className="bg-surface-container-lowest p-2.5 sm:p-3 rounded flex items-start gap-2 shadow-xs border border-border-warm/50">
-                  <span className="material-symbols-outlined text-terracotta-sandstone mt-0.5 text-icon-18">alarm_on</span>
+                  <Icon name="alarm_on" className="text-terracotta-sandstone mt-0.5 text-icon-18" />
                   <div className="flex flex-col">
                     <span className="font-title-md text-xs text-on-surface font-serif font-bold">Agra Cantt Backup</span>
                     <span className="text-label-lg text-secondary">Dedicated station coordinator on platform 1 arrival</span>

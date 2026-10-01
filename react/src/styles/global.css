@@ -1132,7 +1132,7 @@ html.dark .sheet-content {
 }
 
 .button {
-  min-height: 44px;
+  min-height: 48px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -4719,7 +4719,7 @@ html.dark .lead-bar {
 .about {
   --cubic: cubic-bezier(0.64, 0.01, 0.07, 1.65);
   --transition: 0.6s var(--cubic);
-  --size: 46px;
+  --size: 48px;
   position: fixed;
   z-index: 990;
   bottom: 24px;
@@ -14238,7 +14238,7 @@ html.dark .loc-empty {
   font: 700 9px/1.1 var(--font-body-md);
   transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease;
 }
-.home-booking-fleet-option .material-symbols-outlined {
+.home-booking-fleet-option svg {
   font-size: 18px;
 }
 .home-booking-fleet-option:hover,

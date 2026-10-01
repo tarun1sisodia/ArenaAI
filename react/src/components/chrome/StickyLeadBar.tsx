@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Icon } from "../icons/Icon";
 import { contact } from "../../data/contact";
 import { WhatsAppIcon } from "../icons/WhatsAppIcon";
 
@@ -45,7 +46,7 @@ export function StickyLeadBar({ currentPath }: StickyLeadBarProps) {
         href={`tel:${contact.phone}`}
         aria-label={`Call ${contact.phoneDisplay}`}
       >
-        <span className="material-symbols-outlined text-primary text-icon-18">call</span>
+        <Icon name="call" className="text-primary text-icon-18" />
         <span className="mt-0.5">Call Desk</span>
       </a>
 
@@ -66,7 +67,7 @@ export function StickyLeadBar({ currentPath }: StickyLeadBarProps) {
         href="/book.html"
         aria-label="Book Cab or Tour"
       >
-        <span className="material-symbols-outlined text-on-primary text-icon-18">calendar_month</span>
+        <Icon name="calendar_month" className="text-on-primary text-icon-18" />
         <span className="mt-0.5">Book Now</span>
       </a>
     </aside>

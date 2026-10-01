@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import { Icon } from "../components/icons/Icon";
 import type { SupportedLanguage } from "../config";
 import { contact } from "../data/contact";
 import { WhatsAppIcon } from "../components/icons";
@@ -147,12 +148,12 @@ export function FaqPage({ language = "en" }: FaqPageProps) {
         <div className="max-w-[1280px] mx-auto relative z-10 flex flex-col space-y-space-md">
           <nav aria-label="Breadcrumb" className="flex items-center gap-space-xs text-on-surface-variant font-label-caps text-xs">
             <a className="hover:text-primary transition-colors flex items-center gap-1" href="/">
-              <span className="material-symbols-outlined text-icon-16">home</span>
+              <Icon name="home" className="text-icon-16" />
               <span>Home</span>
             </a>
-            <span className="material-symbols-outlined text-icon-14">chevron_right</span>
+            <Icon name="chevron_right" className="text-icon-14" />
             <span>Support</span>
-            <span className="material-symbols-outlined text-icon-14">chevron_right</span>
+            <Icon name="chevron_right" className="text-icon-14" />
             <span className="text-primary font-bold">Frequently Asked Questions</span>
           </nav>
 
@@ -172,9 +173,7 @@ export function FaqPage({ language = "en" }: FaqPageProps) {
           {/* Search & Category Filter Dock */}
           <div className="pt-space-md max-w-4xl space-y-4">
             <div className="relative">
-              <span className="material-symbols-outlined text-on-surface-variant absolute left-3.5 top-3 text-icon-20">
-                search
-              </span>
+              <Icon name="search" className="text-on-surface-variant absolute left-3.5 top-3 text-icon-20" />
               <input
                 type="text"
                 value={searchQuery}
@@ -214,7 +213,7 @@ export function FaqPage({ language = "en" }: FaqPageProps) {
         <div className="space-y-2.5">
           {filteredFaqs.length === 0 ? (
             <div className="text-center py-8 bg-surface-container-lowest rounded-xl border border-border-warm/60">
-              <span className="material-symbols-outlined text-3xl text-on-surface-variant mb-1.5">search_off</span>
+              <Icon name="search_off" className="text-3xl text-on-surface-variant mb-1.5" />
               <h2 className="font-headline-sm text-base font-semibold text-ink-charcoal">No questions matched your search</h2>
               <p className="text-xs text-on-surface-variant mt-0.5">Try another keyword or chat with our 24x7 desk on WhatsApp.</p>
             </div>
@@ -229,9 +228,7 @@ export function FaqPage({ language = "en" }: FaqPageProps) {
                     className="w-full text-left p-3 sm:p-3.5 flex items-center justify-between gap-3 hover:bg-sandstone-wash/20 transition-colors"
                   >
                     <span className="font-title-md text-xs sm:text-title-lg font-semibold text-ink-charcoal">{faq.q}</span>
-                    <span className="material-symbols-outlined text-primary text-icon-18 shrink-0">
-                      {isOpen ? "expand_less" : "expand_more"}
-                    </span>
+                    <Icon name={isOpen ? "expand_less" : "expand_more"} className="text-primary text-icon-18 shrink-0" />
                   </button>
                   {isOpen && (
                     <div className="p-3 sm:p-3.5 pt-0 text-on-surface-variant font-body-sm text-body-md leading-relaxed border-t border-border-warm/40 mt-1">
@@ -259,7 +256,7 @@ export function FaqPage({ language = "en" }: FaqPageProps) {
               className="p-3.5 rounded-xl bg-surface-container-lowest border border-border-warm/70 hover:border-primary transition-all flex flex-col items-center text-center shadow-xs"
             >
               <div className="w-8 h-8 rounded-full bg-sandstone-wash flex items-center justify-center text-primary mb-2">
-                <span className="material-symbols-outlined text-lg">phone_in_talk</span>
+                <Icon name="phone_in_talk" className="text-lg" />
               </div>
               <h3 className="font-title-md text-xs font-bold text-ink-charcoal">Call 24×7 Desk</h3>
               <p className="text-body-md text-primary font-bold mt-0.5">+91 63958 67598</p>
@@ -267,6 +264,7 @@ export function FaqPage({ language = "en" }: FaqPageProps) {
 
             <a
               href="https://wa.me/919762817598"
+              aria-label="Chat on WhatsApp"
               target="_blank"
               rel="noreferrer"
               style={{ color: "#ffffff" }}
@@ -284,7 +282,7 @@ export function FaqPage({ language = "en" }: FaqPageProps) {
               className="p-3.5 rounded-xl bg-surface-container-lowest border border-border-warm/70 hover:border-primary transition-all flex flex-col items-center text-center shadow-xs"
             >
               <div className="w-8 h-8 rounded-full bg-sandstone-wash flex items-center justify-center text-primary mb-2">
-                <span className="material-symbols-outlined text-lg">mail</span>
+                <Icon name="mail" className="text-lg" />
               </div>
               <h3 className="font-title-md text-xs font-bold text-ink-charcoal">Email Support</h3>
               <p className="text-label-lg text-on-surface-variant font-medium mt-0.5 truncate max-w-full">

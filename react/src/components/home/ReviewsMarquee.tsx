@@ -10,6 +10,7 @@
  */
 
 import React from "react";
+import { Icon } from "../icons/Icon";
 import { reviews, type Review } from "../../data/catalogue";
 
 function getInitials(name: string): string {
@@ -49,7 +50,7 @@ function ReviewCard({ review }: ReviewCardProps) {
             </div>
           </div>
           <span className="px-2 py-0.5 rounded-full bg-success-jade/10 text-success-jade font-label-caps text-label-caps uppercase font-bold flex items-center gap-0.5 shrink-0">
-            <span className="material-symbols-outlined text-icon-11">verified</span>
+            <Icon name="verified" className="text-icon-11" />
             Verified
           </span>
         </div>
@@ -66,13 +67,7 @@ function ReviewCard({ review }: ReviewCardProps) {
           aria-label={`${review.rating} out of 5 stars`}
         >
           {Array.from({ length: 5 }).map((_, i) => (
-            <span
-              key={i}
-              className="material-symbols-outlined text-icon-14"
-              aria-hidden="true"
-            >
-              star
-            </span>
+            <Icon name="star" className="text-icon-14" key={i} aria-hidden="true" />
           ))}
         </div>
         <span className="font-label-caps text-label-caps text-on-surface-variant/80 font-medium">
@@ -99,7 +94,7 @@ export function ReviewsMarquee() {
 
       <div className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin mb-space-lg text-center">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-accent/15 text-gold-bronze font-label-caps text-label-lg mb-2 font-bold">
-          <span className="material-symbols-outlined text-icon-15">hotel_class</span>
+          <Icon name="hotel_class" className="text-icon-15" />
           OUR TRAVELER REVIEWS
         </div>
         <h2 className="font-headline-lg text-headline-lg text-on-surface tracking-tight">

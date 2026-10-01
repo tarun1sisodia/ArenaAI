@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { Icon } from "../components/icons/Icon";
 import type { SupportedLanguage } from "../config";
 import { contact } from "../data/contact";
 import { type TourPackage } from "../data";
@@ -246,7 +247,7 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
               All-Inclusive Chauffeur &amp; Guide
             </span>
             <span className="ml-auto inline-flex items-center gap-1 text-gold-accent font-semibold text-body-sm bg-ink-charcoal text-ivory-surface px-3 py-1 rounded-lg shadow-sm">
-              <span className="material-symbols-outlined text-icon-16 text-gold-accent">star</span>
+              <Icon name="star" className="text-icon-16 text-gold-accent" />
               4.98 / 5 <span className="text-secondary-fixed-dim font-normal text-label-md">(650+ Verified Visitors)</span>
             </span>
           </div>
@@ -263,7 +264,7 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
             </div>
             <div className="lg:col-span-4 flex flex-col items-start lg:items-end justify-center">
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-container-low text-secondary text-body-sm">
-                <span className="material-symbols-outlined text-primary text-icon-18">schedule</span>
+                <Icon name="schedule" className="text-primary text-icon-18" />
                 <span>Duration: <strong className="text-on-surface">{pkg.duration}</strong></span>
               </div>
             </div>
@@ -342,7 +343,7 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
                 {pkg.blurb} Designed with complete flexibility and royal hospitality, this private expedition bypasses crowded tour buses, ensuring an intimate, personalized connection with the grand history and architecture of North India.
               </p>
               <div className="bg-surface-container rounded-xl p-space-md flex items-start gap-space-sm border border-border-warm/60">
-                <span className="material-symbols-outlined text-gold-accent text-icon-24 shrink-0 mt-0.5">hotel_class</span>
+                <Icon name="hotel_class" className="text-gold-accent text-icon-24 shrink-0 mt-0.5" />
                 <div className="flex flex-col">
                   <span className="font-title-md text-title-md text-on-surface font-semibold">Why Private Chauffeur Travel is Paramount</span>
                   <p className="font-body-sm text-body-sm text-secondary mt-0.5">
@@ -362,26 +363,26 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
                 {/* Included */}
                 <div className="bg-surface-container-low p-space-md rounded-xl shadow-sm flex flex-col gap-space-sm border border-border-warm/60">
                   <div className="flex items-center gap-space-xs text-success-jade">
-                    <span className="material-symbols-outlined text-icon-22">check_circle</span>
+                    <Icon name="check_circle" className="text-icon-22" />
                     <span className="font-title-md text-title-md font-semibold text-on-surface">What is Fully Included</span>
                   </div>
                   <ul className="flex flex-col gap-space-xs text-body-sm font-body-sm text-on-surface-variant">
                     {pkg.includes.map((inc, i) => (
                       <li key={i} className="flex items-start gap-space-xs">
-                        <span className="material-symbols-outlined text-success-jade text-icon-18 shrink-0 mt-0.5">check</span>
+                        <Icon name="check" className="text-success-jade text-icon-18 shrink-0 mt-0.5" />
                         <span>{inc}</span>
                       </li>
                     ))}
                     <li className="flex items-start gap-space-xs">
-                      <span className="material-symbols-outlined text-success-jade text-icon-18 shrink-0 mt-0.5">check</span>
+                      <Icon name="check" className="text-success-jade text-icon-18 shrink-0 mt-0.5" />
                       <span>Chauffeur-driven AC vehicle dedicated exclusively to your group</span>
                     </li>
                     <li className="flex items-start gap-space-xs">
-                      <span className="material-symbols-outlined text-success-jade text-icon-18 shrink-0 mt-0.5">check</span>
+                      <Icon name="check" className="text-success-jade text-icon-18 shrink-0 mt-0.5" />
                       <span>All expressway FASTag tolls, parking fees, and state entry permits</span>
                     </li>
                     <li className="flex items-start gap-space-xs">
-                      <span className="material-symbols-outlined text-success-jade text-icon-18 shrink-0 mt-0.5">check</span>
+                      <Icon name="check" className="text-success-jade text-icon-18 shrink-0 mt-0.5" />
                       <span>Chilled Himalayan mineral water, sanitizing wipes &amp; confectionary</span>
                     </li>
                   </ul>
@@ -390,26 +391,26 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
                 {/* Excluded */}
                 <div className="bg-surface-container-low p-space-md rounded-xl shadow-sm flex flex-col gap-space-sm border border-border-warm/60">
                   <div className="flex items-center gap-space-xs text-secondary">
-                    <span className="material-symbols-outlined text-icon-22">cancel</span>
+                    <Icon name="cancel" className="text-icon-22" />
                     <span className="font-title-md text-title-md font-semibold text-on-surface">What is Excluded</span>
                   </div>
                   <ul className="flex flex-col gap-space-xs text-body-sm font-body-sm text-on-surface-variant">
                     {pkg.excludes.map((exc, i) => (
                       <li key={i} className="flex items-start gap-space-xs">
-                        <span className="material-symbols-outlined text-secondary text-icon-18 shrink-0 mt-0.5">remove</span>
+                        <Icon name="remove" className="text-secondary text-icon-18 shrink-0 mt-0.5" />
                         <span>{exc}</span>
                       </li>
                     ))}
                     <li className="flex items-start gap-space-xs">
-                      <span className="material-symbols-outlined text-secondary text-icon-18 shrink-0 mt-0.5">remove</span>
+                      <Icon name="remove" className="text-secondary text-icon-18 shrink-0 mt-0.5" />
                       <span>Monument entrance tickets (Pay direct or request concierge pre-booking: ₹1,100 foreign national / ₹50 Indian national)</span>
                     </li>
                     <li className="flex items-start gap-space-xs">
-                      <span className="material-symbols-outlined text-secondary text-icon-18 shrink-0 mt-0.5">remove</span>
+                      <Icon name="remove" className="text-secondary text-icon-18 shrink-0 mt-0.5" />
                       <span>Personal purchases, marble handicraft souvenirs &amp; artisan items</span>
                     </li>
                     <li className="flex items-start gap-space-xs">
-                      <span className="material-symbols-outlined text-secondary text-icon-18 shrink-0 mt-0.5">remove</span>
+                      <Icon name="remove" className="text-secondary text-icon-18 shrink-0 mt-0.5" />
                       <span>Driver &amp; Guide discretionary gratuity / tips</span>
                     </li>
                   </ul>
@@ -425,30 +426,30 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
               </div>
               <div className="bg-sandstone-wash/80 rounded-xl p-space-md flex flex-col gap-space-sm border border-border-warm">
                 <div className="flex items-center gap-2 text-primary font-semibold">
-                  <span className="material-symbols-outlined">warning</span>
+                  <Icon name="warning" />
                   <span className="font-title-md text-title-md">Strict ASI Monument Protocols</span>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-space-sm text-body-sm text-on-surface-variant">
                   <div className="flex items-start gap-2">
-                    <span className="material-symbols-outlined text-terracotta-sandstone text-icon-18 shrink-0 mt-0.5">event_busy</span>
+                    <Icon name="event_busy" className="text-terracotta-sandstone text-icon-18 shrink-0 mt-0.5" />
                     <div>
                       <strong className="text-on-surface">Friday Taj Closure:</strong> The Taj Mahal is strictly closed to visitors every Friday for prayers. Agra Fort remains open.
                     </div>
                   </div>
                   <div className="flex items-start gap-2">
-                    <span className="material-symbols-outlined text-terracotta-sandstone text-icon-18 shrink-0 mt-0.5">photo_camera</span>
+                    <Icon name="photo_camera" className="text-terracotta-sandstone text-icon-18 shrink-0 mt-0.5" />
                     <div>
                       <strong className="text-on-surface">Camera Regulations:</strong> Still cameras and smartphones permitted free. Drones, video tripods, and extra battery packs strictly prohibited by CISF.
                     </div>
                   </div>
                   <div className="flex items-start gap-2">
-                    <span className="material-symbols-outlined text-terracotta-sandstone text-icon-18 shrink-0 mt-0.5">backpack</span>
+                    <Icon name="backpack" className="text-terracotta-sandstone text-icon-18 shrink-0 mt-0.5" />
                     <div>
                       <strong className="text-on-surface">Baggage Restrictions:</strong> Large backpacks, food items, tobacco, and lighters are confiscated at gate lockers. Please leave luggage inside our secured car trunk.
                     </div>
                   </div>
                   <div className="flex items-start gap-2">
-                    <span className="material-symbols-outlined text-terracotta-sandstone text-icon-18 shrink-0 mt-0.5">badge</span>
+                    <Icon name="badge" className="text-terracotta-sandstone text-icon-18 shrink-0 mt-0.5" />
                     <div>
                       <strong className="text-on-surface">Zero Commission Guarantee:</strong> We do not conduct high-pressure carpet or jewellery shop detours. Your time is dedicated strictly to heritage monuments.
                     </div>
@@ -492,7 +493,7 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
                     Instant Reservation
                   </span>
                   <span className="inline-flex items-center gap-1 text-label-md font-semibold text-success-jade bg-surface-container px-2 py-0.5 rounded-full">
-                    <span className="material-symbols-outlined text-icon-14">verified</span> Instant Confirmation
+                    <Icon name="verified" className="text-icon-14" /> Instant Confirmation
                   </span>
                 </div>
                 <h3 className="font-headline-md text-headline-sm text-on-surface">Reserve Your Private Tour</h3>
@@ -516,33 +517,25 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
                   Package Highlights
                 </span>
                 <div className="flex items-start gap-2.5 text-body-sm text-on-surface-variant">
-                  <span className="material-symbols-outlined text-terracotta-sandstone text-icon-18 shrink-0 mt-0.5">
-                    directions_car
-                  </span>
+                  <Icon name="directions_car" className="text-terracotta-sandstone text-icon-18 shrink-0 mt-0.5" />
                   <span>
                     <strong className="text-on-surface font-semibold">Private Doorstep Chauffeur:</strong> Sedan, Ertiga, Innova Crysta VIP, Tempo Traveller, or Urbania
                   </span>
                 </div>
                 <div className="flex items-start gap-2.5 text-body-sm text-on-surface-variant">
-                  <span className="material-symbols-outlined text-terracotta-sandstone text-icon-18 shrink-0 mt-0.5">
-                    toll
-                  </span>
+                  <Icon name="toll" className="text-terracotta-sandstone text-icon-18 shrink-0 mt-0.5" />
                   <span>
                     <strong className="text-on-surface font-semibold">Expressway FastPass:</strong> Pre-cleared FASTag tolls &amp; interstate permits
                   </span>
                 </div>
                 <div className="flex items-start gap-2.5 text-body-sm text-on-surface-variant">
-                  <span className="material-symbols-outlined text-terracotta-sandstone text-icon-18 shrink-0 mt-0.5">
-                    history_edu
-                  </span>
+                  <Icon name="history_edu" className="text-terracotta-sandstone text-icon-18 shrink-0 mt-0.5" />
                   <span>
                     <strong className="text-on-surface font-semibold">Licensed ASI Historian Guide:</strong> Expert English heritage narrative
                   </span>
                 </div>
                 <div className="flex items-start gap-2.5 text-body-sm text-on-surface-variant">
-                  <span className="material-symbols-outlined text-terracotta-sandstone text-icon-18 shrink-0 mt-0.5">
-                    restaurant
-                  </span>
+                  <Icon name="restaurant" className="text-terracotta-sandstone text-icon-18 shrink-0 mt-0.5" />
                   <span>
                     <strong className="text-on-surface font-semibold">Hospitality Care:</strong> Chilled mineral water, sanitized cabin, and luggage assistance
                   </span>
@@ -556,9 +549,7 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
                   className="w-full bg-primary hover:bg-terracotta-sunlit text-on-primary py-3.5 px-4 rounded-lg font-title-md text-title-md transition-all shadow-md flex items-center justify-center gap-2 group text-center"
                 >
                   <span>Book Now</span>
-                  <span className="material-symbols-outlined text-icon-20 group-hover:translate-x-1 transition-transform">
-                    arrow_forward
-                  </span>
+                  <Icon name="arrow_forward" className="text-icon-20 group-hover:translate-x-1 transition-transform" />
                 </a>
                 <span className="text-center text-body-lg text-secondary font-medium">
                   Select vehicle class &amp; pickup date in 2 easy steps
@@ -579,19 +570,19 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
               {/* Trust & Peace-of-Mind Proof Signals */}
               <div className="bg-sandstone-wash/60 p-space-md rounded-xl flex flex-col gap-2 text-body-lg text-on-surface-variant border border-border-warm/60">
                 <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-success-jade text-icon-18 shrink-0">verified</span>
+                  <Icon name="verified" className="text-success-jade text-icon-18 shrink-0" />
                   <span><strong className="text-on-surface font-semibold">100% Full Refund Guarantee:</strong> Free cancellation up to 24h prior</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-gold-accent text-icon-18 shrink-0">lock</span>
+                  <Icon name="lock" className="text-gold-accent text-icon-18 shrink-0" />
                   <span><strong className="text-on-surface font-semibold">28% Advance Token Lock:</strong> Remaining balance upon tour completion</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-terracotta-sandstone text-icon-18 shrink-0">no_meeting_room</span>
+                  <Icon name="no_meeting_room" className="text-terracotta-sandstone text-icon-18 shrink-0" />
                   <span><strong className="text-on-surface font-semibold">Zero Tourist Commission Traps:</strong> 100% authentic heritage time</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-primary text-icon-18 shrink-0">support_agent</span>
+                  <Icon name="support_agent" className="text-primary text-icon-18 shrink-0" />
                   <span><strong className="text-on-surface font-semibold">24×7 Active Dispatch Desk:</strong> Chauffeur &amp; flight delay assistance</span>
                 </div>
               </div>
@@ -631,7 +622,7 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
             </div>
             <div className="lg:col-span-5 flex flex-col gap-space-md">
               <div className="bg-surface-container-low p-space-md rounded-xl shadow-sm flex items-start gap-space-sm border border-border-warm/60">
-                <span className="material-symbols-outlined text-primary text-icon-24 shrink-0 mt-1">speed</span>
+                <Icon name="speed" className="text-primary text-icon-24 shrink-0 mt-1" />
                 <div>
                   <h3 className="font-title-md text-title-md text-on-surface font-semibold">Pristine 100 km/h Highway Cruising</h3>
                   <p className="font-body-sm text-body-sm text-secondary mt-0.5">
@@ -640,7 +631,7 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
                 </div>
               </div>
               <div className="bg-surface-container-low p-space-md rounded-xl shadow-sm flex items-start gap-space-sm border border-border-warm/60">
-                <span className="material-symbols-outlined text-gold-accent text-icon-24 shrink-0 mt-1">local_cafe</span>
+                <Icon name="local_cafe" className="text-gold-accent text-icon-24 shrink-0 mt-1" />
                 <div>
                   <h3 className="font-title-md text-title-md text-on-surface font-semibold">Express Rest Stops at Jewel of Yamuna</h3>
                   <p className="font-body-sm text-body-sm text-secondary mt-0.5">
@@ -649,7 +640,7 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
                 </div>
               </div>
               <div className="bg-surface-container-low p-space-md rounded-xl shadow-sm flex items-start gap-space-sm border border-border-warm/60">
-                <span className="material-symbols-outlined text-terracotta-sandstone text-icon-24 shrink-0 mt-1">electric_rickshaw</span>
+                <Icon name="electric_rickshaw" className="text-terracotta-sandstone text-icon-24 shrink-0 mt-1" />
                 <div>
                   <h3 className="font-title-md text-title-md text-on-surface font-semibold">Eco-Zone Battery Cart Transit</h3>
                   <p className="font-body-sm text-body-sm text-secondary mt-0.5">
@@ -675,7 +666,7 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
             <div className="flex items-center gap-2">
               <div className="flex text-gold-accent">
                 {[...Array(5)].map((_, i) => (
-                  <span key={i} className="material-symbols-outlined text-icon-20">star</span>
+                  <Icon name="star" className="text-icon-20" key={i} />
                 ))}
               </div>
               <span className="font-bold text-on-surface">4.98 Rating</span>
@@ -690,7 +681,7 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
                 <div className="flex items-center justify-between">
                   <div className="flex text-gold-accent">
                     {[...Array(5)].map((_, i) => (
-                      <span key={i} className="material-symbols-outlined text-icon-16">star</span>
+                      <Icon name="star" className="text-icon-16" key={i} />
                     ))}
                   </div>
                   <span className="text-label-caps text-secondary">April 2025</span>
@@ -721,7 +712,7 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
                 <div className="flex items-center justify-between">
                   <div className="flex text-gold-accent">
                     {[...Array(5)].map((_, i) => (
-                      <span key={i} className="material-symbols-outlined text-icon-16">star</span>
+                      <Icon name="star" className="text-icon-16" key={i} />
                     ))}
                   </div>
                   <span className="text-label-caps text-secondary">March 2025</span>
@@ -752,7 +743,7 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
                 <div className="flex items-center justify-between">
                   <div className="flex text-gold-accent">
                     {[...Array(5)].map((_, i) => (
-                      <span key={i} className="material-symbols-outlined text-icon-16">star</span>
+                      <Icon name="star" className="text-icon-16" key={i} />
                     ))}
                   </div>
                   <span className="text-label-caps text-secondary">February 2025</span>
@@ -803,12 +794,7 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
                 >
                   <div className="flex items-center justify-between gap-space-sm">
                     <h3 className="font-title-md text-title-md text-on-surface font-medium">{faq.q}</h3>
-                    <span
-                      className={`material-symbols-outlined text-primary text-icon-20 transition-transform duration-200 ${isOpen ? "rotate-180" : ""
-                        }`}
-                    >
-                      expand_more
-                    </span>
+                    <Icon name="expand_more" className={`text-primary text-icon-20 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
                   </div>
                   {isOpen && (
                     <div className="pt-space-sm text-body-md text-on-surface-variant leading-relaxed">
@@ -841,7 +827,7 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
               className="px-5 py-3 rounded-lg bg-surface/10 hover:bg-surface/20 text-surface text-label-lg font-semibold flex items-center gap-2 transition-colors"
               href={`tel:${contact.phone}`}
             >
-              <span className="material-symbols-outlined text-gold-accent text-icon-18">call</span>
+              <Icon name="call" className="text-gold-accent text-icon-18" />
               <span>Call Desk</span>
             </a>
             <a
@@ -849,7 +835,7 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
               href={bookStep1Url}
             >
               <span>Book Now</span>
-              <span className="material-symbols-outlined text-icon-18">arrow_forward</span>
+              <Icon name="arrow_forward" className="text-icon-18" />
             </a>
           </div>
         </div>

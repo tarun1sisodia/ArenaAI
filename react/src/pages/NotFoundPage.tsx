@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Icon } from "../components/icons/Icon";
 import type { SupportedLanguage } from "../config";
 import { contact } from "../data/contact";
 import { WhatsAppIcon } from "../components/icons";
@@ -44,9 +45,7 @@ export function NotFoundPage({ language = "en" }: NotFoundPageProps) {
               {/* Instant Search / Recovery */}
               <div className="pt-2 max-w-lg space-y-3">
                 <div className="relative">
-                  <span className="material-symbols-outlined text-on-surface-variant absolute left-3.5 top-3 text-icon-20">
-                    search
-                  </span>
+                  <Icon name="search" className="text-on-surface-variant absolute left-3.5 top-3 text-icon-20" />
                   <input
                     type="text"
                     value={search}
@@ -76,11 +75,12 @@ export function NotFoundPage({ language = "en" }: NotFoundPageProps) {
                   href="/"
                   className="px-5 py-2.5 rounded-lg bg-primary hover:bg-primary-container text-white text-sm font-semibold transition-all shadow-sm flex items-center gap-1.5"
                 >
-                  <span className="material-symbols-outlined text-icon-18">home</span>
+                  <Icon name="home" className="text-icon-18" />
                   <span>Return to Home</span>
                 </a>
                 <a
                   href="https://wa.me/919762817598"
+                  aria-label="Chat on WhatsApp"
                   target="_blank"
                   rel="noreferrer"
                   style={{ color: "#ffffff" }}

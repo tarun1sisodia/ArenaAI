@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { Icon } from "../components/icons/Icon";
 import type { SupportedLanguage } from "../config";
 import { contact } from "../data/contact";
 import { WhatsAppIcon } from "../components/icons";
@@ -258,7 +259,7 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
             <a className="hover:text-primary transition-colors" href="/">
               Home
             </a>
-            <span className="material-symbols-outlined text-icon-14">chevron_right</span>
+            <Icon name="chevron_right" className="text-icon-14" />
             <span className="text-primary font-bold">Routes &amp; Outstation Corridors</span>
           </nav>
 
@@ -281,7 +282,7 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3 p-2.5 sm:p-3 rounded-lg bg-surface-container shadow-xs mb-space-lg border border-border-warm/50">
             <div className="flex items-center gap-2 p-1">
               <div className="w-8 h-8 rounded bg-surface-container-lowest flex items-center justify-center text-primary shrink-0 shadow-xs">
-                <span className="material-symbols-outlined text-icon-18">signpost</span>
+                <Icon name="signpost" className="text-icon-18" />
               </div>
               <div>
                 <div className="font-title-md text-xs sm:text-title-lg text-ink-charcoal font-bold">{allRoutes.length} Corridors</div>
@@ -290,7 +291,7 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
             </div>
             <div className="flex items-center gap-2 p-1">
               <div className="w-8 h-8 rounded bg-surface-container-lowest flex items-center justify-center text-success-jade shrink-0 shadow-xs">
-                <span className="material-symbols-outlined text-icon-18">verified_user</span>
+                <Icon name="verified_user" className="text-icon-18" />
               </div>
               <div>
                 <div className="font-title-md text-xs sm:text-title-lg text-ink-charcoal font-bold">100% Fastag</div>
@@ -299,7 +300,7 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
             </div>
             <div className="flex items-center gap-2 p-1">
               <div className="w-8 h-8 rounded bg-surface-container-lowest flex items-center justify-center text-gold-accent shrink-0 shadow-xs">
-                <span className="material-symbols-outlined text-icon-18">speed</span>
+                <Icon name="speed" className="text-icon-18" />
               </div>
               <div>
                 <div className="font-title-md text-xs sm:text-title-lg text-ink-charcoal font-bold">300 KM/Day</div>
@@ -308,7 +309,7 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
             </div>
             <div className="flex items-center gap-2 p-1">
               <div className="w-8 h-8 rounded bg-surface-container-lowest flex items-center justify-center text-terracotta-sunlit shrink-0 shadow-xs">
-                <span className="material-symbols-outlined text-icon-18">money_off</span>
+                <Icon name="money_off" className="text-icon-18" />
               </div>
               <div>
                 <div className="font-title-md text-xs sm:text-title-lg text-ink-charcoal font-bold">Zero Empty</div>
@@ -351,9 +352,7 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
             </div>
 
             <div className="relative min-w-[220px]">
-              <span className="material-symbols-outlined text-on-surface-variant absolute left-3 top-2 text-icon-16">
-                search
-              </span>
+              <Icon name="search" className="text-on-surface-variant absolute left-3 top-2 text-icon-16" />
               <input
                 type="text"
                 value={searchQuery}
@@ -399,7 +398,7 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
                       {route.categoryBadge}
                     </span>
                     <span className="font-label-caps text-body-sm text-on-surface-variant flex items-center gap-1 font-semibold">
-                      <span className="material-symbols-outlined text-icon-13 text-success-jade">check_circle</span>
+                      <Icon name="check_circle" className="text-icon-13 text-success-jade" />
                       {route.tollNote}
                     </span>
                   </div>
@@ -412,15 +411,15 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
 
                   <div className="flex items-center gap-3 font-body-sm text-body-md text-on-surface-variant mb-2 flex-wrap">
                     <span className="flex items-center gap-1 font-medium">
-                      <span className="material-symbols-outlined text-icon-14 text-primary">pin_drop</span>
+                      <Icon name="pin_drop" className="text-icon-14 text-primary" />
                       {route.distanceKm} km
                     </span>
                     <span className="flex items-center gap-1 font-medium">
-                      <span className="material-symbols-outlined text-icon-14 text-primary">schedule</span>
+                      <Icon name="schedule" className="text-icon-14 text-primary" />
                       {route.duration}
                     </span>
                     <span className="flex items-center gap-1 font-medium">
-                      <span className="material-symbols-outlined text-icon-14 text-primary">route</span>
+                      <Icon name="route" className="text-icon-14 text-primary" />
                       {route.highway}
                     </span>
                   </div>
@@ -478,7 +477,7 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
                       href={`/en/${route.id}/`}
                     >
                       <span>Details</span>
-                      <span className="material-symbols-outlined text-icon-13">info</span>
+                      <Icon name="info" className="text-icon-13" />
                     </a>
                     <a
                       className="px-3 py-1.5 rounded-lg bg-black hover:bg-neutral-900 border border-white/10 text-white font-label-caps text-xs transition-colors font-bold inline-flex items-center gap-1.5 active:scale-[0.98]"
@@ -495,7 +494,7 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
                       href={`/book?from=${encodeURIComponent(route.origin || route.name.split("→")[0]?.trim() || "Agra")}&to=${encodeURIComponent(route.destination || route.name.split("→")[1]?.trim() || "")}`}
                     >
                       <span>Book Cab</span>
-                      <span className="material-symbols-outlined text-icon-13">arrow_forward</span>
+                      <Icon name="arrow_forward" className="text-icon-13" />
                     </a>
                   </div>
                 </div>
@@ -533,28 +532,28 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
             <div className="p-3.5 sm:p-4 rounded-xl bg-surface-container-lowest border border-border-warm/50 shadow-xs">
-              <span className="material-symbols-outlined text-primary text-icon-22 mb-1.5">straighten</span>
+              <Icon name="straighten" className="text-primary text-icon-22 mb-1.5" />
               <h3 className="font-title-md text-xs sm:text-title-lg text-on-surface font-bold mb-1">300 km/Day Minimum</h3>
               <p className="font-body-sm text-body-md text-on-surface-variant leading-relaxed">
                 Standard outstation threshold applied to round-trips to ensure driver wages and highway vehicle upkeep are fairly compensated.
               </p>
             </div>
             <div className="p-3.5 sm:p-4 rounded-xl bg-surface-container-lowest border border-border-warm/50 shadow-xs">
-              <span className="material-symbols-outlined text-primary text-icon-22 mb-1.5">toll</span>
+              <Icon name="toll" className="text-primary text-icon-22 mb-1.5" />
               <h3 className="font-title-md text-xs sm:text-title-lg text-on-surface font-bold mb-1">All-Inclusive Tolls</h3>
               <p className="font-body-sm text-body-md text-on-surface-variant leading-relaxed">
                 Yamuna Expressway and national highway tolls are included upfront in one-way quotations with zero roadside toll haggling.
               </p>
             </div>
             <div className="p-3.5 sm:p-4 rounded-xl bg-surface-container-lowest border border-border-warm/50 shadow-xs">
-              <span className="material-symbols-outlined text-primary text-icon-22 mb-1.5">bedtime</span>
+              <Icon name="bedtime" className="text-primary text-icon-22 mb-1.5" />
               <h3 className="font-title-md text-xs sm:text-title-lg text-on-surface font-bold mb-1">Night Allowance</h3>
               <p className="font-body-sm text-body-md text-on-surface-variant leading-relaxed">
                 A fixed ₹300 allowance applies when the vehicle is driven between 10:00 PM and 6:00 AM to ensure chauffeur safety.
               </p>
             </div>
             <div className="p-3.5 sm:p-4 rounded-xl bg-surface-container-lowest border border-border-warm/50 shadow-xs">
-              <span className="material-symbols-outlined text-primary text-icon-22 mb-1.5">savings</span>
+              <Icon name="savings" className="text-primary text-icon-22 mb-1.5" />
               <h3 className="font-title-md text-xs sm:text-title-lg text-on-surface font-bold mb-1">28% Token Advance</h3>
               <p className="font-body-sm text-body-md text-on-surface-variant leading-relaxed">
                 Reserve your ride with just a 28% advance deposit via UPI or card. Pay the remaining 72% directly to the chauffeur at trip completion.
@@ -586,9 +585,7 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
                     className="w-full text-left p-3 sm:p-3.5 flex items-center justify-between gap-3 hover:bg-sandstone-wash/20 transition-colors"
                   >
                     <span className="font-title-md text-xs sm:text-title-lg font-semibold text-ink-charcoal">{faq.q}</span>
-                    <span className="material-symbols-outlined text-primary text-icon-18 shrink-0">
-                      {isOpen ? "expand_less" : "expand_more"}
-                    </span>
+                    <Icon name={isOpen ? "expand_less" : "expand_more"} className="text-primary text-icon-18 shrink-0" />
                   </button>
                   {isOpen && (
                     <div className="p-3 sm:p-3.5 pt-0 text-on-surface-variant font-body-sm text-body-md leading-relaxed border-t border-border-warm/40 mt-1">

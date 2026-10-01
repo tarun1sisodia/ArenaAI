@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
+import { Icon } from "../icons/Icon";
 import { EDITORIAL_TYPOGRAPHY } from "../layout/EditorialPageTemplate";
 import { WhatsAppIcon } from "../icons/WhatsAppIcon";
 import { contact } from "../../data/contact";
@@ -224,7 +225,7 @@ export function InstantRouteCalculator({
               }`}
             >
               <div className="flex items-center gap-1.5 mb-0.5">
-                <span className="material-symbols-outlined text-icon-16 text-terracotta-sandstone">{tier.icon}</span>
+                <Icon name={tier.icon} className="text-icon-16 text-terracotta-sandstone" />
                 <span className="font-title-md text-xs font-bold leading-tight">{tier.label}</span>
               </div>
               <div className="font-body-sm text-label-md opacity-80 pl-5">{tier.seats}</div>
@@ -248,11 +249,11 @@ export function InstantRouteCalculator({
               </div>
               <div className="font-body-sm text-xs text-on-surface-variant flex flex-wrap items-center gap-3">
                 <span className="flex items-center gap-1 font-medium text-ink-slate">
-                  <span className="material-symbols-outlined text-icon-14 text-primary">add_road</span>
+                  <Icon name="add_road" className="text-icon-14 text-primary" />
                   {matchedEntry.km} km (One-Way)
                 </span>
                 <span className="flex items-center gap-1 font-medium text-ink-slate">
-                  <span className="material-symbols-outlined text-icon-14 text-terracotta-sandstone">schedule</span>
+                  <Icon name="schedule" className="text-icon-14 text-terracotta-sandstone" />
                   {Math.floor(matchedEntry.m / 60)}h {matchedEntry.m % 60}m approx
                 </span>
               </div>
@@ -284,7 +285,7 @@ export function InstantRouteCalculator({
               className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-ink-charcoal text-ivory-surface font-label-lg text-xs font-semibold hover:bg-ink-slate transition-colors"
             >
               <span>View Route Details</span>
-              <span className="material-symbols-outlined text-icon-14">arrow_forward</span>
+              <Icon name="arrow_forward" className="text-icon-14" />
             </a>
             <a
               href={`https://wa.me/${contact.phone.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(
@@ -303,14 +304,14 @@ export function InstantRouteCalculator({
               className="inline-flex items-center gap-1 px-3.5 py-2 rounded-lg bg-primary text-white font-label-lg text-xs font-semibold hover:bg-primary-container transition-colors ml-auto shadow-xs active:scale-[0.98]"
             >
               <span>Direct Booking Form</span>
-              <span className="material-symbols-outlined text-icon-14">chevron_right</span>
+              <Icon name="chevron_right" className="text-icon-14" />
             </a>
           </div>
         </div>
       ) : hasSearchedPair ? (
         <div className="p-space-lg text-center bg-surface-container-low rounded-xl border border-dashed border-border-warm flex flex-col items-center justify-center gap-2">
           <div className="w-12 h-12 rounded-full bg-sandstone-wash text-terracotta-sandstone flex items-center justify-center mb-0.5">
-            <span className="material-symbols-outlined text-icon-26">explore_off</span>
+            <Icon name="explore_off" className="text-icon-26" />
           </div>
           <h4 className="font-title-lg text-title-lg text-ink-charcoal font-bold">
             There is no route available, sorry.

@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
+import { Icon } from "../components/icons/Icon";
 import type { SupportedLanguage } from "../config";
 import { contact } from "../data/contact";
 import { WhatsAppIcon } from "../components/icons";
@@ -291,12 +292,13 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                 href="#spec-comparison"
               >
                 <span>Compare Specs</span>
-                <span className="material-symbols-outlined text-icon-16">south</span>
+                <Icon name="south" className="text-icon-16" />
               </a>
               <a
                 className="inline-flex items-center justify-center gap-2 bg-black hover:bg-neutral-900 border border-white/10 text-white font-label-lg text-xs px-4.5 py-2.5 rounded-lg shadow-xs transition-all whitespace-nowrap font-semibold active:scale-[0.98]"
                 style={{ color: "#ffffff" }}
                 href="https://wa.me/919762817598"
+                aria-label="Chat on WhatsApp"
                 target="_blank"
                 rel="noreferrer"
               >
@@ -310,7 +312,7 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
             <div className="bg-surface-container-lowest p-2.5 sm:p-3 rounded-lg shadow-xs border border-border-warm/70 flex items-start gap-2 h-full">
               <div className="w-8 h-8 rounded bg-sandstone-wash flex items-center justify-center text-terracotta-sandstone shrink-0">
-                <span className="material-symbols-outlined text-icon-18">verified</span>
+                <Icon name="verified" className="text-icon-18" />
               </div>
               <div>
                 <h2 className="font-title-md text-title-md text-ink-charcoal leading-snug font-bold">100% Commercial Plates</h2>
@@ -321,7 +323,7 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
             </div>
             <div className="bg-surface-container-lowest p-2.5 sm:p-3 rounded-lg shadow-xs border border-border-warm/70 flex items-start gap-2 h-full">
               <div className="w-8 h-8 rounded bg-sandstone-wash flex items-center justify-center text-terracotta-sandstone shrink-0">
-                <span className="material-symbols-outlined text-icon-18">speed</span>
+                <Icon name="speed" className="text-icon-18" />
               </div>
               <div>
                 <h2 className="font-title-md text-title-md text-ink-charcoal leading-snug font-bold">Speed Governed</h2>
@@ -332,7 +334,7 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
             </div>
             <div className="bg-surface-container-lowest p-2.5 sm:p-3 rounded-lg shadow-xs border border-border-warm/70 flex items-start gap-2 h-full">
               <div className="w-8 h-8 rounded bg-sandstone-wash flex items-center justify-center text-terracotta-sandstone shrink-0">
-                <span className="material-symbols-outlined text-icon-18">airline_seat_recline_extra</span>
+                <Icon name="airline_seat_recline_extra" className="text-icon-18" />
               </div>
               <div>
                 <h2 className="font-title-md text-title-md text-ink-charcoal leading-snug font-bold">Clean, Sanitized Cabins</h2>
@@ -343,7 +345,7 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
             </div>
             <div className="bg-surface-container-lowest p-2.5 sm:p-3 rounded-lg shadow-xs border border-border-warm/70 flex items-start gap-2 h-full">
               <div className="w-8 h-8 rounded bg-sandstone-wash flex items-center justify-center text-terracotta-sandstone shrink-0">
-                <span className="material-symbols-outlined text-icon-18">receipt_long</span>
+                <Icon name="receipt_long" className="text-icon-18" />
               </div>
               <div>
                 <h2 className="font-title-md text-title-md text-ink-charcoal leading-snug font-bold">Official Tax Invoice</h2>
@@ -454,30 +456,28 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 mb-space-sm">
                     <div className="bg-surface-container p-2 rounded border border-border-warm/50 flex flex-col justify-between">
                       <span className="flex items-center gap-1 font-label-caps text-label-caps text-secondary uppercase font-bold">
-                        <span className="material-symbols-outlined text-icon-14 text-terracotta-sandstone">
-                          airline_seat_recline_normal
-                        </span>
+                        <Icon name="airline_seat_recline_normal" className="text-icon-14 text-terracotta-sandstone" />
                         Seats
                       </span>
                       <span className="font-title-md text-body-md text-ink-charcoal mt-0.5 block font-semibold">{veh.specs.seats}</span>
                     </div>
                     <div className="bg-surface-container p-2 rounded border border-border-warm/50 flex flex-col justify-between">
                       <span className="flex items-center gap-1 font-label-caps text-label-caps text-secondary uppercase font-bold">
-                        <span className="material-symbols-outlined text-icon-14 text-terracotta-sandstone">luggage</span>
+                        <Icon name="luggage" className="text-icon-14 text-terracotta-sandstone" />
                         Luggage
                       </span>
                       <span className="font-title-md text-body-md text-ink-charcoal mt-0.5 block font-semibold">{veh.specs.luggage}</span>
                     </div>
                     <div className="bg-surface-container p-2 rounded border border-border-warm/50 flex flex-col justify-between">
                       <span className="flex items-center gap-1 font-label-caps text-label-caps text-secondary uppercase font-bold">
-                        <span className="material-symbols-outlined text-icon-14 text-terracotta-sandstone">ac_unit</span>
+                        <Icon name="ac_unit" className="text-icon-14 text-terracotta-sandstone" />
                         Climate
                       </span>
                       <span className="font-title-md text-body-md text-ink-charcoal mt-0.5 block font-semibold">{veh.specs.climate}</span>
                     </div>
                     <div className="bg-surface-container p-2 rounded border border-border-warm/50 flex flex-col justify-between">
                       <span className="flex items-center gap-1 font-label-caps text-label-caps text-secondary uppercase font-bold">
-                        <span className="material-symbols-outlined text-icon-14 text-terracotta-sandstone">directions_car</span>
+                        <Icon name="directions_car" className="text-icon-14 text-terracotta-sandstone" />
                         Engine
                       </span>
                       <span className="font-title-md text-body-md text-ink-charcoal mt-0.5 block font-semibold">{veh.specs.fuel}</span>
@@ -487,13 +487,13 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                   {/* Amenities & Best Suited */}
                   <div className="flex flex-col gap-1 mb-space-sm text-on-surface-variant font-body-sm text-label-lg">
                     <div className="flex items-start gap-1.5">
-                      <span className="material-symbols-outlined text-icon-14 text-success-jade shrink-0 mt-0.5">check_circle</span>
+                      <Icon name="check_circle" className="text-icon-14 text-success-jade shrink-0 mt-0.5" />
                       <span>
                         <strong>Complimentary Amenities:</strong> {veh.amenities.join(" · ")}
                       </span>
                     </div>
                     <div className="flex items-start gap-1.5">
-                      <span className="material-symbols-outlined text-icon-14 text-terracotta-sandstone shrink-0 mt-0.5">stars</span>
+                      <Icon name="stars" className="text-icon-14 text-terracotta-sandstone shrink-0 mt-0.5" />
                       <span>
                         <strong>Best Suited For:</strong> {veh.bestSuitedFor}
                       </span>
@@ -518,7 +518,7 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                       href={`/book?vehicle=${veh.id}&step=2`}
                     >
                       <span>Book {veh.name.split(" ")[0]}</span>
-                      <span className="material-symbols-outlined text-icon-15">arrow_forward</span>
+                      <Icon name="arrow_forward" className="text-icon-15" />
                     </a>
                   </div>
                 </div>
@@ -673,9 +673,7 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                     className="w-full text-left p-3 sm:p-3.5 flex items-center justify-between gap-3 hover:bg-sandstone-wash/20 transition-colors"
                   >
                     <span className="font-title-md text-xs sm:text-title-lg font-semibold text-ink-charcoal">{faq.q}</span>
-                    <span className="material-symbols-outlined text-primary text-icon-18 shrink-0">
-                      {isOpen ? "expand_less" : "expand_more"}
-                    </span>
+                    <Icon name={isOpen ? "expand_less" : "expand_more"} className="text-primary text-icon-18 shrink-0" />
                   </button>
                   {isOpen && (
                     <div className="p-3 sm:p-3.5 pt-0 text-on-surface-variant font-body-sm text-body-md leading-relaxed border-t border-border-warm/40 mt-1">

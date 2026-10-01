@@ -17,6 +17,8 @@
  * boundaries — never assume the schemes match.
  */
 
+import type { IconName } from "../components/icons/Icon";
+
 export type UiVehicleTier = "sedan" | "ertiga" | "innova" | "tempo" | "urbania";
 
 export interface FleetMeta {
@@ -26,10 +28,11 @@ export interface FleetMeta {
   /** Capacity line shown under the label */
   seats: string;
   /**
-   * Material Symbols Outlined ligature. MUST be a glyph that actually renders —
-   * verify in the built page; a bad name paints raw ligature text on the card.
+   * Icon registry name (src/components/icons/Icon.tsx). MUST be a glyph that
+   * actually renders — verify in the built page; a bad name paints raw
+   * ligature text on the card.
    */
-  icon: string;
+  icon: IconName;
 }
 
 export const FLEETS: readonly FleetMeta[] = [

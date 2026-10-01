@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { Icon } from "../icons/Icon";
 import { BrandLogo } from "./BrandLogo";
 import { MobileNavSheet } from "./MobileNavSheet";
 import { contact } from "../../data/contact";
@@ -107,10 +108,10 @@ export function Header({
             {/* Phone Call CTA */}
             <a
               href={`tel:${contact.phone}`}
-              className="hidden lg:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-sandstone-wash hover:bg-surface-container-high transition-colors text-xs text-primary font-bold border border-primary/20"
+              className="hidden lg:inline-flex min-h-12 items-center gap-1.5 px-3 py-1.5 rounded-md bg-sandstone-wash hover:bg-surface-container-high transition-colors text-xs text-primary font-bold border border-primary/20"
               aria-label={`Call ${contact.phoneDisplay}`}
             >
-              <span className="material-symbols-outlined text-primary text-icon-15">call</span>
+              <Icon name="call" className="text-primary text-icon-15" />
               <span>{contact.phoneDisplay}</span>
             </a>
 
@@ -120,7 +121,7 @@ export function Header({
               target="_blank"
               rel="noopener noreferrer"
               style={{ color: "#ffffff" }}
-              className="hidden sm:inline-flex items-center gap-1.5 bg-black hover:bg-neutral-900 text-white px-3.5 py-1.5 rounded-md text-xs font-semibold shadow-xs transition-all active:scale-[0.98] border border-white/15"
+              className="hidden sm:inline-flex min-h-12 items-center gap-1.5 bg-black hover:bg-neutral-900 text-white px-3.5 py-1.5 rounded-md text-xs font-semibold shadow-xs transition-all active:scale-[0.98] border border-white/15"
             >
               <WhatsAppIcon className="w-[15px] h-[15px] shrink-0 text-white" />
               <span className="text-white font-medium" style={{ color: "#ffffff" }}>WhatsApp</span>
@@ -132,11 +133,9 @@ export function Header({
               onClick={toggleMobileNav}
               aria-label={isMobileNavOpen ? "Close menu" : "Open menu"}
               aria-expanded={isMobileNavOpen}
-              className="xl:hidden p-1.5 rounded-md text-on-surface hover:bg-sandstone-wash transition-colors flex items-center justify-center border border-border-warm/50"
+              className="xl:hidden min-h-12 min-w-12 p-1.5 rounded-md text-on-surface hover:bg-sandstone-wash transition-colors flex items-center justify-center border border-border-warm/50"
             >
-              <span className="material-symbols-outlined text-icon-20">
-                {isMobileNavOpen ? "close" : "menu"}
-              </span>
+              <Icon name={isMobileNavOpen ? "close" : "menu"} className="text-icon-20" />
             </button>
           </div>
         </div>

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { Icon } from "../icons/Icon";
 import { contact } from "../../data/contact";
 import { prefetchDocument } from "../../app/prefetch";
 import { WhatsAppIcon } from "../icons/WhatsAppIcon";
@@ -76,7 +77,7 @@ export function RadialDock({ currentPath, className = "" }: RadialDockProps) {
       >
         <span className="icon">
           <span className="icon icon-call" aria-hidden="true">
-            <span className="material-symbols-outlined text-icon-18">call</span>
+            <Icon name="call" className="text-icon-18" />
           </span>
         </span>
       </a>
@@ -87,7 +88,7 @@ export function RadialDock({ currentPath, className = "" }: RadialDockProps) {
         href={`https://wa.me/${contact.whatsapp}`}
         target="_blank"
         rel="noreferrer"
-        aria-label={`WhatsApp ${contact.phoneDisplay}`}
+        aria-label="Chat on WhatsApp"
         title="WhatsApp"
         tabIndex={isOpen ? 0 : -1}
       >

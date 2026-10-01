@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { Icon, type IconName } from "../icons/Icon";
 import { packages, vehicles, type VehicleId } from "../../data/catalogue";
 import { LocationCombobox } from "../search/LocationCombobox";
 import { calcFare, localTomorrow } from "../../fares";
@@ -12,7 +13,7 @@ type BookingMode = (typeof modes)[number]["id"];
 
 const localTours = packages.filter((tour) => tour.duration.toLowerCase().includes("1 day"));
 const fleetIds: VehicleId[] = ["sedan", "ertiga", "innova", "tempo", "urbania"];
-const fleetIcons: Record<VehicleId, string> = {
+const fleetIcons: Record<VehicleId, IconName> = {
   sedan: "directions_car",
   ertiga: "directions_car",
   innova: "airport_shuttle",
@@ -100,7 +101,7 @@ export function HomeBookingWidget() {
           <div>
             <label htmlFor="home-local-tour" className="home-booking-label">Local Tour</label>
             <div className="home-booking-select-wrap">
-              <span className="material-symbols-outlined home-booking-field-icon" aria-hidden="true">landscape</span>
+              <Icon name="landscape" className="home-booking-field-icon" aria-hidden="true" />
               <select id="home-local-tour" value={localTourId} onChange={(event) => setLocalTourId(event.target.value)} className="home-booking-select">
                 {localTours.map((tour) => <option key={tour.slug} value={tour.slug}>{tour.name}</option>)}
               </select>
@@ -128,7 +129,7 @@ export function HomeBookingWidget() {
             <div className="home-booking-date-wrap">
               <input id="home-pickup-date" type="date" value={pickupDate} min={localTomorrow()} onChange={(event) => setPickupDate(event.target.value)} className="home-booking-date" aria-label="Pickup date" />
               <span className={`home-booking-date-display ${pickupDate ? "has-value" : ""}`} aria-hidden="true">{pickupDate ? formatDate(pickupDate) : "Select date"}</span>
-              <span className="material-symbols-outlined home-booking-field-icon" aria-hidden="true">calendar_today</span>
+              <Icon name="calendar_today" className="home-booking-field-icon" aria-hidden="true" />
             </div>
             <FieldError>{errors.pickupDate}</FieldError>
           </div>
@@ -138,7 +139,7 @@ export function HomeBookingWidget() {
               <div className="home-booking-date-wrap">
                 <input id="home-return-date" type="date" value={returnDate} min={pickupDate || localTomorrow()} onChange={(event) => setReturnDate(event.target.value)} className="home-booking-date" aria-label="Return date" />
                 <span className={`home-booking-date-display ${returnDate ? "has-value" : ""}`} aria-hidden="true">{returnDate ? formatDate(returnDate) : "Select date"}</span>
-                <span className="material-symbols-outlined home-booking-field-icon" aria-hidden="true">calendar_today</span>
+                <Icon name="calendar_today" className="home-booking-field-icon" aria-hidden="true" />
               </div>
               <FieldError>{errors.returnDate}</FieldError>
             </div>
@@ -154,7 +155,7 @@ export function HomeBookingWidget() {
                 const label = id === "innova" ? "Crysta" : id === "tempo" ? "Tempo" : id === "urbania" ? "Urbania" : vehicle?.name ?? id;
                 return (
                   <button key={id} type="button" role="radio" aria-checked={selectedVehicle === id} className={`home-booking-fleet-option ${selectedVehicle === id ? "is-active" : ""}`} onClick={() => setSelectedVehicle(id)}>
-                    <span className="material-symbols-outlined" aria-hidden="true">{fleetIcons[id]}</span>
+                    <Icon name={fleetIcons[id]} aria-hidden="true" />
                     <span>{label}</span>
                   </button>
                 );
@@ -170,7 +171,7 @@ export function HomeBookingWidget() {
           <strong className="home-booking-fare">{estimatedFare}</strong>
         </div>
         <a href={bookingHref()} onClick={(event) => { if (!validate()) { event.preventDefault(); document.getElementById("home-booking-widget")?.scrollIntoView({ behavior: "smooth", block: "center" }); } }} className="home-booking-cta">
-          Book Now <span className="material-symbols-outlined text-icon-17" aria-hidden="true">east</span>
+          Book Now <Icon name="east" className="text-icon-17" aria-hidden="true" />
         </a>
       </div>
       <p className="mt-3 text-center text-label-caps leading-relaxed text-on-surface-variant">Toll-inclusive · booking receipt · 28% advance only</p>

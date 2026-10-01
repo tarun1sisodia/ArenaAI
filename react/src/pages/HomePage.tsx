@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Icon, type IconName } from "../components/icons/Icon";
 import type { SupportedLanguage } from "../config";
 import { contact } from "../data/contact";
 import { ReviewsMarquee } from "../components/home/ReviewsMarquee";
@@ -181,7 +182,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
                   className="inline-flex items-center gap-space-xs px-space-lg py-3 rounded-lg bg-primary hover:bg-primary-container text-white font-label-lg text-label-lg shadow-md transition-all font-semibold active:scale-[0.98]"
                   href="tel:+916395867598"
                 >
-                  <span className="material-symbols-outlined text-icon-18">call</span>
+                  <Icon name="call" className="text-icon-18" />
                   <span className="text-white">Call +91 63958 67598</span>
                 </a>
                 <a
@@ -220,7 +221,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
               { icon: "support_agent", title: "24×7 Dispatch", sub: "Live Agra Control Desk" },
             ]).map((item, idx) => (
               <div key={idx} className="flex items-center gap-2.5 shrink-0 px-4">
-                <span className="material-symbols-outlined text-gold-accent text-icon-20">{item.icon}</span>
+                <Icon name={item.icon as IconName} className="text-gold-accent text-icon-20" />
                 <div className="flex flex-col">
                   <span className="font-title-md text-title-lg font-semibold leading-tight text-ivory-surface">{item.title}</span>
                   <span className="font-label-caps text-label-lg text-surface-dim">{item.sub}</span>
@@ -253,7 +254,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
               <div key={route.to} className="flex flex-col sm:flex-row sm:items-center justify-between py-4 gap-3 group">
                 {/* Route identity */}
                 <div className="flex items-center gap-4 min-w-0">
-                  <span className="material-symbols-outlined text-on-surface-variant text-icon-22 shrink-0">{route.icon}</span>
+                  <Icon name={route.icon as IconName} className="text-on-surface-variant text-icon-22 shrink-0" />
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
                       <span className="font-title-md text-headline-sm font-bold text-on-surface group-hover:text-primary transition-colors">
@@ -295,7 +296,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
               href="/routes"
             >
               <span>View all 980+ routes</span>
-              <span className="material-symbols-outlined text-icon-16">east</span>
+              <Icon name="east" className="text-icon-16" />
             </a>
           </div>
         </section>
@@ -361,7 +362,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
                 },
               ].map((svc) => (
                 <div key={svc.title} className="bg-ink-midnight p-5 sm:p-6 flex flex-col gap-3 hover:bg-ink-charcoal transition-colors">
-                  <span className="material-symbols-outlined text-terracotta-sunlit text-icon-24">{svc.icon}</span>
+                  <Icon name={svc.icon as IconName} className="text-terracotta-sunlit text-icon-24" />
                   <div>
                     <h3 className="font-headline-sm text-headline-sm text-ivory-surface font-normal mb-1">{svc.title}</h3>
                     <p className="font-body-sm text-body-md text-ivory-surface/65 leading-relaxed">{svc.body}</p>
@@ -373,7 +374,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
                   </div>
                   <a className="inline-flex items-center gap-1 font-label-lg text-label-md text-terracotta-sunlit hover:text-gold-accent transition-colors font-semibold self-start" href={svc.href}>
                     <span>Learn more</span>
-                    <span className="material-symbols-outlined text-icon-13">arrow_forward</span>
+                    <Icon name="arrow_forward" className="text-icon-13" />
                   </a>
                 </div>
               ))}
@@ -455,12 +456,12 @@ export function HomePage({ language = "en" }: HomePageProps) {
               href="/fleet"
               className="bg-sandstone-wash rounded-xl border border-border-warm/40 flex flex-col items-center justify-center p-8 gap-3 hover:bg-terracotta-sandstone/10 transition-colors group"
             >
-              <span className="material-symbols-outlined text-primary text-icon-36 group-hover:scale-110 transition-transform">garage</span>
+              <Icon name="garage" className="text-primary text-icon-36 group-hover:scale-110 transition-transform" />
               <p className="font-title-md text-title-lg text-on-surface font-bold text-center">See entire fleet</p>
               <p className="font-body-sm text-label-lg text-on-surface-variant text-center">Compare specs, photos & per-km rates</p>
               <span className="inline-flex items-center gap-1 text-primary font-label-lg text-label-md font-semibold mt-1">
                 <span>Explore fleet</span>
-                <span className="material-symbols-outlined text-icon-14">east</span>
+                <Icon name="east" className="text-icon-14" />
               </span>
             </a>
           </div>
@@ -483,7 +484,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
                 href="/packages"
               >
                 <span>All packages</span>
-                <span className="material-symbols-outlined text-icon-16">east</span>
+                <Icon name="east" className="text-icon-16" />
               </a>
             </div>
 
@@ -553,7 +554,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
                       href={pkg.href}
                     >
                       <span>{pkg.cta}</span>
-                      <span className="material-symbols-outlined text-icon-13">east</span>
+                      <Icon name="east" className="text-icon-13" />
                     </a>
                   </div>
                 </div>
@@ -628,7 +629,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
               >
                 <div className="flex items-center justify-between">
                   <div className="w-9 h-9 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-105 bg-primary text-white">
-                    <span className="material-symbols-outlined text-icon-20">{item.icon}</span>
+                    <Icon name={item.icon as IconName} className="text-icon-20" />
                   </div>
                   <span className="font-label-caps text-label-caps uppercase font-bold px-2 py-0.5 rounded-full bg-gold-accent/15 text-gold-accent border border-gold-accent/30">
                     {item.badge}
@@ -650,7 +651,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
           >
             <div className="flex items-center gap-4">
               <div className="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center shrink-0 shadow-xs">
-                <span className="material-symbols-outlined text-icon-20 text-white">confirmation_number</span>
+                <Icon name="confirmation_number" className="text-icon-20 text-white" />
               </div>
               <div>
                 <h3 className="font-title-md text-headline-sm text-on-surface font-bold">Flat ₹500 off your first outstation trip</h3>
@@ -669,12 +670,12 @@ export function HomePage({ language = "en" }: HomePageProps) {
               >
                 {couponCopied ? (
                   <>
-                    <span className="material-symbols-outlined text-icon-13 text-white">check</span>
+                    <Icon name="check" className="text-icon-13 text-white" />
                     <span className="text-white">Copied!</span>
                   </>
                 ) : (
                   <>
-                    <span className="material-symbols-outlined text-icon-13 text-white">content_copy</span>
+                    <Icon name="content_copy" className="text-icon-13 text-white" />
                     <span className="text-white">Copy</span>
                   </>
                 )}
@@ -704,7 +705,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-space-sm">
                   <a className="p-3.5 rounded-xl bg-surface-container-lowest hover:bg-surface-container transition-all flex items-center gap-3 shadow-sm border border-border-warm/40" href="tel:+916395867598">
                     <div className="w-9 h-9 rounded-full bg-sandstone-wash flex items-center justify-center text-primary shrink-0">
-                      <span className="material-symbols-outlined text-icon-18">call</span>
+                      <Icon name="call" className="text-icon-18" />
                     </div>
                     <div>
                       <span className="font-label-caps text-body-sm text-on-surface-variant block uppercase font-bold">Call 24×7</span>
@@ -722,7 +723,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
                   </a>
                   <div className="p-3.5 rounded-xl bg-surface-container-lowest flex items-center gap-3 shadow-sm border border-border-warm/40 sm:col-span-2">
                     <div className="w-9 h-9 rounded-full bg-sandstone-wash flex items-center justify-center text-primary shrink-0">
-                      <span className="material-symbols-outlined text-icon-18">pin_drop</span>
+                      <Icon name="pin_drop" className="text-icon-18" />
                     </div>
                     <div>
                       <span className="font-label-caps text-body-sm text-on-surface-variant block uppercase font-bold">Office</span>
@@ -792,7 +793,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
                       type="submit"
                       className="w-full flex items-center justify-center gap-1.5 py-3 rounded-lg bg-primary hover:bg-primary-container text-white font-title-md text-xs font-semibold transition-all shadow-md active:scale-[0.98]"
                     >
-                      <span className="material-symbols-outlined text-icon-16 text-white">send</span>
+                      <Icon name="send" className="text-icon-16 text-white" />
                       <span className="text-white">Send Inquiry via WhatsApp</span>
                     </button>
                   </form>

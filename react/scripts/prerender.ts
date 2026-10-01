@@ -368,6 +368,16 @@ export async function prerender(): Promise<void> {
         );
       }
 
+      // Landmark guard (2026-10-02): every prerendered page must expose exactly
+      // one <main id="main-content"> — the skip link targets it and Lighthouse's
+      // landmark audit fails without it. SiteLayout owns the single <main>;
+      // pages must not render their own.
+      const mainCount = (html.match(/<main[\s>]/g) ?? []).length;
+      assert.ok(
+        mainCount === 1 && html.includes('<main id="main-content"'),
+        `Landmark guard: prerendered ${route} has ${mainCount} <main> elements (expected exactly one with id="main-content").`
+      );
+
       // Determine output file path
       const targetFile = route === "/"
         ? join(dist, "index.html")

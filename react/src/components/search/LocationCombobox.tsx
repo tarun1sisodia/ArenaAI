@@ -1,3 +1,4 @@
+import { Icon, type IconName } from "../icons/Icon";
 /**
  * Searchable Location Combobox Component (Step R6.2)
  *
@@ -662,7 +663,7 @@ export function LocationCombobox({
       >
         <span className="loc-pin" aria-hidden="true">
           {/^[a-z0-9_]+$/.test(triggerIcon) ? (
-            <span className="material-symbols-outlined">{triggerIcon}</span>
+            <Icon name={triggerIcon as IconName} />
           ) : triggerIcon}
         </span>
         <span className={`loc-value ${!value ? "is-empty" : ""}`}>

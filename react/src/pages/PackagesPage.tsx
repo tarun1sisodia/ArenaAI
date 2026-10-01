@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { Icon, type IconName } from "../components/icons/Icon";
 import type { SupportedLanguage } from "../config";
 import { contact } from "../data/contact";
 import { packages as staticPackages, type TourPackage } from "../data";
@@ -524,7 +525,7 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
           {/* Breadcrumb Bar */}
           <nav className="flex items-center gap-space-xs text-on-surface-variant font-body-sm text-body-sm mb-space-lg" aria-label="Breadcrumb">
             <a className="hover:text-primary transition-colors" href="/">Home</a>
-            <span className="material-symbols-outlined text-icon-14">chevron_right</span>
+            <Icon name="chevron_right" className="text-icon-14" />
             <span className="text-primary font-semibold">Tour Packages</span>
           </nav>
 
@@ -550,28 +551,28 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
           {/* Trust Ribbon Mosaic (Compact -20%) */}
           <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3 pt-3">
             <div className="bg-surface-container-lowest p-2.5 sm:p-3 rounded-lg flex items-center gap-2 shadow-xs border border-border-warm/60">
-              <span className="material-symbols-outlined text-primary text-icon-20">explore</span>
+              <Icon name="explore" className="text-primary text-icon-20" />
               <div>
                 <div className="font-title-sm text-xs font-bold text-ink-charcoal">6 Signature Packages</div>
                 <div className="font-body-sm text-body-sm text-on-surface-variant">Same-Day to Multi-Day</div>
               </div>
             </div>
             <div className="bg-surface-container-lowest p-2.5 sm:p-3 rounded-lg flex items-center gap-2 shadow-xs border border-border-warm/60">
-              <span className="material-symbols-outlined text-success-jade text-icon-20">verified_user</span>
+              <Icon name="verified_user" className="text-success-jade text-icon-20" />
               <div>
                 <div className="font-title-sm text-xs font-bold text-ink-charcoal">0% Shopping Traps</div>
                 <div className="font-body-sm text-body-sm text-on-surface-variant">Direct monuments only</div>
               </div>
             </div>
             <div className="bg-surface-container-lowest p-2.5 sm:p-3 rounded-lg flex items-center gap-2 shadow-xs border border-border-warm/60">
-              <span className="material-symbols-outlined text-primary text-icon-20">badge</span>
+              <Icon name="badge" className="text-primary text-icon-20" />
               <div>
                 <div className="font-title-sm text-xs font-bold text-ink-charcoal">Govt-Approved Guides</div>
                 <div className="font-body-sm text-body-sm text-on-surface-variant">Licensed ASI historians</div>
               </div>
             </div>
             <div className="bg-surface-container-lowest p-2.5 sm:p-3 rounded-lg flex items-center gap-2 shadow-xs border border-border-warm/60">
-              <span className="material-symbols-outlined text-primary text-icon-20">directions_car</span>
+              <Icon name="directions_car" className="text-primary text-icon-20" />
               <div>
                 <div className="font-title-sm text-xs font-bold text-ink-charcoal">Doorstep Pickup</div>
                 <div className="font-body-sm text-body-sm text-on-surface-variant">Hotel &amp; Cantt Station</div>
@@ -652,9 +653,7 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
 
           {/* Search Bar */}
           <div className="relative min-w-[240px]">
-            <span className="material-symbols-outlined text-on-surface-variant absolute left-3 top-2 text-icon-16">
-              search
-            </span>
+            <Icon name="search" className="text-on-surface-variant absolute left-3 top-2 text-icon-16" />
             <input
               type="text"
               value={searchQuery}
@@ -723,7 +722,7 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
                     </span>
                   </div>
                   <div className="absolute bottom-2.5 right-2.5 px-2 py-0.5 rounded bg-surface-container-lowest/90 backdrop-blur-sm text-ink-charcoal text-label-caps font-label-caps font-semibold flex items-center gap-1 shadow-xs">
-                    <span className="material-symbols-outlined text-icon-13">{item.durationIcon}</span>
+                    <Icon name={item.durationIcon as IconName} className="text-icon-13" />
                     <span>{item.durationBadge}</span>
                   </div>
                 </div>
@@ -761,7 +760,7 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
                   <div className="space-y-1 text-on-surface-variant font-body-sm text-label-lg pt-0.5">
                     {item.inclusions.map((inc, iIdx) => (
                       <div key={iIdx} className="flex items-center gap-1.5">
-                        <span className="material-symbols-outlined text-primary text-icon-14 shrink-0">check_circle</span>
+                        <Icon name="check_circle" className="text-primary text-icon-14 shrink-0" />
                         <span className="truncate">{inc}</span>
                       </div>
                     ))}
@@ -890,7 +889,7 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
       <section className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin py-8 sm:py-10 w-full">
         <div className="flex flex-col gap-1 text-center max-w-2xl mx-auto mb-6">
           <div className="inline-flex items-center justify-center gap-1 text-primary font-label-caps text-body-sm uppercase font-bold tracking-widest">
-            <span className="material-symbols-outlined text-icon-15">verified</span> 100% Transparent Chauffeur Ethics
+            <Icon name="verified" className="text-icon-15" /> 100% Transparent Chauffeur Ethics
           </div>
           <h2 className="font-headline-lg text-headline-lg text-ink-charcoal">The Honest Heritage Charter</h2>
           <p className="font-body-md text-xs text-on-surface-variant">
@@ -902,7 +901,7 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
           <div className="bg-surface-container-lowest p-4 sm:p-5 rounded-xl shadow-xs border border-border-warm flex flex-col gap-3">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-success-jade/10 text-success-jade flex items-center justify-center shrink-0">
-                <span className="material-symbols-outlined text-icon-18">task_alt</span>
+                <Icon name="task_alt" className="text-icon-18" />
               </div>
               <div>
                 <h3 className="font-title-lg text-sm sm:text-base text-ink-charcoal font-semibold">Always Included in Your Quote</h3>
@@ -911,35 +910,35 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
             </div>
             <ul className="flex flex-col gap-2.5 font-body-md text-xs text-on-surface">
               <li className="flex items-start gap-2">
-                <span className="material-symbols-outlined text-success-jade shrink-0 text-icon-16 mt-0.5">check_circle</span>
+                <Icon name="check_circle" className="text-success-jade shrink-0 text-icon-16 mt-0.5" />
                 <div>
                   <strong className="font-semibold text-ink-charcoal">Clean Commercial AC Vehicle:</strong>
                   <p className="text-on-surface-variant text-body-md">Deeply sanitized interior, functional climate control, ample boot luggage space.</p>
                 </div>
               </li>
               <li className="flex items-start gap-2">
-                <span className="material-symbols-outlined text-success-jade shrink-0 text-icon-16 mt-0.5">check_circle</span>
+                <Icon name="check_circle" className="text-success-jade shrink-0 text-icon-16 mt-0.5" />
                 <div>
                   <strong className="font-semibold text-ink-charcoal">Police-Verified Professional Chauffeur:</strong>
                   <p className="text-on-surface-variant text-body-md">Uniformed, non-smoking, courteous, and thoroughly route-trained on Yamuna &amp; Braj corridors.</p>
                 </div>
               </li>
               <li className="flex items-start gap-2">
-                <span className="material-symbols-outlined text-success-jade shrink-0 text-icon-16 mt-0.5">check_circle</span>
+                <Icon name="check_circle" className="text-success-jade shrink-0 text-icon-16 mt-0.5" />
                 <div>
                   <strong className="font-semibold text-ink-charcoal">All Tolls, Fuel &amp; Parking Included:</strong>
                   <p className="text-on-surface-variant text-body-md">No demanding loose cash at monument parking stands or highway expressway booths.</p>
                 </div>
               </li>
               <li className="flex items-start gap-2">
-                <span className="material-symbols-outlined text-success-jade shrink-0 text-icon-16 mt-0.5">check_circle</span>
+                <Icon name="check_circle" className="text-success-jade shrink-0 text-icon-16 mt-0.5" />
                 <div>
                   <strong className="font-semibold text-ink-charcoal">Interstate Border Passenger Taxes:</strong>
                   <p className="text-on-surface-variant text-body-md">Pre-paid UP, Rajasthan, and Delhi commercial tourist entry permits.</p>
                 </div>
               </li>
               <li className="flex items-start gap-2">
-                <span className="material-symbols-outlined text-success-jade shrink-0 text-icon-16 mt-0.5">check_circle</span>
+                <Icon name="check_circle" className="text-success-jade shrink-0 text-icon-16 mt-0.5" />
                 <div>
                   <strong className="font-semibold text-ink-charcoal">Complimentary Hydration:</strong>
                   <p className="text-on-surface-variant text-body-md">Sealed chilled mineral water bottles and route tissue packs in every car.</p>
@@ -952,7 +951,7 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
           <div className="bg-surface-container-lowest p-4 sm:p-5 rounded-xl shadow-xs border border-border-warm flex flex-col gap-3">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                <span className="material-symbols-outlined text-icon-18">receipt_long</span>
+                <Icon name="receipt_long" className="text-icon-18" />
               </div>
               <div>
                 <h3 className="font-title-lg text-sm sm:text-base text-ink-charcoal font-semibold">Transparent Exclusions</h3>
@@ -961,28 +960,28 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
             </div>
             <ul className="flex flex-col gap-2.5 font-body-md text-xs text-on-surface">
               <li className="flex items-start gap-2">
-                <span className="material-symbols-outlined text-primary shrink-0 text-icon-16 mt-0.5">info</span>
+                <Icon name="info" className="text-primary shrink-0 text-icon-16 mt-0.5" />
                 <div>
                   <strong className="font-semibold text-ink-charcoal">ASI Monument Entrance Tickets:</strong>
                   <p className="text-on-surface-variant text-body-md">Payable directly via the Archaeological Survey of India QR portal or ticket counter (e.g., Taj Mahal ₹50 Indian / ₹1,100 Foreigner).</p>
                 </div>
               </li>
               <li className="flex items-start gap-2">
-                <span className="material-symbols-outlined text-primary shrink-0 text-icon-16 mt-0.5">info</span>
+                <Icon name="info" className="text-primary shrink-0 text-icon-16 mt-0.5" />
                 <div>
                   <strong className="font-semibold text-ink-charcoal">ASI Licensed Guide Fees (Optional):</strong>
                   <p className="text-on-surface-variant text-body-md">Govt-approved multilingual guides can be arranged upon request at fixed official tariffs (approx ₹1,200–₹1,800).</p>
                 </div>
               </li>
               <li className="flex items-start gap-2">
-                <span className="material-symbols-outlined text-primary shrink-0 text-icon-16 mt-0.5">info</span>
+                <Icon name="info" className="text-primary shrink-0 text-icon-16 mt-0.5" />
                 <div>
                   <strong className="font-semibold text-ink-charcoal">Personal Dining &amp; Hotel Stays:</strong>
                   <p className="text-on-surface-variant text-body-md">Lunches, dinners, and accommodation are traveler's choice unless booking all-inclusive packages.</p>
                 </div>
               </li>
               <li className="flex items-start gap-2">
-                <span className="material-symbols-outlined text-primary shrink-0 text-icon-16 mt-0.5">info</span>
+                <Icon name="info" className="text-primary shrink-0 text-icon-16 mt-0.5" />
                 <div>
                   <strong className="font-semibold text-ink-charcoal">Driver Night Allowance past 10:00 PM:</strong>
                   <p className="text-on-surface-variant text-body-md">A nominal ₹300 night charge applies strictly if tours extend past 10:00 PM for late-night highway transits.</p>
@@ -991,7 +990,7 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
             </ul>
             {/* Zero Commission Callout Banner */}
             <div className="mt-auto p-2.5 rounded-lg bg-sandstone-wash flex items-center gap-2 border border-border-warm">
-              <span className="material-symbols-outlined text-primary text-icon-20 shrink-0">article_shortcut</span>
+              <Icon name="article_shortcut" className="text-primary text-icon-20 shrink-0" />
               <p className="font-body-sm text-label-lg text-on-surface font-medium">
                 <span className="font-bold text-primary">Strict Zero-Commission Shopping Promise:</span> Our chauffeurs never divert you to overpriced marble emporiums or craft bazaars unless you specifically request an artisan visit.
               </p>
@@ -1036,7 +1035,7 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
                 Secure vehicle custody via UPI, Google Pay, or direct Bank Transfer. An instant booking voucher with full operator details and booking receipt is dispatched.
               </p>
               <div className="font-label-caps text-body-sm text-success-jade mt-auto flex items-center gap-1 font-bold">
-                <span className="material-symbols-outlined text-icon-14">lock</span>
+                <Icon name="lock" className="text-icon-14" />
                 <span>SECURE ALLOCATION GUARANTEE</span>
               </div>
             </div>
@@ -1050,7 +1049,7 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
                 Receive chauffeur contact and cab registration number 2 hours prior to start. Chauffeur arrives at your hotel porch or station platform with your name placard.
               </p>
               <div className="font-label-caps text-body-sm text-primary mt-auto flex items-center gap-1 font-bold">
-                <span className="material-symbols-outlined text-icon-14">done_all</span>
+                <Icon name="done_all" className="text-icon-14" />
                 <span>BALANCE PAID AT TRIP END</span>
               </div>
             </div>
@@ -1084,9 +1083,7 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
               >
                 <summary className="flex items-center justify-between cursor-pointer list-none font-title-md text-xs sm:text-title-lg text-ink-charcoal font-semibold select-none">
                   <span>{faq.q}</span>
-                  <span className="material-symbols-outlined text-primary group-open:rotate-180 transition-transform text-icon-18">
-                    expand_more
-                  </span>
+                  <Icon name="expand_more" className="text-primary group-open:rotate-180 transition-transform text-icon-18" />
                 </summary>
                 <div className="pt-2 font-body-md text-body-md text-on-surface-variant leading-relaxed">
                   {faq.a}
@@ -1105,7 +1102,7 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
             {/* Left Column Info */}
             <div className="lg:col-span-7 flex flex-col gap-space-md">
               <div className="inline-flex items-center gap-space-xs px-space-sm py-1 rounded bg-ink-slate text-gold-accent w-fit font-label-caps text-label-caps uppercase tracking-widest">
-                <span className="material-symbols-outlined text-icon-16">headset_mic</span>
+                <Icon name="headset_mic" className="text-icon-16" />
                 <span>24×7 Custom Tour Planning Desk</span>
               </div>
               <h2 className="font-headline-hero text-headline-hero text-ivory-surface leading-tight">
@@ -1117,11 +1114,11 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
               {/* Trust Badges Row */}
               <div className="flex flex-wrap items-center gap-space-md pt-space-xs text-secondary-container font-label-caps text-label-caps">
                 <div className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-ink-slate/60 border border-warm/10">
-                  <span className="material-symbols-outlined text-gold-accent text-icon-18">bolt</span>
+                  <Icon name="bolt" className="text-gold-accent text-icon-18" />
                   <span>15-Minute Response</span>
                 </div>
                 <div className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-ink-slate/60 border border-warm/10">
-                  <span className="material-symbols-outlined text-gold-accent text-icon-18">directions_car</span>
+                  <Icon name="directions_car" className="text-gold-accent text-icon-18" />
                   <span>Tailored Fleet Dispatch</span>
                 </div>
               </div>
@@ -1139,7 +1136,7 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
                       Connect With Our Supervisor
                     </h3>
                   </div>
-                  <span className="material-symbols-outlined text-primary text-icon-28">support_agent</span>
+                  <Icon name="support_agent" className="text-primary text-icon-28" />
                 </div>
                 {/* Contact Channels */}
                 <div className="flex flex-col gap-space-sm">
@@ -1150,16 +1147,14 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
                   >
                     <div className="flex items-center gap-space-sm">
                       <div className="w-10 h-10 rounded-full bg-ink-charcoal/20 flex items-center justify-center shrink-0">
-                        <span className="material-symbols-outlined text-icon-20">call</span>
+                        <Icon name="call" className="text-icon-20" />
                       </div>
                       <div className="flex flex-col text-left">
                         <span className="font-label-lg text-label-lg font-bold">Call {contact.phoneDisplay}</span>
                         <span className="font-body-sm text-body-sm opacity-90">Immediate 24×7 Call Dispatch</span>
                       </div>
                     </div>
-                    <span className="material-symbols-outlined text-icon-20 transition-transform group-hover:translate-x-1">
-                      arrow_forward
-                    </span>
+                    <Icon name="arrow_forward" className="text-icon-20 transition-transform group-hover:translate-x-1" />
                   </a>
                   {/* WhatsApp Card */}
                   <a
@@ -1182,9 +1177,7 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
                         </span>
                       </div>
                     </div>
-                    <span className="material-symbols-outlined text-white text-icon-20 transition-transform group-hover:translate-x-1">
-                      open_in_new
-                    </span>
+                    <Icon name="open_in_new" className="text-white text-icon-20 transition-transform group-hover:translate-x-1" />
                   </a>
                 </div>
                 {/* Operating Assurance Badge */}

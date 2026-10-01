@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Icon } from "../components/icons/Icon";
 import type { SupportedLanguage } from "../config";
 import { contact } from "../data/contact";
 import { WhatsAppIcon } from "../components/icons";
@@ -106,17 +107,13 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
               </p>
             </div>
             <div className="inline-flex items-center gap-2 rounded-lg bg-surface-container border border-border-warm px-3.5 py-1.5 shadow-xs">
-              <span className="material-symbols-outlined text-xs sm:text-sm text-terracotta-sandstone shrink-0">
-                verified_user
-              </span>
+              <Icon name="verified_user" className="text-xs sm:text-sm text-terracotta-sandstone shrink-0" />
               <p className="text-ink-charcoal text-xs sm:text-sm font-medium whitespace-nowrap">
                 Official booking receipt Billing &amp; Invoices
               </p>
             </div>
             <div className="inline-flex items-center gap-2 rounded-lg bg-surface-container border border-border-warm px-3.5 py-1.5 shadow-xs">
-              <span className="material-symbols-outlined text-xs sm:text-sm text-terracotta-sandstone shrink-0">
-                pin_drop
-              </span>
+              <Icon name="pin_drop" className="text-xs sm:text-sm text-terracotta-sandstone shrink-0" />
               <p className="text-ink-charcoal text-xs sm:text-sm font-medium whitespace-nowrap">
                 Taj Ganj Physical Garage (Near Taj East Gate Rd)
               </p>
@@ -146,7 +143,7 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
             </div>
             <div>
               <div className="w-9 h-9 rounded-full bg-sandstone-wash flex items-center justify-center text-terracotta-sandstone mb-3 mt-1">
-                <span className="material-symbols-outlined text-lg">phone_in_talk</span>
+                <Icon name="phone_in_talk" className="text-lg" />
               </div>
               <h3 className="font-headline-sm text-ink-charcoal text-base mb-1 font-semibold">Immediate Call Dispatch (24×7)</h3>
               <p className="font-title-lg text-terracotta-sandstone mb-2 font-bold text-sm sm:text-base">+91 63958 67598</p>
@@ -159,7 +156,7 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
               className="w-full inline-flex items-center justify-center gap-1.5 bg-terracotta-deep hover:bg-primary text-white font-label-lg py-2 px-3 rounded-lg transition-colors text-center text-xs font-semibold shadow-xs"
               href="tel:+916395867598"
             >
-              <span className="material-symbols-outlined text-icon-16">call</span>
+              <Icon name="call" className="text-icon-16" />
               <span>Call Dispatch Now</span>
             </a>
           </div>
@@ -188,6 +185,7 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
               className="w-full inline-flex items-center justify-center gap-2 bg-black hover:bg-neutral-900 border border-white/10 text-white font-label-lg py-2.5 px-3 rounded-lg transition-colors text-center text-xs font-semibold shadow-xs active:scale-[0.98]"
               style={{ color: "#ffffff" }}
               href="https://wa.me/919762817598"
+              aria-label="Chat on WhatsApp"
               target="_blank"
               rel="noreferrer"
             >
@@ -205,7 +203,7 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
             </div>
             <div>
               <div className="w-9 h-9 rounded-full bg-sandstone-wash flex items-center justify-center text-terracotta-sandstone mb-3 mt-1">
-                <span className="material-symbols-outlined text-lg">business_center</span>
+                <Icon name="business_center" className="text-lg" />
               </div>
               <h3 className="font-headline-sm text-ink-charcoal text-base mb-1 font-semibold">Corporate &amp; Tour Desk</h3>
               <p className="font-title-md text-ink-charcoal mb-0.5 font-semibold text-xs break-all">
@@ -221,7 +219,7 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
               className="w-full inline-flex items-center justify-center gap-1.5 bg-surface-container-high hover:bg-surface-container-highest text-ink-charcoal font-label-lg py-2 px-3 rounded-lg transition-colors border border-outline-variant text-center text-xs font-semibold"
               href="mailto:bookings@agraskbagheltourandtravels.com"
             >
-              <span className="material-symbols-outlined text-icon-16">mail</span>
+              <Icon name="mail" className="text-icon-16" />
               <span>Email Itinerary</span>
             </a>
           </div>
@@ -250,9 +248,7 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
                     className="w-full text-left p-3 sm:p-3.5 flex items-center justify-between gap-3 hover:bg-sandstone-wash/20 transition-colors"
                   >
                     <span className="font-title-md text-xs sm:text-title-lg font-semibold text-ink-charcoal">{faq.q}</span>
-                    <span className="material-symbols-outlined text-primary text-icon-18 shrink-0">
-                      {isOpen ? "expand_less" : "expand_more"}
-                    </span>
+                    <Icon name={isOpen ? "expand_less" : "expand_more"} className="text-primary text-icon-18 shrink-0" />
                   </button>
                   {isOpen && (
                     <div className="p-3 sm:p-3.5 pt-0 text-on-surface-variant font-body-sm text-body-md leading-relaxed border-t border-border-warm/40 mt-1">

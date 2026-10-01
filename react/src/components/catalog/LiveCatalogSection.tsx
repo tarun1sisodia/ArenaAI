@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Icon } from "../icons/Icon";
 import { contact } from "../../data/contact";
 import { WhatsAppIcon } from "../icons";
 import {
@@ -117,7 +118,7 @@ export function LiveCatalogSection({
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-sandstone-wash" aria-hidden="true">
-                    <span className="material-symbols-outlined text-primary text-icon-32">tour</span>
+                    <Icon name="tour" className="text-primary text-icon-32" />
                   </div>
                 )}
                 <div className="absolute top-2.5 left-2.5 flex gap-1.5 flex-wrap">
@@ -158,19 +159,19 @@ export function LiveCatalogSection({
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-3 text-on-surface-variant font-body-sm text-body-sm">
                   {item.durationText && (
                     <span className="inline-flex items-center gap-1">
-                      <span className="material-symbols-outlined text-icon-14" aria-hidden="true">schedule</span>
+                      <Icon name="schedule" className="text-icon-14" aria-hidden="true" />
                       {item.durationText}
                     </span>
                   )}
                   {item.distanceKm !== null && item.distanceKm !== undefined && (
                     <span className="inline-flex items-center gap-1">
-                      <span className="material-symbols-outlined text-icon-14" aria-hidden="true">route</span>
+                      <Icon name="route" className="text-icon-14" aria-hidden="true" />
                       ~{item.distanceKm} km
                     </span>
                   )}
                   {item.stops.length > 0 && (
                     <span className="inline-flex items-center gap-1">
-                      <span className="material-symbols-outlined text-icon-14" aria-hidden="true">pin_drop</span>
+                      <Icon name="pin_drop" className="text-icon-14" aria-hidden="true" />
                       {item.stops.length} stop{item.stops.length === 1 ? "" : "s"}
                     </span>
                   )}
@@ -218,7 +219,7 @@ export function LiveCatalogSection({
                       className="inline-flex items-center gap-1 px-3.5 h-9 rounded-lg bg-primary text-on-primary font-label-lg text-xs font-semibold hover:opacity-90 transition-opacity"
                     >
                       View details
-                      <span className="material-symbols-outlined text-icon-14" aria-hidden="true">arrow_forward</span>
+                      <Icon name="arrow_forward" className="text-icon-14" aria-hidden="true" />
                     </a>
                   </div>
                 </div>

@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
+import { Icon } from "../../components/icons/Icon";
 import { contact } from "../../data/contact";
 import { packages, vehicles, cities, routes, type VehicleId, type TourPackage, type Route } from "../../data/catalogue";
 import { formatInr, localTomorrow, localPackages, type LocalPackageKey } from "./fareEngine";
@@ -56,8 +57,8 @@ function UnavailableBookingRequest({ request, selectedVehicleId }: { request: Un
     return <section className="rounded-2xl border border-primary/30 bg-sandstone-wash/70 p-space-lg" role="status"><div className="flex items-center gap-3 text-on-surface-variant"><span className="w-7 h-7 border-2 border-primary border-t-transparent rounded-full animate-spin" aria-hidden="true" /><p className="font-body-md">Checking route availability before showing vehicles…</p></div></section>;
   }
   return <section className="rounded-2xl border border-primary/30 bg-sandstone-wash/70 p-space-lg md:p-space-xl" role="alert" aria-live="polite">
-    <div className="flex items-start gap-3"><span className="material-symbols-outlined text-icon-28 text-primary" aria-hidden="true">route</span><div><p className="font-label-caps text-label-caps uppercase tracking-widest text-terracotta-sandstone font-bold">Route not in our catalogue</p><h2 className="font-headline-sm text-headline-sm text-ink-midnight font-bold mt-1">{request.kind === "route" ? `${request.origin} → ${request.destination} is not currently available` : "That tour is not currently available"}</h2><p className="font-body-md text-on-surface-variant mt-2 leading-relaxed">We do not have a published route, package, or trip for this search, so we have not shown vehicle availability. Our desk can still check a custom charter by phone or WhatsApp.</p></div></div>
-    <div className="flex flex-col sm:flex-row gap-2 mt-space-md"><a className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-white font-semibold" href={`tel:${contact.phone}`}><span className="material-symbols-outlined text-icon-18" aria-hidden="true">call</span>Call {contact.phoneDisplay}</a><a className="inline-flex items-center justify-center gap-2 rounded-xl bg-black px-4 py-3 text-white font-semibold" href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(`Hello SK Baghel Travels, please check a custom booking for ${request.origin ?? request.name ?? "my requested tour"}${request.destination ? ` to ${request.destination}` : ""}.`)}`} target="_blank" rel="noreferrer"><WhatsAppIcon className="w-4 h-4 shrink-0 text-white" />WhatsApp the desk</a></div>
+    <div className="flex items-start gap-3"><Icon name="route" className="text-icon-28 text-primary" aria-hidden="true" /><div><p className="font-label-caps text-label-caps uppercase tracking-widest text-terracotta-sandstone font-bold">Route not in our catalogue</p><h2 className="font-headline-sm text-headline-sm text-ink-midnight font-bold mt-1">{request.kind === "route" ? `${request.origin} → ${request.destination} is not currently available` : "That tour is not currently available"}</h2><p className="font-body-md text-on-surface-variant mt-2 leading-relaxed">We do not have a published route, package, or trip for this search, so we have not shown vehicle availability. Our desk can still check a custom charter by phone or WhatsApp.</p></div></div>
+    <div className="flex flex-col sm:flex-row gap-2 mt-space-md"><a className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-white font-semibold" href={`tel:${contact.phone}`}><Icon name="call" className="text-icon-18" aria-hidden="true" />Call {contact.phoneDisplay}</a><a className="inline-flex items-center justify-center gap-2 rounded-xl bg-black px-4 py-3 text-white font-semibold" href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(`Hello SK Baghel Travels, please check a custom booking for ${request.origin ?? request.name ?? "my requested tour"}${request.destination ? ` to ${request.destination}` : ""}.`)}`} target="_blank" rel="noreferrer"><WhatsAppIcon className="w-4 h-4 shrink-0 text-white" />WhatsApp the desk</a></div>
     {request.suggestions.length > 0 && <div className="mt-space-lg"><h3 className="font-title-lg text-title-lg text-ink-charcoal font-semibold">Try one of these supported routes</h3><div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3">{request.suggestions.map((route) => { const from = cities.find((city) => city.id === route.from)?.name ?? route.from; const to = cities.find((city) => city.id === route.to)?.name ?? route.to; return <a key={route.id} className="rounded-xl border border-border-warm bg-surface-container-lowest px-3 py-3 hover:border-primary transition-colors" href={`/book.html?from=${encodeURIComponent(route.from)}&to=${encodeURIComponent(route.to)}&vehicle=${selectedVehicleId}&trip=one-way`}><span className="block font-semibold text-ink-charcoal">{from} → {to}</span><span className="text-xs text-on-surface-variant">From {formatInr(route.fares.sedan)} by Sedan</span></a>; })}</div></div>}
     <a className="inline-flex mt-space-md text-primary font-semibold hover:underline" href="/en/routes/">Browse all supported routes ↗</a>
   </section>;
@@ -843,9 +844,9 @@ export function BookingPage() {
         <div className="max-w-[1280px] mx-auto px-gutter flex items-center justify-between">
           <nav aria-label="Breadcrumb" className="flex items-center gap-space-xs text-on-surface-variant font-body-sm text-body-sm overflow-x-auto whitespace-nowrap">
             <a className="hover:text-primary transition-colors" href="/en/">Home</a>
-            <span className="material-symbols-outlined text-icon-14">chevron_right</span>
+            <Icon name="chevron_right" className="text-icon-14" />
             <span className="text-on-surface-variant">Booking</span>
-            <span className="material-symbols-outlined text-icon-14">chevron_right</span>
+            <Icon name="chevron_right" className="text-icon-14" />
             <span className="text-primary font-semibold">
               {step === 1
                 ? hasPreselectedRoute
@@ -889,7 +890,7 @@ export function BookingPage() {
                     step > 1 ? "bg-success-jade text-on-primary" : "bg-primary text-on-primary"
                   }`}
                 >
-                  {step > 1 ? <span className="material-symbols-outlined text-icon-20">check</span> : "1"}
+                  {step > 1 ? <Icon name="check" className="text-icon-20" /> : "1"}
                 </div>
                 <div className="flex flex-col min-w-0">
                   <span className="font-label-caps text-label-caps uppercase text-terracotta-sandstone tracking-wider font-bold">
@@ -919,7 +920,7 @@ export function BookingPage() {
                       : "bg-surface-container-highest text-secondary"
                   }`}
                 >
-                  {step > 2 ? <span className="material-symbols-outlined text-icon-20">check</span> : "2"}
+                  {step > 2 ? <Icon name="check" className="text-icon-20" /> : "2"}
                 </div>
                 <div className="flex flex-col min-w-0">
                   <span className="font-label-caps text-label-caps uppercase text-secondary tracking-wider font-bold">
@@ -944,7 +945,7 @@ export function BookingPage() {
                     step === 3 ? "bg-terracotta-deep text-on-primary" : "bg-surface-container-highest text-secondary"
                   }`}
                 >
-                  <span className="material-symbols-outlined text-icon-20">verified</span>
+                  <Icon name="verified" className="text-icon-20" />
                 </div>
                 <div className="flex flex-col min-w-0">
                   <span className={`font-label-caps text-label-caps uppercase tracking-wider font-bold ${step === 3 ? "text-gold-bronze" : "text-secondary"}`}>
@@ -975,7 +976,7 @@ export function BookingPage() {
                     step > 1 ? "bg-success-jade text-on-primary" : "bg-primary text-on-primary"
                   }`}
                 >
-                  {step > 1 ? <span className="material-symbols-outlined text-icon-20">check</span> : "1"}
+                  {step > 1 ? <Icon name="check" className="text-icon-20" /> : "1"}
                 </div>
                 <div className="flex flex-col min-w-0">
                   <span className="font-label-caps text-label-caps uppercase text-terracotta-sandstone tracking-wider font-bold">
@@ -1005,7 +1006,7 @@ export function BookingPage() {
                       : "bg-surface-container-highest text-secondary"
                   }`}
                 >
-                  {step > 2 ? <span className="material-symbols-outlined text-icon-20">check</span> : "2"}
+                  {step > 2 ? <Icon name="check" className="text-icon-20" /> : "2"}
                 </div>
                 <div className="flex flex-col min-w-0">
                   <span className="font-label-caps text-label-caps uppercase text-secondary tracking-wider font-bold">
@@ -1035,7 +1036,7 @@ export function BookingPage() {
                       : "bg-surface-container-highest text-secondary"
                   }`}
                 >
-                  {step > 3 ? <span className="material-symbols-outlined text-icon-20">check</span> : "3"}
+                  {step > 3 ? <Icon name="check" className="text-icon-20" /> : "3"}
                 </div>
                 <div className="flex flex-col min-w-0">
                   <span className="font-label-caps text-label-caps uppercase text-secondary tracking-wider font-bold">
@@ -1060,7 +1061,7 @@ export function BookingPage() {
                     step === 4 ? "bg-terracotta-deep text-on-primary" : "bg-surface-container-highest text-secondary"
                   }`}
                 >
-                  <span className="material-symbols-outlined text-icon-20">verified</span>
+                  <Icon name="verified" className="text-icon-20" />
                 </div>
                 <div className="flex flex-col min-w-0">
                   <span className={`font-label-caps text-label-caps uppercase tracking-wider font-bold ${step === 4 ? "text-gold-bronze" : "text-secondary"}`}>
@@ -1084,7 +1085,7 @@ export function BookingPage() {
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-space-sm bg-sandstone-wash/80 p-space-md rounded-xl border border-border-warm/80">
                   <div className="flex items-center gap-space-sm min-w-0">
                     <span className="w-11 h-11 rounded-full bg-primary text-white flex items-center justify-center shrink-0 shadow-xs">
-                      <span className="material-symbols-outlined text-icon-24">landscape</span>
+                      <Icon name="landscape" className="text-icon-24" />
                     </span>
                     <div className="min-w-0">
                       <span className="font-label-caps text-label-caps uppercase text-terracotta-sandstone tracking-widest font-bold">
@@ -1102,7 +1103,7 @@ export function BookingPage() {
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-space-sm bg-sandstone-wash/80 p-space-md rounded-xl border border-border-warm/80">
                   <div className="flex items-center gap-space-sm">
                     <span className="w-11 h-11 rounded-full bg-primary text-white flex items-center justify-center shrink-0 shadow-xs">
-                      <span className="material-symbols-outlined text-icon-24">route</span>
+                      <Icon name="route" className="text-icon-24" />
                     </span>
                     <div>
                       <span className="font-label-caps text-label-caps uppercase text-terracotta-sandstone tracking-widest font-bold">
@@ -1119,7 +1120,7 @@ export function BookingPage() {
                       className="inline-flex items-center gap-1 text-xs text-primary font-semibold hover:underline bg-surface px-3 py-1.5 rounded-lg border border-border-warm shadow-xs transition-colors"
                     >
                       <span>Change Route</span>
-                      <span className="material-symbols-outlined text-icon-14">open_in_new</span>
+                      <Icon name="open_in_new" className="text-icon-14" />
                     </a>
                   </div>
                 </div>
@@ -1350,9 +1351,7 @@ export function BookingPage() {
               {/* Plain Sentence Banner for Force Vehicles */}
               {selectedVehicle.alwaysRoundTrip && (
                 <div className="w-full bg-sandstone-wash border border-primary/30 rounded-xl p-space-md flex items-start gap-space-sm mt-1">
-                  <span className="material-symbols-outlined text-primary text-icon-24 shrink-0 mt-0.5">
-                    info
-                  </span>
+                  <Icon name="info" className="text-primary text-icon-24 shrink-0 mt-0.5" />
                   <div className="flex flex-col">
                     <p className="font-title-md text-title-md text-ink-midnight font-bold">
                       This vehicle is always booked as a round trip.
@@ -1423,11 +1422,11 @@ export function BookingPage() {
                           </p>
                           <div className="flex flex-wrap items-center gap-2 mt-1">
                             <span className="inline-flex items-center gap-1 text-label-md font-semibold bg-surface-container-low px-2 py-0.5 rounded text-ink-slate border border-border-warm/60">
-                              <span className="material-symbols-outlined text-icon-14">groups</span>
+                              <Icon name="groups" className="text-icon-14" />
                               {veh.guests}
                             </span>
                             <span className="inline-flex items-center gap-1 text-label-md font-semibold bg-surface-container-low px-2 py-0.5 rounded text-ink-slate border border-border-warm/60">
-                              <span className="material-symbols-outlined text-icon-14">luggage</span>
+                              <Icon name="luggage" className="text-icon-14" />
                               {veh.luggage}
                             </span>
                             {veh.alwaysRoundTrip && (
@@ -1459,7 +1458,7 @@ export function BookingPage() {
                       </h2>
                     </div>
                     <span className="w-8 h-8 rounded-full bg-sandstone-wash flex items-center justify-center text-primary">
-                      <span className="material-symbols-outlined text-icon-20">verified</span>
+                      <Icon name="verified" className="text-icon-20" />
                     </span>
                   </div>
 
@@ -1558,9 +1557,7 @@ export function BookingPage() {
                     type="button"
                   >
                     <span>{isDirectFunnel ? "Proceed to Booking Form" : "Continue to Choose Your Trip"}</span>
-                    <span className="material-symbols-outlined text-icon-18 group-hover:translate-x-1 transition-transform">
-                      arrow_forward
-                    </span>
+                    <Icon name="arrow_forward" className="text-icon-18 group-hover:translate-x-1 transition-transform" />
                   </button>
 
                   <a
@@ -1610,7 +1607,7 @@ export function BookingPage() {
               {/* Header */}
               <div className="w-full bg-ink-charcoal text-ivory-surface px-space-lg py-space-md flex flex-wrap items-center justify-between gap-space-xs">
                 <div className="flex items-center gap-space-sm">
-                  <span className="material-symbols-outlined text-icon-20 text-gold-accent">contact_phone</span>
+                  <Icon name="contact_phone" className="text-icon-20 text-gold-accent" />
                   <h2 className="font-headline-sm text-headline-sm text-ivory-surface tracking-wide uppercase">
                     Passenger Logistics &amp; Review
                   </h2>
@@ -1804,7 +1801,7 @@ export function BookingPage() {
                     disabled={isSubmitting || !serverFare}
                     className="w-full py-3.5 px-space-md rounded-xl bg-terracotta-deep text-on-primary font-title-lg font-bold hover:bg-terracotta-sunlit transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
                   >
-                    <span className="material-symbols-outlined text-icon-20">lock</span>
+                    <Icon name="lock" className="text-icon-20" />
                     <span>
                       {isSubmitting
                         ? "Registering Booking with Server..."
@@ -1846,7 +1843,7 @@ export function BookingPage() {
             <div className="bg-success-jade/10 border border-success-jade/40 rounded-xl p-space-lg flex items-center justify-between gap-space-md">
               <div className="flex items-center gap-space-sm">
                 <span className="w-10 h-10 rounded-full bg-success-jade text-white flex items-center justify-center shrink-0">
-                  <span className="material-symbols-outlined text-icon-24">verified</span>
+                  <Icon name="verified" className="text-icon-24" />
                 </span>
                 <div>
                   <h1 className="font-headline-sm text-headline-sm text-ink-midnight font-bold">

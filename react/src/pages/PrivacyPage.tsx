@@ -1,4 +1,5 @@
 import React from "react";
+import { Icon } from "../components/icons/Icon";
 import type { SupportedLanguage } from "../config";
 import { contact } from "../data/contact";
 
@@ -88,21 +89,21 @@ export function PrivacyPage({ language = "en" }: PrivacyPageProps) {
         {/* Core Commitments */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="p-3.5 sm:p-4 rounded-xl bg-surface-container-lowest border border-border-warm shadow-xs">
-            <span className="material-symbols-outlined text-primary text-xl mb-1.5">lock</span>
+            <Icon name="lock" className="text-primary text-xl mb-1.5" />
             <h2 className="font-bold text-xs text-ink-charcoal mb-0.5">Zero Data Selling</h2>
             <p className="text-label-lg text-on-surface-variant leading-relaxed">
               We never sell or rent passenger phone numbers, itineraries, or emails to souvenir shops, hotels, or advertisers.
             </p>
           </div>
           <div className="p-3.5 sm:p-4 rounded-xl bg-surface-container-lowest border border-border-warm shadow-xs">
-            <span className="material-symbols-outlined text-success-jade text-xl mb-1.5">encrypted</span>
+            <Icon name="encrypted" className="text-success-jade text-xl mb-1.5" />
             <h2 className="font-bold text-xs text-ink-charcoal mb-0.5">Encrypted Transit</h2>
             <p className="text-label-lg text-on-surface-variant leading-relaxed">
               All booking vouchers, driver allocations, and payment tokens are processed over secure HTTPS with 256-bit encryption.
             </p>
           </div>
           <div className="p-3.5 sm:p-4 rounded-xl bg-surface-container-lowest border border-border-warm shadow-xs">
-            <span className="material-symbols-outlined text-primary text-xl mb-1.5">delete_forever</span>
+            <Icon name="delete_forever" className="text-primary text-xl mb-1.5" />
             <h2 className="font-bold text-xs text-ink-charcoal mb-0.5">Right to Erasure</h2>
             <p className="text-label-lg text-on-surface-variant leading-relaxed">
               Guests can email privacy@agraskbagheltourandtravels.com anytime to request immediate deletion of their historical travel records.

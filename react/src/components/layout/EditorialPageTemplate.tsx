@@ -1,4 +1,5 @@
 import { useState, type ReactNode, type AnchorHTMLAttributes, type ButtonHTMLAttributes } from "react";
+import { Icon, type IconName } from "../icons/Icon";
 import { WhatsAppIcon } from "../icons/WhatsAppIcon";
 import { contact } from "../../data/contact";
 
@@ -127,7 +128,7 @@ export function PrimaryButton({
 
   const iconElement =
     typeof icon === "string" ? (
-      <span className="material-symbols-outlined text-icon-15 text-white shrink-0">{icon}</span>
+      <Icon name={icon as IconName} className="text-icon-15 text-white shrink-0" />
     ) : (
       icon
     );
@@ -204,7 +205,7 @@ export function SecondaryButton({
 }: ActionButtonProps) {
   const iconElement =
     typeof icon === "string" ? (
-      <span className="material-symbols-outlined text-icon-14 text-primary shrink-0">{icon}</span>
+      <Icon name={icon as IconName} className="text-icon-14 text-primary shrink-0" />
     ) : (
       icon
     );
@@ -329,7 +330,7 @@ export function LuxuryDarkBentoCard({
     >
       <div className="flex items-center justify-between">
         <div className="w-9 h-9 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-105 bg-primary text-white">
-          <span className="material-symbols-outlined text-icon-20">{icon}</span>
+          <Icon name={icon as IconName} className="text-icon-20" />
         </div>
         <span className="font-label-caps text-label-caps uppercase font-bold px-2 py-0.5 rounded-full bg-gold-accent/15 text-gold-accent border border-gold-accent/30">
           {badge}
@@ -378,7 +379,7 @@ export function PromoCouponStrip({
     >
       <div className="flex items-center gap-4">
         <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center shrink-0 shadow-xs">
-          <span className="material-symbols-outlined text-icon-20 text-white">confirmation_number</span>
+          <Icon name="confirmation_number" className="text-icon-20 text-white" />
         </div>
         <div>
           <h4 className="font-title-md text-headline-sm text-on-surface font-bold">{title}</h4>
@@ -395,12 +396,12 @@ export function PromoCouponStrip({
         >
           {copied ? (
             <>
-              <span className="material-symbols-outlined text-icon-13 text-white">check</span>
+              <Icon name="check" className="text-icon-13 text-white" />
               <span className="text-white">Copied!</span>
             </>
           ) : (
             <>
-              <span className="material-symbols-outlined text-icon-13 text-white">content_copy</span>
+              <Icon name="content_copy" className="text-icon-13 text-white" />
               <span className="text-white">Copy</span>
             </>
           )}
@@ -533,7 +534,7 @@ export function EditorialHero({
                 className="bg-ink-charcoal/80 backdrop-blur-md p-3 rounded-xl border border-white/10 flex items-start gap-2.5"
               >
                 <div className="w-8 h-8 rounded-lg bg-primary/20 text-gold-accent flex items-center justify-center shrink-0">
-                  <span className="material-symbols-outlined text-icon-18">{item.icon}</span>
+                  <Icon name={item.icon as IconName} className="text-icon-18" />
                 </div>
                 <div>
                   <h4 className="font-title-md text-xs text-ivory-surface font-bold leading-tight">

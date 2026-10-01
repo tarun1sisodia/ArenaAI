@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Icon, type IconName } from "../components/icons/Icon";
 import { contact } from "../data/contact";
 import { WhatsAppIcon } from "../components/icons";
 import { NotFoundPage } from "./NotFoundPage";
@@ -123,9 +124,9 @@ export function LivePackageDetailPage({ slug, initialItem }: LivePackageDetailPa
       <section className="w-full max-w-7xl mx-auto px-margin-mobile lg:px-margin pt-space-xl pb-space-lg">
         <nav className="flex items-center gap-space-xs text-on-surface-variant font-body-sm text-body-sm mb-space-lg" aria-label="Breadcrumb">
           <a className="hover:text-primary transition-colors" href="/">Home</a>
-          <span className="material-symbols-outlined text-icon-14" aria-hidden="true">chevron_right</span>
+          <Icon name="chevron_right" className="text-icon-14" aria-hidden="true" />
           <a className="hover:text-primary transition-colors" href="/packages">Tour Packages</a>
-          <span className="material-symbols-outlined text-icon-14" aria-hidden="true">chevron_right</span>
+          <Icon name="chevron_right" className="text-icon-14" aria-hidden="true" />
           <span className="text-primary font-semibold">{item.title}</span>
         </nav>
 
@@ -148,7 +149,7 @@ export function LivePackageDetailPage({ slug, initialItem }: LivePackageDetailPa
               </figure>
             ) : (
               <div className="rounded-2xl aspect-[16/10] bg-sandstone-wash flex items-center justify-center">
-                <span className="material-symbols-outlined text-primary text-icon-48" aria-hidden="true">tour</span>
+                <Icon name="tour" className="text-primary text-icon-48" aria-hidden="true" />
               </div>
             )}
 
@@ -221,9 +222,7 @@ export function LivePackageDetailPage({ slug, initialItem }: LivePackageDetailPa
                 .map((meta) => (
                   <div key={(meta as { label: string }).label} className="bg-surface-container-lowest rounded-xl border border-border-warm/60 p-3">
                     <dt className="flex items-center gap-1.5 font-label-caps text-label-caps uppercase tracking-wider text-on-surface-variant">
-                      <span className="material-symbols-outlined text-icon-14 text-primary" aria-hidden="true">
-                        {(meta as { icon: string }).icon}
-                      </span>
+                      <Icon name={(meta as { icon: string }).icon as IconName} className="text-icon-14 text-primary" aria-hidden="true" />
                       {(meta as { label: string }).label}
                     </dt>
                     <dd className="font-title-sm text-sm font-semibold text-on-surface mt-1 leading-snug">
@@ -257,7 +256,7 @@ export function LivePackageDetailPage({ slug, initialItem }: LivePackageDetailPa
                 className="flex-1 inline-flex items-center justify-center gap-2 h-11 rounded-xl bg-terracotta-deep text-white font-label-lg text-sm font-semibold hover:bg-terracotta-sunlit transition-colors"
               >
                 <span>Book Now</span>
-                <span className="material-symbols-outlined text-icon-18" aria-hidden="true">arrow_forward</span>
+                <Icon name="arrow_forward" className="text-icon-18" aria-hidden="true" />
               </a>
               <a
                 href={whatsappUrl}
@@ -273,7 +272,7 @@ export function LivePackageDetailPage({ slug, initialItem }: LivePackageDetailPa
                 href={`tel:${contact.phone}`}
                 className="flex-1 inline-flex items-center justify-center gap-2 h-11 rounded-xl bg-primary text-on-primary font-label-lg text-sm font-semibold hover:opacity-90 transition-opacity"
               >
-                <span className="material-symbols-outlined text-icon-18" aria-hidden="true">call</span>
+                <Icon name="call" className="text-icon-18" aria-hidden="true" />
                 {contact.phoneDisplay}
               </a>
             </div>
