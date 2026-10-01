@@ -1,0 +1,5 @@
+Contact: mailto:admin@skbagheltravels.in
+Expires: 2027-10-01T00:00:00.000Z
+Preferred-Languages: en, hi
+Canonical: https://agraskbagheltourandtravels.com/.well-known/security.txt
+Policy: https://agraskbagheltourandtravels.com/en/contact/

@@ -734,8 +734,9 @@ export function HomePage({ language = "en" }: HomePageProps) {
                   <form onSubmit={handleInquirySubmit} className="space-y-3">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
-                        <label className="font-label-caps text-[9.5px] text-on-surface-variant uppercase font-semibold block mb-1">Full Name</label>
+                        <label htmlFor="homepage-inquiry-name" className="font-label-caps text-[9.5px] text-on-surface-variant uppercase font-semibold block mb-1">Full Name</label>
                         <input
+                          id="homepage-inquiry-name"
                           type="text"
                           required
                           value={inquiryName}
@@ -745,8 +746,9 @@ export function HomePage({ language = "en" }: HomePageProps) {
                         />
                       </div>
                       <div>
-                        <label className="font-label-caps text-[9.5px] text-on-surface-variant uppercase font-semibold block mb-1">Phone / WhatsApp</label>
+                        <label htmlFor="homepage-inquiry-phone" className="font-label-caps text-[9.5px] text-on-surface-variant uppercase font-semibold block mb-1">Phone / WhatsApp</label>
                         <input
+                          id="homepage-inquiry-phone"
                           type="tel"
                           required
                           value={inquiryPhone}
@@ -757,8 +759,9 @@ export function HomePage({ language = "en" }: HomePageProps) {
                       </div>
                     </div>
                     <div>
-                      <label className="font-label-caps text-[9.5px] text-on-surface-variant uppercase font-semibold block mb-1">Travel Date</label>
+                      <label htmlFor="homepage-inquiry-date" className="font-label-caps text-[9.5px] text-on-surface-variant uppercase font-semibold block mb-1">Travel Date</label>
                       <input
+                        id="homepage-inquiry-date"
                         type="date"
                         required
                         value={inquiryDate}
@@ -767,8 +770,9 @@ export function HomePage({ language = "en" }: HomePageProps) {
                       />
                     </div>
                     <div>
-                      <label className="font-label-caps text-[9.5px] text-on-surface-variant uppercase font-semibold block mb-1">Itinerary & Pickup Details</label>
+                      <label htmlFor="homepage-inquiry-notes" className="font-label-caps text-[9.5px] text-on-surface-variant uppercase font-semibold block mb-1">Itinerary & Pickup Details</label>
                       <textarea
+                        id="homepage-inquiry-notes"
                         rows={3}
                         value={inquiryNotes}
                         onChange={(e) => setInquiryNotes(e.target.value)}

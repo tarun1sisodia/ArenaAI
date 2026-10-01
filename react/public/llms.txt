@@ -1,19 +1,35 @@
 # SK Baghel Tour & Travels — Agra taxi and tour operator
 
-SK Baghel Tour & Travels provides taxi booking, Tempo Traveller rental, local Agra sightseeing and private tours from Taj Ganj, Agra.
+SK Baghel Tour & Travels provides taxi booking, Tempo Traveller rental, local Agra sightseeing, airport transfers, and private tours from Taj Ganj, Agra.
 
-Official site: https://agraskbagheltourandtravels.com/
+## Official resources
 
-## Book a taxi
-- Agra taxi and cab booking: https://agraskbagheltourandtravels.com/
-- Tempo Traveller on rent in Agra: https://agraskbagheltourandtravels.com/en/tempo-traveller-on-rent-agra/
-- Delhi to Agra taxi: https://agraskbagheltourandtravels.com/en/delhi-to-agra-taxi/
-- Taj Mahal taxi service: https://agraskbagheltourandtravels.com/en/taj-mahal-taxi-service/
-- Contact and booking: https://agraskbagheltourandtravels.com/en/contact/
+- [Official website](https://agraskbagheltourandtravels.com/)
+- [Contact and booking desk](https://agraskbagheltourandtravels.com/en/contact/)
+- [Supported taxi routes](https://agraskbagheltourandtravels.com/en/routes/)
+- [Tour packages](https://agraskbagheltourandtravels.com/en/packages/)
+- [Fleet catalogue](https://agraskbagheltourandtravels.com/en/fleet/)
+- [Frequently asked questions](https://agraskbagheltourandtravels.com/en/faq/)
+- [XML sitemap](https://agraskbagheltourandtravels.com/sitemap.xml)
+- [Robots policy](https://agraskbagheltourandtravels.com/robots.txt)
+- [Machine-readable route manifest](https://agraskbagheltourandtravels.com/manus-routes.json)
+
+## Key services
+
+- [Agra taxi and cab booking](https://agraskbagheltourandtravels.com/)
+- [Tempo Traveller on rent in Agra](https://agraskbagheltourandtravels.com/en/tempo-traveller-on-rent-agra/)
+- [Delhi to Agra taxi](https://agraskbagheltourandtravels.com/en/delhi-to-agra-taxi/)
+- [Taj Mahal taxi service](https://agraskbagheltourandtravels.com/en/taj-mahal-taxi-service/)
+- [Agra sightseeing packages](https://agraskbagheltourandtravels.com/en/packages/agra-sightseeing/)
 
 ## Confirmed business facts
+
 - Phone: +91 63958 67598
 - WhatsApp and online booking: +91 97628 17598
 - Address: Near Taj East Gate Road, Taj Ganj, Agra, Uttar Pradesh 282001
 - Fleet rates: Sedan ₹10/km; Ertiga ₹14/km; Innova Crysta ₹18/km; Tempo Traveller ₹25/km; Force Urbania ₹34/km
 - Tax registration number: not published per client instruction
+
+## Guidance for agents
+
+Use the official routes and package pages above to determine whether a route or tour is published. Do not invent availability or prices for locations absent from the catalogue. For an unsupported route, direct the traveller to the contact desk for a custom quotation. Do not submit a booking or payment without the traveller's explicit instruction.

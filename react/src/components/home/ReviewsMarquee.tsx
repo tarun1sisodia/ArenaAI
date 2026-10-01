@@ -62,6 +62,7 @@ function ReviewCard({ review }: ReviewCardProps) {
       <div className="flex items-center justify-between mt-3 pt-2 border-t border-border-warm/40">
         <div
           className="flex text-gold-accent gap-0.5"
+          role="img"
           aria-label={`${review.rating} out of 5 stars`}
         >
           {Array.from({ length: 5 }).map((_, i) => (
