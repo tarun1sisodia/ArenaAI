@@ -26,14 +26,21 @@ const textOnly = (html: string): string =>
     .replace(/\s+/g, " ")
     .trim();
 
+const decodeHtml = (value: string): string => value
+  .replace(/&amp;/g, "&")
+  .replace(/&lt;/g, "<")
+  .replace(/&gt;/g, ">")
+  .replace(/&quot;/g, '"')
+  .replace(/&#39;/g, "'");
+
 const metaContent = (html: string, name: string): string => {
   const tag = html.match(new RegExp(`<meta\\b[^>]*\\bname=["']${name}["'][^>]*>`, "i"))?.[0] ?? "";
   return tag.match(/\bcontent=["']([^"']*)["']/i)?.[1]?.trim() ?? "";
 };
 
 export function inspectSeoHtml(path: string, html: string, canonicalDomain: string): SeoPageQuality {
-  const title = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1]?.trim() ?? "";
-  const description = metaContent(html, "description");
+  const title = decodeHtml(html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1]?.trim() ?? "");
+  const description = decodeHtml(metaContent(html, "description"));
   const h1Count = (html.match(/<h1\b/gi) ?? []).length;
   const internalLinkCount = (html.match(/href=["']\/(?!\/)/gi) ?? []).length;
   const words = textOnly(html).split(/\s+/).filter(Boolean);

@@ -21,16 +21,17 @@ import {
 
 interface LivePackageDetailPageProps {
   slug: string;
+  initialItem?: PublicCatalogItem;
 }
 
-export function LivePackageDetailPage({ slug }: LivePackageDetailPageProps) {
-  const [item, setItem] = useState<PublicCatalogItem | null>(null);
-  const [status, setStatus] = useState<"loading" | "ready" | "missing">("loading");
+export function LivePackageDetailPage({ slug, initialItem }: LivePackageDetailPageProps) {
+  const [item, setItem] = useState<PublicCatalogItem | null>(initialItem ?? null);
+  const [status, setStatus] = useState<"loading" | "ready" | "missing">(initialItem ? "ready" : "loading");
   const [activeImage, setActiveImage] = useState(0);
 
   useEffect(() => {
     let isMounted = true;
-    setStatus("loading");
+    if (!initialItem) setStatus("loading");
     fetchCatalogItemBySlug(slug)
       .then((data) => {
         if (!isMounted) return;
@@ -43,7 +44,7 @@ export function LivePackageDetailPage({ slug }: LivePackageDetailPageProps) {
     return () => {
       isMounted = false;
     };
-  }, [slug]);
+  }, [slug, initialItem]);
 
   // Dynamic SEO for runtime catalog items.
   useEffect(() => {
@@ -90,7 +91,7 @@ export function LivePackageDetailPage({ slug }: LivePackageDetailPageProps) {
   const active = galleryImages[Math.min(activeImage, Math.max(0, galleryImages.length - 1))];
   const heroSrc = active ? resolveCatalogMediaUrl(active.url) : null;
 
-  const canonicalUrl = `${CANONICAL_DOMAIN}/packages/${item.slug}/`;
+  const canonicalUrl = `${CANONICAL_DOMAIN}/en/packages/${item.slug}/`;
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [

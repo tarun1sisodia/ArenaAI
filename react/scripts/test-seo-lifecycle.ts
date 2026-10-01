@@ -18,14 +18,16 @@ assert.doesNotMatch(
 );
 
 const sitemap = generateSitemapXml([
-  { path: "/en/packages/current/", priority: 0.85, changefreq: "weekly", lastmod: "2026-09-27" },
+  { path: "/en/packages/current/", priority: 0.85, changefreq: "weekly", lastmod: "2026-09-27", hiPath: "/hi/packages/current/" },
   { path: "/en/packages/unchanged/", priority: 0.85, changefreq: "weekly" },
 ]);
 assert.match(sitemap, /<lastmod>2026-09-27<\/lastmod>/);
 assert.equal((sitemap.match(/<lastmod>/g) ?? []).length, 1, "Sitemap must omit unknown lastmod values.");
+assert.match(sitemap, /hreflang="hi-IN"/, "Sitemap must expose Hindi alternates for bilingual pages.");
 const sitemapEntries = getSitemapEntries();
 assert.ok(sitemapEntries.length < 100, `Sitemap should contain only rendered canonical routes, found ${sitemapEntries.length}.`);
 assert.equal(sitemapEntries.some((entry) => entry.path.includes("/vehicles/innova/")), false, "Vehicle aliases must stay redirect-only.");
+assert.equal(sitemapEntries.find((entry) => entry.path === "/en/agra-to-delhi-taxi/")?.hiPath, "/hi/agra-se-delhi-taxi/");
 
 const quality = inspectSeoHtml(
   "/en/example/",
