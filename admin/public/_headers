@@ -5,6 +5,7 @@
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: geolocation=(), microphone=(), camera=()
+  Strict-Transport-Security: max-age=31536000
   Alt-Svc: h3=":443"; ma=86400
 
 # Vite emits content-hashed asset filenames, so they are safe to cache hard.

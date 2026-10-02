@@ -1,0 +1,4 @@
+# Canonical host: www must 301 to the apex so crawlers see one host, not two.
+# Host-specific rule only — it does not touch real-404 semantics
+# (not_found_handling: "404-page" stays intact; no catch-all rewrite here).
+https://www.agraskbagheltourandtravels.com/* https://agraskbagheltourandtravels.com/:splat 301
