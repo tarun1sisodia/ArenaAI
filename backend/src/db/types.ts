@@ -6,6 +6,9 @@ import type {
   CatalogItemRecord,
   CatalogMediaRecord,
   InquiryRecord,
+  RentalEnquiryRecord,
+  RentalEnquiryStatus,
+  RentalCarTier,
   InquiryStatus,
   LocationSuggestion,
   NotificationJobRecord,
@@ -27,6 +30,7 @@ export type InquiryListFilter = {
   page?: number;
 };
 
+export type RentalEnquiryListFilter = { status?: RentalEnquiryStatus; carTier?: RentalCarTier; from?: string; to?: string; q?: string; limit?: number; page?: number; };
 export type PaymentListFilter = {
   bookingId?: string;
   status?: PaymentStatus;
@@ -145,6 +149,12 @@ export type Repositories = {
     list(limit?: number): Promise<AuditLogRecord[]>;
   };
 
+  rentalEnquiries: {
+    create(record: RentalEnquiryRecord): Promise<RentalEnquiryRecord>;
+    update(record: RentalEnquiryRecord): Promise<RentalEnquiryRecord>;
+    getById(id: string): Promise<RentalEnquiryRecord | null>;
+    list(filter?: RentalEnquiryListFilter): Promise<{ items: RentalEnquiryRecord[]; total: number }>;
+  };
   inquiries: {
     create(record: InquiryRecord): Promise<InquiryRecord>;
     update(record: InquiryRecord): Promise<InquiryRecord>;

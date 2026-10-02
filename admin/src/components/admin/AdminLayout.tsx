@@ -14,6 +14,7 @@ const TITLES: Record<string, string> = {
   "/catalog": "Catalog CMS",
   "/reviews": "Review Moderation",
   "/inquiries": "Inquiries & Leads",
+  "/rental-requests": "Rental Requests",
   "/fares": "Fare Rules",
   "/audit": "Audit Trail",
 };

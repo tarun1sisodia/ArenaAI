@@ -21,6 +21,7 @@ import type {
   CatalogItemRecord,
   CatalogMediaRecord,
   InquiryRecord,
+  RentalEnquiryRecord,
   LocationSuggestion,
   NotificationJobRecord,
   PaymentRecord,
@@ -39,6 +40,7 @@ import type {
   FareRuleRecord,
   Repositories,
   ReviewListFilter,
+  RentalEnquiryListFilter,
 } from "./types.js";
 import { ConcurrencyError } from "./concurrency.js";
 
@@ -63,6 +65,7 @@ export function createMemoryRepositories(nowIso = new Date().toISOString()): Rep
   const promos = new Map<string, PromoCodeRecord>();
   const audit: AuditLogRecord[] = [];
   const inquiries: InquiryRecord[] = [];
+  const rentalEnquiries: RentalEnquiryRecord[] = [];
   const notifications = new Map<string, NotificationJobRecord>();
   const notificationsByDedupe = new Map<string, string>();
   const webhookEvents = new Map<string, WebhookEventRecord>();
@@ -165,6 +168,7 @@ export function createMemoryRepositories(nowIso = new Date().toISOString()): Rep
           promos: new Map(promos),
           audit: [...audit],
           inquiries: [...inquiries],
+          rentalEnquiries: [...rentalEnquiries],
           notifications: new Map(notifications),
           notificationsByDedupe: new Map(notificationsByDedupe),
           webhookEvents: new Map(webhookEvents),
@@ -191,6 +195,7 @@ export function createMemoryRepositories(nowIso = new Date().toISOString()): Rep
           promos.clear(); for (const [k, v] of snap.promos) promos.set(k, v);
           audit.length = 0; audit.push(...snap.audit);
           inquiries.length = 0; inquiries.push(...snap.inquiries);
+          rentalEnquiries.length = 0; rentalEnquiries.push(...snap.rentalEnquiries);
           notifications.clear(); for (const [k, v] of snap.notifications) notifications.set(k, v);
           notificationsByDedupe.clear(); for (const [k, v] of snap.notificationsByDedupe) notificationsByDedupe.set(k, v);
           webhookEvents.clear(); for (const [k, v] of snap.webhookEvents) webhookEvents.set(k, v);
@@ -471,6 +476,12 @@ export function createMemoryRepositories(nowIso = new Date().toISOString()): Rep
       async list(limit = 100) {
         return audit.slice(-limit).reverse().map(clone);
       },
+    },
+    rentalEnquiries: {
+      async create(record) { rentalEnquiries.push(clone(record)); return clone(record); },
+      async update(record) { const index = rentalEnquiries.findIndex((item) => item.id === record.id); if (index < 0) throw new Error("rental enquiry update failed: not found"); rentalEnquiries[index] = clone(record); return clone(record); },
+      async getById(id) { const found = rentalEnquiries.find((item) => item.id === id); return found ? clone(found) : null; },
+      async list(filter?: RentalEnquiryListFilter) { let list = rentalEnquiries.filter((item) => !filter?.status || item.status === filter.status).filter((item) => !filter?.carTier || item.carTier === filter.carTier).filter((item) => !filter?.from || item.pickupDate >= filter.from).filter((item) => !filter?.to || item.pickupDate <= filter.to); if (filter?.q) { const q = filter.q.toLowerCase(); list = list.filter((item) => item.name.toLowerCase().includes(q) || item.phone.includes(q)); } list.sort((a,b) => b.createdAt.localeCompare(a.createdAt)); const total=list.length; const page=filter?.page ?? 1; const limit=filter?.limit ?? 50; return { total, items: list.slice((page-1)*limit, page*limit).map(clone) }; },
     },
     inquiries: {
       async create(record) {

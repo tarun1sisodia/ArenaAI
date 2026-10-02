@@ -9,6 +9,7 @@ const BookingsPage = lazy(() => import("@/pages/BookingsPage").then((m) => ({ de
 const FinancePage = lazy(() => import("@/pages/FinancePage").then((m) => ({ default: m.FinancePage })));
 const CatalogPage = lazy(() => import("@/pages/CatalogPage").then((m) => ({ default: m.CatalogPage })));
 const ReviewsPage = lazy(() => import("@/pages/ReviewsPage").then((m) => ({ default: m.ReviewsPage })));
+const RentalRequestsPage = lazy(() => import("@/pages/RentalRequestsPage").then((m) => ({ default: m.RentalRequestsPage })));
 const InquiriesPage = lazy(() => import("@/pages/InquiriesPage").then((m) => ({ default: m.InquiriesPage })));
 const FaresPage = lazy(() => import("@/pages/FaresPage").then((m) => ({ default: m.FaresPage })));
 const AuditPage = lazy(() => import("@/pages/AuditPage").then((m) => ({ default: m.AuditPage })));
@@ -53,6 +54,7 @@ function Root({ user, onLogin, onLogout }: { user: AdminUser | null; onLogin: (u
                 <Route path="catalog" element={<CatalogPage user={user} />} />
                 <Route path="reviews" element={<ReviewsPage user={user} />} />
                 <Route path="inquiries" element={<InquiriesPage user={user} />} />
+                <Route path="rental-requests" element={<RentalRequestsPage user={user} />} />
                 <Route path="fares" element={<FaresPage user={user} />} />
                 <Route path="audit" element={<AuditPage user={user} />} />
               </Route>
