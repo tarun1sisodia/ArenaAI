@@ -154,7 +154,7 @@ export function getSeo(pathname: string, section: string, language: "en" | "hi",
   if (section === "contact") {
     return {
       title: "Contact Us — SK Baghel Tour & Travels Agra | 24×7 Travel Desk",
-      description: "Get in touch with our 24×7 Taj Ganj dispatch desk for outstation cabs, sunrise Taj Mahal tours, and luxury group travel in Agra. Call +91 63958 67598.",
+      description: "Get in touch with our 24×7 Taj Ganj dispatch desk for outstation cabs, sunrise Taj Mahal tours, and luxury group travel in Agra. Call +91 97628 17598.",
       ogImage: "/assets/brand/og-banner.webp",
       keywords: ["Contact SK Baghel Travels", "Agra taxi phone number", "Taj Ganj dispatch desk", "24x7 cab booking"],
     };
