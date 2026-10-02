@@ -41,7 +41,6 @@ interface ManifestRouteData {
   d: string;
   km: number;
   m: number;
-  fh: number;
   fs: number;
   fe: number;
   fi: number;
@@ -259,7 +258,7 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
             <a className="hover:text-primary transition-colors" href="/">
               Home
             </a>
-            <span className="material-symbols-outlined text-[14px]">chevron_right</span>
+            <span className="material-symbols-outlined text-icon-14">chevron_right</span>
             <span className="text-primary font-bold">Routes &amp; Outstation Corridors</span>
           </nav>
 
@@ -282,38 +281,38 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3 p-2.5 sm:p-3 rounded-lg bg-surface-container shadow-xs mb-space-lg border border-border-warm/50">
             <div className="flex items-center gap-2 p-1">
               <div className="w-8 h-8 rounded bg-surface-container-lowest flex items-center justify-center text-primary shrink-0 shadow-xs">
-                <span className="material-symbols-outlined text-[18px]">signpost</span>
+                <span className="material-symbols-outlined text-icon-18">signpost</span>
               </div>
               <div>
-                <div className="font-title-md text-xs sm:text-[13px] text-ink-charcoal font-bold">{allRoutes.length} Corridors</div>
-                <div className="font-body-sm text-[9.5px] text-on-surface-variant">Verified Intercity Drops</div>
+                <div className="font-title-md text-xs sm:text-title-lg text-ink-charcoal font-bold">{allRoutes.length} Corridors</div>
+                <div className="font-body-sm text-body-sm text-on-surface-variant">Verified Intercity Drops</div>
               </div>
             </div>
             <div className="flex items-center gap-2 p-1">
               <div className="w-8 h-8 rounded bg-surface-container-lowest flex items-center justify-center text-success-jade shrink-0 shadow-xs">
-                <span className="material-symbols-outlined text-[18px]">verified_user</span>
+                <span className="material-symbols-outlined text-icon-18">verified_user</span>
               </div>
               <div>
-                <div className="font-title-md text-xs sm:text-[13px] text-ink-charcoal font-bold">100% Fastag</div>
-                <div className="font-body-sm text-[9.5px] text-on-surface-variant">&amp; Toll Clarity</div>
+                <div className="font-title-md text-xs sm:text-title-lg text-ink-charcoal font-bold">100% Fastag</div>
+                <div className="font-body-sm text-body-sm text-on-surface-variant">&amp; Toll Clarity</div>
               </div>
             </div>
             <div className="flex items-center gap-2 p-1">
               <div className="w-8 h-8 rounded bg-surface-container-lowest flex items-center justify-center text-gold-accent shrink-0 shadow-xs">
-                <span className="material-symbols-outlined text-[18px]">speed</span>
+                <span className="material-symbols-outlined text-icon-18">speed</span>
               </div>
               <div>
-                <div className="font-title-md text-xs sm:text-[13px] text-ink-charcoal font-bold">300 KM/Day</div>
-                <div className="font-body-sm text-[9.5px] text-on-surface-variant">Round-Trip Baseline</div>
+                <div className="font-title-md text-xs sm:text-title-lg text-ink-charcoal font-bold">300 KM/Day</div>
+                <div className="font-body-sm text-body-sm text-on-surface-variant">Round-Trip Baseline</div>
               </div>
             </div>
             <div className="flex items-center gap-2 p-1">
               <div className="w-8 h-8 rounded bg-surface-container-lowest flex items-center justify-center text-terracotta-sunlit shrink-0 shadow-xs">
-                <span className="material-symbols-outlined text-[18px]">money_off</span>
+                <span className="material-symbols-outlined text-icon-18">money_off</span>
               </div>
               <div>
-                <div className="font-title-md text-xs sm:text-[13px] text-ink-charcoal font-bold">Zero Empty</div>
-                <div className="font-body-sm text-[9.5px] text-on-surface-variant">Return Surcharges</div>
+                <div className="font-title-md text-xs sm:text-title-lg text-ink-charcoal font-bold">Zero Empty</div>
+                <div className="font-body-sm text-body-sm text-on-surface-variant">Return Surcharges</div>
               </div>
             </div>
           </div>
@@ -352,7 +351,7 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
             </div>
 
             <div className="relative min-w-[220px]">
-              <span className="material-symbols-outlined text-on-surface-variant absolute left-3 top-2 text-[16px]">
+              <span className="material-symbols-outlined text-on-surface-variant absolute left-3 top-2 text-icon-16">
                 search
               </span>
               <input
@@ -396,11 +395,11 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
               >
                 <div>
                   <div className="flex items-center justify-between mb-1.5 flex-wrap gap-2">
-                    <span className="px-2 py-0.5 rounded bg-sandstone-wash text-primary font-label-caps text-[9.5px] uppercase font-bold tracking-wider">
+                    <span className="px-2 py-0.5 rounded bg-sandstone-wash text-primary font-label-caps text-body-sm uppercase font-bold tracking-wider">
                       {route.categoryBadge}
                     </span>
-                    <span className="font-label-caps text-[9.5px] text-on-surface-variant flex items-center gap-1 font-semibold">
-                      <span className="material-symbols-outlined text-[13px] text-success-jade">check_circle</span>
+                    <span className="font-label-caps text-body-sm text-on-surface-variant flex items-center gap-1 font-semibold">
+                      <span className="material-symbols-outlined text-icon-13 text-success-jade">check_circle</span>
                       {route.tollNote}
                     </span>
                   </div>
@@ -411,56 +410,56 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
                     </a>
                   </h3>
 
-                  <div className="flex items-center gap-3 font-body-sm text-[10.5px] text-on-surface-variant mb-2 flex-wrap">
+                  <div className="flex items-center gap-3 font-body-sm text-body-md text-on-surface-variant mb-2 flex-wrap">
                     <span className="flex items-center gap-1 font-medium">
-                      <span className="material-symbols-outlined text-[14px] text-primary">pin_drop</span>
+                      <span className="material-symbols-outlined text-icon-14 text-primary">pin_drop</span>
                       {route.distanceKm} km
                     </span>
                     <span className="flex items-center gap-1 font-medium">
-                      <span className="material-symbols-outlined text-[14px] text-primary">schedule</span>
+                      <span className="material-symbols-outlined text-icon-14 text-primary">schedule</span>
                       {route.duration}
                     </span>
                     <span className="flex items-center gap-1 font-medium">
-                      <span className="material-symbols-outlined text-[14px] text-primary">route</span>
+                      <span className="material-symbols-outlined text-icon-14 text-primary">route</span>
                       {route.highway}
                     </span>
                   </div>
 
-                  <p className="font-body-sm text-[10.5px] text-on-surface-variant mb-3 leading-relaxed">
+                  <p className="font-body-sm text-body-md text-on-surface-variant mb-3 leading-relaxed">
                     {route.description}
                   </p>
 
                   {/* Fare Grid (5-column: Sedan, Ertiga, Innova, Tempo, Urbania) */}
                   <div className="grid grid-cols-3 sm:grid-cols-5 gap-1.5 mb-3 p-2 rounded-lg bg-surface-container-low border border-border-warm/40 text-center">
                     <div className="p-0.5">
-                      <span className="font-label-caps text-[9px] text-secondary uppercase block font-semibold">Sedan</span>
+                      <span className="font-label-caps text-label-caps text-secondary uppercase block font-semibold">Sedan</span>
                       <span className="font-price-display text-sm sm:text-base text-primary font-bold">
                         ₹{route.fares.sedan.toLocaleString("en-IN")}
                       </span>
                     </div>
                     <div className="p-0.5">
-                      <span className="font-label-caps text-[9px] text-secondary uppercase block font-semibold">Ertiga</span>
+                      <span className="font-label-caps text-label-caps text-secondary uppercase block font-semibold">Ertiga</span>
                       <span className="font-price-display text-sm sm:text-base text-ink-charcoal font-bold">
                         ₹{route.fares.ertiga.toLocaleString("en-IN")}
                       </span>
                     </div>
                     <div className="p-0.5">
-                      <span className="font-label-caps text-[9px] text-secondary uppercase block font-semibold">Innova</span>
+                      <span className="font-label-caps text-label-caps text-secondary uppercase block font-semibold">Innova</span>
                       <span className="font-price-display text-sm sm:text-base text-ink-charcoal font-bold">
                         ₹{route.fares.crysta.toLocaleString("en-IN")}
                       </span>
                     </div>
                     <div className="p-0.5">
-                      <span className="font-label-caps text-[9px] text-secondary uppercase block font-semibold">
-                        Tempo <span className="text-[8px] text-terracotta-sandstone font-normal">(RT)</span>
+                      <span className="font-label-caps text-label-caps text-secondary uppercase block font-semibold">
+                        Tempo <span className="text-label-caps text-terracotta-sandstone font-normal">(RT)</span>
                       </span>
                       <span className="font-price-display text-sm sm:text-base text-ink-charcoal font-bold">
                         ₹{route.fares.tempo.toLocaleString("en-IN")}
                       </span>
                     </div>
                     <div className="p-0.5">
-                      <span className="font-label-caps text-[9px] text-secondary uppercase block font-semibold">
-                        Urbania <span className="text-[8px] text-terracotta-sandstone font-normal">(RT)</span>
+                      <span className="font-label-caps text-label-caps text-secondary uppercase block font-semibold">
+                        Urbania <span className="text-label-caps text-terracotta-sandstone font-normal">(RT)</span>
                       </span>
                       <span className="font-price-display text-sm sm:text-base text-ink-charcoal font-bold">
                         ₹{route.fares.urbania.toLocaleString("en-IN")}
@@ -470,7 +469,7 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
                 </div>
 
                 <div className="flex items-center justify-between gap-3 pt-2.5 border-t border-border-warm/60">
-                  <span className="font-label-caps text-[9px] text-on-surface-variant uppercase font-semibold">
+                  <span className="font-label-caps text-label-caps text-on-surface-variant uppercase font-semibold">
                     {route.stateTaxNote}
                   </span>
                   <div className="flex items-center gap-2">
@@ -479,7 +478,7 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
                       href={`/en/${route.id}/`}
                     >
                       <span>Details</span>
-                      <span className="material-symbols-outlined text-[13px]">info</span>
+                      <span className="material-symbols-outlined text-icon-13">info</span>
                     </a>
                     <a
                       className="px-3 py-1.5 rounded-lg bg-black hover:bg-neutral-900 border border-white/10 text-white font-label-caps text-xs transition-colors font-bold inline-flex items-center gap-1.5 active:scale-[0.98]"
@@ -496,7 +495,7 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
                       href={`/book?from=${encodeURIComponent(route.origin || route.name.split("→")[0]?.trim() || "Agra")}&to=${encodeURIComponent(route.destination || route.name.split("→")[1]?.trim() || "")}`}
                     >
                       <span>Book Cab</span>
-                      <span className="material-symbols-outlined text-[13px]">arrow_forward</span>
+                      <span className="material-symbols-outlined text-icon-13">arrow_forward</span>
                     </a>
                   </div>
                 </div>
@@ -521,7 +520,7 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
       <section className="w-full bg-surface-container-low py-8 sm:py-10 border-t border-border-warm/60">
         <div className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin">
           <div className="text-center max-w-2xl mx-auto mb-6">
-            <span className="font-label-caps text-[9.5px] text-primary uppercase tracking-widest font-bold block mb-1">
+            <span className="font-label-caps text-body-sm text-primary uppercase tracking-widest font-bold block mb-1">
               Transparent Commercial Billing
             </span>
             <h2 className="font-headline-lg text-headline-lg text-on-surface font-semibold">
@@ -534,30 +533,30 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
             <div className="p-3.5 sm:p-4 rounded-xl bg-surface-container-lowest border border-border-warm/50 shadow-xs">
-              <span className="material-symbols-outlined text-primary text-[22px] mb-1.5">straighten</span>
-              <h4 className="font-title-md text-xs sm:text-[13px] text-on-surface font-bold mb-1">300 km/Day Minimum</h4>
-              <p className="font-body-sm text-[10.5px] text-on-surface-variant leading-relaxed">
+              <span className="material-symbols-outlined text-primary text-icon-22 mb-1.5">straighten</span>
+              <h3 className="font-title-md text-xs sm:text-title-lg text-on-surface font-bold mb-1">300 km/Day Minimum</h3>
+              <p className="font-body-sm text-body-md text-on-surface-variant leading-relaxed">
                 Standard outstation threshold applied to round-trips to ensure driver wages and highway vehicle upkeep are fairly compensated.
               </p>
             </div>
             <div className="p-3.5 sm:p-4 rounded-xl bg-surface-container-lowest border border-border-warm/50 shadow-xs">
-              <span className="material-symbols-outlined text-primary text-[22px] mb-1.5">toll</span>
-              <h4 className="font-title-md text-xs sm:text-[13px] text-on-surface font-bold mb-1">All-Inclusive Tolls</h4>
-              <p className="font-body-sm text-[10.5px] text-on-surface-variant leading-relaxed">
+              <span className="material-symbols-outlined text-primary text-icon-22 mb-1.5">toll</span>
+              <h3 className="font-title-md text-xs sm:text-title-lg text-on-surface font-bold mb-1">All-Inclusive Tolls</h3>
+              <p className="font-body-sm text-body-md text-on-surface-variant leading-relaxed">
                 Yamuna Expressway and national highway tolls are included upfront in one-way quotations with zero roadside toll haggling.
               </p>
             </div>
             <div className="p-3.5 sm:p-4 rounded-xl bg-surface-container-lowest border border-border-warm/50 shadow-xs">
-              <span className="material-symbols-outlined text-primary text-[22px] mb-1.5">bedtime</span>
-              <h4 className="font-title-md text-xs sm:text-[13px] text-on-surface font-bold mb-1">Night Allowance</h4>
-              <p className="font-body-sm text-[10.5px] text-on-surface-variant leading-relaxed">
+              <span className="material-symbols-outlined text-primary text-icon-22 mb-1.5">bedtime</span>
+              <h3 className="font-title-md text-xs sm:text-title-lg text-on-surface font-bold mb-1">Night Allowance</h3>
+              <p className="font-body-sm text-body-md text-on-surface-variant leading-relaxed">
                 A fixed ₹300 allowance applies when the vehicle is driven between 10:00 PM and 6:00 AM to ensure chauffeur safety.
               </p>
             </div>
             <div className="p-3.5 sm:p-4 rounded-xl bg-surface-container-lowest border border-border-warm/50 shadow-xs">
-              <span className="material-symbols-outlined text-primary text-[22px] mb-1.5">savings</span>
-              <h4 className="font-title-md text-xs sm:text-[13px] text-on-surface font-bold mb-1">28% Token Advance</h4>
-              <p className="font-body-sm text-[10.5px] text-on-surface-variant leading-relaxed">
+              <span className="material-symbols-outlined text-primary text-icon-22 mb-1.5">savings</span>
+              <h3 className="font-title-md text-xs sm:text-title-lg text-on-surface font-bold mb-1">28% Token Advance</h3>
+              <p className="font-body-sm text-body-md text-on-surface-variant leading-relaxed">
                 Reserve your ride with just a 28% advance deposit via UPI or card. Pay the remaining 72% directly to the chauffeur at trip completion.
               </p>
             </div>
@@ -569,7 +568,7 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
       <section className="w-full bg-surface py-8 sm:py-10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-6">
-            <span className="font-label-caps text-[9.5px] text-primary uppercase tracking-widest font-bold block mb-1">
+            <span className="font-label-caps text-body-sm text-primary uppercase tracking-widest font-bold block mb-1">
               Corridor Inquiries
             </span>
             <h2 className="font-headline-lg text-headline-lg text-ink-charcoal font-semibold">
@@ -586,13 +585,13 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
                     onClick={() => setOpenFaq(isOpen ? null : index)}
                     className="w-full text-left p-3 sm:p-3.5 flex items-center justify-between gap-3 hover:bg-sandstone-wash/20 transition-colors"
                   >
-                    <span className="font-title-md text-xs sm:text-[13px] font-semibold text-ink-charcoal">{faq.q}</span>
-                    <span className="material-symbols-outlined text-primary text-[18px] shrink-0">
+                    <span className="font-title-md text-xs sm:text-title-lg font-semibold text-ink-charcoal">{faq.q}</span>
+                    <span className="material-symbols-outlined text-primary text-icon-18 shrink-0">
                       {isOpen ? "expand_less" : "expand_more"}
                     </span>
                   </button>
                   {isOpen && (
-                    <div className="p-3 sm:p-3.5 pt-0 text-on-surface-variant font-body-sm text-[10.5px] leading-relaxed border-t border-border-warm/40 mt-1">
+                    <div className="p-3 sm:p-3.5 pt-0 text-on-surface-variant font-body-sm text-body-md leading-relaxed border-t border-border-warm/40 mt-1">
                       {faq.a}
                     </div>
                   )}

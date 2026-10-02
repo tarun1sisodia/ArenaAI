@@ -110,7 +110,7 @@ export function Header({
               className="hidden lg:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-sandstone-wash hover:bg-surface-container-high transition-colors text-xs text-primary font-bold border border-primary/20"
               aria-label={`Call ${contact.phoneDisplay}`}
             >
-              <span className="material-symbols-outlined text-primary text-[15px]">call</span>
+              <span className="material-symbols-outlined text-primary text-icon-15">call</span>
               <span>{contact.phoneDisplay}</span>
             </a>
 
@@ -134,7 +134,7 @@ export function Header({
               aria-expanded={isMobileNavOpen}
               className="xl:hidden p-1.5 rounded-md text-on-surface hover:bg-sandstone-wash transition-colors flex items-center justify-center border border-border-warm/50"
             >
-              <span className="material-symbols-outlined text-[20px]">
+              <span className="material-symbols-outlined text-icon-20">
                 {isMobileNavOpen ? "close" : "menu"}
               </span>
             </button>

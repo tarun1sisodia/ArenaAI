@@ -56,8 +56,8 @@ function UnavailableBookingRequest({ request, selectedVehicleId }: { request: Un
     return <section className="rounded-2xl border border-primary/30 bg-sandstone-wash/70 p-space-lg" role="status"><div className="flex items-center gap-3 text-on-surface-variant"><span className="w-7 h-7 border-2 border-primary border-t-transparent rounded-full animate-spin" aria-hidden="true" /><p className="font-body-md">Checking route availability before showing vehicles…</p></div></section>;
   }
   return <section className="rounded-2xl border border-primary/30 bg-sandstone-wash/70 p-space-lg md:p-space-xl" role="alert" aria-live="polite">
-    <div className="flex items-start gap-3"><span className="material-symbols-outlined text-[28px] text-primary" aria-hidden="true">route</span><div><p className="font-label-caps text-label-caps uppercase tracking-widest text-terracotta-sandstone font-bold">Route not in our catalogue</p><h2 className="font-headline-sm text-headline-sm text-ink-midnight font-bold mt-1">{request.kind === "route" ? `${request.origin} → ${request.destination} is not currently available` : "That tour is not currently available"}</h2><p className="font-body-md text-on-surface-variant mt-2 leading-relaxed">We do not have a published route, package, or trip for this search, so we have not shown vehicle availability. Our desk can still check a custom charter by phone or WhatsApp.</p></div></div>
-    <div className="flex flex-col sm:flex-row gap-2 mt-space-md"><a className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-white font-semibold" href={`tel:${contact.phone}`}><span className="material-symbols-outlined text-[18px]" aria-hidden="true">call</span>Call {contact.phoneDisplay}</a><a className="inline-flex items-center justify-center gap-2 rounded-xl bg-black px-4 py-3 text-white font-semibold" href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(`Hello SK Baghel Travels, please check a custom booking for ${request.origin ?? request.name ?? "my requested tour"}${request.destination ? ` to ${request.destination}` : ""}.`)}`} target="_blank" rel="noreferrer"><WhatsAppIcon className="w-4 h-4 shrink-0 text-white" />WhatsApp the desk</a></div>
+    <div className="flex items-start gap-3"><span className="material-symbols-outlined text-icon-28 text-primary" aria-hidden="true">route</span><div><p className="font-label-caps text-label-caps uppercase tracking-widest text-terracotta-sandstone font-bold">Route not in our catalogue</p><h2 className="font-headline-sm text-headline-sm text-ink-midnight font-bold mt-1">{request.kind === "route" ? `${request.origin} → ${request.destination} is not currently available` : "That tour is not currently available"}</h2><p className="font-body-md text-on-surface-variant mt-2 leading-relaxed">We do not have a published route, package, or trip for this search, so we have not shown vehicle availability. Our desk can still check a custom charter by phone or WhatsApp.</p></div></div>
+    <div className="flex flex-col sm:flex-row gap-2 mt-space-md"><a className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-white font-semibold" href={`tel:${contact.phone}`}><span className="material-symbols-outlined text-icon-18" aria-hidden="true">call</span>Call {contact.phoneDisplay}</a><a className="inline-flex items-center justify-center gap-2 rounded-xl bg-black px-4 py-3 text-white font-semibold" href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(`Hello SK Baghel Travels, please check a custom booking for ${request.origin ?? request.name ?? "my requested tour"}${request.destination ? ` to ${request.destination}` : ""}.`)}`} target="_blank" rel="noreferrer"><WhatsAppIcon className="w-4 h-4 shrink-0 text-white" />WhatsApp the desk</a></div>
     {request.suggestions.length > 0 && <div className="mt-space-lg"><h3 className="font-title-lg text-title-lg text-ink-charcoal font-semibold">Try one of these supported routes</h3><div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3">{request.suggestions.map((route) => { const from = cities.find((city) => city.id === route.from)?.name ?? route.from; const to = cities.find((city) => city.id === route.to)?.name ?? route.to; return <a key={route.id} className="rounded-xl border border-border-warm bg-surface-container-lowest px-3 py-3 hover:border-primary transition-colors" href={`/book.html?from=${encodeURIComponent(route.from)}&to=${encodeURIComponent(route.to)}&vehicle=${selectedVehicleId}&trip=one-way`}><span className="block font-semibold text-ink-charcoal">{from} → {to}</span><span className="text-xs text-on-surface-variant">From {formatInr(route.fares.sedan)} by Sedan</span></a>; })}</div></div>}
     <a className="inline-flex mt-space-md text-primary font-semibold hover:underline" href="/en/routes/">Browse all supported routes ↗</a>
   </section>;
@@ -122,7 +122,7 @@ const VEHICLE_OPTIONS: VehicleOption[] = [
     subtitle: "12 to 16 Passenger High-Roof Touring Coach",
     image: "/assets/fleet/tempo.webp",
     badge: "Always Booked as Round Trip",
-    badgeClass: "bg-terracotta-sandstone text-white font-bold",
+    badgeClass: "bg-terracotta-deep text-white font-bold",
     guests: "12–16 Guests",
     luggage: "10–12 Large Bags",
     features: ["Individual AC Louvers", "Dedicated Luggage Bay", "Full Reclining Seats"],
@@ -843,9 +843,9 @@ export function BookingPage() {
         <div className="max-w-[1280px] mx-auto px-gutter flex items-center justify-between">
           <nav aria-label="Breadcrumb" className="flex items-center gap-space-xs text-on-surface-variant font-body-sm text-body-sm overflow-x-auto whitespace-nowrap">
             <a className="hover:text-primary transition-colors" href="/en/">Home</a>
-            <span className="material-symbols-outlined text-[14px]">chevron_right</span>
+            <span className="material-symbols-outlined text-icon-14">chevron_right</span>
             <span className="text-on-surface-variant">Booking</span>
-            <span className="material-symbols-outlined text-[14px]">chevron_right</span>
+            <span className="material-symbols-outlined text-icon-14">chevron_right</span>
             <span className="text-primary font-semibold">
               {step === 1
                 ? hasPreselectedRoute
@@ -862,7 +862,7 @@ export function BookingPage() {
                 : "Step 2: Choose Your Trip"}
             </span>
           </nav>
-          <div className="hidden sm:flex items-center gap-2 text-[12px] text-secondary">
+          <div className="hidden sm:flex items-center gap-2 text-body-lg text-secondary">
             <span className="w-2 h-2 rounded-full bg-success-jade inline-block animate-pulse"></span>
             <span>Live Fastify Fare Engine Connected</span>
           </div>
@@ -889,7 +889,7 @@ export function BookingPage() {
                     step > 1 ? "bg-success-jade text-on-primary" : "bg-primary text-on-primary"
                   }`}
                 >
-                  {step > 1 ? <span className="material-symbols-outlined text-[20px]">check</span> : "1"}
+                  {step > 1 ? <span className="material-symbols-outlined text-icon-20">check</span> : "1"}
                 </div>
                 <div className="flex flex-col min-w-0">
                   <span className="font-label-caps text-label-caps uppercase text-terracotta-sandstone tracking-wider font-bold">
@@ -919,7 +919,7 @@ export function BookingPage() {
                       : "bg-surface-container-highest text-secondary"
                   }`}
                 >
-                  {step > 2 ? <span className="material-symbols-outlined text-[20px]">check</span> : "2"}
+                  {step > 2 ? <span className="material-symbols-outlined text-icon-20">check</span> : "2"}
                 </div>
                 <div className="flex flex-col min-w-0">
                   <span className="font-label-caps text-label-caps uppercase text-secondary tracking-wider font-bold">
@@ -941,13 +941,13 @@ export function BookingPage() {
               >
                 <div
                   className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${
-                    step === 3 ? "bg-terracotta-sandstone text-on-primary" : "bg-surface-container-highest text-secondary"
+                    step === 3 ? "bg-terracotta-deep text-on-primary" : "bg-surface-container-highest text-secondary"
                   }`}
                 >
-                  <span className="material-symbols-outlined text-[20px]">verified</span>
+                  <span className="material-symbols-outlined text-icon-20">verified</span>
                 </div>
                 <div className="flex flex-col min-w-0">
-                  <span className={`font-label-caps text-label-caps uppercase tracking-wider font-bold ${step === 3 ? "text-gold-accent" : "text-secondary"}`}>
+                  <span className={`font-label-caps text-label-caps uppercase tracking-wider font-bold ${step === 3 ? "text-gold-bronze" : "text-secondary"}`}>
                     {step === 3 ? "Step 3 • Issued" : "Step 3 • Final Voucher"}
                   </span>
                   <span className={`font-title-md text-title-md truncate font-semibold ${step === 3 ? "text-ivory-surface" : "text-on-surface-variant"}`}>
@@ -975,7 +975,7 @@ export function BookingPage() {
                     step > 1 ? "bg-success-jade text-on-primary" : "bg-primary text-on-primary"
                   }`}
                 >
-                  {step > 1 ? <span className="material-symbols-outlined text-[20px]">check</span> : "1"}
+                  {step > 1 ? <span className="material-symbols-outlined text-icon-20">check</span> : "1"}
                 </div>
                 <div className="flex flex-col min-w-0">
                   <span className="font-label-caps text-label-caps uppercase text-terracotta-sandstone tracking-wider font-bold">
@@ -1005,7 +1005,7 @@ export function BookingPage() {
                       : "bg-surface-container-highest text-secondary"
                   }`}
                 >
-                  {step > 2 ? <span className="material-symbols-outlined text-[20px]">check</span> : "2"}
+                  {step > 2 ? <span className="material-symbols-outlined text-icon-20">check</span> : "2"}
                 </div>
                 <div className="flex flex-col min-w-0">
                   <span className="font-label-caps text-label-caps uppercase text-secondary tracking-wider font-bold">
@@ -1035,7 +1035,7 @@ export function BookingPage() {
                       : "bg-surface-container-highest text-secondary"
                   }`}
                 >
-                  {step > 3 ? <span className="material-symbols-outlined text-[20px]">check</span> : "3"}
+                  {step > 3 ? <span className="material-symbols-outlined text-icon-20">check</span> : "3"}
                 </div>
                 <div className="flex flex-col min-w-0">
                   <span className="font-label-caps text-label-caps uppercase text-secondary tracking-wider font-bold">
@@ -1057,13 +1057,13 @@ export function BookingPage() {
               >
                 <div
                   className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${
-                    step === 4 ? "bg-terracotta-sandstone text-on-primary" : "bg-surface-container-highest text-secondary"
+                    step === 4 ? "bg-terracotta-deep text-on-primary" : "bg-surface-container-highest text-secondary"
                   }`}
                 >
-                  <span className="material-symbols-outlined text-[20px]">verified</span>
+                  <span className="material-symbols-outlined text-icon-20">verified</span>
                 </div>
                 <div className="flex flex-col min-w-0">
-                  <span className={`font-label-caps text-label-caps uppercase tracking-wider font-bold ${step === 4 ? "text-gold-accent" : "text-secondary"}`}>
+                  <span className={`font-label-caps text-label-caps uppercase tracking-wider font-bold ${step === 4 ? "text-gold-bronze" : "text-secondary"}`}>
                     {step === 4 ? "Step 4 • Issued" : "Step 4 • Final Voucher"}
                   </span>
                   <span className={`font-title-md text-title-md truncate font-semibold ${step === 4 ? "text-ivory-surface" : "text-on-surface-variant"}`}>
@@ -1084,7 +1084,7 @@ export function BookingPage() {
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-space-sm bg-sandstone-wash/80 p-space-md rounded-xl border border-border-warm/80">
                   <div className="flex items-center gap-space-sm min-w-0">
                     <span className="w-11 h-11 rounded-full bg-primary text-white flex items-center justify-center shrink-0 shadow-xs">
-                      <span className="material-symbols-outlined text-[24px]">landscape</span>
+                      <span className="material-symbols-outlined text-icon-24">landscape</span>
                     </span>
                     <div className="min-w-0">
                       <span className="font-label-caps text-label-caps uppercase text-terracotta-sandstone tracking-widest font-bold">
@@ -1102,7 +1102,7 @@ export function BookingPage() {
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-space-sm bg-sandstone-wash/80 p-space-md rounded-xl border border-border-warm/80">
                   <div className="flex items-center gap-space-sm">
                     <span className="w-11 h-11 rounded-full bg-primary text-white flex items-center justify-center shrink-0 shadow-xs">
-                      <span className="material-symbols-outlined text-[24px]">route</span>
+                      <span className="material-symbols-outlined text-icon-24">route</span>
                     </span>
                     <div>
                       <span className="font-label-caps text-label-caps uppercase text-terracotta-sandstone tracking-widest font-bold">
@@ -1119,7 +1119,7 @@ export function BookingPage() {
                       className="inline-flex items-center gap-1 text-xs text-primary font-semibold hover:underline bg-surface px-3 py-1.5 rounded-lg border border-border-warm shadow-xs transition-colors"
                     >
                       <span>Change Route</span>
-                      <span className="material-symbols-outlined text-[14px]">open_in_new</span>
+                      <span className="material-symbols-outlined text-icon-14">open_in_new</span>
                     </a>
                   </div>
                 </div>
@@ -1193,7 +1193,7 @@ export function BookingPage() {
                         onChange={(value) => setDestinationName(value)}
                         placeholder="Search destination city, airport, landmark..."
                         label="Destination City"
-                        triggerIcon="location_on"
+                        triggerIcon="pin_drop"
                         showLocationIqBadge={false}
                       />
                     </div>
@@ -1350,7 +1350,7 @@ export function BookingPage() {
               {/* Plain Sentence Banner for Force Vehicles */}
               {selectedVehicle.alwaysRoundTrip && (
                 <div className="w-full bg-sandstone-wash border border-primary/30 rounded-xl p-space-md flex items-start gap-space-sm mt-1">
-                  <span className="material-symbols-outlined text-primary text-[24px] shrink-0 mt-0.5">
+                  <span className="material-symbols-outlined text-primary text-icon-24 shrink-0 mt-0.5">
                     info
                   </span>
                   <div className="flex flex-col">
@@ -1403,7 +1403,7 @@ export function BookingPage() {
                             loading="lazy"
                           />
                           {veh.badge && (
-                            <span className={`absolute top-1.5 left-1.5 px-2 py-0.5 rounded text-[10px] ${veh.badgeClass || "bg-primary text-white"}`}>
+                            <span className={`absolute top-1.5 left-1.5 px-2 py-0.5 rounded text-label-lg ${veh.badgeClass || "bg-primary text-white"}`}>
                               {veh.badge}
                             </span>
                           )}
@@ -1422,16 +1422,16 @@ export function BookingPage() {
                             {veh.subtitle}
                           </p>
                           <div className="flex flex-wrap items-center gap-2 mt-1">
-                            <span className="inline-flex items-center gap-1 text-[11px] font-semibold bg-surface-container-low px-2 py-0.5 rounded text-ink-slate border border-border-warm/60">
-                              <span className="material-symbols-outlined text-[14px]">groups</span>
+                            <span className="inline-flex items-center gap-1 text-label-md font-semibold bg-surface-container-low px-2 py-0.5 rounded text-ink-slate border border-border-warm/60">
+                              <span className="material-symbols-outlined text-icon-14">groups</span>
                               {veh.guests}
                             </span>
-                            <span className="inline-flex items-center gap-1 text-[11px] font-semibold bg-surface-container-low px-2 py-0.5 rounded text-ink-slate border border-border-warm/60">
-                              <span className="material-symbols-outlined text-[14px]">luggage</span>
+                            <span className="inline-flex items-center gap-1 text-label-md font-semibold bg-surface-container-low px-2 py-0.5 rounded text-ink-slate border border-border-warm/60">
+                              <span className="material-symbols-outlined text-icon-14">luggage</span>
                               {veh.luggage}
                             </span>
                             {veh.alwaysRoundTrip && (
-                              <span className="inline-flex items-center gap-1 text-[11px] font-semibold bg-sandstone-wash text-terracotta-sandstone px-2 py-0.5 rounded border border-primary/20">
+                              <span className="inline-flex items-center gap-1 text-label-md font-semibold bg-sandstone-wash text-terracotta-sandstone px-2 py-0.5 rounded border border-primary/20">
                                 Round-Trip Policy
                               </span>
                             )}
@@ -1459,7 +1459,7 @@ export function BookingPage() {
                       </h2>
                     </div>
                     <span className="w-8 h-8 rounded-full bg-sandstone-wash flex items-center justify-center text-primary">
-                      <span className="material-symbols-outlined text-[20px]">verified</span>
+                      <span className="material-symbols-outlined text-icon-20">verified</span>
                     </span>
                   </div>
 
@@ -1532,7 +1532,7 @@ export function BookingPage() {
                           <span className="font-title-lg text-title-lg text-ink-midnight font-bold">
                             Total Final Fare
                           </span>
-                          <span className="block font-body-sm text-[11px] text-success-jade font-semibold">
+                          <span className="block font-body-sm text-label-md text-success-jade font-semibold">
                             Authoritative Server Rate
                           </span>
                         </div>
@@ -1554,11 +1554,11 @@ export function BookingPage() {
                   <button
                     onClick={handleProceedFromStep1}
                     disabled={loadingFare || !serverFare}
-                    className="w-full py-3.5 px-space-md rounded-xl bg-terracotta-sandstone text-on-primary font-label-lg text-label-lg font-semibold hover:bg-terracotta-sunlit disabled:opacity-50 transition-all shadow-md flex items-center justify-center gap-2 group cursor-pointer"
+                    className="w-full py-3.5 px-space-md rounded-xl bg-terracotta-deep text-on-primary font-label-lg text-label-lg font-semibold hover:bg-primary disabled:opacity-50 transition-all shadow-md flex items-center justify-center gap-2 group cursor-pointer"
                     type="button"
                   >
                     <span>{isDirectFunnel ? "Proceed to Booking Form" : "Continue to Choose Your Trip"}</span>
-                    <span className="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">
+                    <span className="material-symbols-outlined text-icon-18 group-hover:translate-x-1 transition-transform">
                       arrow_forward
                     </span>
                   </button>
@@ -1610,7 +1610,7 @@ export function BookingPage() {
               {/* Header */}
               <div className="w-full bg-ink-charcoal text-ivory-surface px-space-lg py-space-md flex flex-wrap items-center justify-between gap-space-xs">
                 <div className="flex items-center gap-space-sm">
-                  <span className="material-symbols-outlined text-[20px] text-gold-accent">contact_phone</span>
+                  <span className="material-symbols-outlined text-icon-20 text-gold-accent">contact_phone</span>
                   <h2 className="font-headline-sm text-headline-sm text-ivory-surface tracking-wide uppercase">
                     Passenger Logistics &amp; Review
                   </h2>
@@ -1775,7 +1775,7 @@ export function BookingPage() {
                       </button>
                     </div>
                     {promoMessage && (
-                      <span className={`text-[11px] font-medium ${serverFare?.promoValid ? "text-success-jade" : "text-terracotta-sandstone"}`}>
+                      <span className={`text-label-md font-medium ${serverFare?.promoValid ? "text-success-jade" : "text-terracotta-sandstone"}`}>
                         {promoMessage}
                       </span>
                     )}
@@ -1802,9 +1802,9 @@ export function BookingPage() {
                   <button
                     type="submit"
                     disabled={isSubmitting || !serverFare}
-                    className="w-full py-3.5 px-space-md rounded-xl bg-terracotta-sandstone text-on-primary font-title-lg font-bold hover:bg-terracotta-sunlit transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
+                    className="w-full py-3.5 px-space-md rounded-xl bg-terracotta-deep text-on-primary font-title-lg font-bold hover:bg-terracotta-sunlit transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
                   >
-                    <span className="material-symbols-outlined text-[20px]">lock</span>
+                    <span className="material-symbols-outlined text-icon-20">lock</span>
                     <span>
                       {isSubmitting
                         ? "Registering Booking with Server..."
@@ -1846,7 +1846,7 @@ export function BookingPage() {
             <div className="bg-success-jade/10 border border-success-jade/40 rounded-xl p-space-lg flex items-center justify-between gap-space-md">
               <div className="flex items-center gap-space-sm">
                 <span className="w-10 h-10 rounded-full bg-success-jade text-white flex items-center justify-center shrink-0">
-                  <span className="material-symbols-outlined text-[24px]">verified</span>
+                  <span className="material-symbols-outlined text-icon-24">verified</span>
                 </span>
                 <div>
                   <h1 className="font-headline-sm text-headline-sm text-ink-midnight font-bold">
@@ -1869,7 +1869,7 @@ export function BookingPage() {
             <div className="bg-surface-container-lowest rounded-xl shadow-md border border-border-warm overflow-hidden">
               <div className="bg-ink-charcoal text-ivory-surface p-space-md flex items-center justify-between">
                 <div>
-                  <span className="text-[10px] tracking-widest text-gold-accent uppercase font-bold">
+                  <span className="text-label-lg tracking-widest text-gold-accent uppercase font-bold">
                     SK Baghel Imperial Fleet Charter
                   </span>
                   <h2 className="text-lg font-bold text-white">Chauffeur Transit Voucher</h2>

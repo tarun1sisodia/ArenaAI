@@ -87,14 +87,22 @@ export function HomePage({ language = "en" }: HomePageProps) {
       <div className="w-full relative z-20">
         {/* ── HERO ── Taj Mahal sunrise background, text left / booking dock right */}
         <section className="relative w-full pt-20 sm:pt-28 pb-16 bg-ink-midnight text-on-primary overflow-hidden">
-          {/* Background image — Taj Mahal sunrise, 80% opacity, full contrast & brightness */}
-          <div
-            className="absolute inset-0 z-0 opacity-80 pointer-events-none bg-cover bg-[center_35%] contrast-105 brightness-100"
-            style={{
-              backgroundImage:
-                'url("https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=2400&q=85")',
-            }}
-          />
+          {/* LCP hero image — real <img> (not CSS background) so the browser can
+              early-discover and prioritize it. Self-hosted AVIF/WebP, 1920w.
+              Decorative: headline carries the content (alt=""). */}
+          <picture className="absolute inset-0 z-0 pointer-events-none" aria-hidden="true">
+            <source srcSet="/images/hero-taj-sunrise.avif" type="image/avif" />
+            <img
+              src="/images/hero-taj-sunrise.webp"
+              alt=""
+              fetchPriority="high"
+              decoding="async"
+              width={1920}
+              height={1280}
+              className="h-full w-full object-cover opacity-80 contrast-105 brightness-100"
+              style={{ objectPosition: "center 35%" }}
+            />
+          </picture>
           {/* Subtle gradient overlay to ensure text and booking form legibility while leaving ~80% of the image vividly visible */}
           <div className="absolute inset-0 bg-gradient-to-r from-ink-midnight/65 via-ink-midnight/10 to-ink-midnight/10 z-0 pointer-events-none" />
           <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-ink-midnight to-transparent z-0 pointer-events-none" />
@@ -173,7 +181,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
                   className="inline-flex items-center gap-space-xs px-space-lg py-3 rounded-lg bg-primary hover:bg-primary-container text-white font-label-lg text-label-lg shadow-md transition-all font-semibold active:scale-[0.98]"
                   href="tel:+916395867598"
                 >
-                  <span className="material-symbols-outlined text-[18px]">call</span>
+                  <span className="material-symbols-outlined text-icon-18">call</span>
                   <span className="text-white">Call +91 63958 67598</span>
                 </a>
                 <a
@@ -212,10 +220,10 @@ export function HomePage({ language = "en" }: HomePageProps) {
               { icon: "support_agent", title: "24×7 Dispatch", sub: "Live Agra Control Desk" },
             ]).map((item, idx) => (
               <div key={idx} className="flex items-center gap-2.5 shrink-0 px-4">
-                <span className="material-symbols-outlined text-gold-accent text-[20px]">{item.icon}</span>
+                <span className="material-symbols-outlined text-gold-accent text-icon-20">{item.icon}</span>
                 <div className="flex flex-col">
-                  <span className="font-title-md text-[13px] font-semibold leading-tight text-ivory-surface">{item.title}</span>
-                  <span className="font-label-caps text-[10px] text-surface-dim">{item.sub}</span>
+                  <span className="font-title-md text-title-lg font-semibold leading-tight text-ivory-surface">{item.title}</span>
+                  <span className="font-label-caps text-label-lg text-surface-dim">{item.sub}</span>
                 </div>
               </div>
             ))}
@@ -245,17 +253,17 @@ export function HomePage({ language = "en" }: HomePageProps) {
               <div key={route.to} className="flex flex-col sm:flex-row sm:items-center justify-between py-4 gap-3 group">
                 {/* Route identity */}
                 <div className="flex items-center gap-4 min-w-0">
-                  <span className="material-symbols-outlined text-on-surface-variant text-[22px] shrink-0">{route.icon}</span>
+                  <span className="material-symbols-outlined text-on-surface-variant text-icon-22 shrink-0">{route.icon}</span>
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
-                      <span className="font-title-md text-[14px] font-bold text-on-surface group-hover:text-primary transition-colors">
+                      <span className="font-title-md text-headline-sm font-bold text-on-surface group-hover:text-primary transition-colors">
                         {route.from} → {route.to}
                       </span>
-                      <span className="px-1.5 py-0.5 rounded bg-sandstone-wash text-primary font-label-caps text-[8px] uppercase font-bold shrink-0">
+                      <span className="px-1.5 py-0.5 rounded bg-sandstone-wash text-primary font-label-caps text-label-caps uppercase font-bold shrink-0">
                         {route.badge}
                       </span>
                     </div>
-                    <div className="flex items-center gap-3 font-body-sm text-[10px] text-on-surface-variant">
+                    <div className="flex items-center gap-3 font-body-sm text-label-lg text-on-surface-variant">
                       <span>{route.km}</span>
                       <span className="w-1 h-1 rounded-full bg-on-surface-variant/40" />
                       <span>{route.time}</span>
@@ -267,11 +275,11 @@ export function HomePage({ language = "en" }: HomePageProps) {
                 {/* Price + CTA */}
                 <div className="flex items-center gap-4 shrink-0">
                   <div className="text-right">
-                    <span className="font-label-caps text-[8.5px] text-on-surface-variant block">Sedan from</span>
+                    <span className="font-label-caps text-label-caps text-on-surface-variant block">Sedan from</span>
                     <span className="font-price-display text-lg font-bold text-primary">₹{route.price.toLocaleString("en-IN")}</span>
                   </div>
                   <a
-                    className="px-3.5 py-1.5 rounded-lg bg-sandstone-wash hover:bg-primary/10 text-primary border border-primary/25 hover:border-primary/50 text-[11px] font-semibold transition-all duration-200 whitespace-nowrap active:scale-[0.98] shadow-xs"
+                    className="px-3.5 py-1.5 rounded-lg bg-sandstone-wash hover:bg-primary/10 text-primary border border-primary/25 hover:border-primary/50 text-label-md font-semibold transition-all duration-200 whitespace-nowrap active:scale-[0.98] shadow-xs"
                     href={`/book?from=Agra&to=${route.to}`}
                   >
                     <span className="text-primary font-bold">Book ↗</span>
@@ -287,7 +295,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
               href="/routes"
             >
               <span>View all 980+ routes</span>
-              <span className="material-symbols-outlined text-[16px]">east</span>
+              <span className="material-symbols-outlined text-icon-16">east</span>
             </a>
           </div>
         </section>
@@ -353,19 +361,19 @@ export function HomePage({ language = "en" }: HomePageProps) {
                 },
               ].map((svc) => (
                 <div key={svc.title} className="bg-ink-midnight p-5 sm:p-6 flex flex-col gap-3 hover:bg-ink-charcoal transition-colors">
-                  <span className="material-symbols-outlined text-terracotta-sunlit text-[24px]">{svc.icon}</span>
+                  <span className="material-symbols-outlined text-terracotta-sunlit text-icon-24">{svc.icon}</span>
                   <div>
                     <h3 className="font-headline-sm text-headline-sm text-ivory-surface font-normal mb-1">{svc.title}</h3>
-                    <p className="font-body-sm text-[10.5px] text-ivory-surface/65 leading-relaxed">{svc.body}</p>
+                    <p className="font-body-sm text-body-md text-ivory-surface/65 leading-relaxed">{svc.body}</p>
                   </div>
                   <div className="flex flex-wrap gap-1.5 mt-auto">
                     {svc.tags.map((t) => (
-                      <span key={t} className="px-2 py-0.5 rounded bg-border-warm/10 text-ivory-surface/70 font-label-caps text-[8.5px]">{t}</span>
+                      <span key={t} className="px-2 py-0.5 rounded bg-border-warm/10 text-ivory-surface/70 font-label-caps text-label-caps">{t}</span>
                     ))}
                   </div>
-                  <a className="inline-flex items-center gap-1 font-label-lg text-[11px] text-terracotta-sunlit hover:text-gold-accent transition-colors font-semibold self-start" href={svc.href}>
+                  <a className="inline-flex items-center gap-1 font-label-lg text-label-md text-terracotta-sunlit hover:text-gold-accent transition-colors font-semibold self-start" href={svc.href}>
                     <span>Learn more</span>
-                    <span className="material-symbols-outlined text-[13px]">arrow_forward</span>
+                    <span className="material-symbols-outlined text-icon-13">arrow_forward</span>
                   </a>
                 </div>
               ))}
@@ -425,15 +433,15 @@ export function HomePage({ language = "en" }: HomePageProps) {
                 </div>
                 <div className="p-3.5 flex-1 flex flex-col gap-2">
                   <div>
-                    <h3 className="font-title-md text-[13px] font-bold text-on-surface">{v.label}</h3>
-                    <p className="font-body-sm text-[10px] text-on-surface-variant mt-0.5">{v.note}</p>
+                    <h3 className="font-title-md text-title-lg font-bold text-on-surface">{v.label}</h3>
+                    <p className="font-body-sm text-label-lg text-on-surface-variant mt-0.5">{v.note}</p>
                   </div>
-                  <div className="flex items-center justify-between text-[9.5px] font-body-sm text-on-surface-variant border-t border-border-warm/40 pt-2">
+                  <div className="flex items-center justify-between text-body-sm font-body-sm text-on-surface-variant border-t border-border-warm/40 pt-2">
                     <span>{v.seats} seats</span>
                     <span className="text-primary font-semibold">{v.rate}</span>
                   </div>
                   <a
-                    className="w-full block py-2 text-center rounded-lg bg-primary hover:bg-primary-container text-white font-label-lg text-[11px] transition-all font-semibold mt-auto shadow-xs active:scale-[0.98]"
+                    className="w-full block py-2 text-center rounded-lg bg-primary hover:bg-primary-container text-white font-label-lg text-label-md transition-all font-semibold mt-auto shadow-xs active:scale-[0.98]"
                     href={`/book?vehicle=${v.id}`}
                   >
                     <span className="text-white">Select {v.label.split(" ")[0]}</span>
@@ -447,12 +455,12 @@ export function HomePage({ language = "en" }: HomePageProps) {
               href="/fleet"
               className="bg-sandstone-wash rounded-xl border border-border-warm/40 flex flex-col items-center justify-center p-8 gap-3 hover:bg-terracotta-sandstone/10 transition-colors group"
             >
-              <span className="material-symbols-outlined text-primary text-[36px] group-hover:scale-110 transition-transform">garage</span>
-              <p className="font-title-md text-[13px] text-on-surface font-bold text-center">See entire fleet</p>
-              <p className="font-body-sm text-[10px] text-on-surface-variant text-center">Compare specs, photos & per-km rates</p>
-              <span className="inline-flex items-center gap-1 text-primary font-label-lg text-[11px] font-semibold mt-1">
+              <span className="material-symbols-outlined text-primary text-icon-36 group-hover:scale-110 transition-transform">garage</span>
+              <p className="font-title-md text-title-lg text-on-surface font-bold text-center">See entire fleet</p>
+              <p className="font-body-sm text-label-lg text-on-surface-variant text-center">Compare specs, photos & per-km rates</p>
+              <span className="inline-flex items-center gap-1 text-primary font-label-lg text-label-md font-semibold mt-1">
                 <span>Explore fleet</span>
-                <span className="material-symbols-outlined text-[14px]">east</span>
+                <span className="material-symbols-outlined text-icon-14">east</span>
               </span>
             </a>
           </div>
@@ -475,7 +483,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
                 href="/packages"
               >
                 <span>All packages</span>
-                <span className="material-symbols-outlined text-[16px]">east</span>
+                <span className="material-symbols-outlined text-icon-16">east</span>
               </a>
             </div>
 
@@ -483,7 +491,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
               {[
                 {
                   badge: "Same Day", badgeColor: "bg-ink-midnight/80 text-tertiary-fixed",
-                  price: "₹3,499", priceColor: "bg-terracotta-sandstone",
+                  price: "₹3,499", priceColor: "bg-terracotta-deep",
                   img: "/assets/packages/agra-fort.webp",
                   alt: "Taj Mahal Tour",
                   title: "Same Day Agra — Taj Mahal & Agra Fort",
@@ -494,7 +502,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
                 },
                 {
                   badge: "Dawn Special", badgeColor: "bg-ink-midnight/80 text-gold-accent",
-                  price: "₹5,200", priceColor: "bg-terracotta-sandstone",
+                  price: "₹5,200", priceColor: "bg-terracotta-deep",
                   img: "/assets/packages/taj-dawn.webp",
                   alt: "Taj Sunrise Tour",
                   title: "Taj Mahal Sunrise Guided Tour",
@@ -505,7 +513,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
                 },
                 {
                   badge: "Pilgrimage", badgeColor: "bg-ink-midnight/80 text-tertiary-fixed",
-                  price: "₹4,200", priceColor: "bg-terracotta-sandstone",
+                  price: "₹4,200", priceColor: "bg-terracotta-deep",
                   img: "/assets/packages/mathura.webp",
                   alt: "Mathura Vrindavan",
                   title: "Mathura & Vrindavan Darshan",
@@ -522,7 +530,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
                       src={pkg.img}
                       alt={pkg.alt}
                     />
-                    <span className={`absolute top-2 left-2 px-1.5 py-0.5 rounded ${pkg.badgeColor} font-label-caps text-[8.5px] uppercase font-bold backdrop-blur-sm`}>
+                    <span className={`absolute top-2 left-2 px-1.5 py-0.5 rounded ${pkg.badgeColor} font-label-caps text-label-caps uppercase font-bold backdrop-blur-sm`}>
                       {pkg.badge}
                     </span>
                     <div className={`absolute bottom-2 right-2 px-2 py-0.5 rounded ${pkg.priceColor} text-white font-price-display text-sm font-bold`}>
@@ -530,22 +538,22 @@ export function HomePage({ language = "en" }: HomePageProps) {
                     </div>
                   </div>
                   <div className="p-3.5 flex-1 flex flex-col gap-2">
-                    <h3 className="font-title-md text-[13px] font-bold text-on-surface group-hover:text-primary transition-colors leading-snug">{pkg.title}</h3>
-                    <p className="font-body-sm text-[10.5px] text-on-surface-variant leading-relaxed">{pkg.body}</p>
+                    <h3 className="font-title-md text-title-lg font-bold text-on-surface group-hover:text-primary transition-colors leading-snug">{pkg.title}</h3>
+                    <p className="font-body-sm text-body-md text-on-surface-variant leading-relaxed">{pkg.body}</p>
                     <ul className="space-y-1 mt-1">
                       {pkg.itinerary.map((item) => (
-                        <li key={item} className="flex items-center gap-1.5 font-body-sm text-[9.5px] text-on-surface-variant">
+                        <li key={item} className="flex items-center gap-1.5 font-body-sm text-body-sm text-on-surface-variant">
                           <span className="w-1 h-1 rounded-full bg-gold-accent shrink-0" />
                           {item}
                         </li>
                       ))}
                     </ul>
                     <a
-                      className="mt-auto pt-2 border-t border-border-warm/40 inline-flex items-center gap-1 font-label-lg text-[11px] text-primary hover:text-primary-container font-bold transition-colors"
+                      className="mt-auto pt-2 border-t border-border-warm/40 inline-flex items-center gap-1 font-label-lg text-label-md text-primary hover:text-primary-container font-bold transition-colors"
                       href={pkg.href}
                     >
                       <span>{pkg.cta}</span>
-                      <span className="material-symbols-outlined text-[13px]">east</span>
+                      <span className="material-symbols-outlined text-icon-13">east</span>
                     </a>
                   </div>
                 </div>
@@ -620,16 +628,16 @@ export function HomePage({ language = "en" }: HomePageProps) {
               >
                 <div className="flex items-center justify-between">
                   <div className="w-9 h-9 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-105 bg-primary text-white">
-                    <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
+                    <span className="material-symbols-outlined text-icon-20">{item.icon}</span>
                   </div>
-                  <span className="font-label-caps text-[8.5px] uppercase font-bold px-2 py-0.5 rounded-full bg-gold-accent/15 text-gold-accent border border-gold-accent/30">
+                  <span className="font-label-caps text-label-caps uppercase font-bold px-2 py-0.5 rounded-full bg-gold-accent/15 text-gold-accent border border-gold-accent/30">
                     {item.badge}
                   </span>
                 </div>
                 <h3 className="font-headline-sm text-headline-sm font-semibold text-ivory-surface">
                   {item.title}
                 </h3>
-                <p className="font-body-sm text-[10.5px] leading-relaxed text-ivory-surface/75">
+                <p className="font-body-sm text-body-md leading-relaxed text-ivory-surface/75">
                   {item.desc}
                 </p>
               </div>
@@ -642,31 +650,31 @@ export function HomePage({ language = "en" }: HomePageProps) {
           >
             <div className="flex items-center gap-4">
               <div className="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center shrink-0 shadow-xs">
-                <span className="material-symbols-outlined text-[20px] text-white">confirmation_number</span>
+                <span className="material-symbols-outlined text-icon-20 text-white">confirmation_number</span>
               </div>
               <div>
-                <h4 className="font-title-md text-[14px] text-on-surface font-bold">Flat ₹500 off your first outstation trip</h4>
-                <p className="font-body-sm text-[10.5px] text-on-surface-variant mt-0.5">
+                <h3 className="font-title-md text-headline-sm text-on-surface font-bold">Flat ₹500 off your first outstation trip</h3>
+                <p className="font-body-sm text-body-md text-on-surface-variant mt-0.5">
                   Valid on Agra to Delhi and Agra to Jaipur one-way routes.
                 </p>
               </div>
             </div>
             <div className="flex items-center gap-2 bg-surface-container-lowest px-3 py-2 rounded-lg border border-border-warm/40 shadow-sm shrink-0">
-              <span className="font-label-caps text-[9px] text-on-surface-variant font-semibold">Coupon:</span>
+              <span className="font-label-caps text-label-caps text-on-surface-variant font-semibold">Coupon:</span>
               <code className="font-title-md font-bold text-primary tracking-wider text-xs">ASTTCAR500OFF</code>
               <button
                 type="button"
                 onClick={copyCoupon}
-                className="text-[10px] px-3 py-1.5 rounded-lg bg-primary hover:bg-primary-container text-white font-label-caps transition-all font-bold shadow-xs active:scale-[0.98] inline-flex items-center gap-1 cursor-pointer"
+                className="text-label-lg px-3 py-1.5 rounded-lg bg-primary hover:bg-primary-container text-white font-label-caps transition-all font-bold shadow-xs active:scale-[0.98] inline-flex items-center gap-1 cursor-pointer"
               >
                 {couponCopied ? (
                   <>
-                    <span className="material-symbols-outlined text-[13px] text-white">check</span>
+                    <span className="material-symbols-outlined text-icon-13 text-white">check</span>
                     <span className="text-white">Copied!</span>
                   </>
                 ) : (
                   <>
-                    <span className="material-symbols-outlined text-[13px] text-white">content_copy</span>
+                    <span className="material-symbols-outlined text-icon-13 text-white">content_copy</span>
                     <span className="text-white">Copy</span>
                   </>
                 )}
@@ -696,11 +704,11 @@ export function HomePage({ language = "en" }: HomePageProps) {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-space-sm">
                   <a className="p-3.5 rounded-xl bg-surface-container-lowest hover:bg-surface-container transition-all flex items-center gap-3 shadow-sm border border-border-warm/40" href="tel:+916395867598">
                     <div className="w-9 h-9 rounded-full bg-sandstone-wash flex items-center justify-center text-primary shrink-0">
-                      <span className="material-symbols-outlined text-[18px]">call</span>
+                      <span className="material-symbols-outlined text-icon-18">call</span>
                     </div>
                     <div>
-                      <span className="font-label-caps text-[9.5px] text-on-surface-variant block uppercase font-bold">Call 24×7</span>
-                      <span className="font-title-md text-[13px] text-on-surface font-bold">+91 63958 67598</span>
+                      <span className="font-label-caps text-body-sm text-on-surface-variant block uppercase font-bold">Call 24×7</span>
+                      <span className="font-title-md text-title-lg text-on-surface font-bold">+91 63958 67598</span>
                     </div>
                   </a>
                   <a className="p-3.5 rounded-xl bg-surface-container-lowest hover:bg-surface-container transition-all flex items-center gap-3 shadow-sm border border-border-warm/40" href={`https://wa.me/${contact.whatsapp}`} target="_blank" rel="noreferrer">
@@ -708,17 +716,17 @@ export function HomePage({ language = "en" }: HomePageProps) {
                       <WhatsAppIcon className="w-[18px] h-[18px] shrink-0" />
                     </div>
                     <div>
-                      <span className="font-label-caps text-[9.5px] text-on-surface-variant block uppercase font-bold">WhatsApp</span>
-                      <span className="font-title-md text-[13px] text-on-surface font-bold">Chat with Support</span>
+                      <span className="font-label-caps text-body-sm text-on-surface-variant block uppercase font-bold">WhatsApp</span>
+                      <span className="font-title-md text-title-lg text-on-surface font-bold">Chat with Support</span>
                     </div>
                   </a>
                   <div className="p-3.5 rounded-xl bg-surface-container-lowest flex items-center gap-3 shadow-sm border border-border-warm/40 sm:col-span-2">
                     <div className="w-9 h-9 rounded-full bg-sandstone-wash flex items-center justify-center text-primary shrink-0">
-                      <span className="material-symbols-outlined text-[18px]">location_on</span>
+                      <span className="material-symbols-outlined text-icon-18">pin_drop</span>
                     </div>
                     <div>
-                      <span className="font-label-caps text-[9.5px] text-on-surface-variant block uppercase font-bold">Office</span>
-                      <span className="font-title-md text-[13px] text-on-surface font-medium">Taj Ganj, Agra 282001</span>
+                      <span className="font-label-caps text-body-sm text-on-surface-variant block uppercase font-bold">Office</span>
+                      <span className="font-title-md text-title-lg text-on-surface font-medium">Taj Ganj, Agra 282001</span>
                     </div>
                   </div>
                 </div>
@@ -728,13 +736,13 @@ export function HomePage({ language = "en" }: HomePageProps) {
               <div className="lg:col-span-7">
                 <div className="bg-surface-container-lowest p-5 sm:p-6 rounded-xl shadow-md border border-border-warm/40">
                   <h3 className="font-headline-sm text-headline-sm font-normal text-on-surface mb-1">Send a booking inquiry</h3>
-                  <p className="font-body-sm text-[11px] text-on-surface-variant mb-space-md">
+                  <p className="font-body-sm text-label-md text-on-surface-variant mb-space-md">
                     We'll reply on WhatsApp with a quote in under 5 minutes.
                   </p>
                   <form onSubmit={handleInquirySubmit} className="space-y-3">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
-                        <label htmlFor="homepage-inquiry-name" className="font-label-caps text-[9.5px] text-on-surface-variant uppercase font-semibold block mb-1">Full Name</label>
+                        <label htmlFor="homepage-inquiry-name" className="font-label-caps text-body-sm text-on-surface-variant uppercase font-semibold block mb-1">Full Name</label>
                         <input
                           id="homepage-inquiry-name"
                           type="text"
@@ -746,7 +754,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
                         />
                       </div>
                       <div>
-                        <label htmlFor="homepage-inquiry-phone" className="font-label-caps text-[9.5px] text-on-surface-variant uppercase font-semibold block mb-1">Phone / WhatsApp</label>
+                        <label htmlFor="homepage-inquiry-phone" className="font-label-caps text-body-sm text-on-surface-variant uppercase font-semibold block mb-1">Phone / WhatsApp</label>
                         <input
                           id="homepage-inquiry-phone"
                           type="tel"
@@ -759,7 +767,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
                       </div>
                     </div>
                     <div>
-                      <label htmlFor="homepage-inquiry-date" className="font-label-caps text-[9.5px] text-on-surface-variant uppercase font-semibold block mb-1">Travel Date</label>
+                      <label htmlFor="homepage-inquiry-date" className="font-label-caps text-body-sm text-on-surface-variant uppercase font-semibold block mb-1">Travel Date</label>
                       <input
                         id="homepage-inquiry-date"
                         type="date"
@@ -770,7 +778,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
                       />
                     </div>
                     <div>
-                      <label htmlFor="homepage-inquiry-notes" className="font-label-caps text-[9.5px] text-on-surface-variant uppercase font-semibold block mb-1">Itinerary & Pickup Details</label>
+                      <label htmlFor="homepage-inquiry-notes" className="font-label-caps text-body-sm text-on-surface-variant uppercase font-semibold block mb-1">Itinerary & Pickup Details</label>
                       <textarea
                         id="homepage-inquiry-notes"
                         rows={3}
@@ -784,7 +792,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
                       type="submit"
                       className="w-full flex items-center justify-center gap-1.5 py-3 rounded-lg bg-primary hover:bg-primary-container text-white font-title-md text-xs font-semibold transition-all shadow-md active:scale-[0.98]"
                     >
-                      <span className="material-symbols-outlined text-[16px] text-white">send</span>
+                      <span className="material-symbols-outlined text-icon-16 text-white">send</span>
                       <span className="text-white">Send Inquiry via WhatsApp</span>
                     </button>
                   </form>

@@ -13905,79 +13905,6 @@ a[class*="bg-success-jade"][href*="wa.me"]:hover {
   border-color: rgba(34, 197, 94, 0.35);
 }
 
-/* Inline Token Config Box */
-.loc-token-box {
-  padding: 12px;
-  background: var(--surface, #ffffff);
-  border-bottom: 1px solid var(--border, #e8ecef);
-  font-size: 0.8rem;
-}
-
-.loc-token-title {
-  font-weight: 600;
-  color: var(--text, #1a1d20);
-  margin-bottom: 4px;
-}
-
-.loc-token-desc {
-  color: var(--text-soft, #6c757d);
-  font-size: 0.75rem;
-  margin-bottom: 8px;
-  line-height: 1.4;
-}
-
-.loc-token-input {
-  width: 100%;
-  padding: 6px 10px;
-  font-size: 0.82rem;
-  border: 1px solid var(--border, #e8ecef);
-  border-radius: 6px;
-  background: var(--surface-alt, #f8f9fa);
-  color: var(--text, #1a1d20);
-  outline: none;
-  margin-bottom: 8px;
-}
-
-.loc-token-input:focus {
-  border-color: var(--gold, #e5a044);
-}
-
-.loc-token-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.loc-token-btn-save {
-  padding: 4px 12px;
-  background: var(--gold, #e5a044);
-  color: #ffffff;
-  font-size: 0.78rem;
-  font-weight: 600;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.loc-token-btn-clear {
-  padding: 4px 10px;
-  background: transparent;
-  color: #dc2626;
-  font-size: 0.78rem;
-  border: 1px solid rgba(220, 38, 38, 0.3);
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.loc-token-btn-cancel {
-  padding: 4px 10px;
-  background: transparent;
-  color: var(--text-soft, #6c757d);
-  font-size: 0.78rem;
-  border: none;
-  cursor: pointer;
-}
-
 /* Quick Popular Tags */
 .loc-quick-tags {
   display: flex;
@@ -14143,28 +14070,6 @@ html.dark .loc-api-tag {
   color: #a8a29e;
 }
 
-[data-theme="dark"] .loc-token-box,
-html.dark .loc-token-box {
-  background: #201e1d;
-  border-bottom-color: #3d3936;
-}
-
-[data-theme="dark"] .loc-token-title,
-html.dark .loc-token-title {
-  color: #fdfcfb;
-}
-
-[data-theme="dark"] .loc-token-desc,
-html.dark .loc-token-desc {
-  color: #a8a29e;
-}
-
-[data-theme="dark"] .loc-token-input,
-html.dark .loc-token-input {
-  background: #181615;
-  border-color: #3d3936;
-  color: #fdfcfb;
-}
 
 [data-theme="dark"] .loc-quick-tags,
 html.dark .loc-quick-tags {

@@ -287,11 +287,11 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
             </div>
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 shrink-0">
               <a
-                className="inline-flex items-center justify-center gap-1.5 bg-terracotta-sandstone hover:bg-terracotta-sunlit text-on-primary font-label-lg text-xs px-4.5 py-2.5 rounded-lg shadow-sm transition-all whitespace-nowrap font-semibold"
+                className="inline-flex items-center justify-center gap-1.5 bg-terracotta-deep hover:bg-terracotta-sunlit text-white font-label-lg text-xs px-4.5 py-2.5 rounded-lg shadow-sm transition-all whitespace-nowrap font-semibold"
                 href="#spec-comparison"
               >
                 <span>Compare Specs</span>
-                <span className="material-symbols-outlined text-[16px]">south</span>
+                <span className="material-symbols-outlined text-icon-16">south</span>
               </a>
               <a
                 className="inline-flex items-center justify-center gap-2 bg-black hover:bg-neutral-900 border border-white/10 text-white font-label-lg text-xs px-4.5 py-2.5 rounded-lg shadow-xs transition-all whitespace-nowrap font-semibold active:scale-[0.98]"
@@ -310,44 +310,44 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
             <div className="bg-surface-container-lowest p-2.5 sm:p-3 rounded-lg shadow-xs border border-border-warm/70 flex items-start gap-2 h-full">
               <div className="w-8 h-8 rounded bg-sandstone-wash flex items-center justify-center text-terracotta-sandstone shrink-0">
-                <span className="material-symbols-outlined text-[18px]">verified</span>
+                <span className="material-symbols-outlined text-icon-18">verified</span>
               </div>
               <div>
-                <h4 className="font-title-md text-[11.5px] text-ink-charcoal leading-snug font-bold">100% Commercial Plates</h4>
-                <p className="font-body-sm text-[9.5px] text-on-surface-variant mt-0.5">
+                <h2 className="font-title-md text-title-md text-ink-charcoal leading-snug font-bold">100% Commercial Plates</h2>
+                <p className="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
                   All-India Tourist Permit with pre-cleared interstate taxes.
                 </p>
               </div>
             </div>
             <div className="bg-surface-container-lowest p-2.5 sm:p-3 rounded-lg shadow-xs border border-border-warm/70 flex items-start gap-2 h-full">
               <div className="w-8 h-8 rounded bg-sandstone-wash flex items-center justify-center text-terracotta-sandstone shrink-0">
-                <span className="material-symbols-outlined text-[18px]">speed</span>
+                <span className="material-symbols-outlined text-icon-18">speed</span>
               </div>
               <div>
-                <h4 className="font-title-md text-[11.5px] text-ink-charcoal leading-snug font-bold">Speed Governed</h4>
-                <p className="font-body-sm text-[9.5px] text-on-surface-variant mt-0.5">
+                <h2 className="font-title-md text-title-md text-ink-charcoal leading-snug font-bold">Speed Governed</h2>
+                <p className="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
                   Strict adherence to 80/100 km/h expressway security benchmarks.
                 </p>
               </div>
             </div>
             <div className="bg-surface-container-lowest p-2.5 sm:p-3 rounded-lg shadow-xs border border-border-warm/70 flex items-start gap-2 h-full">
               <div className="w-8 h-8 rounded bg-sandstone-wash flex items-center justify-center text-terracotta-sandstone shrink-0">
-                <span className="material-symbols-outlined text-[18px]">airline_seat_recline_extra</span>
+                <span className="material-symbols-outlined text-icon-18">airline_seat_recline_extra</span>
               </div>
               <div>
-                <h4 className="font-title-md text-[11.5px] text-ink-charcoal leading-snug font-bold">Clean, Sanitized Cabins</h4>
-                <p className="font-body-sm text-[9.5px] text-on-surface-variant mt-0.5">
+                <h2 className="font-title-md text-title-md text-ink-charcoal leading-snug font-bold">Clean, Sanitized Cabins</h2>
+                <p className="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
                   Vacuumed and cleaned before every single guest pickup.
                 </p>
               </div>
             </div>
             <div className="bg-surface-container-lowest p-2.5 sm:p-3 rounded-lg shadow-xs border border-border-warm/70 flex items-start gap-2 h-full">
               <div className="w-8 h-8 rounded bg-sandstone-wash flex items-center justify-center text-terracotta-sandstone shrink-0">
-                <span className="material-symbols-outlined text-[18px]">receipt_long</span>
+                <span className="material-symbols-outlined text-icon-18">receipt_long</span>
               </div>
               <div>
-                <h4 className="font-title-md text-[11.5px] text-ink-charcoal leading-snug font-bold">Official Tax Invoice</h4>
-                <p className="font-body-sm text-[9.5px] text-on-surface-variant mt-0.5">
+                <h2 className="font-title-md text-title-md text-ink-charcoal leading-snug font-bold">Official Tax Invoice</h2>
+                <p className="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
                   Instant tax invoice for corporate &amp; family travel.
                 </p>
               </div>
@@ -397,7 +397,7 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                   alt={veh.name}
                 />
                 <div className="absolute top-3 left-3 right-3 flex justify-between items-start pointer-events-none">
-                  <span className="inline-block px-2.5 py-0.5 rounded bg-sandstone-wash/95 backdrop-blur-sm text-terracotta-sandstone font-label-caps text-[9px] uppercase tracking-wider shadow-xs font-bold">
+                  <span className="inline-block px-2.5 py-0.5 rounded bg-sandstone-wash/95 backdrop-blur-sm text-terracotta-sandstone font-label-caps text-label-caps uppercase tracking-wider shadow-xs font-bold">
                     {veh.highlightBadge}
                   </span>
                 </div>
@@ -409,91 +409,91 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                     <h2 className="font-headline-md text-base sm:text-lg text-ink-charcoal font-semibold">
                       {veh.name}
                     </h2>
-                    <span className="font-label-caps text-[10px] px-2 py-0.5 rounded bg-sandstone-wash text-ink-charcoal font-bold border border-border-warm">
+                    <span className="font-label-caps text-label-lg px-2 py-0.5 rounded bg-sandstone-wash text-ink-charcoal font-bold border border-border-warm">
                       {veh.classTag}
                     </span>
                   </div>
-                  <p className="font-body-sm text-[10.5px] sm:text-[11px] text-on-surface-variant mb-space-sm leading-relaxed">
+                  <p className="font-body-sm text-body-md sm:text-label-md text-on-surface-variant mb-space-sm leading-relaxed">
                     {veh.description}
                   </p>
 
                   {/* Pricing Banner (Compact -20%) */}
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 bg-surface-container-low p-2 sm:p-2.5 rounded-lg mb-space-sm border border-border-warm/60 text-center">
                     <div className="py-0.5">
-                      <span className="block font-label-caps text-[9px] text-secondary uppercase font-semibold">
+                      <span className="block font-label-caps text-label-caps text-secondary uppercase font-semibold">
                         Outstation Rate
                       </span>
                       <div className="flex items-baseline justify-center gap-0.5 mt-0.5">
                         <span className="font-price-display text-base sm:text-lg text-terracotta-sandstone font-bold">
                           ₹{veh.rates.outstationPerKm}
                         </span>
-                        <span className="font-body-sm text-[9.5px] text-on-surface-variant font-medium">/ km</span>
+                        <span className="font-body-sm text-body-sm text-on-surface-variant font-medium">/ km</span>
                       </div>
                     </div>
                     <div className="bg-surface-container-high/40 rounded py-0.5 px-1 sm:border-x sm:border-border-warm/40">
-                      <span className="block font-label-caps text-[9px] text-secondary uppercase font-semibold">
+                      <span className="block font-label-caps text-label-caps text-secondary uppercase font-semibold">
                         8h/80Km Local
                       </span>
                       <span className="block font-price-display text-base text-ink-charcoal font-bold mt-0.5">
                         ₹{veh.rates.local8h80km.toLocaleString("en-IN")}
                       </span>
-                      <span className="block font-body-sm text-[9px] text-on-surface-variant">Standard Day</span>
+                      <span className="block font-body-sm text-label-caps text-on-surface-variant">Standard Day</span>
                     </div>
                     <div className="py-0.5">
-                      <span className="block font-label-caps text-[9px] text-secondary uppercase font-semibold">
+                      <span className="block font-label-caps text-label-caps text-secondary uppercase font-semibold">
                         Full Day Agra
                       </span>
                       <span className="block font-price-display text-base text-ink-charcoal font-bold mt-0.5">
                         ₹{veh.rates.fullDayYamuna.toLocaleString("en-IN")}
                       </span>
-                      <span className="block font-body-sm text-[9px] text-success-jade font-semibold">Tolls Included</span>
+                      <span className="block font-body-sm text-label-caps text-success-jade font-semibold">Tolls Included</span>
                     </div>
                   </div>
 
                   {/* Technical Specs Grid (Compact -20%) */}
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 mb-space-sm">
                     <div className="bg-surface-container p-2 rounded border border-border-warm/50 flex flex-col justify-between">
-                      <span className="flex items-center gap-1 font-label-caps text-[8.5px] text-secondary uppercase font-bold">
-                        <span className="material-symbols-outlined text-[14px] text-terracotta-sandstone">
+                      <span className="flex items-center gap-1 font-label-caps text-label-caps text-secondary uppercase font-bold">
+                        <span className="material-symbols-outlined text-icon-14 text-terracotta-sandstone">
                           airline_seat_recline_normal
                         </span>
                         Seats
                       </span>
-                      <span className="font-title-md text-[10.5px] text-ink-charcoal mt-0.5 block font-semibold">{veh.specs.seats}</span>
+                      <span className="font-title-md text-body-md text-ink-charcoal mt-0.5 block font-semibold">{veh.specs.seats}</span>
                     </div>
                     <div className="bg-surface-container p-2 rounded border border-border-warm/50 flex flex-col justify-between">
-                      <span className="flex items-center gap-1 font-label-caps text-[8.5px] text-secondary uppercase font-bold">
-                        <span className="material-symbols-outlined text-[14px] text-terracotta-sandstone">luggage</span>
+                      <span className="flex items-center gap-1 font-label-caps text-label-caps text-secondary uppercase font-bold">
+                        <span className="material-symbols-outlined text-icon-14 text-terracotta-sandstone">luggage</span>
                         Luggage
                       </span>
-                      <span className="font-title-md text-[10.5px] text-ink-charcoal mt-0.5 block font-semibold">{veh.specs.luggage}</span>
+                      <span className="font-title-md text-body-md text-ink-charcoal mt-0.5 block font-semibold">{veh.specs.luggage}</span>
                     </div>
                     <div className="bg-surface-container p-2 rounded border border-border-warm/50 flex flex-col justify-between">
-                      <span className="flex items-center gap-1 font-label-caps text-[8.5px] text-secondary uppercase font-bold">
-                        <span className="material-symbols-outlined text-[14px] text-terracotta-sandstone">ac_unit</span>
+                      <span className="flex items-center gap-1 font-label-caps text-label-caps text-secondary uppercase font-bold">
+                        <span className="material-symbols-outlined text-icon-14 text-terracotta-sandstone">ac_unit</span>
                         Climate
                       </span>
-                      <span className="font-title-md text-[10.5px] text-ink-charcoal mt-0.5 block font-semibold">{veh.specs.climate}</span>
+                      <span className="font-title-md text-body-md text-ink-charcoal mt-0.5 block font-semibold">{veh.specs.climate}</span>
                     </div>
                     <div className="bg-surface-container p-2 rounded border border-border-warm/50 flex flex-col justify-between">
-                      <span className="flex items-center gap-1 font-label-caps text-[8.5px] text-secondary uppercase font-bold">
-                        <span className="material-symbols-outlined text-[14px] text-terracotta-sandstone">directions_car</span>
+                      <span className="flex items-center gap-1 font-label-caps text-label-caps text-secondary uppercase font-bold">
+                        <span className="material-symbols-outlined text-icon-14 text-terracotta-sandstone">directions_car</span>
                         Engine
                       </span>
-                      <span className="font-title-md text-[10.5px] text-ink-charcoal mt-0.5 block font-semibold">{veh.specs.fuel}</span>
+                      <span className="font-title-md text-body-md text-ink-charcoal mt-0.5 block font-semibold">{veh.specs.fuel}</span>
                     </div>
                   </div>
 
                   {/* Amenities & Best Suited */}
-                  <div className="flex flex-col gap-1 mb-space-sm text-on-surface-variant font-body-sm text-[10px]">
+                  <div className="flex flex-col gap-1 mb-space-sm text-on-surface-variant font-body-sm text-label-lg">
                     <div className="flex items-start gap-1.5">
-                      <span className="material-symbols-outlined text-[14px] text-success-jade shrink-0 mt-0.5">check_circle</span>
+                      <span className="material-symbols-outlined text-icon-14 text-success-jade shrink-0 mt-0.5">check_circle</span>
                       <span>
                         <strong>Complimentary Amenities:</strong> {veh.amenities.join(" · ")}
                       </span>
                     </div>
                     <div className="flex items-start gap-1.5">
-                      <span className="material-symbols-outlined text-[14px] text-terracotta-sandstone shrink-0 mt-0.5">stars</span>
+                      <span className="material-symbols-outlined text-icon-14 text-terracotta-sandstone shrink-0 mt-0.5">stars</span>
                       <span>
                         <strong>Best Suited For:</strong> {veh.bestSuitedFor}
                       </span>
@@ -514,11 +514,11 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                       <span className="text-white font-semibold" style={{ color: "#ffffff" }}>WhatsApp Inquiry</span>
                     </a>
                     <a
-                      className="w-full sm:w-auto px-4 py-2 rounded-lg bg-terracotta-sandstone hover:bg-terracotta-sunlit text-on-primary font-label-lg text-xs inline-flex items-center justify-center gap-1.5 shadow-xs transition-all shrink-0 font-semibold"
+                      className="w-full sm:w-auto px-4 py-2 rounded-lg bg-terracotta-deep hover:bg-terracotta-sunlit text-white font-label-lg text-xs inline-flex items-center justify-center gap-1.5 shadow-xs transition-all shrink-0 font-semibold"
                       href={`/book?vehicle=${veh.id}&step=2`}
                     >
                       <span>Book {veh.name.split(" ")[0]}</span>
-                      <span className="material-symbols-outlined text-[15px]">arrow_forward</span>
+                      <span className="material-symbols-outlined text-icon-15">arrow_forward</span>
                     </a>
                   </div>
                 </div>
@@ -532,7 +532,7 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
       <section id="spec-comparison" className="w-full bg-sandstone-wash/30 py-8 sm:py-space-xl border-y border-border-warm/70">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-space-lg">
-            <span className="font-label-caps text-[9.5px] text-terracotta-sandstone uppercase tracking-widest font-bold">
+            <span className="font-label-caps text-body-sm text-terracotta-sandstone uppercase tracking-widest font-bold">
               TRANSPARENT TARIFF BENCHMARK
             </span>
             <h2 className="font-headline-lg text-headline-sm sm:text-headline-lg text-ink-charcoal mt-1 font-semibold">
@@ -543,8 +543,8 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
             </p>
           </div>
           <div className="w-full overflow-x-auto rounded-xl shadow-xs bg-surface-container-lowest border border-border-warm/80">
-            <table className="w-full text-left font-body-sm text-[11px] min-w-[720px] border-collapse">
-              <thead className="bg-surface-container text-ink-charcoal font-label-caps text-[9.5px] uppercase tracking-wider border-b border-border-warm font-bold">
+            <table className="w-full text-left font-body-sm text-label-md min-w-[720px] border-collapse">
+              <thead className="bg-surface-container text-ink-charcoal font-label-caps text-body-sm uppercase tracking-wider border-b border-border-warm font-bold">
                 <tr>
                   <th className="py-2.5 px-3.5 align-middle">Vehicle Class</th>
                   <th className="py-2.5 px-3.5 align-middle">Passenger Capacity</th>
@@ -557,8 +557,8 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
               <tbody className="divide-y divide-surface-container">
                 <tr className="hover:bg-sandstone-wash/20 transition-colors">
                   <td className="py-2.5 px-3.5 align-middle">
-                    <span className="block font-title-md text-[11.5px] text-ink-charcoal font-semibold">Maruti Dzire / Etios</span>
-                    <span className="font-body-sm text-[9.5px] text-secondary font-normal">Executive Sedan</span>
+                    <span className="block font-title-md text-title-md text-ink-charcoal font-semibold">Maruti Dzire / Etios</span>
+                    <span className="font-body-sm text-body-sm text-secondary font-normal">Executive Sedan</span>
                   </td>
                   <td className="py-2.5 px-3.5 align-middle text-on-surface-variant font-medium whitespace-nowrap">4 + 1 Pax</td>
                   <td className="py-2.5 px-3.5 align-middle text-on-surface-variant">2 Large Bags</td>
@@ -566,7 +566,7 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                   <td className="py-2.5 px-3.5 align-middle font-bold text-terracotta-sandstone text-sm whitespace-nowrap">₹10 / km</td>
                   <td className="py-2.5 px-3.5 align-middle text-right whitespace-nowrap">
                     <a
-                      className="inline-block px-2.5 py-1 rounded bg-terracotta-sandstone hover:bg-terracotta-sunlit text-on-primary font-label-caps text-[9.5px] tracking-wider transition-all shadow-xs font-bold"
+                      className="inline-block px-2.5 py-1 rounded bg-terracotta-deep hover:bg-terracotta-sunlit text-white font-label-caps text-body-sm tracking-wider transition-all shadow-xs font-bold"
                       href="/book?vehicle=sedan&step=2"
                     >
                       Select Sedan
@@ -575,8 +575,8 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                 </tr>
                 <tr className="hover:bg-sandstone-wash/20 transition-colors">
                   <td className="py-2.5 px-3.5 align-middle">
-                    <span className="block font-title-md text-[11.5px] text-ink-charcoal font-semibold">Maruti Suzuki Ertiga</span>
-                    <span className="font-body-sm text-[9.5px] text-secondary font-normal">Smart Hybrid MPV</span>
+                    <span className="block font-title-md text-title-md text-ink-charcoal font-semibold">Maruti Suzuki Ertiga</span>
+                    <span className="font-body-sm text-body-sm text-secondary font-normal">Smart Hybrid MPV</span>
                   </td>
                   <td className="py-2.5 px-3.5 align-middle text-on-surface-variant font-medium whitespace-nowrap">6 + 1 Pax</td>
                   <td className="py-2.5 px-3.5 align-middle text-on-surface-variant">3 Medium + 3 Cabin</td>
@@ -584,7 +584,7 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                   <td className="py-2.5 px-3.5 align-middle font-bold text-terracotta-sandstone text-sm whitespace-nowrap">₹14 / km</td>
                   <td className="py-2.5 px-3.5 align-middle text-right whitespace-nowrap">
                     <a
-                      className="inline-block px-2.5 py-1 rounded bg-terracotta-sandstone hover:bg-terracotta-sunlit text-on-primary font-label-caps text-[9.5px] tracking-wider transition-all shadow-xs font-bold"
+                      className="inline-block px-2.5 py-1 rounded bg-terracotta-deep hover:bg-terracotta-sunlit text-white font-label-caps text-body-sm tracking-wider transition-all shadow-xs font-bold"
                       href="/book?vehicle=ertiga&step=2"
                     >
                       Select MPV
@@ -593,8 +593,8 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                 </tr>
                 <tr className="hover:bg-sandstone-wash/20 transition-colors bg-sandstone-wash/10">
                   <td className="py-2.5 px-3.5 align-middle">
-                    <span className="block font-title-md text-[11.5px] text-ink-charcoal font-semibold">Toyota Innova Crysta</span>
-                    <span className="font-body-sm text-[9.5px] text-terracotta-sandstone font-semibold">Executive Touring</span>
+                    <span className="block font-title-md text-title-md text-ink-charcoal font-semibold">Toyota Innova Crysta</span>
+                    <span className="font-body-sm text-body-sm text-terracotta-sandstone font-semibold">Executive Touring</span>
                   </td>
                   <td className="py-2.5 px-3.5 align-middle text-on-surface-variant font-medium whitespace-nowrap">6/7 + 1 Pax</td>
                   <td className="py-2.5 px-3.5 align-middle text-on-surface-variant">4 Large + Handbags</td>
@@ -602,7 +602,7 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                   <td className="py-2.5 px-3.5 align-middle font-bold text-terracotta-sandstone text-sm whitespace-nowrap">₹18 / km</td>
                   <td className="py-2.5 px-3.5 align-middle text-right whitespace-nowrap">
                     <a
-                      className="inline-block px-2.5 py-1 rounded bg-terracotta-sandstone hover:bg-terracotta-sunlit text-on-primary font-label-caps text-[9.5px] tracking-wider transition-all shadow-xs font-bold"
+                      className="inline-block px-2.5 py-1 rounded bg-terracotta-deep hover:bg-terracotta-sunlit text-white font-label-caps text-body-sm tracking-wider transition-all shadow-xs font-bold"
                       href="/book?vehicle=innova&step=2"
                     >
                       Select Crysta
@@ -611,8 +611,8 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                 </tr>
                 <tr className="hover:bg-sandstone-wash/20 transition-colors">
                   <td className="py-2.5 px-3.5 align-middle">
-                    <span className="block font-title-md text-[11.5px] text-ink-charcoal font-semibold">Force Tempo Traveller</span>
-                    <span className="font-body-sm text-[9.5px] text-secondary font-normal">Luxury Minibus</span>
+                    <span className="block font-title-md text-title-md text-ink-charcoal font-semibold">Force Tempo Traveller</span>
+                    <span className="font-body-sm text-body-sm text-secondary font-normal">Luxury Minibus</span>
                   </td>
                   <td className="py-2.5 px-3.5 align-middle text-on-surface-variant font-medium whitespace-nowrap">12 to 26 Pax</td>
                   <td className="py-2.5 px-3.5 align-middle text-on-surface-variant">15+ Bags + Deep Boot</td>
@@ -620,7 +620,7 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                   <td className="py-2.5 px-3.5 align-middle font-bold text-terracotta-sandstone text-sm whitespace-nowrap">₹25 / km</td>
                   <td className="py-2.5 px-3.5 align-middle text-right whitespace-nowrap">
                     <a
-                      className="inline-block px-2.5 py-1 rounded bg-terracotta-sandstone hover:bg-terracotta-sunlit text-on-primary font-label-caps text-[9.5px] tracking-wider transition-all shadow-xs font-bold"
+                      className="inline-block px-2.5 py-1 rounded bg-terracotta-deep hover:bg-terracotta-sunlit text-white font-label-caps text-body-sm tracking-wider transition-all shadow-xs font-bold"
                       href="/book?vehicle=tempo&step=2"
                     >
                       Select Minibus
@@ -629,8 +629,8 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                 </tr>
                 <tr className="hover:bg-sandstone-wash/20 transition-colors">
                   <td className="py-2.5 px-3.5 align-middle">
-                    <span className="block font-title-md text-[11.5px] text-ink-charcoal font-semibold">Force Urbania VIP</span>
-                    <span className="font-body-sm text-[9.5px] text-secondary font-normal">Monocoque Executive Van</span>
+                    <span className="block font-title-md text-title-md text-ink-charcoal font-semibold">Force Urbania VIP</span>
+                    <span className="font-body-sm text-body-sm text-secondary font-normal">Monocoque Executive Van</span>
                   </td>
                   <td className="py-2.5 px-3.5 align-middle text-on-surface-variant font-medium whitespace-nowrap">9 to 17 Pax</td>
                   <td className="py-2.5 px-3.5 align-middle text-on-surface-variant">12+ Suitcases Hold</td>
@@ -638,7 +638,7 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                   <td className="py-2.5 px-3.5 align-middle font-bold text-terracotta-sandstone text-sm whitespace-nowrap">₹34 / km</td>
                   <td className="py-2.5 px-3.5 align-middle text-right whitespace-nowrap">
                     <a
-                      className="inline-block px-2.5 py-1 rounded bg-terracotta-sandstone hover:bg-terracotta-sunlit text-on-primary font-label-caps text-[9.5px] tracking-wider transition-all shadow-xs font-bold"
+                      className="inline-block px-2.5 py-1 rounded bg-terracotta-deep hover:bg-terracotta-sunlit text-white font-label-caps text-body-sm tracking-wider transition-all shadow-xs font-bold"
                       href="/book?vehicle=urbania&step=2"
                     >
                       Select Urbania
@@ -655,7 +655,7 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
       <section className="w-full bg-surface py-8 sm:py-space-xl">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-space-lg">
-            <span className="font-label-caps text-[9.5px] text-primary uppercase tracking-widest font-bold block mb-1">
+            <span className="font-label-caps text-body-sm text-primary uppercase tracking-widest font-bold block mb-1">
               Vehicle Guidelines &amp; Policies
             </span>
             <h2 className="font-headline-lg text-headline-sm sm:text-headline-lg text-ink-charcoal font-semibold">
@@ -672,13 +672,13 @@ export function FleetPage({ language = "en" }: FleetPageProps) {
                     onClick={() => setOpenFaq(isOpen ? null : index)}
                     className="w-full text-left p-3 sm:p-3.5 flex items-center justify-between gap-3 hover:bg-sandstone-wash/20 transition-colors"
                   >
-                    <span className="font-title-md text-xs sm:text-[13px] font-semibold text-ink-charcoal">{faq.q}</span>
-                    <span className="material-symbols-outlined text-primary text-[18px] shrink-0">
+                    <span className="font-title-md text-xs sm:text-title-lg font-semibold text-ink-charcoal">{faq.q}</span>
+                    <span className="material-symbols-outlined text-primary text-icon-18 shrink-0">
                       {isOpen ? "expand_less" : "expand_more"}
                     </span>
                   </button>
                   {isOpen && (
-                    <div className="p-3 sm:p-3.5 pt-0 text-on-surface-variant font-body-sm text-[10.5px] leading-relaxed border-t border-border-warm/40 mt-1">
+                    <div className="p-3 sm:p-3.5 pt-0 text-on-surface-variant font-body-sm text-body-md leading-relaxed border-t border-border-warm/40 mt-1">
                       {faq.a}
                     </div>
                   )}

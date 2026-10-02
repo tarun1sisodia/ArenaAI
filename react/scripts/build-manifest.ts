@@ -16,7 +16,6 @@ export interface CompressedRoute {
   d: string;              // Destination
   km: number;             // Distance in km (One-Way)
   m: number;              // Duration in minutes
-  fh: number;             // Fare Hatchback
   fs: number;             // Fare Sedan (Dzire / Etios)
   fe: number;             // Fare Ertiga / SUV
   fi: number;             // Fare Innova Crysta
@@ -42,14 +41,12 @@ export async function buildRouteCatalogAndManifest(): Promise<void> {
     const fi = item.fares.innova;
     const ft = item.fares.tempo;
     const fu = item.fares.urbania;
-    const fh = item.hatchbackFare || Math.round(fs * 0.85);
 
     manifest[slug] = {
       o: item.origin,
       d: item.destination,
       km: item.km,
       m: item.durationMins || Math.round((item.km / 55) * 60),
-      fh,
       fs,
       fe,
       fi,
@@ -105,7 +102,6 @@ export async function buildRouteCatalogAndManifest(): Promise<void> {
             d: item.destinationCity ?? item.destination_city ?? "Local sightseeing",
             km: distanceKm,
             m: durationMins,
-            fh: Math.round(Number(fares.sedan ?? 2000) * 0.85),
             fs: Number(fares.sedan ?? 2000),
             fe: Number(fares.ertiga ?? 2800),
             fi: Number(fares.innova ?? 3800),

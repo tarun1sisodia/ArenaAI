@@ -65,7 +65,7 @@ const AVAILABILITY_BADGE: Record<PublicAvailability, { label: (seats: number | n
   available: null,
   limited: {
     label: (seats) => (seats !== null ? `Only ${seats} left` : "Limited seats"),
-    className: "bg-terracotta-sandstone text-on-primary font-bold",
+    className: "bg-terracotta-deep text-white font-bold",
   },
   unavailable: {
     label: () => "On request",
@@ -114,7 +114,7 @@ export function TripSelectionStep({
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-space-lg">
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-space-xs px-2.5 py-1 rounded bg-sandstone-wash text-terracotta-sandstone font-label-caps text-label-caps uppercase tracking-widest mb-space-xs">
-              <span className="material-symbols-outlined text-[15px]">route</span>
+              <span className="material-symbols-outlined text-icon-15">route</span>
               Step 2 • Live Desk Catalogue
             </div>
             <h1 className="font-headline-lg text-headline-lg text-ink-charcoal tracking-tight mt-1">
@@ -153,7 +153,7 @@ export function TripSelectionStep({
         {/* Search bar + trip type filters */}
         <div className="mt-space-md flex flex-col md:flex-row gap-space-sm md:items-center">
           <div className="relative flex-1 min-w-0">
-            <span className="material-symbols-outlined text-on-surface-variant absolute left-3 top-1/2 -translate-y-1/2 text-[18px]" aria-hidden="true">
+            <span className="material-symbols-outlined text-on-surface-variant absolute left-3 top-1/2 -translate-y-1/2 text-icon-18" aria-hidden="true">
               search
             </span>
             <input
@@ -199,7 +199,7 @@ export function TripSelectionStep({
 
           {filteredTrips.length === 0 && (
             <div className="bg-surface-container-lowest rounded-xl border border-border-warm p-space-lg text-center">
-              <span className="material-symbols-outlined text-[32px] text-secondary" aria-hidden="true">search_off</span>
+              <span className="material-symbols-outlined text-icon-32 text-secondary" aria-hidden="true">search_off</span>
               <p className="font-title-md text-title-md text-ink-charcoal font-semibold mt-2">
                 No trips match “{search}”
               </p>
@@ -254,17 +254,17 @@ export function TripSelectionStep({
                   </p>
                   <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-body-sm text-body-sm text-on-surface-variant">
                     <span className="inline-flex items-center gap-1">
-                      <span className="material-symbols-outlined text-[14px]" aria-hidden="true">schedule</span>
+                      <span className="material-symbols-outlined text-icon-14" aria-hidden="true">schedule</span>
                       {trip.duration}
                     </span>
                     {trip.distanceKm !== null && trip.distanceKm !== undefined && (
                       <span className="inline-flex items-center gap-1">
-                        <span className="material-symbols-outlined text-[14px]" aria-hidden="true">route</span>
+                        <span className="material-symbols-outlined text-icon-14" aria-hidden="true">route</span>
                         ~{trip.distanceKm} km
                       </span>
                     )}
                     <span className="inline-flex items-center gap-1">
-                      <span className="material-symbols-outlined text-[14px]" aria-hidden="true">location_on</span>
+                      <span className="material-symbols-outlined text-icon-14" aria-hidden="true">pin_drop</span>
                       {trip.stops.length > 0 ? `${trip.stops.length} stop${trip.stops.length === 1 ? "" : "s"}` : "Direct"}
                     </span>
                     <span className="px-1.5 py-0.5 rounded bg-surface-container-low font-label-caps text-label-caps uppercase tracking-wider text-on-surface-variant">
@@ -333,7 +333,7 @@ export function TripSelectionStep({
                     {quoteLoading ? "Quoting…" : "Exact Fare"}
                   </span>
                   {quoteLoading ? (
-                    <span className="material-symbols-outlined text-[20px] animate-spin text-secondary" aria-hidden="true">
+                    <span className="material-symbols-outlined text-icon-20 animate-spin text-secondary" aria-hidden="true">
                       progress_activity
                     </span>
                   ) : quoteError ? (
@@ -362,10 +362,10 @@ export function TripSelectionStep({
               type="button"
               disabled={!selectedTrip}
               onClick={onContinue}
-              className="w-full py-3.5 px-space-md rounded-xl bg-terracotta-sandstone text-on-primary font-label-lg text-label-lg font-semibold hover:bg-terracotta-sunlit transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              className="w-full py-3.5 px-space-md rounded-xl bg-terracotta-deep text-white font-label-lg text-label-lg font-semibold hover:bg-terracotta-sunlit transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               <span>Continue to Booking Form</span>
-              <span className="material-symbols-outlined text-[18px]" aria-hidden="true">arrow_forward</span>
+              <span className="material-symbols-outlined text-icon-18" aria-hidden="true">arrow_forward</span>
             </button>
           </div>
         </div>

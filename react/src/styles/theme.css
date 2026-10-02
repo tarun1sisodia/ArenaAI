@@ -15,7 +15,13 @@
   /* Terracotta & Heritage Accents */
   --color-terracotta-sandstone: #C85A32;
   --color-terracotta-sunlit: #D97746;
+  /* Deepened terracotta for white-text badges — #C85A32 on white is 4.23:1
+     (fails WCAG AA); this is 5.10:1. Added 2026-10-01 (a11y fix). */
+  --color-terracotta-deep: #B4502A;
   --color-gold-accent: #D99A3E;
+  /* Dark bronze for small gold-family text on light surfaces — #D99A3E on
+     #F8F3F0 is 2.21:1 (fails WCAG AA); this is 5.12:1. Added 2026-10-01. */
+  --color-gold-bronze: #8C5E14;
   --color-success-jade: #2D6A4F;
 
   /* Neutrals & Surfaces */
@@ -123,6 +129,33 @@
   --text-label-lg--line-height: 14px;
   --text-label-caps: 8.5px;
   --text-label-caps--line-height: 11px;
+
+  /* Type-scale infill — added 2026-10-01 (typography sync).
+     Named tokens absorbing ad-hoc text-[Npx] usages found across the app.
+     Prefer the primary scale above for new work. */
+  --text-label-md: 11px;
+  --text-label-md--line-height: 14px;
+  --text-headline-card: 18px;
+  --text-headline-card--line-height: 24px;
+  --text-display-watermark: 160px;
+  --text-display-watermark--line-height: 160px;
+  /* Icon glyph sizes — Material Symbols are sized via font-size; these keep
+     icon sizing on named tokens instead of text-[Npx] arbitrary values. */
+  --text-icon-11: 11px;
+  --text-icon-13: 13px;
+  --text-icon-14: 14px;
+  --text-icon-15: 15px;
+  --text-icon-16: 16px;
+  --text-icon-17: 17px;
+  --text-icon-18: 18px;
+  --text-icon-20: 20px;
+  --text-icon-22: 22px;
+  --text-icon-24: 24px;
+  --text-icon-26: 26px;
+  --text-icon-28: 28px;
+  --text-icon-32: 32px;
+  --text-icon-36: 36px;
+  --text-icon-48: 48px;
 
   /* Tightened Spacing Tokens (-20% reduction) */
   --spacing-space-xs: 0.2rem;

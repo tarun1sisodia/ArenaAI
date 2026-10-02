@@ -83,7 +83,7 @@ export function Footer({ className = "" }: FooterProps) {
               </p>
             <div className="flex flex-col gap-1 pt-1 text-body-sm">
                 <a href={`tel:${contact.phone}`} className="inline-flex items-center gap-2 text-on-surface hover:text-primary transition-colors">
-                  <span className="material-symbols-outlined text-primary text-[18px]">call</span>
+                  <span className="material-symbols-outlined text-primary text-icon-18">call</span>
                   <span>{contact.phoneDisplay}</span>
                 </a>
                 <a href={`https://wa.me/${contact.whatsapp}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-on-surface hover:text-primary transition-colors">
@@ -96,7 +96,7 @@ export function Footer({ className = "" }: FooterProps) {
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-space-xs text-primary hover:underline font-label-lg text-label-lg mt-1"
                 >
-                  <span className="material-symbols-outlined text-[16px]">map</span>
+                  <span className="material-symbols-outlined text-icon-16">map</span>
                   <span>View on Google Maps</span>
                 </a>
               </div>
@@ -206,10 +206,10 @@ export function Footer({ className = "" }: FooterProps) {
       {/* Sub-Footer & Legal Copyright */}
       <div className="border-t border-border-warm bg-surface-container/40">
         <div className="max-w-7xl mx-auto px-margin-mobile lg:px-margin py-space-md flex flex-col sm:flex-row items-center justify-between gap-space-sm text-center sm:text-left">
-          <p className="font-body-sm text-body-sm text-on-surface-variant text-[13px]">
+          <p className="font-body-sm text-body-sm text-on-surface-variant text-title-lg">
             © {new Date().getFullYear()} SK Baghel Tour & Travels. All rights reserved.
           </p>
-          <div className="flex flex-wrap items-center gap-space-md font-body-sm text-body-sm text-[13px]">
+          <div className="flex flex-wrap items-center gap-space-md font-body-sm text-body-sm text-title-lg">
             <a href="/privacy" className="hover:text-primary transition-colors">Privacy Policy</a>
             <span className="text-border-warm">•</span>
             <a href="/terms" className="hover:text-primary transition-colors">Terms of Service</a>
