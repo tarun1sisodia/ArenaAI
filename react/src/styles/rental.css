@@ -1,0 +1,193 @@
+/* Taxi Rental page: focused responsive layer for cards, form, and mobile controls. */
+.rental-page {
+  --rental-ink: #25211f;
+  --rental-muted: #5a626a;
+  --rental-border: #e7ddd5;
+}
+.rental-page .detail-content {
+  max-width: 1100px;
+}
+.rental-page .fleet-card-body h2 {
+  margin: 0 0 8px;
+  color: var(--rental-ink);
+  font-family: var(--font-display, Georgia, serif);
+  font-size: clamp(1.45rem, 2vw, 1.8rem);
+  line-height: 1.2;
+}
+.rental-rate-copy {
+  min-height: 52px;
+  margin: 0 0 12px;
+  color: var(--rental-muted);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+.rental-rate-copy strong {
+  color: var(--gold-deep, #b27123);
+}
+.rental-page .text-link {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  width: fit-content;
+  font-weight: 700;
+}
+.rental-how {
+  margin: 48px 0 40px;
+  padding: 28px;
+  border: 1px solid var(--rental-border);
+  border-radius: var(--radius-card, 12px);
+  background: var(--bg-alt, #faf7f4);
+}
+.rental-how .catalogue-grid {
+  margin-top: 16px;
+}
+.rental-how .catalogue-grid > div {
+  padding: 16px;
+  border: 1px solid var(--rental-border);
+  border-radius: var(--radius, 8px);
+  background: var(--surface, #fff);
+}
+.rental-how p {
+  margin: 6px 0 0;
+  color: var(--rental-muted);
+}
+.rental-form-section {
+  max-width: 820px;
+  margin: 0 auto 52px;
+  padding: 28px;
+  border: 1px solid var(--rental-border);
+  border-radius: var(--radius-card, 12px);
+  background: var(--surface, #fff);
+  box-shadow: 0 8px 28px rgba(49, 38, 31, 0.06);
+}
+.rental-form h2,
+.form-success h2 {
+  margin: 0 0 20px;
+  color: var(--rental-ink);
+  font-family: var(--font-display, Georgia, serif);
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  line-height: 1.2;
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.form-grid label {
+  display: grid;
+  gap: 6px;
+  color: var(--rental-ink);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+.form-grid label span {
+  color: var(--rental-muted);
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+.form-grid input,
+.form-grid select,
+.form-grid textarea {
+  width: 100%;
+  min-height: 46px;
+  border: 1px solid #cfc3bb;
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: #fff;
+  color: var(--rental-ink);
+  font: inherit;
+  font-weight: 500;
+}
+.form-grid textarea {
+  min-height: 112px;
+  resize: vertical;
+}
+.form-grid input:focus-visible,
+.form-grid select:focus-visible,
+.form-grid textarea:focus-visible {
+  outline: 3px solid rgba(229, 160, 68, 0.35);
+  outline-offset: 1px;
+  border-color: var(--gold-deep, #b27123);
+}
+.form-grid .full {
+  grid-column: 1 / -1;
+}
+.form-grid label.checkbox {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  grid-template-columns: none;
+  gap: 8px;
+}
+.form-grid label.checkbox input {
+  width: 20px;
+  min-height: 20px;
+  accent-color: var(--gold-deep, #b27123);
+}
+.form-grid .honeypot {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.form-error {
+  margin: 0 0 14px;
+  color: #b42318;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+.form-success p:not(.eyebrow) {
+  color: var(--rental-muted);
+}
+.rental-page .detail-content:last-child {
+  max-width: 820px;
+}
+@media (max-width: 700px) {
+  .rental-page {
+    padding-bottom: 132px;
+  }
+  .rental-page .marketing-hero {
+    padding-top: 52px;
+  }
+  .rental-page .fleet-card-media {
+    height: 200px;
+  }
+  .rental-page .fleet-card-body {
+    padding: 18px;
+  }
+  .rental-page .fleet-card-body h2 {
+    font-size: 1.45rem;
+  }
+  .rental-rate-copy {
+    min-height: 0;
+    margin-bottom: 8px;
+  }
+  .rental-page .text-link {
+    width: 100%;
+    justify-content: center;
+    border-radius: 8px;
+    background: var(--gold-soft, #fff1d6);
+    color: var(--gold-deep, #b27123);
+  }
+  .rental-how,
+  .rental-form-section {
+    padding: 20px;
+  }
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .form-grid .full {
+    grid-column: auto;
+  }
+  .rental-form-section .button,
+  .form-success .button {
+    width: 100%;
+  }
+  .app-shell:has(.rental-page) .about {
+    bottom: 86px;
+  }
+}
