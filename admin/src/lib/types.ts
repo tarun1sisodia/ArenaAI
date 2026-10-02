@@ -184,6 +184,8 @@ export interface Inquiry {
   createdAt: string;
 }
 
+export type RentalStatus = "new" | "contacted" | "quoted" | "done" | "closed" | "spam";
+export interface RentalEnquiry { id: string; ref: string; name: string; phone: string; email?: string | null; carTier: string; pickupDate: string; returnDate: string; pickupLocation: string; withDriver: boolean; note?: string | null; status: RentalStatus; notes: string[]; createdAt: string; updatedAt: string; }
 export interface FareRule {
   vehicleTier: VehicleTier;
   label: string;

@@ -37,6 +37,7 @@ export function MobileNavSheet({
     { label: "Home", href: "/", icon: "home" },
     { label: "About Us", href: "/en/about/", icon: "info" },
     { label: "Services", href: "/en/services/", icon: "room_service" },
+    { label: "Taxi Rental", href: "/en/taxis/rent/", icon: "local_taxi" },
     { label: "Outstation Routes", href: "/en/routes/", icon: "alt_route" },
     { label: "Tour Packages", href: "/en/packages/", icon: "explore" },
     { label: "Fleet Showroom", href: "/en/fleet/", icon: "directions_car" },

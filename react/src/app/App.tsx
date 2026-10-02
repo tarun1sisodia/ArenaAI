@@ -3,6 +3,7 @@ import { ErrorBoundary } from "../components/ErrorBoundary";
 import { SiteLayout } from "../layouts/SiteLayout";
 import { HomePage } from "../pages/HomePage";
 
+const RentalPage = lazy(() => import("../pages/RentalPage").then((m) => ({ default: m.RentalPage })));
 const ServicesPage = lazy(() => import("../pages/ServicesPage").then((m) => ({ default: m.ServicesPage })));
 const RoutesPage = lazy(() => import("../pages/RoutesPage").then((m) => ({ default: m.RoutesPage })));
 const PackagesPage = lazy(() => import("../pages/PackagesPage").then((m) => ({ default: m.PackagesPage })));
@@ -110,6 +111,7 @@ export function getSeo(pathname: string, section: string, language: "en" | "hi",
     };
   }
 
+  if (section === "rent") { return { title: "Rent a Taxi in Agra | SK Baghel Tour & Travels", description: "Request a chauffeured taxi rental in Agra. Choose from Sedan, Ertiga, Innova Crysta, Tempo Traveller and Urbania; the owner confirms availability by phone.", ogImage: "/assets/fleet/innova.webp", keywords: ["rent a taxi Agra", "car rental Agra", "taxi rental Agra"] }; }
   if (section === "services") {
     return {
       title: "Taxi Services in Agra | Outstation, Local & Airport Cabs | SK Baghel",
@@ -307,6 +309,7 @@ export function App({ pathname: propPathname }: AppProps = {}) {
     isHome ||
     isBooking ||
     isMarketingHub ||
+    section === "rent" ||
     Boolean(activeRoute) ||
     Boolean(matchedPackage) ||
     Boolean(matchedVehicle) ||
@@ -358,6 +361,8 @@ export function App({ pathname: propPathname }: AppProps = {}) {
           <VehicleDetailPage language={language} vehicle={matchedVehicle} />
         ) : isSeoLanding ? (
           <SeoLandingPage slug={section as SeoLandingSlug} />
+          ) : section === "rent" ? (
+            <RentalPage />
           ) : section === "services" ? (
             <ServicesPage language={language} />
           ) : section === "routes" ? (

@@ -5,6 +5,7 @@ import type {
   CatalogItemRecord,
   CatalogMediaRecord,
   InquiryRecord,
+  RentalEnquiryRecord,
   LocationSuggestion,
   NotificationJobRecord,
   PaymentRecord,
@@ -14,7 +15,7 @@ import type {
   ReviewRecord,
   WebhookEventRecord,
 } from "../types/domain.js";
-import type { DeviceRegistrationRecord, FareRuleRecord, InquiryListFilter, PaymentListFilter, Repositories } from "./types.js";
+import type { DeviceRegistrationRecord, FareRuleRecord, InquiryListFilter, RentalEnquiryListFilter, PaymentListFilter, Repositories } from "./types.js";
 import type { RouteCatalogRecord } from "./route-catalog-types.js";
 import { createPoolConfig } from "./poolConfig.js";
 import { ConcurrencyError } from "./concurrency.js";
@@ -31,6 +32,7 @@ function mapRouteCatalog(row: Record<string, unknown>): RouteCatalogRecord {
   return { id: String(row.id), tripType: row.trip_type as RouteCatalogRecord["tripType"], sourceCity: String(row.source_city), sourceDetail: row.source_detail ? String(row.source_detail) : null, destinationCity: row.destination_city ? String(row.destination_city) : null, slug: String(row.slug), distanceKm: row.distance_km === null ? null : num(row.distance_km), durationText: row.duration_text ? String(row.duration_text) : null, availableFleets: (row.available_fleets as string[]) ?? [], faresInr: (row.fares_inr as Record<string, number>) ?? {}, driverChargeInr: num(row.driver_charge_inr), nightHaltInr: num(row.night_halt_inr), tollIncluded: Boolean(row.toll_included), tollAmountInr: row.toll_amount_inr === null ? null : num(row.toll_amount_inr), interstateCharges: (row.interstate_charges as RouteCatalogRecord["interstateCharges"]) ?? [], minKmPerDay: num(row.min_km_per_day), stops: (row.stops as RouteCatalogRecord["stops"]) ?? [], status: row.status as RouteCatalogRecord["status"], needsReview: Boolean(row.needs_review), createdAt: new Date(String(row.created_at)).toISOString(), updatedAt: new Date(String(row.updated_at)).toISOString() };
 }
 
+function mapRentalEnquiry(row: Record<string, unknown>): RentalEnquiryRecord { return { id: String(row.id), ref: String(row.ref), name: String(row.name), phone: String(row.phone), email: row.email ? String(row.email) : null, carTier: row.car_tier as RentalEnquiryRecord["carTier"], pickupDate: String(row.pickup_date).slice(0,10), returnDate: String(row.return_date).slice(0,10), pickupLocation: String(row.pickup_location), withDriver: Boolean(row.with_driver), note: row.note ? String(row.note) : null, status: row.status as RentalEnquiryRecord["status"], notes: (row.notes as string[]) ?? [], createdAt: new Date(String(row.created_at)).toISOString(), updatedAt: new Date(String(row.updated_at)).toISOString() }; }
 function mapBooking(row: Record<string, unknown>): BookingRecord {
   return {
     id: String(row.id),
@@ -711,6 +713,12 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
             createdAt: new Date(String(row.created_at)).toISOString(),
           }));
         },
+      },
+      rentalEnquiries: {
+        async create(record: RentalEnquiryRecord) { const rows = await query(client, `insert into rental_enquiries (id, ref, name, phone, email, car_tier, pickup_date, return_date, pickup_location, with_driver, note, status, notes, created_at, updated_at) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15) returning *`, [record.id,record.ref,record.name,record.phone,record.email,record.carTier,record.pickupDate,record.returnDate,record.pickupLocation,record.withDriver,record.note,record.status,record.notes,record.createdAt,record.updatedAt]); return mapRentalEnquiry(rows[0]!); },
+        async update(record: RentalEnquiryRecord) { const rows = await query(client, `update rental_enquiries set status=$2, notes=$3, updated_at=$4 where id=$1 returning *`, [record.id,record.status,record.notes,record.updatedAt]); if (!rows[0]) throw new Error("rental enquiry update failed: not found"); return mapRentalEnquiry(rows[0]); },
+        async getById(id: string) { const rows = await query(client, "select * from rental_enquiries where id=$1", [id]); return rows[0] ? mapRentalEnquiry(rows[0]) : null; },
+        async list(filter?: RentalEnquiryListFilter) { const clauses:string[]=[]; const params:unknown[]=[]; if(filter?.status){params.push(filter.status);clauses.push(`status=$${params.length}`);} if(filter?.carTier){params.push(filter.carTier);clauses.push(`car_tier=$${params.length}`);} if(filter?.from){params.push(filter.from);clauses.push(`pickup_date >= $${params.length}`);} if(filter?.to){params.push(filter.to);clauses.push(`pickup_date <= $${params.length}`);} if(filter?.q){params.push(`%${filter.q.toLowerCase()}%`);clauses.push(`(lower(name) like $${params.length} or phone like $${params.length})`);} const where=clauses.length?`where ${clauses.join(" and ")}`:""; const count=await query(client,`select count(*)::int as total from rental_enquiries ${where}`,params); const page=filter?.page??1, limit=filter?.limit??50; const qp=[...params,limit,(page-1)*limit]; const rows=await query(client,`select * from rental_enquiries ${where} order by created_at desc limit $${qp.length-1} offset $${qp.length}`,qp); return { total:num(count[0]?.total??0), items:rows.map(mapRentalEnquiry) }; },
       },
       inquiries: {
         async create(record: InquiryRecord) {

@@ -8,6 +8,7 @@ import {
   Library,
   LogOut,
   MessageSquare,
+  Car,
   ScrollText,
   Star,
 } from "lucide-react";
@@ -31,6 +32,7 @@ export const NAV_ITEMS: NavItem[] = [
   { to: "/catalog", label: "Catalog CMS", icon: Library },
   { to: "/reviews", label: "Reviews", icon: Star },
   { to: "/inquiries", label: "Inquiries", icon: MessageSquare },
+  { to: "/rental-requests", label: "Rental Requests", icon: Car },
   { to: "/fares", label: "Fare Rules", icon: Compass },
   { to: "/audit", label: "Audit Log", icon: ScrollText },
 ];

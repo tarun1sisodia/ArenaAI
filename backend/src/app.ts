@@ -33,6 +33,9 @@ import { CURATED_PLACES } from "./modules/fares/fare.catalogue.js";
 import { createInquiryController } from "./modules/inquiries/inquiry.controller.js";
 import { registerInquiryRoutes } from "./modules/inquiries/inquiry.routes.js";
 import { createInquiryService } from "./modules/inquiries/inquiry.service.js";
+import { createRentalEnquiryController } from "./modules/rental-enquiries/rental-enquiry.controller.js";
+import { registerRentalEnquiryRoutes } from "./modules/rental-enquiries/rental-enquiry.routes.js";
+import { createRentalEnquiryService } from "./modules/rental-enquiries/rental-enquiry.service.js";
 import { createLocationController } from "./modules/locations/location.controller.js";
 import { registerLocationRoutes } from "./modules/locations/location.routes.js";
 import { createLocationService } from "./modules/locations/location.service.js";
@@ -209,6 +212,7 @@ export async function buildApp(options: AppOptions): Promise<BuiltApp> {
   const reviewService = createReviewService({ db, clock });
   const locationService = createLocationService({ db, clock, geocoding });
   const inquiryService = createInquiryService({ db, clock });
+  const rentalEnquiryService = createRentalEnquiryService({ db, clock });
   const routeCatalogService = createRouteCatalogService({ db, clock });
 
   const healthHandler = async () => ({ success: true, data: { status: "ok", version: env.FARE_RULES_VERSION } });
@@ -240,6 +244,7 @@ export async function buildApp(options: AppOptions): Promise<BuiltApp> {
   await registerReviewRoutes(app, createReviewController(reviewService));
   await registerRouteCatalogRoutes(app, createRouteCatalogController(routeCatalogService));
   await registerInquiryRoutes(app, createInquiryController(inquiryService));
+  await registerRentalEnquiryRoutes(app, createRentalEnquiryController(rentalEnquiryService));
   await registerAdminRoutes(app, createAdminController(adminService, paymentService, bookingService));
 
   app.post("/api/v1/devices/register", {

@@ -22,6 +22,8 @@ import type {
   Inquiry,
   InquiryStatus,
   InquiryType,
+  RentalEnquiry,
+  RentalStatus,
   Payment,
   PaymentMethod,
   PaymentProvider,
@@ -171,6 +173,11 @@ export async function updateAdminInquiry(
   return json.data;
 }
 
+export async function fetchAdminRentalEnquiries(filter?: { status?: RentalStatus | "all"; car?: string | "all"; from?: string; to?: string; q?: string }): Promise<RentalEnquiry[]> {
+  const params = new URLSearchParams(); if (filter?.status && filter.status !== "all" && filter.status !== "new") params.set("status", filter.status); if (filter?.car && filter.car !== "all") params.set("car", filter.car); if (filter?.from) params.set("from", filter.from); if (filter?.to) params.set("to", filter.to); if (filter?.q) params.set("q", filter.q);
+  const json = await apiFetch(`/api/v1/ops/admin/rental-enquiries${params.toString() ? `?${params}` : ""}`); const items = json?.data?.items || json?.data?.rentalEnquiries || []; return Array.isArray(items) ? items.map((item: any) => ({ ...item, status: item.status || "new", notes: Array.isArray(item.notes) ? item.notes : [] })) : [];
+}
+export async function updateAdminRentalEnquiry(id: string, updates: { status?: RentalStatus; note?: string }): Promise<RentalEnquiry> { const json = await apiFetch(`/api/v1/ops/admin/rental-enquiries/${encodeURIComponent(id)}`, { method: "PATCH", body: JSON.stringify(updates) }); return json.data; }
 export async function fetchAdminPayments(filter?: {
   page?: number;
   limit?: number;
