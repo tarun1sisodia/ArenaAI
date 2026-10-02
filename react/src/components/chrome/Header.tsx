@@ -51,6 +51,7 @@ export function Header({
     { label: "Home", href: "/" },
     { label: "About", href: "/en/about/" },
     { label: "Services", href: "/en/services/" },
+    { label: "Taxi Rental", href: "/en/taxis/rent/" },
     { label: "Routes", href: "/en/routes/" },
     { label: "Packages", href: "/en/packages/" },
     { label: "Fleet", href: "/en/fleet/" },
