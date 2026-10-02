@@ -11,7 +11,7 @@ export interface ContactPageProps {
 const FAQ_ITEMS = [
   {
     q: "How quickly will your dispatch team respond to my booking or inquiry?",
-    a: "Our 24×7 Taj Ganj dispatch team responds within 2 to 5 minutes on WhatsApp (+91 63958 67598) or direct phone call. Inquiries submitted via the form are confirmed within 15 minutes with a transparent fare breakdown.",
+    a: "Our 24×7 Taj Ganj dispatch team responds within 2 to 5 minutes on WhatsApp (+91 97628 17598) or direct phone call. Inquiries submitted via the form are confirmed within 15 minutes with a transparent fare breakdown.",
   },
   {
     q: "Can I book a cab for a 5:00 AM Taj Mahal sunrise tour on short notice?",
@@ -103,7 +103,7 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
             <div className="inline-flex items-center gap-2 rounded-lg bg-surface-container border border-border-warm px-3.5 py-1.5 shadow-xs">
               <WhatsAppIcon className="w-4 h-4 shrink-0" />
               <p className="text-ink-charcoal text-xs sm:text-sm font-medium whitespace-nowrap">
-                Direct WhatsApp Travel Desk (+91 63958 67598)
+                Direct WhatsApp Travel Desk (+91 97628 17598)
               </p>
             </div>
             <div className="inline-flex items-center gap-2 rounded-lg bg-surface-container border border-border-warm px-3.5 py-1.5 shadow-xs">
@@ -146,7 +146,7 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
                 <Icon name="phone_in_talk" className="text-lg" />
               </div>
               <h3 className="font-headline-sm text-ink-charcoal text-base mb-1 font-semibold">Immediate Call Dispatch (24×7)</h3>
-              <p className="font-title-lg text-terracotta-sandstone mb-2 font-bold text-sm sm:text-base">+91 63958 67598</p>
+              <p className="font-title-lg text-terracotta-sandstone mb-2 font-bold text-sm sm:text-base">+91 97628 17598</p>
               <p className="text-on-surface-variant font-body-sm leading-relaxed mb-4 text-body-md">
                 Immediate taxi allocation, late-night expressway emergencies, 3:00 AM airport pickups, and instant driver
                 assignment.
@@ -154,7 +154,7 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
             </div>
             <a
               className="w-full inline-flex items-center justify-center gap-1.5 bg-terracotta-deep hover:bg-primary text-white font-label-lg py-2 px-3 rounded-lg transition-colors text-center text-xs font-semibold shadow-xs"
-              href="tel:+916395867598"
+              href="tel:+919762817598"
             >
               <Icon name="call" className="text-icon-16" />
               <span>Call Dispatch Now</span>
@@ -175,7 +175,7 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
               <h3 className="font-headline-sm text-ink-charcoal text-base mb-1 font-semibold">
                 WhatsApp Desk (Fastest)
               </h3>
-              <p className="font-title-lg text-ink-charcoal mb-2 font-bold text-sm sm:text-base">+91 63958 67598</p>
+              <p className="font-title-lg text-ink-charcoal mb-2 font-bold text-sm sm:text-base">+91 97628 17598</p>
               <p className="text-on-surface-variant font-body-sm leading-relaxed mb-4 text-body-md">
                 Send itinerary details, receive vehicle photos, driver credentials, live location tracking, and instant quote
                 cards with UPI advance links.

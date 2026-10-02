@@ -1665,7 +1665,7 @@ export function BookingPage() {
                       type="tel"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      placeholder="+91 63958 67598"
+                      placeholder="+91 97628 17598"
                       className="px-3 py-2.5 rounded-lg border border-border-warm bg-surface font-body-md text-on-surface focus:ring-1 focus:ring-primary focus:outline-none"
                     />
                   </div>

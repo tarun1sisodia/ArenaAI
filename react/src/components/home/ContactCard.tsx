@@ -5,7 +5,7 @@
  * - Architectural bento card with 4-corner plus cross markers (rotating 90° on card hover)
  * - Left column (1.3fr):
  *   - Fraunces display header with Taj Ganj dispatch desk description
- *   - 2-column contact tiles grid for Call (+91 63958 67598), WhatsApp, Email, and Google Maps
+ *   - 2-column contact tiles grid for Call (+91 97628 17598), WhatsApp, Email, and Google Maps
  *   - Full-width availability tile (24×7 Active Dispatch • Near Taj East Gate Rd)
  * - Right column (1fr):
  *   - Interactive inquiry form with name, phone, and trip details
@@ -102,7 +102,7 @@ export function ContactCard() {
       setIsSubmitting(false);
       setToast({
         show: true,
-        message: `Failed to submit inquiry: ${err?.message || "Please call us directly at +91 63958 67598."}`,
+        message: `Failed to submit inquiry: ${err?.message || "Please call us directly at +91 97628 17598."}`,
       });
       setTimeout(() => {
         setToast((prev) => ({ ...prev, show: false }));
@@ -460,7 +460,7 @@ export function ContactCard() {
                       type="tel"
                       inputMode="tel"
                       autoComplete="tel"
-                      placeholder="e.g. +91 63958 67598"
+                      placeholder="e.g. +91 97628 17598"
                       value={formData.phone}
                       onChange={handleInputChange}
                       required
