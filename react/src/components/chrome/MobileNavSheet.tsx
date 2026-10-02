@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { Icon, type IconName } from "../icons/Icon";
 import { BrandLogo } from "./BrandLogo";
 import { contact } from "../../data/contact";
 import { prefetchDocument } from "../../app/prefetch";
@@ -33,7 +34,7 @@ export function MobileNavSheet({
 
   if (!isOpen) return null;
 
-  const links = [
+  const links: { label: string; href: string; icon: IconName }[] = [
     { label: "Home", href: "/", icon: "home" },
     { label: "About Us", href: "/en/about/", icon: "info" },
     { label: "Services", href: "/en/services/", icon: "room_service" },
@@ -71,7 +72,7 @@ export function MobileNavSheet({
               onClick={onClose}
               aria-label="Close menu"
             >
-              <span className="material-symbols-outlined text-[20px]">close</span>
+              <Icon name="close" className="text-icon-20" />
             </button>
           </div>
 
@@ -92,9 +93,7 @@ export function MobileNavSheet({
                       : "text-on-surface hover:bg-sandstone-wash"
                   }`}
                 >
-                  <span className={`material-symbols-outlined text-[20px] ${active ? "text-on-primary-container" : "text-terracotta-sandstone"}`}>
-                    {link.icon}
-                  </span>
+                  <Icon name={link.icon} className={`text-icon-20 ${active ? "text-on-primary-container" : "text-terracotta-sandstone"}`} />
                   <span>{link.label}</span>
                 </a>
               );
@@ -108,9 +107,9 @@ export function MobileNavSheet({
           <div className="grid grid-cols-2 gap-2">
             <a
               href={`tel:${contact.phone}`}
-              className="flex items-center justify-center gap-1.5 py-2.5 rounded-lg bg-surface-container text-on-surface font-label-lg text-label-lg hover:bg-surface-container-high transition-colors"
+              className="flex min-h-12 items-center justify-center gap-1.5 py-2.5 rounded-lg bg-surface-container text-on-surface font-label-lg text-label-lg hover:bg-surface-container-high transition-colors"
             >
-              <span className="material-symbols-outlined text-primary text-[18px]">call</span>
+              <Icon name="call" className="text-primary text-icon-18" />
               <span>Call Desk</span>
             </a>
             <a
@@ -118,14 +117,14 @@ export function MobileNavSheet({
               target="_blank"
               rel="noopener noreferrer"
               style={{ color: "#ffffff" }}
-              className="flex items-center justify-center gap-1.5 py-2.5 rounded-lg bg-black text-white font-label-lg text-label-lg hover:bg-neutral-900 transition-colors shadow-sm border border-white/10 active:scale-[0.98]"
+              className="flex min-h-12 items-center justify-center gap-1.5 py-2.5 rounded-lg bg-black text-white font-label-lg text-label-lg hover:bg-neutral-900 transition-colors shadow-sm border border-white/10 active:scale-[0.98]"
             >
               <WhatsAppIcon className="w-[18px] h-[18px] shrink-0 text-white" />
               <span className="text-white" style={{ color: "#ffffff" }}>WhatsApp</span>
             </a>
           </div>
 
-          <div className="text-center text-body-sm text-secondary text-[12px] pt-1">
+          <div className="text-center text-body-sm text-secondary text-body-lg pt-1">
             24×7 Taj Ganj Agra Dispatch • Transparent Fares
           </div>
         </div>

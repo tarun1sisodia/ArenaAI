@@ -7,6 +7,7 @@
     <changefreq>daily</changefreq>
     <priority>1.00</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://agraskbagheltourandtravels.com/" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://agraskbagheltourandtravels.com/hi/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://agraskbagheltourandtravels.com/" />
   </url>
   <url>
@@ -15,6 +16,7 @@
     <changefreq>daily</changefreq>
     <priority>0.90</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://agraskbagheltourandtravels.com/" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://agraskbagheltourandtravels.com/hi/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://agraskbagheltourandtravels.com/" />
   </url>
   <url>
@@ -23,6 +25,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://agraskbagheltourandtravels.com/en/services/" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://agraskbagheltourandtravels.com/hi/services/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://agraskbagheltourandtravels.com/en/services/" />
   </url>
   <url>
@@ -31,6 +34,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://agraskbagheltourandtravels.com/en/routes/" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://agraskbagheltourandtravels.com/hi/routes/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://agraskbagheltourandtravels.com/en/routes/" />
   </url>
   <url>
@@ -39,6 +43,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://agraskbagheltourandtravels.com/en/packages/" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://agraskbagheltourandtravels.com/hi/packages/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://agraskbagheltourandtravels.com/en/packages/" />
   </url>
   <url>
@@ -47,6 +52,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://agraskbagheltourandtravels.com/en/fleet/" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://agraskbagheltourandtravels.com/hi/fleet/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://agraskbagheltourandtravels.com/en/fleet/" />
   </url>
   <url>
@@ -55,6 +61,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://agraskbagheltourandtravels.com/en/about/" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://agraskbagheltourandtravels.com/hi/about/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://agraskbagheltourandtravels.com/en/about/" />
   </url>
   <url>
@@ -63,6 +70,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://agraskbagheltourandtravels.com/en/contact/" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://agraskbagheltourandtravels.com/hi/contact/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://agraskbagheltourandtravels.com/en/contact/" />
   </url>
   <url>
@@ -71,6 +79,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://agraskbagheltourandtravels.com/en/faq/" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://agraskbagheltourandtravels.com/hi/faq/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://agraskbagheltourandtravels.com/en/faq/" />
   </url>
   <url>
@@ -79,6 +88,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://agraskbagheltourandtravels.com/en/privacy/" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://agraskbagheltourandtravels.com/hi/privacy/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://agraskbagheltourandtravels.com/en/privacy/" />
   </url>
   <url>
@@ -87,6 +97,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://agraskbagheltourandtravels.com/en/terms/" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://agraskbagheltourandtravels.com/hi/terms/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://agraskbagheltourandtravels.com/en/terms/" />
   </url>
   <url>
@@ -95,6 +106,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://agraskbagheltourandtravels.com/en/vehicles/sedan/" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://agraskbagheltourandtravels.com/hi/vehicles/sedan/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://agraskbagheltourandtravels.com/en/vehicles/sedan/" />
   </url>
   <url>
@@ -103,6 +115,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://agraskbagheltourandtravels.com/en/vehicles/ertiga/" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://agraskbagheltourandtravels.com/hi/vehicles/ertiga/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://agraskbagheltourandtravels.com/en/vehicles/ertiga/" />
   </url>
   <url>
@@ -111,6 +124,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://agraskbagheltourandtravels.com/en/vehicles/innova-crysta/" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://agraskbagheltourandtravels.com/hi/vehicles/innova-crysta/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://agraskbagheltourandtravels.com/en/vehicles/innova-crysta/" />
   </url>
   <url>
@@ -119,6 +133,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://agraskbagheltourandtravels.com/en/vehicles/tempo-traveller/" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://agraskbagheltourandtravels.com/hi/vehicles/tempo-traveller/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://agraskbagheltourandtravels.com/en/vehicles/tempo-traveller/" />
   </url>
   <url>
@@ -127,6 +142,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://agraskbagheltourandtravels.com/en/vehicles/urbania/" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://agraskbagheltourandtravels.com/hi/vehicles/urbania/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://agraskbagheltourandtravels.com/en/vehicles/urbania/" />
   </url>
   <url>
@@ -135,6 +151,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://agraskbagheltourandtravels.com/en/packages/taj-mahal-sunrise-tour/" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://agraskbagheltourandtravels.com/hi/packages/taj-mahal-sunrise-tour/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://agraskbagheltourandtravels.com/en/packages/taj-mahal-sunrise-tour/" />
   </url>
   <url>
@@ -143,6 +160,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://agraskbagheltourandtravels.com/en/packages/agra-sightseeing/" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://agraskbagheltourandtravels.com/hi/packages/agra-sightseeing/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://agraskbagheltourandtravels.com/en/packages/agra-sightseeing/" />
   </url>
   <url>
@@ -151,6 +169,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://agraskbagheltourandtravels.com/en/packages/agra-unhurried/" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://agraskbagheltourandtravels.com/hi/packages/agra-unhurried/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://agraskbagheltourandtravels.com/en/packages/agra-unhurried/" />
   </url>
   <url>
@@ -159,6 +178,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://agraskbagheltourandtravels.com/en/packages/mathura-vrindavan/" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://agraskbagheltourandtravels.com/hi/packages/mathura-vrindavan/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://agraskbagheltourandtravels.com/en/packages/mathura-vrindavan/" />
   </url>
   <url>
@@ -167,6 +187,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://agraskbagheltourandtravels.com/en/packages/gatimaan-express-agra-tour/" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://agraskbagheltourandtravels.com/hi/packages/gatimaan-express-agra-tour/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://agraskbagheltourandtravels.com/en/packages/gatimaan-express-agra-tour/" />
   </url>
   <url>
@@ -175,6 +196,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://agraskbagheltourandtravels.com/en/packages/golden-triangle/" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://agraskbagheltourandtravels.com/hi/packages/golden-triangle/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://agraskbagheltourandtravels.com/en/packages/golden-triangle/" />
   </url>
   <url>
@@ -183,6 +205,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://agraskbagheltourandtravels.com/en/agra-to-delhi-taxi/" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://agraskbagheltourandtravels.com/hi/agra-se-delhi-taxi/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://agraskbagheltourandtravels.com/en/agra-to-delhi-taxi/" />
   </url>
   <url>
@@ -191,6 +214,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://agraskbagheltourandtravels.com/en/delhi-to-agra-taxi/" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://agraskbagheltourandtravels.com/hi/delhi-se-agra-taxi/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://agraskbagheltourandtravels.com/en/delhi-to-agra-taxi/" />
   </url>
   <url>
@@ -199,6 +223,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://agraskbagheltourandtravels.com/en/agra-to-jaipur-taxi/" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://agraskbagheltourandtravels.com/hi/agra-se-jaipur-taxi/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://agraskbagheltourandtravels.com/en/agra-to-jaipur-taxi/" />
   </url>
   <url>
@@ -207,6 +232,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://agraskbagheltourandtravels.com/en/delhi-to-jaipur-taxi/" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://agraskbagheltourandtravels.com/hi/delhi-se-jaipur-taxi/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://agraskbagheltourandtravels.com/en/delhi-to-jaipur-taxi/" />
   </url>
   <url>
@@ -215,6 +241,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://agraskbagheltourandtravels.com/en/agra-to-gwalior-taxi/" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://agraskbagheltourandtravels.com/hi/agra-se-gwalior-taxi/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://agraskbagheltourandtravels.com/en/agra-to-gwalior-taxi/" />
   </url>
   <url>
@@ -223,6 +250,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://agraskbagheltourandtravels.com/en/agra-to-lucknow-taxi/" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://agraskbagheltourandtravels.com/hi/agra-se-lucknow-taxi/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://agraskbagheltourandtravels.com/en/agra-to-lucknow-taxi/" />
   </url>
   <url>
@@ -231,6 +259,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://agraskbagheltourandtravels.com/en/agra-to-mathura-taxi/" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://agraskbagheltourandtravels.com/hi/agra-se-mathura-taxi/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://agraskbagheltourandtravels.com/en/agra-to-mathura-taxi/" />
   </url>
   <url>
@@ -239,6 +268,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://agraskbagheltourandtravels.com/en/agra-sightseeing-taxi/" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://agraskbagheltourandtravels.com/hi/agra-darshan-taxi/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://agraskbagheltourandtravels.com/en/agra-sightseeing-taxi/" />
   </url>
   <url>
@@ -247,6 +277,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://agraskbagheltourandtravels.com/en/tempo-traveller-on-rent-agra/" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://agraskbagheltourandtravels.com/hi/tempo-traveller-on-rent-agra/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://agraskbagheltourandtravels.com/en/tempo-traveller-on-rent-agra/" />
   </url>
   <url>
@@ -255,6 +286,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://agraskbagheltourandtravels.com/en/12-seater-tempo-traveller-agra/" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://agraskbagheltourandtravels.com/hi/12-seater-tempo-traveller-agra/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://agraskbagheltourandtravels.com/en/12-seater-tempo-traveller-agra/" />
   </url>
   <url>
@@ -263,6 +295,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://agraskbagheltourandtravels.com/en/16-seater-tempo-traveller-agra/" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://agraskbagheltourandtravels.com/hi/16-seater-tempo-traveller-agra/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://agraskbagheltourandtravels.com/en/16-seater-tempo-traveller-agra/" />
   </url>
   <url>
@@ -271,6 +304,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://agraskbagheltourandtravels.com/en/18-seater-tempo-traveller-agra/" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://agraskbagheltourandtravels.com/hi/18-seater-tempo-traveller-agra/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://agraskbagheltourandtravels.com/en/18-seater-tempo-traveller-agra/" />
   </url>
   <url>
@@ -279,6 +313,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://agraskbagheltourandtravels.com/en/20-seater-tempo-traveller-agra/" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://agraskbagheltourandtravels.com/hi/20-seater-tempo-traveller-agra/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://agraskbagheltourandtravels.com/en/20-seater-tempo-traveller-agra/" />
   </url>
   <url>
@@ -287,6 +322,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://agraskbagheltourandtravels.com/en/24-seater-tempo-traveller-agra/" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://agraskbagheltourandtravels.com/hi/24-seater-tempo-traveller-agra/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://agraskbagheltourandtravels.com/en/24-seater-tempo-traveller-agra/" />
   </url>
   <url>
@@ -295,6 +331,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://agraskbagheltourandtravels.com/en/same-day-agra-tour-from-delhi/" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://agraskbagheltourandtravels.com/hi/same-day-agra-tour-from-delhi/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://agraskbagheltourandtravels.com/en/same-day-agra-tour-from-delhi/" />
   </url>
   <url>
@@ -303,6 +340,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://agraskbagheltourandtravels.com/en/taj-mahal-taxi-service/" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://agraskbagheltourandtravels.com/hi/taj-mahal-taxi-service/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://agraskbagheltourandtravels.com/en/taj-mahal-taxi-service/" />
   </url>
   <url>
@@ -311,6 +349,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://agraskbagheltourandtravels.com/en/agra-fatehpur-sikri-one-day-tour/" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://agraskbagheltourandtravels.com/hi/agra-fatehpur-sikri-one-day-tour/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://agraskbagheltourandtravels.com/en/agra-fatehpur-sikri-one-day-tour/" />
   </url>
 </urlset>

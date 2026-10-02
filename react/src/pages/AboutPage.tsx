@@ -1,4 +1,5 @@
 import React from "react";
+import { Icon } from "../components/icons/Icon";
 import { contact } from "../data/contact";
 import { WhatsAppIcon } from "../components/icons";
 import {
@@ -19,9 +20,9 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
         <div className="max-w-7xl mx-auto px-margin-mobile lg:px-margin flex items-center justify-between">
           <nav aria-label="Breadcrumb" className="flex items-center gap-space-xs text-body-sm font-body-sm text-on-surface-variant">
             <a className="hover:text-primary transition-colors" href="/">Home</a>
-            <span className="material-symbols-outlined text-[14px] text-terracotta-sandstone">chevron_right</span>
+            <Icon name="chevron_right" className="text-icon-14 text-terracotta-sandstone" />
             <span className="text-on-surface font-semibold">Why Choose Us</span>
-            <span className="material-symbols-outlined text-[14px] text-terracotta-sandstone">chevron_right</span>
+            <Icon name="chevron_right" className="text-icon-14 text-terracotta-sandstone" />
             <span className="text-terracotta-sandstone font-medium">The Baghel Standard</span>
           </nav>
         </div>
@@ -37,8 +38,8 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-center">
             {/* Text Column */}
             <div className="lg:col-span-7 flex flex-col gap-space-md">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary-fixed text-primary font-label-caps text-[9.5px] uppercase tracking-widest w-fit font-bold">
-                <span className="material-symbols-outlined text-[14px]">verified</span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary-fixed text-primary font-label-caps text-body-sm uppercase tracking-widest w-fit font-bold">
+                <Icon name="verified" className="text-icon-14" />
                 Heritage Chauffeur Ethics Since 2009
               </span>
               <h1 className={EDITORIAL_TYPOGRAPHY.heroH1}>
@@ -66,23 +67,23 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-space-md">
                 <div className="flex flex-col bg-surface-container-low p-2.5 sm:p-3 rounded-lg shadow-xs border border-border-warm/40">
                   <span className="font-headline-md text-base sm:text-lg text-terracotta-sandstone font-serif font-bold">15+</span>
-                  <span className="font-body-sm text-[11px] text-on-surface font-semibold">Years in Taj Ganj</span>
-                  <span className="text-[9.5px] text-secondary">Family-run local legacy</span>
+                  <span className="font-body-sm text-label-md text-on-surface font-semibold">Years in Taj Ganj</span>
+                  <span className="text-body-sm text-secondary">Family-run local legacy</span>
                 </div>
                 <div className="flex flex-col bg-surface-container-low p-2.5 sm:p-3 rounded-lg shadow-xs border border-border-warm/40">
                   <span className="font-headline-md text-base sm:text-lg text-terracotta-sandstone font-serif font-bold">3,800+</span>
-                  <span className="font-body-sm text-[11px] text-on-surface font-semibold">Verified Expeditions</span>
-                  <span className="text-[9.5px] text-secondary">4.9 / 5 Guest Satisfaction</span>
+                  <span className="font-body-sm text-label-md text-on-surface font-semibold">Verified Expeditions</span>
+                  <span className="text-body-sm text-secondary">4.9 / 5 Guest Satisfaction</span>
                 </div>
                 <div className="flex flex-col bg-surface-container-low p-2.5 sm:p-3 rounded-lg shadow-xs border border-border-warm/40">
                   <span className="font-headline-md text-base sm:text-lg text-terracotta-sandstone font-serif font-bold">100%</span>
-                  <span className="font-body-sm text-[11px] text-on-surface font-semibold">Yellow-Plate Fleet</span>
-                  <span className="text-[9.5px] text-secondary">Zero illegal white plates</span>
+                  <span className="font-body-sm text-label-md text-on-surface font-semibold">Yellow-Plate Fleet</span>
+                  <span className="text-body-sm text-secondary">Zero illegal white plates</span>
                 </div>
                 <div className="flex flex-col bg-surface-container-low p-2.5 sm:p-3 rounded-lg shadow-xs border border-border-warm/40">
                   <span className="font-headline-md text-base sm:text-lg text-terracotta-sandstone font-serif font-bold">0</span>
-                  <span className="font-body-sm text-[11px] text-on-surface font-semibold">Emporium Detours</span>
-                  <span className="text-[9.5px] text-secondary">Zero commission traps</span>
+                  <span className="font-body-sm text-label-md text-on-surface font-semibold">Emporium Detours</span>
+                  <span className="text-body-sm text-secondary">Zero commission traps</span>
                 </div>
               </div>
             </div>
@@ -129,7 +130,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between">
                   <span className="font-headline-md text-lg sm:text-xl font-serif text-terracotta-sandstone font-bold">01</span>
-                  <span className="material-symbols-outlined text-primary text-[22px]">do_not_disturb_on</span>
+                  <Icon name="do_not_disturb_on" className="text-primary text-icon-22" />
                 </div>
                 <h3 className={EDITORIAL_TYPOGRAPHY.subH4}>Zero Commission Traps Guarantee</h3>
                 <p className={EDITORIAL_TYPOGRAPHY.compact}>
@@ -139,8 +140,8 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                 </p>
               </div>
               <div className="mt-3 pt-2 bg-sandstone-wash/50 p-2 rounded">
-                <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowSandstone} text-[8.5px] mb-0.5`}>Guest Protection</span>
-                <span className="font-body-sm text-[10.5px] text-ink-charcoal font-medium">100% Uncompromised Itinerary Integrity</span>
+                <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowSandstone} text-label-caps mb-0.5`}>Guest Protection</span>
+                <span className="font-body-sm text-body-md text-ink-charcoal font-medium">100% Uncompromised Itinerary Integrity</span>
               </div>
             </div>
 
@@ -149,7 +150,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between">
                   <span className="font-headline-md text-lg sm:text-xl font-serif text-terracotta-sandstone font-bold">02</span>
-                  <span className="material-symbols-outlined text-primary text-[22px]">flight_takeoff</span>
+                  <Icon name="flight_takeoff" className="text-primary text-icon-22" />
                 </div>
                 <h3 className={EDITORIAL_TYPOGRAPHY.subH4}>Punctual Doorstep &amp; Flight Tracking</h3>
                 <p className={EDITORIAL_TYPOGRAPHY.compact}>
@@ -159,8 +160,8 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                 </p>
               </div>
               <div className="mt-3 pt-2 bg-sandstone-wash/50 p-2 rounded">
-                <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowSandstone} text-[8.5px] mb-0.5`}>Buffer Guarantee</span>
-                <span className="font-body-sm text-[10.5px] text-ink-charcoal font-medium">Zero Surcharge for Flight or Rail Delays</span>
+                <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowSandstone} text-label-caps mb-0.5`}>Buffer Guarantee</span>
+                <span className="font-body-sm text-body-md text-ink-charcoal font-medium">Zero Surcharge for Flight or Rail Delays</span>
               </div>
             </div>
 
@@ -169,7 +170,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between">
                   <span className="font-headline-md text-lg sm:text-xl font-serif text-terracotta-sandstone font-bold">03</span>
-                  <span className="material-symbols-outlined text-primary text-[22px]">badge</span>
+                  <Icon name="badge" className="text-primary text-icon-22" />
                 </div>
                 <h3 className={EDITORIAL_TYPOGRAPHY.subH4}>100% Yellow-Plate Commercial Fleet</h3>
                 <p className={EDITORIAL_TYPOGRAPHY.compact}>
@@ -179,8 +180,8 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                 </p>
               </div>
               <div className="mt-3 pt-2 bg-sandstone-wash/50 p-2 rounded">
-                <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowSandstone} text-[8.5px] mb-0.5`}>Legal Verification</span>
-                <span className="font-body-sm text-[10.5px] text-ink-charcoal font-medium">All India Tourist Permit (AITP) Certified</span>
+                <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowSandstone} text-label-caps mb-0.5`}>Legal Verification</span>
+                <span className="font-body-sm text-body-md text-ink-charcoal font-medium">All India Tourist Permit (AITP) Certified</span>
               </div>
             </div>
 
@@ -189,7 +190,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between">
                   <span className="font-headline-md text-lg sm:text-xl font-serif text-terracotta-sandstone font-bold">04</span>
-                  <span className="material-symbols-outlined text-primary text-[22px]">person_apron</span>
+                  <Icon name="person_apron" className="text-primary text-icon-22" />
                 </div>
                 <h3 className={EDITORIAL_TYPOGRAPHY.subH4}>Chauffeur Etiquette &amp; Heritage Fluency</h3>
                 <p className={EDITORIAL_TYPOGRAPHY.compact}>
@@ -198,8 +199,8 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                 </p>
               </div>
               <div className="mt-3 pt-2 bg-sandstone-wash/50 p-2 rounded">
-                <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowSandstone} text-[8.5px] mb-0.5`}>Chauffeur Standard</span>
-                <span className="font-body-sm text-[10.5px] text-ink-charcoal font-medium">Bilingual, Courteous &amp; Tobacco-Free</span>
+                <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowSandstone} text-label-caps mb-0.5`}>Chauffeur Standard</span>
+                <span className="font-body-sm text-body-md text-ink-charcoal font-medium">Bilingual, Courteous &amp; Tobacco-Free</span>
               </div>
             </div>
 
@@ -208,7 +209,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between">
                   <span className="font-headline-md text-lg sm:text-xl font-serif text-terracotta-sandstone font-bold">05</span>
-                  <span className="material-symbols-outlined text-primary text-[22px]">payments</span>
+                  <Icon name="payments" className="text-primary text-icon-22" />
                 </div>
                 <h3 className={EDITORIAL_TYPOGRAPHY.subH4}>Transparent 28% Advance &amp; Fare Lock</h3>
                 <p className={EDITORIAL_TYPOGRAPHY.compact}>
@@ -217,8 +218,8 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                 </p>
               </div>
               <div className="mt-3 pt-2 bg-sandstone-wash/50 p-2 rounded">
-                <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowSandstone} text-[8.5px] mb-0.5`}>Financial Safety</span>
-                <span className="font-body-sm text-[10.5px] text-ink-charcoal font-medium">booking receipt Invoiced • No Cash Shakedowns</span>
+                <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowSandstone} text-label-caps mb-0.5`}>Financial Safety</span>
+                <span className="font-body-sm text-body-md text-ink-charcoal font-medium">booking receipt Invoiced • No Cash Shakedowns</span>
               </div>
             </div>
 
@@ -227,7 +228,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between">
                   <span className="font-headline-md text-lg sm:text-xl font-serif text-terracotta-sandstone font-bold">06</span>
-                  <span className="material-symbols-outlined text-primary text-[22px]">support_agent</span>
+                  <Icon name="support_agent" className="text-primary text-icon-22" />
                 </div>
                 <h3 className={EDITORIAL_TYPOGRAPHY.subH4}>24×7 Human Taj Ganj Dispatch Desk</h3>
                 <p className={EDITORIAL_TYPOGRAPHY.compact}>
@@ -236,8 +237,8 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                 </p>
               </div>
               <div className="mt-3 pt-2 bg-sandstone-wash/50 p-2 rounded">
-                <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowSandstone} text-[8.5px] mb-0.5`}>Instant Human Voice</span>
-                <span className="font-body-sm text-[10.5px] text-ink-charcoal font-medium">Direct Telephone &amp; Live WhatsApp Desk</span>
+                <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowSandstone} text-label-caps mb-0.5`}>Instant Human Voice</span>
+                <span className="font-body-sm text-body-md text-ink-charcoal font-medium">Direct Telephone &amp; Live WhatsApp Desk</span>
               </div>
             </div>
           </div>
@@ -257,7 +258,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
             </svg>
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-center">
               <div className="lg:col-span-5 flex flex-col gap-2.5">
-                <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowGold} text-[9.5px]`}>
+                <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowGold} text-body-sm`}>
                   Unwavering Vehicle Readiness
                 </span>
                 <h2 className={EDITORIAL_TYPOGRAPHY.sectionH2Dark}>
@@ -268,18 +269,18 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                   sensory audit is executed at our Taj Ganj maintenance facility.
                 </p>
                 <div className="flex flex-col gap-1.5 pt-1">
-                  <div className="flex items-center gap-2 text-[10.5px]">
-                    <span className="material-symbols-outlined text-gold-accent text-[16px]">speed</span>
+                  <div className="flex items-center gap-2 text-body-md">
+                    <Icon name="speed" className="text-gold-accent text-icon-16" />
                     <span className="text-ivory-surface font-medium">Governor Speed Cap:</span>
                     <span className="text-secondary-fixed-dim">Strictly calibrated to 80–100 km/h</span>
                   </div>
-                  <div className="flex items-center gap-2 text-[10.5px]">
-                    <span className="material-symbols-outlined text-gold-accent text-[16px]">local_drink</span>
+                  <div className="flex items-center gap-2 text-body-md">
+                    <Icon name="local_drink" className="text-gold-accent text-icon-16" />
                     <span className="text-ivory-surface font-medium">In-Cabin Hospitality:</span>
                     <span className="text-secondary-fixed-dim">Chilled sealed water, tissues &amp; mints</span>
                   </div>
-                  <div className="flex items-center gap-2 text-[10.5px]">
-                    <span className="material-symbols-outlined text-gold-accent text-[16px]">medical_services</span>
+                  <div className="flex items-center gap-2 text-body-md">
+                    <Icon name="medical_services" className="text-gold-accent text-icon-16" />
                     <span className="text-ivory-surface font-medium">Safety Equipment:</span>
                     <span className="text-secondary-fixed-dim">ISO-approved medical kit &amp; fire canister</span>
                   </div>
@@ -291,8 +292,8 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   <div className="bg-ink-slate p-2.5 sm:p-3 rounded-lg flex flex-col gap-1 border border-white/5">
                     <div className="flex items-center justify-between">
-                      <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowGold} text-[8.5px]`}>Mechanical Systems</span>
-                      <span className="material-symbols-outlined text-success-jade text-[16px]">check_circle</span>
+                      <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowGold} text-label-caps`}>Mechanical Systems</span>
+                      <Icon name="check_circle" className="text-success-jade text-icon-16" />
                     </div>
                     <h4 className={EDITORIAL_TYPOGRAPHY.subH4Dark}>Braking &amp; Tread Depth</h4>
                     <p className={EDITORIAL_TYPOGRAPHY.compactDark}>
@@ -301,8 +302,8 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                   </div>
                   <div className="bg-ink-slate p-2.5 sm:p-3 rounded-lg flex flex-col gap-1 border border-white/5">
                     <div className="flex items-center justify-between">
-                      <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowGold} text-[8.5px]`}>Atmospheric Purity</span>
-                      <span className="material-symbols-outlined text-success-jade text-[16px]">check_circle</span>
+                      <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowGold} text-label-caps`}>Atmospheric Purity</span>
+                      <Icon name="check_circle" className="text-success-jade text-icon-16" />
                     </div>
                     <h4 className={EDITORIAL_TYPOGRAPHY.subH4Dark}>Dual-Zone AC Sanitization</h4>
                     <p className={EDITORIAL_TYPOGRAPHY.compactDark}>
@@ -311,8 +312,8 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                   </div>
                   <div className="bg-ink-slate p-2.5 sm:p-3 rounded-lg flex flex-col gap-1 border border-white/5">
                     <div className="flex items-center justify-between">
-                      <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowGold} text-[8.5px]`}>Navigational Rigor</span>
-                      <span className="material-symbols-outlined text-success-jade text-[16px]">check_circle</span>
+                      <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowGold} text-label-caps`}>Navigational Rigor</span>
+                      <Icon name="check_circle" className="text-success-jade text-icon-16" />
                     </div>
                     <h4 className={EDITORIAL_TYPOGRAPHY.subH4Dark}>Redundant GPS Telematics</h4>
                     <p className={EDITORIAL_TYPOGRAPHY.compactDark}>
@@ -321,8 +322,8 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                   </div>
                   <div className="bg-ink-slate p-2.5 sm:p-3 rounded-lg flex flex-col gap-1 border border-white/5">
                     <div className="flex items-center justify-between">
-                      <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowGold} text-[8.5px]`}>Guest Ergonomics</span>
-                      <span className="material-symbols-outlined text-success-jade text-[16px]">check_circle</span>
+                      <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowGold} text-label-caps`}>Guest Ergonomics</span>
+                      <Icon name="check_circle" className="text-success-jade text-icon-16" />
                     </div>
                     <h4 className={EDITORIAL_TYPOGRAPHY.subH4Dark}>Power Port Validation</h4>
                     <p className={EDITORIAL_TYPOGRAPHY.compactDark}>
@@ -332,14 +333,14 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                 </div>
 
                 {/* Visual Fleet Cutout Strip */}
-                <div className="mt-2.5 bg-ink-slate/60 p-2 sm:p-2.5 rounded-lg flex flex-wrap items-center justify-between gap-2 text-[10.5px] border border-white/5">
+                <div className="mt-2.5 bg-ink-slate/60 p-2 sm:p-2.5 rounded-lg flex flex-wrap items-center justify-between gap-2 text-body-md border border-white/5">
                   <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-terracotta-sunlit text-[16px]">airline_seat_recline_normal</span>
+                    <Icon name="airline_seat_recline_normal" className="text-terracotta-sunlit text-icon-16" />
                     <span className="text-ivory-surface">
                       Toyota Innova Crysta • Dzire Executive • Urbania 10-Seater • Tempo Traveller
                     </span>
                   </div>
-                  <span className="text-gold-accent font-semibold text-[10px]">100% AC Verified</span>
+                  <span className="text-gold-accent font-semibold text-label-lg">100% AC Verified</span>
                 </div>
               </div>
             </div>
@@ -365,13 +366,13 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
 
           {/* Comparison Table Wrapper */}
           <div className="w-full bg-surface-container-lowest rounded-xl shadow-xs overflow-x-auto border border-border-warm/50">
-            <table className="w-full text-left border-collapse min-w-[650px] font-body-sm text-[11px]">
+            <table className="w-full text-left border-collapse min-w-[650px] font-body-sm text-label-md">
               <thead>
                 <tr className="bg-sandstone-wash/80 text-on-surface border-b border-border-warm">
                   <th className="py-2.5 px-4 font-title-md text-xs font-bold">Standard Criteria</th>
                   <th className="py-2.5 px-4 font-title-md text-xs font-bold text-terracotta-sandstone bg-sandstone-wash">
                     <span className="flex items-center gap-1">
-                      <span className="material-symbols-outlined text-terracotta-sandstone text-[16px]">stars</span>
+                      <Icon name="stars" className="text-terracotta-sandstone text-icon-16" />
                       SK Baghel Tour &amp; Travels
                     </span>
                   </th>
@@ -385,7 +386,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                   <td className="py-2.5 px-4 font-medium text-ink-charcoal">Vehicle Model Guarantee</td>
                   <td className="py-2.5 px-4 font-semibold text-success-jade bg-sandstone-wash/30">
                     <div className="flex items-center gap-1">
-                      <span className="material-symbols-outlined text-[16px]">check_circle</span>
+                      <Icon name="check_circle" className="text-icon-16" />
                       Exact Model Reserved (e.g. Crysta ZX)
                     </div>
                   </td>
@@ -397,7 +398,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                   <td className="py-2.5 px-4 font-medium text-ink-charcoal">Unsolicited Commission Stops</td>
                   <td className="py-2.5 px-4 font-semibold text-success-jade bg-sandstone-wash/30">
                     <div className="flex items-center gap-1">
-                      <span className="material-symbols-outlined text-[16px]">verified_user</span>
+                      <Icon name="verified_user" className="text-icon-16" />
                       Strict Zero Tolerance (Cash penalty)
                     </div>
                   </td>
@@ -409,7 +410,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                   <td className="py-2.5 px-4 font-medium text-ink-charcoal">Yamuna Toll &amp; State Taxes</td>
                   <td className="py-2.5 px-4 font-semibold text-success-jade bg-sandstone-wash/30">
                     <div className="flex items-center gap-1">
-                      <span className="material-symbols-outlined text-[16px]">check_circle</span>
+                      <Icon name="check_circle" className="text-icon-16" />
                       Bundled &amp; Stated Upfront
                     </div>
                   </td>
@@ -421,7 +422,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                   <td className="py-2.5 px-4 font-medium text-ink-charcoal">Driver Verification</td>
                   <td className="py-2.5 px-4 font-semibold text-success-jade bg-sandstone-wash/30">
                     <div className="flex items-center gap-1">
-                      <span className="material-symbols-outlined text-[16px]">check_circle</span>
+                      <Icon name="check_circle" className="text-icon-16" />
                       Police ID + 7+ Yrs Golden Triangle
                     </div>
                   </td>
@@ -433,7 +434,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                   <td className="py-2.5 px-4 font-medium text-ink-charcoal">Chauffeur Contact Time</td>
                   <td className="py-2.5 px-4 font-semibold text-success-jade bg-sandstone-wash/30">
                     <div className="flex items-center gap-1">
-                      <span className="material-symbols-outlined text-[16px]">check_circle</span>
+                      <Icon name="check_circle" className="text-icon-16" />
                       Assigned 18–24 Hours Prior
                     </div>
                   </td>
@@ -445,7 +446,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                   <td className="py-2.5 px-4 font-medium text-ink-charcoal">Cancellation &amp; Reschedule</td>
                   <td className="py-2.5 px-4 font-semibold text-success-jade bg-sandstone-wash/30">
                     <div className="flex items-center gap-1">
-                      <span className="material-symbols-outlined text-[16px]">check_circle</span>
+                      <Icon name="check_circle" className="text-icon-16" />
                       Free Reschedule up to 12 Hours
                     </div>
                   </td>
@@ -470,8 +471,8 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                 Words From Those Who Journeyed With Us
               </h2>
             </div>
-            <div className="flex items-center gap-1 text-[11px] font-body-sm text-secondary">
-              <span className="material-symbols-outlined text-gold-accent text-[18px]">star</span>
+            <div className="flex items-center gap-1 text-label-md font-body-sm text-secondary">
+              <Icon name="star" className="text-gold-accent text-icon-18" />
               <span className="font-semibold text-ink-charcoal">4.92 / 5.0 Aggregate</span>
               <span>across Google &amp; TripAdvisor</span>
             </div>
@@ -484,14 +485,12 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                 <div className="flex items-center justify-between text-gold-accent">
                   <div className="flex gap-0.5">
                     {[...Array(5)].map((_, i) => (
-                      <span key={i} className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: '"FILL" 1' }}>
-                        star
-                      </span>
+                      <Icon name="star" className="text-icon-16" key={i} />
                     ))}
                   </div>
-                  <span className="text-[10px] text-secondary font-mono">Delhi ⇄ Agra Same-Day</span>
+                  <span className="text-label-lg text-secondary font-mono">Delhi ⇄ Agra Same-Day</span>
                 </div>
-                <p className="font-headline-sm text-xs sm:text-[13px] font-serif italic text-ink-charcoal leading-relaxed">
+                <p className="font-headline-sm text-xs sm:text-title-lg font-serif italic text-ink-charcoal leading-relaxed">
                   “Zero pressure. As two solo women travelers visiting the Taj at sunrise, our driver Mr. Rajesh was
                   chivalrous, highly defensive on the expressway, and didn’t stop at a single souvenir shop.”
                 </p>
@@ -500,10 +499,10 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col">
                     <span className="font-title-md text-xs text-on-surface font-semibold">Elena Rostova &amp; Claire V.</span>
-                    <span className="text-[10px] text-secondary">Geneva, Switzerland</span>
+                    <span className="text-label-lg text-secondary">Geneva, Switzerland</span>
                   </div>
-                  <div className="flex items-center gap-1 bg-surface-container px-2 py-0.5 rounded text-success-jade text-[10px] font-medium">
-                    <span className="material-symbols-outlined text-success-jade text-[15px]">verified</span>
+                  <div className="flex items-center gap-1 bg-surface-container px-2 py-0.5 rounded text-success-jade text-label-lg font-medium">
+                    <Icon name="verified" className="text-success-jade text-icon-15" />
                     <span>Verified Guest</span>
                   </div>
                 </div>
@@ -516,14 +515,12 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                 <div className="flex items-center justify-between text-gold-accent">
                   <div className="flex gap-0.5">
                     {[...Array(5)].map((_, i) => (
-                      <span key={i} className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: '"FILL" 1' }}>
-                        star
-                      </span>
+                      <Icon name="star" className="text-icon-16" key={i} />
                     ))}
                   </div>
-                  <span className="text-[10px] text-secondary font-mono">Mathura-Vrindavan Circuit</span>
+                  <span className="text-label-lg text-secondary font-mono">Mathura-Vrindavan Circuit</span>
                 </div>
-                <p className="font-headline-sm text-xs sm:text-[13px] font-serif italic text-ink-charcoal leading-relaxed">
+                <p className="font-headline-sm text-xs sm:text-title-lg font-serif italic text-ink-charcoal leading-relaxed">
                   “We booked a 12-seater Tempo Traveller for an extended family pilgrimage. The vehicle had clean
                   seatcovers, pristine cold AC throughout 42°C heat, and courteous behavior toward elderly parents.”
                 </p>
@@ -532,10 +529,10 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col">
                     <span className="font-title-md text-xs text-on-surface font-semibold">Rajesh &amp; Sunita Sharma</span>
-                    <span className="text-[10px] text-secondary">Greater Kailash, New Delhi</span>
+                    <span className="text-label-lg text-secondary">Greater Kailash, New Delhi</span>
                   </div>
-                  <div className="flex items-center gap-1 bg-surface-container px-2 py-0.5 rounded text-success-jade text-[10px] font-medium">
-                    <span className="material-symbols-outlined text-success-jade text-[15px]">verified</span>
+                  <div className="flex items-center gap-1 bg-surface-container px-2 py-0.5 rounded text-success-jade text-label-lg font-medium">
+                    <Icon name="verified" className="text-success-jade text-icon-15" />
                     <span>Verified Guest</span>
                   </div>
                 </div>
@@ -548,14 +545,12 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                 <div className="flex items-center justify-between text-gold-accent">
                   <div className="flex gap-0.5">
                     {[...Array(5)].map((_, i) => (
-                      <span key={i} className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: '"FILL" 1' }}>
-                        star
-                      </span>
+                      <Icon name="star" className="text-icon-16" key={i} />
                     ))}
                   </div>
-                  <span className="text-[10px] text-secondary font-mono">Golden Triangle 4-Day</span>
+                  <span className="text-label-lg text-secondary font-mono">Golden Triangle 4-Day</span>
                 </div>
-                <p className="font-headline-sm text-xs sm:text-[13px] font-serif italic text-ink-charcoal leading-relaxed">
+                <p className="font-headline-sm text-xs sm:text-title-lg font-serif italic text-ink-charcoal leading-relaxed">
                   “I arrange road delegations for visiting architectural academics. The punctuality of SK Baghel's desk
                   at Taj Ganj is the finest in Uttar Pradesh. Transparent invoicing and genuine warmth.”
                 </p>
@@ -564,10 +559,10 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col">
                     <span className="font-title-md text-xs text-on-surface font-semibold">David Miller</span>
-                    <span className="text-[10px] text-secondary">Melbourne, Australia</span>
+                    <span className="text-label-lg text-secondary">Melbourne, Australia</span>
                   </div>
-                  <div className="flex items-center gap-1 bg-surface-container px-2 py-0.5 rounded text-success-jade text-[10px] font-medium">
-                    <span className="material-symbols-outlined text-success-jade text-[15px]">verified</span>
+                  <div className="flex items-center gap-1 bg-surface-container px-2 py-0.5 rounded text-success-jade text-label-lg font-medium">
+                    <Icon name="verified" className="text-success-jade text-icon-15" />
                     <span>Verified Guest</span>
                   </div>
                 </div>
@@ -582,7 +577,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
         <div className="max-w-7xl mx-auto px-margin-mobile lg:px-margin">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
             <div className="lg:col-span-6 flex flex-col gap-3">
-              <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowSandstone} text-[9.5px]`}>
+              <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowSandstone} text-body-sm`}>
                 Physical Roots in Taj Ganj
               </span>
               <h2 className={EDITORIAL_TYPOGRAPHY.sectionH2}>
@@ -595,17 +590,17 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
                 <div className="bg-surface-container-lowest p-2.5 sm:p-3 rounded flex items-start gap-2 shadow-xs border border-border-warm/50">
-                  <span className="material-symbols-outlined text-terracotta-sandstone mt-0.5 text-[18px]">pin_drop</span>
+                  <Icon name="pin_drop" className="text-terracotta-sandstone mt-0.5 text-icon-18" />
                   <div className="flex flex-col">
                     <span className="font-title-md text-xs text-on-surface font-serif font-bold">Taj Ganj Station</span>
-                    <span className="text-[10px] text-secondary">{contact.address}</span>
+                    <span className="text-label-lg text-secondary">{contact.address}</span>
                   </div>
                 </div>
                 <div className="bg-surface-container-lowest p-2.5 sm:p-3 rounded flex items-start gap-2 shadow-xs border border-border-warm/50">
-                  <span className="material-symbols-outlined text-terracotta-sandstone mt-0.5 text-[18px]">alarm_on</span>
+                  <Icon name="alarm_on" className="text-terracotta-sandstone mt-0.5 text-icon-18" />
                   <div className="flex flex-col">
                     <span className="font-title-md text-xs text-on-surface font-serif font-bold">Agra Cantt Backup</span>
-                    <span className="text-[10px] text-secondary">Dedicated station coordinator on platform 1 arrival</span>
+                    <span className="text-label-lg text-secondary">Dedicated station coordinator on platform 1 arrival</span>
                   </div>
                 </div>
               </div>
@@ -625,7 +620,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                       <p className="text-body-sm text-sandstone-wash/80">Active 24 Hours • 7 Days A Week</p>
                     </div>
                     <a
-                      className="bg-terracotta-sandstone text-ivory-surface px-3 py-1.5 rounded text-label-caps font-label-caps uppercase hover:bg-terracotta-sunlit transition-colors"
+                      className="bg-terracotta-deep text-white px-3 py-1.5 rounded text-label-caps font-label-caps uppercase hover:bg-terracotta-sunlit transition-colors"
                       href={contact.mapsUrl}
                       rel="noopener noreferrer"
                       target="_blank"
@@ -645,7 +640,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
         <div className="max-w-7xl mx-auto px-margin-mobile lg:px-margin">
           <div className="bg-surface-container-lowest rounded-xl p-6 sm:p-8 md:p-12 shadow-xl flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 sm:gap-8 w-full border border-border-warm">
             <div className="flex flex-col gap-space-xs max-w-xl text-left w-full">
-              <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowSandstone} text-[9.5px]`}>
+              <span className={`${EDITORIAL_TYPOGRAPHY.eyebrowSandstone} text-body-sm`}>
                 Unrivaled Hospitality Awaits
               </span>
               <h2 className={EDITORIAL_TYPOGRAPHY.sectionH2}>

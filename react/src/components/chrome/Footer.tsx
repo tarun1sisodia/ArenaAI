@@ -1,4 +1,5 @@
 import { BrandLogo } from "./BrandLogo";
+import { Icon } from "../icons/Icon";
 import { contact } from "../../data/contact";
 import { prefetchDocument } from "../../app/prefetch";
 import { WhatsAppIcon } from "../icons/WhatsAppIcon";
@@ -82,11 +83,11 @@ export function Footer({ className = "" }: FooterProps) {
                 {contact.address}
               </p>
             <div className="flex flex-col gap-1 pt-1 text-body-sm">
-                <a href={`tel:${contact.phone}`} className="inline-flex items-center gap-2 text-on-surface hover:text-primary transition-colors">
-                  <span className="material-symbols-outlined text-primary text-[18px]">call</span>
+                <a href={`tel:${contact.phone}`} className="inline-flex min-h-12 items-center gap-2 text-on-surface hover:text-primary transition-colors">
+                  <Icon name="call" className="text-primary text-icon-18" />
                   <span>{contact.phoneDisplay}</span>
                 </a>
-                <a href={`https://wa.me/${contact.whatsapp}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-on-surface hover:text-primary transition-colors">
+                <a href={`https://wa.me/${contact.whatsapp}`} aria-label="Chat on WhatsApp" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-12 items-center gap-2 text-on-surface hover:text-primary transition-colors">
                   <WhatsAppIcon className="w-[18px] h-[18px] shrink-0" />
                   <span>WhatsApp Support</span>
                 </a>
@@ -94,9 +95,9 @@ export function Footer({ className = "" }: FooterProps) {
                   href={contact.mapsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-space-xs text-primary hover:underline font-label-lg text-label-lg mt-1"
+                  className="inline-flex min-h-12 items-center gap-space-xs text-primary hover:underline font-label-lg text-label-lg mt-1"
                 >
-                  <span className="material-symbols-outlined text-[16px]">map</span>
+                  <Icon name="map" className="text-icon-16" />
                   <span>View on Google Maps</span>
                 </a>
               </div>
@@ -112,7 +113,7 @@ export function Footer({ className = "" }: FooterProps) {
                   rel="noopener noreferrer"
                   aria-label="SK Baghel Tour & Travels on Facebook"
                   title="Facebook"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border-warm bg-surface text-on-surface hover:border-primary hover:bg-primary hover:text-on-primary transition-colors"
+                  className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-border-warm bg-surface text-on-surface hover:border-primary hover:bg-primary hover:text-on-primary transition-colors"
                 >
                   <SocialIcon name="facebook" />
                 </a>
@@ -122,7 +123,7 @@ export function Footer({ className = "" }: FooterProps) {
                   rel="noopener noreferrer"
                   aria-label="SK Baghel Tour & Travels on Instagram"
                   title="Instagram"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border-warm bg-surface text-on-surface hover:border-primary hover:bg-primary hover:text-on-primary transition-colors"
+                  className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-border-warm bg-surface text-on-surface hover:border-primary hover:bg-primary hover:text-on-primary transition-colors"
                 >
                   <SocialIcon name="instagram" />
                 </a>
@@ -132,7 +133,7 @@ export function Footer({ className = "" }: FooterProps) {
                   rel="noopener noreferrer"
                   aria-label="SK Baghel Tour & Travels on YouTube"
                   title="YouTube"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border-warm bg-surface text-on-surface hover:border-primary hover:bg-primary hover:text-on-primary transition-colors"
+                  className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-border-warm bg-surface text-on-surface hover:border-primary hover:bg-primary hover:text-on-primary transition-colors"
                 >
                   <SocialIcon name="youtube" />
                 </a>
@@ -151,7 +152,7 @@ export function Footer({ className = "" }: FooterProps) {
                   <a
                     href={item.href}
                     onMouseEnter={() => prefetchDocument(item.href)}
-                    className="flex items-center justify-between hover:text-primary transition-colors py-0.5"
+                    className="flex min-h-12 items-center justify-between hover:text-primary transition-colors py-0.5"
                   >
                     <span>{item.name}</span>
                     <span className="font-label-caps text-label-caps text-primary font-semibold">{item.rate}</span>
@@ -172,7 +173,7 @@ export function Footer({ className = "" }: FooterProps) {
                   <a
                     href={item.href}
                     onMouseEnter={() => prefetchDocument(item.href)}
-                    className="flex items-center justify-between hover:text-primary transition-colors py-0.5"
+                    className="flex min-h-12 items-center justify-between hover:text-primary transition-colors py-0.5"
                   >
                     <span>{item.name}</span>
                     <span className="font-label-caps text-label-caps text-primary font-semibold">{item.fare}</span>
@@ -193,7 +194,7 @@ export function Footer({ className = "" }: FooterProps) {
                   key={item.name}
                   href={item.href}
                   onMouseEnter={() => prefetchDocument(item.href)}
-                  className="hover:text-primary transition-colors py-0.5"
+                  className="flex min-h-12 items-center hover:text-primary transition-colors py-0.5"
                 >
                   {item.name}
                 </a>
@@ -206,10 +207,10 @@ export function Footer({ className = "" }: FooterProps) {
       {/* Sub-Footer & Legal Copyright */}
       <div className="border-t border-border-warm bg-surface-container/40">
         <div className="max-w-7xl mx-auto px-margin-mobile lg:px-margin py-space-md flex flex-col sm:flex-row items-center justify-between gap-space-sm text-center sm:text-left">
-          <p className="font-body-sm text-body-sm text-on-surface-variant text-[13px]">
+          <p className="font-body-sm text-body-sm text-on-surface-variant text-title-lg">
             © {new Date().getFullYear()} SK Baghel Tour & Travels. All rights reserved.
           </p>
-          <div className="flex flex-wrap items-center gap-space-md font-body-sm text-body-sm text-[13px]">
+          <div className="flex flex-wrap items-center gap-space-md font-body-sm text-body-sm text-title-lg">
             <a href="/privacy" className="hover:text-primary transition-colors">Privacy Policy</a>
             <span className="text-border-warm">•</span>
             <a href="/terms" className="hover:text-primary transition-colors">Terms of Service</a>

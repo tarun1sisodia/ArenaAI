@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Icon, type IconName } from "../components/icons/Icon";
 import { contact } from "../data/contact";
 import { WhatsAppIcon } from "../components/icons";
 import { NotFoundPage } from "./NotFoundPage";
@@ -21,16 +22,17 @@ import {
 
 interface LivePackageDetailPageProps {
   slug: string;
+  initialItem?: PublicCatalogItem;
 }
 
-export function LivePackageDetailPage({ slug }: LivePackageDetailPageProps) {
-  const [item, setItem] = useState<PublicCatalogItem | null>(null);
-  const [status, setStatus] = useState<"loading" | "ready" | "missing">("loading");
+export function LivePackageDetailPage({ slug, initialItem }: LivePackageDetailPageProps) {
+  const [item, setItem] = useState<PublicCatalogItem | null>(initialItem ?? null);
+  const [status, setStatus] = useState<"loading" | "ready" | "missing">(initialItem ? "ready" : "loading");
   const [activeImage, setActiveImage] = useState(0);
 
   useEffect(() => {
     let isMounted = true;
-    setStatus("loading");
+    if (!initialItem) setStatus("loading");
     fetchCatalogItemBySlug(slug)
       .then((data) => {
         if (!isMounted) return;
@@ -43,7 +45,7 @@ export function LivePackageDetailPage({ slug }: LivePackageDetailPageProps) {
     return () => {
       isMounted = false;
     };
-  }, [slug]);
+  }, [slug, initialItem]);
 
   // Dynamic SEO for runtime catalog items.
   useEffect(() => {
@@ -90,7 +92,7 @@ export function LivePackageDetailPage({ slug }: LivePackageDetailPageProps) {
   const active = galleryImages[Math.min(activeImage, Math.max(0, galleryImages.length - 1))];
   const heroSrc = active ? resolveCatalogMediaUrl(active.url) : null;
 
-  const canonicalUrl = `${CANONICAL_DOMAIN}/packages/${item.slug}/`;
+  const canonicalUrl = `${CANONICAL_DOMAIN}/en/packages/${item.slug}/`;
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -122,9 +124,9 @@ export function LivePackageDetailPage({ slug }: LivePackageDetailPageProps) {
       <section className="w-full max-w-7xl mx-auto px-margin-mobile lg:px-margin pt-space-xl pb-space-lg">
         <nav className="flex items-center gap-space-xs text-on-surface-variant font-body-sm text-body-sm mb-space-lg" aria-label="Breadcrumb">
           <a className="hover:text-primary transition-colors" href="/">Home</a>
-          <span className="material-symbols-outlined text-[14px]" aria-hidden="true">chevron_right</span>
+          <Icon name="chevron_right" className="text-icon-14" aria-hidden="true" />
           <a className="hover:text-primary transition-colors" href="/packages">Tour Packages</a>
-          <span className="material-symbols-outlined text-[14px]" aria-hidden="true">chevron_right</span>
+          <Icon name="chevron_right" className="text-icon-14" aria-hidden="true" />
           <span className="text-primary font-semibold">{item.title}</span>
         </nav>
 
@@ -147,7 +149,7 @@ export function LivePackageDetailPage({ slug }: LivePackageDetailPageProps) {
               </figure>
             ) : (
               <div className="rounded-2xl aspect-[16/10] bg-sandstone-wash flex items-center justify-center">
-                <span className="material-symbols-outlined text-primary text-[48px]" aria-hidden="true">tour</span>
+                <Icon name="tour" className="text-primary text-icon-48" aria-hidden="true" />
               </div>
             )}
 
@@ -188,7 +190,7 @@ export function LivePackageDetailPage({ slug }: LivePackageDetailPageProps) {
                 </span>
               )}
               {item.availability === "limited" && (
-                <span className="px-2.5 py-1 rounded bg-terracotta-sandstone text-on-primary font-label-caps text-label-caps uppercase tracking-wider font-bold">
+                <span className="px-2.5 py-1 rounded bg-terracotta-deep text-white font-label-caps text-label-caps uppercase tracking-wider font-bold">
                   {item.seatsLeft !== null ? `Only ${item.seatsLeft} left` : "Limited seats"}
                 </span>
               )}
@@ -213,16 +215,14 @@ export function LivePackageDetailPage({ slug }: LivePackageDetailPageProps) {
                 item.distanceKm !== null && item.distanceKm !== undefined
                   ? { label: "Distance", value: `~${item.distanceKm} km`, icon: "route" }
                   : null,
-                { label: "Route", value: item.routeSummary, icon: "location_on" },
+                { label: "Route", value: item.routeSummary, icon: "pin_drop" },
                 { label: "Last reviewed", value: (item.updatedAt || item.publishedAt) ? new Date(item.updatedAt || item.publishedAt || "").toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "Live", icon: "verified" },
               ]
                 .filter(Boolean)
                 .map((meta) => (
                   <div key={(meta as { label: string }).label} className="bg-surface-container-lowest rounded-xl border border-border-warm/60 p-3">
                     <dt className="flex items-center gap-1.5 font-label-caps text-label-caps uppercase tracking-wider text-on-surface-variant">
-                      <span className="material-symbols-outlined text-[14px] text-primary" aria-hidden="true">
-                        {(meta as { icon: string }).icon}
-                      </span>
+                      <Icon name={(meta as { icon: string }).icon as IconName} className="text-icon-14 text-primary" aria-hidden="true" />
                       {(meta as { label: string }).label}
                     </dt>
                     <dd className="font-title-sm text-sm font-semibold text-on-surface mt-1 leading-snug">
@@ -253,10 +253,10 @@ export function LivePackageDetailPage({ slug }: LivePackageDetailPageProps) {
             <div className="flex flex-col sm:flex-row gap-2.5">
               <a
                 href={`/book.html?package=${encodeURIComponent(item.slug)}&step=1`}
-                className="flex-1 inline-flex items-center justify-center gap-2 h-11 rounded-xl bg-terracotta-sandstone text-on-primary font-label-lg text-sm font-semibold hover:bg-terracotta-sunlit transition-colors"
+                className="flex-1 inline-flex items-center justify-center gap-2 h-11 rounded-xl bg-terracotta-deep text-white font-label-lg text-sm font-semibold hover:bg-terracotta-sunlit transition-colors"
               >
                 <span>Book Now</span>
-                <span className="material-symbols-outlined text-[18px]" aria-hidden="true">arrow_forward</span>
+                <Icon name="arrow_forward" className="text-icon-18" aria-hidden="true" />
               </a>
               <a
                 href={whatsappUrl}
@@ -272,7 +272,7 @@ export function LivePackageDetailPage({ slug }: LivePackageDetailPageProps) {
                 href={`tel:${contact.phone}`}
                 className="flex-1 inline-flex items-center justify-center gap-2 h-11 rounded-xl bg-primary text-on-primary font-label-lg text-sm font-semibold hover:opacity-90 transition-opacity"
               >
-                <span className="material-symbols-outlined text-[18px]" aria-hidden="true">call</span>
+                <Icon name="call" className="text-icon-18" aria-hidden="true" />
                 {contact.phoneDisplay}
               </a>
             </div>

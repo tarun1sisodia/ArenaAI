@@ -16,7 +16,6 @@ export interface CompressedRoute {
   d: string;              // Destination
   km: number;             // Distance in km (One-Way)
   m: number;              // Duration in minutes
-  fh: number;             // Fare Hatchback
   fs: number;             // Fare Sedan (Dzire / Etios)
   fe: number;             // Fare Ertiga / SUV
   fi: number;             // Fare Innova Crysta
@@ -34,6 +33,7 @@ export async function buildRouteCatalogAndManifest(): Promise<void> {
 
   const manifest: Record<string, CompressedRoute> = {};
   const allRoutesList: any[] = [];
+  const publishedRouteItems: any[] = [];
 
   for (const [slug, item] of Object.entries(catalogRoutes)) {
     const fs = item.fares.sedan;
@@ -41,14 +41,12 @@ export async function buildRouteCatalogAndManifest(): Promise<void> {
     const fi = item.fares.innova;
     const ft = item.fares.tempo;
     const fu = item.fares.urbania;
-    const fh = item.hatchbackFare || Math.round(fs * 0.85);
 
     manifest[slug] = {
       o: item.origin,
       d: item.destination,
       km: item.km,
       m: item.durationMins || Math.round((item.km / 55) * 60),
-      fh,
       fs,
       fe,
       fi,
@@ -93,6 +91,7 @@ export async function buildRouteCatalogAndManifest(): Promise<void> {
         const payload = await response.json() as { data?: Array<any> };
         for (const item of payload.data ?? []) {
           if (item.status !== "published") continue;
+          publishedRouteItems.push(item);
           const fares = item.faresInr ?? item.fares_inr ?? {};
           const routeSlug = String(item.slug);
           const distanceKm = Number(item.distanceKm ?? item.distance_km ?? 0);
@@ -103,7 +102,6 @@ export async function buildRouteCatalogAndManifest(): Promise<void> {
             d: item.destinationCity ?? item.destination_city ?? "Local sightseeing",
             km: distanceKm,
             m: durationMins,
-            fh: Math.round(Number(fares.sedan ?? 2000) * 0.85),
             fs: Number(fares.sedan ?? 2000),
             fe: Number(fares.ertiga ?? 2800),
             fi: Number(fares.innova ?? 3800),
@@ -220,6 +218,31 @@ export async function buildRouteCatalogAndManifest(): Promise<void> {
   const catalogOutputPath = join(reactRoot, "src", "data", "generated-catalog.json");
   writeFileSync(catalogOutputPath, JSON.stringify(catalogPayload, null, 2), "utf-8");
   console.log(`✅ [Manifest Builder] Emitted src/data/generated-catalog.json with ${allRoutesList.length} typed routes.`);
+
+  // Published catalog items are also snapshotted for SSG. Runtime API reads
+  // keep the customer UI fresh, while this snapshot gives crawlers complete
+  // HTML for catalog pages instead of a client-only loading shell.
+  const publishedCatalogPath = join(reactRoot, "src", "data", "generated-published-catalog.json");
+  const catalogUrl = process.env.CATALOG_API_URL || process.env.VITE_API_BASE_URL;
+  let publishedCatalog: unknown[] = [];
+  if (catalogUrl) {
+    try {
+      const response = await fetch(`${catalogUrl.replace(/\/+$/, "")}/api/v1/catalog`, {
+        headers: { accept: "application/json" },
+        signal: AbortSignal.timeout(15_000),
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const payload = await response.json() as { data?: unknown };
+      publishedCatalog = Array.isArray(payload.data) ? payload.data : [];
+      console.log(`✅ [Manifest Builder] Snapshotted ${publishedCatalog.length} published catalog items for SSG.`);
+    } catch (error) {
+      console.warn(`⚠️ [Manifest Builder] Published catalog snapshot unavailable; rendering static baseline only (${error instanceof Error ? error.message : String(error)}).`);
+    }
+  } else {
+    console.warn("⚠️ [Manifest Builder] CATALOG_API_URL/VITE_API_BASE_URL not set; published catalog SSG snapshot is empty.");
+  }
+  writeFileSync(publishedCatalogPath, JSON.stringify(publishedCatalog, null, 2), "utf-8");
+  writeFileSync(join(reactRoot, "src", "data", "generated-published-routes.json"), JSON.stringify(publishedRouteItems, null, 2), "utf-8");
 }
 
 await buildRouteCatalogAndManifest();

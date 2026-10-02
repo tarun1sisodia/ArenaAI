@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import { Icon } from "../components/icons/Icon";
 import type { SupportedLanguage } from "../config";
 import { contact } from "../data/contact";
 import { WhatsAppIcon } from "../components/icons";
@@ -147,17 +148,17 @@ export function FaqPage({ language = "en" }: FaqPageProps) {
         <div className="max-w-[1280px] mx-auto relative z-10 flex flex-col space-y-space-md">
           <nav aria-label="Breadcrumb" className="flex items-center gap-space-xs text-on-surface-variant font-label-caps text-xs">
             <a className="hover:text-primary transition-colors flex items-center gap-1" href="/">
-              <span className="material-symbols-outlined text-[16px]">home</span>
+              <Icon name="home" className="text-icon-16" />
               <span>Home</span>
             </a>
-            <span className="material-symbols-outlined text-[14px]">chevron_right</span>
+            <Icon name="chevron_right" className="text-icon-14" />
             <span>Support</span>
-            <span className="material-symbols-outlined text-[14px]">chevron_right</span>
+            <Icon name="chevron_right" className="text-icon-14" />
             <span className="text-primary font-bold">Frequently Asked Questions</span>
           </nav>
 
           <div className="max-w-3xl space-y-space-xs">
-            <span className="px-3 py-1 rounded-full bg-primary/10 text-primary font-label-caps text-[11px] uppercase tracking-wider font-bold inline-block">
+            <span className="px-3 py-1 rounded-full bg-primary/10 text-primary font-label-caps text-label-md uppercase tracking-wider font-bold inline-block">
               24×7 Traveler Helpdesk
             </span>
             <h1 className="font-headline-hero text-headline-hero text-on-surface tracking-tight leading-tight">
@@ -172,9 +173,7 @@ export function FaqPage({ language = "en" }: FaqPageProps) {
           {/* Search & Category Filter Dock */}
           <div className="pt-space-md max-w-4xl space-y-4">
             <div className="relative">
-              <span className="material-symbols-outlined text-on-surface-variant absolute left-3.5 top-3 text-[20px]">
-                search
-              </span>
+              <Icon name="search" className="text-on-surface-variant absolute left-3.5 top-3 text-icon-20" />
               <input
                 type="text"
                 value={searchQuery}
@@ -214,8 +213,8 @@ export function FaqPage({ language = "en" }: FaqPageProps) {
         <div className="space-y-2.5">
           {filteredFaqs.length === 0 ? (
             <div className="text-center py-8 bg-surface-container-lowest rounded-xl border border-border-warm/60">
-              <span className="material-symbols-outlined text-3xl text-on-surface-variant mb-1.5">search_off</span>
-              <h3 className="font-headline-sm text-base font-semibold text-ink-charcoal">No questions matched your search</h3>
+              <Icon name="search_off" className="text-3xl text-on-surface-variant mb-1.5" />
+              <h2 className="font-headline-sm text-base font-semibold text-ink-charcoal">No questions matched your search</h2>
               <p className="text-xs text-on-surface-variant mt-0.5">Try another keyword or chat with our 24x7 desk on WhatsApp.</p>
             </div>
           ) : (
@@ -228,13 +227,11 @@ export function FaqPage({ language = "en" }: FaqPageProps) {
                     onClick={() => toggleItem(faq.id)}
                     className="w-full text-left p-3 sm:p-3.5 flex items-center justify-between gap-3 hover:bg-sandstone-wash/20 transition-colors"
                   >
-                    <span className="font-title-md text-xs sm:text-[13px] font-semibold text-ink-charcoal">{faq.q}</span>
-                    <span className="material-symbols-outlined text-primary text-[18px] shrink-0">
-                      {isOpen ? "expand_less" : "expand_more"}
-                    </span>
+                    <span className="font-title-md text-xs sm:text-title-lg font-semibold text-ink-charcoal">{faq.q}</span>
+                    <Icon name={isOpen ? "expand_less" : "expand_more"} className="text-primary text-icon-18 shrink-0" />
                   </button>
                   {isOpen && (
-                    <div className="p-3 sm:p-3.5 pt-0 text-on-surface-variant font-body-sm text-[10.5px] leading-relaxed border-t border-border-warm/40 mt-1">
+                    <div className="p-3 sm:p-3.5 pt-0 text-on-surface-variant font-body-sm text-body-md leading-relaxed border-t border-border-warm/40 mt-1">
                       {faq.a}
                     </div>
                   )}
@@ -247,7 +244,7 @@ export function FaqPage({ language = "en" }: FaqPageProps) {
         {/* 3. STILL HAVE QUESTIONS? BENTO STRIP (Compact -20%) */}
         <div className="mt-10 pt-8 border-t border-border-warm/60">
           <div className="text-center max-w-xl mx-auto mb-6">
-            <h3 className="font-headline-lg text-headline-lg font-semibold text-ink-charcoal">Still have a question?</h3>
+            <h2 className="font-headline-lg text-headline-lg font-semibold text-ink-charcoal">Still have a question?</h2>
             <p className="text-xs text-on-surface-variant mt-1">
               Our Taj Ganj control desk is manned 24 hours a day, 7 days a week.
             </p>
@@ -259,14 +256,14 @@ export function FaqPage({ language = "en" }: FaqPageProps) {
               className="p-3.5 rounded-xl bg-surface-container-lowest border border-border-warm/70 hover:border-primary transition-all flex flex-col items-center text-center shadow-xs"
             >
               <div className="w-8 h-8 rounded-full bg-sandstone-wash flex items-center justify-center text-primary mb-2">
-                <span className="material-symbols-outlined text-lg">phone_in_talk</span>
+                <Icon name="phone_in_talk" className="text-lg" />
               </div>
-              <h4 className="font-title-md text-xs font-bold text-ink-charcoal">Call 24×7 Desk</h4>
-              <p className="text-[10.5px] text-primary font-bold mt-0.5">+91 97628 17598</p>
-            </a>
+              <h3 className="font-title-md text-xs font-bold text-ink-charcoal">Call 24×7 Desk</h3>
+              <p className="text-body-md text-primary font-bold mt-0.5">+91 97628 17598</p>            </a>
 
             <a
               href="https://wa.me/919762817598"
+              aria-label="Chat on WhatsApp"
               target="_blank"
               rel="noreferrer"
               style={{ color: "#ffffff" }}
@@ -275,8 +272,8 @@ export function FaqPage({ language = "en" }: FaqPageProps) {
               <div className="w-8 h-8 rounded-full bg-neutral-800 flex items-center justify-center mb-2">
                 <WhatsAppIcon className="w-5 h-5 shrink-0 text-white" />
               </div>
-              <h4 className="font-title-md text-xs font-bold text-white" style={{ color: "#ffffff" }}>WhatsApp</h4>
-              <p className="text-[10.5px] text-[#25D366] font-bold mt-0.5">Instant Response</p>
+              <h3 className="font-title-md text-xs font-bold text-white" style={{ color: "#ffffff" }}>WhatsApp</h3>
+              <p className="text-body-md text-whatsapp font-bold mt-0.5">Instant Response</p>
             </a>
 
             <a
@@ -284,10 +281,10 @@ export function FaqPage({ language = "en" }: FaqPageProps) {
               className="p-3.5 rounded-xl bg-surface-container-lowest border border-border-warm/70 hover:border-primary transition-all flex flex-col items-center text-center shadow-xs"
             >
               <div className="w-8 h-8 rounded-full bg-sandstone-wash flex items-center justify-center text-primary mb-2">
-                <span className="material-symbols-outlined text-lg">mail</span>
+                <Icon name="mail" className="text-lg" />
               </div>
-              <h4 className="font-title-md text-xs font-bold text-ink-charcoal">Email Support</h4>
-              <p className="text-[10px] text-on-surface-variant font-medium mt-0.5 truncate max-w-full">
+              <h3 className="font-title-md text-xs font-bold text-ink-charcoal">Email Support</h3>
+              <p className="text-label-lg text-on-surface-variant font-medium mt-0.5 truncate max-w-full">
                 bookings@agraskbagheltourandtravels.com
               </p>
             </a>

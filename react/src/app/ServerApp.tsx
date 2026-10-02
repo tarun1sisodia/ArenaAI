@@ -20,7 +20,60 @@ import { SeoLandingPage } from "../pages/SeoLandingPage";
 import { SEO_LANDING_SLUGS, type SeoLandingSlug } from "../data/seoLandingSlugs";
 import { marketingHubs } from "./routes";
 import { SeoHead } from "../components/seo/SeoHead";
-import { packages, routes, vehicles } from "../data/catalogue";
+import { packages, routes, vehicles, type Route } from "../data/catalogue";
+import LivePackageDetailPage from "../pages/LivePackageDetailPage";
+import generatedPublishedCatalog from "../data/generated-published-catalog.json";
+import generatedPublishedRoutes from "../data/generated-published-routes.json";
+import type { PublicCatalogItem } from "../services/catalog";
+
+type GeneratedCatalogItem = {
+  slug: string;
+  title: string;
+  shortDescription: string;
+  coverImage?: { url?: string } | null;
+  [key: string]: unknown;
+};
+type GeneratedRouteItem = {
+  slug?: string;
+  sourceCity?: string;
+  destinationCity?: string | null;
+  distanceKm?: number | null;
+  durationText?: string | null;
+  tripType?: string;
+  tollIncluded?: boolean;
+  faresInr?: Record<string, number>;
+  [key: string]: unknown;
+};
+
+const publishedCatalog = (generatedPublishedCatalog as GeneratedCatalogItem[]).filter(
+  (item) => Boolean(item && item.slug && item.title),
+);
+const publishedRoutes = (generatedPublishedRoutes as GeneratedRouteItem[]).filter(
+  (item) => Boolean(item && item.slug && item.sourceCity),
+);
+
+function toFrontendRoute(item: GeneratedRouteItem): Route {
+  const fares = item.faresInr ?? {};
+  return {
+    id: String(item.slug),
+    from: String(item.sourceCity).toLowerCase().replaceAll(" ", "-"),
+    to: String(item.destinationCity ?? "sightseeing").toLowerCase().replaceAll(" ", "-"),
+    origin: String(item.sourceCity),
+    destination: String(item.destinationCity ?? "Local sightseeing"),
+    km: Number(item.distanceKm ?? 0),
+    duration: String(item.durationText ?? "Flexible duration"),
+    kind: item.tripType === "local-tour" ? "local" : "one-way",
+    pricingModel: item.tripType,
+    toll: item.tollIncluded === false ? 0 : 1,
+    fares: {
+      sedan: Number(fares.sedan ?? 0),
+      ertiga: Number(fares.ertiga ?? 0),
+      innova: Number(fares.innova ?? 0),
+      tempo: Number(fares.tempo ?? 0),
+      urbania: Number(fares.urbania ?? 0),
+    },
+  };
+}
 
 export function getMarketingPath(pathname: string) {
   const segments = pathname.split("/").filter(Boolean);
@@ -36,7 +89,14 @@ export interface SeoMetadata {
   keywords?: string[];
 }
 
-export function getSeo(pathname: string, section: string, language: "en" | "hi", isBooking: boolean): SeoMetadata {
+function getSeoBase(
+  pathname: string,
+  section: string,
+  language: "en" | "hi",
+  isBooking: boolean,
+  dynamicItem?: Pick<GeneratedCatalogItem, "title" | "shortDescription" | "coverImage">,
+  dynamicRoute?: Route,
+): SeoMetadata {
   if (SEO_LANDING_SLUGS.includes(section as SeoLandingSlug)) {
     const labels: Record<string, string> = {
       "tempo-traveller-on-rent-agra": "Tempo Traveller on Rent in Agra | 12–24 Seater, ₹25/km",
@@ -53,6 +113,31 @@ export function getSeo(pathname: string, section: string, language: "en" | "hi",
       description: "Compare vehicles and prepare a transparent mock booking from Agra.",
       ogImage: "/assets/brand/og-banner.webp",
       keywords: ["Agra taxi booking", "Agra cab reservation", "online taxi booking Agra"],
+    };
+  }
+  const resolvedDynamicItem = dynamicItem ?? (pathname.includes("/packages/")
+    ? publishedCatalog.find((item) => pathname.replace(/\/$/, "").endsWith(`/packages/${item.slug}`))
+    : undefined);
+  const resolvedDynamicRoute = dynamicRoute ?? (() => {
+    const item = publishedRoutes.find((entry) => pathname.replace(/\/$/, "").endsWith(`/${entry.slug}`));
+    return item ? toFrontendRoute(item) : undefined;
+  })();
+  if (resolvedDynamicItem) {
+    return {
+      title: `${resolvedDynamicItem.title} — Private Tour & Fares | SK Baghel`,
+      description: resolvedDynamicItem.shortDescription,
+      ogImage: resolvedDynamicItem.coverImage?.url || "/assets/brand/og-banner.webp",
+      keywords: [resolvedDynamicItem.title, "Agra tour package", "private taxi Agra", "SK Baghel Travels"],
+    };
+  }
+  if (resolvedDynamicRoute) {
+    const from = resolvedDynamicRoute.origin ?? resolvedDynamicRoute.from;
+    const to = resolvedDynamicRoute.destination ?? resolvedDynamicRoute.to;
+    return {
+      title: `${from} to ${to} Taxi Fare | SK Baghel`,
+      description: `${resolvedDynamicRoute.duration} private taxi from ${from} to ${to}, with transparent fares and verified drivers.`,
+      ogImage: "/assets/brand/og-banner.webp",
+      keywords: [`${from} to ${to} taxi`, `${from} to ${to} fare`, "Agra outstation cab"],
     };
   }
   const path = pathname.replace(/\/$/, "");
@@ -202,6 +287,27 @@ export function getSeo(pathname: string, section: string, language: "en" | "hi",
   };
 }
 
+function clampSeoText(value: string, max: number): string {
+  if (value.length <= max) return value;
+  return `${value.slice(0, max - 1).trimEnd()}…`;
+}
+
+export function getSeo(
+  pathname: string,
+  section: string,
+  language: "en" | "hi",
+  isBooking: boolean,
+  dynamicItem?: Pick<GeneratedCatalogItem, "title" | "shortDescription" | "coverImage">,
+  dynamicRoute?: Route,
+): SeoMetadata {
+  const metadata = getSeoBase(pathname, section, language, isBooking, dynamicItem, dynamicRoute);
+  return {
+    ...metadata,
+    title: clampSeoText(metadata.title, 60),
+    description: clampSeoText(metadata.description, 155),
+  };
+}
+
 export interface AppProps {
   pathname?: string;
 }
@@ -234,11 +340,16 @@ export function ServerApp({ pathname: propPathname }: AppProps = {}) {
     const hindiFrom = item.from === "agra" && item.to === "agra" ? "agra-darshan" : `${item.from}-se-${item.to}`;
     return pathname.includes(`${from}-taxi`) || pathname.includes(`${hindiFrom}-taxi`);
   });
+  const dynamicRouteItem = publishedRoutes.find((item) => pathname.replace(/\/$/, "").endsWith(`/${item.slug}`));
+  const dynamicRoute = dynamicRouteItem ? toFrontendRoute(dynamicRouteItem) : undefined;
 
   const matchedPackage = pathname.includes("/packages/") && packages.find((item) => {
     const p = pathname.replace(/\/$/, "");
     return p.endsWith(`/${item.slug}`) || p.endsWith(item.slug);
   });
+  const dynamicPackage = pathname.includes("/packages/")
+    ? publishedCatalog.find((item) => pathname.replace(/\/$/, "").endsWith(`/packages/${item.slug}`))
+    : undefined;
 
   const matchedVehicle =
     (pathname.includes("/vehicles/") || pathname.includes("/fleet/")) &&
@@ -253,7 +364,9 @@ export function ServerApp({ pathname: propPathname }: AppProps = {}) {
     isBooking ||
     isMarketingHub ||
     Boolean(matchedRoute) ||
+    Boolean(dynamicRoute) ||
     Boolean(matchedPackage) ||
+    Boolean(dynamicPackage) ||
     Boolean(matchedVehicle) ||
     isSeoLanding ||
     packages.some((item) => pathname.endsWith(item.slug) || pathname.endsWith(item.slug + "/"));
@@ -271,7 +384,7 @@ export function ServerApp({ pathname: propPathname }: AppProps = {}) {
     description: pageDescription,
     ogImage: pageOgImage,
     keywords: pageKeywords,
-  } = getSeo(pathname, effectiveSection, language, isBooking);
+  } = getSeo(pathname, effectiveSection, language, isBooking, dynamicPackage, dynamicRoute);
 
   return (
     <ErrorBoundary>
@@ -293,8 +406,12 @@ export function ServerApp({ pathname: propPathname }: AppProps = {}) {
           <HomePage language={language} />
         ) : matchedRoute ? (
           <RouteDetailPage language={language} route={matchedRoute} />
+        ) : dynamicRoute ? (
+          <RouteDetailPage language={language} route={dynamicRoute} />
         ) : matchedPackage ? (
           <PackageDetailPage language={language} pkg={matchedPackage} />
+        ) : dynamicPackage ? (
+          <LivePackageDetailPage slug={dynamicPackage.slug} initialItem={dynamicPackage as unknown as PublicCatalogItem} />
         ) : matchedVehicle ? (
           <VehicleDetailPage language={language} vehicle={matchedVehicle} />
         ) : isSeoLanding ? (

@@ -5,28 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#FAFAFA" />
     <meta name="description" content="SK Baghel Tour & Travels React migration platform." />
-    <!-- H1 (Network & Transport): warm up the location-search API tunnel. useLocationIQ
-         fetches api.locationiq.com during this visit, so preconnect saves a DNS+TCP+TLS
-         handshake on the critical path. -->
-    <link rel="dns-prefetch" href="https://api.locationiq.com" />
-    <link rel="preconnect" href="https://api.locationiq.com" crossorigin />
+    <!-- LocationIQ: proxy-only search via /api/v1/locations/autocomplete
+         (browser-direct token path removed 2026-10-02), so no preconnect —
+         PageSpeed flagged it as unused. -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..700;1,400..700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+    <!-- Material Symbols font removed 2026-10-02: every icon now renders via
+         the typed inline-SVG registry (src/components/icons/Icon.tsx), which
+         retires the ~3.9 MB variable font from the critical path. Do not
+         re-add the font stylesheet; add new glyphs to the registry instead. -->
     <title>SK Baghel Tour & Travels</title>
-    <!-- Google Tag Manager -->
+    <!-- Google Tag Manager — deferred until browser idle so it never contends
+         with LCP on the critical path (PageSpeed: ~90KB unused GTM JS). -->
     <script>
-      (function (w, d, s, l, i) {
-        w[l] = w[l] || [];
-        w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
-        var f = d.getElementsByTagName(s)[0],
-          j = d.createElement(s),
-          dl = l != "dataLayer" ? "&l=" + l : "";
-        j.async = true;
-        j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
-        f.parentNode.insertBefore(j, f);
-      })(window, document, "script", "dataLayer", "GTM-KFXGSK7H");
+      (function () {
+        function loadGTM() {
+          (function (w, d, s, l, i) {
+            w[l] = w[l] || [];
+            w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+            var f = d.getElementsByTagName(s)[0],
+              j = d.createElement(s),
+              dl = l != "dataLayer" ? "&l=" + l : "";
+            j.async = true;
+            j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
+            f.parentNode.insertBefore(j, f);
+          })(window, document, "script", "dataLayer", "GTM-KFXGSK7H");
+        }
+        if ("requestIdleCallback" in window) {
+          window.requestIdleCallback(loadGTM, { timeout: 5000 });
+        } else {
+          window.addEventListener("load", function () {
+            setTimeout(loadGTM, 2000);
+          });
+        }
+      })();
     </script>
     <!-- End Google Tag Manager -->
   </head>

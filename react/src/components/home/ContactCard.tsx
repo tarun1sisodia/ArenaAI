@@ -138,7 +138,7 @@ export function ContactCard() {
             href={`https://wa.me/${contact.whatsapp}`}
             target="_blank"
             rel="noreferrer"
-            aria-label="Chat with SK Baghel on WhatsApp"
+            aria-label="Chat on WhatsApp"
           >
             <WhatsAppIcon className="w-4 h-4 shrink-0 text-white" />
             <span className="text-white" style={{ color: "#ffffff" }}>WhatsApp Desk ↗</span>
@@ -250,7 +250,7 @@ export function ContactCard() {
                   href={`https://wa.me/${contact.whatsapp}`}
                   target="_blank"
                   rel="noreferrer"
-                  aria-label="Message SK Baghel on WhatsApp"
+                  aria-label="Chat on WhatsApp"
                   role="listitem"
                 >
                   <div className="contact-tile-icon" aria-hidden="true">

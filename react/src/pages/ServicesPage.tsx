@@ -1,4 +1,5 @@
 import type { SupportedLanguage } from "../config";
+import { Icon } from "../components/icons/Icon";
 import {
   PrimaryButton,
   WhatsAppButton,
@@ -157,7 +158,7 @@ export function ServicesPage({ language = "en" }: ServicesPageProps) {
             <a className="hover:text-primary transition-colors" href="/">
               Home
             </a>
-            <span className="material-symbols-outlined text-[14px]">chevron_right</span>
+            <Icon name="chevron_right" className="text-icon-14" />
             <span className="text-primary font-bold">Services</span>
           </nav>
 
@@ -194,7 +195,7 @@ export function ServicesPage({ language = "en" }: ServicesPageProps) {
               {SERVICES_MODULES.map((s) => (
                 <a
                   key={s.id}
-                  className="whitespace-nowrap px-3 py-1 rounded-full bg-surface-container hover:bg-surface-container-high text-ink-charcoal font-label-caps text-[9.5px] transition-all font-bold"
+                  className="whitespace-nowrap px-3 py-1 rounded-full bg-surface-container hover:bg-surface-container-high text-ink-charcoal font-label-caps text-body-sm transition-all font-bold"
                   href={`#${s.id}`}
                 >
                   {s.number} {s.name.split(":")[0]}
@@ -236,10 +237,10 @@ export function ServicesPage({ language = "en" }: ServicesPageProps) {
                 />
                 <div className="absolute bottom-2.5 left-2.5 right-2.5 p-2 sm:p-2.5 bg-surface-container-lowest/95 backdrop-blur-md rounded-lg shadow-xs border border-border-warm/40">
                   <div className="flex items-center justify-between text-on-surface">
-                    <span className="font-label-caps text-[9px] text-primary uppercase font-bold">Starting Tariff</span>
+                    <span className="font-label-caps text-label-caps text-primary uppercase font-bold">Starting Tariff</span>
                     <span className="font-price-display text-base sm:text-lg text-primary font-bold">{s.startingFare}</span>
                   </div>
-                  <p className="font-body-sm text-[9.5px] text-on-surface-variant mt-0.5">{s.fareDetail}</p>
+                  <p className="font-body-sm text-body-sm text-on-surface-variant mt-0.5">{s.fareDetail}</p>
                 </div>
               </div>
 
@@ -247,7 +248,7 @@ export function ServicesPage({ language = "en" }: ServicesPageProps) {
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <span className="font-price-display text-headline-sm text-primary font-bold">{s.number}</span>
-                    <span className="font-label-caps text-[9.5px] text-terracotta-sandstone uppercase font-bold tracking-wider">
+                    <span className="font-label-caps text-body-sm text-terracotta-sandstone uppercase font-bold tracking-wider">
                       {s.subtitle}
                     </span>
                   </div>
@@ -258,16 +259,14 @@ export function ServicesPage({ language = "en" }: ServicesPageProps) {
 
                   <div className="space-y-1.5 mb-3 border-y border-border-warm/50 py-2">
                     {s.highlights.map((item) => (
-                      <div key={item} className="flex items-start gap-1.5 text-on-surface font-body-sm text-[10.5px]">
-                        <span className="material-symbols-outlined text-success-jade text-[15px] shrink-0 mt-0.5">
-                          check_circle
-                        </span>
+                      <div key={item} className="flex items-start gap-1.5 text-on-surface font-body-sm text-body-md">
+                        <Icon name="check_circle" className="text-success-jade text-icon-15 shrink-0 mt-0.5" />
                         <span>{item}</span>
                       </div>
                     ))}
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3 text-[10px] text-on-surface-variant">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3 text-label-lg text-on-surface-variant">
                     <div>
                       <strong className="block text-ink-charcoal mb-0.5">Fleet Options:</strong>
                       {s.vehicleTypes}
@@ -314,10 +313,10 @@ export function ServicesPage({ language = "en" }: ServicesPageProps) {
             <div className="p-3.5 sm:p-4 rounded-xl bg-surface-container-lowest border border-border-warm/50 shadow-xs flex flex-col justify-between">
               <div>
                 <div className="w-8 h-8 rounded-lg bg-sandstone-wash flex items-center justify-center text-primary mb-2.5">
-                  <span className="material-symbols-outlined text-[20px]">timer</span>
+                  <Icon name="timer" className="text-icon-20" />
                 </div>
-                <h3 className={`${EDITORIAL_TYPOGRAPHY.subH4} text-xs sm:text-[13px] mb-1`}>Punctuality Guarantee</h3>
-                <p className={`${EDITORIAL_TYPOGRAPHY.compact} text-[9.5px] sm:text-[10px]`}>
+                <h3 className={`${EDITORIAL_TYPOGRAPHY.subH4} text-xs sm:text-title-lg mb-1`}>Punctuality Guarantee</h3>
+                <p className={`${EDITORIAL_TYPOGRAPHY.compact} text-body-sm sm:text-label-lg`}>
                   Chauffeurs arrive at your pickup location 15 minutes before the scheduled rendezvous. If any delay occurs, our
                   standby backup fleet in Taj Ganj deploys immediately.
                 </p>
@@ -327,10 +326,10 @@ export function ServicesPage({ language = "en" }: ServicesPageProps) {
             <div className="p-3.5 sm:p-4 rounded-xl bg-surface-container-lowest border border-border-warm/50 shadow-xs flex flex-col justify-between">
               <div>
                 <div className="w-8 h-8 rounded-lg bg-sandstone-wash flex items-center justify-center text-primary mb-2.5">
-                  <span className="material-symbols-outlined text-[20px]">payments</span>
+                  <Icon name="payments" className="text-icon-20" />
                 </div>
-                <h3 className={`${EDITORIAL_TYPOGRAPHY.subH4} text-xs sm:text-[13px] mb-1`}>Upfront Inclusive Pricing</h3>
-                <p className={`${EDITORIAL_TYPOGRAPHY.compact} text-[9.5px] sm:text-[10px]`}>
+                <h3 className={`${EDITORIAL_TYPOGRAPHY.subH4} text-xs sm:text-title-lg mb-1`}>Upfront Inclusive Pricing</h3>
+                <p className={`${EDITORIAL_TYPOGRAPHY.compact} text-body-sm sm:text-label-lg`}>
                   Every quoted fare itemizes booking receipt, toll clearances, and fuel. What you agree upon is exactly what you pay—with zero
                   hidden roadside extras or tourist surcharges.
                 </p>
@@ -340,10 +339,10 @@ export function ServicesPage({ language = "en" }: ServicesPageProps) {
             <div className="p-3.5 sm:p-4 rounded-xl bg-surface-container-lowest border border-border-warm/50 shadow-xs flex flex-col justify-between">
               <div>
                 <div className="w-8 h-8 rounded-lg bg-sandstone-wash flex items-center justify-center text-primary mb-2.5">
-                  <span className="material-symbols-outlined text-[20px]">badge</span>
+                  <Icon name="badge" className="text-icon-20" />
                 </div>
-                <h3 className={`${EDITORIAL_TYPOGRAPHY.subH4} text-xs sm:text-[13px] mb-1`}>Police-Verified Drivers</h3>
-                <p className={`${EDITORIAL_TYPOGRAPHY.compact} text-[9.5px] sm:text-[10px]`}>
+                <h3 className={`${EDITORIAL_TYPOGRAPHY.subH4} text-xs sm:text-title-lg mb-1`}>Police-Verified Drivers</h3>
+                <p className={`${EDITORIAL_TYPOGRAPHY.compact} text-body-sm sm:text-label-lg`}>
                   Every chauffeur holds an active commercial badge, police background verification certificate, and follows our
                   strict guest etiquette code for families and solo women travelers.
                 </p>
@@ -353,10 +352,10 @@ export function ServicesPage({ language = "en" }: ServicesPageProps) {
             <div className="p-3.5 sm:p-4 rounded-xl bg-surface-container-lowest border border-border-warm/50 shadow-xs flex flex-col justify-between">
               <div>
                 <div className="w-8 h-8 rounded-lg bg-sandstone-wash flex items-center justify-center text-primary mb-2.5">
-                  <span className="material-symbols-outlined text-[20px]">sanitizer</span>
+                  <Icon name="sanitizer" className="text-icon-20" />
                 </div>
-                <h3 className={`${EDITORIAL_TYPOGRAPHY.subH4} text-xs sm:text-[13px] mb-1`}>Spotless Vehicles</h3>
-                <p className={`${EDITORIAL_TYPOGRAPHY.compact} text-[9.5px] sm:text-[10px]`}>
+                <h3 className={`${EDITORIAL_TYPOGRAPHY.subH4} text-xs sm:text-title-lg mb-1`}>Spotless Vehicles</h3>
+                <p className={`${EDITORIAL_TYPOGRAPHY.compact} text-body-sm sm:text-label-lg`}>
                   Each cab undergoes vacuum sanitization, high-performance AC checks, and is stocked with sealed mineral water bottles
                   and device charging cables before dispatch.
                 </p>

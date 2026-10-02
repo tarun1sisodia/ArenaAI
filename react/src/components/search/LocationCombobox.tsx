@@ -1,3 +1,4 @@
+import { Icon, type IconName } from "../icons/Icon";
 /**
  * Searchable Location Combobox Component (Step R6.2)
  *
@@ -7,7 +8,10 @@
  * 3. Live LocationIQ address autocomplete with 300ms debounce via useLocationIQ hook.
  * 4. Full keyboard navigation (ArrowUp, ArrowDown, Enter, Escape).
  * 5. ARIA 1.2 combobox accessibility standards.
- * 6. Inline LocationIQ token management modal/badge.
+ * 6. Non-interactive LocationIQ status indicator. Live search runs only
+ *    through the secure backend proxy, which holds the token server-side;
+ *    the browser holds no token and nothing is displayed or editable here
+ *    (2026-10-02 security fix).
  * 7. Clean White light mode and Solar Dusk dark mode design tokens compliance.
  */
 
@@ -377,8 +381,6 @@ export function LocationCombobox({
   // Dropdown open / close state
   const [isOpen, setIsOpen] = useState(false);
   const [activeIdx, setActiveIdx] = useState(-1);
-  const [showTokenDialog, setShowTokenDialog] = useState(false);
-  const [tokenInputVal, setTokenInputVal] = useState("");
   const [statusMessage, setStatusMessage] = useState("");
 
   // Container refs for click-outside and focus management
@@ -387,16 +389,17 @@ export function LocationCombobox({
   const searchInputRef = useRef<HTMLInputElement>(null);
   const listboxRef = useRef<HTMLDivElement>(null);
 
-  // Hook into typed LocationIQ engine
+  // Hook into typed LocationIQ engine.
+  // NOTE (2026-10-02): live search runs only through the secure backend
+  // proxy at /api/v1/locations/autocomplete, which holds the token
+  // server-side. The browser holds no token; when the proxy returns no
+  // results the curated static destinations below are shown instead.
   const {
     query,
     setQuery,
     results: iqResults,
     isLoading,
-    token,
-    hasToken,
-    setToken,
-    clearToken,
+    liveSearchAvailable,
   } = useLocationIQ("", { debounceMs: 300, minQueryLength: 2, limit: 5 });
 
   // Filter static destinations based on user query
@@ -468,7 +471,6 @@ export function LocationCombobox({
   const closeDropdown = useCallback(() => {
     setIsOpen(false);
     setActiveIdx(-1);
-    setShowTokenDialog(false);
   }, []);
 
   // Handle outside clicks to close dropdown
@@ -639,25 +641,6 @@ export function LocationCombobox({
     }
   };
 
-  // LocationIQ token management handlers
-  const handleOpenTokenDialog = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setTokenInputVal(token);
-    setShowTokenDialog((prev) => !prev);
-  };
-
-  const handleSaveToken = (e: React.FormEvent) => {
-    e.preventDefault();
-    setToken(tokenInputVal);
-    setShowTokenDialog(false);
-  };
-
-  const handleClearToken = () => {
-    clearToken();
-    setTokenInputVal("");
-    setShowTokenDialog(false);
-  };
-
   return (
     <div
       ref={containerRef}
@@ -680,7 +663,7 @@ export function LocationCombobox({
       >
         <span className="loc-pin" aria-hidden="true">
           {/^[a-z0-9_]+$/.test(triggerIcon) ? (
-            <span className="material-symbols-outlined">{triggerIcon}</span>
+            <Icon name={triggerIcon as IconName} />
           ) : triggerIcon}
         </span>
         <span className={`loc-value ${!value ? "is-empty" : ""}`}>
@@ -728,69 +711,25 @@ export function LocationCombobox({
               </span>
             )}
 
-            {/* LocationIQ Token Status Badge */}
+            {/* LocationIQ status indicator (non-interactive). Live search
+                runs through the secure backend proxy; the browser holds no
+                token and nothing here can expose or edit one. */}
             {showLocationIqBadge && (
-              <button
-                type="button"
-                className={`loc-api-tag ${hasToken ? "is-active" : ""}`}
-                onClick={handleOpenTokenDialog}
+              <span
+                className={`loc-api-tag ${liveSearchAvailable ? "is-active" : ""}`}
                 title={
-                  hasToken
-                    ? "LocationIQ connected · Click to configure token"
-                    : "Add LocationIQ token for live address search"
+                  liveSearchAvailable
+                    ? "LocationIQ live search available"
+                    : "LocationIQ live search unavailable — showing curated destinations"
                 }
               >
-                {hasToken ? "● LocationIQ Active" : "+ Add Token"}
-              </button>
+                {liveSearchAvailable ? "● LocationIQ Active" : "○ Curated List"}
+              </span>
             )}
           </div>
 
-          {/* 2b. Inline Token Configuration Popover */}
-          {showTokenDialog && (
-            <div className="loc-token-box">
-              <form onSubmit={handleSaveToken} className="loc-token-form">
-                <div className="loc-token-title">
-                  LocationIQ Browser Access Token
-                </div>
-                <div className="loc-token-desc">
-                  Enables live address search along highways and Agra
-                  monuments. Stored privately in this browser.
-                </div>
-                <input
-                  type="text"
-                  className="loc-token-input"
-                  value={tokenInputVal}
-                  onChange={(e) => setTokenInputVal(e.target.value)}
-                  placeholder="Paste your pk.xxxxxxxxxx token"
-                  autoFocus
-                />
-                <div className="loc-token-actions">
-                  <button type="submit" className="loc-token-btn-save">
-                    Save
-                  </button>
-                  {hasToken && (
-                    <button
-                      type="button"
-                      className="loc-token-btn-clear"
-                      onClick={handleClearToken}
-                    >
-                      Clear
-                    </button>
-                  )}
-                  <button
-                    type="button"
-                    className="loc-token-btn-cancel"
-                    onClick={() => setShowTokenDialog(false)}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            </div>
-          )}
-
-          {/* 2c. Quick Popular Suggestion Pills */}
-          {quickTags.length > 0 && !showTokenDialog && (
+          {/* 2b. Quick Popular Suggestion Pills */}
+          {quickTags.length > 0 && (
             <div className="loc-quick-tags" aria-label="Popular Quick Picks">
               {quickTags.map((tag) => (
                 <button

@@ -10,9 +10,10 @@ export function SiteLayout({ children }: SiteLayoutProps) {
     <div className="app-shell">
       <SkipLink />
       <Header />
-      <div className="pt-12">
+      {/* Single main landmark on every page; SkipLink targets #main-content (2026-10-02). */}
+      <main id="main-content" className="pt-12">
         {children}
-      </div>
+      </main>
       <LeadBar />
       <RadialDock />
       <Footer />

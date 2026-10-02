@@ -1,4 +1,5 @@
 import { useState, type ReactNode, type AnchorHTMLAttributes, type ButtonHTMLAttributes } from "react";
+import { Icon, type IconName } from "../icons/Icon";
 import { WhatsAppIcon } from "../icons/WhatsAppIcon";
 import { contact } from "../../data/contact";
 
@@ -72,7 +73,7 @@ export const EDITORIAL_BUTTONS = {
 
   // Compact Size (Table rows, small cards)
   primaryCompact:
-    "inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary hover:bg-primary-container text-white font-label-lg text-[11px] font-semibold shadow-xs active:scale-[0.98] transition-all whitespace-nowrap cursor-pointer",
+    "inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary hover:bg-primary-container text-white font-label-lg text-label-md font-semibold shadow-xs active:scale-[0.98] transition-all whitespace-nowrap cursor-pointer",
 
   // Pure Black WhatsApp Button (Guaranteed #ffffff text and icon)
   whatsapp:
@@ -82,11 +83,11 @@ export const EDITORIAL_BUTTONS = {
     "inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-black hover:bg-neutral-900 border border-white/20 text-white font-label-lg text-xs sm:text-sm font-semibold shadow-md hover:shadow-lg active:scale-[0.98] transition-all whitespace-nowrap cursor-pointer",
 
   whatsappCompact:
-    "inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-black hover:bg-neutral-900 border border-white/15 text-white font-label-lg text-[11px] font-semibold shadow-xs active:scale-[0.98] transition-all whitespace-nowrap cursor-pointer",
+    "inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-black hover:bg-neutral-900 border border-white/15 text-white font-label-lg text-label-md font-semibold shadow-xs active:scale-[0.98] transition-all whitespace-nowrap cursor-pointer",
 
   // Soft Sandstone / Secondary Button
   secondary:
-    "inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-sandstone-wash hover:bg-primary/10 text-primary border border-primary/25 hover:border-primary/50 font-label-lg text-[11px] font-semibold transition-all duration-200 whitespace-nowrap active:scale-[0.98] shadow-xs cursor-pointer",
+    "inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-sandstone-wash hover:bg-primary/10 text-primary border border-primary/25 hover:border-primary/50 font-label-lg text-label-md font-semibold transition-all duration-200 whitespace-nowrap active:scale-[0.98] shadow-xs cursor-pointer",
 
   // Outline / Ghost Button
   outline:
@@ -127,7 +128,7 @@ export function PrimaryButton({
 
   const iconElement =
     typeof icon === "string" ? (
-      <span className="material-symbols-outlined text-[15px] text-white shrink-0">{icon}</span>
+      <Icon name={icon as IconName} className="text-icon-15 text-white shrink-0" />
     ) : (
       icon
     );
@@ -204,7 +205,7 @@ export function SecondaryButton({
 }: ActionButtonProps) {
   const iconElement =
     typeof icon === "string" ? (
-      <span className="material-symbols-outlined text-[14px] text-primary shrink-0">{icon}</span>
+      <Icon name={icon as IconName} className="text-icon-14 text-primary shrink-0" />
     ) : (
       icon
     );
@@ -256,7 +257,7 @@ export function EditorialPill({
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border font-label-caps text-[9px] uppercase tracking-wider font-bold ${variantClass} ${className}`}
+      className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border font-label-caps text-label-caps uppercase tracking-wider font-bold ${variantClass} ${className}`}
     >
       {children}
     </span>
@@ -329,9 +330,9 @@ export function LuxuryDarkBentoCard({
     >
       <div className="flex items-center justify-between">
         <div className="w-9 h-9 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-105 bg-primary text-white">
-          <span className="material-symbols-outlined text-[20px]">{icon}</span>
+          <Icon name={icon as IconName} className="text-icon-20" />
         </div>
-        <span className="font-label-caps text-[8.5px] uppercase font-bold px-2 py-0.5 rounded-full bg-gold-accent/15 text-gold-accent border border-gold-accent/30">
+        <span className="font-label-caps text-label-caps uppercase font-bold px-2 py-0.5 rounded-full bg-gold-accent/15 text-gold-accent border border-gold-accent/30">
           {badge}
         </span>
       </div>
@@ -378,29 +379,29 @@ export function PromoCouponStrip({
     >
       <div className="flex items-center gap-4">
         <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center shrink-0 shadow-xs">
-          <span className="material-symbols-outlined text-[20px] text-white">confirmation_number</span>
+          <Icon name="confirmation_number" className="text-icon-20 text-white" />
         </div>
         <div>
-          <h4 className="font-title-md text-[14px] text-on-surface font-bold">{title}</h4>
-          <p className="font-body-sm text-[10.5px] text-on-surface-variant mt-0.5">{subtitle}</p>
+          <h4 className="font-title-md text-headline-sm text-on-surface font-bold">{title}</h4>
+          <p className="font-body-sm text-body-md text-on-surface-variant mt-0.5">{subtitle}</p>
         </div>
       </div>
       <div className="flex items-center gap-2 bg-surface-container-lowest px-3 py-2 rounded-lg border border-border-warm/40 shadow-sm shrink-0">
-        <span className="font-label-caps text-[9px] text-on-surface-variant font-semibold">Coupon:</span>
+        <span className="font-label-caps text-label-caps text-on-surface-variant font-semibold">Coupon:</span>
         <code className="font-title-md font-bold text-primary tracking-wider text-xs">{code}</code>
         <button
           type="button"
           onClick={handleCopy}
-          className="text-[10px] px-3 py-1.5 rounded-lg bg-primary hover:bg-primary-container text-white font-label-caps transition-all font-bold shadow-xs active:scale-[0.98] inline-flex items-center gap-1 cursor-pointer"
+          className="text-label-lg px-3 py-1.5 rounded-lg bg-primary hover:bg-primary-container text-white font-label-caps transition-all font-bold shadow-xs active:scale-[0.98] inline-flex items-center gap-1 cursor-pointer"
         >
           {copied ? (
             <>
-              <span className="material-symbols-outlined text-[13px] text-white">check</span>
+              <Icon name="check" className="text-icon-13 text-white" />
               <span className="text-white">Copied!</span>
             </>
           ) : (
             <>
-              <span className="material-symbols-outlined text-[13px] text-white">content_copy</span>
+              <Icon name="content_copy" className="text-icon-13 text-white" />
               <span className="text-white">Copy</span>
             </>
           )}
@@ -418,6 +419,7 @@ export interface EditorialHeroProps {
   badge?: string;
   title: string | ReactNode;
   subtitle?: string | ReactNode;
+  /** Optional override; defaults to the self-hosted hero image. Provide a plain URL (not a CSS url()). */
   backgroundImage?: string;
   breadcrumbs?: Array<{ label: string; href?: string }>;
   primaryAction?: {
@@ -434,11 +436,15 @@ export interface EditorialHeroProps {
   children?: ReactNode;
 }
 
+/** Self-hosted default hero (AVIF/WebP); overrides should also be self-hosted. */
+const DEFAULT_HERO_AVIF = "/images/hero-taj-sunrise.avif";
+const DEFAULT_HERO_WEBP = "/images/hero-taj-sunrise.webp";
+
 export function EditorialHero({
   badge,
   title,
   subtitle,
-  backgroundImage = "https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=2400&q=85",
+  backgroundImage,
   breadcrumbs = [{ label: "Home", href: "/" }],
   primaryAction,
   whatsAppText = "Hello SK Baghel Desk, I would like to inquire about cab bookings.",
@@ -447,12 +453,18 @@ export function EditorialHero({
 }: EditorialHeroProps) {
   return (
     <section className="relative w-full pt-16 sm:pt-24 pb-14 bg-ink-midnight text-on-primary overflow-hidden">
-      {backgroundImage && (
-        <div
-          className="absolute inset-0 z-0 opacity-40 pointer-events-none bg-cover bg-center contrast-105 brightness-95"
-          style={{ backgroundImage: `url("${backgroundImage}")` }}
+      {/* Real <img> (not CSS background) for early discovery. Decorative. */}
+      <picture className="absolute inset-0 z-0 pointer-events-none" aria-hidden="true">
+        {!backgroundImage && <source srcSet={DEFAULT_HERO_AVIF} type="image/avif" />}
+        <img
+          src={backgroundImage || DEFAULT_HERO_WEBP}
+          alt=""
+          decoding="async"
+          width={1920}
+          height={1280}
+          className="h-full w-full object-cover opacity-40 contrast-105 brightness-95"
         />
-      )}
+      </picture>
       <div className="absolute inset-0 bg-gradient-to-r from-ink-midnight via-ink-midnight/85 to-ink-midnight/70 z-0 pointer-events-none" />
       <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-ink-midnight to-transparent z-0 pointer-events-none" />
 
@@ -486,7 +498,7 @@ export function EditorialHero({
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
           <div className="max-w-3xl flex flex-col items-start gap-3">
             {badge && (
-              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-gold-accent/20 border border-gold-accent/40 text-gold-accent font-label-caps text-[10px] uppercase tracking-widest backdrop-blur-md">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-gold-accent/20 border border-gold-accent/40 text-gold-accent font-label-caps text-label-lg uppercase tracking-widest backdrop-blur-md">
                 <span className="w-1.5 h-1.5 rounded-full bg-gold-accent animate-pulse" />
                 <span>{badge}</span>
               </div>
@@ -522,13 +534,13 @@ export function EditorialHero({
                 className="bg-ink-charcoal/80 backdrop-blur-md p-3 rounded-xl border border-white/10 flex items-start gap-2.5"
               >
                 <div className="w-8 h-8 rounded-lg bg-primary/20 text-gold-accent flex items-center justify-center shrink-0">
-                  <span className="material-symbols-outlined text-[18px]">{item.icon}</span>
+                  <Icon name={item.icon as IconName} className="text-icon-18" />
                 </div>
                 <div>
                   <h4 className="font-title-md text-xs text-ivory-surface font-bold leading-tight">
                     {item.title}
                   </h4>
-                  <p className="font-body-sm text-[10px] text-ivory-surface/75 mt-0.5 leading-snug">
+                  <p className="font-body-sm text-label-lg text-ivory-surface/75 mt-0.5 leading-snug">
                     {item.desc}
                   </p>
                 </div>

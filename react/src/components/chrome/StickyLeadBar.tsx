@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Icon } from "../icons/Icon";
 import { contact } from "../../data/contact";
 import { WhatsAppIcon } from "../icons/WhatsAppIcon";
 
@@ -41,16 +42,16 @@ export function StickyLeadBar({ currentPath }: StickyLeadBarProps) {
       data-nosnippet
     >
       <a
-        className="flex-1 flex flex-col items-center justify-center py-1.5 rounded-lg bg-surface-container text-on-surface font-label-caps text-[11px] font-semibold hover:bg-surface-container-high transition-colors"
+        className="flex-1 flex flex-col items-center justify-center py-1.5 rounded-lg bg-surface-container text-on-surface font-label-caps text-label-md font-semibold hover:bg-surface-container-high transition-colors"
         href={`tel:${contact.phone}`}
         aria-label={`Call ${contact.phoneDisplay}`}
       >
-        <span className="material-symbols-outlined text-primary text-[18px]">call</span>
+        <Icon name="call" className="text-primary text-icon-18" />
         <span className="mt-0.5">Call Desk</span>
       </a>
 
       <a
-        className="flex-1 flex flex-col items-center justify-center py-1.5 rounded-lg bg-black text-white font-label-caps text-[11px] font-semibold hover:bg-neutral-900 transition-colors shadow-xs border border-white/10"
+        className="flex-1 flex flex-col items-center justify-center py-1.5 rounded-lg bg-black text-white font-label-caps text-label-md font-semibold hover:bg-neutral-900 transition-colors shadow-xs border border-white/10"
         style={{ color: "#ffffff" }}
         href={`https://wa.me/${contact.whatsapp}?text=Hello%20SK%20Baghel%20Travels`}
         target="_blank"
@@ -62,11 +63,11 @@ export function StickyLeadBar({ currentPath }: StickyLeadBarProps) {
       </a>
 
       <a
-        className="flex-1 flex flex-col items-center justify-center py-1.5 rounded-lg bg-primary text-on-primary font-label-caps text-[11px] font-semibold hover:bg-primary-container transition-colors shadow-xs"
+        className="flex-1 flex flex-col items-center justify-center py-1.5 rounded-lg bg-primary text-on-primary font-label-caps text-label-md font-semibold hover:bg-primary-container transition-colors shadow-xs"
         href="/book.html"
         aria-label="Book Cab or Tour"
       >
-        <span className="material-symbols-outlined text-on-primary text-[18px]">calendar_month</span>
+        <Icon name="calendar_month" className="text-on-primary text-icon-18" />
         <span className="mt-0.5">Book Now</span>
       </a>
     </aside>

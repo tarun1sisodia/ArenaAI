@@ -1,10 +1,13 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
+import { Icon } from "../icons/Icon";
 import { EDITORIAL_TYPOGRAPHY } from "../layout/EditorialPageTemplate";
 import { WhatsAppIcon } from "../icons/WhatsAppIcon";
 import { contact } from "../../data/contact";
 import { getIndicativeBrowseFare } from "../../fares";
 import { loadRoutesManifest } from "../../services/catalogManifest";
 import { LocationCombobox } from "../search/LocationCombobox";
+import { FLEETS } from "../../data/fleets";
+import type { UiVehicleTier } from "../../data/fleets";
 import type { LocationSuggestion } from "../../hooks/useLocationIQ";
 
 export interface CompressedRouteItem {
@@ -12,7 +15,6 @@ export interface CompressedRouteItem {
   d: string;        // Destination
   km: number;       // Distance in km (One-Way)
   m: number;        // Duration in minutes
-  fh: number;       // Fare Hatchback
   fs: number;       // Fare Sedan
   fe: number;       // Fare Ertiga / SUV
   fi: number;       // Fare Innova Crysta
@@ -22,7 +24,11 @@ export interface CompressedRouteItem {
   toll: 1 | 0;      // Toll inclusion
 }
 
-export type VehicleTier = "sedan" | "ertiga" | "innova" | "hatchback" | "tempo" | "urbania";
+/**
+ * Vehicle tier for the route widget. Aliased to the canonical UI registry
+ * (data/fleets.ts) — the 5 bookable fleets. There is no 6th "hatchback" tier.
+ */
+export type VehicleTier = UiVehicleTier;
 
 export interface InstantRouteCalculatorProps {
   initialOrigin?: string;
@@ -148,15 +154,7 @@ export function InstantRouteCalculator({
   // Indicative Browse Engine (Shared Rule Module)
   const indicativeQuote = useMemo(() => {
     if (!matchedEntry) return null;
-    const tier = selectedTier === "hatchback" ? "sedan" : selectedTier;
-    const quote = getIndicativeBrowseFare(matchedEntry, tier, "one-way");
-    if (selectedTier === "hatchback") {
-      return {
-        ...quote,
-        total: matchedEntry.fh || Math.round(quote.total * 0.85),
-      };
-    }
-    return quote;
+    return getIndicativeBrowseFare(matchedEntry, selectedTier, "one-way");
   }, [matchedEntry, selectedTier]);
 
   const activeFare = indicativeQuote?.total ?? 0;
@@ -206,27 +204,20 @@ export function InstantRouteCalculator({
             onChange={(val) => setDestInput(val)}
             placeholder="Search destination city, airport, landmark..."
             label="Drop-off Destination"
-            triggerIcon="location_on"
+            triggerIcon="pin_drop"
           />
         </div>
       </div>
 
-      {/* Vehicle Tier Selector (6 Options) */}
+      {/* Vehicle Tier Selector (5 Options — canonical fleet registry, see data/fleets.ts) */}
       <div className="mb-space-md">
         <label className="block font-label-lg text-xs font-bold text-ink-slate mb-1.5">Select Vehicle Class</label>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
-          {[
-            { id: "sedan", label: "Sedan", seats: "4 Seater · 2 Bags", icon: "directions_car" },
-            { id: "ertiga", label: "Ertiga / SUV", seats: "6 Seater · 3 Bags", icon: "airport_shuttle" },
-            { id: "innova", label: "Innova Crysta", seats: "6 Seater · 4 Bags", icon: "directions_car_filled" },
-            { id: "tempo", label: "Tempo Traveller", seats: "7-26 Seater", icon: "transportation" },
-            { id: "urbania", label: "Force Urbania", seats: "10-13 Luxury", icon: "vip_services" },
-            { id: "hatchback", label: "Hatchback", seats: "4 Seater · 2 Bags", icon: "electric_car" },
-          ].map((tier) => (
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
+          {FLEETS.map((tier) => (
             <button
               key={tier.id}
               type="button"
-              onClick={() => setSelectedTier(tier.id as VehicleTier)}
+              onClick={() => setSelectedTier(tier.id)}
               className={`p-2.5 rounded-lg text-left transition-all border ${
                 selectedTier === tier.id
                   ? "bg-primary-container text-on-primary-container border-primary font-semibold shadow-xs"
@@ -234,10 +225,10 @@ export function InstantRouteCalculator({
               }`}
             >
               <div className="flex items-center gap-1.5 mb-0.5">
-                <span className="material-symbols-outlined text-[16px] text-terracotta-sandstone">{tier.icon}</span>
+                <Icon name={tier.icon} className="text-icon-16 text-terracotta-sandstone" />
                 <span className="font-title-md text-xs font-bold leading-tight">{tier.label}</span>
               </div>
-              <div className="font-body-sm text-[11px] opacity-80 pl-5">{tier.seats}</div>
+              <div className="font-body-sm text-label-md opacity-80 pl-5">{tier.seats}</div>
             </button>
           ))}
         </div>
@@ -252,17 +243,17 @@ export function InstantRouteCalculator({
                 <span className="font-title-lg text-title-lg text-ink-charcoal font-bold">
                   {matchedEntry.o} → {matchedEntry.d}
                 </span>
-                <span className="font-label-caps text-[10px] px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface font-bold uppercase">
+                <span className="font-label-caps text-label-lg px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface font-bold uppercase">
                   {matchedEntry.c}
                 </span>
               </div>
               <div className="font-body-sm text-xs text-on-surface-variant flex flex-wrap items-center gap-3">
                 <span className="flex items-center gap-1 font-medium text-ink-slate">
-                  <span className="material-symbols-outlined text-[14px] text-primary">add_road</span>
+                  <Icon name="add_road" className="text-icon-14 text-primary" />
                   {matchedEntry.km} km (One-Way)
                 </span>
                 <span className="flex items-center gap-1 font-medium text-ink-slate">
-                  <span className="material-symbols-outlined text-[14px] text-terracotta-sandstone">schedule</span>
+                  <Icon name="schedule" className="text-icon-14 text-terracotta-sandstone" />
                   {Math.floor(matchedEntry.m / 60)}h {matchedEntry.m % 60}m approx
                 </span>
               </div>
@@ -276,7 +267,7 @@ export function InstantRouteCalculator({
 
               {/* Transparent Breakdown for Tempo / Urbania */}
               {isGroupVehicle && (
-                <span className="block font-body-sm text-[10px] text-on-surface-variant mt-0.5 font-medium">
+                <span className="block font-body-sm text-label-lg text-on-surface-variant mt-0.5 font-medium">
                   Round-trip billed · {billableKm} km · +₹500 Driver
                 </span>
               )}
@@ -294,7 +285,7 @@ export function InstantRouteCalculator({
               className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-ink-charcoal text-ivory-surface font-label-lg text-xs font-semibold hover:bg-ink-slate transition-colors"
             >
               <span>View Route Details</span>
-              <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
+              <Icon name="arrow_forward" className="text-icon-14" />
             </a>
             <a
               href={`https://wa.me/${contact.phone.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(
@@ -303,24 +294,24 @@ export function InstantRouteCalculator({
               target="_blank"
               rel="noopener noreferrer"
               style={{ color: "#ffffff" }}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#000000] border border-white/15 text-[#ffffff] font-label-lg text-xs font-semibold hover:bg-neutral-900 transition-colors shadow-xs"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-black border border-white/15 text-white font-label-lg text-xs font-semibold hover:bg-neutral-900 transition-colors shadow-xs"
             >
               <WhatsAppIcon className="w-3.5 h-3.5 fill-current text-white" />
               <span className="text-white font-semibold" style={{ color: "#ffffff" }}>WhatsApp Concierge</span>
             </a>
             <a
-              href={`/book?from=${encodeURIComponent(matchedEntry.o)}&to=${encodeURIComponent(matchedEntry.d)}&vehicle=${selectedTier === "hatchback" ? "sedan" : selectedTier}&trip=one-way`}
+              href={`/book?from=${encodeURIComponent(matchedEntry.o)}&to=${encodeURIComponent(matchedEntry.d)}&vehicle=${selectedTier}&trip=one-way`}
               className="inline-flex items-center gap-1 px-3.5 py-2 rounded-lg bg-primary text-white font-label-lg text-xs font-semibold hover:bg-primary-container transition-colors ml-auto shadow-xs active:scale-[0.98]"
             >
               <span>Direct Booking Form</span>
-              <span className="material-symbols-outlined text-[14px]">chevron_right</span>
+              <Icon name="chevron_right" className="text-icon-14" />
             </a>
           </div>
         </div>
       ) : hasSearchedPair ? (
         <div className="p-space-lg text-center bg-surface-container-low rounded-xl border border-dashed border-border-warm flex flex-col items-center justify-center gap-2">
           <div className="w-12 h-12 rounded-full bg-sandstone-wash text-terracotta-sandstone flex items-center justify-center mb-0.5">
-            <span className="material-symbols-outlined text-[26px]">explore_off</span>
+            <Icon name="explore_off" className="text-icon-26" />
           </div>
           <h4 className="font-title-lg text-title-lg text-ink-charcoal font-bold">
             There is no route available, sorry.

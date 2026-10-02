@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Icon } from "../icons/Icon";
 import { contact } from "../../data/contact";
 import { WhatsAppIcon } from "../icons";
 import {
@@ -29,7 +30,7 @@ const AVAILABILITY_BADGE: Record<PublicCatalogItem["availability"], { label: str
   available: null,
   limited: {
     label: "Limited seats",
-    className: "bg-terracotta-sandstone text-on-primary font-bold",
+    className: "bg-terracotta-deep text-on-primary font-bold",
   },
   unavailable: {
     label: "On request",
@@ -78,7 +79,7 @@ export function LiveCatalogSection({
     >
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-space-md mb-6">
         <div className="max-w-2xl">
-          <span className="font-label-caps text-[9.5px] text-primary uppercase font-bold tracking-widest">
+          <span className="font-label-caps text-body-sm text-primary uppercase font-bold tracking-widest">
             {eyebrow}
           </span>
           <h2 className="font-headline-lg text-headline-lg text-ink-charcoal mt-1">{title}</h2>
@@ -117,11 +118,11 @@ export function LiveCatalogSection({
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-sandstone-wash" aria-hidden="true">
-                    <span className="material-symbols-outlined text-primary text-[32px]">tour</span>
+                    <Icon name="tour" className="text-primary text-icon-32" />
                   </div>
                 )}
                 <div className="absolute top-2.5 left-2.5 flex gap-1.5 flex-wrap">
-                  <span className="px-2 py-0.5 rounded bg-primary text-on-primary text-[8.5px] font-label-caps uppercase tracking-wider shadow-xs font-bold">
+                  <span className="px-2 py-0.5 rounded bg-primary text-on-primary text-label-caps font-label-caps uppercase tracking-wider shadow-xs font-bold">
                     {item.type === "package"
                       ? "Tour package"
                       : item.type === "tour"
@@ -133,13 +134,13 @@ export function LiveCatalogSection({
                             : item.type}
                   </span>
                   {item.tripType && (
-                    <span className="px-2 py-0.5 rounded bg-ink-charcoal/90 text-ivory-surface text-[8.5px] font-label-caps uppercase tracking-wider backdrop-blur-sm font-semibold">
+                    <span className="px-2 py-0.5 rounded bg-ink-charcoal/90 text-ivory-surface text-label-caps font-label-caps uppercase tracking-wider backdrop-blur-sm font-semibold">
                       {TRIP_TYPE_LABEL[item.tripType]}
                     </span>
                   )}
                   {availability && (
                     <span
-                      className={`px-2 py-0.5 rounded text-[8.5px] font-label-caps uppercase tracking-wider shadow-xs ${availability.className}`}
+                      className={`px-2 py-0.5 rounded text-label-caps font-label-caps uppercase tracking-wider shadow-xs ${availability.className}`}
                     >
                       {item.availability === "limited" && item.seatsLeft !== null
                         ? `Only ${item.seatsLeft} left`
@@ -150,7 +151,7 @@ export function LiveCatalogSection({
               </div>
 
               <div className="flex flex-col flex-1 p-4">
-                <h3 className="font-title-md text-[14px] font-bold text-ink-charcoal leading-snug">{item.title}</h3>
+                <h3 className="font-title-md text-headline-sm font-bold text-ink-charcoal leading-snug">{item.title}</h3>
                 <p className="font-body-sm text-body-sm text-on-surface-variant mt-1.5 leading-relaxed line-clamp-2">
                   {item.shortDescription}
                 </p>
@@ -158,19 +159,19 @@ export function LiveCatalogSection({
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-3 text-on-surface-variant font-body-sm text-body-sm">
                   {item.durationText && (
                     <span className="inline-flex items-center gap-1">
-                      <span className="material-symbols-outlined text-[14px]" aria-hidden="true">schedule</span>
+                      <Icon name="schedule" className="text-icon-14" aria-hidden="true" />
                       {item.durationText}
                     </span>
                   )}
                   {item.distanceKm !== null && item.distanceKm !== undefined && (
                     <span className="inline-flex items-center gap-1">
-                      <span className="material-symbols-outlined text-[14px]" aria-hidden="true">route</span>
+                      <Icon name="route" className="text-icon-14" aria-hidden="true" />
                       ~{item.distanceKm} km
                     </span>
                   )}
                   {item.stops.length > 0 && (
                     <span className="inline-flex items-center gap-1">
-                      <span className="material-symbols-outlined text-[14px]" aria-hidden="true">location_on</span>
+                      <Icon name="pin_drop" className="text-icon-14" aria-hidden="true" />
                       {item.stops.length} stop{item.stops.length === 1 ? "" : "s"}
                     </span>
                   )}
@@ -181,13 +182,13 @@ export function LiveCatalogSection({
                     {item.stops.slice(0, 4).map((stop) => (
                       <span
                         key={stop}
-                        className="px-2 py-0.5 rounded bg-sandstone-wash text-terracotta-sandstone text-[9.5px] font-medium"
+                        className="px-2 py-0.5 rounded bg-sandstone-wash text-terracotta-sandstone text-body-sm font-medium"
                       >
                         {stop}
                       </span>
                     ))}
                     {item.stops.length > 4 && (
-                      <span className="px-2 py-0.5 rounded bg-sandstone-wash text-terracotta-sandstone text-[9.5px] font-medium">
+                      <span className="px-2 py-0.5 rounded bg-sandstone-wash text-terracotta-sandstone text-body-sm font-medium">
                         +{item.stops.length - 4} more
                       </span>
                     )}
@@ -196,7 +197,7 @@ export function LiveCatalogSection({
 
                 <div className="mt-auto pt-4 flex items-end justify-between gap-3">
                   <div>
-                    <span className="block font-label-caps text-[8.5px] uppercase tracking-wider text-on-surface-variant">
+                    <span className="block font-label-caps text-label-caps uppercase tracking-wider text-on-surface-variant">
                       Starting from
                     </span>
                     <span className="font-title-md text-lg font-bold text-ink-charcoal">
@@ -218,7 +219,7 @@ export function LiveCatalogSection({
                       className="inline-flex items-center gap-1 px-3.5 h-9 rounded-lg bg-primary text-on-primary font-label-lg text-xs font-semibold hover:opacity-90 transition-opacity"
                     >
                       View details
-                      <span className="material-symbols-outlined text-[14px]" aria-hidden="true">arrow_forward</span>
+                      <Icon name="arrow_forward" className="text-icon-14" aria-hidden="true" />
                     </a>
                   </div>
                 </div>

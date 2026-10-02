@@ -99,7 +99,7 @@ function DetailPage({ detail, language }: { detail: Vehicle | Package | Route; l
   const languagePrefix = language === "hi" ? "/hi" : "/en";
 
   return (
-    <main id="main-content" className="marketing-page">
+    <div className="marketing-page">
       <section className="marketing-hero detail-hero">
         <p className="eyebrow">SK Baghel Tour &amp; Travels</p>
         <h1>{title}</h1>
@@ -113,7 +113,7 @@ function DetailPage({ detail, language }: { detail: Vehicle | Package | Route; l
       {vehicle && <section className="detail-media-section"><img src={vehicle.image} alt={`${vehicle.name} hire in Agra`} width="480" height="300" /><div><p className="eyebrow">{vehicle.klass}</p><h2>Comfort for {vehicle.suitable.toLowerCase()}.</h2><p className="spec-row">{vehicle.tags.join(" · ")}</p><p className="fare">{vehicle.rateRange}</p><ul className="check-list">{vehicle.models.map((model) => <li key={model}>{model}</li>)}</ul></div></section>}
       {tour && <><section className="detail-media-section"><img src={tour.image} alt={`${tour.name} from Agra`} width="480" height="300" /><div><p className="eyebrow">{tour.kicker} · {tour.duration}</p><h2>See the highlights without rushing.</h2><p>{tour.places.join(" → ")}</p><p className="fare">From ₹{tour.from.toLocaleString("en-IN")}</p></div></section><section className="detail-content"><h2>What this journey includes.</h2><div className="detail-columns"><div><h3>Included</h3><ul className="check-list">{tour.includes.map((item) => <li key={item}>{item}</li>)}</ul></div><div><h3>Not included</h3><ul className="cross-list">{tour.excludes.map((item) => <li key={item}>{item}</li>)}</ul></div></div></section></>}
       {route && <section className="detail-content"><p className="eyebrow">Sample fare</p><h2>Compare vehicles before you book.</h2><p>{route.duration} · {route.km} km · private chauffeur-driven vehicle.</p><div className="fare-table-wrap"><table className="fare-table"><thead><tr><th>Vehicle</th><th>Seats</th><th>One way</th><th>Book</th></tr></thead><tbody>{vehicles.map((candidate) => <tr key={candidate.id}><td><a href={`${languagePrefix}/vehicles/${candidate.id === "innova" ? "innova-crysta" : candidate.id === "tempo" ? "tempo-traveller" : candidate.id}/`}>{candidate.name}</a></td><td>{candidate.seats}</td><td><strong>₹{route.fares[candidate.id].toLocaleString("en-IN")}</strong></td><td><a className="text-link" href={`/book.html?route=${route.id}&vehicle=${candidate.id}`}>Book ↗</a></td></tr>)}</tbody></table></div></section>}
-    </main>
+    </div>
   );
 }
 
@@ -125,7 +125,7 @@ export function MarketingPage({ language, section }: MarketingPageProps) {
   if (detail) return <DetailPage detail={detail} language={language} />;
 
   return (
-    <main id="main-content" className="marketing-page">
+    <div className="marketing-page">
       <section className="marketing-hero">
         <p className="eyebrow">{eyebrow}</p>
         <h1>{title}</h1>
@@ -191,6 +191,6 @@ export function MarketingPage({ language, section }: MarketingPageProps) {
           <div className="hero-actions"><a className="button button-whatsapp inline-flex items-center gap-2" style={{ color: "#ffffff" }} href={`https://wa.me/${contact.whatsapp}`} target="_blank" rel="noreferrer"><WhatsAppIcon className="w-4 h-4 shrink-0 text-white" /><span className="text-white" style={{ color: "#ffffff" }}>Message on WhatsApp</span></a><a className="button button-outline" href="/book.html">Start a booking</a></div>
         </section>
       )}
-    </main>
+    </div>
   );
 }

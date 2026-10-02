@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import { Icon } from "../components/icons/Icon";
 import { contact } from "../data/contact";
 import { type Vehicle, vehicles, routes } from "../data/catalogue";
 import { WhatsAppIcon } from "../components/icons";
@@ -108,13 +109,13 @@ export function VehicleDetailPage({ vehicle }: VehicleDetailPageProps) {
         <div className="max-w-7xl mx-auto px-margin-mobile lg:px-margin flex items-center justify-between">
           <nav aria-label="Breadcrumb" className="flex items-center gap-space-xs text-body-sm font-body-sm text-on-surface-variant">
             <a className="hover:text-primary transition-colors" href="/">Home</a>
-            <span className="material-symbols-outlined text-[14px] text-terracotta-sandstone">chevron_right</span>
+            <Icon name="chevron_right" className="text-icon-14 text-terracotta-sandstone" />
             <a className="hover:text-primary transition-colors" href="/fleet/">Fleet</a>
-            <span className="material-symbols-outlined text-[14px] text-terracotta-sandstone">chevron_right</span>
+            <Icon name="chevron_right" className="text-icon-14 text-terracotta-sandstone" />
             <span className="text-terracotta-sandstone font-medium">{vehicle.name}</span>
           </nav>
           <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary-fixed text-primary text-label-caps font-label-caps uppercase tracking-wider">
-            <span className="material-symbols-outlined text-[14px]">verified</span>
+            <Icon name="verified" className="text-icon-14" />
             100% Yellow-Plate Commercial
           </span>
         </div>
@@ -147,31 +148,31 @@ export function VehicleDetailPage({ vehicle }: VehicleDetailPageProps) {
               {/* Spec highlights */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-space-sm pt-space-xs">
                 <div className="flex items-center gap-2 p-space-sm rounded bg-surface-container-low border border-border-warm/40">
-                  <span className="material-symbols-outlined text-terracotta-sandstone text-[20px]">airline_seat_recline_extra</span>
+                  <Icon name="airline_seat_recline_extra" className="text-terracotta-sandstone text-icon-20" />
                   <div className="flex flex-col">
-                    <span className="font-title-md text-[14px] text-ink-charcoal font-semibold">{vehicle.seats} Seats</span>
-                    <span className="text-[11px] text-secondary">Contoured comfort</span>
+                    <span className="font-title-md text-headline-sm text-ink-charcoal font-semibold">{vehicle.seats} Seats</span>
+                    <span className="text-label-md text-secondary">Contoured comfort</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 p-space-sm rounded bg-surface-container-low border border-border-warm/40">
-                  <span className="material-symbols-outlined text-terracotta-sandstone text-[20px]">luggage</span>
+                  <Icon name="luggage" className="text-terracotta-sandstone text-icon-20" />
                   <div className="flex flex-col">
-                    <span className="font-title-md text-[14px] text-ink-charcoal font-semibold">{vehicle.bags} Bags</span>
-                    <span className="text-[11px] text-secondary">Large boot bay</span>
+                    <span className="font-title-md text-headline-sm text-ink-charcoal font-semibold">{vehicle.bags} Bags</span>
+                    <span className="text-label-md text-secondary">Large boot bay</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 p-space-sm rounded bg-surface-container-low border border-border-warm/40">
-                  <span className="material-symbols-outlined text-terracotta-sandstone text-[20px]">mode_fan</span>
+                  <Icon name="mode_fan" className="text-terracotta-sandstone text-icon-20" />
                   <div className="flex flex-col">
-                    <span className="font-title-md text-[14px] text-ink-charcoal font-semibold">Dual AC</span>
-                    <span className="text-[11px] text-secondary">Pristine cooling</span>
+                    <span className="font-title-md text-headline-sm text-ink-charcoal font-semibold">Dual AC</span>
+                    <span className="text-label-md text-secondary">Pristine cooling</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 p-space-sm rounded bg-surface-container-low border border-border-warm/40">
-                  <span className="material-symbols-outlined text-terracotta-sandstone text-[20px]">shield_person</span>
+                  <Icon name="shield_person" className="text-terracotta-sandstone text-icon-20" />
                   <div className="flex flex-col">
-                    <span className="font-title-md text-[14px] text-ink-charcoal font-semibold">Police ID</span>
-                    <span className="text-[11px] text-secondary">Verified driver</span>
+                    <span className="font-title-md text-headline-sm text-ink-charcoal font-semibold">Police ID</span>
+                    <span className="text-label-md text-secondary">Verified driver</span>
                   </div>
                 </div>
               </div>
@@ -189,10 +190,10 @@ export function VehicleDetailPage({ vehicle }: VehicleDetailPageProps) {
 
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-space-sm">
                   <a
-                    className="inline-flex items-center justify-center gap-space-xs bg-terracotta-sandstone text-on-primary px-6 py-3.5 rounded text-label-lg font-label-lg shadow-md hover:bg-terracotta-sunlit transition-all duration-200"
+                    className="inline-flex items-center justify-center gap-space-xs bg-terracotta-deep text-white px-6 py-3.5 rounded text-label-lg font-label-lg shadow-md hover:bg-terracotta-sunlit transition-all duration-200"
                     href={bookingUrl}
                   >
-                    <span className="material-symbols-outlined text-[20px]">calendar_month</span>
+                    <Icon name="calendar_month" className="text-icon-20" />
                     <span>Reserve {vehicle.name}</span>
                   </a>
                   <a
@@ -236,11 +237,11 @@ export function VehicleDetailPage({ vehicle }: VehicleDetailPageProps) {
               {/* Trust signals strip */}
               <div className="grid grid-cols-2 gap-space-sm pt-space-md">
                 <div className="flex items-center gap-2 p-space-sm rounded bg-surface-container-low border border-border-warm/40">
-                  <span className="material-symbols-outlined text-success-jade text-[20px]">verified</span>
+                  <Icon name="verified" className="text-success-jade text-icon-20" />
                   <span className="text-body-sm text-on-surface font-medium">100% Yellow Commercial Plate</span>
                 </div>
                 <div className="flex items-center gap-2 p-space-sm rounded bg-surface-container-low border border-border-warm/40">
-                  <span className="material-symbols-outlined text-success-jade text-[20px]">speed</span>
+                  <Icon name="speed" className="text-success-jade text-icon-20" />
                   <span className="text-body-sm text-on-surface font-medium">80–100 km/h Speed Governed</span>
                 </div>
               </div>
@@ -269,7 +270,7 @@ export function VehicleDetailPage({ vehicle }: VehicleDetailPageProps) {
             <div className="bg-surface-container-lowest p-space-xl rounded-lg shadow-sm border border-border-warm/50 flex flex-col justify-between">
               <div className="flex flex-col gap-space-sm">
                 <div className="w-12 h-12 rounded-lg bg-sandstone-wash flex items-center justify-center text-terracotta-sandstone">
-                  <span className="material-symbols-outlined text-[26px]">chair</span>
+                  <Icon name="chair" className="text-icon-26" />
                 </div>
                 <h3 className="font-title-lg text-title-lg text-on-surface font-serif">Seating &amp; Ergonomics</h3>
                 <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
@@ -285,7 +286,7 @@ export function VehicleDetailPage({ vehicle }: VehicleDetailPageProps) {
             <div className="bg-surface-container-lowest p-space-xl rounded-lg shadow-sm border border-border-warm/50 flex flex-col justify-between">
               <div className="flex flex-col gap-space-sm">
                 <div className="w-12 h-12 rounded-lg bg-sandstone-wash flex items-center justify-center text-terracotta-sandstone">
-                  <span className="material-symbols-outlined text-[26px]">luggage</span>
+                  <Icon name="luggage" className="text-icon-26" />
                 </div>
                 <h3 className="font-title-lg text-title-lg text-on-surface font-serif">Luggage &amp; Storage</h3>
                 <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
@@ -301,7 +302,7 @@ export function VehicleDetailPage({ vehicle }: VehicleDetailPageProps) {
             <div className="bg-surface-container-lowest p-space-xl rounded-lg shadow-sm border border-border-warm/50 flex flex-col justify-between">
               <div className="flex flex-col gap-space-sm">
                 <div className="w-12 h-12 rounded-lg bg-sandstone-wash flex items-center justify-center text-terracotta-sandstone">
-                  <span className="material-symbols-outlined text-[26px]">ac_unit</span>
+                  <Icon name="ac_unit" className="text-icon-26" />
                 </div>
                 <h3 className="font-title-lg text-title-lg text-on-surface font-serif">Climate Control &amp; AC</h3>
                 <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
@@ -317,7 +318,7 @@ export function VehicleDetailPage({ vehicle }: VehicleDetailPageProps) {
             <div className="bg-surface-container-lowest p-space-xl rounded-lg shadow-sm border border-border-warm/50 flex flex-col justify-between">
               <div className="flex flex-col gap-space-sm">
                 <div className="w-12 h-12 rounded-lg bg-sandstone-wash flex items-center justify-center text-terracotta-sandstone">
-                  <span className="material-symbols-outlined text-[26px]">verified_user</span>
+                  <Icon name="verified_user" className="text-icon-26" />
                 </div>
                 <h3 className="font-title-lg text-title-lg text-on-surface font-serif">Safety &amp; Compliance</h3>
                 <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
@@ -355,7 +356,7 @@ export function VehicleDetailPage({ vehicle }: VehicleDetailPageProps) {
               <div className="flex flex-col gap-space-md">
                 <div className="flex items-center justify-between">
                   <span className="font-title-md text-title-md font-serif text-terracotta-sandstone">Local Sightseeing</span>
-                  <span className="material-symbols-outlined text-primary text-[24px]">location_city</span>
+                  <Icon name="location_city" className="text-primary text-icon-24" />
                 </div>
                 <p className="font-body-sm text-body-sm text-on-surface-variant">
                   Explore Taj Mahal, Agra Fort, Mehtab Bagh, and Baby Taj with a private dedicated chauffeur.
@@ -363,28 +364,28 @@ export function VehicleDetailPage({ vehicle }: VehicleDetailPageProps) {
                 <div className="flex flex-col gap-space-xs pt-space-xs divide-y divide-border-warm/30">
                   <div className="flex items-center justify-between py-2 text-body-sm">
                     <span className="text-ink-charcoal font-medium">8 Hours / 80 km</span>
-                    <span className="font-semibold text-terracotta-sandstone font-serif text-[16px]">₹{rates.standard8h}</span>
+                    <span className="font-semibold text-terracotta-sandstone font-serif text-headline-md">₹{rates.standard8h}</span>
                   </div>
                   <div className="flex items-center justify-between py-2 text-body-sm">
                     <span className="text-ink-charcoal font-medium">Full Day Sightseeing (12h)</span>
-                    <span className="font-semibold text-terracotta-sandstone font-serif text-[16px]">₹{rates.fullDay}</span>
+                    <span className="font-semibold text-terracotta-sandstone font-serif text-headline-md">₹{rates.fullDay}</span>
                   </div>
                   <div className="flex items-center justify-between py-2 text-body-sm">
                     <span className="text-ink-charcoal font-medium">Agra Cantt Railway Drop</span>
-                    <span className="font-semibold text-terracotta-sandstone font-serif text-[16px]">₹{rates.agraCantt}</span>
+                    <span className="font-semibold text-terracotta-sandstone font-serif text-headline-md">₹{rates.agraCantt}</span>
                   </div>
                   <div className="flex items-center justify-between py-2 text-body-sm">
                     <span className="text-ink-charcoal font-medium">Agra Airport (AGR) Transfer</span>
-                    <span className="font-semibold text-terracotta-sandstone font-serif text-[16px]">₹{rates.agraAirport}</span>
+                    <span className="font-semibold text-terracotta-sandstone font-serif text-headline-md">₹{rates.agraAirport}</span>
                   </div>
                 </div>
               </div>
               <a
-                className="mt-space-lg w-full inline-flex items-center justify-center gap-space-xs bg-sandstone-wash text-terracotta-sandstone hover:bg-terracotta-sandstone hover:text-on-primary py-3 rounded text-label-lg font-label-lg transition-colors border border-border-warm"
+                className="mt-space-lg w-full inline-flex items-center justify-center gap-space-xs bg-sandstone-wash text-terracotta-sandstone hover:bg-terracotta-deep hover:text-white py-3 rounded text-label-lg font-label-lg transition-colors border border-border-warm"
                 href={`/book/?vehicle=${vehicleSlug}&type=local&step=2`}
               >
                 <span>Book Local Agra Cab</span>
-                <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+                <Icon name="arrow_forward" className="text-icon-16" />
               </a>
             </div>
 
@@ -393,7 +394,7 @@ export function VehicleDetailPage({ vehicle }: VehicleDetailPageProps) {
               <div className="flex flex-col gap-space-md">
                 <div className="flex items-center justify-between">
                   <span className="font-title-md text-title-md font-serif text-terracotta-sandstone">Popular Fixed Outstation Drops</span>
-                  <span className="material-symbols-outlined text-primary text-[24px]">alt_route</span>
+                  <Icon name="alt_route" className="text-primary text-icon-24" />
                 </div>
                 <p className="font-body-sm text-body-sm text-on-surface-variant">
                   One-way doorstep drops between Agra and major northern hubs. No return empty-run fare penalty.
@@ -405,14 +406,14 @@ export function VehicleDetailPage({ vehicle }: VehicleDetailPageProps) {
                       className="p-space-sm rounded bg-surface-container-low border border-border-warm/40 flex items-center justify-between"
                     >
                       <div className="flex flex-col">
-                        <span className="font-title-md text-[13px] text-ink-charcoal font-semibold">{r.routeEn}</span>
-                        <span className="text-[11px] text-secondary">{r.highway} • {r.km} km</span>
+                        <span className="font-title-md text-title-lg text-ink-charcoal font-semibold">{r.routeEn}</span>
+                        <span className="text-label-md text-secondary">{r.highway} • {r.km} km</span>
                       </div>
                       <div className="flex flex-col items-end">
-                        <span className="font-headline-sm text-[16px] text-terracotta-sandstone font-serif font-semibold">
+                        <span className="font-headline-sm text-headline-md text-terracotta-sandstone font-serif font-semibold">
                           ₹{r.fare.toLocaleString("en-IN")}
                         </span>
-                        <span className="text-[10px] text-secondary">One-Way</span>
+                        <span className="text-label-lg text-secondary">One-Way</span>
                       </div>
                     </div>
                   ))}
@@ -423,11 +424,11 @@ export function VehicleDetailPage({ vehicle }: VehicleDetailPageProps) {
                   Tolls and state entrance taxes bundled into fixed one-way bookings.
                 </span>
                 <a
-                  className="inline-flex items-center gap-space-xs bg-terracotta-sandstone text-on-primary px-6 py-2.5 rounded text-label-lg font-label-lg shadow-sm hover:bg-terracotta-sunlit transition-all"
+                  className="inline-flex items-center gap-space-xs bg-terracotta-deep text-white px-6 py-2.5 rounded text-label-lg font-label-lg shadow-sm hover:bg-terracotta-sunlit transition-all"
                   href={bookingUrl}
                 >
                   <span>Book Outstation Transfer</span>
-                  <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+                  <Icon name="arrow_forward" className="text-icon-16" />
                 </a>
               </div>
             </div>
@@ -465,13 +466,7 @@ export function VehicleDetailPage({ vehicle }: VehicleDetailPageProps) {
                     aria-expanded={isOpen}
                   >
                     <span className="font-title-md text-title-md text-ink-charcoal font-serif">{item.q}</span>
-                    <span
-                      className={`material-symbols-outlined text-terracotta-sandstone text-[22px] transition-transform duration-200 shrink-0 ${
-                        isOpen ? "rotate-180" : ""
-                      }`}
-                    >
-                      keyboard_arrow_down
-                    </span>
+                    <Icon name="keyboard_arrow_down" className={`text-terracotta-sandstone text-icon-22 transition-transform duration-200 shrink-0 ${isOpen ? "rotate-180" : ""}`} />
                   </button>
                   {isOpen && (
                     <div className="px-space-lg pb-space-lg pt-0 text-body-md text-on-surface-variant leading-relaxed border-t border-border-warm/20">
@@ -493,7 +488,7 @@ export function VehicleDetailPage({ vehicle }: VehicleDetailPageProps) {
               <span className="font-label-caps text-label-caps text-terracotta-sandstone uppercase tracking-widest">
                 Reserve With Confidence
               </span>
-              <h2 className="font-headline-lg text-[28px] sm:text-headline-md md:text-headline-lg text-ink-charcoal font-serif leading-tight">
+              <h2 className="font-headline-lg text-headline-hero sm:text-headline-md md:text-headline-lg text-ink-charcoal font-serif leading-tight">
                 Secure Your {vehicle.name} Today.
               </h2>
               <p className="font-body-md text-body-md text-on-surface-variant max-w-lg leading-relaxed">
@@ -503,17 +498,17 @@ export function VehicleDetailPage({ vehicle }: VehicleDetailPageProps) {
             </div>
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full lg:w-auto shrink-0">
               <a
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-space-xs bg-terracotta-sandstone text-on-primary px-6 sm:px-8 py-3.5 sm:py-4 rounded text-label-lg font-label-lg shadow-md hover:bg-terracotta-sunlit transition-all duration-200 text-center"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-space-xs bg-terracotta-deep text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded text-label-lg font-label-lg shadow-md hover:bg-terracotta-sunlit transition-all duration-200 text-center"
                 href={bookingUrl}
               >
-                <span className="material-symbols-outlined text-[20px]">calendar_today</span>
+                <Icon name="calendar_today" className="text-icon-20" />
                 <span>Book This Vehicle</span>
               </a>
               <a
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-space-xs bg-ink-charcoal text-ivory-surface px-6 py-3.5 sm:py-4 rounded text-label-lg font-label-lg shadow-sm hover:bg-ink-slate transition-all duration-200 text-center"
                 href={`tel:${contact.phone}`}
               >
-                <span className="material-symbols-outlined text-[20px] text-terracotta-sunlit">phone_in_talk</span>
+                <Icon name="phone_in_talk" className="text-icon-20 text-terracotta-sunlit" />
                 <span>{contact.phoneDisplay}</span>
               </a>
             </div>

@@ -6,8 +6,8 @@
  * by search engines and viewable without client-side JavaScript.
  */
 
-import { cp, mkdir, readFile, writeFile } from "node:fs/promises";
-import { existsSync } from "node:fs";
+import { cp, mkdir, readFile, readdir, writeFile } from "node:fs/promises";
+import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createServer } from "vite";
@@ -16,6 +16,8 @@ import { createElement } from "react";
 import { generateSitemapAndRobots } from "./generate-sitemap.ts";
 import { assertBuildSafeSeo, inspectSeoHtml } from "./seo-content-guardrails.ts";
 import { SEO_LANDING_SLUGS } from "../src/data/seoLandingSlugs.ts";
+import { FLEETS } from "../src/data/fleets.ts";
+import assert from "node:assert";
 
 const __filename = fileURLToPath(import.meta.url);
 const scriptsDir = dirname(__filename);
@@ -71,6 +73,32 @@ const packageRoutes = [
   "golden-triangle",
 ];
 
+function getPublishedPackageRoutes(): string[] {
+  const snapshotPath = join(reactRoot, "src", "data", "generated-published-catalog.json");
+  if (!existsSync(snapshotPath)) return [];
+  try {
+    const snapshot = JSON.parse(readFileSync(snapshotPath, "utf8")) as Array<{ type?: string; slug?: string }>;
+    return snapshot
+      .filter((item) => (item.type === "package" || item.type === "tour") && /^[a-z0-9-]{2,80}$/.test(item.slug ?? ""))
+      .map((item) => `/en/packages/${item.slug}/`);
+  } catch {
+    return [];
+  }
+}
+
+function getPublishedRoutePages(): string[] {
+  const snapshotPath = join(reactRoot, "src", "data", "generated-published-routes.json");
+  if (!existsSync(snapshotPath)) return [];
+  try {
+    const snapshot = JSON.parse(readFileSync(snapshotPath, "utf8")) as Array<{ slug?: string }>;
+    return snapshot
+      .filter((item) => /^[a-z0-9-]{2,80}$/.test(item.slug ?? ""))
+      .map((item) => `/en/${item.slug}/`);
+  } catch {
+    return [];
+  }
+}
+
 const routePairs = [
   "agra-to-delhi-taxi",
   "delhi-to-agra-taxi",
@@ -114,6 +142,8 @@ const routesToRender: string[] = [
 
   // Tour Packages (6)
   ...packageRoutes.map((p) => `/en/packages/${p}/`),
+  ...getPublishedPackageRoutes(),
+  ...getPublishedRoutePages(),
 
   // English Routes (8)
   ...routePairs.map((r) => `/en/${r}/`),
@@ -190,6 +220,32 @@ export async function prerender(): Promise<void> {
     let renderedCount = 0;
     let totalBytes = 0;
 
+    // Unsplash hotlink guard (2026-10-01, PageSpeed): no full-size Unsplash
+    // hotlinks (w>1200) may be added to source — self-host via public/images
+    // (see hero-taj-sunrise.avif). Lazy w<=1200 gallery images are grandfathered.
+    {
+      const srcDir = join(reactRoot, "src");
+      const offenders: string[] = [];
+      const walk = async (dir: string): Promise<void> => {
+        for (const entry of await readdir(dir, { withFileTypes: true })) {
+          const p = join(dir, entry.name);
+          if (entry.isDirectory()) { await walk(p); continue; }
+          if (!/\.(tsx?|css)$/.test(entry.name)) continue;
+          const text = await readFile(p, "utf8");
+          const re = /images\.unsplash\.com\/[^"'`\s]*[?&]w=(\d+)/g;
+          let m: RegExpExecArray | null;
+          while ((m = re.exec(text))) {
+            if (parseInt(m[1], 10) > 1200) offenders.push(`${p}: w=${m[1]}`);
+          }
+        }
+      };
+      await walk(srcDir);
+      assert.ok(
+        offenders.length === 0,
+        `Unsplash guard: full-size hotlinks (w>1200) must be self-hosted:\n${offenders.join("\n")}`
+      );
+    }
+
     for (const route of routesToRender) {
       const isBooking = route.endsWith("book.html") || route.includes("/book");
       const is404 = route.includes("404");
@@ -259,6 +315,13 @@ export async function prerender(): Promise<void> {
       html = html.replace(/<meta name="description" content="[^"]*" \/>\s*/, "");
 
       // 3. Inject pre-rendered React markup into #root
+      // Fail loudly if the template was already prerendered (stale dist/index.html)
+      // — a silent no-op here produces pages missing all React markup.
+      assert.ok(
+        html.includes('<div id="root"></div>'),
+        `Prerender: dist/index.html is missing the empty <div id="root"></div> mount point. ` +
+        `Run vite build before prerender.ts (do not run prerender twice on the same dist).`
+      );
       html = html.replace('<div id="root"></div>', `<div id="root">${appHtml}</div>`);
 
       // 4. Update only the accessibility fallback; preserve GTM's noscript iframe
@@ -279,6 +342,41 @@ export async function prerender(): Promise<void> {
         }
         if (process.env.SEO_STRICT === "1") assertBuildSafeSeo(quality);
       }
+
+      // Fleet registry guard (2026-10-01): the route widget must render exactly
+      // the 5 canonical fleets — a drifted 6th "Hatchback" card must fail the build.
+      if (route === "/en/routes/") {
+        for (const fleet of FLEETS) {
+          assert.ok(
+            html.includes(`>${fleet.label}<`),
+            `Fleet registry guard: prerendered ${route} is missing the "${fleet.label}" card.`
+          );
+        }
+        assert.ok(
+          !html.includes(">Hatchback<"),
+          `Fleet registry guard: prerendered ${route} contains a bogus "Hatchback" card.`
+        );
+      }
+
+      // CTA contrast guard (2026-10-01): these exact class pairs were measured
+      // below WCAG AA 4.5:1 in production (#C85A32 on white = 4.23:1).
+      // Use bg-terracotta-deep / text-gold-bronze instead — see theme.css.
+      for (const badPair of ["bg-terracotta-sandstone text-white", "bg-terracotta-sandstone text-on-primary"]) {
+        assert.ok(
+          !html.includes(badPair),
+          `Contrast guard: prerendered ${route} contains failing pair "${badPair}".`
+        );
+      }
+
+      // Landmark guard (2026-10-02): every prerendered page must expose exactly
+      // one <main id="main-content"> — the skip link targets it and Lighthouse's
+      // landmark audit fails without it. SiteLayout owns the single <main>;
+      // pages must not render their own.
+      const mainCount = (html.match(/<main[\s>]/g) ?? []).length;
+      assert.ok(
+        mainCount === 1 && html.includes('<main id="main-content"'),
+        `Landmark guard: prerendered ${route} has ${mainCount} <main> elements (expected exactly one with id="main-content").`
+      );
 
       // Determine output file path
       const targetFile = route === "/"

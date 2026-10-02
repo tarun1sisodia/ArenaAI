@@ -7,7 +7,6 @@ export interface CompressedRoute {
   d: string;              // Destination
   km: number;             // Distance in km (One-Way)
   m: number;              // Duration in minutes
-  fh: number;             // Fare Hatchback
   fs: number;             // Fare Sedan (Dzire / Etios)
   fe: number;             // Fare Ertiga / SUV
   fi: number;             // Fare Innova Crysta
