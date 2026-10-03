@@ -7,11 +7,15 @@
  */
 
 import { spawn } from "node:child_process";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const rootDir = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 
 const services = [
-  { name: "BACKEND ", cmd: "npm", args: ["--prefix", "backend", "run", "dev"], color: "\x1b[34m" },
-  { name: "CUSTOMER", cmd: "npm", args: ["--prefix", "react", "run", "dev"], color: "\x1b[32m" },
-  { name: "ADMIN   ", cmd: "npm", args: ["--prefix", "admin", "run", "dev"], color: "\x1b[35m" },
+  { name: "BACKEND ", cwd: path.join(rootDir, "backend"), args: ["run", "dev"], color: "\x1b[34m" },
+  { name: "CUSTOMER", cwd: path.join(rootDir, "react"), args: ["run", "dev"], color: "\x1b[32m" },
+  { name: "ADMIN   ", cwd: path.join(rootDir, "admin"), args: ["run", "dev"], color: "\x1b[35m" },
 ];
 
 const processes = [];
@@ -26,8 +30,9 @@ const isWindows = process.platform === "win32";
 const npmCmd = isWindows ? "npm.cmd" : "npm";
 
 for (const svc of services) {
-  const child = spawn(isWindows ? npmCmd : svc.cmd, svc.args, {
-    stdio: ["inherit", "pipe", "pipe"],
+  const child = spawn(isWindows ? npmCmd : "npm", svc.args, {
+    cwd: svc.cwd,
+    stdio: ["ignore", "pipe", "pipe"],
     shell: isWindows,
     env: { ...process.env, FORCE_COLOR: "1" },
   });
@@ -50,7 +55,15 @@ for (const svc of services) {
 function shutdown() {
   console.log("\nShutting down all services...");
   for (const p of processes) {
-    p.kill("SIGTERM");
+    if (isWindows && p.pid) {
+      try {
+        spawn("taskkill.exe", ["/pid", String(p.pid), "/T", "/F"]);
+      } catch {
+        p.kill("SIGTERM");
+      }
+    } else {
+      p.kill("SIGTERM");
+    }
   }
   process.exit(0);
 }
