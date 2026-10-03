@@ -13,8 +13,8 @@ this file at commit `2c02ee3`. The table below is the condensed record.
 ## Current State
 
 - **Current Phase:** Phase M — HTML UI to React Migration — **COMPLETED** ✅
-- **Current Step:** Step M17 complete (Multi-Agent Orchestration + Commercial Exception Rules & Strategy Pattern for Force & Urbania + H1 Hyper-Scale Script Fix). Next up: Connecting live API routes and finishing deployment tasks.
-- **Last updated:** 2026-09-27
+- **Current Step:** The API-backed booking, admin REST data layer, and Supabase staff-auth flows are implemented in the repository. Deployment/provider configuration and production readiness still require environment-level verification.
+- **Last updated:** 2026-10-03
 - **Summary:** All HTML designs from `react/new_design/` are completely converted into the React application with ultra-luxury aesthetic styling, design tokens (`theme.css`), and the strict English-only mandate:
   * Multi-Agent Orchestration Engine (`agents/`): Automated agent pipeline with `code_extractor.py`, dynamic language templates (`task_template.py`), `tenacity` exponential retry logic, and specialized agents (`schema_agent.py`, `service_agent.py`, `frontend_agent.py`, `test_agent.py`, `seo_content_agent.py`, `orchestrator.py`).
   * Commercial Exception Rules & Strategy Pattern (`backend/src/modules/fares/fare.strategy.ts`): Implemented strict commercial booking rules for group vehicles ("Urbania", "Force Tempo", and any "Force" variants): forced round-trip billing (`km * 2`), 300 km/day minimum distance floor (`Math.max(km * 2, 300 * days)`), ₹500/day driver allowance, and locked fixed-rate pricing structure (zero promo discounts).
@@ -30,7 +30,7 @@ this file at commit `2c02ee3`. The table below is the condensed record.
   * Services Page: `ServicesPage.tsx` retaining its clean original section layout, with unified font sizes, font colors, button sizes (`PrimaryButton`), and pure black WhatsApp button (`WhatsAppButton`).
   * Dynamic Templates: `RouteDetailPage.tsx` and `VehicleDetailPage.tsx` matching the new luxury design system and 2-step booking handoff.
   * Support & Compliance: `ContactPage.tsx` (`contact-us.html`), `FaqPage.tsx` (`faq.html`), `TermsPage.tsx` (`terms_condit.html`), `PrivacyPage.tsx` (`privacy_policy.html`), and `NotFoundPage.tsx` (`404.html`).
-- **Verified:** `npm run verify:t1` passed (6/6 checks green), `npm --prefix react run typecheck` passed (0 errors), `npm --prefix react run build` pre-rendered 37 static pages + 10 legacy redirects + sitemap (32 URLs), and monorepo `npm run verify` passed cleanly (3 typechecks, 64 backend unit tests, 3 builds).
+- **Verified (2026-10-03):** `npm run verify` passed (customer/admin/backend typechecks, 142 backend tests, customer SEO lifecycle checks, and all three production builds). The generated build warns when `VITE_API_BASE_URL` is absent; this local build did not verify deployed configuration.
 - **Deployment monitoring (delivered with the integration branch):**
   `scripts/healthcheck.mjs` performs dependency-free checks of the API `/health`,
   the customer site and the admin site, wired to `.github/workflows/uptime.yml`
@@ -40,11 +40,7 @@ this file at commit `2c02ee3`. The table below is the condensed record.
   documented Render free-tier wake-up limitation. Still open in Phase I5: alert
   routing to a human (the workflow only fails), and request-ID correlation between
   the API and the frontends.
-- **Open items:** API integration not started (both frontends still render the
-  in-repo catalogue; `VITE_API_BASE_URL` is documented but unread). Payments remain
-  mock until Phase I2. Placeholder NAP phone `+91 98765 43210` and stock photography
-  must be replaced before launch. Dev-only Vitest advisory (2 moderate) needs the
-  Vitest 5 major to clear.
+- **Open items:** Verify the deployed customer/admin build variables, Supabase Google provider and callback allowlist, API origin, and payment-provider/webhook configuration before describing production sign-in or payments as live. The customer keeps curated in-repo marketing content as an intentional resilience fallback. The development-only simulated-success path has been removed; a browser-side success shortcut must not be reintroduced. Confirm public NAP details and launch assets against the account owner's approved information.
 
 ---
 
@@ -55,7 +51,7 @@ this file at commit `2c02ee3`. The table below is the condensed record.
 | Client has not confirmed the real phone/WhatsApp number and final fare card | All CTAs and schema point at placeholder NAP | Client decision — `CLIENT_CONFIRMATION_FARES_AND_RULES.md` |
 | Cloudflare Pages projects must be created/renamed to `skbagheltravels-customer` and `skbagheltravels-admin` and the domains repointed | Root deploy scripts and both `wrangler.jsonc` files now reference those names | Account owner (dashboard) |
 | Render environment secrets are still `sync: false` placeholders | Production API cannot boot | Add values in the Render dashboard before the first API deploy |
-| No live payment credentials / webhook drills | Booking remains advance-mock | Phase I2 |
+| Production payment credentials / webhook drill not verified from this repository session | Live-payment readiness is unconfirmed; UI must not imply a payment succeeded | Verify deployment secrets and run the approved provider test transaction |
 
 ---
 
@@ -70,6 +66,7 @@ this file at commit `2c02ee3`. The table below is the condensed record.
 | 2026-09-14 | CI is the root command contract plus deploy guards, on Node 22 | One interface for CI, hosts and humans; Node 22 matches `engines`, Docker and Render |
 | 2026-09-14 | Backend runtime image contains production dependencies only, with `.dockerignore` excluding `.env*` | Dev tooling never ships to production and secrets never enter the build context |
 | 2026-09-14 | `VITE_API_BASE_URL` is documented and set in Pages as reserved configuration; no frontend code reads it until Phase I1 | Prevents a half-wired API integration from shipping silently |
+| 2026-10-03 | Customer booking/payment success comes only from backend state; remove the local simulated-success control. Customer marketing keeps curated catalogue fallbacks, but no fabricated booking/payment record. | Prevent false vouchers or paid states; preserve legitimate public content when the API is unavailable |
 | 2026-09-14 | Root docs are the monorepo of record (`README.md`, `02_PROJECT_CONTEXT.md`, `03_PHASE_PLAN.md`, `04_PROGRESS_TRACKER.md`, `PRD.md`); `react/docs/` keeps the frontend-specific pack and points at the root for shared docs | Removes two divergent copies of the same document |
 | 2026-09-11 | Design Lock Registry (`DESIGN_LOCKS.md`): locked components/patterns cannot change without explicit user permission | Prevents silent drift of approved design work |
 | 2026-09-10 | Legacy static HTML/CSS/JS/Python SSG codebase removed from the repository root; references preserved under `react/reference/` | One active frontend instead of a maintained and an unmaintained copy |

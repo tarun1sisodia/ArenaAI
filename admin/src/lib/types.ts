@@ -36,13 +36,13 @@ export interface FareSnapshot {
   baseFare: number;
   nightAllowance: number;
   driverAllowance: number;
-  tollsTaxes: number;
+  tollsTaxes: number | null;
   promoDiscount: number;
   discountAmount?: number;
   totalFare: number;
-  advancePaid: number;
+  advancePaid: number | null;
   advanceAmount?: number;
-  balancePayable: number;
+  balancePayable: number | null;
   balanceAmount?: number;
 }
 
@@ -79,7 +79,7 @@ export interface Payment {
   id: string;
   bookingTicketId: string;
   provider: PaymentProvider;
-  method: PaymentMethod;
+  method: PaymentMethod | null;
   providerPaymentId: string;
   amount: number;
   status: PaymentStatus;
@@ -173,7 +173,7 @@ export interface Inquiry {
   name: string;
   phone: string;
   email?: string;
-  type: InquiryType;
+  type: InquiryType | null;
   subject: string;
   message: string;
   status: InquiryStatus;
@@ -189,9 +189,9 @@ export interface FareRule {
   seats: number;
   perKm: number;
   minDailyKm: number;
-  nightChargePerHour: number;
-  driverAllowance: number;
-  active: boolean;
+  nightChargePerHour: number | null;
+  driverAllowance: number | null;
+  active: boolean | null;
 }
 
 export interface FareRuleset {

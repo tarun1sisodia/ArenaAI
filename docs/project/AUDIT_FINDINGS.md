@@ -1,5 +1,7 @@
 # Full Codebase Audit Findings Ledger — SK Baghel Tour & Travels (ArenaAI)
 
+> **Historical findings ledger:** Findings describe the code observed when each audit was performed. Some customer booking/admin mock-only findings were later resolved; consult each finding's `Status` and the current [`02_PROJECT_CONTEXT.md`](02_PROJECT_CONTEXT.md) before treating an old `Actual behavior` section as current.
+
 Every finding is documented with reproduction, impact, evidence, and remediation advice.
 
 ---
@@ -31,7 +33,7 @@ Every finding is documented with reproduction, impact, evidence, and remediation
 - **File:** `react/src/features/booking/BookingPage.tsx`
 - **Function/Endpoint:** `pay()` / Booking funnel submission
 - **Expected behavior:** The 5-step booking flow calls backend APIs: calculates server fare via `POST /api/v1/fares/calculate`, persists draft booking via `POST /api/v1/bookings/draft`, and initiates payment checkout session via `POST /api/v1/payments/create-checkout`.
-- **Actual behavior:** The entire customer booking flow is a client-side simulation. Fares are calculated by a local frontend engine (`fareEngine.ts`), and clicking "Pay advance" executes a `setTimeout` that invents a pseudo-random ticket ID (`AGR-${Math.random().toString(36).slice(2, 8).toUpperCase()}`) without making any network requests.
+- **Observed at audit time:** The customer booking flow was a client-side simulation. Fares were calculated by a local frontend engine (`fareEngine.ts`), and clicking "Pay advance" executed a `setTimeout` that invented a pseudo-random ticket ID (`AGR-${Math.random().toString(36).slice(2, 8).toUpperCase()}`) without making any network requests.
 - **Reproduction:** Inspect `react/src/features/booking/BookingPage.tsx` lines 116-124 and search for `fetch` across `react/src`.
 - **Impact:** Customers using the website cannot generate real bookings, and the backend booking ledger is never populated by customer interactions.
 - **Evidence:** `BookingPage.tsx` line 118:
@@ -53,12 +55,12 @@ Every finding is documented with reproduction, impact, evidence, and remediation
 - **File:** `admin/src/` (Entire Application)
 - **Function/Endpoint:** All Admin operations (Bookings, Finance, Catalog, Reviews, Inquiries, Fares, Audit)
 - **Expected behavior:** Admin operations desk authenticates against Supabase Auth / Fastify authGuard and interacts with `/api/v1/ops/admin/*` endpoints to manage live operations.
-- **Actual behavior:** The admin panel is completely decoupled from the Fastify backend. It operates entirely on in-memory mock fixtures loaded from `admin/src/lib/mock-data.ts`. Authentication is a mock role selector on `LoginPage.tsx` that writes dummy profiles directly into `localStorage["skb-admin-session"]`. There are zero HTTP requests (`fetch`/`axios`) in `admin/src`.
+- **Observed at audit time:** The admin panel was completely decoupled from the Fastify backend. It operated on in-memory fixtures loaded from `admin/src/lib/mock-data.ts`; authentication used a role selector, and there were zero HTTP requests in `admin/src`.
 - **Reproduction:** Search for `fetch` or HTTP client calls across `admin/src`.
 - **Impact:** Operations personnel cannot view or manage real bookings, issue real refunds via payment gateways, publish catalog items, moderate customer reviews, or review real audit logs.
 - **Evidence:** `admin/src/lib/mock-data.ts` (743 lines of static mock data); 0 network requests in `admin/src`.
 - **Status:** RESOLVED
-- **Resolution:** Implemented typed API service layer `admin/src/lib/api.ts` wired to `env.API_BASE_URL` with Bearer auth token header. Connected `BookingsPage`, `InquiriesPage`, `FinancePage`, `FaresPage`, and `AuditPage` to `/api/v1/ops/admin/*` endpoints with resilient fallback to local fixtures when offline. Supported both Supabase GoTrue Auth and localhost testing auth.
+- **Resolution:** Implemented the typed API service layer `admin/src/lib/api.ts`, wired to `env.API_BASE_URL` with bearer authentication, and connected the admin pages to `/api/v1/ops/admin/*` endpoints. Current clients reject malformed/unavailable responses instead of filling records from local fixtures. Staff login uses Supabase Auth; the admin browser has no mock-role selector or localhost test-auth identity.
 
 ---
 
@@ -484,6 +486,4 @@ Every finding is documented with reproduction, impact, evidence, and remediation
 - **Evidence:** `backend/migrations/0009_add_indexes_and_rls.sql` lines 20–34.
 - **Status:** RESOLVED
 - **Resolution:** Added migration `0016_comprehensive_rls_policies.sql` establishing full `service_role` and superuser access across all 14 tables, while providing client write policies for `inquiries` and `reviews` (in pending state) and public read policies for catalog media and promo codes.
-
-
 

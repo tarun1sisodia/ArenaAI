@@ -60,7 +60,7 @@ Do not delete trips, routes, packages, verticals, fleet pages, or useful media m
 - Payment checkout failure no longer proceeds to a success voucher.
 - Payment success now requires backend webhook-backed `captured` + `paid_confirmed` status; browser callbacks are not trusted.
 - Production Razorpay key format, order currency, and payment-event handling are hardened; compiled migrations run before the API starts.
-- Payment simulation is development-only and opt-in.
+- The customer booking UI has no local simulated-payment success path; booking and payment state must be confirmed by the backend. Test-only provider adapters and backend test fixtures remain isolated from the customer runtime.
 - Backend `/ready` returns HTTP 503 when the database is not ready.
 - SEO/AEO/GEO lifecycle rules are part of the root operating specification.
 

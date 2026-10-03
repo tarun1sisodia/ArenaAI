@@ -113,7 +113,7 @@ function getSeoBase(
   if (isBooking) {
     return {
       title: "Book a ride | SK Baghel Tour & Travels",
-      description: "Compare vehicles and prepare a transparent mock booking from Agra.",
+      description: "Compare vehicles and send a clear trip request from Agra.",
       ogImage: "/assets/brand/og-banner.webp",
       keywords: ["Agra taxi booking", "Agra cab reservation", "online taxi booking Agra"],
     };

@@ -25,8 +25,10 @@ Three independently deployable applications live in one repository:
 
 The browser is never trusted for amounts or payment success: PostgreSQL (Supabase)
 is the ledger; the API is the authority for fares, booking state, payments and
-admin permissions. Until the API integration phase lands, the frontends render
-from the in-repo catalogue and the booking flow stays a mock-data client app.
+admin permissions. Customer marketing pages retain curated in-repo catalogue
+content as a resilience fallback; booking requests and payment confirmation use
+the backend API and configured checkout. A customer-side simulation must never
+create a successful booking or payment result.
 
 ## 2. Stack — decided, do not re-litigate mid-build
 
@@ -35,7 +37,7 @@ from the in-repo catalogue and the booking flow stays a mock-data client app.
 | Customer site | React 19 + Vite 7 + TypeScript (strict) | Component system shared with the design language; typed catalogue |
 | Customer rendering | Static pre-render (`react/scripts/prerender.ts`) | Fully-formed HTML for every marketing URL: crawlable, JS-optional first paint |
 | Customer languages | English + Hindi, localized URLs (`/en/…`, `/hi/…`) | Bilingual SEO with hreflang `en-IN` / `hi-IN` / `x-default`; fares identical in both |
-| Booking | `/book.html` route inside the same React app | App page, not SEO; `noindex`; mock advance/card until payments go live |
+| Booking | `/book.html` route inside the same React app | App page, not SEO; `noindex`; server-backed booking and checkout; payment availability depends on deployment configuration |
 | Admin | React 19 + Vite 7 + Tailwind 4 + motion + react-router-dom | Vercel-light design system, Saffron Gold accents, custom SVG charts |
 | API | Fastify 5 + TypeScript strict, Node ≥ 22 | Small surface, first-class JSON schema and hooks; Docker/Render friendly |
 | API data | PostgreSQL via `pg` + Supabase; in-memory store for dev/test | One repository interface, two implementations (`src/db`) |

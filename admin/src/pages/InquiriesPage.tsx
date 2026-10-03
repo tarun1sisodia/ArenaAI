@@ -21,6 +21,8 @@ const TYPE_META: Record<InquiryType, { label: string; icon: typeof Plane; tone: 
   outstation: { label: "Outstation", icon: ArrowRight, tone: "gold" },
 };
 
+const UNKNOWN_TYPE_META = { label: "Not specified", icon: MessageSquare, tone: "neutral" as const };
+
 export function InquiriesPage({ user }: { user: AdminUser }) {
   const reduce = useReducedMotion();
   const [items, setItems] = useState<Inquiry[]>([]);
@@ -131,7 +133,8 @@ export function InquiriesPage({ user }: { user: AdminUser }) {
             </Card>
           )}
           {items.map((item, i) => {
-            const TypeIcon = TYPE_META[item.type].icon;
+            const typeMeta = item.type ? TYPE_META[item.type] ?? UNKNOWN_TYPE_META : UNKNOWN_TYPE_META;
+            const TypeIcon = typeMeta.icon;
             return (
               <motion.button
                 key={item.id}
@@ -153,9 +156,9 @@ export function InquiriesPage({ user }: { user: AdminUser }) {
                   </span>
                   <StatusBadge status={item.status} />
                 </div>
-                <p className="mt-1 line-clamp-1 text-[12.5px] text-ink-soft">{item.subject}</p>
+                <p className="mt-1 line-clamp-1 text-[12.5px] text-ink-soft">{item.subject || "Subject not provided"}</p>
                 <p className="mt-1 font-mono text-[10px] uppercase tracking-wide text-ink-faint">
-                  {TYPE_META[item.type].label} · {timeAgo(item.createdAt)}
+                  {typeMeta.label} · {timeAgo(item.createdAt)}
                 </p>
               </motion.button>
             );
@@ -180,11 +183,11 @@ export function InquiriesPage({ user }: { user: AdminUser }) {
               <Card className="p-5">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
-                    <h2 className="font-display text-xl font-medium tracking-tight text-ink">{selected.subject}</h2>
+                    <h2 className="font-display text-xl font-medium tracking-tight text-ink">{selected.subject || "Subject not provided"}</h2>
                     <div className="mt-1.5 flex flex-wrap items-center gap-3 text-[13px] text-ink-soft">
                       <span className="flex items-center gap-1.5"><Building2 className="h-3.5 w-3.5 text-gold" />{selected.name}</span>
                       <span className="flex items-center gap-1.5 font-mono text-[12px]"><Phone className="h-3.5 w-3.5 text-gold" />{selected.phone}</span>
-                      <Badge tone={TYPE_META[selected.type].tone}>{TYPE_META[selected.type].label}</Badge>
+                      <Badge tone={selected.type ? TYPE_META[selected.type]?.tone ?? "neutral" : "neutral"}>{selected.type ? TYPE_META[selected.type]?.label ?? "Not specified" : "Not specified"}</Badge>
                     </div>
                   </div>
                   <StatusBadge status={selected.status} />

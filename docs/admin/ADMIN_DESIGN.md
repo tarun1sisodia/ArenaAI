@@ -1,6 +1,6 @@
 # Admin Panel — Design & Frontend Spec (Phase 0: Design)
 
-**Status:** Design build (demo data, no backend wiring) · Branch work: session branch `arena/01a09f48-arenaai`
+**Status:** Historical design snapshot from the initial admin UI phase; its demo-data/no-backend description predates the REST API and Supabase Auth integration in the current `admin/` app.
 **Related:** [ADMIN_PRD.md](ADMIN_PRD.md) · [ADMIN_TRD.md](ADMIN_TRD.md) · [ADMIN_API_CONTRACT.md](ADMIN_API_CONTRACT.md) · [DESIGN.md](DESIGN.md) · [DESIGN_LOCKS.md](DESIGN_LOCKS.md)
 
 ---

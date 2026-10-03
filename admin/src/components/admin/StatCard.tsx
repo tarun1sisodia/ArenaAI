@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 
 export interface StatCardProps {
   label: string;
-  value: number;
+  value: number | null;
   format?: "inr" | "number" | "percent";
   icon: LucideIcon;
   /** Percentage vs the previous period — omit when no real comparison exists. */
@@ -44,7 +44,7 @@ export function StatCard({ label, value, format, icon: Icon, delta, deltaLabel, 
         <div className="mt-3 flex items-end justify-between gap-2">
           <div>
             <p className="font-display text-2xl sm:text-3xl font-semibold tracking-tight text-ink truncate">
-              <AnimatedCounter value={value} format={format} />
+              {value === null ? "—" : <AnimatedCounter value={value} format={format} />}
             </p>
             {typeof delta === "number" && deltaLabel ? (
               <p className="mt-1.5 flex items-center gap-1 text-[12px]">

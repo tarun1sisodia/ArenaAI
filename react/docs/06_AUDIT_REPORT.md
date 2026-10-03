@@ -4,6 +4,8 @@
 **Stack detected:** Vanilla static MPA — Python SSG (`scripts/render_pages.py`) emitting EN+HI trees. **Not React/Next.** Framework-specific checks (SSR payload, hydration, `useMemo`, React Query/SWR) are mapped to their static-site equivalents: content-in-initial-HTML ✅ (full SSG — crawlable), per-page JS payload, DOM churn, and asset strategy.
 **Post-recent-fixes:** page-relative URL build is in place; this audit assumes the `main` branch as of commit `d769e06` (PR #11 merged).
 
+> **Historical snapshot (2026-09-01):** This report audits the retired static frontend, not the current React application. Its mock-booking and placeholder-contact observations are historical and should not be treated as current runtime behavior.
+
 **Verification limits (explicit):** Core Web Vitals could not be measured in this sandbox (chromium download blocked) — CLS/LCP findings are from static evidence, not lab data. External links (`wa.me`, maps) and the mock NAP cannot be validated against a live business. `scripts/visual_audit.mjs` exists but has never been executed anywhere.
 
 ---

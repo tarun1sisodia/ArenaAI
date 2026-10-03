@@ -485,8 +485,8 @@ export function BookingsPage({ user }: { user: AdminUser }) {
                     ].map(([label, val], i) => (
                       <div key={label as string} className={cn("flex items-center justify-between px-4 py-2.5 text-[13px]", i > 0 && "border-t border-hairline")}>
                         <span className="text-ink-soft">{label}</span>
-                        <span className={cn("font-mono", (val as number) < 0 ? "text-success" : "text-ink")}>
-                          {(val as number) < 0 ? "− " : ""}{formatINR(Math.abs(val as number))}
+                        <span className={cn("font-mono", typeof val === "number" && val < 0 ? "text-success" : "text-ink")}>
+                          {typeof val === "number" ? `${val < 0 ? "− " : ""}${formatINR(Math.abs(val))}` : "Not reported"}
                         </span>
                       </div>
                     ))}
@@ -498,11 +498,11 @@ export function BookingsPage({ user }: { user: AdminUser }) {
                   <div className="mt-3 grid grid-cols-2 gap-3">
                     <div className="rounded-sm bg-success-soft p-3">
                       <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-success">Advance paid</p>
-                      <p className="mt-0.5 text-sm font-semibold text-success">{formatINR(selected.fare.advancePaid)}</p>
+                      <p className="mt-0.5 text-sm font-semibold text-success">{selected.fare.advancePaid === null ? "Not reported" : formatINR(selected.fare.advancePaid)}</p>
                     </div>
                     <div className="rounded-sm bg-gold-soft p-3">
                       <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-gold-text">Balance at drop</p>
-                      <p className="mt-0.5 text-sm font-semibold text-gold-text">{formatINR(selected.fare.balancePayable)}</p>
+                      <p className="mt-0.5 text-sm font-semibold text-gold-text">{selected.fare.balancePayable === null ? "Not reported" : formatINR(selected.fare.balancePayable)}</p>
                     </div>
                   </div>
                 </div>

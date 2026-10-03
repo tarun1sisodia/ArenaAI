@@ -27,7 +27,6 @@ import type {
   Payment,
   PaymentMethod,
   PaymentProvider,
-  PaymentStatus,
   Review,
   ReviewStatus,
   TripType,
@@ -36,6 +35,7 @@ import type {
 } from "./types";
 
 async function apiFetch(path: string, init?: RequestInit): Promise<any> {
+  if (!env.API_BASE_URL) throw new Error("Backend is not connected.");
   const res = await fetch(`${env.API_BASE_URL}${path}`, {
     ...init,
     headers: {
@@ -68,6 +68,45 @@ async function apiFetch(path: string, init?: RequestInit): Promise<any> {
   return json;
 }
 
+function requireItems(data: any, label: string, ...aliases: string[]): any[] {
+  if (Array.isArray(data)) return data;
+  if (data && typeof data === "object") {
+    for (const key of ["items", ...aliases]) if (Array.isArray(data[key])) return data[key];
+  }
+  throw new Error(`${label} response was malformed; no records were loaded.`);
+}
+
+function requireText(value: unknown, label: string): string {
+  if (typeof value !== "string" || !value.trim()) throw new Error(`${label} was missing from the API response.`);
+  return value;
+}
+
+function optionalText(value: unknown): string {
+  return typeof value === "string" ? value : "";
+}
+
+function requireNumber(value: unknown, label: string): number {
+  if (value === null || value === undefined || value === "") throw new Error(`${label} was missing from the API response.`);
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) throw new Error(`${label} was invalid in the API response.`);
+  return parsed;
+}
+
+function optionalNumber(value: unknown, label: string): number | null {
+  if (value === null || value === undefined) return null;
+  return requireNumber(value, label);
+}
+
+function requireRecord(value: unknown, label: string): Record<string, any> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error(`${label} response was malformed.`);
+  return value as Record<string, any>;
+}
+
+function requireEnum<T extends string>(value: unknown, choices: readonly T[], label: string): T {
+  if (typeof value !== "string" || !choices.includes(value as T)) throw new Error(`${label} was invalid in the API response.`);
+  return value as T;
+}
+
 export async function fetchAdminBookings(filter?: {
   status?: BookingStatus | "all";
   ticketId?: string;
@@ -81,38 +120,39 @@ export async function fetchAdminBookings(filter?: {
   if (filter?.pageSize) params.set("pageSize", String(filter.pageSize));
 
   const json = await apiFetch(`/api/v1/ops/admin/bookings${params.toString() ? `?${params.toString()}` : ""}`);
-  const items = json?.data?.items || json?.data?.bookings || [];
-
-  if (!Array.isArray(items)) return [];
-
-  return items.map((b: any) => ({
-    id: b.id,
-    ticketId: b.ticketId || b.id,
-    customerName: b.customerName || "Customer",
-    customerPhone: b.customerPhone || "",
-    customerEmail: b.customerEmail || "",
-    origin: b.originName || b.origin || "Agra",
-    destination: b.destinationName || b.destination || "Delhi",
-    pickupDateTime: b.pickupDatetime || b.pickupDateTime || new Date().toISOString(),
-    returnDateTime: b.returnDatetime || b.returnDateTime || null,
-    distanceKm: Number(b.distanceKm) || 0,
-    tripType: (b.tripType as TripType) || "one-way",
-    vehicleTier: (b.vehicleTier as VehicleTier) || "sedan",
-    status: (b.status as BookingStatus) || "pending_payment",
-    version: Number(b.version) || 1,
-    notes: b.specialNotes || b.notes || "",
-    createdAt: b.createdAt || new Date().toISOString(),
-    fare: {
-      baseFare: Number(b.baseFare ?? b.totalFare) || 0,
-      nightAllowance: Number(b.nightAllowance) || 0,
-      driverAllowance: Number(b.driverAllowance) || 0,
-      tollsTaxes: 0,
-      promoDiscount: Number(b.discountAmount) || 0,
-      totalFare: Number(b.totalFare) || 0,
-      advancePaid: Number(b.advanceAmount) || 0,
-      balancePayable: Math.max(0, (Number(b.totalFare) || 0) - (Number(b.advanceAmount) || 0)),
-    },
-  }));
+  const items = requireItems(json?.data, "Bookings", "bookings");
+  return items.map((b: any) => {
+    const status = requireEnum(b.status, ["draft", "pending_payment", "paid_confirmed", "in_transit", "completed", "cancelled", "refunded"] as const, "Booking status");
+    const totalFare = requireNumber(b.totalFare, "Booking total fare");
+    return {
+      id: requireText(b.id, "Booking ID"),
+      ticketId: requireText(b.ticketId, "Booking ticket ID"),
+      customerName: optionalText(b.customerName),
+      customerPhone: optionalText(b.customerPhone),
+      customerEmail: optionalText(b.customerEmail),
+      origin: optionalText(b.originName ?? b.origin),
+      destination: optionalText(b.destinationName ?? b.destination),
+      pickupDateTime: requireText(b.pickupDatetime ?? b.pickupDateTime, "Booking pickup time"),
+      returnDateTime: b.returnDatetime ?? b.returnDateTime ?? null,
+      distanceKm: requireNumber(b.distanceKm, "Booking distance"),
+      tripType: requireEnum(b.tripType, ["one-way", "round-trip", "local-tour", "airport-transfer", "local-hourly", "custom-tour"] as const, "Booking trip type") as TripType,
+      vehicleTier: requireEnum(b.vehicleTier, ["sedan", "ertiga", "innova-crysta", "tempo-traveller", "urbania"] as const, "Booking vehicle"),
+      status,
+      version: requireNumber(b.version, "Booking version"),
+      notes: optionalText(b.specialNotes ?? b.notes),
+      createdAt: requireText(b.createdAt, "Booking created time"),
+      fare: {
+        baseFare: requireNumber(b.baseFare, "Booking base fare"),
+        nightAllowance: requireNumber(b.nightAllowance, "Booking night allowance"),
+        driverAllowance: requireNumber(b.driverAllowance, "Booking driver allowance"),
+        tollsTaxes: optionalNumber(b.tollsTaxes, "Booking tolls and taxes"),
+        promoDiscount: requireNumber(b.discountAmount, "Booking discount"),
+        totalFare,
+        advancePaid: optionalNumber(b.advancePaid, "Advance paid"),
+        balancePayable: optionalNumber(b.balanceAmount, "Balance payable"),
+      },
+    };
+  });
 }
 
 export async function transitionAdminBooking(
@@ -153,20 +193,19 @@ export async function fetchAdminInquiries(filter?: {
   if (filter?.limit) params.set("limit", String(filter.limit));
 
   const json = await apiFetch(`/api/v1/ops/admin/inquiries${params.toString() ? `?${params.toString()}` : ""}`);
-  const items = json?.data?.items || json?.data?.inquiries || [];
-
-  if (!Array.isArray(items)) return [];
-
+  const items = requireItems(json?.data, "Inquiries", "inquiries");
   return items.map((iq: any) => ({
-    id: iq.id,
-    name: iq.name || "Customer",
-    phone: iq.phone || "",
-    type: (iq.tripInterest as InquiryType) || "contact",
-    subject: iq.tripInterest ? `Interest: ${iq.tripInterest}` : "Customer Inquiry",
-    message: iq.message || "",
-    status: (iq.status as InquiryStatus) || "new",
-    notes: Array.isArray(iq.notes) ? iq.notes : [],
-    createdAt: iq.createdAt || new Date().toISOString(),
+    id: requireText(iq.id, "Inquiry ID"),
+    name: optionalText(iq.name),
+    phone: optionalText(iq.phone),
+    type: ["custom_tour", "group_charter", "contact", "local_tour", "outstation"].includes(iq.tripInterest)
+      ? iq.tripInterest as InquiryType
+      : null,
+    subject: iq.tripInterest ? `Interest: ${iq.tripInterest}` : "",
+    message: optionalText(iq.message),
+    status: requireEnum(iq.status, ["new", "contacted", "quoted", "converted", "resolved", "closed", "spam"] as const, "Inquiry status") as InquiryStatus,
+    notes: requireItems(iq.notes, "Inquiry notes"),
+    createdAt: requireText(iq.createdAt, "Inquiry created time"),
   }));
 }
 
@@ -183,97 +222,104 @@ export async function updateAdminInquiry(
 
 export async function fetchAdminRentalEnquiries(filter?: { status?: RentalStatus | "all"; car?: string | "all"; from?: string; to?: string; q?: string }): Promise<RentalEnquiry[]> {
   const params = new URLSearchParams(); if (filter?.status && filter.status !== "all" && filter.status !== "new") params.set("status", filter.status); if (filter?.car && filter.car !== "all") params.set("car", filter.car); if (filter?.from) params.set("from", filter.from); if (filter?.to) params.set("to", filter.to); if (filter?.q) params.set("q", filter.q);
-  const json = await apiFetch(`/api/v1/ops/admin/rental-enquiries${params.toString() ? `?${params}` : ""}`); const items = json?.data?.items || json?.data?.rentalEnquiries || []; return Array.isArray(items) ? items.map((item: any) => ({ ...item, status: item.status || "new", notes: Array.isArray(item.notes) ? item.notes : [] })) : [];
+  const json = await apiFetch(`/api/v1/ops/admin/rental-enquiries${params.toString() ? `?${params}` : ""}`);
+  const items = requireItems(json?.data, "Rental requests", "rentalEnquiries");
+  return items.map((item: any) => ({
+    ...item,
+    id: requireText(item.id, "Rental request ID"),
+    status: requireEnum(item.status, ["new", "contacted", "quoted", "done", "closed", "spam"] as const, "Rental request status"),
+    notes: requireItems(item.notes, "Rental request notes"),
+  }));
 }
 export async function updateAdminRentalEnquiry(id: string, updates: { status?: RentalStatus; note?: string }): Promise<RentalEnquiry> { const json = await apiFetch(`/api/v1/ops/admin/rental-enquiries/${encodeURIComponent(id)}`, { method: "PATCH", body: JSON.stringify(updates) }); return json.data; }
 export async function fetchAdminPayments(filter?: {
   page?: number;
   limit?: number;
-}): Promise<{ items: Payment[]; totalCaptured: number; totalRefunded: number }> {
+}): Promise<{ items: Payment[]; total: number; totalCaptured: number; totalRefunded: number }> {
   const params = new URLSearchParams();
   if (filter?.page) params.set("page", String(filter.page));
   if (filter?.limit) params.set("limit", String(filter.limit));
 
   const json = await apiFetch(`/api/v1/ops/admin/payments${params.toString() ? `?${params.toString()}` : ""}`);
-  const items = json?.data?.items || json?.data?.payments || [];
-
-  const mapped: Payment[] = Array.isArray(items)
-    ? items.map((p: any) => ({
-        id: p.id,
-        bookingTicketId: p.bookingTicketId || p.bookingId || "—",
-        provider: (p.provider as PaymentProvider) || "razorpay",
-        method: (p.method as PaymentMethod) || "card",
-        providerPaymentId: p.providerPaymentId || p.id,
-        amount: Math.round(Number(p.amountMinor ?? p.amountPaise ?? 0) / 100),
-        status: (p.status as PaymentStatus) || "captured",
-        capturedAt: p.capturedAt || p.createdAt || new Date().toISOString(),
-      }))
-    : [];
+  const items = requireItems(json?.data, "Payments", "payments");
+  const mapped: Payment[] = items.map((p: any) => {
+    const status = requireEnum(p.status, ["captured", "refunded", "pending", "failed", "needs_review"] as const, "Payment status");
+    return {
+      id: requireText(p.id, "Payment ID"),
+      bookingTicketId: optionalText(p.bookingTicketId ?? p.bookingId),
+      provider: requireEnum(p.provider, ["razorpay", "paypal", "card"] as const, "Payment provider") as PaymentProvider,
+      method: p.paymentMethod || p.method
+        ? requireEnum(p.paymentMethod ?? p.method, ["upi", "card", "netbanking", "paypal"] as const, "Payment method") as PaymentMethod
+        : null,
+      providerPaymentId: optionalText(p.providerPaymentId),
+      amount: Math.round(requireNumber(p.amountMinor, "Payment amount") / 100),
+      status,
+      capturedAt: status === "captured"
+        ? requireText(p.verifiedAt ?? p.capturedAt, "Payment capture time")
+        : optionalText(p.verifiedAt ?? p.capturedAt),
+    };
+  });
 
   return {
     items: mapped,
-    totalCaptured: Math.round((json?.data?.totalCapturedPaise || 0) / 100),
-    totalRefunded: Math.round((json?.data?.totalRefundedPaise || 0) / 100),
+    total: requireNumber(json?.data?.total, "Total payment count"),
+    totalCaptured: Math.round(requireNumber(json?.data?.totalCapturedPaise, "Captured payment total") / 100),
+    totalRefunded: Math.round(requireNumber(json?.data?.totalRefundedPaise, "Refunded payment total") / 100),
   };
 }
 
 export async function fetchAdminFareRules(): Promise<FareRuleset> {
   const json = await apiFetch(`/api/v1/ops/admin/fare-rules`);
-  const data = json?.data;
-  if (!data || !data.version) {
-    throw new Error("Fare rules response was malformed.");
-  }
+  const data = requireRecord(json?.data, "Fare rules");
+  const outstation = requireRecord(data.outstation, "Outstation rules");
+  const vehicles = requireItems(data.vehicles, "Fare vehicles");
+  const startHour = optionalNumber(outstation.nightStartHour, "Night start hour");
+  const endHour = optionalNumber(outstation.nightEndHour, "Night end hour");
+  const nightWindow = optionalText(data.nightWindow) ||
+    (startHour !== null && endHour !== null
+      ? `${String(startHour).padStart(2, "0")}:00 – ${String(endHour).padStart(2, "0")}:00 IST`
+      : "");
 
-  const outstation = data.outstation || {};
-  const vehicles = Array.isArray(data.vehicles) ? data.vehicles : [];
-
-  const rules = vehicles.map((v: any) => ({ 
-    vehicleTier: (v.tier || v.id) as VehicleTier,
-    label: `${v.name || v.id} (${v.seats}-seater)`,
-    seats: Number(v.seats) || 4,
-    perKm: Number(v.perKm) || 10,
-    minDailyKm: Number(outstation.minKmPerDay) || 300,
-    nightChargePerHour: Number(v.perKm) >= 25 ? 90 : 50,
-    driverAllowance: Number(v.seats) >= 12 ? (Number(outstation.nightAllowanceTempo) || 500) : (Number(outstation.nightAllowanceCab) || 300),
-    active: v.active !== false,
-  }));
-
-  const startHour = String(outstation.nightStartHour ?? 22).padStart(2, "0");
-  const endHour = String(outstation.nightEndHour ?? 5).padStart(2, "0");
+  const rules = vehicles.map((v: any) => {
+    const tier = requireEnum(v.tier ?? v.id, ["sedan", "ertiga", "innova-crysta", "tempo-traveller", "urbania"] as const, "Fare vehicle tier");
+    const seats = requireNumber(v.seats, "Fare vehicle seats");
+    const cabinAllowance = optionalNumber(outstation.nightAllowanceCab, "Cab driver allowance");
+    const tempoAllowance = optionalNumber(outstation.nightAllowanceTempo, "Tempo driver allowance");
+    const derivedAllowance = seats >= 12 ? tempoAllowance : cabinAllowance;
+    return {
+      vehicleTier: tier as VehicleTier,
+      label: `${optionalText(v.name) || tier} (${seats}-seater)`,
+      seats,
+      perKm: requireNumber(v.perKm, "Fare per-kilometre rate"),
+      minDailyKm: requireNumber(outstation.minKmPerDay, "Minimum daily kilometres"),
+      nightChargePerHour: optionalNumber(v.nightChargePerHour, "Night charge per hour"),
+      driverAllowance: optionalNumber(v.driverAllowance, "Driver allowance") ?? derivedAllowance,
+      active: typeof v.active === "boolean" ? v.active : null,
+    };
+  });
 
   return {
-    version: data.version,
-    effectiveFrom: data.effectiveFrom || data.version,
-    nightWindow: data.nightWindow || `${startHour}:00 – ${endHour}:00 IST`,
+    version: requireText(data.version, "Fare rules version"),
+    effectiveFrom: optionalText(data.effectiveFrom),
+    nightWindow,
     rules,
-    notes: Array.isArray(data.notes)
-      ? data.notes
-      : [
-          `Outstation trips bill the greater of actual km or the tier minimum daily km (${outstation.minKmPerDay || 300} km/day).`,
-          `Night allowance applies when travel occurs inside the ${startHour}:00–${endHour}:00 IST window.`,
-          `Driver daily allowance is fixed per commercial agreement (₹${outstation.nightAllowanceCab || 300} cab / ₹${outstation.nightAllowanceTempo || 500} tempo).`,
-          "Tolls, parking and state check-gate fees are passed at actuals with receipts.",
-          "Fares are calculated exclusively by the backend fare engine — admin cannot override.",
-        ],
+    notes: Array.isArray(data.notes) ? data.notes.map((note: unknown) => requireText(note, "Fare rule note")) : [],
   };
 }
 
 export async function fetchAdminAuditLogs(limit = 100): Promise<AuditEntry[]> {
   const json = await apiFetch(`/api/v1/ops/admin/audit-logs?limit=${limit}`);
-  const items = json?.data;
-
-  if (!Array.isArray(items)) return [];
-
+  const items = requireItems(json?.data, "Audit log");
   return items.map((a: any) => ({
-    id: a.id,
-    action: a.action,
-    actor: a.actor || "Staff",
-    actorRole: a.actorRole || "super_admin",
-    resourceType: a.resourceType || "booking",
-    resourceId: a.resourceId || "",
-    ip: a.ip || "—",
-    detail: a.detail || "",
-    at: a.at || a.createdAt || new Date().toISOString(),
+    id: requireText(a.id, "Audit entry ID"),
+    action: requireText(a.action, "Audit action") as AuditEntry["action"],
+    actor: optionalText(a.actor),
+    actorRole: optionalText(a.actorRole) as AuditEntry["actorRole"],
+    resourceType: optionalText(a.resourceType),
+    resourceId: optionalText(a.resourceId),
+    ip: optionalText(a.ip),
+    detail: optionalText(a.detail),
+    at: requireText(a.at ?? a.createdAt, "Audit time"),
   }));
 }
 
@@ -281,40 +327,40 @@ export async function fetchAdminAuditLogs(limit = 100): Promise<AuditEntry[]> {
 
 function mapCatalogItem(c: any): CatalogItem {
   return {
-    id: c.id,
-    slug: c.slug || "",
-    title: c.title || "Untitled",
-    category: (c.type as CatalogCategory) || "package",
-    summary: c.shortDescription || c.description || "",
-    duration: c.durationText || "",
-    startingPrice: Number(c.startingPriceInr) || 0,
-    status: (c.status as CatalogStatus) || "draft",
-    updatedAt: c.updatedAt || c.createdAt || new Date().toISOString(),
-    places: (c.routeSummary || "")
+    id: requireText(c.id, "Catalog item ID"),
+    slug: requireText(c.slug, "Catalog item slug"),
+    title: requireText(c.title, "Catalog item title"),
+    category: requireEnum(c.type, ["ride", "tour", "package", "route", "vehicle", "place"] as const, "Catalog item category"),
+    summary: optionalText(c.shortDescription ?? c.description),
+    duration: optionalText(c.durationText),
+    startingPrice: requireNumber(c.startingPriceInr, "Catalog starting price"),
+    status: requireEnum(c.status, ["draft", "published", "archived"] as const, "Catalog item status"),
+    updatedAt: requireText(c.updatedAt ?? c.createdAt, "Catalog item update time"),
+    places: optionalText(c.routeSummary)
       .split(/[,·|]/)
       .map((s: string) => s.trim())
       .filter(Boolean),
-    distanceKm: c.distanceKm === null || c.distanceKm === undefined ? null : Number(c.distanceKm),
-    availability: (c.availability as CatalogAvailability) || "available",
-    seatsLeft: c.seatsLeft === null || c.seatsLeft === undefined ? null : Number(c.seatsLeft),
-    stops: Array.isArray(c.stops) ? c.stops : [],
-    tripType: (c.tripType as CatalogTripType | null) ?? null,
+    distanceKm: optionalNumber(c.distanceKm, "Catalog distance"),
+    availability: requireEnum(c.availability, ["available", "limited", "unavailable"] as const, "Catalog availability"),
+    seatsLeft: optionalNumber(c.seatsLeft, "Catalog seats remaining"),
+    stops: requireItems(c.stops, "Catalog stops"),
+    tripType: c.tripType == null ? null : requireEnum(c.tripType, ["one-way", "round-trip", "local-tour", "airport-transfer"] as const, "Catalog trip type"),
   };
 }
 
 function mapCatalogMedia(m: any): CatalogMedia {
   return {
-    id: m.id,
-    catalogItemId: m.catalogItemId || "",
-    mediaType: (m.mediaType as "image" | "video") || "image",
-    altText: m.altText || "",
+    id: requireText(m.id, "Catalog media ID"),
+    catalogItemId: requireText(m.catalogItemId, "Catalog media item ID"),
+    mediaType: requireEnum(m.mediaType, ["image", "video"] as const, "Catalog media type"),
+    altText: optionalText(m.altText),
     caption: m.caption ?? null,
-    sortOrder: Number(m.sortOrder) || 0,
-    status: (m.status as CatalogStatus) || "draft",
-    url: m.url || m.storagePath || "",
+    sortOrder: requireNumber(m.sortOrder, "Catalog media order"),
+    status: requireEnum(m.status, ["draft", "published", "archived"] as const, "Catalog media status"),
+    url: requireText(m.url ?? m.storagePath, "Catalog media URL"),
     mimeType: m.mimeType ?? null,
-    sizeBytes: m.sizeBytes === null || m.sizeBytes === undefined ? null : Number(m.sizeBytes),
-    createdAt: m.createdAt || new Date().toISOString(),
+    sizeBytes: optionalNumber(m.sizeBytes, "Catalog media size"),
+    createdAt: requireText(m.createdAt, "Catalog media creation time"),
   };
 }
 
@@ -337,14 +383,14 @@ export async function fetchAdminCatalog(filter?: {
   if (filter?.q?.trim()) params.set("q", filter.q.trim());
   const qs = params.toString();
   const json = await apiFetch(`/api/v1/ops/admin/catalog${qs ? `?${qs}` : ""}`);
-  const items = json?.data?.items || json?.data || [];
-  return Array.isArray(items) ? items.map(mapCatalogItem) : [];
+  const items = requireItems(json?.data, "Catalog");
+  return items.map(mapCatalogItem);
 }
 
 export async function fetchAdminCatalogItem(id: string): Promise<{ item: CatalogItem; media: CatalogMedia[] }> {
   const json = await apiFetch(`/api/v1/ops/admin/catalog/${encodeURIComponent(id)}`);
-  const data = json?.data ?? {};
-  return { item: mapCatalogItem(data), media: Array.isArray(data.media) ? data.media.map(mapCatalogMedia) : [] };
+  const data = requireRecord(json?.data, "Catalog item");
+  return { item: mapCatalogItem(data), media: requireItems(data.media, "Catalog media").map(mapCatalogMedia) };
 }
 
 export async function fetchCatalogManifestStatus(): Promise<{
@@ -354,7 +400,13 @@ export async function fetchCatalogManifestStatus(): Promise<{
   packageCount: number;
 }> {
   const json = await apiFetch(`/api/v1/ops/admin/catalog/manifest/status`);
-  return json?.data ?? { version: 1, updatedAt: new Date().toISOString(), routeCount: 0, packageCount: 0 };
+  const data = requireRecord(json?.data, "Catalog manifest status");
+  return {
+    version: requireNumber(data.version, "Manifest version"),
+    updatedAt: requireText(data.updatedAt, "Manifest update time"),
+    routeCount: requireNumber(data.routeCount, "Manifest route count"),
+    packageCount: requireNumber(data.packageCount, "Manifest package count"),
+  };
 }
 
 export async function republishCatalogManifest(): Promise<{
@@ -367,7 +419,13 @@ export async function republishCatalogManifest(): Promise<{
     method: "POST",
     body: JSON.stringify({}),
   });
-  return json?.data ?? { version: 1, updatedAt: new Date().toISOString(), routeCount: 0, packageCount: 0 };
+  const data = requireRecord(json?.data, "Republished catalog manifest");
+  return {
+    version: requireNumber(data.version, "Manifest version"),
+    updatedAt: requireText(data.updatedAt, "Manifest update time"),
+    routeCount: requireNumber(data.routeCount, "Manifest route count"),
+    packageCount: requireNumber(data.packageCount, "Manifest package count"),
+  };
 }
 
 export async function setCatalogItemStatus(id: string, action: "publish" | "archive"): Promise<CatalogItem> {
@@ -375,7 +433,7 @@ export async function setCatalogItemStatus(id: string, action: "publish" | "arch
     method: "POST",
     body: JSON.stringify({}),
   });
-  return mapCatalogItem(json?.data ?? { id });
+  return mapCatalogItem(requireRecord(json?.data, "Updated catalog item"));
 }
 
 export async function createAdminCatalogItem(payload: {
@@ -400,7 +458,7 @@ export async function createAdminCatalogItem(payload: {
       description: payload.description || payload.shortDescription,
     }),
   });
-  return mapCatalogItem(json?.data ?? {});
+  return mapCatalogItem(requireRecord(json?.data, "Created catalog item"));
 }
 
 export async function updateAdminCatalogItem(
@@ -426,7 +484,7 @@ export async function updateAdminCatalogItem(
     method: "PATCH",
     body: JSON.stringify(payload),
   });
-  return mapCatalogItem(json?.data ?? { id });
+  return mapCatalogItem(requireRecord(json?.data, "Updated catalog item"));
 }
 
 /* ── Catalog media (image manager) ────────────────────────────────────────── */
@@ -445,7 +503,7 @@ export async function uploadCatalogMedia(
     method: "POST",
     body: JSON.stringify(payload),
   });
-  return mapCatalogMedia(json?.data ?? {});
+  return mapCatalogMedia(requireRecord(json?.data, "Uploaded catalog media"));
 }
 
 export async function attachCatalogMediaByPath(
@@ -456,7 +514,7 @@ export async function attachCatalogMediaByPath(
     method: "POST",
     body: JSON.stringify({ ...payload, mediaType: "image" }),
   });
-  return mapCatalogMedia(json?.data ?? {});
+  return mapCatalogMedia(requireRecord(json?.data, "Attached catalog media"));
 }
 
 export async function updateCatalogMedia(
@@ -467,7 +525,7 @@ export async function updateCatalogMedia(
     method: "PATCH",
     body: JSON.stringify(payload),
   });
-  return mapCatalogMedia(json?.data ?? { id: mediaId });
+  return mapCatalogMedia(requireRecord(json?.data, "Updated catalog media"));
 }
 
 export async function deleteCatalogMedia(mediaId: string): Promise<void> {
@@ -506,20 +564,19 @@ export async function createAdminBooking(payload: {
 
 export async function fetchAdminReviews(catalogItems?: { id: string; title: string }[]): Promise<Review[]> {
   const json = await apiFetch(`/api/v1/ops/admin/reviews`);
-  const items = json?.data?.items || json?.data || [];
-  if (!Array.isArray(items)) return [];
+  const items = requireItems(json?.data, "Reviews");
 
   const titleById = new Map((catalogItems ?? []).map((c) => [c.id, c.title]));
 
   return items.map((r: any) => ({
-    id: r.id,
-    customerName: r.displayName || "Customer",
-    ticketId: r.bookingId || "—",
-    route: (r.catalogItemId && titleById.get(r.catalogItemId)) || "General",
-    rating: Number(r.rating) || 0,
-    text: r.reviewText || "",
-    status: (r.status as ReviewStatus) || "pending_review",
-    submittedAt: r.createdAt || r.publishedAt || new Date().toISOString(),
+    id: requireText(r.id, "Review ID"),
+    customerName: optionalText(r.displayName),
+    ticketId: optionalText(r.bookingId),
+    route: optionalText(r.catalogItemId ? titleById.get(r.catalogItemId) : ""),
+    rating: requireNumber(r.rating, "Review rating"),
+    text: optionalText(r.reviewText),
+    status: requireEnum(r.status, ["draft", "pending_review", "approved", "rejected", "published", "archived"] as const, "Review status"),
+    submittedAt: requireText(r.createdAt ?? r.publishedAt, "Review submission time"),
     verifiedBooking:
       r.verificationStatus === "booking_verified" || r.verificationStatus === "manually_verified",
   }));
@@ -535,32 +592,94 @@ export async function actOnReview(
       action === "reject" ? { reason: "Rejected by staff during moderation." } : {},
     ),
   });
-  return { id: json?.data?.id ?? id, status: json?.data?.status ?? "pending_review" };
+  const data = requireRecord(json?.data, "Review moderation result");
+  return {
+    id: requireText(data.id, "Review ID"),
+    status: requireEnum(data.status, ["draft", "pending_review", "approved", "rejected", "published", "archived"] as const, "Review status"),
+  };
 }
 
 
 function mapRouteCatalogItem(value: any): RouteCatalogItem {
+  const tripType = requireEnum(value.tripType ?? value.trip_type, ["one-way", "round-trip", "local-tour"] as const, "Route trip type");
+  const status = requireEnum(value.status, ["draft", "published", "archived"] as const, "Route status");
+  const tollIncluded = value.tollIncluded ?? value.toll_included;
+  const needsReview = value.needsReview ?? value.needs_review;
+  if (typeof tollIncluded !== "boolean") throw new Error("Route toll-included flag was missing from the API response.");
+  if (typeof needsReview !== "boolean") throw new Error("Route review flag was missing from the API response.");
   return {
-    id: value.id, tripType: value.tripType ?? value.trip_type, sourceCity: value.sourceCity ?? value.source_city,
-    sourceDetail: value.sourceDetail ?? value.source_detail ?? null, destinationCity: value.destinationCity ?? value.destination_city ?? null,
-    slug: value.slug, distanceKm: value.distanceKm ?? value.distance_km ?? null, durationText: value.durationText ?? value.duration_text ?? null,
-    availableFleets: value.availableFleets ?? value.available_fleets ?? [], faresInr: value.faresInr ?? value.fares_inr ?? {},
-    driverChargeInr: Number(value.driverChargeInr ?? value.driver_charge_inr ?? 0), nightHaltInr: Number(value.nightHaltInr ?? value.night_halt_inr ?? 0),
-    tollIncluded: Boolean(value.tollIncluded ?? value.toll_included), tollAmountInr: value.tollAmountInr ?? value.toll_amount_inr ?? null,
-    interstateCharges: value.interstateCharges ?? value.interstate_charges ?? [], minKmPerDay: Number(value.minKmPerDay ?? value.min_km_per_day ?? 300),
-    stops: value.stops ?? [], status: value.status, needsReview: Boolean(value.needsReview ?? value.needs_review), createdAt: value.createdAt ?? value.created_at, updatedAt: value.updatedAt ?? value.updated_at,
+    id: requireText(value.id, "Route ID"),
+    tripType,
+    sourceCity: requireText(value.sourceCity ?? value.source_city, "Route source city"),
+    sourceDetail: value.sourceDetail ?? value.source_detail ?? null,
+    destinationCity: value.destinationCity ?? value.destination_city ?? null,
+    slug: requireText(value.slug, "Route slug"),
+    distanceKm: optionalNumber(value.distanceKm ?? value.distance_km, "Route distance"),
+    durationText: optionalText(value.durationText ?? value.duration_text),
+    availableFleets: requireItems(value.availableFleets ?? value.available_fleets, "Route fleets"),
+    faresInr: requireRecord(value.faresInr ?? value.fares_inr, "Route fares"),
+    driverChargeInr: requireNumber(value.driverChargeInr ?? value.driver_charge_inr, "Route driver charge"),
+    nightHaltInr: requireNumber(value.nightHaltInr ?? value.night_halt_inr, "Route night halt"),
+    tollIncluded,
+    tollAmountInr: optionalNumber(value.tollAmountInr ?? value.toll_amount_inr, "Route toll amount"),
+    interstateCharges: requireItems(value.interstateCharges ?? value.interstate_charges, "Route interstate charges"),
+    minKmPerDay: requireNumber(value.minKmPerDay ?? value.min_km_per_day, "Route minimum daily kilometres"),
+    stops: requireItems(value.stops, "Route stops"),
+    status,
+    needsReview,
+    createdAt: requireText(value.createdAt ?? value.created_at, "Route creation time"),
+    updatedAt: requireText(value.updatedAt ?? value.updated_at, "Route update time"),
   };
 }
 
 export async function fetchAdminRoutes(filter?: { tripType?: RouteTripType | "all"; status?: CatalogStatus | "all"; q?: string }): Promise<RouteCatalogItem[]> {
-  const params = new URLSearchParams(); if (filter?.tripType && filter.tripType !== "all") params.set("trip_type", filter.tripType); if (filter?.status && filter.status !== "all") params.set("status", filter.status); if (filter?.q?.trim()) params.set("q", filter.q.trim());
-  const json = await apiFetch(`/api/v1/ops/admin/route-catalog${params.toString() ? `?${params}` : ""}`); return (json?.data?.items ?? json?.data ?? []).map(mapRouteCatalogItem);
+  const params = new URLSearchParams();
+  if (filter?.tripType && filter.tripType !== "all") params.set("trip_type", filter.tripType);
+  if (filter?.status && filter.status !== "all") params.set("status", filter.status);
+  if (filter?.q?.trim()) params.set("q", filter.q.trim());
+  const json = await apiFetch(`/api/v1/ops/admin/route-catalog${params.toString() ? `?${params}` : ""}`);
+  return requireItems(json?.data, "Route catalog").map(mapRouteCatalogItem);
 }
-export async function fetchAdminRoute(id: string): Promise<RouteCatalogItem> { const json = await apiFetch(`/api/v1/ops/admin/route-catalog/${encodeURIComponent(id)}`); return mapRouteCatalogItem(json?.data); }
-export async function createAdminRoute(payload: Omit<RouteCatalogItem, "id" | "status" | "createdAt" | "updatedAt"> & { status?: never }): Promise<RouteCatalogItem> { const json = await apiFetch(`/api/v1/ops/admin/route-catalog`, { method: "POST", body: JSON.stringify({ trip_type: payload.tripType, source_city: payload.sourceCity, source_detail: payload.sourceDetail || undefined, destination_city: payload.destinationCity || undefined, slug: payload.slug, distance_km: payload.distanceKm ?? undefined, duration_text: payload.durationText || undefined, available_fleets: payload.availableFleets, fares_inr: payload.faresInr, driver_charge_inr: payload.driverChargeInr, night_halt_inr: payload.nightHaltInr, toll_included: payload.tollIncluded, toll_amount_inr: payload.tollAmountInr ?? undefined, interstate_charges: payload.interstateCharges, min_km_per_day: payload.minKmPerDay, stops: payload.stops, needs_review: payload.needsReview }) }); return mapRouteCatalogItem(json?.data); }
-export async function updateAdminRoute(id: string, payload: Partial<Omit<RouteCatalogItem, "id" | "status" | "createdAt" | "updatedAt">>): Promise<RouteCatalogItem> { const body: any = {}; for (const [key, value] of Object.entries(payload)) { const snake = key.replace(/[A-Z]/g, (m) => `_${m.toLowerCase()}`); body[snake] = value; } const json = await apiFetch(`/api/v1/ops/admin/route-catalog/${encodeURIComponent(id)}`, { method: "PATCH", body: JSON.stringify(body) }); return mapRouteCatalogItem(json?.data); }
-export async function publishAdminRoute(id: string): Promise<RouteCatalogItem> { const json = await apiFetch(`/api/v1/ops/admin/route-catalog/${encodeURIComponent(id)}/publish`, { method: "POST", body: "{}" }); return mapRouteCatalogItem(json?.data); }
-export async function archiveAdminRoute(id: string): Promise<RouteCatalogItem> { const json = await apiFetch(`/api/v1/ops/admin/route-catalog/${encodeURIComponent(id)}/archive`, { method: "POST", body: "{}" }); return mapRouteCatalogItem(json?.data); }
-export async function checkRouteSlug(slug: string): Promise<{ available: boolean }> { const json = await apiFetch(`/api/v1/ops/admin/route-catalog/slug-check?slug=${encodeURIComponent(slug)}`); return json?.data ?? { available: false }; }
-export async function suggestRouteFares(input: { tripType: RouteTripType; distanceKm: number }): Promise<Record<string, number>> { const json = await apiFetch(`/api/v1/ops/admin/route-catalog/suggest-fares`, { method: "POST", body: JSON.stringify({ trip_type: input.tripType, distance_km: input.distanceKm }) }); return json?.data ?? {}; }
-export async function fetchRouteFleets(): Promise<RouteFleet[]> { const json = await apiFetch(`/api/v1/route-catalog/fleets`); return json?.data ?? []; }
+export async function fetchAdminRoute(id: string): Promise<RouteCatalogItem> {
+  const json = await apiFetch(`/api/v1/ops/admin/route-catalog/${encodeURIComponent(id)}`);
+  return mapRouteCatalogItem(requireRecord(json?.data, "Route"));
+}
+export async function createAdminRoute(payload: Omit<RouteCatalogItem, "id" | "status" | "createdAt" | "updatedAt"> & { status?: never }): Promise<RouteCatalogItem> {
+  const json = await apiFetch(`/api/v1/ops/admin/route-catalog`, { method: "POST", body: JSON.stringify({
+    trip_type: payload.tripType, source_city: payload.sourceCity, source_detail: payload.sourceDetail || undefined,
+    destination_city: payload.destinationCity || undefined, slug: payload.slug, distance_km: payload.distanceKm ?? undefined,
+    duration_text: payload.durationText || undefined, available_fleets: payload.availableFleets, fares_inr: payload.faresInr,
+    driver_charge_inr: payload.driverChargeInr, night_halt_inr: payload.nightHaltInr, toll_included: payload.tollIncluded,
+    toll_amount_inr: payload.tollAmountInr ?? undefined, interstate_charges: payload.interstateCharges,
+    min_km_per_day: payload.minKmPerDay, stops: payload.stops, needs_review: payload.needsReview,
+  }) });
+  return mapRouteCatalogItem(requireRecord(json?.data, "Created route"));
+}
+export async function updateAdminRoute(id: string, payload: Partial<Omit<RouteCatalogItem, "id" | "status" | "createdAt" | "updatedAt">>): Promise<RouteCatalogItem> {
+  const body: any = {};
+  for (const [key, value] of Object.entries(payload)) body[key.replace(/[A-Z]/g, (m) => `_${m.toLowerCase()}`)] = value;
+  const json = await apiFetch(`/api/v1/ops/admin/route-catalog/${encodeURIComponent(id)}`, { method: "PATCH", body: JSON.stringify(body) });
+  return mapRouteCatalogItem(requireRecord(json?.data, "Updated route"));
+}
+export async function publishAdminRoute(id: string): Promise<RouteCatalogItem> {
+  const json = await apiFetch(`/api/v1/ops/admin/route-catalog/${encodeURIComponent(id)}/publish`, { method: "POST", body: "{}" });
+  return mapRouteCatalogItem(requireRecord(json?.data, "Published route"));
+}
+export async function archiveAdminRoute(id: string): Promise<RouteCatalogItem> {
+  const json = await apiFetch(`/api/v1/ops/admin/route-catalog/${encodeURIComponent(id)}/archive`, { method: "POST", body: "{}" });
+  return mapRouteCatalogItem(requireRecord(json?.data, "Archived route"));
+}
+export async function checkRouteSlug(slug: string): Promise<{ available: boolean }> {
+  const json = await apiFetch(`/api/v1/ops/admin/route-catalog/slug-check?slug=${encodeURIComponent(slug)}`);
+  const data = requireRecord(json?.data, "Route slug availability");
+  if (typeof data.available !== "boolean") throw new Error("Route slug availability response was malformed.");
+  return { available: data.available };
+}
+export async function suggestRouteFares(input: { tripType: RouteTripType; distanceKm: number }): Promise<Record<string, number>> {
+  const json = await apiFetch(`/api/v1/ops/admin/route-catalog/suggest-fares`, { method: "POST", body: JSON.stringify({ trip_type: input.tripType, distance_km: input.distanceKm }) });
+  return requireRecord(json?.data, "Suggested route fares");
+}
+export async function fetchRouteFleets(): Promise<RouteFleet[]> {
+  const json = await apiFetch(`/api/v1/route-catalog/fleets`);
+  return requireItems(json?.data, "Route fleets");
+}

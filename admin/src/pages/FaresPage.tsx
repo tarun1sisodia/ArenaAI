@@ -308,13 +308,15 @@ export function FaresPage({ user }: { user: AdminUser }) {
                         {formatINR(r.perKm)}
                       </TD>
                       <TD className="text-right font-mono text-[13px]">{r.minDailyKm}</TD>
-                      <TD className="text-right font-mono text-[13px]">{formatINR(r.nightChargePerHour)}</TD>
-                      <TD className="text-right font-mono text-[13px]">{formatINR(r.driverAllowance)}</TD>
+                    <TD className="text-right font-mono text-[13px]">{r.nightChargePerHour === null ? "Not reported" : formatINR(r.nightChargePerHour)}</TD>
+                    <TD className="text-right font-mono text-[13px]">{r.driverAllowance === null ? "Not reported" : formatINR(r.driverAllowance)}</TD>
                       <TD className="text-center">
                         {r.active === false ? (
                           <Badge tone="neutral">Off fleet</Badge>
-                        ) : (
+                        ) : r.active === true ? (
                           <Badge tone="success">Available</Badge>
+                        ) : (
+                          <Badge tone="neutral">Not reported</Badge>
                         )}
                       </TD>
                     </motion.tr>
