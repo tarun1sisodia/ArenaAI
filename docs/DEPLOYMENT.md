@@ -101,6 +101,14 @@ curl -fsS https://<render-service>.onrender.com/ready
 
 The image is multi-stage: full dependencies build `dist`, a separate stage installs production-only dependencies, and the runtime stage runs as the non-root `skb` user with devDependencies (TypeScript, Vitest, ESLint, tsx) absent. [`backend/.dockerignore`](../backend/.dockerignore) keeps `.env` files, `node_modules`, `dist`, tests and docs out of the build context.
 
+### Chainguard Zero-CVE Container & Dependency Bot Setup
+
+For enterprise container hardening, the repository provides [`backend/Dockerfile.chainguard`](../backend/Dockerfile.chainguard) based on official Chainguard images (`cgr.dev/chainguard/node:latest` and `cgr.dev/chainguard/node:latest-dev`).
+- **Zero Known Vulnerabilities**: Minimal attack surface with Wolfi OS base.
+- **Non-Root Execution**: Runs under standard non-root privileges out of the box.
+- **Automated Package Updates**: Configured in [`.github/dependabot.yml`](../.github/dependabot.yml) under the `docker` and `npm` package ecosystems.
+- **Automated Bot Verification**: PRs created by automated bots that pull new package or container updates trigger [`.github/workflows/bot-package-updates.yml`](../.github/workflows/bot-package-updates.yml), enforcing `npm run verify` prior to merge.
+
 ### Add the API custom domain
 
 1. In Render, open the service's **Settings → Custom Domains → Add Custom Domain**.
@@ -157,15 +165,19 @@ The customer site is **pre-rendered** by `react/scripts/prerender.ts`: every mar
 3. Set **Root directory** to `/admin`.
 4. Set **Build command** to `npm ci && npm run build`.
 5. Set **Build output directory** to `dist`.
-6. Add `VITE_API_BASE_URL=https://api.agraskbagheltourandtravels.com` under the production environment variables.
+6. Add the following production build variables under **Settings → Environment variables → Production**:
+   - `VITE_API_BASE_URL=https://api.agraskbagheltourandtravels.com`
+   - `VITE_SUPABASE_URL=https://<SUPABASE_PROJECT_REF>.supabase.co`
+   - `VITE_SUPABASE_ANON_KEY=<SUPABASE_ANON_PUBLIC_KEY>`
+   *Never place a Supabase service-role key or Google client secret in any `VITE_*` variable.*
 7. Under **Settings → Build & deployments → Ignored build command**, enter:
    ```
    git diff --quiet HEAD^ HEAD -- admin/
    ```
    Cloudflare will skip the admin build when no `admin/` files changed.
 8. Deploy and open the generated Pages URL.
-8. Add the custom domain `admin.agraskbagheltourandtravels.com` under **Custom domains**.
-9. Confirm the login route, deep links such as `/bookings`, and API requests work over HTTPS.
+9. Add the custom domain `admin.agraskbagheltourandtravels.com` under **Custom domains**.
+10. Confirm the login route, deep links such as `/bookings`, and API requests work over HTTPS.
 
 The same settings are recorded in [`admin/cloudflare-pages.toml`](../admin/cloudflare-pages.toml). For manual deployment:
 
@@ -173,7 +185,49 @@ The same settings are recorded in [`admin/cloudflare-pages.toml`](../admin/cloud
 npm run deploy:admin
 ```
 
-The current admin login is a frontend demonstration flow. Before production use, connect it to the backend's real authentication and RBAC endpoints and remove any test-auth behavior from the production environment.
+### Admin Authentication Setup (Supabase Auth & Google OAuth)
+
+The admin SPA accepts **Supabase Auth** sessions only. Email/password and Google OAuth use the same staff authorization rule: the authenticated user's server-controlled `app_metadata.role` must equal `super_admin`. Backend admin routes independently enforce that role in the JWT.
+
+#### 1. Confirm the correct Supabase project
+Use the project referenced by the deployed admin build—not whichever project is currently open in another browser tab. Confirm the build-time values in Cloudflare Pages:
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
+- `VITE_API_BASE_URL`
+
+#### 2. Configure Google's OAuth client and Supabase
+1. In Google Cloud Console, create or select an OAuth 2.0 **Web application** client.
+2. Set its authorized redirect URI to the Supabase callback:
+   `https://<SUPABASE_PROJECT_REF>.supabase.co/auth/v1/callback`
+3. Add the deployed admin origin (`https://admin.agraskbagheltourandtravels.com` or staging origin) and the local development origin (`http://localhost:5173`) as authorized JavaScript origins.
+4. In Supabase Dashboard → **Authentication → Sign In / Up → Providers → Google**, enable Google and enter the client ID and client secret. Keep the secret in Supabase only.
+5. In Supabase Dashboard → **Authentication → URL Configuration → Redirect URLs**, allow the app callback for each origin:
+   - `https://<admin-host>/auth/callback`
+   - `http://localhost:5173/auth/callback`
+6. Rebuild and deploy the admin SPA after setting its three `VITE_*` build variables. OAuth redirect URLs are fixed to the current app origin plus `/auth/callback`; the app does not accept an arbitrary redirect supplied in a query string.
+The SPA creates a single-use PKCE verifier and exchanges the returned authorization code with Supabase. A successful Google login is rejected unless that Google identity has the staff role below.
+
+#### 3. Provision a staff user directly in Supabase
+Create or locate the user under **Authentication → Users** in the *same project*. Then run this in that project's SQL Editor, replacing the email with the exact staff account:
+
+```sql
+update auth.users
+set raw_app_meta_data = coalesce(raw_app_meta_data, '{}'::jsonb)
+  || jsonb_build_object('role', 'super_admin')
+where lower(email) = lower('STAFF_EMAIL_HERE')
+returning id, email, raw_app_meta_data ->> 'role' as role;
+```
+
+Confirm the returned row has role `super_admin`. Use `raw_app_meta_data` / `app_metadata`; do not put the authorization role in user-editable `raw_user_meta_data`. After changing a role, sign out and sign in again so Supabase issues a token with updated claims.
+
+This works for both email/password users and the matching Google identity. A non-staff Google account is denied even if Google authentication itself succeeds.
+
+#### 4. Troubleshooting
+- **Invalid email/password:** confirm user exists in the deployed project and is confirmed.
+- **Access denied:** confirm `raw_app_meta_data.role` is exactly `super_admin` on the user, then sign out and sign in again.
+- **Google OAuth could not be completed:** check Google provider in Supabase, verify redirect URI is `/auth/v1/callback`, and allowlist `/auth/callback` in Supabase URL Configuration.
+- **Backend is not connected:** confirm `VITE_API_BASE_URL`, `VITE_SUPABASE_URL`, and `VITE_SUPABASE_ANON_KEY`, then rebuild.
+- **Second-factor challenge:** admin SPA does not implement a Supabase TOTP/MFA challenge flow; do not disable an enforced factor just to work around missing MFA UI.
 
 ### Routing rules for this app
 

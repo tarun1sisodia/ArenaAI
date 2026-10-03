@@ -16,54 +16,74 @@ const AuditPage = lazy(() => import("@/pages/AuditPage").then((m) => ({ default:
 import { AUTH_EXPIRED_EVENT, clearSession, getStoredSession, saveSession, validateStoredSession } from "@/lib/auth";
 import type { AdminUser } from "@/lib/types";
 
+import { AuthCallbackPage } from "@/pages/AuthCallbackPage";
+
 function Root({ user, onLogin, onLogout }: { user: AdminUser | null; onLogin: (u: AdminUser) => void; onLogout: () => void }) {
   const reduce = useReducedMotion();
   const navigate = useNavigate();
 
   return (
-    <AnimatePresence mode="wait">
-      {!user ? (
-        <motion.div
-          key="login"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 1.02 }}
-          transition={{ duration: 0.3 }}
-        >
-          <LoginPage
+    <Routes>
+      <Route
+        path="/auth/callback"
+        element={
+          <AuthCallbackPage
             onLogin={(authedUser) => {
               onLogin(authedUser);
-              navigate("/");
+              navigate("/", { replace: true });
             }}
           />
-        </motion.div>
-      ) : (
-        <motion.div
-          key="app"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <Suspense fallback={<div className="flex h-64 items-center justify-center text-sm text-slate-400">Loading module...</div>}>
-            <Routes>
-              <Route element={<AdminLayout user={user} onLogout={onLogout} />}>
-                <Route index element={<DashboardPage />} />
-                <Route path="bookings" element={<BookingsPage user={user} />} />
-                <Route path="finance" element={<FinancePage user={user} />} />
-                <Route path="catalog" element={<CatalogPage user={user} />} />
-                <Route path="reviews" element={<ReviewsPage user={user} />} />
-                <Route path="inquiries" element={<InquiriesPage user={user} />} />
-                <Route path="rental-requests" element={<RentalRequestsPage user={user} />} />
-                <Route path="fares" element={<FaresPage user={user} />} />
-                <Route path="audit" element={<AuditPage user={user} />} />
-              </Route>
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </Suspense>
-        </motion.div>
-      )}
-    </AnimatePresence>
+        }
+      />
+      <Route
+        path="/*"
+        element={
+          <AnimatePresence mode="wait">
+            {!user ? (
+              <motion.div
+                key="login"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 1.02 }}
+                transition={{ duration: 0.3 }}
+              >
+                <LoginPage
+                  onLogin={(authedUser) => {
+                    onLogin(authedUser);
+                    navigate("/");
+                  }}
+                />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="app"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <Suspense fallback={<div className="flex h-64 items-center justify-center text-sm text-slate-400">Loading module...</div>}>
+                  <Routes>
+                    <Route element={<AdminLayout user={user} onLogout={onLogout} />}>
+                      <Route index element={<DashboardPage />} />
+                      <Route path="bookings" element={<BookingsPage user={user} />} />
+                      <Route path="finance" element={<FinancePage user={user} />} />
+                      <Route path="catalog" element={<CatalogPage user={user} />} />
+                      <Route path="reviews" element={<ReviewsPage user={user} />} />
+                      <Route path="inquiries" element={<InquiriesPage user={user} />} />
+                      <Route path="rental-requests" element={<RentalRequestsPage user={user} />} />
+                      <Route path="fares" element={<FaresPage user={user} />} />
+                      <Route path="audit" element={<AuditPage user={user} />} />
+                    </Route>
+                    <Route path="*" element={<Navigate to="/" replace />} />
+                  </Routes>
+                </Suspense>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        }
+      />
+    </Routes>
   );
 }
 

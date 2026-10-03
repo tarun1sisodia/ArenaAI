@@ -51,3 +51,15 @@ updates:
     schedule:
       interval: weekly
       day: monday
+  - package-ecosystem: docker
+    directory: /backend
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      chainguard-and-base:
+        patterns:
+          - "cgr.dev/chainguard/*"
+          - "node"
+
