@@ -1,6 +1,7 @@
 import pg from "pg";
 import type {
   AuditLogRecord,
+  BookingIntentRecord,
   BookingRecord,
   CatalogItemRecord,
   CatalogMediaRecord,
@@ -87,6 +88,26 @@ function mapBooking(row: Record<string, unknown>): BookingRecord {
     packageId: row.package_id ? String(row.package_id) : null,
     createdAt: new Date(String(row.created_at)).toISOString(),
     updatedAt: new Date(String(row.updated_at)).toISOString(),
+  };
+}
+
+function mapBookingIntent(row: Record<string, unknown>): BookingIntentRecord {
+  return {
+    id: String(row.id),
+    idempotencyKey: String(row.idempotency_key),
+    resumeSecretHash: String(row.resume_secret_hash),
+    payload: row.payload,
+    quote: row.quote as BookingIntentRecord["quote"],
+    quoteTotalFare: num(row.quote_total_fare),
+    quoteAdvanceAmount: num(row.quote_advance_amount),
+    quoteBalanceAmount: num(row.quote_balance_amount),
+    fareReconfirmationPending: Boolean(row.fare_reconfirmation_pending),
+    expiresAt: new Date(String(row.expires_at)).toISOString(),
+    createdAt: new Date(String(row.created_at)).toISOString(),
+    updatedAt: new Date(String(row.updated_at)).toISOString(),
+    consumedAt: row.consumed_at ? new Date(String(row.consumed_at)).toISOString() : null,
+    claimedUserId: row.claimed_user_id ? String(row.claimed_user_id) : null,
+    resultingBookingId: row.resulting_booking_id ? String(row.resulting_booking_id) : null,
   };
 }
 
@@ -283,6 +304,10 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
             params.push(filter.to);
             clauses.push(`pickup_datetime <= $${params.length}`);
           }
+          if (filter.userId) {
+            params.push(filter.userId);
+            clauses.push(`user_id=$${params.length}`);
+          }
           const where = clauses.length ? `where ${clauses.join(" and ")}` : "";
           const countRows = await query(client, `select count(*)::int as total from bookings ${where}`, params);
           const page = filter.page ?? 1;
@@ -305,6 +330,39 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
           );
           const items = rows.map(mapBooking);
           return items.filter((item) => phonesMatch(item.customerPhone, phone));
+        },
+      },
+      bookingIntents: {
+        async create(record: BookingIntentRecord) {
+          const rows = await query(client, `insert into customer_booking_intents
+            (id, idempotency_key, resume_secret_hash, payload, quote, quote_total_fare,
+             quote_advance_amount, quote_balance_amount, fare_reconfirmation_pending, expires_at, created_at, updated_at,
+             consumed_at, claimed_user_id, resulting_booking_id)
+            values ($1,$2,$3,$4::jsonb,$5::jsonb,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15) returning *`,
+            [record.id, record.idempotencyKey, record.resumeSecretHash, JSON.stringify(record.payload), JSON.stringify(record.quote),
+             record.quoteTotalFare, record.quoteAdvanceAmount, record.quoteBalanceAmount, record.fareReconfirmationPending, record.expiresAt, record.createdAt,
+             record.updatedAt, record.consumedAt, record.claimedUserId, record.resultingBookingId]);
+          return mapBookingIntent(rows[0]!);
+        },
+        async update(record: BookingIntentRecord) {
+          const rows = await query(client, `update customer_booking_intents set
+            resume_secret_hash=$2, payload=$3::jsonb, quote=$4::jsonb, quote_total_fare=$5, quote_advance_amount=$6,
+            quote_balance_amount=$7, expires_at=$8, updated_at=$9, consumed_at=$10,
+            claimed_user_id=$11, resulting_booking_id=$12, fare_reconfirmation_pending=$13 where id=$1 returning *`,
+            [record.id, record.resumeSecretHash, JSON.stringify(record.payload), JSON.stringify(record.quote), record.quoteTotalFare,
+             record.quoteAdvanceAmount, record.quoteBalanceAmount, record.expiresAt, record.updatedAt,
+             record.consumedAt, record.claimedUserId, record.resultingBookingId, record.fareReconfirmationPending]);
+          if (!rows[0]) throw new Error("booking intent update failed");
+          return mapBookingIntent(rows[0]);
+        },
+        async getById(id: string) {
+          const isTx = "release" in client && typeof (client as { release?: unknown }).release === "function";
+          const rows = await query(client, isTx ? "select * from customer_booking_intents where id=$1 for update" : "select * from customer_booking_intents where id=$1", [id]);
+          return rows[0] ? mapBookingIntent(rows[0]) : null;
+        },
+        async getByIdempotencyKey(key: string) {
+          const rows = await query(client, "select * from customer_booking_intents where idempotency_key=$1", [key]);
+          return rows[0] ? mapBookingIntent(rows[0]) : null;
         },
       },
       payments: {

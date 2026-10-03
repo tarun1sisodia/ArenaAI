@@ -22,6 +22,9 @@ import { createAdminService } from "./modules/admin/admin.service.js";
 import { createBookingController } from "./modules/bookings/booking.controller.js";
 import { registerBookingRoutes } from "./modules/bookings/booking.routes.js";
 import { createBookingService } from "./modules/bookings/booking.service.js";
+import { createBookingIntentController } from "./modules/booking-intents/booking-intent.controller.js";
+import { createBookingIntentService } from "./modules/booking-intents/booking-intent.service.js";
+import { registerBookingIntentRoutes } from "./modules/booking-intents/booking-intent.routes.js";
 import { createCatalogController } from "./modules/catalog/catalog.controller.js";
 import { registerCatalogRoutes } from "./modules/catalog/catalog.routes.js";
 import { createCatalogService } from "./modules/catalog/catalog.service.js";
@@ -122,7 +125,7 @@ export async function buildApp(options: AppOptions): Promise<BuiltApp> {
     },
     credentials: true,
     methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "X-Booking-Token", "X-Request-Id", "X-Razorpay-Signature"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Booking-Token", "X-Booking-Intent-Secret", "X-Request-Id", "X-Razorpay-Signature"],
   });
 
   await app.register(rateLimit, {
@@ -238,7 +241,9 @@ export async function buildApp(options: AppOptions): Promise<BuiltApp> {
 
   await registerFareRoutes(app, createFareController(fareService));
   await registerLocationRoutes(app, createLocationController(locationService));
-  await registerBookingRoutes(app, createBookingController(bookingService));
+  await registerBookingRoutes(app, createBookingController(bookingService, env.CUSTOMER_AUTH_REQUIRED_FOR_NEW_BOOKINGS));
+  const bookingIntentService = createBookingIntentService({ db, clock, fareService, bookingService });
+  await registerBookingIntentRoutes(app, createBookingIntentController(bookingIntentService));
   await registerPaymentRoutes(app, createPaymentController(paymentService));
   await registerCatalogRoutes(app, createCatalogController(catalogService));
   await registerReviewRoutes(app, createReviewController(reviewService));

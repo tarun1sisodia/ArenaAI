@@ -4,14 +4,20 @@ import {
   BookingAccessQuerySchema,
   CreateDraftBookingSchema,
   TicketIdParamSchema,
+  MyBookingsQuerySchema,
+  BookingIdParamSchema,
 } from "./booking.schema.js";
 import type { createBookingService } from "./booking.service.js";
+import { Errors } from "../../shared/errors.js";
 
-export function createBookingController(service: ReturnType<typeof createBookingService>) {
+export function createBookingController(service: ReturnType<typeof createBookingService>, requireAuthForNewBookings = false) {
   return {
     async createDraft(request: FastifyRequest, reply: FastifyReply) {
       const body = CreateDraftBookingSchema.parse(request.body);
-      const result = await service.createDraft(body);
+      if (requireAuthForNewBookings && !request.user) {
+        throw Errors.unauthorized("Authentication is required for new bookings.");
+      }
+      const result = await service.createDraft(body, request.user ?? null);
       return sendSuccess(
         reply,
         {
@@ -27,6 +33,18 @@ export function createBookingController(service: ReturnType<typeof createBooking
         },
         201,
       );
+    },
+
+    async listMine(request: FastifyRequest, reply: FastifyReply) {
+      if (!request.user) throw Errors.unauthorized();
+      const query = MyBookingsQuerySchema.parse(request.query);
+      return sendSuccess(reply, await service.listOwned(request.user.id, query.page, query.pageSize));
+    },
+
+    async getMine(request: FastifyRequest, reply: FastifyReply) {
+      if (!request.user) throw Errors.unauthorized();
+      const params = BookingIdParamSchema.parse(request.params);
+      return sendSuccess(reply, await service.getOwned(request.user.id, params.bookingId));
     },
 
     async getBooking(request: FastifyRequest, reply: FastifyReply) {

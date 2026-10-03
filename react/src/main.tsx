@@ -2,6 +2,7 @@ import { StrictMode } from "react";
 import { createRoot, hydrateRoot } from "react-dom/client";
 import App from "@/app/App";
 import { AppErrorBoundary } from "@/AppErrorBoundary";
+import { CustomerAuthProvider } from "@/auth/customerAuth";
 import { assertCatalogueInvariants } from "@/data/parity";
 import "@/styles/tokens.css";
 import "@/styles/theme.css";
@@ -22,9 +23,11 @@ try {
 
 const appTree = (
   <StrictMode>
-    <AppErrorBoundary>
-      <App />
-    </AppErrorBoundary>
+      <AppErrorBoundary>
+        <CustomerAuthProvider>
+          <App />
+        </CustomerAuthProvider>
+      </AppErrorBoundary>
   </StrictMode>
 );
 

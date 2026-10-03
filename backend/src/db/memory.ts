@@ -17,6 +17,7 @@ import {
 } from "./seedData.js";
 import type {
   AuditLogRecord,
+  BookingIntentRecord,
   BookingRecord,
   CatalogItemRecord,
   CatalogMediaRecord,
@@ -50,6 +51,8 @@ function clone<T>(value: T): T {
 
 export function createMemoryRepositories(nowIso = new Date().toISOString()): Repositories {
   const bookings = new Map<string, BookingRecord>();
+  const bookingIntents = new Map<string, BookingIntentRecord>();
+  const bookingIntentsByIdempotency = new Map<string, string>();
   const bookingsByTicket = new Map<string, string>();
   const payments = new Map<string, PaymentRecord>();
   const paymentsByIdempotency = new Map<string, string>();
@@ -153,6 +156,8 @@ export function createMemoryRepositories(nowIso = new Date().toISOString()): Rep
       return withLock(async () => {
         const snap = {
           bookings: new Map(bookings),
+          bookingIntents: new Map(bookingIntents),
+          bookingIntentsByIdempotency: new Map(bookingIntentsByIdempotency),
           bookingsByTicket: new Map(bookingsByTicket),
           payments: new Map(payments),
           paymentsByIdempotency: new Map(paymentsByIdempotency),
@@ -180,6 +185,8 @@ export function createMemoryRepositories(nowIso = new Date().toISOString()): Rep
           return await fn(repos);
         } catch (err) {
           bookings.clear(); for (const [k, v] of snap.bookings) bookings.set(k, v);
+          bookingIntents.clear(); for (const [k, v] of snap.bookingIntents) bookingIntents.set(k, v);
+          bookingIntentsByIdempotency.clear(); for (const [k, v] of snap.bookingIntentsByIdempotency) bookingIntentsByIdempotency.set(k, v);
           bookingsByTicket.clear(); for (const [k, v] of snap.bookingsByTicket) bookingsByTicket.set(k, v);
           payments.clear(); for (const [k, v] of snap.payments) payments.set(k, v);
           paymentsByIdempotency.clear(); for (const [k, v] of snap.paymentsByIdempotency) paymentsByIdempotency.set(k, v);
@@ -249,6 +256,7 @@ export function createMemoryRepositories(nowIso = new Date().toISOString()): Rep
         if (filter.ticketId) items = items.filter((item) => item.ticketId === filter.ticketId);
         if (filter.from) items = items.filter((item) => item.pickupDatetime >= filter.from!);
         if (filter.to) items = items.filter((item) => item.pickupDatetime <= filter.to!);
+        if (filter.userId) items = items.filter((item) => item.userId === filter.userId);
         items.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
         const total = items.length;
         const page = filter.page ?? 1;
@@ -265,6 +273,28 @@ export function createMemoryRepositories(nowIso = new Date().toISOString()): Rep
             return storedPhone === normalizedPhone && b.createdAt >= from;
           })
           .map(clone);
+      },
+    },
+    bookingIntents: {
+      async create(record) {
+        if (bookingIntentsByIdempotency.has(record.idempotencyKey)) throw new Error("duplicate booking intent idempotency key");
+        bookingIntents.set(record.id, clone(record));
+        bookingIntentsByIdempotency.set(record.idempotencyKey, record.id);
+        return clone(record);
+      },
+      async update(record) {
+        if (!bookingIntents.has(record.id)) throw new Error("booking intent update failed: not found");
+        bookingIntents.set(record.id, clone(record));
+        return clone(record);
+      },
+      async getById(id) {
+        const found = bookingIntents.get(id);
+        return found ? clone(found) : null;
+      },
+      async getByIdempotencyKey(key) {
+        const id = bookingIntentsByIdempotency.get(key);
+        const found = id ? bookingIntents.get(id) : undefined;
+        return found ? clone(found) : null;
       },
     },
     payments: {

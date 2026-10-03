@@ -4,6 +4,7 @@ import { MobileNavSheet } from "./MobileNavSheet";
 import { contact } from "../../data/contact";
 import { prefetchDocument } from "../../app/prefetch";
 import { WhatsAppIcon } from "../icons/WhatsAppIcon";
+import { getCustomerDisplayName, useCustomerAuth } from "../../auth/customerAuth";
 
 export interface HeaderProps {
   currentPath?: string;
@@ -18,6 +19,8 @@ export function Header({
 }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [internalMobileNav, setInternalMobileNav] = useState(false);
+  const [accountError, setAccountError] = useState<string | null>(null);
+  const { user, loading: authLoading, configured, signInWithGoogle } = useCustomerAuth();
 
   const isMobileNavOpen = controlledMobileNav !== undefined ? controlledMobileNav : internalMobileNav;
 
@@ -105,6 +108,16 @@ export function Header({
 
           {/* Actions: Phone, WhatsApp, and Mobile Menu */}
           <div className="flex items-center gap-2 shrink-0">
+            {!authLoading && (user ? (
+              <a href="/my-bookings/" title={user.email ?? "My account"} className="hidden sm:inline-flex items-center gap-1.5 rounded-md border border-primary/25 bg-sandstone-wash px-2.5 py-1.5 text-xs font-semibold text-primary hover:bg-surface-container-high">
+                <span className="material-symbols-outlined text-icon-16" aria-hidden="true">account_circle</span>
+                <span className="max-w-24 truncate">{getCustomerDisplayName(user)}</span>
+              </a>
+            ) : configured ? (
+              <button type="button" onClick={() => void signInWithGoogle().catch((error) => setAccountError(error instanceof Error ? error.message : "Sign-in could not start."))} className="hidden sm:inline-flex items-center gap-1.5 rounded-md border border-primary/25 px-2.5 py-1.5 text-xs font-semibold text-primary hover:bg-sandstone-wash">
+                <span aria-hidden="true" className="grid h-4 w-4 place-items-center rounded-full bg-white text-[10px] font-bold text-primary">G</span> Sign in
+              </button>
+            ) : null)}
             {/* Phone Call CTA */}
             <a
               href={`tel:${contact.phone}`}
@@ -140,6 +153,7 @@ export function Header({
               </span>
             </button>
           </div>
+          {accountError && <p role="status" className="absolute right-4 top-12 z-50 max-w-xs rounded-md border border-red-200 bg-red-50 p-2 text-xs text-red-800">{accountError}</p>}
         </div>
       </header>
 

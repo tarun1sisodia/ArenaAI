@@ -4,7 +4,7 @@ import { TICKET_ID_PATTERN } from "../../shared/ids.js";
 export const CreatePaymentCheckoutSchema = z
   .object({
     ticketId: z.string().regex(TICKET_ID_PATTERN),
-    guestAccessToken: z.string().min(16).max(128),
+    guestAccessToken: z.string().min(16).max(128).optional(),
     idempotencyKey: z.string().uuid(),
     returnUrl: z.string().url().max(500).optional(),
     cancelUrl: z.string().url().max(500).optional(),

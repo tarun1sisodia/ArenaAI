@@ -14,7 +14,7 @@ export function createPaymentController(service: ReturnType<typeof createPayment
     async createCheckout(request: FastifyRequest, reply: FastifyReply) {
       assertNoClientAmount(request.body);
       const body = CreatePaymentCheckoutSchema.parse(request.body);
-      const data = await service.createCheckout(body);
+      const data = await service.createCheckout(body, request.user ?? null);
       return sendSuccess(reply, data, 201);
     },
 
@@ -26,10 +26,8 @@ export function createPaymentController(service: ReturnType<typeof createPayment
           ? request.headers["x-booking-token"]
           : undefined;
       const token = query.token ?? headerToken;
-      if (!token) {
-        throw Errors.unauthorized("Booking token is required.");
-      }
-      const data = await service.getStatus(params.paymentId, token);
+      if (!token && !request.user) throw Errors.unauthorized("Booking ownership proof is required.");
+      const data = await service.getStatus(params.paymentId, token, request.user ?? null);
       return sendSuccess(reply, data);
     },
 

@@ -164,6 +164,24 @@ export type BookingRecord = {
   updatedAt: string;
 };
 
+export type BookingIntentRecord = {
+  id: string;
+  idempotencyKey: string;
+  resumeSecretHash: string;
+  payload: unknown;
+  quote: FareBreakdown;
+  quoteTotalFare: number;
+  quoteAdvanceAmount: number;
+  quoteBalanceAmount: number;
+  fareReconfirmationPending: boolean;
+  expiresAt: string;
+  createdAt: string;
+  updatedAt: string;
+  consumedAt: string | null;
+  claimedUserId: string | null;
+  resultingBookingId: string | null;
+};
+
 export type PaymentRecord = {
   id: string;
   bookingId: string;

@@ -11,6 +11,11 @@ const EnvSchema = z.object({
     .default(
       "http://localhost:5173,http://localhost:5174,http://localhost:4174,http://localhost:4175,http://127.0.0.1:5173,http://127.0.0.1:5174,http://127.0.0.1:4174,http://127.0.0.1:4175,http://localhost:3000,https://agraskbagheltourandtravels.com,https://www.agraskbagheltourandtravels.com,https://admin.agraskbagheltourandtravels.com,https://skbagheltravels-admin.coccoder999.workers.dev,https://skbagheltravels-customer.coccoder999.workers.dev",
     ),
+  CUSTOMER_AUTH_REQUIRED_FOR_NEW_BOOKINGS: z
+    .string()
+    .optional()
+    .transform((value) => value === "true" || value === "1"),
+
   ALLOW_TEST_AUTH: z
     .string()
     .optional()

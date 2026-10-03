@@ -47,7 +47,7 @@ export async function authenticateRequest(request: FastifyRequest, env: Env): Pr
     // 1. If symmetric (HS256) and secret is provided, verify with secret
     if (isSymmetric && env.SUPABASE_JWT_SECRET) {
       const secret = new TextEncoder().encode(env.SUPABASE_JWT_SECRET);
-      const { payload } = await jwtVerify(token, secret);
+      const { payload } = await jwtVerify(token, secret, { audience: "authenticated" });
       return principalFromPayload(payload as unknown as Record<string, unknown>);
     }
 
@@ -57,6 +57,7 @@ export async function authenticateRequest(request: FastifyRequest, env: Env): Pr
       const jwks = createRemoteJWKSet(new URL(`${normalizedUrl}/auth/v1/.well-known/jwks.json`));
       const { payload } = await jwtVerify(token, jwks, {
         issuer: [`${normalizedUrl}/auth/v1`, normalizedUrl, "supabase"],
+        audience: "authenticated",
       });
       return principalFromPayload(payload as unknown as Record<string, unknown>);
     }
@@ -64,7 +65,7 @@ export async function authenticateRequest(request: FastifyRequest, env: Env): Pr
     // 3. Fallback to secret if JWKS is not configured
     if (env.SUPABASE_JWT_SECRET) {
       const secret = new TextEncoder().encode(env.SUPABASE_JWT_SECRET);
-      const { payload } = await jwtVerify(token, secret);
+      const { payload } = await jwtVerify(token, secret, { audience: "authenticated" });
       return principalFromPayload(payload as unknown as Record<string, unknown>);
     }
   } catch (err) {

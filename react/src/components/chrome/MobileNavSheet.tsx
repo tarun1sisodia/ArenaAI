@@ -3,6 +3,8 @@ import { BrandLogo } from "./BrandLogo";
 import { contact } from "../../data/contact";
 import { prefetchDocument } from "../../app/prefetch";
 import { WhatsAppIcon } from "../icons/WhatsAppIcon";
+import { getCustomerDisplayName, useCustomerAuth } from "../../auth/customerAuth";
+import { useState } from "react";
 
 export interface MobileNavSheetProps {
   isOpen: boolean;
@@ -15,6 +17,8 @@ export function MobileNavSheet({
   onClose,
   currentPath = "/",
 }: MobileNavSheetProps) {
+  const { user, configured, signInWithGoogle } = useCustomerAuth();
+  const [accountError, setAccountError] = useState<string | null>(null);
   useEffect(() => {
     if (!isOpen) return;
 
@@ -105,6 +109,12 @@ export function MobileNavSheet({
 
         {/* Footer Actions */}
         <div className="p-space-md border-t border-border-warm bg-sandstone-wash/30 flex flex-col gap-space-sm">
+          {user ? (
+            <a href="/my-bookings/" onClick={onClose} className="flex items-center justify-center gap-2 rounded-lg border border-primary/30 bg-surface-container-lowest px-4 py-3 font-semibold text-primary"><span className="material-symbols-outlined" aria-hidden="true">account_circle</span><span>My Bookings · {getCustomerDisplayName(user)}</span></a>
+          ) : configured ? (
+            <button type="button" onClick={() => void signInWithGoogle().catch((error) => setAccountError(error instanceof Error ? error.message : "Sign-in could not start."))} className="flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 font-semibold text-white"><span className="grid h-5 w-5 place-items-center rounded-full bg-white text-xs font-bold text-primary" aria-hidden="true">G</span><span>Continue with Google</span></button>
+          ) : null}
+          {accountError && <p role="alert" className="rounded-md bg-red-50 p-2 text-xs text-red-800">{accountError}</p>}
           {/* Direct Call & WhatsApp Buttons */}
           <div className="grid grid-cols-2 gap-2">
             <a

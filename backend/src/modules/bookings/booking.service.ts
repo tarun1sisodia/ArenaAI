@@ -19,10 +19,11 @@ export function createBookingService(deps: {
   fareService?: ReturnType<typeof createFareService>;
 }) {
   return {
-    async createDraft(input: CreateDraftBookingRequest): Promise<{
+    async createDraft(input: CreateDraftBookingRequest, owner?: AuthUser | null, repository: Repositories = deps.db): Promise<{
       booking: BookingRecord;
       guestAccessToken: string;
     }> {
+      const database = repository;
       // Server-authoritative fare calculation - client totals are ignored
       let fare: import("../fares/fare.types.js").FareEngineResult;
       if (deps.fareService) {
@@ -52,7 +53,7 @@ export function createBookingService(deps: {
             } | null)
           | undefined;
         if (input.promoCode) {
-          const promo = await deps.db.promos.getByCode(input.promoCode);
+          const promo = await database.promos.getByCode(input.promoCode);
           if (promo) {
             promoLookup = () => ({
               discount: promo.discountAmount,
@@ -107,7 +108,7 @@ export function createBookingService(deps: {
       // SEC-007: targeted phone+time-window query — no global page scan
       // Reliably detects duplicates regardless of overall booking volume
       const fiveMinAgo = new Date(deps.clock.now().getTime() - 5 * 60 * 1000).toISOString();
-      const recentByPhone = await deps.db.bookings.listByPhone(input.customerPhone, { from: fiveMinAgo });
+      const recentByPhone = await database.bookings.listByPhone(input.customerPhone, { from: fiveMinAgo });
       const duplicate = recentByPhone.find(
         (b) =>
           b.originName === input.originName &&
@@ -123,10 +124,10 @@ export function createBookingService(deps: {
       const now = toIso(deps.clock.now());
       let ticketId = newTicketId(deps.clock);
       for (let attempt = 0; attempt < 8; attempt += 1) {
-        if (!(await deps.db.bookings.ticketExists(ticketId))) break;
+        if (!(await database.bookings.ticketExists(ticketId))) break;
         ticketId = newTicketId(deps.clock);
       }
-      if (await deps.db.bookings.ticketExists(ticketId)) {
+      if (await database.bookings.ticketExists(ticketId)) {
         throw Errors.conflict("TICKET_GENERATION_FAILED", "Could not allocate a unique ticket ID.");
       }
 
@@ -139,7 +140,7 @@ export function createBookingService(deps: {
       const record: BookingRecord = {
         id: newId(),
         ticketId,
-        userId: null,
+        userId: owner?.id ?? null,
         guestAccessToken: newGuestAccessToken(),
         tripType: fare.tripType,
         vehicleTier: input.vehicleTier,
@@ -172,8 +173,34 @@ export function createBookingService(deps: {
         updatedAt: now,
       };
 
-      const created = await deps.db.bookings.create(record);
+      if (owner?.id && !(await database.profiles.getById(owner.id))) {
+        try {
+          await database.profiles.upsert({
+            id: owner.id,
+            fullName: customerName,
+            phone: input.customerPhone,
+            email: input.customerEmail ?? owner.email,
+            role: "customer",
+            createdAt: now,
+            updatedAt: now,
+          });
+        } catch {
+          throw Errors.conflict("PROFILE_CONTACT_CONFLICT", "The phone or email is already linked to another account.");
+        }
+      }
+      const created = await database.bookings.create(record);
       return { booking: created, guestAccessToken: created.guestAccessToken };
+    },
+
+    async listOwned(userId: string, page = 1, pageSize = 20) {
+      const result = await deps.db.bookings.list({ userId, page: Math.max(1, page), pageSize: Math.min(50, Math.max(1, pageSize)) });
+      return { items: result.items.map((booking) => projectBooking(booking, { unmask: false })), total: result.total, page: Math.max(1, page), pageSize: Math.min(50, Math.max(1, pageSize)) };
+    },
+
+    async getOwned(userId: string, bookingId: string) {
+      const booking = await deps.db.bookings.getById(bookingId);
+      if (!booking || booking.userId !== userId) throw Errors.notFound("BOOKING_NOT_FOUND", "Booking not found.");
+      return projectBooking(booking, { unmask: false });
     },
 
     async getVerifiedBooking(input: {

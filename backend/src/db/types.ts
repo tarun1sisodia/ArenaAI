@@ -1,6 +1,7 @@
 import type { RouteCatalogRecord, RouteCatalogStatus, RouteCatalogTripType } from "./route-catalog-types.js";
 import type {
   AuditLogRecord,
+  BookingIntentRecord,
   BookingRecord,
   BookingStatus,
   CatalogItemRecord,
@@ -46,6 +47,7 @@ export type BookingListFilter = {
   to?: string;
   page?: number;
   pageSize?: number;
+  userId?: string;
 };
 
 export type CatalogListFilter = {
@@ -74,6 +76,13 @@ export type Repositories = {
     list(filter: BookingListFilter): Promise<{ items: BookingRecord[]; total: number }>;
     /** SEC-007: targeted phone+time-window query for duplicate booking detection */
     listByPhone(phone: string, options: { from: string }): Promise<BookingRecord[]>;
+  };
+
+  bookingIntents: {
+    create(record: BookingIntentRecord): Promise<BookingIntentRecord>;
+    update(record: BookingIntentRecord): Promise<BookingIntentRecord>;
+    getById(id: string): Promise<BookingIntentRecord | null>;
+    getByIdempotencyKey(key: string): Promise<BookingIntentRecord | null>;
   };
 
   payments: {

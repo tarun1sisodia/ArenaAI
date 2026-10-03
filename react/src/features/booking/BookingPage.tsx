@@ -1,19 +1,18 @@
-import { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { contact } from "../../data/contact";
 import { packages, vehicles, cities, routes, type VehicleId, type TourPackage, type Route } from "../../data/catalogue";
 import { formatInr, localTomorrow, localPackages, type LocalPackageKey } from "./fareEngine";
 import {
   calculateServerFare,
-  createDraftBooking,
-  createPaymentCheckout,
-  getPaymentStatus,
   mapVehicleTier,
   formatInquiryPhone,
   sanitizeInquiryName,
   type ServerFareBreakdown,
   type BackendTripType,
 } from "../../services/api";
-import { loadRazorpayScript } from "./razorpay";
+import { useCustomerAuth } from "../../auth/customerAuth";
+import { clearPendingBookingIntent, getPendingBookingIntent, storePendingBookingIntent, storePaymentResumeReference } from "../../auth/bookingIntentStorage";
+import { CustomerApiError, createBookingIntent, finalizeBookingIntent, getBookingIntent } from "../../services/customerAuthApi";
 import { WhatsAppIcon } from "../../components/icons";
 import { TripSelectionStep, type SelectableTrip } from "./TripSelectionStep";
 import { BookingAssistant, type QuickPick } from "./BookingAssistant";
@@ -30,6 +29,15 @@ interface UnsupportedRequest {
 
 function normalizePlace(value: string): string {
   return value.trim().toLowerCase().replace(/[^a-z0-9]+/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function stableSerialize(value: unknown): string {
+  if (Array.isArray(value)) return `[${value.map(stableSerialize).join(",")}]`;
+  if (value && typeof value === "object") {
+    const record = value as Record<string, unknown>;
+    return `{${Object.keys(record).filter((key) => record[key] !== undefined).sort().map((key) => `${JSON.stringify(key)}:${stableSerialize(record[key])}`).join(",")}}`;
+  }
+  return JSON.stringify(value) ?? "undefined";
 }
 
 function cityIdForSearch(value: string): string | null {
@@ -150,6 +158,7 @@ function formatBookingDate(value: string): string {
   return Number.isNaN(date.getTime()) ? "Select date" : date.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
 }
 export function BookingPage() {
+  const { accessToken, loading: authLoading, configured, signInWithGoogle } = useCustomerAuth();
   // Navigation & Step State
   // For Route-First (3-step flow): 1 = Route & Vehicle, 2 = Guest Details & Review, 3 = Confirmation Voucher
   // For Fleet-First (4-step flow): 1 = Vehicle Tier, 2 = Choose Your Trip, 3 = Guest Details & Review, 4 = Confirmation Voucher
@@ -209,6 +218,12 @@ export function BookingPage() {
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [activeIntent, setActiveIntent] = useState<{ intentId: string; resumeSecret: string; idempotencyKey: string } | null>(null);
+  const [activeIntentPayload, setActiveIntentPayload] = useState<string | null>(null);
+  const [intentCreateKey, setIntentCreateKey] = useState<string | null>(null);
+  const [intentCreatePayload, setIntentCreatePayload] = useState<string | null>(null);
+  const [acceptUpdatedFare, setAcceptUpdatedFare] = useState(false);
+  const restoreIntentStarted = useRef(false);
 
   // Confirmed booking state
   const [confirmedTicketId, setConfirmedTicketId] = useState<string>("");
@@ -524,6 +539,58 @@ export function BookingPage() {
   const isDirectFunnel = hasPreselectedRoute;
   const isAvailabilityBlocked = Boolean(unsupportedRequest) || (hasPreselectedRoute && !queryReady);
 
+  useEffect(() => {
+    if (restoreIntentStarted.current || typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("restoreIntent") !== "1") return;
+    restoreIntentStarted.current = true;
+    const pending = getPendingBookingIntent();
+    if (!pending) {
+      setSubmitError("That saved booking continuation has expired. Please review your trip details and start again.");
+      return;
+    }
+    setIsSubmitting(true);
+    void getBookingIntent(pending.intentId, pending.resumeSecret).then(({ payload, quote }) => {
+      setOriginName(payload.originName);
+      setLocalPickupName(payload.originName);
+      setDestinationName(payload.destinationName);
+      setHasPreselectedRoute(true);
+      setQueryReady(true);
+      setBookingMode(payload.localPackageKey ? "local" : payload.packageId ? "package" : payload.tripType === "local-tour" || payload.tripType === "airport-transfer" ? "local" : "outstation");
+      setIsLocalTourEntry(payload.tripType === "local-tour" || payload.tripType === "airport-transfer");
+      setTripType(payload.tripType === "round-trip" ? "round-trip" : "one-way");
+      setLocalPackageKey(payload.localPackageKey ?? "8hr-80km");
+      if (payload.packageId) {
+        setPackageSlug(payload.packageId);
+        setSelectedPackageCatalogId(payload.packageId);
+        setSelectedLocalCatalogId(payload.packageId);
+      }
+      const vehicleId: Record<string, VehicleId> = { sedan: "sedan", ertiga: "ertiga", "innova-crysta": "innova", "tempo-traveller": "tempo", urbania: "urbania" };
+      setSelectedVehicleId(vehicleId[payload.vehicleTier] ?? "sedan");
+      setPickupDate(payload.pickupDatetime.slice(0, 10));
+      setPickupTime(payload.pickupDatetime.slice(11, 16));
+      setReturnDate((payload.returnDatetime ?? payload.pickupDatetime).slice(0, 10));
+      setReturnTime((payload.returnDatetime ?? payload.pickupDatetime).slice(11, 16));
+      setFullName(payload.customerName);
+      setPhone(payload.customerPhone);
+      setEmail(payload.customerEmail ?? "");
+      setPickupAddress(payload.pickupAddress);
+      setDropAddress(payload.dropAddress ?? "");
+      setFlightTrainNumber(payload.flightTrainNumber ?? "");
+      setSpecialNotes(payload.specialNotes ?? "");
+      setPromoCodeInput(payload.promoCode ?? "");
+      setActivePromoCode(payload.promoCode ?? "");
+      setServerFare(quote);
+      setStep(2);
+      setActiveIntent(pending);
+      setActiveIntentPayload(stableSerialize(payload));
+      setSubmitError(params.get("auth") === "cancelled" ? "Google sign-in was cancelled. Your trip and contact details are restored; continue when ready." : null);
+    }).catch((error) => {
+      setSubmitError(error instanceof Error ? error.message : "Could not restore the saved booking. Please start again.");
+      clearPendingBookingIntent();
+    }).finally(() => setIsSubmitting(false));
+  }, []);
+
   // Compute ISO datetimes for server calculation and submission
   const pickupDatetimeIso = useMemo(() => {
     return `${pickupDate}T${pickupTime}:00+05:30`;
@@ -677,24 +744,25 @@ export function BookingPage() {
     setStep(3);
   };
 
-  // Final Checkout & Draft Booking Submission
+  // Account authorization precedes creating the payable booking. Form PII and fare inputs go
+  // to a short-lived server intent; only the one-time secret is kept in tab-scoped storage.
   const handleSubmitBooking = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!serverFare) {
       setSubmitError("Fare quote is still calculating. Please wait a moment.");
       return;
     }
+    if (authLoading) {
+      setSubmitError("Checking your Google sign-in session. Please try again in a moment.");
+      return;
+    }
 
     setIsSubmitting(true);
     setSubmitError(null);
-    let modalOpened = false;
-
     try {
       const cleanPhone = formatInquiryPhone(phone);
       const cleanName = sanitizeInquiryName(fullName);
-
-      // Draft payload: strictly NO price, total, or distance sent (Server is sole authority)
-      const draft = await createDraftBooking({
+      const payload = {
         tripType: backendTripType,
         vehicleTier: mapVehicleTier(selectedVehicleId),
         originName: effectiveOrigin,
@@ -711,121 +779,78 @@ export function BookingPage() {
         promoCode: serverFare.promoValid && serverFare.promoCode ? serverFare.promoCode : undefined,
         packageId: selectedPackageId,
         localPackageKey: selectedLocalPackageKey,
-      });
+      };
 
-      // Attempt to initiate real checkout
-      try {
-        const idempotencyKey =
-          typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
-            ? crypto.randomUUID()
-            : "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
-                const r = (Math.random() * 16) | 0;
-                const v = c === "x" ? r : (r & 0x3) | 0x8;
-                return v.toString(16);
-              });
-
-        const checkout = await createPaymentCheckout({
-          ticketId: draft.ticketId,
-          guestAccessToken: draft.guestAccessToken,
-          idempotencyKey,
-          provider: "razorpay",
-          currency: "INR",
-        });
-
-        if (checkout.checkoutUrl) {
-          window.location.assign(checkout.checkoutUrl);
-          return;
+      const payloadFingerprint = stableSerialize(payload);
+      let intent = activeIntent;
+      if (intent && activeIntentPayload !== payloadFingerprint) {
+        // The customer edited the restored draft. Do not finalize stale server-side form data.
+        clearPendingBookingIntent();
+        intent = null;
+        setActiveIntent(null);
+        setActiveIntentPayload(null);
+        setAcceptUpdatedFare(false);
+      }
+      if (!intent) {
+        if (!configured && !accessToken) {
+          throw new Error("Google sign-in is not configured on this build. Please contact the travel desk before continuing.");
         }
-
-        if (checkout.providerOrderId) {
-          const rzpKey = checkout.publicClientToken || checkout.keyId;
-          const rzpLoaded = await loadRazorpayScript();
-          if (!rzpLoaded || !window.Razorpay) {
-            throw new Error("Unable to load secure Razorpay checkout modal. Please check your connection or ad-blocker.");
-          }
-          if (!rzpKey) {
-            throw new Error("Payment gateway key missing from server response. Please contact support.");
-          }
-
-          const rzp = new window.Razorpay({
-            key: rzpKey,
-            order_id: checkout.providerOrderId,
-            amount: checkout.amountMinor,
-            currency: checkout.currency || "INR",
-            name: "SK Baghel Tour & Travels",
-            description: `Trip Booking #${draft.ticketId}`,
-            image: `${window.location.origin}/assets/brand/favicon.svg`,
-            prefill: {
-              name: cleanName,
-              contact: cleanPhone,
-              email: email.trim() || undefined,
-            },
-            theme: {
-              color: "#8B1E1E",
-            },
-            modal: {
-              ondismiss: () => {
-                setIsSubmitting(false);
-                setSubmitError(
-                  "Payment window was closed. Your booking request is safely saved as a draft. Click 'Authorize & Pay' to retry.",
-                );
-              },
-            },
-            handler: async () => {
-              try {
-                // Razorpay's browser callback is not proof of payment. The backend
-                // webhook must first move both the payment and booking to confirmed.
-                let verified = null;
-                for (let attempt = 0; attempt < 8; attempt += 1) {
-                  const status = await getPaymentStatus(checkout.paymentId, draft.guestAccessToken);
-                  if (status.status === "captured" && status.bookingStatus === "paid_confirmed") {
-                    verified = status;
-                    break;
-                  }
-                  if (status.status === "failed" || status.status === "refunded") {
-                    throw new Error("The payment was not confirmed by the payment server.");
-                  }
-                  await new Promise((resolve) => window.setTimeout(resolve, 1500));
-                }
-                if (!verified) {
-                  setSubmitError("Payment received by Razorpay but still awaiting server verification. Please do not pay again; use your ticket to check status shortly.");
-                  return;
-                }
-                setConfirmedTicketId(draft.ticketId);
-                setConfirmedBookingId(draft.bookingId);
-                setAmountPaid(verified.amountMinor / 100);
-                window.scrollTo({ top: 0, behavior: "smooth" });
-                setStep(isDirectFunnel ? 3 : 4);
-              } catch (verificationError) {
-                setSubmitError(verificationError instanceof Error ? verificationError.message : "Payment verification is still pending. Please check your ticket status.");
-              } finally {
-                setIsSubmitting(false);
-              }
-            },
-          });
-
-          rzp.on("payment.failed", (response: any) => {
-            setIsSubmitting(false);
-            setSubmitError(`Payment failed: ${response?.error?.description || "Card/UPI transaction was declined."}`);
-          });
-
-          rzp.open();
-          modalOpened = true;
-          return;
+        if (intentCreatePayload && intentCreatePayload !== payloadFingerprint) {
+          setIntentCreateKey(null);
+          setIntentCreatePayload(null);
         }
+        const reuseKey = intentCreatePayload === payloadFingerprint ? intentCreateKey : null;
+        const idempotencyKey = reuseKey ?? (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+          ? crypto.randomUUID()
+          : "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => { const r = Math.random() * 16 | 0; const v = c === "x" ? r : (r & 0x3) | 0x8; return v.toString(16); }));
+        setIntentCreateKey(idempotencyKey);
+        setIntentCreatePayload(payloadFingerprint);
+        clearPendingBookingIntent();
+        const created = await createBookingIntent(payload, idempotencyKey);
+        if (!created.resumeSecret) throw new Error("The booking is saved, but its secure continuation could not be restored. Please submit once more.");
+        intent = { intentId: created.intentId, resumeSecret: created.resumeSecret, idempotencyKey };
+        storePendingBookingIntent(intent);
+        setActiveIntent(intent);
+        setActiveIntentPayload(payloadFingerprint);
+        setIntentCreateKey(null);
+        setIntentCreatePayload(null);
+      }
 
-        throw new Error("Razorpay did not return a checkout order. The booking was saved, but payment was not started.");
-      } catch (payErr) {
-        setSubmitError(payErr instanceof Error ? payErr.message : "Payment checkout could not be started. Please try again.");
+      if (!accessToken) {
+        if (!configured) throw new Error("Google sign-in is not configured. Your saved booking is safe; please contact the travel desk.");
+        await signInWithGoogle("/book.html?restoreIntent=1");
         return;
       }
-    } catch (err: any) {
-      console.error("Booking submission error:", err);
-      setSubmitError(err?.message || "Failed to create booking draft. Please check your contact details.");
-    } finally {
-      if (!modalOpened) {
-        setIsSubmitting(false);
+
+      try {
+        const result = await finalizeBookingIntent(intent.intentId, intent.resumeSecret, accessToken, acceptUpdatedFare);
+        storePaymentResumeReference({
+          bookingId: result.booking.id,
+          ticketId: result.booking.ticketId,
+          idempotencyKey: typeof crypto !== "undefined" && typeof crypto.randomUUID === "function" ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
+        });
+        clearPendingBookingIntent();
+        setActiveIntent(null);
+        setActiveIntentPayload(null);
+        setAcceptUpdatedFare(false);
+        setIntentCreateKey(null);
+        setIntentCreatePayload(null);
+        window.location.assign("/payment/resume/");
+      } catch (finalizeError) {
+        if (finalizeError instanceof CustomerApiError && finalizeError.code === "FARE_RECONFIRMATION_REQUIRED") {
+          const refreshed = await getBookingIntent(intent.intentId, intent.resumeSecret);
+          setServerFare(refreshed.quote);
+          setAcceptUpdatedFare(true);
+          setSubmitError(`The server fare changed to ${formatInr(refreshed.quote.totalFare)} (advance ${formatInr(refreshed.quote.advanceAmount)}). Review the updated amount above and click again to accept it before payment.`);
+          return;
+        }
+        throw finalizeError;
       }
+    } catch (err) {
+      console.error("Booking authorization/payment error:", err);
+      setSubmitError(err instanceof Error ? err.message : "Could not prepare your booking. Your payment has not been started.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -1640,6 +1665,7 @@ export function BookingPage() {
                     {submitError}
                   </div>
                 )}
+                <p className="-mb-3 text-sm text-on-surface-variant">Before payment, sign in with Google so this booking is saved to your account and can be resumed if checkout is interrupted.</p>
 
                 {/* Clean prefilled booking summary — mirrors the homepage selection. */}
                 <div className="booking-prefill-summary grid grid-cols-2 sm:grid-cols-4 gap-space-sm rounded-lg border border-border-warm/70 bg-surface-container-low p-space-sm">
@@ -1810,14 +1836,16 @@ export function BookingPage() {
                 <div className="flex flex-col gap-2 pt-2 border-t border-border-warm">
                   <button
                     type="submit"
-                    disabled={isSubmitting || !serverFare}
+                    disabled={isSubmitting || authLoading || !serverFare}
                     className="w-full py-3.5 px-space-md rounded-xl bg-terracotta-deep text-on-primary font-title-lg font-bold hover:bg-terracotta-sunlit transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
                   >
                     <span className="material-symbols-outlined text-icon-20">lock</span>
                     <span>
                       {isSubmitting
-                        ? "Registering Booking with Server..."
-                        : `Authorize & Pay ${formatInr(serverFare?.advanceAmount ?? 0)}`}
+                        ? "Saving booking securely…"
+                        : acceptUpdatedFare
+                          ? `Accept Updated Fare & Pay ${formatInr(serverFare?.advanceAmount ?? 0)}`
+                          : `Authorize & Pay ${formatInr(serverFare?.advanceAmount ?? 0)}`}
                     </span>
                   </button>
 

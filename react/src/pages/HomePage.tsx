@@ -5,12 +5,18 @@ import { ReviewsMarquee } from "../components/home/ReviewsMarquee";
 import { FamousPlacesSection } from "../components/home/FamousPlacesSection";
 import { WhatsAppIcon } from "../components/icons";
 import { HomeBookingWidget } from "../components/home/HomeBookingWidget";
+import { useCustomerAuth } from "../auth/customerAuth";
 
 export interface HomePageProps {
   language?: SupportedLanguage;
 }
 
 export function HomePage({ language = "en" }: HomePageProps) {
+  const { user, loading: authLoading, configured, signInWithGoogle } = useCustomerAuth();
+  const [accountPromptDismissed, setAccountPromptDismissed] = useState(() => {
+    if (typeof window === "undefined") return true;
+    try { return window.localStorage.getItem("arenaai:account-prompt-dismissed") === "1"; } catch { return false; }
+  });
   const text = "Agra to Anywhere";
   const [tripType, setTripType] = useState<"oneway" | "round" | "local">("oneway");
   const [origin, setOrigin] = useState("Agra");
@@ -82,6 +88,16 @@ export function HomePage({ language = "en" }: HomePageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaGraph) }}
       />
+
+      {!authLoading && configured && !user && !accountPromptDismissed && (
+        <aside className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 border-b border-border-warm bg-sandstone-wash px-4 py-3 sm:px-6" aria-label="Optional account sign-in">
+          <p className="text-sm text-ink-midnight"><strong>Save your trips.</strong> Sign in with Google to find pending and previous bookings later. You can also do this at checkout.</p>
+          <div className="flex items-center gap-2">
+            <button type="button" onClick={() => void signInWithGoogle().catch(() => {})} className="rounded-lg bg-primary px-3 py-2 text-sm font-semibold text-white">Continue with Google</button>
+            <button type="button" aria-label="Dismiss account reminder" onClick={() => { setAccountPromptDismissed(true); try { window.localStorage.setItem("arenaai:account-prompt-dismissed", "1"); } catch { /* optional preference */ } }} className="rounded-lg px-3 py-2 text-sm font-semibold text-on-surface-variant hover:bg-surface-container">Dismiss</button>
+          </div>
+        </aside>
+      )}
 
       {/* ── MAIN HOMEPAGE CONTENT ── */}
       <div className="w-full relative z-20">

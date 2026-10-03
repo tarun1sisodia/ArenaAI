@@ -101,3 +101,9 @@ export const BookingAccessQuerySchema = z.object({
   token: z.string().min(16).max(128).optional(),
   phone: z.string().regex(/^\+?[0-9]{10,14}$/).optional(),
 });
+
+export const MyBookingsQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).max(10000).default(1),
+  pageSize: z.coerce.number().int().min(1).max(50).default(20),
+});
+export const BookingIdParamSchema = z.object({ bookingId: z.string().uuid() });

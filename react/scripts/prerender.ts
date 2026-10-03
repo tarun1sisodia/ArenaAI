@@ -131,6 +131,9 @@ const routesToRender: string[] = [
   "/book.html",
   "/book/",
   "/en/book/",
+  "/auth/callback/",
+  "/my-bookings/",
+  "/payment/resume/",
   "/404.html",
   "/en/404/",
 

@@ -21,6 +21,9 @@ const VehicleDetailPage = lazy(() => import("../pages/VehicleDetailPage").then((
 const BookingPage = lazy(() => import("../features/booking/BookingPage").then((m) => ({ default: m.BookingPage })));
 const MarketingPage = lazy(() => import("../pages/MarketingPage").then((m) => ({ default: m.MarketingPage })));
 const SeoLandingPage = lazy(() => import("../pages/SeoLandingPage").then((m) => ({ default: m.SeoLandingPage })));
+const AuthCallbackPage = lazy(() => import("../pages/AuthCallbackPage").then((m) => ({ default: m.AuthCallbackPage })));
+const MyBookingsPage = lazy(() => import("../pages/MyBookingsPage").then((m) => ({ default: m.MyBookingsPage })));
+const PaymentResumePage = lazy(() => import("../pages/PaymentResumePage").then((m) => ({ default: m.PaymentResumePage })));
 import { SEO_LANDING_SLUGS, type SeoLandingSlug } from "../data/seoLandingSlugs";
 import { marketingHubs } from "./routes";
 import { SeoHead } from "../components/seo/SeoHead";
@@ -224,6 +227,10 @@ export function App({ pathname: propPathname }: AppProps = {}) {
   const isMarketingHub = marketingHubs.includes(section as (typeof marketingHubs)[number]);
   const isSeoLanding = SEO_LANDING_SLUGS.includes(section as SeoLandingSlug);
   const cleanPath = pathname.replace(/\/$/, "");
+  const isAuthCallback = cleanPath === "/auth/callback";
+  const isMyBookings = cleanPath === "/my-bookings";
+  const isPaymentResume = cleanPath === "/payment/resume";
+  const isPrivateCustomerPage = isAuthCallback || isMyBookings || isPaymentResume;
   const isBooking =
     cleanPath.endsWith("book.html") ||
     section === "book" ||
@@ -308,6 +315,7 @@ export function App({ pathname: propPathname }: AppProps = {}) {
   const isKnownRoute =
     isHome ||
     isBooking ||
+    isPrivateCustomerPage ||
     isMarketingHub ||
     section === "rent" ||
     Boolean(activeRoute) ||
@@ -341,12 +349,18 @@ export function App({ pathname: propPathname }: AppProps = {}) {
         description={pageDescription}
         ogImage={pageOgImage}
         keywords={pageKeywords}
-        noindex={isBooking || is404}
+        noindex={isBooking || isPrivateCustomerPage || is404}
       />
       <SiteLayout>
         <Suspense fallback={null}>
           {is404 ? (
             <NotFoundPage language={language} />
+          ) : isAuthCallback ? (
+            <AuthCallbackPage />
+          ) : isMyBookings ? (
+            <MyBookingsPage />
+          ) : isPaymentResume ? (
+            <PaymentResumePage />
           ) : isBooking ? (
             <BookingPage />
           ) : isHome ? (

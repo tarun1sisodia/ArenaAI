@@ -15,6 +15,9 @@ import { RouteDetailPage } from "../pages/RouteDetailPage";
 import { PackageDetailPage } from "../pages/PackageDetailPage";
 import { VehicleDetailPage } from "../pages/VehicleDetailPage";
 import { BookingPage } from "../features/booking/BookingPage";
+import { AuthCallbackPage } from "../pages/AuthCallbackPage";
+import { MyBookingsPage } from "../pages/MyBookingsPage";
+import { PaymentResumePage } from "../pages/PaymentResumePage";
 import { MarketingPage } from "../pages/MarketingPage";
 import { SeoLandingPage } from "../pages/SeoLandingPage";
 import { SEO_LANDING_SLUGS, type SeoLandingSlug } from "../data/seoLandingSlugs";
@@ -326,6 +329,10 @@ export function ServerApp({ pathname: propPathname }: AppProps = {}) {
   const isMarketingHub = marketingHubs.includes(section as (typeof marketingHubs)[number]);
   const isSeoLanding = SEO_LANDING_SLUGS.includes(section as SeoLandingSlug);
   const cleanPath = pathname.replace(/\/$/, "");
+  const isAuthCallback = cleanPath === "/auth/callback";
+  const isMyBookings = cleanPath === "/my-bookings";
+  const isPaymentResume = cleanPath === "/payment/resume";
+  const isPrivateCustomerPage = isAuthCallback || isMyBookings || isPaymentResume;
   const isBooking =
     cleanPath.endsWith("book.html") ||
     section === "book" ||
@@ -362,6 +369,7 @@ export function ServerApp({ pathname: propPathname }: AppProps = {}) {
   const isKnownRoute =
     isHome ||
     isBooking ||
+    isPrivateCustomerPage ||
     isMarketingHub ||
     Boolean(matchedRoute) ||
     Boolean(dynamicRoute) ||
@@ -395,11 +403,17 @@ export function ServerApp({ pathname: propPathname }: AppProps = {}) {
         description={pageDescription}
         ogImage={pageOgImage}
         keywords={pageKeywords}
-        noindex={isBooking || is404}
+        noindex={isBooking || isPrivateCustomerPage || is404}
       />
       <SiteLayout>
         {is404 ? (
           <NotFoundPage language={language} />
+        ) : isAuthCallback ? (
+          <AuthCallbackPage />
+        ) : isMyBookings ? (
+          <MyBookingsPage />
+        ) : isPaymentResume ? (
+          <PaymentResumePage />
         ) : isBooking ? (
           <BookingPage />
         ) : isHome ? (

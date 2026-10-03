@@ -8,6 +8,7 @@ import { rupeesToPaise } from "../../shared/money.js";
 import { assertTransition } from "../../shared/stateMachine.js";
 import type {
   PaymentRecord,
+  AuthUser,
 } from "../../types/domain.js";
 import type { PaymentProviderRegistry } from "../../providers/PaymentProvider.js";
 import { assertBookingPayable } from "../bookings/booking.service.js";
@@ -44,10 +45,18 @@ export function createPaymentService(deps: {
   notifications: ReturnType<typeof createNotificationService>;
 }) {
   return {
-    async createCheckout(input: CreatePaymentCheckoutRequest) {
-      // Idempotency first - if same key exists, return existing
+    async createCheckout(input: CreatePaymentCheckoutRequest, actor?: AuthUser | null) {
+      const authorize = (booking: import("../../types/domain.js").BookingRecord) => {
+        const ownerOk = Boolean(actor?.id && booking.userId === actor.id);
+        const tokenOk = Boolean(!booking.userId && input.guestAccessToken && input.guestAccessToken.length >= 16 && booking.guestAccessToken.length === input.guestAccessToken.length && timingSafeEqualString(booking.guestAccessToken, input.guestAccessToken));
+        if (!ownerOk && !tokenOk) throw Errors.notFound("BOOKING_NOT_FOUND", "The booking could not be found or verified.");
+      };
+      // Idempotent replay still requires ownership proof before returning checkout data.
       const existing = await deps.db.payments.getByIdempotencyKey(input.idempotencyKey);
       if (existing) {
+        const existingBooking = await deps.db.bookings.getById(existing.bookingId);
+        if (!existingBooking) throw Errors.notFound("BOOKING_NOT_FOUND", "The booking could not be found or verified.");
+        authorize(existingBooking);
         return toPublicCheckout(existing);
       }
 
@@ -63,9 +72,8 @@ export function createPaymentService(deps: {
       // Use transaction to prevent race conditions on concurrent checkout creation
       return deps.db.transaction(async (trx) => {
         const booking = await trx.bookings.getByTicketId(input.ticketId);
-        if (!booking || !timingSafeEqualString(booking.guestAccessToken, input.guestAccessToken)) {
-          throw Errors.notFound("BOOKING_NOT_FOUND", "The booking could not be found or verified.");
-        }
+        if (!booking) throw Errors.notFound("BOOKING_NOT_FOUND", "The booking could not be found or verified.");
+        authorize(booking);
         assertBookingPayable(booking);
 
         // Double-check idempotency inside transaction
@@ -143,21 +151,14 @@ export function createPaymentService(deps: {
       });
     },
 
-    async getStatus(paymentId: string, token: string) {
-      if (!token || token.length < 16) {
-        throw Errors.unauthorized("Booking token is required.");
-      }
+    async getStatus(paymentId: string, token?: string, actor?: AuthUser | null) {
       const payment = await deps.db.payments.getById(paymentId);
       if (!payment) throw Errors.notFound("PAYMENT_NOT_FOUND", "Payment not found.");
       const booking = await deps.db.bookings.getById(payment.bookingId);
       if (!booking) throw Errors.notFound("BOOKING_NOT_FOUND", "Booking not found for payment.");
-      // Timing-safe token comparison
-      const tokenValid =
-        booking.guestAccessToken.length === token.length &&
-        timingSafeEqualString(booking.guestAccessToken, token);
-      if (!tokenValid) {
-        throw Errors.unauthorized("Booking token is required.");
-      }
+      const ownerValid = Boolean(actor?.id && booking.userId === actor.id);
+      const tokenValid = Boolean(!booking.userId && token && token.length >= 16 && booking.guestAccessToken.length === token.length && timingSafeEqualString(booking.guestAccessToken, token));
+      if (!ownerValid && !tokenValid) throw Errors.unauthorized("Booking ownership proof is required.");
       return {
         paymentId: payment.id,
         ticketId: booking.ticketId,
