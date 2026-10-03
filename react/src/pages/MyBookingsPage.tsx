@@ -12,6 +12,24 @@ function formatDate(value: string): string {
 }
 function money(value: number): string { return `₹${Number(value || 0).toLocaleString("en-IN")}`; }
 
+function bookingTitle(booking: CustomerBookingSummary): string {
+  const selection = booking.bookingSelection;
+  if (selection?.kind === "outstation") return selection.name || `${selection.originName} → ${selection.destinationName}`;
+  if (selection?.kind === "package") return selection.name || `Tour package: ${selection.slug.replaceAll("-", " ")}`;
+  if (selection?.kind === "local") return selection.name || "Local service";
+  if (booking.originName && booking.destinationName) return `${booking.originName} → ${booking.destinationName}`;
+  return "Trip details unavailable";
+}
+
+function bookingSubtitle(booking: CustomerBookingSummary): string {
+  const selection = booking.bookingSelection;
+  if (selection?.kind === "outstation") return `${selection.originName} → ${selection.destinationName}`;
+  if (selection?.kind === "local") return `Pickup: ${selection.pickupLocation}`;
+  if (selection?.kind === "package") return `Package itinerary · ${selection.slug.replaceAll("-", " ")}`;
+  if (booking.originName && booking.destinationName) return `${booking.originName} → ${booking.destinationName}`;
+  return "Legacy booking record";
+}
+
 export function MyBookingsPage() {
   const { user, accessToken, loading: authLoading, configured, signInWithGoogle, signOut } = useCustomerAuth();
   const [items, setItems] = useState<CustomerBookingSummary[]>([]);
@@ -52,18 +70,18 @@ export function MyBookingsPage() {
 
   if (authLoading) return <main className="min-h-[60vh] p-8 grid place-items-center"><section className="text-center"><h1 className="text-2xl font-bold text-ink-midnight">My bookings</h1><p className="mt-2 text-on-surface-variant">Checking your account…</p></section></main>;
   if (!user || !accessToken) return (
-    <main className="min-h-[65vh] px-4 py-16 grid place-items-center"><section className="max-w-lg rounded-2xl border border-border-warm bg-surface-container-lowest p-8 text-center shadow-md"><h1 className="text-2xl font-bold text-ink-midnight">Your bookings</h1><p className="mt-3 text-on-surface-variant">Sign in with Google to see pending, confirmed, and paid bookings associated with your account.</p><button type="button" disabled={!configured} onClick={() => void signInWithGoogle("/my-bookings/").catch((e) => setError(e.message))} className="mt-6 rounded-xl bg-primary px-5 py-3 font-semibold text-white disabled:opacity-50">Continue with Google</button>{error && <p className="mt-3 text-sm text-red-700" role="alert">{error}</p>}</section></main>
+    <main className="min-h-[65vh] px-4 py-16 grid place-items-center"><section className="max-w-lg rounded-2xl border border-border-warm bg-surface-container-lowest p-8 text-center shadow-md"><h1 className="text-2xl font-bold text-ink-midnight">Your bookings</h1><p className="mt-3 text-on-surface-variant">Sign in with Google to see pending, confirmed, and paid bookings associated with your account.</p><button type="button" disabled={!configured} onClick={() => void signInWithGoogle("/my-bookings/").catch((cause) => setError(cause.message))} className="mt-6 rounded-xl bg-primary px-5 py-3 font-semibold text-white disabled:opacity-50">Continue with Google</button>{error && <p className="mt-3 text-sm text-red-700" role="alert">{error}</p>}</section></main>
   );
 
   return (
     <main className="min-h-[65vh] bg-surface px-4 py-12 sm:px-6">
       <div className="mx-auto max-w-5xl">
-        <div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-xs uppercase tracking-widest text-primary font-bold">Your account</p><h1 className="mt-2 text-3xl font-bold text-ink-midnight">My bookings</h1><p className="mt-2 text-sm text-on-surface-variant">Signed in as {user.email ?? "Google account"}. Only bookings linked to this account are shown.</p></div><div className="flex gap-2"><button type="button" onClick={() => void refresh()} disabled={loading} className="rounded-lg border border-border-warm px-4 py-2 font-semibold hover:bg-sandstone-wash disabled:opacity-50">Refresh</button><button type="button" onClick={() => void signOut().then(() => window.location.assign("/")).catch((e) => setError(e.message))} className="rounded-lg border border-border-warm px-4 py-2 font-semibold hover:bg-sandstone-wash">Sign out</button></div></div>
+        <div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-xs uppercase tracking-widest text-primary font-bold">Your account</p><h1 className="mt-2 text-3xl font-bold text-ink-midnight">My bookings</h1><p className="mt-2 text-sm text-on-surface-variant">Signed in as {user.email ?? "Google account"}. Only bookings linked to this account are shown.</p></div><div className="flex gap-2"><button type="button" onClick={() => void refresh()} disabled={loading} className="rounded-lg border border-border-warm px-4 py-2 font-semibold hover:bg-sandstone-wash disabled:opacity-50">Refresh</button><button type="button" onClick={() => void signOut().then(() => window.location.assign("/")).catch((cause) => setError(cause.message))} className="rounded-lg border border-border-warm px-4 py-2 font-semibold hover:bg-sandstone-wash">Sign out</button></div></div>
         {error && <p className="mt-5 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800" role="alert">{error}</p>}
         {loading ? <p className="mt-8">Loading bookings…</p> : items.length === 0 ? <section className="mt-8 rounded-2xl border border-border-warm bg-surface-container-lowest p-8 text-center"><h2 className="text-xl font-semibold">No bookings yet</h2><p className="mt-2 text-on-surface-variant">Your new bookings will appear here, including drafts whose payment was interrupted.</p><a href="/book.html" className="mt-5 inline-flex rounded-xl bg-primary px-5 py-3 font-semibold text-white">Plan a trip</a></section> : <div className="mt-7 grid gap-4">{items.map((booking) => {
           const pending = ["pending_payment", "draft", "payment_failed"].includes(booking.status);
           const statusText = booking.status.replaceAll("_", " ");
-          return <article key={booking.bookingId} className="rounded-2xl border border-border-warm bg-surface-container-lowest p-5 shadow-sm"><div className="flex flex-wrap items-start justify-between gap-4"><div><p className="text-xs font-semibold uppercase tracking-wide text-primary">{booking.ticketId}</p><h2 className="mt-1 text-lg font-bold text-ink-midnight">{booking.originName} → {booking.destinationName}</h2><p className="mt-1 text-sm text-on-surface-variant">{formatDate(booking.pickupDatetime)} · {booking.vehicleTier.replaceAll("-", " ")} · {booking.tripType.replaceAll("-", " ")}</p></div><span className="rounded-full bg-sandstone-wash px-3 py-1 text-sm font-semibold capitalize">{statusText}</span></div><div className="mt-4 flex flex-wrap items-center justify-between gap-4 border-t border-border-warm pt-4"><div className="text-sm"><span className="text-on-surface-variant">Total </span><strong>{money(booking.totalFare)}</strong><span className="mx-2 text-border-warm">·</span><span className="text-on-surface-variant">Advance </span><strong>{money(booking.advanceAmount)}</strong></div>{pending ? <button type="button" onClick={() => continuePayment(booking)} className="rounded-xl bg-primary px-4 py-2.5 font-semibold text-white">Continue payment</button> : <span className="text-sm text-on-surface-variant">{booking.paymentStatus ? `Payment: ${booking.paymentStatus.replaceAll("_", " ")}` : "Booking status is up to date"}</span>}</div></article>;
+          return <article key={booking.bookingId} className="rounded-2xl border border-border-warm bg-surface-container-lowest p-5 shadow-sm"><div className="flex flex-wrap items-start justify-between gap-4"><div><p className="text-xs font-semibold uppercase tracking-wide text-primary">{booking.ticketId}</p><h2 className="mt-1 text-lg font-bold text-ink-midnight">{bookingTitle(booking)}</h2><p className="mt-1 text-sm text-on-surface-variant">{bookingSubtitle(booking)} · {formatDate(booking.pickupDatetime)} · {booking.vehicleTier.replaceAll("-", " ")}</p></div><span className="rounded-full bg-sandstone-wash px-3 py-1 text-sm font-semibold capitalize">{statusText}</span></div><div className="mt-4 flex flex-wrap items-center justify-between gap-4 border-t border-border-warm pt-4"><div className="text-sm"><span className="text-on-surface-variant">Total </span><strong>{money(booking.totalFare)}</strong><span className="mx-2 text-border-warm">·</span><span className="text-on-surface-variant">Advance </span><strong>{money(booking.advanceAmount)}</strong></div>{pending ? <button type="button" onClick={() => continuePayment(booking)} className="rounded-xl bg-primary px-4 py-2.5 font-semibold text-white">Continue payment</button> : <span className="text-sm text-on-surface-variant">{booking.paymentStatus ? `Payment: ${booking.paymentStatus.replaceAll("_", " ")}` : "Booking status is up to date"}</span>}</div></article>;
         })}</div>}
       </div>
     </main>

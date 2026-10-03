@@ -12,9 +12,9 @@ this file at commit `2c02ee3`. The table below is the condensed record.
 
 ## Current State
 
-- **Current Phase:** Phase M — HTML UI to React Migration — **COMPLETED** ✅
-- **Current Step:** Step M17 complete (Multi-Agent Orchestration + Commercial Exception Rules & Strategy Pattern for Force & Urbania + H1 Hyper-Scale Script Fix). Next up: Connecting live API routes and finishing deployment tasks.
-- **Last updated:** 2026-09-27
+- **Current Phase:** Phase I — live API integration and production hardening (active)
+- **Current Step:** Canonical booking-selection integrity fix complete on `fix/canonical-booking-selection`; production rollout and live payment drills remain.
+- **Last updated:** 2026-10-04
 - **Summary:** All HTML designs from `react/new_design/` are completely converted into the React application with ultra-luxury aesthetic styling, design tokens (`theme.css`), and the strict English-only mandate:
   * Multi-Agent Orchestration Engine (`agents/`): Automated agent pipeline with `code_extractor.py`, dynamic language templates (`task_template.py`), `tenacity` exponential retry logic, and specialized agents (`schema_agent.py`, `service_agent.py`, `frontend_agent.py`, `test_agent.py`, `seo_content_agent.py`, `orchestrator.py`).
   * Commercial Exception Rules & Strategy Pattern (`backend/src/modules/fares/fare.strategy.ts`): Implemented strict commercial booking rules for group vehicles ("Urbania", "Force Tempo", and any "Force" variants): forced round-trip billing (`km * 2`), 300 km/day minimum distance floor (`Math.max(km * 2, 300 * days)`), ₹500/day driver allowance, and locked fixed-rate pricing structure (zero promo discounts).
@@ -30,7 +30,7 @@ this file at commit `2c02ee3`. The table below is the condensed record.
   * Services Page: `ServicesPage.tsx` retaining its clean original section layout, with unified font sizes, font colors, button sizes (`PrimaryButton`), and pure black WhatsApp button (`WhatsAppButton`).
   * Dynamic Templates: `RouteDetailPage.tsx` and `VehicleDetailPage.tsx` matching the new luxury design system and 2-step booking handoff.
   * Support & Compliance: `ContactPage.tsx` (`contact-us.html`), `FaqPage.tsx` (`faq.html`), `TermsPage.tsx` (`terms_condit.html`), `PrivacyPage.tsx` (`privacy_policy.html`), and `NotFoundPage.tsx` (`404.html`).
-- **Verified:** `npm run verify:t1` passed (6/6 checks green), `npm --prefix react run typecheck` passed (0 errors), `npm --prefix react run build` pre-rendered 37 static pages + 10 legacy redirects + sitemap (32 URLs), and monorepo `npm run verify` passed cleanly (3 typechecks, 64 backend unit tests, 3 builds).
+- **Verified:** Latest root `npm run verify` passed after the booking-flow changes (all app typechecks, backend tests, SEO lifecycle checks, and three builds); API-backed package fare/review flow and 390px mobile Step 1/2 layouts were also inspected.
 - **Deployment monitoring (delivered with the integration branch):**
   `scripts/healthcheck.mjs` performs dependency-free checks of the API `/health`,
   the customer site and the admin site, wired to `.github/workflows/uptime.yml`
@@ -40,11 +40,7 @@ this file at commit `2c02ee3`. The table below is the condensed record.
   documented Render free-tier wake-up limitation. Still open in Phase I5: alert
   routing to a human (the workflow only fails), and request-ID correlation between
   the API and the frontends.
-- **Open items:** API integration not started (both frontends still render the
-  in-repo catalogue; `VITE_API_BASE_URL` is documented but unread). Payments remain
-  mock until Phase I2. Placeholder NAP phone `+91 98765 43210` and stock photography
-  must be replaced before launch. Dev-only Vitest advisory (2 moderate) needs the
-  Vitest 5 major to clear.
+- **Open items:** Migration `0023_add_canonical_booking_selection.sql` is prepared but has not been applied to production; deploy it in the staged release before enabling the new persisted fields. Live payment credentials/webhook drills, placeholder NAP phone `+91 98765 43210`, real photography, human uptime alert routing, and the dev-only Vitest advisory remain launch work.
 
 ---
 
@@ -110,6 +106,7 @@ this file at commit `2c02ee3`. The table below is the condensed record.
 | 2026-09-26 | Phase M (M15) | Master Editorial Typography & Button System: Updated `react/src/components/layout/EditorialPageTemplate.tsx` to provide strictly standardized font sizes, font colors (`EDITORIAL_TYPOGRAPHY`), button sizes, and button colors (`EDITORIAL_BUTTONS`) with reusable action components (`PrimaryButton`, `WhatsAppButton` with guaranteed pure white `#ffffff` text & icon, `SecondaryButton`, `EditorialPill`); updated `ServicesPage.tsx` preserving its clean original layout and sections while adopting uniform font sizes, font colors, and button sizes/colors throughout; monorepo `npm run verify` passed cleanly (3 typechecks, 55 backend tests, 3 builds) |
 | 2026-10-01 | Task 6 continuation | Added the supplied Google Tag Manager container `GTM-KFXGSK7H` to `react/index.html` in both the document head and body noscript fallback, and updated `react/scripts/prerender.ts` so the noscript iframe survives every static SEO page; code-side SEO implementation remains complete, while external Search Console, GA/GTM workspace configuration, GBP, directory and backlink actions remain launch-owner work. |
 | 2026-10-02 | PageSpeed Phase 1+2 + main integration (`feat/pagespeed-booking-seo-hub`) | Canonical 5-fleet registry (`react/src/data/fleets.ts`) feeding both booking widgets, manifest builder and pre-renderer with Hatchback/contrast/Unsplash build guards; typed SVG icon registry (`react/src/components/icons/Icon.tsx`) replacing Material Symbols font spans (font subsetting via fontTools breaks `rlig` ligatures — do not retry; migrate call-sites to `<Icon>` instead); Famous Places gallery moved from Unsplash to self-hosted AVIF/WebP/JPG responsive sets under `react/public/assets/places/gallery/`; LCP hero as `<picture>` AVIF/WebP; GTM deferred to idle; merged latest `main` (published-catalog SSG prerender + SEO remediation docs) resolving the `prerender.ts` import conflict as a union of both sides; removed the browser-direct LocationIQ fallback (proxy-only search); fixed `RouteDetailPage` corridor visual pointing at three non-existent `/assets/routes/*.webp` files (now the existing `/assets/hero/hero-highway.webp`). Root `npm run verify` green: 3 typechecks, backend tests, SEO lifecycle, 3 builds; pre-render 49 pages + 14 redirects, sitemap 39 URLs. Not deployed. |
+| 2026-10-04 | Canonical booking-selection integrity fix (`fix/canonical-booking-selection`) | Removed the duplicate trip-selection stage and carried one typed selection through fare quote, review, booking intent/finalization, owned history and voucher; added additive migration `0023`, profile prefill/current-profile endpoint, customer/admin type-specific labels, and end-to-end tests. Root `npm run verify` passed; 390px mobile Step 1/2 and API-backed package fare/review were inspected. Production database was not modified; migration rollout remains pending. |
 
 ---
 
@@ -124,7 +121,7 @@ this file at commit `2c02ee3`. The table below is the condensed record.
 - [x] SSG pre-renderer + sitemap/robots generator wired into the build
 - [x] **Section 11 SEO lifecycle foundation** — truthful unavailable/limited structured-data offers, last-reviewed live catalog metadata, breadcrumbs, sitemap `lastmod` omission when no source timestamp exists, and regression coverage
 - [x] Real 404 page and legacy redirect stubs
-- [x] Fares and booking run on the local engine (mock, no server calls)
+- [x] Customer fares and booking intents/finalization use the API with one canonical typed trip selection; the additive selection migration still requires staged deployment
 - [x] Multi-service customer booking funnel (outstation, local packages, transfers, tour packages)
 - [x] Pre-rendering static HTML for `/book/`, `/en/book/`, `/hi/book/`, and `/book.html` preventing 404s
 - [ ] Real photography and real NAP (Phase I4)

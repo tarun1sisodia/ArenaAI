@@ -5,6 +5,7 @@ import { newId } from "../../shared/ids.js";
 import type { FareRuleRecord, InquiryListFilter, PaymentListFilter, Repositories } from "../../db/types.js";
 import { maskEmail, maskPhone } from "../../shared/privacy.js";
 import type { BookingRecord, InquiryStatus } from "../../types/domain.js";
+import { projectBooking } from "../bookings/booking.service.js";
 import {
   AIRPORT_TRANSFERS,
   DEFAULT_PROMO,
@@ -33,14 +34,18 @@ export function createAdminService(deps: { db: Repositories; clock?: Clock }) {
       pageSize?: number;
     }) {
       const result = await deps.db.bookings.list(filter);
-      const items = result.items.map((booking) => ({
+      const items = result.items.map((booking) => {
+        const selectionProjection = projectBooking(booking, { unmask: false });
+        return {
         id: booking.id,
         ticketId: booking.ticketId,
         status: booking.status,
         tripType: booking.tripType,
         vehicleTier: booking.vehicleTier,
-        originName: booking.originName,
-        destinationName: booking.destinationName,
+        originName: selectionProjection.originName,
+        destinationName: selectionProjection.destinationName,
+        bookingSelection: selectionProjection.bookingSelection,
+        selectedCatalogItemId: selectionProjection.selectedCatalogItemId,
         pickupDatetime: booking.pickupDatetime,
         customerName: booking.customerName,
         customerPhone: maskPhone(booking.customerPhone),
@@ -56,7 +61,8 @@ export function createAdminService(deps: { db: Repositories; clock?: Clock }) {
         advanceAmount: booking.advanceAmount,
         totalFare: booking.totalFare,
         version: booking.version,
-      }));
+        };
+      });
       return {
         total: result.total,
         page: filter.page ?? 1,

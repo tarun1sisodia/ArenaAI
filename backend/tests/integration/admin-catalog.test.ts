@@ -146,6 +146,28 @@ describe("admin operations and catalog", () => {
     expect(visible.statusCode).toBe(200);
     expect(visible.json().data.title).toBe("Hidden Tour");
 
+    const bookingResponse = await app.inject({
+      method: "POST",
+      url: "/api/v1/bookings/draft",
+      payload: {
+        vehicleTier: "sedan",
+        bookingSelection: { kind: "package", id, source: "catalog", slug: "hidden-tour" },
+        pickupAddress: "Hotel lobby, Agra",
+        pickupDatetime: sampleDraft.pickupDatetime,
+        customerName: "Neha Sharma",
+        customerPhone: "+919876543220",
+      },
+    });
+    expect(bookingResponse.statusCode).toBe(201);
+    const booking = bookingResponse.json().data as { ticketId: string; guestAccessToken: string; fare: { totalFare: number } };
+    expect(booking.fare.totalFare).toBeGreaterThan(0);
+    const voucher = await app.inject({ method: "GET", url: `/api/v1/bookings/${booking.ticketId}?token=${booking.guestAccessToken}` });
+    expect(voucher.statusCode).toBe(200);
+    expect(voucher.json().data.bookingSelection).toMatchObject({ kind: "package", id, slug: "hidden-tour", name: "Hidden Tour" });
+    expect(voucher.json().data.selectedCatalogItemId).toBe(id);
+    expect(voucher.json().data.originName).toBeNull();
+    expect(voucher.json().data.destinationName).toBeNull();
+
     const review = await app.inject({
       method: "POST",
       url: "/api/v1/reviews",

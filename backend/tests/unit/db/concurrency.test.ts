@@ -199,6 +199,8 @@ describe("Database Concurrency Control & Optimistic Locking (Phase H2)", () => {
         version: 1,
         specialNotes: null,
         packageId: null,
+        bookingSelection: null,
+        selectedCatalogItemId: null,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       });

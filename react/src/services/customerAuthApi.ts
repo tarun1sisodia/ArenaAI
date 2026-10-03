@@ -1,4 +1,4 @@
-import type { CreateDraftBookingPayload, ServerFareBreakdown } from "./api";
+import type { BookingSelectionPayload, CreateDraftBookingPayload, ServerFareBreakdown } from "./api";
 import { getApiBaseUrl } from "./api";
 
 export class CustomerApiError extends Error {
@@ -59,8 +59,9 @@ export interface CustomerBookingSummary {
   status: string;
   tripType: string;
   vehicleTier: string;
-  originName: string;
-  destinationName: string;
+  originName: string | null;
+  destinationName: string | null;
+  bookingSelection: BookingSelectionPayload | null;
   pickupDatetime: string;
   returnDatetime: string | null;
   totalFare: number;
@@ -68,6 +69,33 @@ export interface CustomerBookingSummary {
   balanceAmount: number;
   createdAt: string;
   paymentStatus?: string | null;
+}
+
+export interface CustomerProfile {
+  fullName: string | null;
+  phone: string | null;
+  email: string | null;
+}
+
+export interface CustomerBookingDetails {
+  id: string;
+  ticketId: string;
+  status: string;
+  tripType: string;
+  vehicleTier: string;
+  originName: string | null;
+  destinationName: string | null;
+  bookingSelection: BookingSelectionPayload | null;
+  pickupAddress: string;
+  dropAddress: string | null;
+  pickupDatetime: string;
+  returnDatetime: string | null;
+  distanceKm: number;
+  fare: ServerFareBreakdown;
+}
+
+export function getMyProfile(accessToken: string): Promise<CustomerProfile> {
+  return apiCall<CustomerProfile>("/api/v1/me/profile", { token: accessToken });
 }
 
 export function createBookingIntent(payload: CreateDraftBookingPayload, idempotencyKey: string): Promise<BookingIntentResponse> {
@@ -101,8 +129,11 @@ export function listMyBookings(accessToken: string, page = 1): Promise<{ items: 
         status: String(row.status ?? "unknown"),
         tripType: String(row.tripType ?? ""),
         vehicleTier: String(row.vehicleTier ?? ""),
-        originName: String(row.originName ?? ""),
-        destinationName: String(row.destinationName ?? ""),
+        originName: typeof row.originName === "string" ? row.originName : null,
+        destinationName: typeof row.destinationName === "string" ? row.destinationName : null,
+        bookingSelection: row.bookingSelection && typeof row.bookingSelection === "object"
+          ? row.bookingSelection as BookingSelectionPayload
+          : null,
         pickupDatetime: String(row.pickupDatetime ?? ""),
         returnDatetime: typeof row.returnDatetime === "string" ? row.returnDatetime : null,
         totalFare: Number(fare.totalFare ?? row.totalFare ?? 0),
@@ -115,8 +146,8 @@ export function listMyBookings(accessToken: string, page = 1): Promise<{ items: 
   }));
 }
 
-export function getMyBooking(bookingId: string, accessToken: string): Promise<CustomerBookingSummary> {
-  return apiCall(`/api/v1/me/bookings/${encodeURIComponent(bookingId)}`, { token: accessToken });
+export function getMyBooking(bookingId: string, accessToken: string): Promise<CustomerBookingDetails> {
+  return apiCall<CustomerBookingDetails>(`/api/v1/me/bookings/${encodeURIComponent(bookingId)}`, { token: accessToken });
 }
 
 export interface PaymentCheckoutResponse {

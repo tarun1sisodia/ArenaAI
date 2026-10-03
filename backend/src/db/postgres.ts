@@ -42,8 +42,12 @@ function mapBooking(row: Record<string, unknown>): BookingRecord {
     guestAccessToken: String(row.guest_access_token),
     tripType: row.trip_type as BookingRecord["tripType"],
     vehicleTier: row.vehicle_tier as BookingRecord["vehicleTier"],
-    originName: String(row.origin_name),
-    destinationName: String(row.destination_name),
+    originName: row.origin_name === null || row.origin_name === undefined ? null : String(row.origin_name),
+    destinationName: row.destination_name === null || row.destination_name === undefined ? null : String(row.destination_name),
+    bookingSelection: row.booking_selection && typeof row.booking_selection === "object"
+      ? row.booking_selection as BookingRecord["bookingSelection"]
+      : null,
+    selectedCatalogItemId: row.selected_catalog_item_id ? String(row.selected_catalog_item_id) : null,
     pickupAddress: String(row.pickup_address),
     dropAddress: row.drop_address ? String(row.drop_address) : null,
     pickupDatetime: new Date(String(row.pickup_datetime)).toISOString(),
@@ -215,9 +219,10 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
               return_datetime, flight_train_number, distance_km, customer_name, customer_phone,
               customer_email, base_fare, night_allowance, driver_allowance, discount_amount,
               promo_code, total_fare, advance_amount, balance_amount, fare_rules_version,
-              fare_snapshot, status, version, special_notes, package_id, created_at, updated_at
+              fare_snapshot, status, version, special_notes, package_id,
+              booking_selection, selected_catalog_item_id, created_at, updated_at
             ) values (
-              $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27::jsonb,$28,$29,$30,$31,$32,$33
+              $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27::jsonb,$28,$29,$30,$31,$32::jsonb,$33,$34,$35
             ) returning *`,
             [
               record.id, record.ticketId, record.userId, record.guestAccessToken, record.tripType,
@@ -227,7 +232,9 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
               record.baseFare, record.nightAllowance, record.driverAllowance, record.discountAmount,
               record.promoCode, record.totalFare, record.advanceAmount, record.balanceAmount,
               record.fareRulesVersion, JSON.stringify(record.fareSnapshot), record.status, record.version,
-              record.specialNotes, record.packageId, record.createdAt, record.updatedAt,
+              record.specialNotes, record.packageId,
+              record.bookingSelection ? JSON.stringify(record.bookingSelection) : null,
+              record.selectedCatalogItemId, record.createdAt, record.updatedAt,
             ],
           );
           return mapBooking(rows[0]!);

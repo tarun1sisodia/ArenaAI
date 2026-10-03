@@ -400,6 +400,8 @@ export const SEED_BOOKINGS: BookingRecord[] = [
   // ① One-way — Agra → Delhi Airport
   {
     id: "40000000-0000-4000-a000-000000000001",
+    bookingSelection: null,
+    selectedCatalogItemId: null,
     ticketId: "AGR-20260927-0001",
     userId: "00000000-0000-4000-a000-000000000002",
     guestAccessToken: "tok_guest_secret_01a05b8c1001abcdef12345678901234567890abcdef123456",
@@ -444,6 +446,8 @@ export const SEED_BOOKINGS: BookingRecord[] = [
   // ② Round-trip — Agra ↔ Jaipur
   {
     id: "40000000-0000-4000-a000-000000000002",
+    bookingSelection: null,
+    selectedCatalogItemId: null,
     ticketId: "AGR-20260927-0002",
     userId: "00000000-0000-4000-a000-000000000003",
     guestAccessToken: "tok_guest_secret_01a05b8c1002abcdef12345678901234567890abcdef123456",
@@ -488,6 +492,8 @@ export const SEED_BOOKINGS: BookingRecord[] = [
   // ③ Local-tour — Same Day Agra Heritage Circuit
   {
     id: "40000000-0000-4000-a000-000000000003",
+    bookingSelection: null,
+    selectedCatalogItemId: null,
     ticketId: "AGR-20260927-0003",
     userId: "00000000-0000-4000-a000-000000000004",
     guestAccessToken: "tok_guest_secret_01a05b8c1003abcdef12345678901234567890abcdef123456",
@@ -532,6 +538,8 @@ export const SEED_BOOKINGS: BookingRecord[] = [
   // ④ Airport-transfer — Agra City → Kheria Airport
   {
     id: "40000000-0000-4000-a000-000000000004",
+    bookingSelection: null,
+    selectedCatalogItemId: null,
     ticketId: "AGR-20260927-0004",
     userId: null,
     guestAccessToken: "tok_guest_secret_01a05b8c1004abcdef12345678901234567890abcdef123456",
@@ -576,6 +584,8 @@ export const SEED_BOOKINGS: BookingRecord[] = [
   // ⑤ Package — Golden Triangle (Delhi + Agra + Jaipur)
   {
     id: "40000000-0000-4000-a000-000000000005",
+    bookingSelection: null,
+    selectedCatalogItemId: null,
     ticketId: "AGR-20260927-0005",
     userId: "00000000-0000-4000-a000-000000000005",
     guestAccessToken: "tok_guest_secret_01a05b8c1005abcdef12345678901234567890abcdef123456",

@@ -22,11 +22,17 @@ export function getApiBaseUrl(): string {
 export type BackendTripType = "one-way" | "round-trip" | "local-tour" | "airport-transfer";
 export type BackendVehicleTier = "sedan" | "ertiga" | "innova-crysta" | "tempo-traveller" | "urbania";
 
+export type BookingSelectionPayload =
+  | { kind: "outstation"; id: string; tripType: "one-way" | "round-trip"; originName: string; destinationName: string; name?: string }
+  | { kind: "local"; id: string; source: "catalog" | "curated" | "legacy"; slug?: string; tripType: "local-tour" | "airport-transfer"; localPackageKey?: "8hr-80km" | "12hr-120km" | "airport-transfer"; pickupLocation: string; transferTarget?: string; name?: string }
+  | { kind: "package"; id: string; source: "catalog" | "curated" | "legacy"; slug: string; name?: string };
+
 export interface CalculateFarePayload {
-  tripType: BackendTripType;
+  tripType?: BackendTripType;
   vehicleTier: BackendVehicleTier;
-  originName: string;
-  destinationName: string;
+  originName?: string;
+  destinationName?: string;
+  bookingSelection?: BookingSelectionPayload;
   pickupDatetime: string;
   returnDatetime?: string;
   promoCode?: string;
@@ -77,10 +83,11 @@ export async function calculateServerFare(
 }
 
 export interface CreateDraftBookingPayload {
-  tripType: BackendTripType;
+  tripType?: BackendTripType;
   vehicleTier: BackendVehicleTier;
-  originName: string;
-  destinationName: string;
+  originName?: string;
+  destinationName?: string;
+  bookingSelection?: BookingSelectionPayload;
   pickupAddress: string;
   dropAddress?: string;
   pickupDatetime: string;
