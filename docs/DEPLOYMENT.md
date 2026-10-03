@@ -87,7 +87,7 @@ The checked-in [`render.yaml`](../render.yaml) is the source of truth for the Re
 4. Render detects `render.yaml`; review the service named `skb-baghel-api`.
 5. Create the Blueprint. Render builds the Docker image from `backend/Dockerfile` and starts `node dist/server.js`.
 6. In the service settings, confirm the health check path is `/ready` and the exposed application port is `4000`.
-7. Add every `sync: false` variable from `render.yaml` in Render's **Environment** page. At minimum, production needs `DATABASE_URL`, `API_BASE_URL`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_JWT_SECRET`, `CORS_ORIGINS`, and the provider credentials used by the enabled payment/notification features.
+7. Add every `sync: false` variable from `render.yaml` in Render's **Environment** page. At minimum, production needs `DATABASE_URL`, `API_BASE_URL`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_JWT_SECRET`, `CORS_ORIGINS`, `ADMIN_EMAIL` (optional: locks super_admin operations API to one Gmail address), and the provider credentials used by the enabled payment/notification features.
 8. Keep `NODE_ENV=production` and `ALLOW_TEST_AUTH=false`. Never upload `.env` to GitHub.
 9. Deploy and wait until Render reports the service as **Live**.
 10. Test the Render URL before adding the custom domain:
@@ -169,6 +169,7 @@ The customer site is **pre-rendered** by `react/scripts/prerender.ts`: every mar
    - `VITE_API_BASE_URL=https://api.agraskbagheltourandtravels.com`
    - `VITE_SUPABASE_URL=https://<SUPABASE_PROJECT_REF>.supabase.co`
    - `VITE_SUPABASE_ANON_KEY=<SUPABASE_ANON_PUBLIC_KEY>`
+   - `VITE_ADMIN_EMAIL=<ALLOWED_ADMIN_GMAIL>` (Optional: locks admin desk exclusively to this single Gmail address)
    *Never place a Supabase service-role key or Google client secret in any `VITE_*` variable.*
 7. Under **Settings → Build & deployments → Ignored build command**, enter:
    ```

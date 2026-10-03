@@ -22,6 +22,25 @@ function Root({ user, onLogin, onLogout }: { user: AdminUser | null; onLogin: (u
   const reduce = useReducedMotion();
   const navigate = useNavigate();
 
+  const searchParams = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
+  const isOAuthCallback =
+    typeof window !== "undefined" &&
+    (window.location.pathname === "/auth/callback" ||
+      Boolean(searchParams?.has("code")) ||
+      Boolean(searchParams?.has("error")) ||
+      window.location.hash.includes("access_token="));
+
+  if (!user && isOAuthCallback) {
+    return (
+      <AuthCallbackPage
+        onLogin={(authedUser) => {
+          onLogin(authedUser);
+          navigate("/", { replace: true });
+        }}
+      />
+    );
+  }
+
   return (
     <Routes>
       <Route

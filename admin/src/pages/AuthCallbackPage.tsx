@@ -48,7 +48,13 @@ export function AuthCallbackPage({ onLogin }: { onLogin: (user: AdminUser) => vo
             <Button
               variant="outline"
               size="sm"
-              onClick={() => navigate("/", { replace: true })}
+              onClick={() => {
+                if (typeof window !== "undefined" && window.history && window.history.replaceState) {
+                  window.history.replaceState({}, document.title, "/");
+                }
+                setError(null);
+                navigate("/", { replace: true });
+              }}
               className="mt-2"
             >
               Return to Sign in

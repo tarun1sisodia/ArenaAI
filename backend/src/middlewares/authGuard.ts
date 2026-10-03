@@ -48,7 +48,7 @@ export async function authenticateRequest(request: FastifyRequest, env: Env): Pr
     if (isSymmetric && env.SUPABASE_JWT_SECRET) {
       const secret = new TextEncoder().encode(env.SUPABASE_JWT_SECRET);
       const { payload } = await jwtVerify(token, secret, { audience: "authenticated" });
-      return principalFromPayload(payload as unknown as Record<string, unknown>);
+      return enforceAdminEmailWhitelist(principalFromPayload(payload as unknown as Record<string, unknown>), env);
     }
 
     // 2. If asymmetric (ES256/RS256) or no symmetric secret, verify against Supabase JWKS
@@ -59,14 +59,14 @@ export async function authenticateRequest(request: FastifyRequest, env: Env): Pr
         issuer: [`${normalizedUrl}/auth/v1`, normalizedUrl, "supabase"],
         audience: "authenticated",
       });
-      return principalFromPayload(payload as unknown as Record<string, unknown>);
+      return enforceAdminEmailWhitelist(principalFromPayload(payload as unknown as Record<string, unknown>), env);
     }
 
     // 3. Fallback to secret if JWKS is not configured
     if (env.SUPABASE_JWT_SECRET) {
       const secret = new TextEncoder().encode(env.SUPABASE_JWT_SECRET);
       const { payload } = await jwtVerify(token, secret, { audience: "authenticated" });
-      return principalFromPayload(payload as unknown as Record<string, unknown>);
+      return enforceAdminEmailWhitelist(principalFromPayload(payload as unknown as Record<string, unknown>), env);
     }
   } catch (err) {
     console.warn("[AUTH] Token verification failed:", err);
@@ -105,3 +105,15 @@ export function requireUser(request: FastifyRequest): AuthUser {
 function asRecord(value: unknown): Record<string, unknown> {
   return value && typeof value === "object" ? (value as Record<string, unknown>) : {};
 }
+
+function enforceAdminEmailWhitelist(user: AuthUser, env: Env): AuthUser {
+  if (user.role === "super_admin" && env.ADMIN_EMAIL) {
+    const email = (user.email || "").trim().toLowerCase();
+    if (email !== env.ADMIN_EMAIL.toLowerCase()) {
+      console.warn(`[AUTH] super_admin rejected: email "${email}" does not match ADMIN_EMAIL whitelist`);
+      throw Errors.forbidden("Access denied: account is not authorized for operations desk.");
+    }
+  }
+  return user;
+}
+

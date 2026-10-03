@@ -30,6 +30,14 @@ export function extractSuperAdminUser(user: User, token: string): AdminUser {
   if (role !== "super_admin") {
     throw new Error("Access denied: insufficient privileges for the operations desk.");
   }
+
+  if (env.ADMIN_EMAIL) {
+    const userEmail = (user.email || "").trim().toLowerCase();
+    if (userEmail !== env.ADMIN_EMAIL) {
+      throw new Error(`Access denied: account (${user.email || "unknown"}) is not authorized for the operations desk.`);
+    }
+  }
+
   return {
     id: user.id || "usr_super_admin",
     role: "super_admin",
@@ -42,6 +50,7 @@ export function extractSuperAdminUser(user: User, token: string): AdminUser {
     token,
   };
 }
+
 
 /**
  * Verifies backend server connectivity before authentication.
@@ -77,6 +86,10 @@ export async function loginWithCredentials(
   }
   if (!password || password.length < 6) {
     throw new Error("Password must be at least 6 characters long.");
+  }
+
+  if (env.ADMIN_EMAIL && trimmedEmail.toLowerCase() !== env.ADMIN_EMAIL) {
+    throw new Error("Access denied: this email is not authorized for the operations desk.");
   }
 
   // 1. Verify backend server connectivity
@@ -182,6 +195,9 @@ export async function handleAuthCallback(): Promise<AdminUser> {
   try {
     const adminUser = extractSuperAdminUser(session.user, session.access_token);
     saveSession(adminUser);
+    if (typeof window !== "undefined" && window.history && window.history.replaceState) {
+      window.history.replaceState({}, document.title, window.location.pathname || "/");
+    }
     return adminUser;
   } catch (err) {
     await client.auth.signOut().catch(() => {});

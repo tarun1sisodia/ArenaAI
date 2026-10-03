@@ -13,5 +13,6 @@ export const env = {
       : "https://skb-baghel-api-staging.onrender.com"),
   SUPABASE_URL: (import.meta.env.VITE_SUPABASE_URL as string | undefined)?.replace(/\/+$/, "") || "",
   SUPABASE_ANON_KEY: (import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined) || "",
+  ADMIN_EMAIL: (import.meta.env.VITE_ADMIN_EMAIL as string | undefined)?.trim().toLowerCase() || "",
   IS_DEV: Boolean(import.meta.env.DEV),
 } as const;

@@ -54,6 +54,7 @@ const EnvSchema = z.object({
   WHATSAPP_TEMPLATE_PAYMENT: z.string().default("skb_payment_confirmed"),
   RESEND_API_KEY: z.string().optional().default(""),
   EMAIL_FROM: z.string().default("bookings@agraskbagheltourandtravels.com"),
+  ADMIN_EMAIL: z.string().trim().optional().default(""),
 });
 
 export type Env = z.infer<typeof EnvSchema>;
