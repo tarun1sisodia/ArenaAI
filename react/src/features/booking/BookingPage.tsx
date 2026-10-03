@@ -889,14 +889,14 @@ export function BookingPage() {
                   ? "Step 1: Outstation Route & Vehicle"
                   : "Step 1: Select Vehicle Tier"
                 : isGuestFormStep
-                ? isDirectFunnel
-                  ? "Step 2: Guest Details & Review"
-                  : "Step 3: Guest Details & Review"
-                : isVoucherStep
-                ? isDirectFunnel
-                  ? "Step 3: Confirmed Voucher"
-                  : "Step 4: Confirmed Voucher"
-                : "Step 2: Choose Your Trip"}
+                  ? isDirectFunnel
+                    ? "Step 2: Guest Details & Review"
+                    : "Step 3: Guest Details & Review"
+                  : isVoucherStep
+                    ? isDirectFunnel
+                      ? "Step 3: Confirmed Voucher"
+                      : "Step 4: Confirmed Voucher"
+                    : "Step 2: Choose Your Trip"}
             </span>
           </nav>
           <div className="hidden sm:flex items-center gap-2 text-body-lg text-secondary">
@@ -915,16 +915,14 @@ export function BookingPage() {
               {/* Step 1 */}
               <div
                 onClick={() => step > 1 && setStep(1)}
-                className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${
-                  step === 1
+                className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${step === 1
                     ? "bg-surface-container-lowest shadow-sm border border-border-warm ring-1 ring-primary/20"
                     : "bg-surface-container-lowest/50 opacity-85 cursor-pointer hover:bg-surface-container-lowest"
-                }`}
+                  }`}
               >
                 <div
-                  className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${
-                    step > 1 ? "bg-success-jade text-on-primary" : "bg-primary text-on-primary"
-                  }`}
+                  className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${step > 1 ? "bg-success-jade text-on-primary" : "bg-primary text-on-primary"
+                    }`}
                 >
                   {step > 1 ? <span className="material-symbols-outlined text-icon-20">check</span> : "1"}
                 </div>
@@ -941,20 +939,18 @@ export function BookingPage() {
               {/* Step 2 */}
               <div
                 onClick={() => step === 3 && setStep(2)}
-                className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${
-                  step === 2
+                className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${step === 2
                     ? "bg-surface-container-lowest shadow-sm border border-border-warm ring-1 ring-primary/20"
                     : "bg-surface-container-lowest/50 opacity-85"
-                }`}
+                  }`}
               >
                 <div
-                  className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${
-                    step > 2
+                  className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${step > 2
                       ? "bg-success-jade text-on-primary"
                       : step === 2
-                      ? "bg-primary text-on-primary"
-                      : "bg-surface-container-highest text-secondary"
-                  }`}
+                        ? "bg-primary text-on-primary"
+                        : "bg-surface-container-highest text-secondary"
+                    }`}
                 >
                   {step > 2 ? <span className="material-symbols-outlined text-icon-20">check</span> : "2"}
                 </div>
@@ -970,16 +966,14 @@ export function BookingPage() {
 
               {/* Step 3 */}
               <div
-                className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${
-                  step === 3
+                className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${step === 3
                     ? "bg-ink-charcoal text-ivory-surface shadow-md"
                     : "bg-surface-container-lowest/50 opacity-75"
-                }`}
+                  }`}
               >
                 <div
-                  className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${
-                    step === 3 ? "bg-terracotta-deep text-on-primary" : "bg-surface-container-highest text-secondary"
-                  }`}
+                  className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${step === 3 ? "bg-terracotta-deep text-on-primary" : "bg-surface-container-highest text-secondary"
+                    }`}
                 >
                   <span className="material-symbols-outlined text-icon-20">verified</span>
                 </div>
@@ -1001,16 +995,14 @@ export function BookingPage() {
               {/* Step 1 */}
               <div
                 onClick={() => step > 1 && setStep(1)}
-                className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${
-                  step === 1
+                className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${step === 1
                     ? "bg-surface-container-lowest shadow-sm border border-border-warm ring-1 ring-primary/20"
                     : "bg-surface-container-lowest/50 opacity-85 cursor-pointer hover:bg-surface-container-lowest"
-                }`}
+                  }`}
               >
                 <div
-                  className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${
-                    step > 1 ? "bg-success-jade text-on-primary" : "bg-primary text-on-primary"
-                  }`}
+                  className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${step > 1 ? "bg-success-jade text-on-primary" : "bg-primary text-on-primary"
+                    }`}
                 >
                   {step > 1 ? <span className="material-symbols-outlined text-icon-20">check</span> : "1"}
                 </div>
@@ -1027,20 +1019,18 @@ export function BookingPage() {
               {/* Step 2 */}
               <div
                 onClick={() => step > 2 && setStep(2)}
-                className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${
-                  step === 2
+                className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${step === 2
                     ? "bg-surface-container-lowest shadow-sm border border-border-warm ring-1 ring-primary/20"
                     : "bg-surface-container-lowest/50 opacity-85 cursor-pointer hover:bg-surface-container-lowest"
-                }`}
+                  }`}
               >
                 <div
-                  className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${
-                    step > 2
+                  className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${step > 2
                       ? "bg-success-jade text-on-primary"
                       : step === 2
-                      ? "bg-primary text-on-primary"
-                      : "bg-surface-container-highest text-secondary"
-                  }`}
+                        ? "bg-primary text-on-primary"
+                        : "bg-surface-container-highest text-secondary"
+                    }`}
                 >
                   {step > 2 ? <span className="material-symbols-outlined text-icon-20">check</span> : "2"}
                 </div>
@@ -1057,20 +1047,18 @@ export function BookingPage() {
               {/* Step 3 */}
               <div
                 onClick={() => step === 4 && setStep(3)}
-                className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${
-                  step === 3
+                className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${step === 3
                     ? "bg-surface-container-lowest shadow-sm border border-border-warm ring-1 ring-primary/20"
                     : "bg-surface-container-lowest/50 opacity-85"
-                }`}
+                  }`}
               >
                 <div
-                  className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${
-                    step > 3
+                  className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${step > 3
                       ? "bg-success-jade text-on-primary"
                       : step === 3
-                      ? "bg-primary text-on-primary"
-                      : "bg-surface-container-highest text-secondary"
-                  }`}
+                        ? "bg-primary text-on-primary"
+                        : "bg-surface-container-highest text-secondary"
+                    }`}
                 >
                   {step > 3 ? <span className="material-symbols-outlined text-icon-20">check</span> : "3"}
                 </div>
@@ -1086,16 +1074,14 @@ export function BookingPage() {
 
               {/* Step 4 */}
               <div
-                className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${
-                  step === 4
+                className={`flex items-center gap-space-sm p-space-sm rounded-lg transition-all ${step === 4
                     ? "bg-ink-charcoal text-ivory-surface shadow-md"
                     : "bg-surface-container-lowest/50 opacity-75"
-                }`}
+                  }`}
               >
                 <div
-                  className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${
-                    step === 4 ? "bg-terracotta-deep text-on-primary" : "bg-surface-container-highest text-secondary"
-                  }`}
+                  className={`w-9 h-9 rounded-full flex items-center justify-center font-title-md text-title-md font-semibold shrink-0 ${step === 4 ? "bg-terracotta-deep text-on-primary" : "bg-surface-container-highest text-secondary"
+                    }`}
                 >
                   <span className="material-symbols-outlined text-icon-20">verified</span>
                 </div>
@@ -1176,27 +1162,24 @@ export function BookingPage() {
                     <button
                       type="button"
                       onClick={() => setBookingMode("outstation")}
-                      className={`px-3.5 py-1.5 rounded-md font-label-lg text-xs font-semibold transition-all ${
-                        bookingMode === "outstation" ? "bg-primary text-on-primary shadow-xs" : "text-ink-slate hover:text-ink-charcoal"
-                      }`}
+                      className={`px-3.5 py-1.5 rounded-md font-label-lg text-xs font-semibold transition-all ${bookingMode === "outstation" ? "bg-primary text-on-primary shadow-xs" : "text-ink-slate hover:text-ink-charcoal"
+                        }`}
                     >
                       Outstation Route
                     </button>
                     <button
                       type="button"
                       onClick={() => setBookingMode("local")}
-                      className={`px-3.5 py-1.5 rounded-md font-label-lg text-xs font-semibold transition-all ${
-                        bookingMode === "local" ? "bg-primary text-on-primary shadow-xs" : "text-ink-slate hover:text-ink-charcoal"
-                      }`}
+                      className={`px-3.5 py-1.5 rounded-md font-label-lg text-xs font-semibold transition-all ${bookingMode === "local" ? "bg-primary text-on-primary shadow-xs" : "text-ink-slate hover:text-ink-charcoal"
+                        }`}
                     >
                       Local Tour / Transfer
                     </button>
                     <button
                       type="button"
                       onClick={() => setBookingMode("package")}
-                      className={`px-3.5 py-1.5 rounded-md font-label-lg text-xs font-semibold transition-all ${
-                        bookingMode === "package" ? "bg-primary text-on-primary shadow-xs" : "text-ink-slate hover:text-ink-charcoal"
-                      }`}
+                      className={`px-3.5 py-1.5 rounded-md font-label-lg text-xs font-semibold transition-all ${bookingMode === "package" ? "bg-primary text-on-primary shadow-xs" : "text-ink-slate hover:text-ink-charcoal"
+                        }`}
                     >
                       Tour Package
                     </button>
@@ -1265,36 +1248,36 @@ export function BookingPage() {
                       />
                     </div>
                     <div className="sm:col-span-2 lg:col-span-2 flex flex-col gap-1">
-                    <label htmlFor="local-pkg-select" className="font-label-lg text-xs font-bold text-ink-slate">Select Local Tour / Transfer</label>
-                    <select
-                      id="local-pkg-select"
-                      value={selectedLocalCatalogId ? `live:${selectedLocalCatalogId}` : localPackageKey}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        if (value.startsWith("live:")) {
-                          setSelectedLocalCatalogId(value.slice(5));
-                        } else {
-                          setSelectedLocalCatalogId(null);
-                          setLocalPackageKey(value as LocalPackageKey);
-                        }
-                      }}
-                      className="px-3 py-2 rounded-lg border border-border-warm bg-surface font-body-md text-on-surface focus:ring-1 focus:ring-primary focus:outline-none"
-                    >
-                      <optgroup label="Standard local services">
-                        <option value="8hr-80km">{localPackages["8hr-80km"].label}</option>
-                        <option value="12hr-120km">{localPackages["12hr-120km"].label}</option>
-                        <option value="airport-transfer">{localPackages["airport-transfer"].label}</option>
-                      </optgroup>
-                      {localCatalogTrips.length > 0 && (
-                        <optgroup label="Published tours & transfers">
-                          {localCatalogTrips.map((item) => (
-                            <option key={item.id} value={`live:${item.id}`}>
-                              {item.title} — {item.durationText || "Custom itinerary"}
-                            </option>
-                          ))}
+                      <label htmlFor="local-pkg-select" className="font-label-lg text-xs font-bold text-ink-slate">Select Local Tour / Transfer</label>
+                      <select
+                        id="local-pkg-select"
+                        value={selectedLocalCatalogId ? `live:${selectedLocalCatalogId}` : localPackageKey}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (value.startsWith("live:")) {
+                            setSelectedLocalCatalogId(value.slice(5));
+                          } else {
+                            setSelectedLocalCatalogId(null);
+                            setLocalPackageKey(value as LocalPackageKey);
+                          }
+                        }}
+                        className="px-3 py-2 rounded-lg border border-border-warm bg-surface font-body-md text-on-surface focus:ring-1 focus:ring-primary focus:outline-none"
+                      >
+                        <optgroup label="Standard local services">
+                          <option value="8hr-80km">{localPackages["8hr-80km"].label}</option>
+                          <option value="12hr-120km">{localPackages["12hr-120km"].label}</option>
+                          <option value="airport-transfer">{localPackages["airport-transfer"].label}</option>
                         </optgroup>
-                      )}
-                    </select>
+                        {localCatalogTrips.length > 0 && (
+                          <optgroup label="Published tours & transfers">
+                            {localCatalogTrips.map((item) => (
+                              <option key={item.id} value={`live:${item.id}`}>
+                                {item.title} — {item.durationText || "Custom itinerary"}
+                              </option>
+                            ))}
+                          </optgroup>
+                        )}
+                      </select>
                     </div>
                   </>
                 )}
@@ -1405,216 +1388,215 @@ export function BookingPage() {
             {isAvailabilityBlocked ? (
               <UnavailableBookingRequest request={unsupportedRequest} selectedVehicleId={selectedVehicleId} />
             ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-start">
-              {/* Left Column: 5 Vehicle Cards (8 Cols) */}
-              <div className="lg:col-span-8 flex flex-col gap-space-md">
-                <div className="flex items-center justify-between">
-                  <h2 className="font-title-lg text-title-lg text-ink-charcoal font-semibold">
-                    Select Your Fleet Class
-                  </h2>
-                  <span className="font-body-sm text-xs text-secondary">
-                    5 Commercial Vehicles Available
-                  </span>
-                </div>
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-start">
+                {/* Left Column: 5 Vehicle Cards (8 Cols) */}
+                <div className="lg:col-span-8 flex flex-col gap-space-md">
+                  <div className="flex items-center justify-between">
+                    <h2 className="font-title-lg text-title-lg text-ink-charcoal font-semibold">
+                      Select Your Fleet Class
+                    </h2>
+                    <span className="font-body-sm text-xs text-secondary">
+                      5 Commercial Vehicles Available
+                    </span>
+                  </div>
 
-                {fleetOptions.map((veh) => {
-                  const isSelected = selectedVehicleId === veh.id;
-                  return (
-                    <button
-                      key={veh.id}
-                      type="button"
-                      aria-pressed={isSelected}
-                      onClick={() => setSelectedVehicleId(veh.id)}
-                      className={`w-full text-left cursor-pointer rounded-xl p-space-md lg:p-space-lg transition-all border ${
-                        isSelected
-                          ? "bg-surface-container-lowest border-primary ring-2 ring-primary/20 shadow-md"
-                          : "bg-surface-container-lowest border-border-warm hover:border-primary/40 shadow-xs"
-                      }`}
-                    >
-                      <div className="flex flex-col sm:flex-row gap-space-md items-start sm:items-center">
-                        <div className="relative w-full sm:w-44 h-28 bg-surface-container-low rounded-lg overflow-hidden shrink-0 border border-border-warm/60">
-                          <img
-                            src={veh.image}
-                            alt={veh.name}
-                            className="w-full h-full object-cover"
-                            loading="lazy"
-                          />
-                          {veh.badge && (
-                            <span className={`absolute top-1.5 left-1.5 px-2 py-0.5 rounded text-label-lg ${veh.badgeClass || "bg-primary text-white"}`}>
-                              {veh.badge}
-                            </span>
-                          )}
-                        </div>
-
-                        <div className="flex-1 flex flex-col gap-1 min-w-0">
-                          <div className="flex items-center justify-between">
-                            <h3 className="font-title-lg text-title-lg text-ink-midnight font-bold">
-                              {veh.name}
-                            </h3>
-                            <span className="font-label-caps text-xs text-primary font-bold">
-                              {isSelected ? "Selected Tier" : "Click to Select"}
-                            </span>
-                          </div>
-                          <p className="font-body-sm text-body-sm text-secondary">
-                            {veh.subtitle}
-                          </p>
-                          <div className="flex flex-wrap items-center gap-2 mt-1">
-                            <span className="inline-flex items-center gap-1 text-label-md font-semibold bg-surface-container-low px-2 py-0.5 rounded text-ink-slate border border-border-warm/60">
-                              <span className="material-symbols-outlined text-icon-14">groups</span>
-                              {veh.guests}
-                            </span>
-                            <span className="inline-flex items-center gap-1 text-label-md font-semibold bg-surface-container-low px-2 py-0.5 rounded text-ink-slate border border-border-warm/60">
-                              <span className="material-symbols-outlined text-icon-14">luggage</span>
-                              {veh.luggage}
-                            </span>
-                            {veh.alwaysRoundTrip && (
-                              <span className="inline-flex items-center gap-1 text-label-md font-semibold bg-sandstone-wash text-terracotta-sandstone px-2 py-0.5 rounded border border-primary/20">
-                                Round-Trip Policy
+                  {fleetOptions.map((veh) => {
+                    const isSelected = selectedVehicleId === veh.id;
+                    return (
+                      <button
+                        key={veh.id}
+                        type="button"
+                        aria-pressed={isSelected}
+                        onClick={() => setSelectedVehicleId(veh.id)}
+                        className={`w-full text-left cursor-pointer rounded-xl p-space-md lg:p-space-lg transition-all border ${isSelected
+                            ? "bg-surface-container-lowest border-primary ring-2 ring-primary/20 shadow-md"
+                            : "bg-surface-container-lowest border-border-warm hover:border-primary/40 shadow-xs"
+                          }`}
+                      >
+                        <div className="flex flex-col sm:flex-row gap-space-md items-start sm:items-center">
+                          <div className="relative w-full sm:w-44 h-28 bg-surface-container-low rounded-lg overflow-hidden shrink-0 border border-border-warm/60">
+                            <img
+                              src={veh.image}
+                              alt={veh.name}
+                              className="w-full h-full object-cover"
+                              loading="lazy"
+                            />
+                            {veh.badge && (
+                              <span className={`absolute top-1.5 left-1.5 px-2 py-0.5 rounded text-label-lg ${veh.badgeClass || "bg-primary text-white"}`}>
+                                {veh.badge}
                               </span>
                             )}
                           </div>
-                          <p className="font-body-sm text-xs text-on-surface-variant italic mt-1">
-                            {veh.editorialPitch}
-                          </p>
+
+                          <div className="flex-1 flex flex-col gap-1 min-w-0">
+                            <div className="flex items-center justify-between">
+                              <h3 className="font-title-lg text-title-lg text-ink-midnight font-bold">
+                                {veh.name}
+                              </h3>
+                              <span className="font-label-caps text-xs text-primary font-bold">
+                                {isSelected ? "Selected Tier" : "Click to Select"}
+                              </span>
+                            </div>
+                            <p className="font-body-sm text-body-sm text-secondary">
+                              {veh.subtitle}
+                            </p>
+                            <div className="flex flex-wrap items-center gap-2 mt-1">
+                              <span className="inline-flex items-center gap-1 text-label-md font-semibold bg-surface-container-low px-2 py-0.5 rounded text-ink-slate border border-border-warm/60">
+                                <span className="material-symbols-outlined text-icon-14">groups</span>
+                                {veh.guests}
+                              </span>
+                              <span className="inline-flex items-center gap-1 text-label-md font-semibold bg-surface-container-low px-2 py-0.5 rounded text-ink-slate border border-border-warm/60">
+                                <span className="material-symbols-outlined text-icon-14">luggage</span>
+                                {veh.luggage}
+                              </span>
+                              {veh.alwaysRoundTrip && (
+                                <span className="inline-flex items-center gap-1 text-label-md font-semibold bg-sandstone-wash text-terracotta-sandstone px-2 py-0.5 rounded border border-primary/20">
+                                  Round-Trip Policy
+                                </span>
+                              )}
+                            </div>
+                            <p className="font-body-sm text-xs text-on-surface-variant italic mt-1">
+                              {veh.editorialPitch}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Right Column: Sticky Server Fare Ledger (4 Cols) */}
-              <aside className="lg:col-span-4 sticky top-24">
-                <div className="bg-surface-container-lowest rounded-xl p-space-lg shadow-md border border-border-warm flex flex-col gap-space-md">
-                  <div className="flex items-center justify-between pb-space-sm border-b border-border-warm">
-                    <div className="flex flex-col">
-                      <span className="font-label-caps text-label-caps uppercase text-terracotta-sandstone font-bold tracking-wider">
-                        Real-Time Server Quote
-                      </span>
-                      <h2 className="font-headline-sm text-headline-sm text-ink-midnight font-medium">
-                        Live Price Ledger
-                      </h2>
-                    </div>
-                    <span className="w-8 h-8 rounded-full bg-sandstone-wash flex items-center justify-center text-primary">
-                      <span className="material-symbols-outlined text-icon-20">verified</span>
-                    </span>
-                  </div>
-
-                  {/* Route & Vehicle Summary */}
-                  <div className="bg-surface-container-low p-space-md rounded-xl flex flex-col gap-1 border border-border-warm/60">
-                    <span className="font-label-caps text-label-caps uppercase text-secondary font-bold">
-                      Itinerary
-                    </span>
-                    <div className="font-title-md text-title-md text-ink-charcoal font-semibold leading-snug">
-                      {serverFare?.label || `${effectiveOrigin} → ${effectiveDestination}`}
-                    </div>
-                    <div className="font-body-sm text-xs text-on-surface-variant flex items-center gap-2 mt-0.5">
-                      <span>Vehicle: <strong>{selectedVehicle.name}</strong></span>
-                      {serverFare?.billedKm && (
-                        <span>• Billed: <strong>{serverFare.billedKm} km</strong></span>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Loading State or Server Price Breakdown */}
-                  {loadingFare ? (
-                    <div className="p-space-lg flex flex-col items-center justify-center gap-2 bg-surface-container-low rounded-xl">
-                      <span className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></span>
-                      <span className="font-body-sm text-xs text-secondary font-medium">
-                        Calculating authoritative fare with Fastify...
-                      </span>
-                    </div>
-                  ) : fareError ? (
-                    <div className="p-space-md bg-red-50 border border-red-200 text-red-800 rounded-xl text-xs">
-                      <p className="font-bold">Fare Estimation Notice:</p>
-                      <p className="mt-0.5">{fareError}</p>
-                      <button
-                        type="button"
-                        onClick={fetchAuthoritativeFare}
-                        className="mt-2 text-primary font-bold underline"
-                      >
-                        Retry calculation
                       </button>
-                    </div>
-                  ) : serverFare ? (
-                    <div className="flex flex-col gap-2 pt-space-xs border-t border-border-warm">
-                      <div className="flex justify-between items-center font-body-sm text-body-sm text-on-surface-variant">
-                        <span>Base Server Fare:</span>
-                        <span className="font-medium">{formatInr(serverFare.baseFare)}</span>
-                      </div>
-
-                      {serverFare.nightAllowance > 0 && (
-                        <div className="flex justify-between items-center font-body-sm text-body-sm text-terracotta-sandstone">
-                          <span>Night Chauffeur Allowance (22:00–05:00):</span>
-                          <span>+{formatInr(serverFare.nightAllowance)}</span>
-                        </div>
-                      )}
-
-                      {serverFare.driverAllowance > 0 && (
-                        <div className="flex justify-between items-center font-body-sm text-body-sm text-ink-slate">
-                          <span>Commercial Driver Allowance:</span>
-                          <span>+{formatInr(serverFare.driverAllowance)}</span>
-                        </div>
-                      )}
-
-                      {serverFare.discountAmount > 0 && (
-                        <div className="flex justify-between items-center font-body-sm text-body-sm text-success-jade">
-                          <span>Promotional Discount:</span>
-                          <span>-{formatInr(serverFare.discountAmount)}</span>
-                        </div>
-                      )}
-
-                      <div className="mt-space-xs pt-space-xs border-t border-border-warm flex items-baseline justify-between">
-                        <div>
-                          <span className="font-title-lg text-title-lg text-ink-midnight font-bold">
-                            Total Final Fare
-                          </span>
-                          <span className="block font-body-sm text-label-md text-success-jade font-semibold">
-                            Authoritative Server Rate
-                          </span>
-                        </div>
-                        <div className="text-right">
-                          <span className="font-price-display text-price-display text-primary font-bold">
-                            {formatInr(serverFare.totalFare)}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="mt-1 p-2.5 rounded-lg bg-sandstone-wash flex justify-between items-center text-xs">
-                        <span className="font-semibold text-ink-charcoal">Advance Token to Confirm:</span>
-                        <span className="font-bold text-primary">{formatInr(serverFare.advanceAmount)}</span>
-                      </div>
-                    </div>
-                  ) : null}
-
-                  {/* Continue CTA Button */}
-                  <button
-                    onClick={handleProceedFromStep1}
-                    disabled={loadingFare || !serverFare}
-                    className="w-full py-3.5 px-space-md rounded-xl bg-terracotta-deep text-on-primary font-label-lg text-label-lg font-semibold hover:bg-primary disabled:opacity-50 transition-all shadow-md flex items-center justify-center gap-2 group cursor-pointer"
-                    type="button"
-                  >
-                    <span>{isDirectFunnel ? "Proceed to Booking Form" : "Continue to Choose Your Trip"}</span>
-                    <span className="material-symbols-outlined text-icon-18 group-hover:translate-x-1 transition-transform">
-                      arrow_forward
-                    </span>
-                  </button>
-
-                  <a
-                    className="flex items-center justify-center gap-2 py-2.5 px-space-sm rounded-lg bg-black hover:bg-neutral-900 border border-white/10 text-white font-label-lg text-label-lg transition-colors text-center"
-                    style={{ color: "#ffffff" }}
-                    href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
-                      `Hello SK Baghel Travels, query for ${effectiveOrigin} to ${effectiveDestination} with ${selectedVehicle.name}.`
-                    )}`}
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
-                    <WhatsAppIcon className="w-4 h-4 shrink-0 text-white" />
-                    <span className="text-white font-semibold" style={{ color: "#ffffff" }}>WhatsApp Concierge Desk</span>
-                  </a>
+                    );
+                  })}
                 </div>
-              </aside>
-            </div>
+
+                {/* Right Column: Sticky Server Fare Ledger (4 Cols) */}
+                <aside className="lg:col-span-4 sticky top-24">
+                  <div className="bg-surface-container-lowest rounded-xl p-space-lg shadow-md border border-border-warm flex flex-col gap-space-md">
+                    <div className="flex items-center justify-between pb-space-sm border-b border-border-warm">
+                      <div className="flex flex-col">
+                        <span className="font-label-caps text-label-caps uppercase text-terracotta-sandstone font-bold tracking-wider">
+                          Real-Time Server Quote
+                        </span>
+                        <h2 className="font-headline-sm text-headline-sm text-ink-midnight font-medium">
+                          Live Price Ledger
+                        </h2>
+                      </div>
+                      <span className="w-8 h-8 rounded-full bg-sandstone-wash flex items-center justify-center text-primary">
+                        <span className="material-symbols-outlined text-icon-20">verified</span>
+                      </span>
+                    </div>
+
+                    {/* Route & Vehicle Summary */}
+                    <div className="bg-surface-container-low p-space-md rounded-xl flex flex-col gap-1 border border-border-warm/60">
+                      <span className="font-label-caps text-label-caps uppercase text-secondary font-bold">
+                        Itinerary
+                      </span>
+                      <div className="font-title-md text-title-md text-ink-charcoal font-semibold leading-snug">
+                        {serverFare?.label || `${effectiveOrigin} → ${effectiveDestination}`}
+                      </div>
+                      <div className="font-body-sm text-xs text-on-surface-variant flex items-center gap-2 mt-0.5">
+                        <span>Vehicle: <strong>{selectedVehicle.name}</strong></span>
+                        {serverFare?.billedKm && (
+                          <span>• Billed: <strong>{serverFare.billedKm} km</strong></span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Loading State or Server Price Breakdown */}
+                    {loadingFare ? (
+                      <div className="p-space-lg flex flex-col items-center justify-center gap-2 bg-surface-container-low rounded-xl">
+                        <span className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></span>
+                        <span className="font-body-sm text-xs text-secondary font-medium">
+                          Calculating authoritative fare with Fastify...
+                        </span>
+                      </div>
+                    ) : fareError ? (
+                      <div className="p-space-md bg-red-50 border border-red-200 text-red-800 rounded-xl text-xs">
+                        <p className="font-bold">Fare Estimation Notice:</p>
+                        <p className="mt-0.5">{fareError}</p>
+                        <button
+                          type="button"
+                          onClick={fetchAuthoritativeFare}
+                          className="mt-2 text-primary font-bold underline"
+                        >
+                          Retry calculation
+                        </button>
+                      </div>
+                    ) : serverFare ? (
+                      <div className="flex flex-col gap-2 pt-space-xs border-t border-border-warm">
+                        <div className="flex justify-between items-center font-body-sm text-body-sm text-on-surface-variant">
+                          <span>Base Server Fare:</span>
+                          <span className="font-medium">{formatInr(serverFare.baseFare)}</span>
+                        </div>
+
+                        {serverFare.nightAllowance > 0 && (
+                          <div className="flex justify-between items-center font-body-sm text-body-sm text-terracotta-sandstone">
+                            <span>Night Chauffeur Allowance (22:00–05:00):</span>
+                            <span>+{formatInr(serverFare.nightAllowance)}</span>
+                          </div>
+                        )}
+
+                        {serverFare.driverAllowance > 0 && (
+                          <div className="flex justify-between items-center font-body-sm text-body-sm text-ink-slate">
+                            <span>Commercial Driver Allowance:</span>
+                            <span>+{formatInr(serverFare.driverAllowance)}</span>
+                          </div>
+                        )}
+
+                        {serverFare.discountAmount > 0 && (
+                          <div className="flex justify-between items-center font-body-sm text-body-sm text-success-jade">
+                            <span>Promotional Discount:</span>
+                            <span>-{formatInr(serverFare.discountAmount)}</span>
+                          </div>
+                        )}
+
+                        <div className="mt-space-xs pt-space-xs border-t border-border-warm flex items-baseline justify-between">
+                          <div>
+                            <span className="font-title-lg text-title-lg text-ink-midnight font-bold">
+                              Total Final Fare
+                            </span>
+                            <span className="block font-body-sm text-label-md text-success-jade font-semibold">
+                              Authoritative Server Rate
+                            </span>
+                          </div>
+                          <div className="text-right">
+                            <span className="font-price-display text-price-display text-primary font-bold">
+                              {formatInr(serverFare.totalFare)}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="mt-1 p-2.5 rounded-lg bg-sandstone-wash flex justify-between items-center text-xs">
+                          <span className="font-semibold text-ink-charcoal">Advance Token to Confirm:</span>
+                          <span className="font-bold text-primary">{formatInr(serverFare.advanceAmount)}</span>
+                        </div>
+                      </div>
+                    ) : null}
+
+                    {/* Continue CTA Button */}
+                    <button
+                      onClick={handleProceedFromStep1}
+                      disabled={loadingFare || !serverFare}
+                      className="w-full py-3.5 px-space-md rounded-xl bg-terracotta-deep text-on-primary font-label-lg text-label-lg font-semibold hover:bg-primary disabled:opacity-50 transition-all shadow-md flex items-center justify-center gap-2 group cursor-pointer"
+                      type="button"
+                    >
+                      <span>{isDirectFunnel ? "Proceed to Booking Form" : "Continue to Choose Your Trip"}</span>
+                      <span className="material-symbols-outlined text-icon-18 group-hover:translate-x-1 transition-transform">
+                        arrow_forward
+                      </span>
+                    </button>
+
+                    <a
+                      className="flex items-center justify-center gap-2 py-2.5 px-space-sm rounded-lg bg-black hover:bg-neutral-900 border border-white/10 text-white font-label-lg text-label-lg transition-colors text-center"
+                      style={{ color: "#ffffff" }}
+                      href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
+                        `Hello SK Baghel Travels, query for ${effectiveOrigin} to ${effectiveDestination} with ${selectedVehicle.name}.`
+                      )}`}
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      <WhatsAppIcon className="w-4 h-4 shrink-0 text-white" />
+                      <span className="text-white font-semibold" style={{ color: "#ffffff" }}>WhatsApp Concierge Desk</span>
+                    </a>
+                  </div>
+                </aside>
+              </div>
             )}
           </div>
         )}

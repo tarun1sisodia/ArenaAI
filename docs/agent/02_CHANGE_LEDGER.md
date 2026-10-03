@@ -247,6 +247,28 @@ Implemented:
   - Preserved vehicle model descriptions in `fleetOptions` memo to eliminate first-paint flash when live fleet data loads from `/api/v1/fleet`.
   - Extended URL query parameter parsing to accept both internal IDs and canonical tiers (e.g. `innova-crysta`, `tempo-traveller`).
   - Verified server-authoritative fare calculation and price ledger consistency.
+### 2026-10-04 — Full-Stack Customer Booking Experience & Funnel Correction
+
+- Homepage Hero Structural Stabilization:
+  - Added `min-h-[580px] lg:min-h-[640px] flex items-center` to hero section and `w-full` on inner grid in `react/src/pages/HomePage.tsx`.
+  - Added `min-h-[460px] flex flex-col justify-between` to `HomeBookingWidget.tsx`.
+  - Eliminates hero collapse, Taj Mahal `<picture>` aspect ratio jump, background zooming/recropping, and trust ticker shifting when switching between One Way, Round Trip, and Local Taxi.
+- Date Picker Unlock & Accessibility:
+  - Stretched `::-webkit-calendar-picker-indicator` across `inset: 0` with `cursor: pointer` in `react/src/styles/global.css`.
+  - Added `pickupInputRef` and `returnInputRef` with `openPickupPicker` / `openReturnPicker` (`showPicker()` with focus fallback) in `HomeBookingWidget.tsx` and `BookingPage.tsx`.
+  - Added full mouse click, touch, and keyboard (Enter/Space) calendar trigger support.
+  - Implemented round-trip date validation (`returnDate >= pickupDate`) auto-syncing return date if pickup date advances.
+- Elimination of Duplicate "Choose Your Trip" Step:
+  - Removed legacy 4-step fleet-first funnel and removed `<TripSelectionStep>` component invocation from `BookingPage.tsx`.
+  - Transformed funnel into canonical 3-step architecture: Step 1 (Configure Trip & Vehicle), Step 2 (Guest Details & Review), Step 3 (Confirmed Voucher).
+  - Homepage selections (One Way, Round Trip, Local Taxi) carry directly into canonical booking context without re-prompting.
+  - Homepage Local Taxi now includes vehicle selection (`&vehicle=${selectedVehicle}`), persisting seamlessly into `/book`.
+- Authoritative Review Summary & Data Cleanliness:
+  - Fixed entity corruption on Step 2 where package place metadata leaked into origin and destination fields.
+  - Replaced corrupted summary with canonical 4-column summary grid cleanly presenting Trip Mode, Route/Tour, Dates/Times, Vehicle, Total Fare, and 28% Advance Token.
+  - Implemented user profile prefill from `useCustomerAuth()` for `fullName`, `email`, and `phone` without fabricating fake placeholders.
+  - Verified "Edit Trip / Vehicle" smoothly navigates back to Step 1 while preserving active inputs.
+- Verified with full `npm run verify` (typechecks x3, 23 backend vitest suites / 142 tests passing, SSG prerendering 52 pages, builds x3).
 
 ## Known next work (Phase 3 — secure integrations)
 

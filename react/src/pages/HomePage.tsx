@@ -93,7 +93,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
         <aside className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 border-b border-border-warm bg-sandstone-wash px-4 py-3 sm:px-6" aria-label="Optional account sign-in">
           <p className="text-sm text-ink-midnight"><strong>Save your trips.</strong> Sign in with Google to find pending and previous bookings later. You can also do this at checkout.</p>
           <div className="flex items-center gap-2">
-            <button type="button" onClick={() => void signInWithGoogle().catch(() => {})} className="rounded-lg bg-primary px-3 py-2 text-sm font-semibold text-white">Continue with Google</button>
+            <button type="button" onClick={() => void signInWithGoogle().catch(() => { })} className="rounded-lg bg-primary px-3 py-2 text-sm font-semibold text-white">Continue with Google</button>
             <button type="button" aria-label="Dismiss account reminder" onClick={() => { setAccountPromptDismissed(true); try { window.localStorage.setItem("arenaai:account-prompt-dismissed", "1"); } catch { /* optional preference */ } }} className="rounded-lg px-3 py-2 text-sm font-semibold text-on-surface-variant hover:bg-surface-container">Dismiss</button>
           </div>
         </aside>
@@ -102,7 +102,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
       {/* ── MAIN HOMEPAGE CONTENT ── */}
       <div className="w-full relative z-20">
         {/* ── HERO ── Taj Mahal sunrise background, text left / booking dock right */}
-        <section className="relative w-full pt-20 sm:pt-28 pb-16 bg-ink-midnight text-on-primary overflow-hidden">
+        <section className="relative w-full min-h-[580px] lg:min-h-[640px] flex items-center pt-20 sm:pt-28 pb-16 bg-ink-midnight text-on-primary overflow-hidden">
           {/* LCP hero image — real <img> (not CSS background) so the browser can
               early-discover and prioritize it. Self-hosted AVIF/WebP, 1920w.
               Decorative: headline carries the content (alt=""). */}
@@ -123,7 +123,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
           <div className="absolute inset-0 bg-gradient-to-r from-ink-midnight/65 via-ink-midnight/10 to-ink-midnight/10 z-0 pointer-events-none" />
           <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-ink-midnight to-transparent z-0 pointer-events-none" />
 
-          <div className="relative z-10 max-w-[1280px] mx-auto px-margin-mobile lg:px-margin grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+          <div className="relative z-10 w-full max-w-[1280px] mx-auto px-margin-mobile lg:px-margin grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             {/* Left — headline + two CTAs only (hero stack discipline: 3 elements max) */}
             <div className="lg:col-span-6 flex flex-col items-start gap-space-md">
 
