@@ -1,3 +1,5 @@
+import type { BookingSelection } from "../shared/bookingSelection.js";
+
 export const TRIP_TYPES = [
   "one-way",
   "round-trip",
@@ -135,8 +137,10 @@ export type BookingRecord = {
   guestAccessToken: string;
   tripType: TripType;
   vehicleTier: VehicleTier;
-  originName: string;
-  destinationName: string;
+  originName: string | null;
+  destinationName: string | null;
+  bookingSelection: BookingSelection | null;
+  selectedCatalogItemId: string | null;
   pickupAddress: string;
   dropAddress: string | null;
   pickupDatetime: string;

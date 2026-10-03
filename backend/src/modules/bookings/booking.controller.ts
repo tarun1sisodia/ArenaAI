@@ -47,6 +47,16 @@ export function createBookingController(service: ReturnType<typeof createBooking
       return sendSuccess(reply, await service.getOwned(request.user.id, params.bookingId));
     },
 
+    async getMyProfile(request: FastifyRequest, reply: FastifyReply) {
+      if (!request.user) throw Errors.unauthorized();
+      const profile = await service.getOwnProfile(request.user.id);
+      return sendSuccess(reply, {
+        fullName: profile?.fullName ?? null,
+        phone: profile?.phone ?? null,
+        email: profile?.email ?? request.user.email ?? null,
+      });
+    },
+
     async getBooking(request: FastifyRequest, reply: FastifyReply) {
       const params = TicketIdParamSchema.parse(request.params);
       const query = BookingAccessQuerySchema.parse(request.query);

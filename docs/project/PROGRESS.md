@@ -49,6 +49,7 @@
 
 ## Next Actions
 
+- [ ] Apply `0023_add_canonical_booking_selection.sql` through the staged release; this task did not apply it to live Supabase.
 - [ ] Run Razorpay/PayPal sandbox drills against a public HTTPS webhook.
 - [ ] Review remaining critical items in [BUGS.md](BUGS.md) with staging evidence.
 - [ ] Deploy Mumbai-region API host and production webhook endpoints after sandbox sign-off.
@@ -69,6 +70,7 @@
 | 2026-09-27 | **Phase 1: Production Security & Integrity Controls**: (1.1) Mandatory Razorpay production credentials & adapter prohibition; (1.2) Public media visibility checks (SEC-004); (1.3) Active DB fare engine overrides & package sync; (1.4) Unique-active fare rule partial index & transactional activation; (1.5) Full booking & payment lifecycle integration test suite; (1.6) Device token registration ownership lockdown (SEC-005); (1.7) Pre-deploy migrations in Render release phase + Docker entrypoint; (1.8) Deployment readiness health check (`/ready`) returning 503 on DB degradation. | Antigravity AI |
 | 2026-09-27 | **Phase 2: Source-of-Truth Convergence & Dynamic Catalog Manifest**: (2.1–2.4) Manifest compiler excludes draft/archived routes; published DB routes override baseline corridors; packages load real published media cover images; (2.5–2.6) Client bounded cache envelope with 10-minute TTL, conditional ETag validation (`If-None-Match`), HTTP 304 handling, and stale status indicator; (2.7) Manifest route prioritized over static route in `App.tsx`. | Antigravity AI |
 | 2026-09-27 | **Phase 3 — Step 3.1: Secure LocationIQ Proxy & Caching**: Server-held secret architecture via `/api/v1/locations/autocomplete`, rate limits (60/min), input/output sanitization & bounds (8 items, 200 char max), 30-day locationCache TTL in PostgreSQL/memory, graceful static catalog fallback, client hook dual envelope parser, unit test suite (5/5 passing). | Antigravity AI |
+| 2026-10-04 | Canonical booking-selection integrity: additive migration `0023` (pending deployment), nullable route-only fields, authoritative typed selection through quotes/bookings, safe own-profile endpoint, customer/admin type-aware summaries, and end-to-end coverage. Root `npm run verify` passed; no live data or schema was changed. | Manus AI |
 
 
 ## References

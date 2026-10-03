@@ -36,6 +36,25 @@ const STATUSES: (BookingStatus | "all")[] = [
   "refunded",
 ];
 
+function bookingTitle(booking: Booking): string {
+  const selection = booking.bookingSelection;
+  if (selection?.kind === "outstation") return selection.name || `${selection.originName} → ${selection.destinationName}`;
+  if (selection?.name) return selection.name;
+  if (selection?.kind === "package") return `Tour package: ${selection.slug.replaceAll("-", " ")}`;
+  if (selection?.kind === "local") return "Local service";
+  if (booking.origin && booking.destination) return `${booking.origin} → ${booking.destination}`;
+  return "Trip details unavailable";
+}
+
+function bookingSubtitle(booking: Booking): string {
+  const selection = booking.bookingSelection;
+  if (selection?.kind === "outstation") return `${selection.originName} → ${selection.destinationName} · ${selection.tripType.replaceAll("-", " ")}`;
+  if (selection?.kind === "local") return `Pickup: ${selection.pickupLocation} · ${selection.tripType.replaceAll("-", " ")} · ID ${selection.id}`;
+  if (selection?.kind === "package") return `Tour package · ${selection.slug.replaceAll("-", " ")} · ID ${selection.id}`;
+  if (booking.origin && booking.destination) return `${booking.origin} → ${booking.destination}`;
+  return "Legacy booking record";
+}
+
 /** Valid staff transitions per TRD §4.1 state machine */
 const TRANSITIONS: Partial<Record<BookingStatus, { to: BookingStatus; label: string; tone: "gold" | "default" | "destructive" | "outline" }[]>> = {
   paid_confirmed: [
@@ -284,7 +303,7 @@ export function BookingsPage({ user }: { user: AdminUser }) {
             <TRow>
               <TH>Ticket</TH>
               <TH>Customer</TH>
-              <TH>Route</TH>
+              <TH>Trip / Route</TH>
               <TH>Pickup</TH>
               <TH>Vehicle</TH>
               <TH className="text-right">Total</TH>
@@ -313,9 +332,9 @@ export function BookingsPage({ user }: { user: AdminUser }) {
                   <span className="block font-mono text-[11px] text-ink-faint">{maskPhone(b.customerPhone)}</span>
                 </TD>
                 <TD>
-                  <span className="flex items-center gap-1.5 text-[13px] text-ink">
-                    <MapPin className="h-3.5 w-3.5 text-gold" />
-                    {b.origin} → {b.destination}
+                  <span className="flex items-start gap-1.5 text-[13px] text-ink">
+                    <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-gold" />
+                    <span className="min-w-0"><span className="block font-medium">{bookingTitle(b)}</span><span className="block max-w-[240px] truncate text-[11px] text-ink-faint">{bookingSubtitle(b)}</span></span>
                   </span>
                 </TD>
                 <TD className="whitespace-nowrap font-mono text-[12px] text-ink-soft">
@@ -376,8 +395,9 @@ export function BookingsPage({ user }: { user: AdminUser }) {
                 <div>
                   <Badge tone="gold" className="mb-1.5">{selected.ticketId}</Badge>
                   <h2 className="font-display text-xl font-medium tracking-tight text-ink">
-                    {selected.origin} → {selected.destination}
+                    {bookingTitle(selected)}
                   </h2>
+                  <p className="mt-0.5 text-[12px] text-ink-soft">{bookingSubtitle(selected)}</p>
                   <p className="mt-0.5 text-[13px] text-ink-soft">
                     {(VEHICLE_LABELS as Record<string, string>)[selected.vehicleTier] ?? selected.vehicleTier} · {selected.distanceKm} km · created {timeAgo(selected.createdAt)}
                   </p>
