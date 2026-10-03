@@ -15,6 +15,28 @@ import {
   SEED_REVIEWS,
   SEED_WEBHOOKS,
 } from "./seedData.js";
+import {
+  SEED_CANCELLATION_POLICIES,
+  SEED_COMPANY_PROFILE,
+  SEED_DOSSIER_SIGNOFFS,
+  SEED_LOCAL_PACKAGES,
+  SEED_MONUMENTS,
+  SEED_PACKAGE_UPGRADES,
+  SEED_PET_POLICY,
+  SEED_TOUR_PACKAGES,
+  SEED_TRANSFER_ROUTES,
+} from "./dossier-seeds.js";
+import type {
+  CancellationPolicyRecord,
+  CompanyProfileRecord,
+  DossierSignoffRecord,
+  LocalSightseeingPackageRecord,
+  MonumentRecord,
+  PackageVehicleUpgradeRecord,
+  PetTaxiPolicyRecord,
+  TourPackageRecord,
+  TransferRouteRecord,
+} from "./dossier-types.js";
 import type {
   AuditLogRecord,
   BookingIntentRecord,
@@ -76,6 +98,19 @@ export function createMemoryRepositories(nowIso = new Date().toISOString()): Rep
   const devices = new Map<string, DeviceRegistrationRecord>();
   const fareRules = new Map<string, FareRuleRecord>();
   const locks = new Map<string, Promise<void>>();
+
+  const tourPackages = new Map<string, TourPackageRecord>();
+  const tourPackagesByCode = new Map<string, string>();
+  const packageUpgrades = new Map<string, PackageVehicleUpgradeRecord>();
+  const transferRoutes = new Map<string, TransferRouteRecord>();
+  const transferRoutesByCode = new Map<string, string>();
+  const localPackages = new Map<string, LocalSightseeingPackageRecord>();
+  const localPackagesByCode = new Map<string, string>();
+  const cancellationPolicies: CancellationPolicyRecord[] = [];
+  const monuments: MonumentRecord[] = [];
+  let petPolicy: PetTaxiPolicyRecord = clone(SEED_PET_POLICY);
+  let companyProfile: CompanyProfileRecord = clone(SEED_COMPANY_PROFILE);
+  const dossierSignoffs: DossierSignoffRecord[] = [];
 
   seedReferenceData(nowIso);
 
@@ -146,6 +181,24 @@ export function createMemoryRepositories(nowIso = new Date().toISOString()): Rep
     for (const lc of SEED_LOCATION_CACHE) {
       locationCache.set(lc.key, { suggestions: clone(lc.suggestions), storedAt: lc.storedAt });
     }
+    for (const tp of SEED_TOUR_PACKAGES) {
+      tourPackages.set(tp.id, clone(tp));
+      tourPackagesByCode.set(tp.packageCode, tp.id);
+    }
+    for (const pu of SEED_PACKAGE_UPGRADES) {
+      packageUpgrades.set(pu.id, clone(pu));
+    }
+    for (const tr of SEED_TRANSFER_ROUTES) {
+      transferRoutes.set(tr.id, clone(tr));
+      transferRoutesByCode.set(tr.routeCode, tr.id);
+    }
+    for (const lp of SEED_LOCAL_PACKAGES) {
+      localPackages.set(lp.id, clone(lp));
+      localPackagesByCode.set(lp.packageCode, lp.id);
+    }
+    cancellationPolicies.push(...SEED_CANCELLATION_POLICIES.map(clone));
+    monuments.push(...SEED_MONUMENTS.map(clone));
+    dossierSignoffs.push(...SEED_DOSSIER_SIGNOFFS.map(clone));
   }
 
   const repos: Repositories = {
@@ -400,6 +453,220 @@ export function createMemoryRepositories(nowIso = new Date().toISOString()): Rep
       async getBySlug(slug) { const found = [...routeCatalog.values()].find((item) => item.slug === slug); return found ? clone(found) : null; },
       async list(filter) { let items = [...routeCatalog.values()]; if (filter.tripType) items = items.filter((item) => item.tripType === filter.tripType); if (filter.status) items = items.filter((item) => item.status === filter.status); if (filter.q) { const q = filter.q.toLowerCase(); items = items.filter((item) => item.sourceCity.toLowerCase().includes(q) || (item.destinationCity ?? "").toLowerCase().includes(q) || item.slug.includes(q)); } items.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)); const total = items.length; const page = filter.page ?? 1; const limit = filter.limit ?? 50; return { items: items.slice((page - 1) * limit, page * limit).map(clone), total }; },
       async delete(id) { routeCatalog.delete(id); },
+    },
+    tourPackages: {
+      async create(record) {
+        if ([...tourPackages.values()].some((item) => item.packageCode === record.packageCode)) {
+          throw new Error("duplicate tour package code");
+        }
+        tourPackages.set(record.id, clone(record));
+        tourPackagesByCode.set(record.packageCode, record.id);
+        return clone(record);
+      },
+      async update(record) {
+        tourPackages.set(record.id, clone(record));
+        tourPackagesByCode.set(record.packageCode, record.id);
+        return clone(record);
+      },
+      async getById(id) {
+        const found = tourPackages.get(id);
+        return found ? clone(found) : null;
+      },
+      async getByCode(code) {
+        const id = tourPackagesByCode.get(code);
+        if (!id) return null;
+        const found = tourPackages.get(id);
+        return found ? clone(found) : null;
+      },
+      async list(filter = {}) {
+        let items = [...tourPackages.values()];
+        if (filter.status && filter.status !== "all") {
+          items = items.filter((item) => item.status === filter.status);
+        }
+        if (filter.q) {
+          const q = filter.q.toLowerCase();
+          items = items.filter((item) => item.name.toLowerCase().includes(q) || item.packageCode.includes(q));
+        }
+        items.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+        const total = items.length;
+        const page = filter.page ?? 1;
+        const limit = filter.limit ?? 50;
+        return { items: items.slice((page - 1) * limit, page * limit).map(clone), total };
+      },
+      async delete(id) {
+        const found = tourPackages.get(id);
+        if (found) {
+          tourPackagesByCode.delete(found.packageCode);
+          tourPackages.delete(id);
+        }
+      },
+      async listUpgrades(packageId) {
+        const list = [...packageUpgrades.values()].filter((item) =>
+          packageId ? item.packageId === packageId || item.packageId === null : item.packageId === null
+        );
+        return list.sort((a, b) => a.surchargeInr - b.surchargeInr).map(clone);
+      },
+      async saveUpgrade(record) {
+        packageUpgrades.set(record.id, clone(record));
+        return clone(record);
+      },
+      async deleteUpgrade(id) {
+        packageUpgrades.delete(id);
+      },
+    },
+    transferRoutes: {
+      async create(record) {
+        if ([...transferRoutes.values()].some((item) => item.routeCode === record.routeCode)) {
+          throw new Error("duplicate transfer route code");
+        }
+        transferRoutes.set(record.id, clone(record));
+        transferRoutesByCode.set(record.routeCode, record.id);
+        return clone(record);
+      },
+      async update(record) {
+        transferRoutes.set(record.id, clone(record));
+        transferRoutesByCode.set(record.routeCode, record.id);
+        return clone(record);
+      },
+      async getById(id) {
+        const found = transferRoutes.get(id);
+        return found ? clone(found) : null;
+      },
+      async getByCode(code) {
+        const id = transferRoutesByCode.get(code);
+        if (!id) return null;
+        const found = transferRoutes.get(id);
+        return found ? clone(found) : null;
+      },
+      async list(filter = {}) {
+        let items = [...transferRoutes.values()];
+        if (filter.status && filter.status !== "all") {
+          items = items.filter((item) => item.status === filter.status);
+        }
+        if (filter.q) {
+          const q = filter.q.toLowerCase();
+          items = items.filter((item) => item.name.toLowerCase().includes(q) || item.routeCode.includes(q));
+        }
+        items.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+        const total = items.length;
+        const page = filter.page ?? 1;
+        const limit = filter.limit ?? 50;
+        return { items: items.slice((page - 1) * limit, page * limit).map(clone), total };
+      },
+      async delete(id) {
+        const found = transferRoutes.get(id);
+        if (found) {
+          transferRoutesByCode.delete(found.routeCode);
+          transferRoutes.delete(id);
+        }
+      },
+    },
+    localPackages: {
+      async create(record) {
+        if ([...localPackages.values()].some((item) => item.packageCode === record.packageCode)) {
+          throw new Error("duplicate local package code");
+        }
+        localPackages.set(record.id, clone(record));
+        localPackagesByCode.set(record.packageCode, record.id);
+        return clone(record);
+      },
+      async update(record) {
+        localPackages.set(record.id, clone(record));
+        localPackagesByCode.set(record.packageCode, record.id);
+        return clone(record);
+      },
+      async getById(id) {
+        const found = localPackages.get(id);
+        return found ? clone(found) : null;
+      },
+      async getByCode(code) {
+        const id = localPackagesByCode.get(code);
+        if (!id) return null;
+        const found = localPackages.get(id);
+        return found ? clone(found) : null;
+      },
+      async list(filter = {}) {
+        let items = [...localPackages.values()];
+        if (filter.status && filter.status !== "all") {
+          items = items.filter((item) => item.status === filter.status);
+        }
+        if (filter.q) {
+          const q = filter.q.toLowerCase();
+          items = items.filter((item) => item.name.toLowerCase().includes(q) || item.packageCode.includes(q));
+        }
+        items.sort((a, b) => a.durationHours - b.durationHours);
+        const total = items.length;
+        const page = filter.page ?? 1;
+        const limit = filter.limit ?? 50;
+        return { items: items.slice((page - 1) * limit, page * limit).map(clone), total };
+      },
+      async delete(id) {
+        const found = localPackages.get(id);
+        if (found) {
+          localPackagesByCode.delete(found.packageCode);
+          localPackages.delete(id);
+        }
+      },
+    },
+    cancellationPolicies: {
+      async list() {
+        return cancellationPolicies.map(clone);
+      },
+      async update(record) {
+        const index = cancellationPolicies.findIndex((item) => item.id === record.id);
+        if (index >= 0) {
+          cancellationPolicies[index] = clone(record);
+        } else {
+          cancellationPolicies.push(clone(record));
+        }
+        return clone(record);
+      },
+    },
+    monuments: {
+      async list() {
+        return [...monuments].sort((a, b) => a.sortOrder - b.sortOrder).map(clone);
+      },
+      async update(record) {
+        const index = monuments.findIndex((item) => item.id === record.id);
+        if (index >= 0) {
+          monuments[index] = clone(record);
+        } else {
+          monuments.push(clone(record));
+        }
+        return clone(record);
+      },
+    },
+    petPolicy: {
+      async get() {
+        return clone(petPolicy);
+      },
+      async update(record) {
+        petPolicy = clone(record);
+        return clone(record);
+      },
+    },
+    companyProfile: {
+      async get() {
+        return clone(companyProfile);
+      },
+      async update(record) {
+        companyProfile = clone(record);
+        return clone(record);
+      },
+    },
+    dossierSignoffs: {
+      async list() {
+        return [...dossierSignoffs].sort((a, b) => a.sectionKey.localeCompare(b.sectionKey)).map(clone);
+      },
+      async update(record) {
+        const index = dossierSignoffs.findIndex((item) => item.id === record.id);
+        if (index >= 0) {
+          dossierSignoffs[index] = clone(record);
+        } else {
+          dossierSignoffs.push(clone(record));
+        }
+        return clone(record);
+      },
     },
     catalog: {
       async create(record) {

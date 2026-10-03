@@ -14,21 +14,10 @@ import type { AttachMediaSchema, CreateCatalogSchema, PublicCatalogQuerySchema, 
 import { mediaObjectPath, type MediaStorage } from "./media.storage.js";
 import type { z } from "zod";
 
-async function requestFrontendRebuild(reason: string, manifestVersion: number): Promise<void> {
-  const hook = process.env.PAGES_DEPLOY_HOOK_URL?.trim();
-  if (!hook) return;
-  try {
-    const response = await fetch(hook, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ reason, manifestVersion }),
-      signal: AbortSignal.timeout(10_000),
-    });
-    if (!response.ok) console.warn(`[catalog] frontend rebuild hook returned HTTP ${response.status}`);
-  } catch (error) {
-    // The API publication is authoritative; a transient hook failure is retryable.
-    console.warn(`[catalog] frontend rebuild hook failed: ${error instanceof Error ? error.message : "unknown error"}`);
-  }
+import { triggerFrontendRebuild } from "../../shared/deploy-hook.js";
+
+async function requestFrontendRebuild(reason: string, _manifestVersion: number): Promise<void> {
+  await triggerFrontendRebuild(reason);
 }
 
 export function createCatalogService(deps: { db: Repositories; clock: Clock; mediaStorage?: MediaStorage | null }) {

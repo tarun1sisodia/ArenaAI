@@ -18,6 +18,18 @@ import type {
 } from "../types/domain.js";
 import type { DeviceRegistrationRecord, FareRuleRecord, InquiryListFilter, RentalEnquiryListFilter, PaymentListFilter, Repositories } from "./types.js";
 import type { RouteCatalogRecord } from "./route-catalog-types.js";
+import type {
+  CancellationPolicyRecord,
+  CompanyProfileRecord,
+  ContentStatus,
+  DossierSignoffRecord,
+  LocalSightseeingPackageRecord,
+  MonumentRecord,
+  PackageVehicleUpgradeRecord,
+  PetTaxiPolicyRecord,
+  TourPackageRecord,
+  TransferRouteRecord,
+} from "./dossier-types.js";
 import { createPoolConfig } from "./poolConfig.js";
 import { ConcurrencyError } from "./concurrency.js";
 import { phonesMatch } from "../shared/privacy.js";
@@ -28,6 +40,150 @@ function num(value: unknown): number {
   return typeof value === "number" ? value : Number(value);
 }
 
+function mapLocalPackage(row: Record<string, unknown>): LocalSightseeingPackageRecord {
+  return {
+    id: String(row.id),
+    packageCode: String(row.package_code),
+    name: String(row.name),
+    durationHours: num(row.duration_hours),
+    includedKm: num(row.included_km),
+    covers: String(row.covers),
+    parkingNote: row.parking_note ? String(row.parking_note) : null,
+    fleetPrices: (row.fleet_prices as Record<string, number>) ?? {},
+    usePerKm: Boolean(row.use_per_km),
+    extraRates: (row.extra_rates as LocalSightseeingPackageRecord["extraRates"]) ?? null,
+    nightChargeInr: num(row.night_charge_inr),
+    status: row.status as ContentStatus,
+    isActive: Boolean(row.is_active),
+    createdAt: new Date(String(row.created_at)).toISOString(),
+    updatedAt: new Date(String(row.updated_at)).toISOString(),
+  };
+}
+
+function mapTransferRoute(row: Record<string, unknown>): TransferRouteRecord {
+  return {
+    id: String(row.id),
+    routeCode: String(row.route_code),
+    name: String(row.name),
+    distanceText: row.distance_text ? String(row.distance_text) : null,
+    directionNote: row.direction_note ? String(row.direction_note) : null,
+    fleetPrices: (row.fleet_prices as Record<string, number>) ?? {},
+    usePerKm: Boolean(row.use_per_km),
+    nightChargeInr: num(row.night_charge_inr),
+    status: row.status as ContentStatus,
+    isActive: Boolean(row.is_active),
+    createdAt: new Date(String(row.created_at)).toISOString(),
+    updatedAt: new Date(String(row.updated_at)).toISOString(),
+  };
+}
+
+function mapTourPackage(row: Record<string, unknown>): TourPackageRecord {
+  return {
+    id: String(row.id),
+    packageCode: String(row.package_code),
+    name: String(row.name),
+    durationText: String(row.duration_text),
+    days: num(row.days),
+    nights: num(row.nights),
+    baseTierCode: String(row.base_tier_code),
+    startingPriceInr: num(row.starting_price_inr),
+    fleetPrices: (row.fleet_prices as Record<string, number>) ?? {},
+    usePerKm: Boolean(row.use_per_km),
+    nightChargeInr: num(row.night_charge_inr),
+    flatChargeInr: num(row.flat_charge_inr),
+    inclusionsHighlight: row.inclusions_highlight ? String(row.inclusions_highlight) : null,
+    inclusionsNote: row.inclusions_note ? String(row.inclusions_note) : null,
+    status: row.status as ContentStatus,
+    isActive: Boolean(row.is_active),
+    createdAt: new Date(String(row.created_at)).toISOString(),
+    updatedAt: new Date(String(row.updated_at)).toISOString(),
+  };
+}
+
+function mapPackageUpgrade(row: Record<string, unknown>): PackageVehicleUpgradeRecord {
+  return {
+    id: String(row.id),
+    packageId: row.package_id ? String(row.package_id) : null,
+    tierCode: String(row.tier_code),
+    passengerNote: row.passenger_note ? String(row.passenger_note) : null,
+    surchargeInr: num(row.surcharge_inr),
+    createdAt: new Date(String(row.created_at)).toISOString(),
+    updatedAt: new Date(String(row.updated_at)).toISOString(),
+  };
+}
+
+function mapCancellationPolicy(row: Record<string, unknown>): CancellationPolicyRecord {
+  return {
+    id: String(row.id),
+    policyType: row.policy_type as CancellationPolicyRecord["policyType"],
+    noticePeriodText: String(row.notice_period_text),
+    sortOrder: num(row.sort_order),
+    feeRetainedPercent: num(row.fee_retained_percent),
+    refundPercent: num(row.refund_percent),
+    ruleText: String(row.rule_text),
+    refundTimelineNote: String(row.refund_timeline_note),
+    createdAt: new Date(String(row.created_at)).toISOString(),
+    updatedAt: new Date(String(row.updated_at)).toISOString(),
+  };
+}
+
+function mapCompanyProfile(row: Record<string, unknown>): CompanyProfileRecord {
+  return {
+    id: String(row.id),
+    brandName: String(row.brand_name),
+    officeAddress: String(row.office_address),
+    primaryPhone: String(row.primary_phone),
+    whatsappNumber: String(row.whatsapp_number),
+    email: String(row.email),
+    gstin: String(row.gstin),
+    operatingHours: String(row.operating_hours),
+    mapsLocation: String(row.maps_location),
+    dossierVersion: String(row.dossier_version),
+    dossierStatus: row.dossier_status as CompanyProfileRecord["dossierStatus"],
+    createdAt: new Date(String(row.created_at)).toISOString(),
+    updatedAt: new Date(String(row.updated_at)).toISOString(),
+  };
+}
+
+function mapDossierSignoff(row: Record<string, unknown>): DossierSignoffRecord {
+  return {
+    id: String(row.id),
+    sectionKey: String(row.section_key),
+    sectionTitle: String(row.section_title),
+    status: row.status as DossierSignoffRecord["status"],
+    clientNotes: row.client_notes ? String(row.client_notes) : null,
+    approvedBy: row.approved_by ? String(row.approved_by) : null,
+    approvedAt: row.approved_at ? new Date(String(row.approved_at)).toISOString() : null,
+    createdAt: new Date(String(row.created_at)).toISOString(),
+    updatedAt: new Date(String(row.updated_at)).toISOString(),
+  };
+}
+
+function mapMonument(row: Record<string, unknown>): MonumentRecord {
+  return {
+    id: String(row.id),
+    name: String(row.name),
+    visitingHours: String(row.visiting_hours),
+    closedNote: String(row.closed_note),
+    historicalContext: row.historical_context ? String(row.historical_context) : null,
+    sortOrder: num(row.sort_order),
+    createdAt: new Date(String(row.created_at)).toISOString(),
+    updatedAt: new Date(String(row.updated_at)).toISOString(),
+  };
+}
+
+function mapPetTaxiPolicy(row: Record<string, unknown>): PetTaxiPolicyRecord {
+  return {
+    id: String(row.id),
+    isOffered: Boolean(row.is_offered),
+    seatProtectionNote: String(row.seat_protection_note),
+    breedRestrictionNote: String(row.breed_restriction_note),
+    comfortStopNote: String(row.comfort_stop_note),
+    bookingInstruction: String(row.booking_instruction),
+    createdAt: new Date(String(row.created_at)).toISOString(),
+    updatedAt: new Date(String(row.updated_at)).toISOString(),
+  };
+}
 
 function mapRouteCatalog(row: Record<string, unknown>): RouteCatalogRecord {
   return { id: String(row.id), tripType: row.trip_type as RouteCatalogRecord["tripType"], sourceCity: String(row.source_city), sourceDetail: row.source_detail ? String(row.source_detail) : null, destinationCity: row.destination_city ? String(row.destination_city) : null, slug: String(row.slug), distanceKm: row.distance_km === null ? null : num(row.distance_km), durationText: row.duration_text ? String(row.duration_text) : null, availableFleets: (row.available_fleets as string[]) ?? [], faresInr: (row.fares_inr as Record<string, number>) ?? {}, driverChargeInr: num(row.driver_charge_inr), nightHaltInr: num(row.night_halt_inr), tollIncluded: Boolean(row.toll_included), tollAmountInr: row.toll_amount_inr === null ? null : num(row.toll_amount_inr), interstateCharges: (row.interstate_charges as RouteCatalogRecord["interstateCharges"]) ?? [], minKmPerDay: num(row.min_km_per_day), stops: (row.stops as RouteCatalogRecord["stops"]) ?? [], status: row.status as RouteCatalogRecord["status"], needsReview: Boolean(row.needs_review), createdAt: new Date(String(row.created_at)).toISOString(), updatedAt: new Date(String(row.updated_at)).toISOString() };
@@ -569,6 +725,236 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
           return { items: rows.slice((page - 1) * limit, page * limit).map(mapRouteCatalog), total };
         },
         async delete(id: string) { await query(client, "delete from route_catalog where id=$1", [id]); },
+      },
+      tourPackages: {
+        async create(record: TourPackageRecord) {
+          await query(
+            client,
+            `insert into tour_packages (id, package_code, name, duration_text, days, nights, base_tier_code, starting_price_inr, fleet_prices, use_per_km, night_charge_inr, flat_charge_inr, inclusions_highlight, inclusions_note, status, is_active, created_at, updated_at)
+             values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)`,
+            [record.id, record.packageCode, record.name, record.durationText, record.days, record.nights, record.baseTierCode, record.startingPriceInr, JSON.stringify(record.fleetPrices), record.usePerKm, record.nightChargeInr, record.flatChargeInr, record.inclusionsHighlight, record.inclusionsNote, record.status, record.isActive, record.createdAt, record.updatedAt]
+          );
+          return record;
+        },
+        async update(record: TourPackageRecord) {
+          await query(
+            client,
+            `update tour_packages set package_code=$2, name=$3, duration_text=$4, days=$5, nights=$6, base_tier_code=$7, starting_price_inr=$8, fleet_prices=$9, use_per_km=$10, night_charge_inr=$11, flat_charge_inr=$12, inclusions_highlight=$13, inclusions_note=$14, status=$15, is_active=$16, updated_at=$17 where id=$1`,
+            [record.id, record.packageCode, record.name, record.durationText, record.days, record.nights, record.baseTierCode, record.startingPriceInr, JSON.stringify(record.fleetPrices), record.usePerKm, record.nightChargeInr, record.flatChargeInr, record.inclusionsHighlight, record.inclusionsNote, record.status, record.isActive, record.updatedAt]
+          );
+          return record;
+        },
+        async getById(id: string) {
+          const rows = await query(client, "select * from tour_packages where id=$1", [id]);
+          return rows[0] ? mapTourPackage(rows[0]) : null;
+        },
+        async getByCode(code: string) {
+          const rows = await query(client, "select * from tour_packages where package_code=$1", [code]);
+          return rows[0] ? mapTourPackage(rows[0]) : null;
+        },
+        async list(filter = {}) {
+          const clauses: string[] = [];
+          const params: unknown[] = [];
+          if (filter.status && filter.status !== "all") {
+            params.push(filter.status);
+            clauses.push(`status = $${params.length}`);
+          }
+          if (filter.q) {
+            params.push(`%${filter.q}%`);
+            clauses.push(`(name ilike $${params.length} or package_code ilike $${params.length})`);
+          }
+          const where = clauses.length ? `where ${clauses.join(" and ")}` : "";
+          const rows = await query(client, `select * from tour_packages ${where} order by created_at asc`, params);
+          const page = filter.page ?? 1;
+          const limit = filter.limit ?? 50;
+          return { items: rows.slice((page - 1) * limit, page * limit).map(mapTourPackage), total: rows.length };
+        },
+        async delete(id: string) {
+          await query(client, "delete from tour_packages where id=$1", [id]);
+        },
+        async listUpgrades(packageId?: string | null) {
+          const rows = packageId
+            ? await query(client, "select * from package_vehicle_upgrades where package_id=$1 or package_id is null order by surcharge_inr asc", [packageId])
+            : await query(client, "select * from package_vehicle_upgrades where package_id is null order by surcharge_inr asc");
+          return rows.map(mapPackageUpgrade);
+        },
+        async saveUpgrade(record: PackageVehicleUpgradeRecord) {
+          await query(
+            client,
+            `insert into package_vehicle_upgrades (id, package_id, tier_code, passenger_note, surcharge_inr, created_at, updated_at)
+             values ($1,$2,$3,$4,$5,$6,$7)
+             on conflict (package_id, tier_code) do update set passenger_note=excluded.passenger_note, surcharge_inr=excluded.surcharge_inr, updated_at=excluded.updated_at`,
+            [record.id, record.packageId, record.tierCode, record.passengerNote, record.surchargeInr, record.createdAt, record.updatedAt]
+          );
+          return record;
+        },
+        async deleteUpgrade(id: string) {
+          await query(client, "delete from package_vehicle_upgrades where id=$1", [id]);
+        },
+      },
+      transferRoutes: {
+        async create(record: TransferRouteRecord) {
+          await query(
+            client,
+            `insert into transfer_routes (id, route_code, name, distance_text, direction_note, fleet_prices, use_per_km, night_charge_inr, status, is_active, created_at, updated_at)
+             values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`,
+            [record.id, record.routeCode, record.name, record.distanceText, record.directionNote, JSON.stringify(record.fleetPrices), record.usePerKm, record.nightChargeInr, record.status, record.isActive, record.createdAt, record.updatedAt]
+          );
+          return record;
+        },
+        async update(record: TransferRouteRecord) {
+          await query(
+            client,
+            `update transfer_routes set route_code=$2, name=$3, distance_text=$4, direction_note=$5, fleet_prices=$6, use_per_km=$7, night_charge_inr=$8, status=$9, is_active=$10, updated_at=$11 where id=$1`,
+            [record.id, record.routeCode, record.name, record.distanceText, record.directionNote, JSON.stringify(record.fleetPrices), record.usePerKm, record.nightChargeInr, record.status, record.isActive, record.updatedAt]
+          );
+          return record;
+        },
+        async getById(id: string) {
+          const rows = await query(client, "select * from transfer_routes where id=$1", [id]);
+          return rows[0] ? mapTransferRoute(rows[0]) : null;
+        },
+        async getByCode(code: string) {
+          const rows = await query(client, "select * from transfer_routes where route_code=$1", [code]);
+          return rows[0] ? mapTransferRoute(rows[0]) : null;
+        },
+        async list(filter = {}) {
+          const clauses: string[] = [];
+          const params: unknown[] = [];
+          if (filter.status && filter.status !== "all") {
+            params.push(filter.status);
+            clauses.push(`status = $${params.length}`);
+          }
+          if (filter.q) {
+            params.push(`%${filter.q}%`);
+            clauses.push(`(name ilike $${params.length} or route_code ilike $${params.length})`);
+          }
+          const where = clauses.length ? `where ${clauses.join(" and ")}` : "";
+          const rows = await query(client, `select * from transfer_routes ${where} order by created_at asc`, params);
+          const page = filter.page ?? 1;
+          const limit = filter.limit ?? 50;
+          return { items: rows.slice((page - 1) * limit, page * limit).map(mapTransferRoute), total: rows.length };
+        },
+        async delete(id: string) {
+          await query(client, "delete from transfer_routes where id=$1", [id]);
+        },
+      },
+      localPackages: {
+        async create(record: LocalSightseeingPackageRecord) {
+          await query(
+            client,
+            `insert into local_sightseeing_packages (id, package_code, name, duration_hours, included_km, covers, parking_note, fleet_prices, use_per_km, extra_rates, night_charge_inr, status, is_active, created_at, updated_at)
+             values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)`,
+            [record.id, record.packageCode, record.name, record.durationHours, record.includedKm, record.covers, record.parkingNote, JSON.stringify(record.fleetPrices), record.usePerKm, record.extraRates ? JSON.stringify(record.extraRates) : null, record.nightChargeInr, record.status, record.isActive, record.createdAt, record.updatedAt]
+          );
+          return record;
+        },
+        async update(record: LocalSightseeingPackageRecord) {
+          await query(
+            client,
+            `update local_sightseeing_packages set package_code=$2, name=$3, duration_hours=$4, included_km=$5, covers=$6, parking_note=$7, fleet_prices=$8, use_per_km=$9, extra_rates=$10, night_charge_inr=$11, status=$12, is_active=$13, updated_at=$14 where id=$1`,
+            [record.id, record.packageCode, record.name, record.durationHours, record.includedKm, record.covers, record.parkingNote, JSON.stringify(record.fleetPrices), record.usePerKm, record.extraRates ? JSON.stringify(record.extraRates) : null, record.nightChargeInr, record.status, record.isActive, record.updatedAt]
+          );
+          return record;
+        },
+        async getById(id: string) {
+          const rows = await query(client, "select * from local_sightseeing_packages where id=$1", [id]);
+          return rows[0] ? mapLocalPackage(rows[0]) : null;
+        },
+        async getByCode(code: string) {
+          const rows = await query(client, "select * from local_sightseeing_packages where package_code=$1", [code]);
+          return rows[0] ? mapLocalPackage(rows[0]) : null;
+        },
+        async list(filter = {}) {
+          const clauses: string[] = [];
+          const params: unknown[] = [];
+          if (filter.status && filter.status !== "all") {
+            params.push(filter.status);
+            clauses.push(`status = $${params.length}`);
+          }
+          if (filter.q) {
+            params.push(`%${filter.q}%`);
+            clauses.push(`(name ilike $${params.length} or package_code ilike $${params.length})`);
+          }
+          const where = clauses.length ? `where ${clauses.join(" and ")}` : "";
+          const rows = await query(client, `select * from local_sightseeing_packages ${where} order by duration_hours asc`, params);
+          const page = filter.page ?? 1;
+          const limit = filter.limit ?? 50;
+          return { items: rows.slice((page - 1) * limit, page * limit).map(mapLocalPackage), total: rows.length };
+        },
+        async delete(id: string) {
+          await query(client, "delete from local_sightseeing_packages where id=$1", [id]);
+        },
+      },
+      cancellationPolicies: {
+        async list() {
+          const rows = await query(client, "select * from cancellation_policies order by policy_type asc, sort_order asc");
+          return rows.map(mapCancellationPolicy);
+        },
+        async update(record: CancellationPolicyRecord) {
+          await query(
+            client,
+            `update cancellation_policies set notice_period_text=$2, fee_retained_percent=$3, refund_percent=$4, rule_text=$5, refund_timeline_note=$6, updated_at=$7 where id=$1`,
+            [record.id, record.noticePeriodText, record.feeRetainedPercent, record.refundPercent, record.ruleText, record.refundTimelineNote, record.updatedAt]
+          );
+          return record;
+        },
+      },
+      monuments: {
+        async list() {
+          const rows = await query(client, "select * from monuments order by sort_order asc");
+          return rows.map(mapMonument);
+        },
+        async update(record: MonumentRecord) {
+          await query(
+            client,
+            `update monuments set name=$2, visiting_hours=$3, closed_note=$4, historical_context=$5, sort_order=$6, updated_at=$7 where id=$1`,
+            [record.id, record.name, record.visitingHours, record.closedNote, record.historicalContext, record.sortOrder, record.updatedAt]
+          );
+          return record;
+        },
+      },
+      petPolicy: {
+        async get() {
+          const rows = await query(client, "select * from pet_taxi_policy limit 1");
+          return rows[0] ? mapPetTaxiPolicy(rows[0]) : null;
+        },
+        async update(record: PetTaxiPolicyRecord) {
+          await query(
+            client,
+            `update pet_taxi_policy set is_offered=$2, seat_protection_note=$3, breed_restriction_note=$4, comfort_stop_note=$5, booking_instruction=$6, updated_at=$7 where id=$1`,
+            [record.id, record.isOffered, record.seatProtectionNote, record.breedRestrictionNote, record.comfortStopNote, record.bookingInstruction, record.updatedAt]
+          );
+          return record;
+        },
+      },
+      companyProfile: {
+        async get() {
+          const rows = await query(client, "select * from company_profile limit 1");
+          return rows[0] ? mapCompanyProfile(rows[0]) : null;
+        },
+        async update(record: CompanyProfileRecord) {
+          await query(
+            client,
+            `update company_profile set brand_name=$2, office_address=$3, primary_phone=$4, whatsapp_number=$5, email=$6, gstin=$7, operating_hours=$8, maps_location=$9, dossier_version=$10, dossier_status=$11, updated_at=$12 where id=$1`,
+            [record.id, record.brandName, record.officeAddress, record.primaryPhone, record.whatsappNumber, record.email, record.gstin, record.operatingHours, record.mapsLocation, record.dossierVersion, record.dossierStatus, record.updatedAt]
+          );
+          return record;
+        },
+      },
+      dossierSignoffs: {
+        async list() {
+          const rows = await query(client, "select * from dossier_signoffs order by section_key asc");
+          return rows.map(mapDossierSignoff);
+        },
+        async update(record: DossierSignoffRecord) {
+          await query(
+            client,
+            `update dossier_signoffs set status=$2, client_notes=$3, approved_by=$4, approved_at=$5, updated_at=$6 where id=$1`,
+            [record.id, record.status, record.clientNotes, record.approvedBy, record.approvedAt, record.updatedAt]
+          );
+          return record;
+        },
       },
       catalog: {
         async create(record: CatalogItemRecord) {

@@ -13,15 +13,10 @@ export function makeRouteSlug(type: string, source: string, destination?: string
   return `${s}-to-${d}-${type === "round-trip" ? "round-trip-" : ""}taxi`.replace(/--+/g, "-");
 }
 
+import { triggerFrontendRebuild } from "../../shared/deploy-hook.js";
+
 function toRecord(input: CreateRouteCatalogInput, now: string, id = newId()): RouteCatalogRecord {
   return { id, tripType: input.trip_type, sourceCity: input.source_city, sourceDetail: input.source_detail ?? null, destinationCity: input.destination_city ?? null, slug: input.slug, distanceKm: input.distance_km ?? null, durationText: input.duration_text ?? null, availableFleets: input.available_fleets, faresInr: input.fares_inr, driverChargeInr: input.driver_charge_inr, nightHaltInr: input.night_halt_inr, tollIncluded: input.toll_included, tollAmountInr: input.toll_amount_inr ?? null, interstateCharges: input.interstate_charges, minKmPerDay: input.min_km_per_day, stops: input.stops, status: "draft", needsReview: input.needs_review, createdAt: now, updatedAt: now };
-}
-
-async function triggerFrontendRebuild(): Promise<void> {
-  const hook = process.env.PAGES_DEPLOY_HOOK_URL;
-  if (!hook) { console.warn("WARN: PAGES_DEPLOY_HOOK_URL not set — frontend will not auto-rebuild"); return; }
-  try { const response = await fetch(hook, { method: "POST" }); if (!response.ok) console.warn(`WARN: frontend rebuild hook returned ${response.status}`); }
-  catch (error) { console.warn("WARN: frontend rebuild hook failed", error); }
 }
 
 export function createRouteCatalogService(deps: { db: Repositories; clock: Clock }) {

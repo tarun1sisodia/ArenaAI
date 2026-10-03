@@ -1,5 +1,17 @@
 import type { RouteCatalogRecord, RouteCatalogStatus, RouteCatalogTripType } from "./route-catalog-types.js";
 import type {
+  CancellationPolicyRecord,
+  CompanyProfileRecord,
+  ContentStatus,
+  DossierSignoffRecord,
+  LocalSightseeingPackageRecord,
+  MonumentRecord,
+  PackageVehicleUpgradeRecord,
+  PetTaxiPolicyRecord,
+  TourPackageRecord,
+  TransferRouteRecord,
+} from "./dossier-types.js";
+import type {
   AuditLogRecord,
   BookingIntentRecord,
   BookingRecord,
@@ -120,6 +132,61 @@ export type Repositories = {
     getBySlug(slug: string): Promise<RouteCatalogRecord | null>;
     list(filter: RouteCatalogListFilter): Promise<{ items: RouteCatalogRecord[]; total: number }>;
     delete(id: string): Promise<void>;
+  };
+
+  tourPackages: {
+    create(record: TourPackageRecord): Promise<TourPackageRecord>;
+    update(record: TourPackageRecord): Promise<TourPackageRecord>;
+    getById(id: string): Promise<TourPackageRecord | null>;
+    getByCode(code: string): Promise<TourPackageRecord | null>;
+    list(filter?: { status?: ContentStatus | "all"; q?: string; page?: number; limit?: number }): Promise<{ items: TourPackageRecord[]; total: number }>;
+    delete(id: string): Promise<void>;
+    listUpgrades(packageId?: string | null): Promise<PackageVehicleUpgradeRecord[]>;
+    saveUpgrade(record: PackageVehicleUpgradeRecord): Promise<PackageVehicleUpgradeRecord>;
+    deleteUpgrade(id: string): Promise<void>;
+  };
+
+  transferRoutes: {
+    create(record: TransferRouteRecord): Promise<TransferRouteRecord>;
+    update(record: TransferRouteRecord): Promise<TransferRouteRecord>;
+    getById(id: string): Promise<TransferRouteRecord | null>;
+    getByCode(code: string): Promise<TransferRouteRecord | null>;
+    list(filter?: { status?: ContentStatus | "all"; q?: string; page?: number; limit?: number }): Promise<{ items: TransferRouteRecord[]; total: number }>;
+    delete(id: string): Promise<void>;
+  };
+
+  localPackages: {
+    create(record: LocalSightseeingPackageRecord): Promise<LocalSightseeingPackageRecord>;
+    update(record: LocalSightseeingPackageRecord): Promise<LocalSightseeingPackageRecord>;
+    getById(id: string): Promise<LocalSightseeingPackageRecord | null>;
+    getByCode(code: string): Promise<LocalSightseeingPackageRecord | null>;
+    list(filter?: { status?: ContentStatus | "all"; q?: string; page?: number; limit?: number }): Promise<{ items: LocalSightseeingPackageRecord[]; total: number }>;
+    delete(id: string): Promise<void>;
+  };
+
+  cancellationPolicies: {
+    list(): Promise<CancellationPolicyRecord[]>;
+    update(record: CancellationPolicyRecord): Promise<CancellationPolicyRecord>;
+  };
+
+  monuments: {
+    list(): Promise<MonumentRecord[]>;
+    update(record: MonumentRecord): Promise<MonumentRecord>;
+  };
+
+  petPolicy: {
+    get(): Promise<PetTaxiPolicyRecord | null>;
+    update(record: PetTaxiPolicyRecord): Promise<PetTaxiPolicyRecord>;
+  };
+
+  companyProfile: {
+    get(): Promise<CompanyProfileRecord | null>;
+    update(record: CompanyProfileRecord): Promise<CompanyProfileRecord>;
+  };
+
+  dossierSignoffs: {
+    list(): Promise<DossierSignoffRecord[]>;
+    update(record: DossierSignoffRecord): Promise<DossierSignoffRecord>;
   };
 
   catalog: {

@@ -152,6 +152,14 @@ const VEHICLE_OPTIONS: VehicleOption[] = [
   },
 ];
 
+const PACKAGE_UPGRADES: Record<VehicleId, number> = {
+  sedan: 0,
+  ertiga: 800,
+  innova: 1800,
+  tempo: 3500,
+  urbania: 5500,
+};
+
 function formatBookingDate(value: string): string {
   if (!value) return "Select date";
   const date = new Date(`${value}T00:00:00`);
@@ -937,7 +945,7 @@ export function BookingPage() {
                     </button>
                     <button
                       type="button"
-                      onClick={() => { setBookingMode("local"); setUnsupportedRequest(null); }}
+                      onClick={() => { setBookingMode("local"); setLocalPickupName("Agra"); setUnsupportedRequest(null); }}
                       className={`px-3.5 py-1.5 rounded-md font-label-lg text-xs font-semibold transition-all ${
                         bookingMode === "local" ? "bg-primary text-on-primary shadow-xs" : "text-ink-slate hover:text-ink-charcoal"
                       }`}
@@ -1004,20 +1012,7 @@ export function BookingPage() {
 
                 {/* Local Mode */}
                 {bookingMode === "local" && (
-                  <>
-                    <div className="sm:col-span-2 flex flex-col gap-1">
-                      <label htmlFor="local-pickup-input" className="font-label-lg text-xs font-bold text-ink-slate">Pickup Location</label>
-                      <LocationCombobox
-                        id="local-pickup-input"
-                        value={localPickupName}
-                        onChange={(value) => setLocalPickupName(value)}
-                        placeholder="Search hotel, station, city..."
-                        label="Local tour pickup location"
-                        triggerIcon="trip_origin"
-                        showLocationIqBadge={false}
-                      />
-                    </div>
-                    <div className="sm:col-span-2 lg:col-span-2 flex flex-col gap-1">
+                  <div className="sm:col-span-2 lg:col-span-3 flex flex-col gap-1">
                     <label htmlFor="local-pkg-select" className="font-label-lg text-xs font-bold text-ink-slate">Select Local Tour / Transfer</label>
                     <select
                       id="local-pkg-select"
@@ -1048,8 +1043,7 @@ export function BookingPage() {
                         </optgroup>
                       )}
                     </select>
-                    </div>
-                  </>
+                  </div>
                 )}
 
                 {/* Package Mode */}
@@ -1188,6 +1182,12 @@ export function BookingPage() {
 
                 {fleetOptions.map((veh) => {
                   const isSelected = selectedVehicleId === veh.id;
+                  const localTourPrice = selectedLocalCatalog && selectedLocalCatalog.startingPriceInr > 0
+                    ? selectedLocalCatalog.startingPriceInr + (PACKAGE_UPGRADES[veh.id] ?? 0)
+                    : localPackages[localPackageKey]?.fares[veh.id];
+                  const packageTourPrice = (selectedPackageCatalog?.startingPriceInr || selectedPackage.from) + (PACKAGE_UPGRADES[veh.id] ?? 0);
+                  const liveVehicleRate = liveFleet.find((f) => f.id === veh.id || f.tier === mapVehicleTier(veh.id))?.perKm;
+
                   return (
                     <button
                       key={veh.id}
@@ -1216,17 +1216,49 @@ export function BookingPage() {
                         </div>
 
                         <div className="flex-1 flex flex-col gap-1 min-w-0">
-                          <div className="flex items-center justify-between">
-                            <h3 className="font-title-lg text-title-lg text-ink-midnight font-bold">
-                              {veh.name}
-                            </h3>
-                            <span className="font-label-caps text-xs text-primary font-bold">
-                              {isSelected ? "Selected Tier" : "Click to Select"}
-                            </span>
+                          <div className="flex items-start justify-between gap-2">
+                            <div>
+                              <h3 className="font-title-lg text-title-lg text-ink-midnight font-bold">
+                                {veh.name}
+                              </h3>
+                              <p className="font-body-sm text-body-sm text-secondary">
+                                {veh.subtitle}
+                              </p>
+                            </div>
+                            <div className="flex flex-col items-end shrink-0">
+                              {bookingMode === "local" && localTourPrice ? (
+                                <div className="flex flex-col items-end">
+                                  <span className="font-title-lg text-base sm:text-lg font-bold text-primary">
+                                    {formatInr(localTourPrice)}
+                                  </span>
+                                  <span className="font-label-caps text-[10px] text-terracotta-sandstone font-semibold uppercase tracking-wider">
+                                    Fixed Tour Tariff
+                                  </span>
+                                </div>
+                              ) : bookingMode === "package" && packageTourPrice ? (
+                                <div className="flex flex-col items-end">
+                                  <span className="font-title-lg text-base sm:text-lg font-bold text-primary">
+                                    {formatInr(packageTourPrice)}
+                                  </span>
+                                  <span className="font-label-caps text-[10px] text-terracotta-sandstone font-semibold uppercase tracking-wider">
+                                    Package Tariff
+                                  </span>
+                                </div>
+                              ) : liveVehicleRate ? (
+                                <div className="flex flex-col items-end">
+                                  <span className="font-title-lg text-sm sm:text-base font-bold text-ink-midnight">
+                                    ₹{liveVehicleRate}/km
+                                  </span>
+                                  <span className="font-label-caps text-[10px] text-secondary font-medium">
+                                    Standard Rate
+                                  </span>
+                                </div>
+                              ) : null}
+                              <span className={`font-label-caps text-xs font-bold mt-0.5 ${isSelected ? "text-primary" : "text-ink-slate"}`}>
+                                {isSelected ? "Selected Tier" : "Click to Select"}
+                              </span>
+                            </div>
                           </div>
-                          <p className="font-body-sm text-body-sm text-secondary">
-                            {veh.subtitle}
-                          </p>
                           <div className="flex flex-wrap items-center gap-2 mt-1">
                             <span className="inline-flex items-center gap-1 text-label-md font-semibold bg-surface-container-low px-2 py-0.5 rounded text-ink-slate border border-border-warm/60">
                               <span className="material-symbols-outlined text-icon-14">groups</span>
@@ -1581,6 +1613,43 @@ export function BookingPage() {
                     <span className="text-xs text-secondary font-medium">
                       The server locks this amount for Razorpay. Balance ₹{(serverFare?.totalFare ?? 2500) - (serverFare?.advanceAmount ?? 700)} is payable directly to the chauffeur at destination.
                     </span>
+                  </div>
+                </div>
+
+                {/* Concierge Desk Call/WhatsApp Notice before Payment */}
+                <div className="p-space-md rounded-xl bg-sandstone-wash/90 border border-primary/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                  <div className="flex items-start gap-2.5">
+                    <span className="material-symbols-outlined text-primary text-icon-24 shrink-0 mt-0.5">
+                      support_agent
+                    </span>
+                    <div className="flex flex-col">
+                      <p className="font-title-md text-xs sm:text-sm font-bold text-ink-midnight">
+                        Planning custom stops or have questions before paying?
+                      </p>
+                      <p className="font-body-sm text-xs text-on-surface-variant mt-0.5 leading-relaxed">
+                        Local tours and transfers have fixed tariffs. Call our central dispatch desk or message on WhatsApp to confirm custom monument timing or complete an instant reservation offline.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto">
+                    <a
+                      href="tel:+916395867598"
+                      className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg bg-surface border border-border-warm text-ink-charcoal font-label-lg text-xs font-bold hover:bg-surface-container-high transition-colors shadow-2xs"
+                    >
+                      <span className="material-symbols-outlined text-icon-16 text-primary">call</span>
+                      <span>Call Desk</span>
+                    </a>
+                    <a
+                      href="https://wa.me/916395867598?text=Hello%20SK%20Baghel%20Travels%2C%20I%20have%20a%20question%20regarding%20my%20local%20tour%20booking%20before%20payment."
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#25D366] text-white font-label-lg text-xs font-bold hover:bg-[#1EBE5D] transition-colors shadow-2xs"
+                    >
+                      <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z" />
+                      </svg>
+                      <span>WhatsApp Desk</span>
+                    </a>
                   </div>
                 </div>
 

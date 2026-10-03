@@ -1,9 +1,11 @@
+import { useEffect, useMemo, useState } from "react";
 import type { SupportedLanguage } from "../config";
 import {
   PrimaryButton,
   WhatsAppButton,
   EDITORIAL_TYPOGRAPHY,
 } from "../components/layout/EditorialPageTemplate";
+import { fetchLiveFleet, type PublicFleetVehicle } from "../services/catalog";
 
 export interface ServicesPageProps {
   language?: SupportedLanguage;
@@ -148,6 +150,46 @@ const SERVICES_MODULES: ServiceModule[] = [
 ];
 
 export function ServicesPage({ language = "en" }: ServicesPageProps) {
+  const [liveFleet, setLiveFleet] = useState<PublicFleetVehicle[]>([]);
+
+  useEffect(() => {
+    let active = true;
+    fetchLiveFleet()
+      .then((fleet) => {
+        if (active && fleet.length > 0) {
+          setLiveFleet(fleet);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const serviceModules = useMemo(() => {
+    const activeVehicles = liveFleet.filter((v) => v.active);
+    const sedan = activeVehicles.find((v) => v.id === "sedan" || v.tier === "sedan");
+    const tempo = activeVehicles.find((v) => v.id === "tempo" || v.tier === "tempo-traveller");
+    const lowestCabRate = sedan?.perKm ?? 10;
+    const tempoRate = tempo?.perKm ?? 25;
+
+    return SERVICES_MODULES.map((s) => {
+      if (s.id === "service-02") {
+        return {
+          ...s,
+          startingFare: `₹${lowestCabRate}/km`,
+        };
+      }
+      if (s.id === "service-05") {
+        return {
+          ...s,
+          startingFare: `₹${tempoRate}/km`,
+        };
+      }
+      return s;
+    });
+  }, [liveFleet]);
+
   return (
     <div className="bg-surface font-body-md text-body-md text-on-surface antialiased min-h-screen">
       {/* ── 1. HERO & BREADCRUMBS ── */}
@@ -191,7 +233,7 @@ export function ServicesPage({ language = "en" }: ServicesPageProps) {
               Quick Directory Jump
             </p>
             <div className="flex items-center gap-2 overflow-x-auto pb-space-xs mt-1.5 scrollbar-none">
-              {SERVICES_MODULES.map((s) => (
+              {serviceModules.map((s) => (
                 <a
                   key={s.id}
                   className="whitespace-nowrap px-3 py-1 rounded-full bg-surface-container hover:bg-surface-container-high text-ink-charcoal font-label-caps text-body-sm transition-all font-bold"
@@ -220,7 +262,7 @@ export function ServicesPage({ language = "en" }: ServicesPageProps) {
           </p>
         </div>
 
-        {SERVICES_MODULES.map((s) => (
+        {serviceModules.map((s) => (
           <div
             key={s.id}
             id={s.id}

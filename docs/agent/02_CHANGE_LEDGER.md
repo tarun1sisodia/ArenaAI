@@ -270,6 +270,50 @@ Implemented:
   - Verified "Edit Trip / Vehicle" smoothly navigates back to Step 1 while preserving active inputs.
 - Verified with full `npm run verify` (typechecks x3, 23 backend vitest suites / 142 tests passing, SSG prerendering 52 pages, builds x3).
 
+### 2026-10-04 — Dossier Database Template v2: Schema & Data Seeding (Migration 0024)
+
+- Created and executed PostgreSQL migration `backend/migrations/0024_dossier_content.sql`:
+  - Extended `route_catalog` with universal pricing and editorial columns: `use_per_km` (boolean default true), `per_km_rate_override` (numeric), `highway` (text), and `all_inclusive_note` (text).
+  - Created dedicated table `local_sightseeing_packages` (id, package_code unique, name, duration_hours, included_km, covers, parking_note, fleet_prices jsonb, use_per_km default false, extra_rates jsonb, night_charge_inr, status, is_active, timestamps).
+  - Created dedicated table `transfer_routes` (id, route_code unique, name, distance_text, direction_note, fleet_prices jsonb, use_per_km default false, night_charge_inr, status, is_active, timestamps). Split AGC and AF station transfers.
+  - Created dedicated table `tour_packages` (id, package_code unique, name, duration_text, days, nights, base_tier_code, starting_price_inr, fleet_prices jsonb, use_per_km default false, night_charge_inr, flat_charge_inr, inclusions_highlight, inclusions_note, status, is_active, timestamps).
+  - Created relational table `package_vehicle_upgrades` (id, package_id nullable FK, tier_code, passenger_note, surcharge_inr, unique indexes for global vs package overrides).
+  - Created dedicated table `cancellation_policies` (id, policy_type in 'cab'/'tour_package', notice_period_text, sort_order, fee_retained_percent, refund_percent, rule_text, refund_timeline_note).
+  - Created single-row table `company_profile` (brand_name, office_address, primary_phone, whatsapp_number, email, gstin, operating_hours, maps_location, dossier_version, dossier_status).
+  - Created dedicated table `dossier_signoffs` (id, section_key unique, section_title, status in 'pending'/'approved'/'modification_requested', client_notes, approved_by FK, approved_at).
+  - Created dedicated table `monuments` (id, name unique, visiting_hours, closed_note, historical_context, sort_order).
+  - Created single-row table `pet_taxi_policy` (id, is_offered, seat_protection_note, breed_restriction_note, comfort_stop_note, booking_instruction).
+- Seeded baseline rows:
+  - 9 Intercity one-way corridors into `route_catalog` as `status='draft', needs_review=true` (Agra to Delhi, Noida, Gurgaon, Jaipur, Mathura/Vrindavan, Gwalior, Lucknow, Ayodhya, and Delhi to Jaipur).
+  - 9 Cancellation policy slabs (3 cab tiers + 6 tour package slabs).
+  - 10 Monuments from Dossier §10.2 (with Friday closure notes for Taj Mahal).
+  - 1 Pet taxi policy benchmark row.
+  - 1 Company profile row with live verified phone (`+91 97628 17598`) and `[TBD — confirm with client]` for unconfirmed legal/tax fields.
+  - 10 Dossier sign-off sections as `status='pending'`.
+  - 4 Global package vehicle upgrade rows (`package_id IS NULL`).
+  - 2 Local sightseeing package draft rows (`agra-standard-sightseeing`, `agra-extended-city-tour`).
+  - 4 Transfer route draft rows (`agc-station-drop`, `af-station-drop`, `kheria-airport`, `delhi-igi-oneway`).
+  - 6 Signature tour packages draft rows.
+- Verified database schema and seed integrity via automated PostgreSQL query script; all 10 tables and all 9 corridors verified.
+### 2026-10-04 — Dossier Content: Backend Modules & Public Manifest Endpoints (Step 2)
+
+- Built and registered all 8 discrete modules adhering to the 4-file contract (`schema`, `service`, `controller`, `routes`):
+  - `tour-packages`: CRUD, slug junk-refine (`!/^\d+-btn-/.test(slug) && !/command/i.test(slug) && !/--/.test(slug)`), `listUpgrades`, `saveUpgrade`, `deleteUpgrade`, `triggerFrontendRebuild()` on publish/archive/price edits to published items. Manifest serves published packages with attached vehicle upgrades.
+  - `transfer-routes`: CRUD, slug junk-refine, `triggerFrontendRebuild()`, public manifest filtering drafts.
+  - `local-packages`: CRUD, slug junk-refine, `triggerFrontendRebuild()`, public manifest filtering drafts.
+  - `cancellation-policies`: admin list/get/update, public list, `triggerFrontendRebuild()`.
+  - `monuments`: admin list/get/update, public list, `triggerFrontendRebuild()`.
+  - `pet-policy`: admin get/update, public get, `triggerFrontendRebuild()`.
+  - `company-profile`: admin get/update, public get, `triggerFrontendRebuild()`.
+  - `dossier-signoffs`: admin list/get/update, public list. Automatically synchronizes `company_profile.dossier_status` to `'signed_off'` when all 10 sections are approved, `'modifications_needed'` if any section requests modification, or `'pending_review'`, calling `triggerFrontendRebuild()`.
+- Built combined content manifest endpoint:
+  - `GET /api/v1/content/manifest` (rate-limited 120/min mirroring `route-catalog`) aggregating `cancellationPolicies`, `monuments`, `petPolicy`, `companyProfile`, and `dossierSignoffs` in a single unauthenticated roundtrip.
+- Rate limits strictly configured: 120/min for public manifests/lookups, 60/min for admin reads, 30/min for admin writes, 20/min for lifecycle transitions.
+- Fully wired in `backend/src/app.ts` alongside existing route catalog.
+- Added comprehensive integration tests (`backend/tests/integration/dossier-manifest-modules.test.ts`) validating public manifests, draft filtering, publishing flow, vehicle upgrade bundling, junk slug rejection, and signoff synchronization.
+- Zero changes made to `fare.engine.ts` (strictly deferred per scope pin).
+- Fully validated via `npm run verify`: 3x typechecks, 26 vitest test suites / 150 tests passed, customer SEO lifecycle passed, 3x builds succeeded.
+
 ## Known next work (Phase 3 — secure integrations)
 
 - Step 3.2: High-entropy token or OTP recovery for booking status retrieval (`/api/v1/bookings/status`).

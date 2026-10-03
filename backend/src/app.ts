@@ -51,6 +51,31 @@ import { registerReviewRoutes } from "./modules/reviews/review.routes.js";
 import { createRouteCatalogController } from "./modules/route-catalog/route-catalog.controller.js";
 import { registerRouteCatalogRoutes } from "./modules/route-catalog/route-catalog.routes.js";
 import { createRouteCatalogService } from "./modules/route-catalog/route-catalog.service.js";
+import { createTourPackagesController } from "./modules/tour-packages/tour-packages.controller.js";
+import { registerTourPackagesRoutes } from "./modules/tour-packages/tour-packages.routes.js";
+import { createTourPackagesService } from "./modules/tour-packages/tour-packages.service.js";
+import { createTransferRoutesController } from "./modules/transfer-routes/transfer-routes.controller.js";
+import { registerTransferRoutesRoutes } from "./modules/transfer-routes/transfer-routes.routes.js";
+import { createTransferRoutesService } from "./modules/transfer-routes/transfer-routes.service.js";
+import { createLocalPackagesController } from "./modules/local-packages/local-packages.controller.js";
+import { registerLocalPackagesRoutes } from "./modules/local-packages/local-packages.routes.js";
+import { createLocalPackagesService } from "./modules/local-packages/local-packages.service.js";
+import { createCancellationPoliciesController } from "./modules/cancellation-policies/cancellation-policies.controller.js";
+import { registerCancellationPoliciesRoutes } from "./modules/cancellation-policies/cancellation-policies.routes.js";
+import { createCancellationPoliciesService } from "./modules/cancellation-policies/cancellation-policies.service.js";
+import { createMonumentsController } from "./modules/monuments/monuments.controller.js";
+import { registerMonumentsRoutes } from "./modules/monuments/monuments.routes.js";
+import { createMonumentsService } from "./modules/monuments/monuments.service.js";
+import { createPetPolicyController } from "./modules/pet-policy/pet-policy.controller.js";
+import { registerPetPolicyRoutes } from "./modules/pet-policy/pet-policy.routes.js";
+import { createPetPolicyService } from "./modules/pet-policy/pet-policy.service.js";
+import { createCompanyProfileController } from "./modules/company-profile/company-profile.controller.js";
+import { registerCompanyProfileRoutes } from "./modules/company-profile/company-profile.routes.js";
+import { createCompanyProfileService } from "./modules/company-profile/company-profile.service.js";
+import { createDossierSignoffsController } from "./modules/dossier-signoffs/dossier-signoffs.controller.js";
+import { registerDossierSignoffsRoutes } from "./modules/dossier-signoffs/dossier-signoffs.routes.js";
+import { createDossierSignoffsService } from "./modules/dossier-signoffs/dossier-signoffs.service.js";
+import { registerContentManifestRoutes } from "./modules/content/content.routes.js";
 import { createReviewService } from "./modules/reviews/review.service.js";
 import {
   createNoopEmail,
@@ -217,6 +242,14 @@ export async function buildApp(options: AppOptions): Promise<BuiltApp> {
   const inquiryService = createInquiryService({ db, clock });
   const rentalEnquiryService = createRentalEnquiryService({ db, clock });
   const routeCatalogService = createRouteCatalogService({ db, clock });
+  const tourPackagesService = createTourPackagesService({ db, clock });
+  const transferRoutesService = createTransferRoutesService({ db, clock });
+  const localPackagesService = createLocalPackagesService({ db, clock });
+  const cancellationPoliciesService = createCancellationPoliciesService({ db, clock });
+  const monumentsService = createMonumentsService({ db, clock });
+  const petPolicyService = createPetPolicyService({ db, clock });
+  const companyProfileService = createCompanyProfileService({ db, clock });
+  const dossierSignoffsService = createDossierSignoffsService({ db, clock });
 
   const healthHandler = async () => ({ success: true, data: { status: "ok", version: env.FARE_RULES_VERSION } });
   const readyHandler = async (_request: unknown, reply: { code: (statusCode: number) => { send: (payload: unknown) => unknown } }) => {
@@ -248,6 +281,21 @@ export async function buildApp(options: AppOptions): Promise<BuiltApp> {
   await registerCatalogRoutes(app, createCatalogController(catalogService));
   await registerReviewRoutes(app, createReviewController(reviewService));
   await registerRouteCatalogRoutes(app, createRouteCatalogController(routeCatalogService));
+  await registerTourPackagesRoutes(app, createTourPackagesController(tourPackagesService));
+  await registerTransferRoutesRoutes(app, createTransferRoutesController(transferRoutesService));
+  await registerLocalPackagesRoutes(app, createLocalPackagesController(localPackagesService));
+  await registerCancellationPoliciesRoutes(app, createCancellationPoliciesController(cancellationPoliciesService));
+  await registerMonumentsRoutes(app, createMonumentsController(monumentsService));
+  await registerPetPolicyRoutes(app, createPetPolicyController(petPolicyService));
+  await registerCompanyProfileRoutes(app, createCompanyProfileController(companyProfileService));
+  await registerDossierSignoffsRoutes(app, createDossierSignoffsController(dossierSignoffsService));
+  await registerContentManifestRoutes(app, {
+    cancellationPoliciesService,
+    monumentsService,
+    petPolicyService,
+    companyProfileService,
+    dossierSignoffsService,
+  });
   await registerInquiryRoutes(app, createInquiryController(inquiryService));
   await registerRentalEnquiryRoutes(app, createRentalEnquiryController(rentalEnquiryService));
   await registerAdminRoutes(app, createAdminController(adminService, paymentService, bookingService));
