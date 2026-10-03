@@ -857,17 +857,6 @@ export function BookingPage() {
     }
   };
 
-  // Test-only helper. It is intentionally unreachable in production UI.
-  const handleSimulatePayment = () => {
-    if (!import.meta.env.DEV || import.meta.env.VITE_ENABLE_PAYMENT_SIMULATION !== "true") return;
-    const mockTicket = `AGR-${new Date().toISOString().slice(0, 10).replace(/-/g, "")}-${Math.floor(1000 + Math.random() * 9000)}`;
-    setConfirmedTicketId(mockTicket);
-    setConfirmedBookingId(`book-${Date.now()}`);
-    setAmountPaid(serverFare?.advanceAmount ?? 700);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    setStep(isDirectFunnel ? 3 : 4);
-  };
-
   // Is current view rendering the Guest Details form?
   const isGuestFormStep = isDirectFunnel ? step === 2 : step === 3;
   // Is current view rendering the Confirmed Voucher?
@@ -1851,16 +1840,6 @@ export function BookingPage() {
                           : `Authorize & Pay ${formatInr(serverFare?.advanceAmount ?? 0)}`}
                     </span>
                   </button>
-
-                  {import.meta.env.DEV && import.meta.env.VITE_ENABLE_PAYMENT_SIMULATION === "true" && (
-                    <button
-                      type="button"
-                      onClick={handleSimulatePayment}
-                      className="w-full py-2 px-3 rounded-lg bg-surface-container-low hover:bg-surface-container text-ink-slate font-label-lg text-xs font-semibold transition-colors border border-border-warm"
-                    >
-                      Simulate Payment Authorization (Development Only)
-                    </button>
-                  )}
                 </div>
               </form>
             </div>

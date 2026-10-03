@@ -1,11 +1,11 @@
 # Payment system — SK Baghel Tour & Travels
 
-**Status:** Specification only. Live Razorpay is **out of scope** until this document is followed end-to-end.  
-**Canonical product:** Agra SK Baghel Tour & Travels (`book.html` 5-step flow: Route → Vehicle → Details → Advance → Ticket).  
-**Gateway:** Razorpay (India). **Frontend host:** Cloudflare (Workers / Pages + custom domain). **Backend:** Cloudflare Workers + D1/KV **or** a small VPS/cloud API.  
+**Status:** Historical pre-integration proposal. The current customer flow creates bookings through the Fastify API; payment success must come from server-confirmed provider state. Live-provider readiness depends on deployment configuration and was not verified by this document update.
+**Current references:** [`docs/DEPLOYMENT.md`](DEPLOYMENT.md), `backend/src/modules/payments/`, `backend/src/providers/`, and `react/src/features/booking/BookingPage.tsx`.
+**Historical proposal:** Razorpay (India), an earlier Cloudflare Worker/D1-or-VPS architecture, and the former client-side mock checkout. That mock-success path has since been removed.
 **Session branch note:** Arena sessions stay on `arena/<session-id>`. Do not invent a `docs-payment-system` git branch inside an Arena session; keep this file on the session branch and merge to `main`.
 
-This file is the **source of truth** for money movement. If code and this doc disagree, **stop and update the doc first**.
+The sections below preserve the original design proposal and must not be treated as current deployment or implementation facts. For money movement, follow the current backend source and deployment configuration; never infer that live credentials or webhooks are configured from this document.
 
 ---
 

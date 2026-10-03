@@ -63,7 +63,16 @@ export function DashboardPage() {
     let isMounted = true;
     setLoading(true);
     setLoadError(null);
-    Promise.all([fetchAdminBookings(), fetchAdminPayments(), fetchAdminInquiries(), fetchAdminAuditLogs(50)])
+    setBookings([]);
+    setPayments([]);
+    setInquiries([]);
+    setAudit([]);
+    Promise.all([
+      fetchAdminBookings({ page: 1, pageSize: 100 }),
+      fetchAdminPayments({ page: 1, limit: 100 }),
+      fetchAdminInquiries({ page: 1, limit: 100 }),
+      fetchAdminAuditLogs(50),
+    ])
       .then(([b, p, iq, au]) => {
         if (!isMounted) return;
         setBookings(b);
@@ -109,6 +118,7 @@ export function DashboardPage() {
   );
   const inTransit = bookings.filter((b) => b.status === "in_transit").length;
   const newInquiries = inquiries.filter((i) => i.status === "new").length;
+  const statsReady = !loading && !loadError;
 
   function pctDelta(current: number, previous: number): number | undefined {
     if (previous <= 0) return undefined;
@@ -173,7 +183,7 @@ export function DashboardPage() {
       <PageHeader
         eyebrow="Live board"
         title="Operations Overview"
-        description="Live figures from the bookings, payments and audit systems."
+        description="Live data from the most recent records returned by the operations API."
         actions={
           <div className="flex flex-wrap items-center gap-2">
             <Button variant="outline" size="sm" className="min-h-[44px] sm:min-h-[32px]" onClick={() => setReloadKey((k) => k + 1)}>
@@ -210,24 +220,24 @@ export function DashboardPage() {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           index={0}
-          label="Revenue · MTD"
-          value={revenueThisMonth}
+          label="Revenue · MTD (loaded records)"
+          value={statsReady ? revenueThisMonth : null}
           format="inr"
           icon={IndianRupee}
-          delta={pctDelta(revenueThisMonth, revenuePrevMonth)}
+          delta={statsReady ? pctDelta(revenueThisMonth, revenuePrevMonth) : undefined}
           deltaLabel="vs last month"
         />
         <StatCard
           index={1}
-          label="Bookings · MTD"
-          value={bookingsThisMonth}
+          label="Bookings · MTD (loaded records)"
+          value={statsReady ? bookingsThisMonth : null}
           format="number"
           icon={CalendarDays}
-          delta={pctDelta(bookingsThisMonth, bookingsPrevMonth)}
+          delta={statsReady ? pctDelta(bookingsThisMonth, bookingsPrevMonth) : undefined}
           deltaLabel="vs last month"
         />
-        <StatCard index={2} label="Trips in transit" value={inTransit} format="number" icon={CheckCircle2} />
-        <StatCard index={3} label="New inquiries" value={newInquiries} format="number" icon={MessageSquare} />
+        <StatCard index={2} label="Trips in transit · loaded" value={statsReady ? inTransit : null} format="number" icon={CheckCircle2} />
+        <StatCard index={3} label="New inquiries · loaded" value={statsReady ? newInquiries : null} format="number" icon={MessageSquare} />
       </div>
 
       {/* Revenue + status mix */}
@@ -235,8 +245,8 @@ export function DashboardPage() {
         <Card className="xl:col-span-2">
           <CardHeader className="flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
             <div>
-              <CardTitle>Revenue — trailing 12 months</CardTitle>
-              <CardDescription>Captured gateway amounts, ₹</CardDescription>
+              <CardTitle>Captured revenue · latest records</CardTitle>
+              <CardDescription>Most recent 100 payments returned by the API, grouped by month · ₹</CardDescription>
             </div>
             <Badge tone="gold">{shortMonth(now)} in progress</Badge>
           </CardHeader>
@@ -252,8 +262,7 @@ export function DashboardPage() {
             ) : (
               <div className="flex h-44 items-center justify-center text-center">
                 <p className="max-w-xs text-sm leading-relaxed text-ink-soft">
-                  No captured payments in the last 12 months yet. Revenue appears here once customers
-                  complete checkouts.
+                  No captured payments were returned in the latest payment records.
                 </p>
               </div>
             )}
@@ -263,7 +272,7 @@ export function DashboardPage() {
         <Card>
           <CardHeader>
             <CardTitle>Booking status mix</CardTitle>
-            <CardDescription>All bookings on record</CardDescription>
+            <CardDescription>Most recent 100 records returned by the API</CardDescription>
           </CardHeader>
           <CardContent>
             {bookings.length > 0 ? (
@@ -279,7 +288,7 @@ export function DashboardPage() {
             ) : (
               <div className="flex h-44 items-center justify-center text-center">
                 <p className="max-w-xs text-sm leading-relaxed text-ink-soft">
-                  No bookings yet — create one from the customer site to see the status mix.
+                  No bookings were returned on the first page.
                 </p>
               </div>
             )}
@@ -292,7 +301,7 @@ export function DashboardPage() {
         <Card>
           <CardHeader>
             <CardTitle>Trips by vehicle tier</CardTitle>
-            <CardDescription>Current records</CardDescription>
+            <CardDescription>Most recent 100 bookings returned by the API</CardDescription>
           </CardHeader>
           <CardContent>
             {bookings.length > 0 ? (
@@ -315,7 +324,7 @@ export function DashboardPage() {
         <Card>
           <CardHeader>
             <CardTitle>Top routes</CardTitle>
-            <CardDescription>By booking count</CardDescription>
+            <CardDescription>By booking count · latest 100 returned</CardDescription>
           </CardHeader>
           <CardContent>
             {topRoutes.length > 0 ? (

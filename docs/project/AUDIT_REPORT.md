@@ -3,7 +3,9 @@
 **Date:** September 16, 2026  
 **Auditor Roles:** Senior Software Engineer, Software Architect, QA Engineer, Backend Engineer, Frontend Engineer, and Application Security Engineer  
 **Audit Scope:** `react/` (Customer SSG), `admin/` (Operations SPA), `backend/` (Fastify REST API), Database & Migrations (`backend/migrations/`), Authentication, Security & Deployment Topology.  
-**Baseline Status:** Typechecks PASS (3/3), Tests PASS (52/52 deterministic unit/contract tests), Builds PASS (Customer 75-page SSG + Admin SPA + Backend Server).  
+**Baseline Status:** Typechecks PASS (3/3), Tests PASS (52/52 deterministic unit/contract tests), Builds PASS (Customer 75-page SSG + Admin SPA + Backend Server).
+
+> **Historical snapshot (2026-09-16):** This report predates the API-backed booking/admin integrations and Supabase authentication now present in the repository. Its “mock-only” descriptions record the state observed on that date, not current runtime behavior. Use [`02_PROJECT_CONTEXT.md`](02_PROJECT_CONTEXT.md), [`04_PROGRESS_TRACKER.md`](04_PROGRESS_TRACKER.md), and [`docs/agent/CURRENT_SYSTEM_DEBUGGING_MAP.md`](../agent/CURRENT_SYSTEM_DEBUGGING_MAP.md) for current context.
 
 ---
 

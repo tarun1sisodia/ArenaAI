@@ -28,6 +28,10 @@ export function FinancePage({ user }: { user: AdminUser }) {
   const canRefund = can(user.role, "finance:refund");
 
   const [payments, setPayments] = useState<Payment[]>([]);
+  const [paymentCount, setPaymentCount] = useState<number | null>(null);
+  const [totalCaptured, setTotalCaptured] = useState<number | null>(null);
+  const [totalRefunded, setTotalRefunded] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [refundError, setRefundError] = useState<string | null>(null);
   const [refundTarget, setRefundTarget] = useState<Payment | null>(null);
@@ -43,6 +47,9 @@ export function FinancePage({ user }: { user: AdminUser }) {
       .then((res) => {
         if (isMounted) {
           setPayments(res.items);
+          setPaymentCount(res.total);
+          setTotalCaptured(res.totalCaptured);
+          setTotalRefunded(res.totalRefunded);
         }
       })
       .catch((err) => {
@@ -50,6 +57,9 @@ export function FinancePage({ user }: { user: AdminUser }) {
           setPayments([]);
           setLoadError(err instanceof Error ? err.message : "Could not load payments from the backend.");
         }
+      })
+      .finally(() => {
+        if (isMounted) setIsLoading(false);
       });
     return () => {
       isMounted = false;
@@ -57,13 +67,9 @@ export function FinancePage({ user }: { user: AdminUser }) {
   }, []);
 
   const captured = payments.filter((p) => p.status === "captured");
-  const refunded = payments.filter((p) => p.status === "refunded");
-  const totalCaptured = captured.reduce((s, p) => s + p.amount, 0);
-  const totalRefunded = refunded.reduce((s, p) => s + p.amount, 0);
-
   const methodTotals = useMemo(() => {
     const acc: Record<string, number> = {};
-    for (const p of captured) acc[p.method] = (acc[p.method] ?? 0) + p.amount;
+    for (const p of captured) if (p.method) acc[p.method] = (acc[p.method] ?? 0) + p.amount;
     return Object.entries(acc).map(([method, value]) => ({
       label: METHOD_META[method as keyof typeof METHOD_META]?.label ?? method,
       value,
@@ -134,7 +140,7 @@ export function FinancePage({ user }: { user: AdminUser }) {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <StatCard index={0} label="Captured · all time" value={totalCaptured} format="inr" icon={CreditCard} />
         <StatCard index={1} label="Refunded · all time" value={totalRefunded} format="inr" icon={RefreshCw} />
-        <StatCard index={2} label="Payments recorded" value={payments.length} format="number" icon={Banknote} />
+        <StatCard index={2} label="Payments recorded · all time" value={paymentCount} format="number" icon={Banknote} />
       </div>
 
       <div className="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-3">
@@ -142,9 +148,9 @@ export function FinancePage({ user }: { user: AdminUser }) {
           <CardHeader className="flex-row items-center justify-between">
             <div>
               <CardTitle>Payment ledger</CardTitle>
-              <CardDescription>Razorpay · PayPal — captured amounts in INR</CardDescription>
+              <CardDescription>Payment amounts reported by the backend in INR</CardDescription>
             </div>
-            <Badge tone="neutral">{payments.length} records</Badge>
+            <Badge tone="neutral">{paymentCount === null ? "Not reported" : `${paymentCount} records`}</Badge>
           </CardHeader>
           <Table>
             <THead>
@@ -160,7 +166,7 @@ export function FinancePage({ user }: { user: AdminUser }) {
             </THead>
             <TBody>
               {payments.map((p, i) => {
-                const methodMeta = METHOD_META[p.method as keyof typeof METHOD_META];
+                const methodMeta = p.method ? METHOD_META[p.method as keyof typeof METHOD_META] : null;
                 const MethodIcon = methodMeta?.icon ?? CreditCard;
                 const eligible = isEligible(p);
                 return (
@@ -172,18 +178,18 @@ export function FinancePage({ user }: { user: AdminUser }) {
                     className={cn("transition-colors", canRefund && eligible && "cursor-pointer hover:bg-gold-wash/60")}
                     onClick={() => canRefund && eligible && openRefund(p)}
                   >
-                    <TD className="font-mono text-[12px] font-medium">{p.bookingTicketId}</TD>
+                    <TD className="font-mono text-[12px] font-medium">{p.bookingTicketId || "Not reported"}</TD>
                     <TD className="text-[13px] capitalize text-ink-soft">{p.provider}</TD>
                     <TD>
                       <span className="flex items-center gap-1.5 text-[13px] text-ink-soft">
                         <MethodIcon className="h-3.5 w-3.5 text-ink-faint" />
-                        {methodMeta?.label ?? p.method}
+                        {methodMeta?.label ?? p.method ?? "Not reported"}
                       </span>
                     </TD>
                     <TD className="text-right font-mono text-[13px] font-medium">
-                      {p.amount === 0 ? "—" : formatINR(p.amount)}
+                      {formatINR(p.amount)}
                     </TD>
-                    <TD className="font-mono text-[12px] text-ink-soft">{formatDateTime(p.capturedAt)}</TD>
+                    <TD className="font-mono text-[12px] text-ink-soft">{p.capturedAt ? formatDateTime(p.capturedAt) : "Not reported"}</TD>
                     <TD><StatusBadge status={p.status} /></TD>
                     <TD className="text-right">
                       {canRefund && eligible && (
@@ -197,7 +203,7 @@ export function FinancePage({ user }: { user: AdminUser }) {
               })}
             </TBody>
           </Table>
-          {payments.length === 0 && !loadError && (
+          {payments.length === 0 && !isLoading && !loadError && (
             <div className="p-12 text-center">
               <p className="font-display text-lg text-ink">No payments yet</p>
               <p className="mx-auto mt-1.5 max-w-sm text-sm leading-relaxed text-ink-soft">

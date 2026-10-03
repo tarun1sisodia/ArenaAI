@@ -5,7 +5,9 @@
 **Stack:** React 19 + TypeScript (Strict) + Vite + Vanilla CSS Tokens  
 **Runtime Base:** Custom Domain Root (`https://agraskbagheltourandtravels.com`) and Pages Subpath (`/ArenaAI`)  
 **SEO & Language:** Bilingual English (`/en/` & `/`) and Hindi (`/hi/`) with full Schema.org JSON-LD  
-**Authentication & Payments:** Zero Auth (Public Browsing); Mock Frontend Payment (~900ms simulation with ticket `AGR-XXXXXX`)  
+**Authentication & Payments:** Zero Auth (Public Browsing); Mock Frontend Payment (~900ms simulation with ticket `AGR-XXXXXX`)
+
+> **Historical migration plan:** This checklist records the original design before backend booking/payment integration. The browser-side simulated-success path described here has been removed; see the current [`02_PROJECT_CONTEXT.md`](02_PROJECT_CONTEXT.md) and [`04_PROGRESS_TRACKER.md`](04_PROGRESS_TRACKER.md).
 
 ---
 

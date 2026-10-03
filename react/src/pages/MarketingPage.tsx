@@ -31,7 +31,7 @@ const copy = {
 } as const;
 
 const serviceCards = [
-  ["Outstation cabs", "Agra to Delhi, Jaipur, Mathura, Gwalior and Lucknow with clear sample fares.", "/en/routes/"],
+  ["Outstation cabs", "Agra to Delhi, Jaipur, Mathura, Gwalior and Lucknow with transparent fare estimates.", "/en/routes/"],
   ["Local Agra sightseeing", "Taj Mahal, Agra Fort, Mehtab Bagh and the city's heritage corners.", "/en/agra-sightseeing-taxi/"],
   ["Airport transfers", "Doorstep pickup, flight tracking and comfortable drops to Agra or Delhi airports.", "/en/services/"],
   ["Group travel", "Tempo Traveller and Urbania options for families, weddings and corporate groups.", "/en/vehicles/tempo-traveller/"],
@@ -39,15 +39,15 @@ const serviceCards = [
 ] as const;
 
 const faqItems = [
-  ["How does the advance payment work?", "You pay part of the fare after the car is confirmed. The rest is paid to the driver. This React demo never charges anyone."],
+  ["How does the advance payment work?", "A booking request is confirmed after the travel desk checks availability. Any advance payment offered at checkout is handled through the payment provider configured for that booking; the remaining balance is payable to the driver."],
   ["Can I cancel?", "Free cancellation is available up to 24 hours before pickup for cabs. Multi-day tours follow their published refund schedule."],
-  ["Is fare inclusions?", "Sample fares are shown transparently and a booking receipt is available on confirmed paid bookings."],
-  ["What about night driving allowance?", "A ₹300 allowance applies to cars and ₹500 to Tempo Travellers for late-night departures, shown before confirmation."]
+  ["Are fares and inclusions shown up front?", "The fare estimate and available inclusions are shown before you submit a booking request. A booking receipt is available after a booking is confirmed and paid."],
+  ["What about night driving allowance?", "Any night-driving allowance applicable to the selected vehicle and departure time is shown in the fare breakdown before confirmation."]
 ] as const;
 
 const legalSections = {
-  privacy: [["1. Information collection", "We collect only the contact and journey details needed to answer an enquiry or prepare a mock booking."], ["2. How information is used", "Details are used for travel coordination, fare estimates, customer support and service improvement. No live payment or marketing API is connected in this frontend."], ["3. Contact", "For privacy questions, email bookings@agraskbagheltourandtravels.com."]],
-  terms: [["1. Booking and advance", "A booking is confirmed only after availability is checked by the travel desk. The current React flow is a demonstration and does not collect money."], ["2. Fares and inclusions", "Published fares are sample fares. Toll, parking, night allowance and package inclusions are shown before confirmation and may be reconfirmed by the desk."], ["3. Cancellation", "Cab cancellation is free up to 24 hours before pickup. Tour package refunds depend on the published cancellation slab."]]
+  privacy: [["1. Information collection", "We collect contact and journey details needed to respond to enquiries, prepare booking requests, coordinate travel and provide customer support."], ["2. How information is used", "Details are used for travel coordination, fare estimates, booking administration and customer support. Payment options, when available, are presented through the checkout configured for the booking."], ["3. Contact", "For privacy questions, email bookings@agraskbagheltourandtravels.com."]],
+  terms: [["1. Booking and advance", "A booking request is confirmed only after the travel desk checks availability and communicates confirmation. Any required payment step and the amount due are shown before you choose to pay."], ["2. Fares and inclusions", "Published fares are estimates based on the selected trip and current fare rules. Toll, parking, night allowance and package inclusions are shown where available and may be reconfirmed by the desk."], ["3. Cancellation", "Cab cancellation is free up to 24 hours before pickup. Tour package refunds depend on the published cancellation slab."]]
 } as const;
 
 function getPageCopy(language: MarketingPageProps["language"], section: string) {
@@ -95,7 +95,7 @@ function DetailPage({ detail, language }: { detail: Vehicle | Package | Route; l
     ? detail.blurb
     : isPackage
       ? detail.blurb
-      : `Private AC taxi from ${detail.from} to ${detail.to}. Sample fares from ₹${detail.fares.sedan.toLocaleString("en-IN")}.`;
+      : `Private AC taxi from ${detail.from} to ${detail.to}. Indicative fares from ₹${detail.fares.sedan.toLocaleString("en-IN")}.`;
   const languagePrefix = language === "hi" ? "/hi" : "/en";
 
   return (
@@ -154,7 +154,7 @@ export function MarketingPage({ language, section }: MarketingPageProps) {
             <article className="catalogue-card" key={route.id}>
               <p className="eyebrow">{route.duration} · {route.km} km</p>
               <h2>{route.from.replace("-", " ")} to {route.to.replace("-", " ")}</h2>
-              <p>Private AC taxi with a local driver and clear sample fares.</p>
+              <p>Private AC taxi with a local driver and clear fare estimates.</p>
               <div className="card-meta"><span>From Agra desk</span><strong>₹{route.fares.sedan.toLocaleString("en-IN")}</strong></div>
               <a className="button button-outline" href={`/book.html?route=${route.id}`}>Book this route</a>
             </article>

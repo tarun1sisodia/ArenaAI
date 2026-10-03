@@ -225,10 +225,11 @@ hourly itinerary, inclusions/exclusions, cancellation tiers, FAQ, planning CTA, 
 ### 8.9 About / Contact / FAQ / Legal — E-E-A-T story, NAP with map and hours,
 question-shaped FAQ, published privacy and terms with the refund schedule.
 
-### 8.10 Booking funnel (5 steps) — route → vehicle → details → advance → ticket, with
+### 8.10 Booking funnel — route → vehicle → details → advance → ticket, with
 query hydration (`route`, `date`, `vehicle`, `pax`, `coupon`), 24-hour draft expiry,
-validation, and a `noindex` ticket confirmation. Until Phase I2 it runs on the local
-engine against mock payment and must label itself as such.
+validation, and a `noindex` ticket confirmation. Fare and booking state are resolved
+through the backend APIs. A ticket may show a paid state only after server-side
+payment confirmation; the customer UI must never simulate a successful payment.
 
 ### 8.11 404 — recovery actions, popular routes, click-to-call.
 
