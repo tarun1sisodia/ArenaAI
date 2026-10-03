@@ -33,6 +33,10 @@ import type {
   TripType,
   VehicleTier,
   RouteCatalogItem, RouteFleet, RouteTripType,
+  TourPackageItem, TourPackageUpgrade,
+  LocalPackageItem, TransferRouteItem,
+  CancellationPolicyItem, MonumentItem,
+  PetPolicyItem, CompanyProfileItem, DossierSignoffItem,
 } from "./types";
 
 async function apiFetch(path: string, init?: RequestInit): Promise<any> {
@@ -550,7 +554,12 @@ function mapRouteCatalogItem(value: any): RouteCatalogItem {
     driverChargeInr: Number(value.driverChargeInr ?? value.driver_charge_inr ?? 0), nightHaltInr: Number(value.nightHaltInr ?? value.night_halt_inr ?? 0),
     tollIncluded: Boolean(value.tollIncluded ?? value.toll_included), tollAmountInr: value.tollAmountInr ?? value.toll_amount_inr ?? null,
     interstateCharges: value.interstateCharges ?? value.interstate_charges ?? [], minKmPerDay: Number(value.minKmPerDay ?? value.min_km_per_day ?? 300),
-    stops: value.stops ?? [], status: value.status, needsReview: Boolean(value.needsReview ?? value.needs_review), createdAt: value.createdAt ?? value.created_at, updatedAt: value.updatedAt ?? value.updated_at,
+    stops: value.stops ?? [],
+    usePerKm: value.usePerKm ?? value.use_per_km ?? true,
+    perKmRateOverride: value.perKmRateOverride ?? value.per_km_rate_override ?? null,
+    highway: value.highway ?? null,
+    allInclusiveNote: value.allInclusiveNote ?? value.all_inclusive_note ?? null,
+    status: value.status, needsReview: Boolean(value.needsReview ?? value.needs_review), createdAt: value.createdAt ?? value.created_at, updatedAt: value.updatedAt ?? value.updated_at,
   };
 }
 
@@ -559,10 +568,232 @@ export async function fetchAdminRoutes(filter?: { tripType?: RouteTripType | "al
   const json = await apiFetch(`/api/v1/ops/admin/route-catalog${params.toString() ? `?${params}` : ""}`); return (json?.data?.items ?? json?.data ?? []).map(mapRouteCatalogItem);
 }
 export async function fetchAdminRoute(id: string): Promise<RouteCatalogItem> { const json = await apiFetch(`/api/v1/ops/admin/route-catalog/${encodeURIComponent(id)}`); return mapRouteCatalogItem(json?.data); }
-export async function createAdminRoute(payload: Omit<RouteCatalogItem, "id" | "status" | "createdAt" | "updatedAt"> & { status?: never }): Promise<RouteCatalogItem> { const json = await apiFetch(`/api/v1/ops/admin/route-catalog`, { method: "POST", body: JSON.stringify({ trip_type: payload.tripType, source_city: payload.sourceCity, source_detail: payload.sourceDetail || undefined, destination_city: payload.destinationCity || undefined, slug: payload.slug, distance_km: payload.distanceKm ?? undefined, duration_text: payload.durationText || undefined, available_fleets: payload.availableFleets, fares_inr: payload.faresInr, driver_charge_inr: payload.driverChargeInr, night_halt_inr: payload.nightHaltInr, toll_included: payload.tollIncluded, toll_amount_inr: payload.tollAmountInr ?? undefined, interstate_charges: payload.interstateCharges, min_km_per_day: payload.minKmPerDay, stops: payload.stops, needs_review: payload.needsReview }) }); return mapRouteCatalogItem(json?.data); }
-export async function updateAdminRoute(id: string, payload: Partial<Omit<RouteCatalogItem, "id" | "status" | "createdAt" | "updatedAt">>): Promise<RouteCatalogItem> { const body: any = {}; for (const [key, value] of Object.entries(payload)) { const snake = key.replace(/[A-Z]/g, (m) => `_${m.toLowerCase()}`); body[snake] = value; } const json = await apiFetch(`/api/v1/ops/admin/route-catalog/${encodeURIComponent(id)}`, { method: "PATCH", body: JSON.stringify(body) }); return mapRouteCatalogItem(json?.data); }
+export async function createAdminRoute(payload: Omit<RouteCatalogItem, "id" | "status" | "createdAt" | "updatedAt"> & { status?: never }): Promise<RouteCatalogItem> {
+  const json = await apiFetch(`/api/v1/ops/admin/route-catalog`, {
+    method: "POST",
+    body: JSON.stringify({
+      trip_type: payload.tripType, source_city: payload.sourceCity, source_detail: payload.sourceDetail || undefined,
+      destination_city: payload.destinationCity || undefined, slug: payload.slug, distance_km: payload.distanceKm ?? undefined,
+      duration_text: payload.durationText || undefined, available_fleets: payload.availableFleets, fares_inr: payload.faresInr,
+      driver_charge_inr: payload.driverChargeInr, night_halt_inr: payload.nightHaltInr, toll_included: payload.tollIncluded,
+      toll_amount_inr: payload.tollAmountInr ?? undefined, interstate_charges: payload.interstateCharges, min_km_per_day: payload.minKmPerDay,
+      stops: payload.stops, use_per_km: payload.usePerKm ?? true, per_km_rate_override: payload.perKmRateOverride ?? undefined,
+      highway: payload.highway || undefined, all_inclusive_note: payload.allInclusiveNote || undefined,
+      needs_review: payload.needsReview,
+    }),
+  });
+  return mapRouteCatalogItem(json?.data);
+}
+export async function updateAdminRoute(id: string, payload: Partial<Omit<RouteCatalogItem, "id" | "status" | "createdAt" | "updatedAt">>): Promise<RouteCatalogItem> {
+  const body: any = {};
+  for (const [key, value] of Object.entries(payload)) {
+    const snake = key.replace(/[A-Z]/g, (m) => `_${m.toLowerCase()}`);
+    body[snake] = value;
+  }
+  const json = await apiFetch(`/api/v1/ops/admin/route-catalog/${encodeURIComponent(id)}`, { method: "PATCH", body: JSON.stringify(body) });
+  return mapRouteCatalogItem(json?.data);
+}
 export async function publishAdminRoute(id: string): Promise<RouteCatalogItem> { const json = await apiFetch(`/api/v1/ops/admin/route-catalog/${encodeURIComponent(id)}/publish`, { method: "POST", body: "{}" }); return mapRouteCatalogItem(json?.data); }
 export async function archiveAdminRoute(id: string): Promise<RouteCatalogItem> { const json = await apiFetch(`/api/v1/ops/admin/route-catalog/${encodeURIComponent(id)}/archive`, { method: "POST", body: "{}" }); return mapRouteCatalogItem(json?.data); }
 export async function checkRouteSlug(slug: string): Promise<{ available: boolean }> { const json = await apiFetch(`/api/v1/ops/admin/route-catalog/slug-check?slug=${encodeURIComponent(slug)}`); return json?.data ?? { available: false }; }
 export async function suggestRouteFares(input: { tripType: RouteTripType; distanceKm: number }): Promise<Record<string, number>> { const json = await apiFetch(`/api/v1/ops/admin/route-catalog/suggest-fares`, { method: "POST", body: JSON.stringify({ trip_type: input.tripType, distance_km: input.distanceKm }) }); return json?.data ?? {}; }
 export async function fetchRouteFleets(): Promise<RouteFleet[]> { const json = await apiFetch(`/api/v1/route-catalog/fleets`); return json?.data ?? []; }
+
+// ==================== TOUR PACKAGES ====================
+export async function fetchAdminTourPackages(filter?: { status?: CatalogStatus | "all"; q?: string }): Promise<TourPackageItem[]> {
+  const params = new URLSearchParams();
+  if (filter?.status && filter.status !== "all") params.set("status", filter.status);
+  if (filter?.q?.trim()) params.set("q", filter.q.trim());
+  const json = await apiFetch(`/api/v1/ops/admin/tour-packages${params.toString() ? `?${params}` : ""}`);
+  return json?.data?.items ?? json?.data ?? [];
+}
+export async function fetchAdminTourPackage(id: string): Promise<TourPackageItem> {
+  const json = await apiFetch(`/api/v1/ops/admin/tour-packages/${encodeURIComponent(id)}`);
+  return json?.data;
+}
+export async function createAdminTourPackage(payload: any): Promise<TourPackageItem> {
+  const json = await apiFetch(`/api/v1/ops/admin/tour-packages`, { method: "POST", body: JSON.stringify(payload) });
+  return json?.data;
+}
+export async function updateAdminTourPackage(id: string, payload: any): Promise<TourPackageItem> {
+  const json = await apiFetch(`/api/v1/ops/admin/tour-packages/${encodeURIComponent(id)}`, { method: "PATCH", body: JSON.stringify(payload) });
+  return json?.data;
+}
+export async function publishAdminTourPackage(id: string): Promise<TourPackageItem> {
+  const json = await apiFetch(`/api/v1/ops/admin/tour-packages/${encodeURIComponent(id)}/publish`, { method: "POST", body: "{}" });
+  return json?.data;
+}
+export async function archiveAdminTourPackage(id: string): Promise<TourPackageItem> {
+  const json = await apiFetch(`/api/v1/ops/admin/tour-packages/${encodeURIComponent(id)}/archive`, { method: "POST", body: "{}" });
+  return json?.data;
+}
+export async function deleteAdminTourPackage(id: string): Promise<void> {
+  await apiFetch(`/api/v1/ops/admin/tour-packages/${encodeURIComponent(id)}`, { method: "DELETE" });
+}
+export async function checkTourPackageCode(code: string): Promise<{ available: boolean }> {
+  const json = await apiFetch(`/api/v1/ops/admin/tour-packages/check-code?code=${encodeURIComponent(code)}`);
+  return json?.data ?? { available: false };
+}
+export async function fetchTourPackageUpgrades(packageId?: string | null): Promise<TourPackageUpgrade[]> {
+  const q = packageId !== undefined ? `?package_id=${encodeURIComponent(packageId ?? "")}` : "";
+  const json = await apiFetch(`/api/v1/ops/admin/tour-packages/upgrades${q}`);
+  return json?.data ?? [];
+}
+export async function saveTourPackageUpgrade(payload: any): Promise<TourPackageUpgrade> {
+  const json = await apiFetch(`/api/v1/ops/admin/tour-packages/upgrades`, { method: "POST", body: JSON.stringify(payload) });
+  return json?.data;
+}
+export async function deleteTourPackageUpgrade(id: string): Promise<void> {
+  await apiFetch(`/api/v1/ops/admin/tour-packages/upgrades/${encodeURIComponent(id)}`, { method: "DELETE" });
+}
+
+// ==================== LOCAL PACKAGES ====================
+export async function fetchAdminLocalPackages(filter?: { status?: CatalogStatus | "all"; q?: string }): Promise<LocalPackageItem[]> {
+  const params = new URLSearchParams();
+  if (filter?.status && filter.status !== "all") params.set("status", filter.status);
+  if (filter?.q?.trim()) params.set("q", filter.q.trim());
+  const json = await apiFetch(`/api/v1/ops/admin/local-packages${params.toString() ? `?${params}` : ""}`);
+  return json?.data?.items ?? json?.data ?? [];
+}
+export async function fetchAdminLocalPackage(id: string): Promise<LocalPackageItem> {
+  const json = await apiFetch(`/api/v1/ops/admin/local-packages/${encodeURIComponent(id)}`);
+  return json?.data;
+}
+export async function createAdminLocalPackage(payload: any): Promise<LocalPackageItem> {
+  const json = await apiFetch(`/api/v1/ops/admin/local-packages`, { method: "POST", body: JSON.stringify(payload) });
+  return json?.data;
+}
+export async function updateAdminLocalPackage(id: string, payload: any): Promise<LocalPackageItem> {
+  const json = await apiFetch(`/api/v1/ops/admin/local-packages/${encodeURIComponent(id)}`, { method: "PATCH", body: JSON.stringify(payload) });
+  return json?.data;
+}
+export async function publishAdminLocalPackage(id: string): Promise<LocalPackageItem> {
+  const json = await apiFetch(`/api/v1/ops/admin/local-packages/${encodeURIComponent(id)}/publish`, { method: "POST", body: "{}" });
+  return json?.data;
+}
+export async function archiveAdminLocalPackage(id: string): Promise<LocalPackageItem> {
+  const json = await apiFetch(`/api/v1/ops/admin/local-packages/${encodeURIComponent(id)}/archive`, { method: "POST", body: "{}" });
+  return json?.data;
+}
+export async function deleteAdminLocalPackage(id: string): Promise<void> {
+  await apiFetch(`/api/v1/ops/admin/local-packages/${encodeURIComponent(id)}`, { method: "DELETE" });
+}
+export async function checkLocalPackageCode(code: string): Promise<{ available: boolean }> {
+  const json = await apiFetch(`/api/v1/ops/admin/local-packages/check-code?code=${encodeURIComponent(code)}`);
+  return json?.data ?? { available: false };
+}
+
+// ==================== TRANSFER ROUTES ====================
+export async function fetchAdminTransferRoutes(filter?: { status?: CatalogStatus | "all"; q?: string }): Promise<TransferRouteItem[]> {
+  const params = new URLSearchParams();
+  if (filter?.status && filter.status !== "all") params.set("status", filter.status);
+  if (filter?.q?.trim()) params.set("q", filter.q.trim());
+  const json = await apiFetch(`/api/v1/ops/admin/transfer-routes${params.toString() ? `?${params}` : ""}`);
+  return json?.data?.items ?? json?.data ?? [];
+}
+export async function fetchAdminTransferRoute(id: string): Promise<TransferRouteItem> {
+  const json = await apiFetch(`/api/v1/ops/admin/transfer-routes/${encodeURIComponent(id)}`);
+  return json?.data;
+}
+export async function createAdminTransferRoute(payload: any): Promise<TransferRouteItem> {
+  const json = await apiFetch(`/api/v1/ops/admin/transfer-routes`, { method: "POST", body: JSON.stringify(payload) });
+  return json?.data;
+}
+export async function updateAdminTransferRoute(id: string, payload: any): Promise<TransferRouteItem> {
+  const json = await apiFetch(`/api/v1/ops/admin/transfer-routes/${encodeURIComponent(id)}`, { method: "PATCH", body: JSON.stringify(payload) });
+  return json?.data;
+}
+export async function publishAdminTransferRoute(id: string): Promise<TransferRouteItem> {
+  const json = await apiFetch(`/api/v1/ops/admin/transfer-routes/${encodeURIComponent(id)}/publish`, { method: "POST", body: "{}" });
+  return json?.data;
+}
+export async function archiveAdminTransferRoute(id: string): Promise<TransferRouteItem> {
+  const json = await apiFetch(`/api/v1/ops/admin/transfer-routes/${encodeURIComponent(id)}/archive`, { method: "POST", body: "{}" });
+  return json?.data;
+}
+export async function deleteAdminTransferRoute(id: string): Promise<void> {
+  await apiFetch(`/api/v1/ops/admin/transfer-routes/${encodeURIComponent(id)}`, { method: "DELETE" });
+}
+export async function checkTransferRouteCode(code: string): Promise<{ available: boolean }> {
+  const json = await apiFetch(`/api/v1/ops/admin/transfer-routes/check-code?code=${encodeURIComponent(code)}`);
+  return json?.data ?? { available: false };
+}
+
+// ==================== POLICIES & COMPANY ====================
+export async function fetchAdminCancellationPolicies(): Promise<CancellationPolicyItem[]> {
+  const json = await apiFetch(`/api/v1/ops/admin/cancellation-policies`);
+  return json?.data ?? [];
+}
+export async function updateAdminCancellationPolicy(id: string, payload: Partial<CancellationPolicyItem>): Promise<CancellationPolicyItem> {
+  const body: any = {};
+  if (payload.noticePeriodText !== undefined) body.notice_period_text = payload.noticePeriodText;
+  if (payload.feeRetainedPercent !== undefined) body.fee_retained_percent = payload.feeRetainedPercent;
+  if (payload.refundPercent !== undefined) body.refund_percent = payload.refundPercent;
+  if (payload.ruleText !== undefined) body.rule_text = payload.ruleText;
+  if (payload.refundTimelineNote !== undefined) body.refund_timeline_note = payload.refundTimelineNote;
+  const json = await apiFetch(`/api/v1/ops/admin/cancellation-policies/${encodeURIComponent(id)}`, { method: "PATCH", body: JSON.stringify(body) });
+  return json?.data;
+}
+
+export async function fetchAdminMonuments(): Promise<MonumentItem[]> {
+  const json = await apiFetch(`/api/v1/ops/admin/monuments`);
+  return json?.data ?? [];
+}
+export async function updateAdminMonument(id: string, payload: Partial<MonumentItem>): Promise<MonumentItem> {
+  const body: any = {};
+  if (payload.name !== undefined) body.name = payload.name;
+  if (payload.visitingHours !== undefined) body.visiting_hours = payload.visitingHours;
+  if (payload.closedNote !== undefined) body.closed_note = payload.closedNote;
+  if (payload.historicalContext !== undefined) body.historical_context = payload.historicalContext;
+  if (payload.sortOrder !== undefined) body.sort_order = payload.sortOrder;
+  const json = await apiFetch(`/api/v1/ops/admin/monuments/${encodeURIComponent(id)}`, { method: "PATCH", body: JSON.stringify(body) });
+  return json?.data;
+}
+
+export async function fetchAdminPetPolicy(): Promise<PetPolicyItem> {
+  const json = await apiFetch(`/api/v1/ops/admin/pet-policy`);
+  return json?.data;
+}
+export async function updateAdminPetPolicy(payload: Partial<PetPolicyItem>): Promise<PetPolicyItem> {
+  const body: any = {};
+  if (payload.isOffered !== undefined) body.is_offered = payload.isOffered;
+  if (payload.seatProtectionNote !== undefined) body.seat_protection_note = payload.seatProtectionNote;
+  if (payload.breedRestrictionNote !== undefined) body.breed_restriction_note = payload.breedRestrictionNote;
+  if (payload.comfortStopNote !== undefined) body.comfort_stop_note = payload.comfortStopNote;
+  if (payload.bookingInstruction !== undefined) body.booking_instruction = payload.bookingInstruction;
+  const json = await apiFetch(`/api/v1/ops/admin/pet-policy`, { method: "PATCH", body: JSON.stringify(body) });
+  return json?.data;
+}
+
+export async function fetchAdminCompanyProfile(): Promise<CompanyProfileItem> {
+  const json = await apiFetch(`/api/v1/ops/admin/company-profile`);
+  return json?.data;
+}
+export async function updateAdminCompanyProfile(payload: Partial<CompanyProfileItem>): Promise<CompanyProfileItem> {
+  const body: any = {};
+  if (payload.brandName !== undefined) body.brand_name = payload.brandName;
+  if (payload.officeAddress !== undefined) body.office_address = payload.officeAddress;
+  if (payload.primaryPhone !== undefined) body.primary_phone = payload.primaryPhone;
+  if (payload.whatsappNumber !== undefined) body.whatsapp_number = payload.whatsappNumber;
+  if (payload.email !== undefined) body.email = payload.email;
+  if (payload.gstin !== undefined) body.gstin = payload.gstin;
+  if (payload.operatingHours !== undefined) body.operating_hours = payload.operatingHours;
+  if (payload.mapsLocation !== undefined) body.maps_location = payload.mapsLocation;
+  if (payload.dossierVersion !== undefined) body.dossier_version = payload.dossierVersion;
+  if (payload.dossierStatus !== undefined) body.dossier_status = payload.dossierStatus;
+  const json = await apiFetch(`/api/v1/ops/admin/company-profile`, { method: "PATCH", body: JSON.stringify(body) });
+  return json?.data;
+}
+
+export async function fetchAdminDossierSignoffs(): Promise<DossierSignoffItem[]> {
+  const json = await apiFetch(`/api/v1/ops/admin/dossier-signoffs`);
+  return json?.data ?? [];
+}
+export async function updateAdminDossierSignoff(id: string, payload: Partial<DossierSignoffItem>): Promise<DossierSignoffItem> {
+  const body: any = {};
+  if (payload.status !== undefined) body.status = payload.status;
+  if (payload.clientNotes !== undefined) body.client_notes = payload.clientNotes;
+  const json = await apiFetch(`/api/v1/ops/admin/dossier-signoffs/${encodeURIComponent(id)}`, { method: "PATCH", body: JSON.stringify(body) });
+  return json?.data;
+}
+

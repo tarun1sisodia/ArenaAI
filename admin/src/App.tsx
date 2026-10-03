@@ -8,6 +8,10 @@ import { DashboardPage } from "@/pages/DashboardPage";
 const BookingsPage = lazy(() => import("@/pages/BookingsPage").then((m) => ({ default: m.BookingsPage })));
 const FinancePage = lazy(() => import("@/pages/FinancePage").then((m) => ({ default: m.FinancePage })));
 const CatalogPage = lazy(() => import("@/pages/CatalogPage").then((m) => ({ default: m.CatalogPage })));
+const TourPackagesPage = lazy(() => import("@/pages/TourPackagesPage").then((m) => ({ default: m.TourPackagesPage })));
+const LocalTransfersPage = lazy(() => import("@/pages/LocalTransfersPage").then((m) => ({ default: m.LocalTransfersPage })));
+const PoliciesPage = lazy(() => import("@/pages/PoliciesPage").then((m) => ({ default: m.PoliciesPage })));
+const SignoffPage = lazy(() => import("@/pages/SignoffPage").then((m) => ({ default: m.SignoffPage })));
 const ReviewsPage = lazy(() => import("@/pages/ReviewsPage").then((m) => ({ default: m.ReviewsPage })));
 const RentalRequestsPage = lazy(() => import("@/pages/RentalRequestsPage").then((m) => ({ default: m.RentalRequestsPage })));
 const InquiriesPage = lazy(() => import("@/pages/InquiriesPage").then((m) => ({ default: m.InquiriesPage })));
@@ -88,6 +92,10 @@ function Root({ user, onLogin, onLogout }: { user: AdminUser | null; onLogin: (u
                       <Route path="bookings" element={<BookingsPage user={user} />} />
                       <Route path="finance" element={<FinancePage user={user} />} />
                       <Route path="catalog" element={<CatalogPage user={user} />} />
+                      <Route path="tour-packages" element={<TourPackagesPage user={user} />} />
+                      <Route path="local-transfers" element={<LocalTransfersPage user={user} />} />
+                      <Route path="policies" element={<PoliciesPage user={user} />} />
+                      <Route path="sign-off" element={<SignoffPage user={user} />} />
                       <Route path="reviews" element={<ReviewsPage user={user} />} />
                       <Route path="inquiries" element={<InquiriesPage user={user} />} />
                       <Route path="rental-requests" element={<RentalRequestsPage user={user} />} />

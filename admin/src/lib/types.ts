@@ -283,5 +283,135 @@ export interface RouteCatalogItem {
   availableFleets: string[]; faresInr: Record<string, number>; driverChargeInr: number;
   nightHaltInr: number; tollIncluded: boolean; tollAmountInr: number | null;
   interstateCharges: InterstateCharge[]; minKmPerDay: number; stops: RouteStop[];
+  usePerKm?: boolean; perKmRateOverride?: number | null; highway?: string | null; allInclusiveNote?: string | null;
   status: CatalogStatus; needsReview: boolean; createdAt: string; updatedAt: string;
 }
+
+export interface TourPackageUpgrade {
+  id: string;
+  packageId: string | null;
+  tierCode: string;
+  passengerNote: string | null;
+  surchargeInr: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface TourPackageItem {
+  id: string;
+  packageCode: string;
+  name: string;
+  durationText: string;
+  days: number;
+  nights: number;
+  baseTierCode: string;
+  startingPriceInr: number;
+  fleetPrices: Record<string, number>;
+  usePerKm: boolean;
+  nightChargeInr: number;
+  flatChargeInr: number;
+  inclusionsHighlight: string | null;
+  inclusionsNote: string | null;
+  status: CatalogStatus;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  upgrades?: TourPackageUpgrade[];
+}
+
+export interface LocalPackageItem {
+  id: string;
+  packageCode: string;
+  name: string;
+  durationHours: number;
+  includedKm: number;
+  covers: string;
+  parkingNote: string | null;
+  fleetPrices: Record<string, number>;
+  usePerKm: boolean;
+  extraRates: Record<string, { per_km: number; per_hr: number }> | null;
+  nightChargeInr: number;
+  status: CatalogStatus;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface TransferRouteItem {
+  id: string;
+  routeCode: string;
+  name: string;
+  distanceText: string | null;
+  directionNote: string | null;
+  fleetPrices: Record<string, number>;
+  usePerKm: boolean;
+  nightChargeInr: number;
+  status: CatalogStatus;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CancellationPolicyItem {
+  id: string;
+  policyType: "cab" | "tour_package";
+  noticePeriodText: string;
+  sortOrder: number;
+  feeRetainedPercent: number;
+  refundPercent: number;
+  ruleText: string;
+  refundTimelineNote: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface MonumentItem {
+  id: string;
+  name: string;
+  visitingHours: string;
+  closedNote: string;
+  historicalContext: string | null;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PetPolicyItem {
+  id: string;
+  isOffered: boolean;
+  seatProtectionNote: string;
+  breedRestrictionNote: string;
+  comfortStopNote: string;
+  bookingInstruction: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CompanyProfileItem {
+  id: string;
+  brandName: string;
+  officeAddress: string;
+  primaryPhone: string;
+  whatsappNumber: string;
+  email: string;
+  gstin: string;
+  operatingHours: string;
+  mapsLocation: string;
+  dossierVersion: string;
+  dossierStatus: "pending_review" | "signed_off" | "modifications_needed";
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface DossierSignoffItem {
+  id: string;
+  sectionKey: string;
+  sectionTitle: string;
+  status: "pending" | "approved" | "modification_requested";
+  clientNotes: string | null;
+  approvedBy: string | null;
+  approvedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
