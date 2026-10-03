@@ -175,17 +175,17 @@ export function DashboardPage() {
         title="Operations Overview"
         description="Live figures from the bookings, payments and audit systems."
         actions={
-          <>
-            <Button variant="outline" size="sm" onClick={() => setReloadKey((k) => k + 1)}>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button variant="outline" size="sm" className="min-h-[44px] sm:min-h-[32px]" onClick={() => setReloadKey((k) => k + 1)}>
               Refresh
             </Button>
-            <Button variant="outline" size="sm" onClick={() => navigate("/bookings")}>
+            <Button variant="outline" size="sm" className="min-h-[44px] sm:min-h-[32px]" onClick={() => navigate("/bookings")}>
               Open bookings
             </Button>
-            <Button variant="gold" size="sm" onClick={() => navigate("/catalog")}>
+            <Button variant="gold" size="sm" className="min-h-[44px] sm:min-h-[32px]" onClick={() => navigate("/catalog")}>
               Manage catalog
             </Button>
-          </>
+          </div>
         }
       />
 
@@ -195,7 +195,7 @@ export function DashboardPage() {
           role="alert"
         >
           <span className="flex-1">{loadError}</span>
-          <Button variant="outline" size="sm" onClick={() => setReloadKey((k) => k + 1)}>
+          <Button variant="outline" size="sm" className="min-h-[44px] sm:min-h-[32px]" onClick={() => setReloadKey((k) => k + 1)}>
             Retry
           </Button>
         </div>
@@ -207,7 +207,7 @@ export function DashboardPage() {
       )}
 
       {/* KPI grid */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           index={0}
           label="Revenue · MTD"
@@ -233,7 +233,7 @@ export function DashboardPage() {
       {/* Revenue + status mix */}
       <div className="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-3">
         <Card className="xl:col-span-2">
-          <CardHeader className="flex-row items-start justify-between">
+          <CardHeader className="flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
             <div>
               <CardTitle>Revenue — trailing 12 months</CardTitle>
               <CardDescription>Captured gateway amounts, ₹</CardDescription>

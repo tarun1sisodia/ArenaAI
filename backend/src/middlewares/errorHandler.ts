@@ -44,6 +44,10 @@ export function registerErrorHandler(app: FastifyInstance): void {
     // Log full error internally but don't expose to client
     request.log.error({ err: error, requestId, url: request.url, method: request.method }, "unhandled error");
 
+    const isOps = request.url.startsWith("/api/v1/ops/admin");
+    const rawMsg = (error as Error)?.message;
+    const fallbackMsg = isOps && rawMsg ? rawMsg : "An unexpected error occurred.";
+
     return reply.status(statusCode >= 400 ? statusCode : 500).send({
       success: false,
       error: {
@@ -53,7 +57,9 @@ export function registerErrorHandler(app: FastifyInstance): void {
             ? "Too many requests. Please retry shortly."
             : statusCode === 404
               ? "Resource not found."
-              : "An unexpected error occurred.",
+              : (!isProduction || isOps) && rawMsg
+                ? rawMsg
+                : fallbackMsg,
         requestId,
       },
     });

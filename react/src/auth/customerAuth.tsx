@@ -4,14 +4,20 @@ import { createClient, type Session, type SupabaseClient, type User } from "@sup
 const AUTH_RETURN_TO_KEY = "arenaai:auth-return-to";
 let customerClient: SupabaseClient | null = null;
 
+export function getCustomerSupabaseConfig(): { url: string; key: string } {
+  const url = (import.meta.env.VITE_SUPABASE_URL || "")?.trim();
+  const key = (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY || "")?.trim();
+  return { url, key };
+}
+
 export function hasCustomerSupabaseConfig(): boolean {
-  return Boolean(import.meta.env.VITE_SUPABASE_URL && (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY));
+  const { url, key } = getCustomerSupabaseConfig();
+  return Boolean(url && key);
 }
 
 export function getCustomerSupabaseClient(): SupabaseClient {
   if (customerClient) return customerClient;
-  const url = import.meta.env.VITE_SUPABASE_URL?.trim();
-  const key = (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY)?.trim();
+  const { url, key } = getCustomerSupabaseConfig();
   if (!url || !key) {
     throw new Error("Google sign-in is not configured on this site yet.");
   }
@@ -159,3 +165,18 @@ export function getCustomerDisplayName(user: User | null): string {
   const value = metadata?.full_name ?? metadata?.name ?? user?.email?.split("@")[0];
   return typeof value === "string" && value.trim() ? value.trim() : "Your account";
 }
+
+export function getCustomerAvatarUrl(user: User | null): string | null {
+  const metadata = user?.user_metadata as Record<string, unknown> | undefined;
+  const url = metadata?.avatar_url ?? metadata?.picture;
+  return typeof url === "string" && url.trim() ? url.trim() : null;
+}
+
+export function getCustomerInitials(user: User | null): string {
+  const name = getCustomerDisplayName(user);
+  if (!name || name === "Your account") return "U";
+  const parts = name.trim().split(/\s+/);
+  if (parts.length >= 2) return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+  return name.slice(0, 2).toUpperCase();
+}
+

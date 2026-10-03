@@ -30,10 +30,7 @@ export type VehicleTier =
   | "ertiga"
   | "innova-crysta"
   | "tempo-traveller"
-  | "urbania"
-  | "tempo-traveller-12"
-  | "tempo-traveller-17"
-  | "coastal-coach-25";
+  | "urbania";
 
 export interface FareSnapshot {
   baseFare: number;
@@ -243,9 +240,6 @@ export const VEHICLE_LABELS: Record<VehicleTier, string> = {
   "innova-crysta": "Innova Crysta",
   "tempo-traveller": "Tempo Traveller",
   urbania: "Force Urbania",
-  "tempo-traveller-12": "Tempo 12",
-  "tempo-traveller-17": "Tempo 17",
-  "coastal-coach-25": "Coach 25",
 };
 
 export const ROLE_LABELS: Record<AdminRole, string> = {

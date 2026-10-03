@@ -29,7 +29,7 @@ const SafeNotesSchema = z
 export const CreateDraftBookingSchema = z
   .object({
     tripType: z.enum(TRIP_TYPES),
-    vehicleTier: z.enum(VEHICLE_TIERS),
+    vehicleTier: z.enum(VEHICLE_TIERS).default("sedan"),
     originName: z.string().trim().min(2).max(120),
     destinationName: z.string().trim().min(2).max(120),
     pickupAddress: SafeAddressSchema,

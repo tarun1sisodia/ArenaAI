@@ -91,61 +91,61 @@ interface VehicleOption {
 const VEHICLE_OPTIONS: VehicleOption[] = [
   {
     id: "sedan",
-    name: "Executive Sedan",
+    name: "Sedan",
     subtitle: "Maruti Suzuki Dzire Prime or Toyota Etios Platinum",
     image: "/assets/fleet/sedan.webp",
-    guests: "1–3 Guests",
-    luggage: "2 Medium Bags",
+    guests: "4 Seats",
+    luggage: "2 Bags",
     features: ["Dual Climate AC", "USB Fast Charging", "Yamuna Expressway FastTag"],
     editorialPitch: "Ideal for solo voyagers or intimate couples traveling light",
     alwaysRoundTrip: false,
   },
   {
     id: "ertiga",
-    name: "Maruti Ertiga SUV",
+    name: "Ertiga",
     subtitle: "Smart Hybrid E-Tech • Elevated Ride Height",
     image: "/assets/fleet/ertiga.webp",
-    guests: "4–5 Guests",
-    luggage: "3–4 Bags",
+    guests: "6 Seats",
+    luggage: "3 Bags",
     features: ["Roof Mounted AC Louvers", "Flexible 3rd Row", "Spacious Cabin"],
     editorialPitch: "Compact family comfort with extra legroom & elevated highway perspective",
     alwaysRoundTrip: false,
   },
   {
     id: "innova",
-    name: "Toyota Innova Crysta VIP",
+    name: "Innova Crysta",
     subtitle: "6+1 Individual Captain Armchairs • Whisper-Quiet Cabin",
     image: "/assets/fleet/innova.webp",
     badge: "Most Popular • Concierge Choice",
     badgeClass: "bg-primary text-on-primary",
-    guests: "Up to 6 Guests",
-    luggage: "4 Large Suitcases",
+    guests: "6 Seats",
+    luggage: "4 Bags",
     features: ["Captain Armchairs", "Triple Climate Auto AC", "Chilled Mineral Water"],
     editorialPitch: "The undisputed gold standard for Yamuna Expressway cruising with zero fatigue",
     alwaysRoundTrip: false,
   },
   {
     id: "tempo",
-    name: "Force Tempo Traveller",
-    subtitle: "12 to 16 Passenger High-Roof Touring Coach",
+    name: "Tempo Traveller",
+    subtitle: "12-Passenger High-Roof Touring Coach",
     image: "/assets/fleet/tempo.webp",
     badge: "Always Booked as Round Trip",
     badgeClass: "bg-terracotta-deep text-white font-bold",
-    guests: "12–16 Guests",
-    luggage: "10–12 Large Bags",
+    guests: "12 Seats",
+    luggage: "8 Bags",
     features: ["Individual AC Louvers", "Dedicated Luggage Bay", "Full Reclining Seats"],
     editorialPitch: "Tailored for joint families, corporate retreats, and international delegations",
     alwaysRoundTrip: true,
   },
   {
     id: "urbania",
-    name: "Force Urbania Royal Van",
+    name: "Force Urbania",
     subtitle: "Monocoque Whisper Body • Aircraft Recliner Seating",
     image: "/assets/fleet/urbania.webp",
     badge: "Always Booked as Round Trip",
     badgeClass: "bg-gold-accent/20 text-ink-charcoal font-bold",
-    guests: "10–14 Recliner Pods",
-    luggage: "12+ Large Bags",
+    guests: "16 Seats",
+    luggage: "10 Bags",
     features: ["Starry Ambient Ceiling", "European Sound Isolation", "Airplane-Style Recliners"],
     editorialPitch: "Diplomatic, presidential transit with private lounge privacy glass",
     alwaysRoundTrip: true,
@@ -261,7 +261,7 @@ export function BookingPage() {
         name: vehicle.name || fallback.name,
         guests: `${vehicle.seats} Seats`,
         luggage: `${vehicle.bags} Bags`,
-        subtitle: `${vehicle.seats}-seat ${vehicle.name || fallback.name}`,
+        subtitle: fallback.subtitle,
         alwaysRoundTrip: fallback.alwaysRoundTrip,
       };
     });
@@ -476,9 +476,12 @@ export function BookingPage() {
       }
     }
 
-    const qVeh = params.get("vehicle") as VehicleId | null;
-    if (qVeh && VEHICLE_OPTIONS.some((v) => v.id === qVeh)) {
-      setSelectedVehicleId(qVeh);
+    const qVeh = params.get("vehicle");
+    if (qVeh) {
+      const match = VEHICLE_OPTIONS.find((v) => v.id === qVeh || mapVehicleTier(v.id) === qVeh);
+      if (match) {
+        setSelectedVehicleId(match.id);
+      }
     }
 
     const qDate = params.get("date");

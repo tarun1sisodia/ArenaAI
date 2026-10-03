@@ -4,8 +4,6 @@
  */
 
 export function getApiBaseUrl(): string {
-  const envUrl = import.meta.env.VITE_API_BASE_URL as string | undefined;
-  if (envUrl?.trim()) return envUrl.trim().replace(/\/+$/, "");
   if (
     typeof window !== "undefined" &&
     (window.location.hostname === "localhost" ||
@@ -13,6 +11,10 @@ export function getApiBaseUrl(): string {
       window.location.hostname === "0.0.0.0")
   ) {
     return "http://localhost:4000";
+  }
+  const envUrl = import.meta.env.VITE_API_BASE_URL as string | undefined;
+  if (envUrl?.trim() && !envUrl.includes("api.agraskbagheltourandtravels.com")) {
+    return envUrl.trim().replace(/\/+$/, "");
   }
   return "https://skb-baghel-api-staging.onrender.com";
 }

@@ -50,11 +50,19 @@ async function apiFetch(path: string, init?: RequestInit): Promise<any> {
     if (res.status === 401 || res.status === 403) {
       expireSession();
     }
-    const message =
-      json?.error?.message ||
-      (res.status === 401
-        ? "Your session has expired. Please sign in again."
-        : `Request failed (${res.status}). Check that the backend is reachable.`);
+    let message = json?.error?.message || json?.message;
+    if (json?.error?.details && Array.isArray(json.error.details)) {
+      const details = json.error.details
+        .map((d: any) => (d.path ? `${d.path}: ${d.message}` : d.message || JSON.stringify(d)))
+        .join("; ");
+      message = `${message || "Validation failed"} (${details})`;
+    }
+    if (!message) {
+      message =
+        res.status === 401
+          ? "Your session has expired. Please sign in again."
+          : `Request failed (${res.status}). Check that the backend is reachable.`;
+    }
     throw new Error(message);
   }
   return json;
@@ -479,7 +487,7 @@ export async function createAdminBooking(payload: {
   customerPhone: string;
   customerEmail?: string;
   tripType: "one-way" | "round-trip";
-  vehicleTier: string;
+  vehicleTier?: string;
   originName: string;
   destinationName: string;
   pickupAddress: string;

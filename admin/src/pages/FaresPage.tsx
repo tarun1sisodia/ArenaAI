@@ -12,6 +12,16 @@ import { fetchAdminFareRules, updateAdminFareRules } from "@/lib/api";
 import { can, type AdminUser, type FareRuleset, type VehicleTier } from "@/lib/types";
 import { cn, formatINR } from "@/lib/utils";
 
+const CANONICAL_TIERS: VehicleTier[] = ["sedan", "ertiga", "innova-crysta", "tempo-traveller", "urbania"];
+
+const CANONICAL_FLEET_DEFAULTS: Record<VehicleTier, { name: string; seats: number; perKm: number }> = {
+  sedan: { name: "Sedan", seats: 4, perKm: 10 },
+  ertiga: { name: "Ertiga", seats: 6, perKm: 14 },
+  "innova-crysta": { name: "Innova Crysta", seats: 6, perKm: 18 },
+  "tempo-traveller": { name: "Tempo Traveller", seats: 12, perKm: 25 },
+  urbania: { name: "Force Urbania", seats: 16, perKm: 34 },
+};
+
 interface EditableVehicle {
   tier: VehicleTier;
   name: string;
@@ -50,18 +60,41 @@ export function FaresPage({ user }: { user: AdminUser }) {
       nightAllowanceCab: 300,
       nightAllowanceTempo: 500,
     });
+    const rulesMap = new Map(rs.rules.map((r) => [r.vehicleTier, r]));
     setEditVehicles(
-      rs.rules.map((r) => ({
-        tier: r.vehicleTier,
-        name: r.label.replace(/\s*\([0-9]+-seater\)\s*$/, "").trim(),
-        seats: r.seats,
-        perKm: r.perKm,
-        active: r.active !== false,
-      })),
+      CANONICAL_TIERS.map((tier) => {
+        const existing = rulesMap.get(tier);
+        const defaults = CANONICAL_FLEET_DEFAULTS[tier];
+        return {
+          tier,
+          name: existing ? existing.label.replace(/\s*\([0-9]+-seater\)\s*$/, "").trim() : defaults.name,
+          seats: existing?.seats || defaults.seats,
+          perKm: existing?.perKm || defaults.perKm,
+          active: existing?.active !== false,
+        };
+      })
     );
     setSaveError(null);
     setSaveSuccess(null);
     setIsEditOpen(true);
+  };
+
+  const handleResetToCanonical = () => {
+    setEditForm({
+      minKmPerDay: 300,
+      nightAllowanceCab: 300,
+      nightAllowanceTempo: 500,
+    });
+    setEditVehicles(
+      CANONICAL_TIERS.map((tier) => ({
+        tier,
+        name: CANONICAL_FLEET_DEFAULTS[tier].name,
+        seats: CANONICAL_FLEET_DEFAULTS[tier].seats,
+        perKm: CANONICAL_FLEET_DEFAULTS[tier].perKm,
+        active: true,
+      }))
+    );
+    setSaveError(null);
   };
 
   const handleVehicleChange = (tier: VehicleTier, patch: Partial<EditableVehicle>) => {
@@ -193,6 +226,23 @@ export function FaresPage({ user }: { user: AdminUser }) {
 
       {rs && !loading && (
         <>
+          {rs.rules.some((r) => r.perKm <= 1) && (
+            <div className="mb-4 flex items-center justify-between rounded-md border border-amber-500/30 bg-amber-500/10 p-4 text-amber-700 dark:text-amber-300">
+              <div className="flex items-center gap-3">
+                <AlertTriangle className="h-5 w-5 shrink-0" />
+                <div>
+                  <p className="text-sm font-semibold">Corrupt ₹1/km rates detected</p>
+                  <p className="text-xs opacity-90">Vehicles with ₹1/km will heavily undercharge quotes. Click Fix Now to load the canonical rates.</p>
+                </div>
+              </div>
+              {canEdit && (
+                <Button variant="gold" size="sm" onClick={() => { handleOpenEdit(); handleResetToCanonical(); }}>
+                  Fix Now
+                </Button>
+              )}
+            </div>
+          )}
+
           {/* Rule chips */}
           <div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
             {[
@@ -242,7 +292,9 @@ export function FaresPage({ user }: { user: AdminUser }) {
                   </TRow>
                 </THead>
                 <TBody>
-                  {rs.rules.map((r, i) => (
+                  {rs.rules
+                    .filter((r) => CANONICAL_TIERS.includes(r.vehicleTier as VehicleTier))
+                    .map((r, i) => (
                     <motion.tr
                       key={r.vehicleTier}
                       initial={reduce ? { opacity: 1 } : { opacity: 0, y: 8 }}
@@ -433,18 +485,31 @@ export function FaresPage({ user }: { user: AdminUser }) {
             </div>
           </div>
 
-          <div className="sticky bottom-0 mt-5 flex justify-end gap-2 border-t border-rule bg-surface pt-3">
+          <div className="sticky bottom-0 mt-5 flex flex-wrap items-center justify-between gap-2 border-t border-rule bg-surface pt-3">
             <Button
               type="button"
               variant="outline"
-              onClick={() => setIsEditOpen(false)}
+              size="sm"
+              onClick={handleResetToCanonical}
               disabled={saving}
+              className="text-xs"
             >
-              Cancel
+              <RotateCw className="mr-1.5 h-3.5 w-3.5" />
+              Reset to standard rates
             </Button>
-            <Button type="submit" variant="gold" disabled={saving}>
-              {saving ? "Saving…" : "Save Fleet & Rates"}
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsEditOpen(false)}
+                disabled={saving}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" variant="gold" disabled={saving}>
+                {saving ? "Saving…" : "Save Fleet & Rates"}
+              </Button>
+            </div>
           </div>
         </form>
       </Dialog>

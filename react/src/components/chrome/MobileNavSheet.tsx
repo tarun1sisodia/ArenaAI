@@ -3,7 +3,7 @@ import { BrandLogo } from "./BrandLogo";
 import { contact } from "../../data/contact";
 import { prefetchDocument } from "../../app/prefetch";
 import { WhatsAppIcon } from "../icons/WhatsAppIcon";
-import { getCustomerDisplayName, useCustomerAuth } from "../../auth/customerAuth";
+import { getCustomerDisplayName, getCustomerAvatarUrl, getCustomerInitials, useCustomerAuth } from "../../auth/customerAuth";
 import { useState } from "react";
 
 export interface MobileNavSheetProps {
@@ -17,7 +17,7 @@ export function MobileNavSheet({
   onClose,
   currentPath = "/",
 }: MobileNavSheetProps) {
-  const { user, configured, signInWithGoogle } = useCustomerAuth();
+  const { user, configured, signInWithGoogle, signOut } = useCustomerAuth();
   const [accountError, setAccountError] = useState<string | null>(null);
   useEffect(() => {
     if (!isOpen) return;
@@ -110,9 +110,49 @@ export function MobileNavSheet({
         {/* Footer Actions */}
         <div className="p-space-md border-t border-border-warm bg-sandstone-wash/30 flex flex-col gap-space-sm">
           {user ? (
-            <a href="/my-bookings/" onClick={onClose} className="flex items-center justify-center gap-2 rounded-lg border border-primary/30 bg-surface-container-lowest px-4 py-3 font-semibold text-primary"><span className="material-symbols-outlined" aria-hidden="true">account_circle</span><span>My Bookings · {getCustomerDisplayName(user)}</span></a>
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-3 rounded-xl border border-primary/20 bg-white p-3 shadow-xs">
+                {getCustomerAvatarUrl(user) ? (
+                  <img
+                    src={getCustomerAvatarUrl(user)!}
+                    alt={getCustomerDisplayName(user)}
+                    className="h-10 w-10 rounded-full object-cover border border-primary/30 shrink-0"
+                    referrerPolicy="no-referrer"
+                  />
+                ) : (
+                  <span className="grid h-10 w-10 place-items-center rounded-full bg-primary text-sm font-bold text-white shrink-0">
+                    {getCustomerInitials(user)}
+                  </span>
+                )}
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-bold text-ink-midnight truncate">{getCustomerDisplayName(user)}</p>
+                  <p className="text-[11px] text-on-surface-variant truncate">{user.email}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <a
+                  href="/my-bookings/"
+                  onClick={onClose}
+                  className="flex items-center justify-center gap-1.5 rounded-lg border border-primary/30 bg-surface-container-lowest py-2.5 text-xs font-semibold text-primary hover:bg-sandstone-wash transition-colors"
+                >
+                  <span className="material-symbols-outlined text-[16px]">receipt_long</span>
+                  <span>My Bookings</span>
+                </a>
+                <button
+                  type="button"
+                  onClick={() => {
+                    onClose();
+                    void signOut().catch(() => {});
+                  }}
+                  className="flex items-center justify-center gap-1.5 rounded-lg border border-red-200 bg-red-50/80 py-2.5 text-xs font-semibold text-red-700 hover:bg-red-100 transition-colors cursor-pointer"
+                >
+                  <span className="material-symbols-outlined text-[16px]">logout</span>
+                  <span>Sign out</span>
+                </button>
+              </div>
+            </div>
           ) : configured ? (
-            <button type="button" onClick={() => void signInWithGoogle().catch((error) => setAccountError(error instanceof Error ? error.message : "Sign-in could not start."))} className="flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 font-semibold text-white"><span className="grid h-5 w-5 place-items-center rounded-full bg-white text-xs font-bold text-primary" aria-hidden="true">G</span><span>Continue with Google</span></button>
+            <button type="button" onClick={() => void signInWithGoogle().catch((error) => setAccountError(error instanceof Error ? error.message : "Sign-in could not start."))} className="flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 font-semibold text-white shadow-xs cursor-pointer"><span className="grid h-5 w-5 place-items-center rounded-full bg-white text-xs font-bold text-primary" aria-hidden="true">G</span><span>Continue with Google</span></button>
           ) : null}
           {accountError && <p role="alert" className="rounded-md bg-red-50 p-2 text-xs text-red-800">{accountError}</p>}
           {/* Direct Call & WhatsApp Buttons */}

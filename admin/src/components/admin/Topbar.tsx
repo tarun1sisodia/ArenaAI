@@ -32,7 +32,7 @@ export function Topbar({
       <button
         onClick={onMenu}
         aria-label="Open navigation"
-        className="rounded-sm p-2 text-ink-soft hover:bg-surface-2 hover:text-ink lg:hidden"
+        className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-sm text-ink-soft hover:bg-surface-2 hover:text-ink lg:hidden"
       >
         <Menu className="h-5 w-5" />
       </button>
@@ -50,7 +50,7 @@ export function Topbar({
           <button
             onClick={() => setOpen((v) => !v)}
             aria-label={`Notifications (${unread} unread)`}
-            className="relative rounded-sm p-2 text-ink-soft transition-colors hover:bg-surface-2 hover:text-ink"
+            className="relative flex min-h-[44px] min-w-[44px] items-center justify-center rounded-sm text-ink-soft transition-colors hover:bg-surface-2 hover:text-ink"
           >
             <Bell className="h-4.5 w-4.5" />
             {unread > 0 && (
@@ -102,7 +102,7 @@ export function Topbar({
           whileTap={reduce ? undefined : { scale: 0.9 }}
           onClick={onToggleTheme}
           aria-label="Toggle theme"
-          className="relative h-8 w-8 overflow-hidden rounded-sm text-ink-soft transition-colors hover:bg-surface-2 hover:text-ink"
+          className="relative flex min-h-[44px] min-w-[44px] items-center justify-center overflow-hidden rounded-sm text-ink-soft transition-colors hover:bg-surface-2 hover:text-ink"
         >
           <motion.span
             key={theme}

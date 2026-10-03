@@ -17,6 +17,13 @@ import {
   VEHICLES,
 } from "../fares/fare.catalogue.js";
 
+function toUuid(id?: string | null): string {
+  if (id && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)) {
+    return id;
+  }
+  return "00000000-0000-0000-0000-000000000001";
+}
+
 export function createAdminService(deps: { db: Repositories; clock?: Clock }) {
   return {
     async listBookings(filter: {
@@ -157,7 +164,7 @@ export function createAdminService(deps: { db: Repositories; clock?: Clock }) {
         await deps.db.audit.append({
           id: newId(),
           action: "update_fare_rules",
-          actorId: actor?.id || "super_admin",
+          actorId: toUuid(actor?.id),
           actorRole: (actor?.role as any) || "super_admin",
           resourceType: "fare_rules",
           resourceId: versionStr,
@@ -183,7 +190,7 @@ export function createAdminService(deps: { db: Repositories; clock?: Clock }) {
         await deps.db.audit.append({
           id: newId(),
           action: "activate_fare_rules",
-          actorId: actor?.id || "super_admin",
+          actorId: toUuid(actor?.id),
           actorRole: (actor?.role as any) || "super_admin",
           resourceType: "fare_rules",
           resourceId: version,

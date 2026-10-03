@@ -193,6 +193,61 @@ Implemented:
   - Ran `react/scripts/test-locationiq.ts` (24 assertions green).
   - Verified full monorepo with `npm run verify` (typechecks x3, 21 test files / 130 tests passing, SEO tests, and builds x3 green).
 
+### 2026-10-03 — Staging Fix Pass: Prompt 1 (Admin Overview Donut Legend Alignment)
+
+- Fixed `admin/src/components/charts/Charts.tsx` (`DonutChart`):
+  - Removed cramped `sm:grid-cols-2` breakpoint from the legend `<ul>`. Replaced with single-column layout (`flex flex-1 flex-col gap-2 min-w-[180px] w-full max-w-xs`).
+  - Added `whitespace-nowrap` to status labels to prevent mid-phrase wrapping ("Pending payment", "Paid · confirmed").
+  - Formatted status counts with `font-mono text-xs tabular-nums text-ink text-right` aligned on one row with color swatch and label.
+  - Implemented `@container flex flex-col items-center justify-center gap-6 @[440px]:flex-row` on container. When card width is narrow (< 440px), donut chart cleanly stacks vertically above the legend; on wide cards (>= 440px), chart and legend align side-by-side.
+  - Preserved dark mode variables and entrance motion animations.
+  - Verified with `npm --prefix admin run typecheck` (tsc clean) and `npm --prefix admin run build`.
+
+### 2026-10-03 — Staging Fix Pass: Prompt 2 (Admin Overview 375px Mobile Responsiveness)
+
+- Optimized admin overview and shared components for 375px mobile viewports:
+  - `admin/src/pages/DashboardPage.tsx`: KPI grid updated to `grid-cols-1 sm:grid-cols-2 lg:grid-cols-4`. Chart header wrapped responsively with `flex-col sm:flex-row items-start sm:items-center`.
+  - `admin/src/components/admin/StatCard.tsx`: Added `truncate` and `font-display text-2xl sm:text-3xl` to prevent numerical KPI overflow.
+  - `admin/src/components/admin/PageHeader.tsx`: Added `flex-wrap` and gap spacing to prevent action button clipping.
+  - `admin/src/components/admin/Topbar.tsx` & `Sidebar.tsx`: Enforced `min-h-[44px]` accessible touch targets on mobile drawer links and buttons.
+  - `admin/src/components/charts/Charts.tsx`: Adjusted `VerticalBars` spacing to `gap-1.5 sm:gap-3` with `min-w-0` and responsive fonts; enabled `flex-wrap` and word breaking on `RankedBars`.
+
+### 2026-10-03 — Staging Fix Pass: Prompt 3 (Purge Obsolete Vehicle Tiers from Admin)
+
+- Aligned admin vehicle types with canonical backend 5-fleet architecture:
+  - Purged obsolete tiers `tempo-traveller-12`, `tempo-traveller-17`, and `coastal-coach-25` from `VehicleTier` union and `VEHICLE_LABELS` in `admin/src/lib/types.ts`.
+  - Added safe fallback guards `(VEHICLE_LABELS as Record<string, string>)[b.vehicleTier] ?? b.vehicleTier` in `admin/src/pages/BookingsPage.tsx` for table and detail views to ensure older test records never crash the desk.
+
+### 2026-10-03 — Staging Fix Pass: Prompt 4 (Remove Vehicle Tier Selector from Desk New Booking)
+
+- Simplified desk booking creation:
+  - Updated `backend/src/modules/bookings/booking.schema.ts` (`CreateDraftBookingSchema`): Added `.default("sedan")` to `vehicleTier`.
+  - Updated `admin/src/lib/api.ts`: Made `vehicleTier` optional in `createAdminBooking`.
+  - Updated `admin/src/pages/BookingsPage.tsx`: Removed the redundant vehicle tier dropdown from the "New Booking" modal; replaced with informative badge `"Vehicle: Sedan — standard desk rate (assigned by backend)"`. Cleaned up form state and submission payload.
+
+### 2026-10-03 — Staging Fix Pass: Prompt 5 (New Booking Modal Mobile UX Pass)
+
+- Redesigned "New Booking" dialog for mobile viewports:
+  - Transformed into a full-screen sheet on mobile via `h-[100dvh] sm:h-auto max-h-[100dvh] sm:max-h-[88vh] rounded-none sm:rounded-md`.
+  - Converted footer actions to a sticky bottom bar with `min-h-[44px]` full-width touch buttons.
+  - Cleaned up alert banners with prominent icons and placed them above the fold for immediate feedback.
+
+### 2026-10-03 — Staging Fix Pass: Prompt 6 (Fare Rules Save Failure Fix & Corrupt Rate Repair)
+
+- Repaired backend fare rule persistence and audit logging:
+  - Fixed `requireRole(request, ADMIN_ROLES)` returning `undefined` in `backend/src/modules/admin/admin.controller.ts` (`updateFareRules`); replaced with `requireUser(request)`.
+  - Added `toUuid(id)` helper in `backend/src/modules/admin/admin.service.ts` to ensure `actor_id` in `admin_audit_logs` is always a valid UUID, eliminating PostgreSQL 22P02 invalid input syntax crashes.
+  - Refined `backend/src/middlewares/errorHandler.ts` to return actual error messages for admin operations endpoints.
+  - Added "Reset to standard rates" button and corrupt ₹1/km rate warning banner in `admin/src/pages/FaresPage.tsx` to allow 1-click restoration of canonical rates (₹10/14/18/25/34).
+
+### 2026-10-03 — Staging Fix Pass: Prompt 7 (Customer Fleet Cards Backend Parity & Flash Elimination)
+
+- Aligned customer booking page with canonical backend fleet specs:
+  - Updated `VEHICLE_OPTIONS` fallback in `react/src/features/booking/BookingPage.tsx` to canonical fleet names and capacities: Sedan (4 seats, 2 bags), Ertiga (6 seats, 3 bags), Innova Crysta (6 seats, 4 bags), Tempo Traveller (12 seats, 8 bags), Force Urbania (16 seats, 10 bags).
+  - Preserved vehicle model descriptions in `fleetOptions` memo to eliminate first-paint flash when live fleet data loads from `/api/v1/fleet`.
+  - Extended URL query parameter parsing to accept both internal IDs and canonical tiers (e.g. `innova-crysta`, `tempo-traveller`).
+  - Verified server-authoritative fare calculation and price ledger consistency.
+
 ## Known next work (Phase 3 — secure integrations)
 
 - Step 3.2: High-entropy token or OTP recovery for booking status retrieval (`/api/v1/bookings/status`).
@@ -201,4 +256,5 @@ Implemented:
 - Step 3.5: Split staff roles into content, pricing, dispatch, finance, review, audit, and security.
 
 See `docs/agent/00_CONTEXT_HANDOFF.md` and section 8 of the root operating specification.
+
 

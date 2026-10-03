@@ -82,7 +82,7 @@ export function Sidebar({
                 onClick={onMobileClose}
                 className={({ isActive }) =>
                   cn(
-                    "group relative flex items-center gap-3 rounded-sm px-3 py-2.5 text-sm font-medium transition-colors",
+                    "group relative flex min-h-[44px] items-center gap-3 rounded-sm px-3 py-2.5 text-sm font-medium transition-colors",
                     isActive
                       ? "text-gold-text"
                       : "text-ink-soft hover:bg-surface-2 hover:text-ink"
@@ -137,7 +137,7 @@ export function Sidebar({
             onLogout();
             navigate("/login");
           }}
-          className="flex w-full items-center gap-2 rounded-sm px-3 py-2 text-[13px] font-medium text-ink-soft transition-colors hover:bg-error-soft hover:text-error"
+          className="flex min-h-[44px] w-full items-center gap-2 rounded-sm px-3 py-2 text-[13px] font-medium text-ink-soft transition-colors hover:bg-error-soft hover:text-error"
         >
           <LogOut className="h-4 w-4" />
           Sign out

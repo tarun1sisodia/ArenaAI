@@ -1,10 +1,10 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { BrandLogo } from "./BrandLogo";
 import { MobileNavSheet } from "./MobileNavSheet";
 import { contact } from "../../data/contact";
 import { prefetchDocument } from "../../app/prefetch";
 import { WhatsAppIcon } from "../icons/WhatsAppIcon";
-import { getCustomerDisplayName, useCustomerAuth } from "../../auth/customerAuth";
+import { getCustomerDisplayName, getCustomerAvatarUrl, getCustomerInitials, useCustomerAuth } from "../../auth/customerAuth";
 
 export interface HeaderProps {
   currentPath?: string;
@@ -20,12 +20,32 @@ export function Header({
   const [isScrolled, setIsScrolled] = useState(false);
   const [internalMobileNav, setInternalMobileNav] = useState(false);
   const [accountError, setAccountError] = useState<string | null>(null);
-  const { user, loading: authLoading, configured, signInWithGoogle } = useCustomerAuth();
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
+  const { user, loading: authLoading, configured, signInWithGoogle, signOut } = useCustomerAuth();
 
   const isMobileNavOpen = controlledMobileNav !== undefined ? controlledMobileNav : internalMobileNav;
 
   const activePath =
     currentPath || (typeof window !== "undefined" ? window.location.pathname : "/");
+
+  useEffect(() => {
+    if (!userMenuOpen) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setUserMenuOpen(false);
+      }
+    };
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setUserMenuOpen(false);
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [userMenuOpen]);
 
   const toggleMobileNav = useCallback(() => {
     if (onToggleMobileNav) {
@@ -109,13 +129,87 @@ export function Header({
           {/* Actions: Phone, WhatsApp, and Mobile Menu */}
           <div className="flex items-center gap-2 shrink-0">
             {!authLoading && (user ? (
-              <a href="/my-bookings/" title={user.email ?? "My account"} className="hidden sm:inline-flex items-center gap-1.5 rounded-md border border-primary/25 bg-sandstone-wash px-2.5 py-1.5 text-xs font-semibold text-primary hover:bg-surface-container-high">
-                <span className="material-symbols-outlined text-icon-16" aria-hidden="true">account_circle</span>
-                <span className="max-w-24 truncate">{getCustomerDisplayName(user)}</span>
-              </a>
+              <div className="relative hidden sm:block" ref={userMenuRef}>
+                <button
+                  type="button"
+                  onClick={() => setUserMenuOpen((prev) => !prev)}
+                  className="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-sandstone-wash py-1 pl-1.5 pr-2.5 text-xs font-semibold text-primary hover:bg-surface-container-high transition-all shadow-xs cursor-pointer"
+                  aria-expanded={userMenuOpen}
+                  aria-haspopup="true"
+                  title={user.email ?? "My account"}
+                >
+                  {getCustomerAvatarUrl(user) ? (
+                    <img
+                      src={getCustomerAvatarUrl(user)!}
+                      alt={getCustomerDisplayName(user)}
+                      className="h-6 w-6 rounded-full object-cover border border-primary/30"
+                      referrerPolicy="no-referrer"
+                    />
+                  ) : (
+                    <span className="grid h-6 w-6 place-items-center rounded-full bg-primary text-[10px] font-bold text-white">
+                      {getCustomerInitials(user)}
+                    </span>
+                  )}
+                  <span className="max-w-28 truncate">{getCustomerDisplayName(user)}</span>
+                  <span className={`material-symbols-outlined text-[15px] text-primary/70 transition-transform duration-200 ${userMenuOpen ? "rotate-180" : ""}`}>
+                    expand_more
+                  </span>
+                </button>
+
+                {userMenuOpen && (
+                  <div
+                    className="absolute right-0 mt-2 w-56 rounded-xl border border-border-warm bg-white py-2 shadow-xl z-50 animate-in fade-in zoom-in-95 duration-100"
+                    role="menu"
+                  >
+                    <div className="px-4 py-2.5 border-b border-border-warm/60">
+                      <p className="text-xs font-bold text-ink-midnight truncate">{getCustomerDisplayName(user)}</p>
+                      <p className="text-[11px] text-on-surface-variant truncate">{user.email}</p>
+                    </div>
+                    <div className="py-1">
+                      <a
+                        href="/my-bookings/"
+                        onClick={() => setUserMenuOpen(false)}
+                        className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-on-surface hover:bg-sandstone-wash transition-colors"
+                        role="menuitem"
+                      >
+                        <span className="material-symbols-outlined text-[16px] text-primary">receipt_long</span>
+                        <span>My Bookings</span>
+                      </a>
+                      <a
+                        href="/book.html"
+                        onClick={() => setUserMenuOpen(false)}
+                        className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-on-surface hover:bg-sandstone-wash transition-colors"
+                        role="menuitem"
+                      >
+                        <span className="material-symbols-outlined text-[16px] text-primary">add_circle</span>
+                        <span>New Booking</span>
+                      </a>
+                    </div>
+                    <div className="border-t border-border-warm/60 pt-1">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setUserMenuOpen(false);
+                          void signOut().catch(() => {});
+                        }}
+                        className="flex w-full items-center gap-2.5 px-4 py-2 text-xs font-semibold text-red-700 hover:bg-red-50 transition-colors text-left cursor-pointer"
+                        role="menuitem"
+                      >
+                        <span className="material-symbols-outlined text-[16px] text-red-600">logout</span>
+                        <span>Sign out</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             ) : configured ? (
-              <button type="button" onClick={() => void signInWithGoogle().catch((error) => setAccountError(error instanceof Error ? error.message : "Sign-in could not start."))} className="hidden sm:inline-flex items-center gap-1.5 rounded-md border border-primary/25 px-2.5 py-1.5 text-xs font-semibold text-primary hover:bg-sandstone-wash">
-                <span aria-hidden="true" className="grid h-4 w-4 place-items-center rounded-full bg-white text-[10px] font-bold text-primary">G</span> Sign in
+              <button
+                type="button"
+                onClick={() => void signInWithGoogle().catch((error) => setAccountError(error instanceof Error ? error.message : "Sign-in could not start."))}
+                className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-primary/25 px-3 py-1.5 text-xs font-semibold text-primary hover:bg-sandstone-wash transition-colors shadow-xs cursor-pointer"
+              >
+                <span aria-hidden="true" className="grid h-4 w-4 place-items-center rounded-full bg-white text-[10px] font-bold text-primary shadow-2xs">G</span>
+                <span>Sign in</span>
               </button>
             ) : null)}
             {/* Phone Call CTA */}

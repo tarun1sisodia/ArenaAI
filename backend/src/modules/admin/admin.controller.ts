@@ -87,14 +87,16 @@ export function createAdminController(
     },
 
     async updateFareRules(request: FastifyRequest, reply: FastifyReply) {
-      const actor = requireRole(request, ADMIN_ROLES);
+      requireRole(request, ADMIN_ROLES);
+      const actor = requireUser(request);
       const body = AdminUpdateFareRulesSchema.parse(request.body);
       const rules = await service.updateFareRules(actor, body, request.ip);
       return sendSuccess(reply, rules, 200);
     },
 
     async activateFareRules(request: FastifyRequest, reply: FastifyReply) {
-      const actor = requireRole(request, ADMIN_ROLES);
+      requireRole(request, ADMIN_ROLES);
+      const actor = requireUser(request);
       const body = AdminActivateFareRuleSchema.parse(request.body);
       const rules = await service.activateFareRules(actor, body.version);
       return sendSuccess(reply, rules, 200);

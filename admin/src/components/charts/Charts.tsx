@@ -200,8 +200,8 @@ export function DonutChart({
   let acc = 0;
 
   return (
-    <div className="flex flex-wrap items-center gap-6">
-      <div className="relative" style={{ width: size, height: size }}>
+    <div className="@container flex flex-col items-center justify-center gap-6 @[440px]:flex-row">
+      <div className="relative shrink-0" style={{ width: size, height: size }}>
         <svg viewBox="0 0 100 100" className="h-full w-full -rotate-90">
           <circle cx="50" cy="50" r={R} fill="none" stroke="var(--surface-2)" strokeWidth="10" />
           {slices.map((s, i) => {
@@ -232,18 +232,20 @@ export function DonutChart({
           <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-faint">{centerLabel}</span>
         </div>
       </div>
-      <ul className="grid flex-1 grid-cols-1 gap-2 sm:grid-cols-2">
+      <ul className="flex flex-1 flex-col gap-2 min-w-[180px] w-full max-w-xs">
         {slices.map((s, i) => (
           <motion.li
             key={s.label}
             initial={reduce ? { opacity: 1 } : { opacity: 0, x: -8 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 + i * 0.08, duration: 0.4 }}
-            className="flex items-center gap-2 text-[13px]"
+            className="flex items-center justify-between gap-3 text-[13px]"
           >
-            <span className="h-2.5 w-2.5 rounded-[3px]" style={{ background: s.color }} />
-            <span className="flex-1 text-ink-soft">{s.label}</span>
-            <span className="font-mono text-xs text-ink">{s.value}</span>
+            <span className="flex items-center gap-2 min-w-0">
+              <span className="h-2.5 w-2.5 shrink-0 rounded-[3px]" style={{ background: s.color }} />
+              <span className="whitespace-nowrap text-ink-soft">{s.label}</span>
+            </span>
+            <span className="font-mono text-xs tabular-nums text-ink text-right">{s.value}</span>
           </motion.li>
         ))}
       </ul>
@@ -272,9 +274,9 @@ export function RankedBars({
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15 + i * 0.09, duration: 0.45, ease: easeExpo }}
         >
-          <div className="mb-1.5 flex items-baseline justify-between gap-3">
-            <span className="text-[13px] font-medium text-ink">{item.label}</span>
-            <span className="font-mono text-xs text-ink-soft">
+          <div className="mb-1.5 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+            <span className="text-[13px] font-medium text-ink break-words">{item.label}</span>
+            <span className="font-mono text-xs text-ink-soft shrink-0 ml-auto">
               {item.sub ? `${item.sub} · ` : ""}
               {formatValue(item.value)}
             </span>
@@ -306,9 +308,9 @@ export function VerticalBars({ items }: { items: { label: string; value: number 
   const max = Math.max(...items.map((i) => i.value));
 
   return (
-    <div className="flex h-44 items-end gap-3">
+    <div className="flex h-44 items-end gap-1.5 sm:gap-3">
       {items.map((item, i) => (
-        <div key={item.label} className="flex flex-1 flex-col items-center gap-2">
+        <div key={item.label} className="flex flex-1 flex-col items-center gap-2 min-w-0">
           <span className="font-mono text-[11px] text-ink-soft">{item.value}</span>
           <div className="flex w-full flex-1 items-end rounded-sm bg-surface-2">
             <motion.div
@@ -320,7 +322,7 @@ export function VerticalBars({ items }: { items: { label: string; value: number 
               whileHover={{ opacity: 0.85 }}
             />
           </div>
-          <span className="max-w-full truncate font-mono text-[10px] uppercase tracking-wide text-ink-faint">
+          <span className="max-w-full truncate font-mono text-[9px] sm:text-[10px] uppercase tracking-wide text-ink-faint">
             {item.label}
           </span>
         </div>
