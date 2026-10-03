@@ -12,12 +12,10 @@ import {
   createAdminTourPackage,
   deleteAdminTourPackage,
   fetchAdminTourPackages,
-  fetchTourPackageUpgrades,
   publishAdminTourPackage,
-  saveTourPackageUpgrade,
   updateAdminTourPackage,
 } from "@/lib/api";
-import { can, type AdminUser, type CatalogStatus, type TourPackageItem, type TourPackageUpgrade } from "@/lib/types";
+import { can, type AdminUser, type CatalogStatus, type TourPackageItem } from "@/lib/types";
 import { formatINR } from "@/lib/utils";
 
 const FLEET_KEYS = ["sedan", "ertiga", "innova", "tempo", "urbania"] as const;
@@ -57,7 +55,6 @@ export function TourPackagesPage({ user }: { user: AdminUser }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<TourPackageItem | null>(null);
   const [form, setForm] = useState(emptyPackage);
-  const [upgrades, setUpgrades] = useState<TourPackageUpgrade[]>([]);
   const [busy, setBusy] = useState(false);
 
   const reload = async () => {
@@ -80,7 +77,6 @@ export function TourPackagesPage({ user }: { user: AdminUser }) {
   function openNew() {
     setEditing(null);
     setForm(emptyPackage);
-    setUpgrades([]);
     setModalOpen(true);
   }
 
@@ -109,12 +105,6 @@ export function TourPackagesPage({ user }: { user: AdminUser }) {
       status: pkg.status,
       isActive: pkg.isActive,
     });
-    try {
-      const pkgUpgrades = await fetchTourPackageUpgrades(pkg.id);
-      setUpgrades(pkgUpgrades);
-    } catch {
-      setUpgrades([]);
-    }
     setModalOpen(true);
   }
 
@@ -226,9 +216,10 @@ export function TourPackagesPage({ user }: { user: AdminUser }) {
   return (
     <div className="space-y-6">
       <PageHeader
+        eyebrow="Tours & Packages"
         title="Tour Packages"
         description="Signature multi-day itineraries and same-day guided heritage tours with authoritative 5-tier fleet pricing."
-        action={
+        actions={
           can(user.role, "catalog:edit") ? (
             <Button variant="gold" onClick={openNew}>
               <Plus className="mr-1.5 h-4 w-4" /> New Package
@@ -320,7 +311,7 @@ export function TourPackagesPage({ user }: { user: AdminUser }) {
       {/* Editor Dialog */}
       <Dialog
         open={modalOpen}
-        onOpenChange={setModalOpen}
+        onClose={() => setModalOpen(false)}
         title={editing ? `Edit: ${editing.name}` : "New Tour Package"}
         description="Configure commercial fares across the 5 canonical vehicle tiers, durations, and inclusions."
       >
@@ -436,8 +427,8 @@ export function TourPackagesPage({ user }: { user: AdminUser }) {
             <Label>Inclusions & Exclusions Detail Note</Label>
             <Textarea
               rows={2}
-              value={form.inclusionsNote}
-              onChange={(e) => setForm((p) => ({ ...p, inclusionsNote: e.target.value }))}
+              value={form.inclusionsNote ?? ""}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setForm((p) => ({ ...p, inclusionsNote: e.target.value }))}
               placeholder="Monument entrance tickets and personal meals not included..."
             />
           </div>

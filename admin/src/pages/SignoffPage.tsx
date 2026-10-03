@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { AlertCircle, CheckCircle2, Clock, FileCheck, HelpCircle, Save, Sparkles, UserCheck } from "lucide-react";
+import { CheckCircle2, Save } from "lucide-react";
 import { PageHeader } from "@/components/admin/PageHeader";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { Input, Label, Select, Textarea } from "@/components/ui/Input";
+import { Input, Select } from "@/components/ui/Input";
 import {
   fetchAdminCompanyProfile,
   fetchAdminDossierSignoffs,
@@ -62,7 +62,7 @@ export function SignoffPage({ user }: { user: AdminUser }) {
       const current = signoffs.find((s) => s.id === id);
       const isApproving = patch.status === "approved" || (patch.status === undefined && current?.status === "approved");
       const approvedAt = isApproving ? new Date().toISOString() : null;
-      const approvedBy = patch.approvedBy !== undefined ? patch.approvedBy : (isApproving ? user.username : null);
+      const approvedBy = patch.approvedBy !== undefined ? patch.approvedBy : (isApproving ? user.name : null);
 
       const updated = await updateAdminDossierSignoff(id, {
         ...patch,
@@ -76,15 +76,13 @@ export function SignoffPage({ user }: { user: AdminUser }) {
       // Auto-trigger company profile status if all 10 approved
       const nextApprovedCount = nextSignoffs.filter((s) => s.status === "approved").length;
       if (nextApprovedCount === totalCount && companyProfile && companyProfile.dossierStatus !== "signed_off") {
-        const updatedProfile = await updateAdminCompanyProfile(companyProfile.id, {
+        const updatedProfile = await updateAdminCompanyProfile({
           dossierStatus: "signed_off",
-          signedOffBy: user.username,
-          signedOffAt: new Date().toISOString(),
         });
         setCompanyProfile(updatedProfile);
         setFeedback("All 10 sections approved! Dossier marked as officially SIGNED OFF.");
       } else {
-        setFeedback(`Section ${updated.sectionNumber} updated.`);
+        setFeedback(`Section ${updated.sectionKey} updated.`);
       }
     } catch (err: unknown) {
       setFeedback(err instanceof Error ? err.message : "Failed to update sign-off record");
@@ -98,13 +96,11 @@ export function SignoffPage({ user }: { user: AdminUser }) {
     setFinalizing(true);
     setFeedback(null);
     try {
-      const updatedProfile = await updateAdminCompanyProfile(companyProfile.id, {
+      const updatedProfile = await updateAdminCompanyProfile({
         dossierStatus: "signed_off",
-        signedOffBy: user.username,
-        signedOffAt: new Date().toISOString(),
       });
       setCompanyProfile(updatedProfile);
-      setFeedback("Dossier has been officially signed off and archived.");
+      setFeedback("Dossier has been officially signed off and finalized.");
     } catch (err: unknown) {
       setFeedback(err instanceof Error ? err.message : "Failed to finalize dossier status");
     } finally {
@@ -115,8 +111,9 @@ export function SignoffPage({ user }: { user: AdminUser }) {
   return (
     <div className="space-y-6">
       <PageHeader
+        eyebrow="Verification & Compliance"
         title="Client Dossier Sign-Off (Dossier §12)"
-        subtitle="Verification checklist with SK Baghel stakeholders for operational, commercial, and policy rules confirmation."
+        description="Verification checklist with SK Baghel stakeholders for operational, commercial, and policy rules confirmation."
       />
 
       {feedback && (
@@ -142,11 +139,11 @@ export function SignoffPage({ user }: { user: AdminUser }) {
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <h2 className="text-lg font-bold text-white">Client Approval Progress</h2>
-              <Badge variant={allApproved ? "success" : "warning"}>
+              <Badge tone={allApproved ? "success" : "gold"}>
                 {approvedCount} / {totalCount} Sections Approved
               </Badge>
               {companyProfile?.dossierStatus === "signed_off" && (
-                <Badge variant="gold" className="flex items-center gap-1 font-semibold">
+                <Badge tone="success" className="flex items-center gap-1 font-semibold">
                   <CheckCircle2 className="h-3.5 w-3.5" /> Dossier Signed Off
                 </Badge>
               )}
@@ -257,13 +254,8 @@ function SignoffRow({
         {/* Left: Section Details */}
         <div className="space-y-1 lg:max-w-md">
           <div className="flex items-center gap-2">
-            <span className="font-mono text-xs font-bold text-gold">§{item.sectionNumber}</span>
+            <span className="font-mono text-xs font-bold text-gold">{item.sectionKey}</span>
             <h3 className="font-semibold text-white text-base">{item.sectionTitle}</h3>
-            {item.dossierPageRef && (
-              <span className="text-[11px] text-slate-400 bg-surface-dark px-1.5 py-0.5 rounded border border-hairline">
-                {item.dossierPageRef}
-              </span>
-            )}
           </div>
           {item.approvedAt && (
             <p className="text-xs text-emerald-400 flex items-center gap-1">

@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { AlertTriangle, Building, Check, Clock, Dog, Landmark, Pencil, ShieldAlert, Sparkles } from "lucide-react";
+import { useEffect, useState, type ChangeEvent } from "react";
+import { AlertTriangle, Building, Check, Dog, Landmark, Pencil, ShieldAlert } from "lucide-react";
 import { PageHeader } from "@/components/admin/PageHeader";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -24,7 +24,6 @@ import {
   type MonumentItem,
   type PetPolicyItem,
 } from "@/lib/types";
-import { formatINR } from "@/lib/utils";
 
 type PolicyTab = "cancellation" | "pet" | "company" | "monuments";
 
@@ -84,14 +83,15 @@ export function PoliciesPage({ user }: { user: AdminUser }) {
     setFeedback(null);
     try {
       const updated = await updateAdminCancellationPolicy(editingCancellation.id, {
-        feePercentage: Number(editingCancellation.feePercentage),
-        refundPercentage: Number(editingCancellation.refundPercentage),
-        policyRule: editingCancellation.policyRule,
-        refundTimeline: editingCancellation.refundTimeline,
+        noticePeriodText: editingCancellation.noticePeriodText,
+        feeRetainedPercent: Number(editingCancellation.feeRetainedPercent),
+        refundPercent: Number(editingCancellation.refundPercent),
+        ruleText: editingCancellation.ruleText,
+        refundTimelineNote: editingCancellation.refundTimelineNote,
       });
       setCancellationPolicies((prev) => prev.map((p) => (p.id === updated.id ? updated : p)));
       setEditingCancellation(null);
-      setFeedback("Cancellation policy updated successfully.");
+      setFeedback("Cancellation policy slab updated successfully.");
     } catch (err: unknown) {
       setFeedback(err instanceof Error ? err.message : "Failed to update cancellation policy");
     } finally {
@@ -104,12 +104,11 @@ export function PoliciesPage({ user }: { user: AdminUser }) {
     setBusy(true);
     setFeedback(null);
     try {
-      const updated = await updateAdminPetPolicy(petPolicy.id, {
+      const updated = await updateAdminPetPolicy({
         isOffered: Boolean(petForm.isOffered),
-        seatProtectionRequired: Boolean(petForm.seatProtectionRequired),
         seatProtectionNote: petForm.seatProtectionNote ?? "",
-        breedRestrictions: petForm.breedRestrictions ?? "",
-        comfortStopRules: petForm.comfortStopRules ?? "",
+        breedRestrictionNote: petForm.breedRestrictionNote ?? "",
+        comfortStopNote: petForm.comfortStopNote ?? "",
         bookingInstruction: petForm.bookingInstruction ?? "",
       });
       setPetPolicy(updated);
@@ -127,21 +126,21 @@ export function PoliciesPage({ user }: { user: AdminUser }) {
     setBusy(true);
     setFeedback(null);
     try {
-      const updated = await updateAdminCompanyProfile(companyProfile.id, {
+      const updated = await updateAdminCompanyProfile({
         brandName: companyForm.brandName ?? "",
-        legalEntityName: companyForm.legalEntityName ?? "",
         officeAddress: companyForm.officeAddress ?? "",
         primaryPhone: companyForm.primaryPhone ?? "",
         whatsappNumber: companyForm.whatsappNumber ?? "",
-        primaryEmail: companyForm.primaryEmail ?? "",
+        email: companyForm.email ?? "",
         gstin: companyForm.gstin ?? "",
-        openingHours: companyForm.openingHours ?? "",
-        googleMapsUrl: companyForm.googleMapsUrl ?? "",
-        dossierStatus: companyForm.dossierStatus ?? "under_review",
+        operatingHours: companyForm.operatingHours ?? "",
+        mapsLocation: companyForm.mapsLocation ?? "",
+        dossierVersion: companyForm.dossierVersion ?? "v1.0",
+        dossierStatus: companyForm.dossierStatus ?? "pending_review",
       });
       setCompanyProfile(updated);
       setCompanyForm(updated);
-      setFeedback("Company profile updated successfully.");
+      setFeedback("Company NAP profile updated successfully.");
     } catch (err: unknown) {
       setFeedback(err instanceof Error ? err.message : "Failed to update company profile");
     } finally {
@@ -155,11 +154,9 @@ export function PoliciesPage({ user }: { user: AdminUser }) {
     setFeedback(null);
     try {
       const updated = await updateAdminMonument(editingMonument.id, {
+        name: editingMonument.name,
         visitingHours: editingMonument.visitingHours,
-        fridayClosed: editingMonument.fridayClosed,
-        closedDays: editingMonument.closedDays,
-        foreignTicketApproxInr: Number(editingMonument.foreignTicketApproxInr),
-        indianTicketApproxInr: Number(editingMonument.indianTicketApproxInr),
+        closedNote: editingMonument.closedNote,
         historicalContext: editingMonument.historicalContext,
         sortOrder: Number(editingMonument.sortOrder),
       });
@@ -176,8 +173,9 @@ export function PoliciesPage({ user }: { user: AdminUser }) {
   return (
     <div className="space-y-6">
       <PageHeader
+        eyebrow="Policies & Content"
         title="Policies & Company Content"
-        subtitle="Manage cancellation slabs, pet taxi policy, monuments knowledge base, and official NAP profile."
+        description="Manage cancellation slabs, pet taxi rules, monuments knowledge base, and official NAP profile."
       />
 
       {feedback && (
@@ -256,13 +254,11 @@ export function PoliciesPage({ user }: { user: AdminUser }) {
           {/* TAB 1: CANCELLATION POLICIES */}
           {activeTab === "cancellation" && (
             <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-base font-semibold text-white">Cancellation & Refund Slabs</h2>
-                  <p className="text-xs text-slate-400">
-                    Defined per Dossier §6 & §8. These slabs govern booking cancellations and customer refunds.
-                  </p>
-                </div>
+              <div>
+                <h2 className="text-base font-semibold text-white">Cancellation & Refund Slabs</h2>
+                <p className="text-xs text-slate-400">
+                  Defined per Dossier §6 & §8. These slabs govern booking cancellations and customer refunds.
+                </p>
               </div>
 
               {/* Cab policies */}
@@ -284,24 +280,18 @@ export function PoliciesPage({ user }: { user: AdminUser }) {
                     </thead>
                     <tbody className="divide-y divide-hairline">
                       {cancellationPolicies
-                        .filter((p) => p.serviceType === "cab")
+                        .filter((p) => p.policyType === "cab")
                         .map((policy) => (
                           <tr key={policy.id} className="hover:bg-surface-elevated/40">
-                            <td className="px-4 py-3 font-medium text-white">
-                              {policy.noticeHoursMin === null
-                                ? `> ${policy.noticeHoursMax} hrs`
-                                : policy.noticeHoursMax === null
-                                ? `< ${policy.noticeHoursMin} hrs`
-                                : `${policy.noticeHoursMin}–${policy.noticeHoursMax} hrs`}
-                            </td>
+                            <td className="px-4 py-3 font-medium text-white">{policy.noticePeriodText}</td>
                             <td className="px-4 py-3">
-                              <Badge variant={policy.feePercentage === 0 ? "success" : policy.feePercentage === 100 ? "destructive" : "warning"}>
-                                {policy.feePercentage}% Fee
+                              <Badge tone={policy.feeRetainedPercent === 0 ? "success" : policy.feeRetainedPercent === 100 ? "error" : "gold"}>
+                                {policy.feeRetainedPercent}% Fee
                               </Badge>
                             </td>
-                            <td className="px-4 py-3 font-medium text-gold">{policy.refundPercentage}% Refund</td>
-                            <td className="px-4 py-3 text-xs text-slate-300 max-w-xs">{policy.policyRule}</td>
-                            <td className="px-4 py-3 text-xs text-slate-400">{policy.refundTimeline}</td>
+                            <td className="px-4 py-3 font-medium text-gold">{policy.refundPercent}% Refund</td>
+                            <td className="px-4 py-3 text-xs text-slate-300 max-w-xs">{policy.ruleText}</td>
+                            <td className="px-4 py-3 text-xs text-slate-400">{policy.refundTimelineNote}</td>
                             <td className="px-4 py-3 text-right">
                               {canEdit && (
                                 <Button
@@ -321,7 +311,7 @@ export function PoliciesPage({ user }: { user: AdminUser }) {
                 </div>
               </Card>
 
-              {/* Tour policies */}
+              {/* Tour package policies */}
               <Card className="overflow-hidden">
                 <div className="border-b border-hairline bg-surface-elevated px-4 py-3">
                   <span className="text-sm font-semibold text-white">Tour Packages Cancellation Slabs</span>
@@ -340,24 +330,18 @@ export function PoliciesPage({ user }: { user: AdminUser }) {
                     </thead>
                     <tbody className="divide-y divide-hairline">
                       {cancellationPolicies
-                        .filter((p) => p.serviceType === "tour")
+                        .filter((p) => p.policyType === "tour_package")
                         .map((policy) => (
                           <tr key={policy.id} className="hover:bg-surface-elevated/40">
-                            <td className="px-4 py-3 font-medium text-white">
-                              {policy.noticeHoursMin === null
-                                ? `> ${policy.noticeHoursMax} hrs (${(policy.noticeHoursMax ?? 0) / 24}d+)`
-                                : policy.noticeHoursMax === null
-                                ? `< ${policy.noticeHoursMin} hrs`
-                                : `${policy.noticeHoursMin}–${policy.noticeHoursMax} hrs`}
-                            </td>
+                            <td className="px-4 py-3 font-medium text-white">{policy.noticePeriodText}</td>
                             <td className="px-4 py-3">
-                              <Badge variant={policy.feePercentage === 0 ? "success" : policy.feePercentage === 100 ? "destructive" : "warning"}>
-                                {policy.feePercentage}% Fee
+                              <Badge tone={policy.feeRetainedPercent === 0 ? "success" : policy.feeRetainedPercent === 100 ? "error" : "gold"}>
+                                {policy.feeRetainedPercent}% Fee
                               </Badge>
                             </td>
-                            <td className="px-4 py-3 font-medium text-gold">{policy.refundPercentage}% Refund</td>
-                            <td className="px-4 py-3 text-xs text-slate-300 max-w-xs">{policy.policyRule}</td>
-                            <td className="px-4 py-3 text-xs text-slate-400">{policy.refundTimeline}</td>
+                            <td className="px-4 py-3 font-medium text-gold">{policy.refundPercent}% Refund</td>
+                            <td className="px-4 py-3 text-xs text-slate-300 max-w-xs">{policy.ruleText}</td>
+                            <td className="px-4 py-3 text-xs text-slate-400">{policy.refundTimelineNote}</td>
                             <td className="px-4 py-3 text-right">
                               {canEdit && (
                                 <Button
@@ -412,50 +396,36 @@ export function PoliciesPage({ user }: { user: AdminUser }) {
                     </label>
                   </div>
 
-                  <div className="flex items-center gap-3 rounded-lg border border-hairline bg-surface-elevated p-4">
-                    <input
-                      type="checkbox"
-                      id="seatProtection"
-                      checked={Boolean(petForm.seatProtectionRequired)}
-                      onChange={(e) => setPetForm((p) => ({ ...p, seatProtectionRequired: e.target.checked }))}
-                      disabled={!canEdit}
-                      className="h-4 w-4 rounded border-hairline bg-surface-dark text-gold focus:ring-gold"
-                    />
-                    <label htmlFor="seatProtection" className="text-sm font-medium text-white cursor-pointer">
-                      Seat protection / waterproof mat mandatory
-                    </label>
-                  </div>
-
                   <div>
                     <Label>Seat Protection Guidance Note</Label>
                     <Textarea
                       rows={3}
                       value={petForm.seatProtectionNote ?? ""}
-                      onChange={(e) => setPetForm((p) => ({ ...p, seatProtectionNote: e.target.value }))}
+                      onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setPetForm((p) => ({ ...p, seatProtectionNote: e.target.value }))}
                       disabled={!canEdit}
                       placeholder="e.g. Passenger must bring waterproof sheet or mat..."
+                    />
+                  </div>
+
+                  <div>
+                    <Label>Breed & Size Restrictions</Label>
+                    <Textarea
+                      rows={3}
+                      value={petForm.breedRestrictionNote ?? ""}
+                      onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setPetForm((p) => ({ ...p, breedRestrictionNote: e.target.value }))}
+                      disabled={!canEdit}
+                      placeholder="e.g. Small to medium pets allowed; muzzle required for dogs..."
                     />
                   </div>
                 </div>
 
                 <div className="space-y-4">
                   <div>
-                    <Label>Breed & Size Restrictions</Label>
-                    <Textarea
-                      rows={3}
-                      value={petForm.breedRestrictions ?? ""}
-                      onChange={(e) => setPetForm((p) => ({ ...p, breedRestrictions: e.target.value }))}
-                      disabled={!canEdit}
-                      placeholder="e.g. Small to medium pets allowed; muzzle required for dogs..."
-                    />
-                  </div>
-
-                  <div>
                     <Label>Comfort Stop Rules (Long Trips)</Label>
                     <Textarea
                       rows={3}
-                      value={petForm.comfortStopRules ?? ""}
-                      onChange={(e) => setPetForm((p) => ({ ...p, comfortStopRules: e.target.value }))}
+                      value={petForm.comfortStopNote ?? ""}
+                      onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setPetForm((p) => ({ ...p, comfortStopNote: e.target.value }))}
                       disabled={!canEdit}
                       placeholder="e.g. 10-minute comfort break every 2 hours on highway runs..."
                     />
@@ -464,9 +434,9 @@ export function PoliciesPage({ user }: { user: AdminUser }) {
                   <div>
                     <Label>Customer Booking Instructions</Label>
                     <Textarea
-                      rows={3}
+                      rows={4}
                       value={petForm.bookingInstruction ?? ""}
-                      onChange={(e) => setPetForm((p) => ({ ...p, bookingInstruction: e.target.value }))}
+                      onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setPetForm((p) => ({ ...p, bookingInstruction: e.target.value }))}
                       disabled={!canEdit}
                       placeholder="e.g. Mention pet travel in special requirements during booking checkout..."
                     />
@@ -483,7 +453,7 @@ export function PoliciesPage({ user }: { user: AdminUser }) {
                 <div>
                   <h2 className="text-base font-semibold text-white">Company Identity & NAP Profile (Dossier §11)</h2>
                   <p className="text-xs text-slate-400">
-                    Official business details for SEO, structured data, invoices, and client touchpoints. Fields marked with [TBD] indicate pending client confirmation.
+                    Official business details for SEO, structured data, and customer touchpoints. Fields with [TBD] indicate pending client confirmation.
                   </p>
                 </div>
                 {canEdit && (
@@ -493,13 +463,12 @@ export function PoliciesPage({ user }: { user: AdminUser }) {
                 )}
               </div>
 
-              {/* TBD Warning alert */}
               {(companyForm.primaryPhone?.includes("[TBD") || companyForm.gstin?.includes("[TBD")) && (
                 <div className="mb-6 flex items-start gap-3 rounded-lg border border-amber-500/40 bg-amber-500/10 p-4 text-sm text-amber-200">
                   <AlertTriangle className="h-5 w-5 shrink-0 text-amber-400 mt-0.5" />
                   <div>
                     <span className="font-semibold text-white">Pending Client Confirmation: </span>
-                    Some contact and tax details contain <code className="text-amber-300 font-mono text-xs">[TBD]</code> markers. Once the client approves these in the Sign-off page, update them here to update live website footers and schema.
+                    Some contact and tax details contain <code className="text-amber-300 font-mono text-xs">[TBD]</code> markers. Once confirmed by the client, update them here to propagate into website footers and schema.
                   </div>
                 </div>
               )}
@@ -510,15 +479,6 @@ export function PoliciesPage({ user }: { user: AdminUser }) {
                   <Input
                     value={companyForm.brandName ?? ""}
                     onChange={(e) => setCompanyForm((p) => ({ ...p, brandName: e.target.value }))}
-                    disabled={!canEdit}
-                  />
-                </div>
-
-                <div>
-                  <Label>Legal Registered Entity Name</Label>
-                  <Input
-                    value={companyForm.legalEntityName ?? ""}
-                    onChange={(e) => setCompanyForm((p) => ({ ...p, legalEntityName: e.target.value }))}
                     disabled={!canEdit}
                   />
                 </div>
@@ -553,8 +513,8 @@ export function PoliciesPage({ user }: { user: AdminUser }) {
                 <div>
                   <Label>Primary Support Email</Label>
                   <Input
-                    value={companyForm.primaryEmail ?? ""}
-                    onChange={(e) => setCompanyForm((p) => ({ ...p, primaryEmail: e.target.value }))}
+                    value={companyForm.email ?? ""}
+                    onChange={(e) => setCompanyForm((p) => ({ ...p, email: e.target.value }))}
                     disabled={!canEdit}
                   />
                 </div>
@@ -571,17 +531,17 @@ export function PoliciesPage({ user }: { user: AdminUser }) {
                 <div>
                   <Label>Operating Hours</Label>
                   <Input
-                    value={companyForm.openingHours ?? ""}
-                    onChange={(e) => setCompanyForm((p) => ({ ...p, openingHours: e.target.value }))}
+                    value={companyForm.operatingHours ?? ""}
+                    onChange={(e) => setCompanyForm((p) => ({ ...p, operatingHours: e.target.value }))}
                     disabled={!canEdit}
                   />
                 </div>
 
                 <div>
-                  <Label>Google Maps Location URL</Label>
+                  <Label>Google Maps Location / Place Link</Label>
                   <Input
-                    value={companyForm.googleMapsUrl ?? ""}
-                    onChange={(e) => setCompanyForm((p) => ({ ...p, googleMapsUrl: e.target.value }))}
+                    value={companyForm.mapsLocation ?? ""}
+                    onChange={(e) => setCompanyForm((p) => ({ ...p, mapsLocation: e.target.value }))}
                     disabled={!canEdit}
                   />
                 </div>
@@ -589,12 +549,12 @@ export function PoliciesPage({ user }: { user: AdminUser }) {
                 <div>
                   <Label>Dossier Review Status</Label>
                   <Select
-                    value={companyForm.dossierStatus ?? "under_review"}
+                    value={companyForm.dossierStatus ?? "pending_review"}
                     onChange={(e) => setCompanyForm((p) => ({ ...p, dossierStatus: e.target.value as CompanyProfileItem["dossierStatus"] }))}
                     disabled={!canEdit}
                   >
-                    <option value="draft">Draft (In Preparation)</option>
-                    <option value="under_review">Under Review (Client Pending)</option>
+                    <option value="pending_review">Pending Review (Client Working)</option>
+                    <option value="modifications_needed">Modifications Needed</option>
                     <option value="signed_off">Signed Off (Approved)</option>
                   </Select>
                 </div>
@@ -608,7 +568,7 @@ export function PoliciesPage({ user }: { user: AdminUser }) {
               <div>
                 <h2 className="text-base font-semibold text-white">Monuments Knowledge Base (Dossier §10.2)</h2>
                 <p className="text-xs text-slate-400">
-                  Curated Agra & surrounding monuments details used by customer tour pages, itineraries, and SEO rich snippets.
+                  Curated Agra monuments details used by customer tour pages, itineraries, and SEO rich snippets.
                 </p>
               </div>
 
@@ -619,11 +579,11 @@ export function PoliciesPage({ user }: { user: AdminUser }) {
                       <div className="flex items-start justify-between gap-2">
                         <div>
                           <h3 className="font-semibold text-white text-base">{mon.name}</h3>
-                          <span className="text-xs text-slate-400 font-mono">/{mon.slug} · {mon.city}</span>
+                          <span className="text-xs text-slate-400 font-mono">Order #{mon.sortOrder}</span>
                         </div>
-                        {mon.fridayClosed && (
-                          <Badge variant="destructive" className="shrink-0 text-xs">
-                            Friday Closed
+                        {mon.closedNote && (
+                          <Badge tone="error" className="shrink-0 text-xs">
+                            {mon.closedNote}
                           </Badge>
                         )}
                       </div>
@@ -632,17 +592,9 @@ export function PoliciesPage({ user }: { user: AdminUser }) {
                         {mon.historicalContext}
                       </p>
 
-                      <div className="grid grid-cols-2 gap-2 pt-2 border-t border-hairline text-xs">
-                        <div>
-                          <span className="text-slate-400 block">Timings:</span>
-                          <span className="font-medium text-slate-200">{mon.visitingHours}</span>
-                        </div>
-                        <div>
-                          <span className="text-slate-400 block">Tickets (Approx):</span>
-                          <span className="font-medium text-gold">
-                            ₹{mon.indianTicketApproxInr} Indian / ₹{mon.foreignTicketApproxInr} Foreign
-                          </span>
-                        </div>
+                      <div className="pt-2 border-t border-hairline text-xs">
+                        <span className="text-slate-400 block">Visiting Hours:</span>
+                        <span className="font-medium text-slate-200">{mon.visitingHours}</span>
                       </div>
                     </div>
 
@@ -671,9 +623,18 @@ export function PoliciesPage({ user }: { user: AdminUser }) {
         <Dialog
           open={Boolean(editingCancellation)}
           onClose={() => setEditingCancellation(null)}
-          title={`Edit Cancellation Slab (${editingCancellation.serviceType.toUpperCase()})`}
+          title={`Edit Cancellation Slab (${editingCancellation.policyType.toUpperCase()})`}
         >
           <div className="space-y-4 pt-2">
+            <div>
+              <Label>Notice Period Window Description</Label>
+              <Input
+                value={editingCancellation.noticePeriodText}
+                onChange={(e) => setEditingCancellation((p) => (p ? { ...p, noticePeriodText: e.target.value } : null))}
+                placeholder="e.g. > 24 hours before pickup"
+              />
+            </div>
+
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <Label>Fee Retained (%)</Label>
@@ -681,14 +642,14 @@ export function PoliciesPage({ user }: { user: AdminUser }) {
                   type="number"
                   min={0}
                   max={100}
-                  value={editingCancellation.feePercentage}
+                  value={editingCancellation.feeRetainedPercent}
                   onChange={(e) =>
                     setEditingCancellation((p) =>
                       p
                         ? {
                             ...p,
-                            feePercentage: Number(e.target.value),
-                            refundPercentage: 100 - Number(e.target.value),
+                            feeRetainedPercent: Number(e.target.value),
+                            refundPercent: 100 - Number(e.target.value),
                           }
                         : null
                     )
@@ -702,14 +663,14 @@ export function PoliciesPage({ user }: { user: AdminUser }) {
                   type="number"
                   min={0}
                   max={100}
-                  value={editingCancellation.refundPercentage}
+                  value={editingCancellation.refundPercent}
                   onChange={(e) =>
                     setEditingCancellation((p) =>
                       p
                         ? {
                             ...p,
-                            refundPercentage: Number(e.target.value),
-                            feePercentage: 100 - Number(e.target.value),
+                            refundPercent: Number(e.target.value),
+                            feeRetainedPercent: 100 - Number(e.target.value),
                           }
                         : null
                     )
@@ -722,16 +683,16 @@ export function PoliciesPage({ user }: { user: AdminUser }) {
               <Label>Policy Rule Text</Label>
               <Textarea
                 rows={3}
-                value={editingCancellation.policyRule}
-                onChange={(e) => setEditingCancellation((p) => (p ? { ...p, policyRule: e.target.value } : null))}
+                value={editingCancellation.ruleText}
+                onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setEditingCancellation((p) => (p ? { ...p, ruleText: e.target.value } : null))}
               />
             </div>
 
             <div>
               <Label>Refund Timeline Note</Label>
               <Input
-                value={editingCancellation.refundTimeline}
-                onChange={(e) => setEditingCancellation((p) => (p ? { ...p, refundTimeline: e.target.value } : null))}
+                value={editingCancellation.refundTimelineNote}
+                onChange={(e) => setEditingCancellation((p) => (p ? { ...p, refundTimelineNote: e.target.value } : null))}
               />
             </div>
 
@@ -755,6 +716,14 @@ export function PoliciesPage({ user }: { user: AdminUser }) {
           title={`Edit Monument: ${editingMonument.name}`}
         >
           <div className="space-y-4 pt-2">
+            <div>
+              <Label>Monument Name</Label>
+              <Input
+                value={editingMonument.name}
+                onChange={(e) => setEditingMonument((p) => (p ? { ...p, name: e.target.value } : null))}
+              />
+            </div>
+
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <Label>Visiting Hours</Label>
@@ -766,46 +735,11 @@ export function PoliciesPage({ user }: { user: AdminUser }) {
               </div>
 
               <div>
-                <Label>Closed Days</Label>
+                <Label>Closed Note</Label>
                 <Input
-                  value={editingMonument.closedDays}
-                  onChange={(e) => setEditingMonument((p) => (p ? { ...p, closedDays: e.target.value } : null))}
-                  placeholder="e.g. Fridays or Open all days"
-                />
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 rounded-lg border border-hairline bg-surface-elevated p-3">
-              <input
-                type="checkbox"
-                id="monFridayClosed"
-                checked={editingMonument.fridayClosed}
-                onChange={(e) => setEditingMonument((p) => (p ? { ...p, fridayClosed: e.target.checked } : null))}
-                className="h-4 w-4 rounded border-hairline bg-surface-dark text-gold focus:ring-gold"
-              />
-              <label htmlFor="monFridayClosed" className="text-sm text-white cursor-pointer font-medium">
-                Closed every Friday (Taj Mahal rule)
-              </label>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <Label>Indian Ticket Approx (INR)</Label>
-                <Input
-                  type="number"
-                  min={0}
-                  value={editingMonument.indianTicketApproxInr}
-                  onChange={(e) => setEditingMonument((p) => (p ? { ...p, indianTicketApproxInr: Number(e.target.value) } : null))}
-                />
-              </div>
-
-              <div>
-                <Label>Foreign Ticket Approx (INR)</Label>
-                <Input
-                  type="number"
-                  min={0}
-                  value={editingMonument.foreignTicketApproxInr}
-                  onChange={(e) => setEditingMonument((p) => (p ? { ...p, foreignTicketApproxInr: Number(e.target.value) } : null))}
+                  value={editingMonument.closedNote}
+                  onChange={(e) => setEditingMonument((p) => (p ? { ...p, closedNote: e.target.value } : null))}
+                  placeholder="e.g. Closed on Fridays"
                 />
               </div>
             </div>
@@ -814,8 +748,8 @@ export function PoliciesPage({ user }: { user: AdminUser }) {
               <Label>Historical Context & Tour Narrative</Label>
               <Textarea
                 rows={4}
-                value={editingMonument.historicalContext}
-                onChange={(e) => setEditingMonument((p) => (p ? { ...p, historicalContext: e.target.value } : null))}
+                value={editingMonument.historicalContext ?? ""}
+                onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setEditingMonument((p) => (p ? { ...p, historicalContext: e.target.value } : null))}
               />
             </div>
 

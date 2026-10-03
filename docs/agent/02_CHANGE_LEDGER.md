@@ -314,6 +314,25 @@ Implemented:
 - Zero changes made to `fare.engine.ts` (strictly deferred per scope pin).
 - Fully validated via `npm run verify`: 3x typechecks, 26 vitest test suites / 150 tests passed, customer SEO lifecycle passed, 3x builds succeeded.
 
+### 2026-10-04 — Dossier Content: Admin UI & Operations Desk (Step 3)
+
+- Implemented §4 of the build spec across `admin/`:
+  - **Sidebar & Navigation (`admin/src/components/admin/Sidebar.tsx`)**: Added navigation links for `/tour-packages`, `/local-transfers`, `/policies`, and `/sign-off` with appropriate Lucide icons.
+  - **Route Catalog Extension (`admin/src/components/admin/RouteCatalogPanel.tsx`)**: Added `use_per_km` toggle, `per_km_rate_override` input, `highway` descriptor, and `all_inclusive_note`.
+  - **Types & API Client (`admin/src/lib/types.ts`, `admin/src/lib/api.ts`)**: Added comprehensive TypeScript interfaces and typed CRUD API functions for all 8 dossier modules (tour packages, vehicle upgrades, local sightseeing packages, transfer routes, cancellation policies, monuments, pet taxi policy, company NAP profile, and client dossier signoffs).
+  - **Tour Packages Page (`admin/src/pages/TourPackagesPage.tsx`)**: Full lifecycle management table and modal editor supporting 5 canonical fleet tiers (`sedan`, `ertiga`, `innova`, `tempo`, `urbania`), starting price, `use_per_km` toggle, night charge, flat charge, duration, and inclusions notes.
+  - **Local & Transfers Page (`admin/src/pages/LocalTransfersPage.tsx`)**: Tabbed operational workspace supporting Local Sightseeing Packages (duration, included km, 5 fleet prices, extra km/hr rates editor) and Point-to-Point Transfers (doorstep station/airport transfers, distance notes, 5 fleet prices).
+  - **Policies & Content Page (`admin/src/pages/PoliciesPage.tsx`)**: 4-tab interface managing:
+    1. Cancellation & refund slabs for cabs and tour packages (notice window, fee retained %, refund %, rule description, refund timeline note).
+    2. Pet taxi policy (offering toggle, seat protection note, breed restrictions, comfort stop rules, customer booking instruction).
+    3. Company NAP Profile (official brand, registered entity, office address, phone, WhatsApp, email, GSTIN with pending `[TBD]` client confirmation banner, operating hours, Google Maps location, and dossier review status).
+    4. Monuments knowledge base (10 monuments per Dossier §10.2 with visiting hours, closure notes, and historical context).
+  - **Client Sign-off Page (`admin/src/pages/SignoffPage.tsx`)**: 10-row client verification checklist per Dossier §12 with status select (`pending`, `approved`, `modification_requested`), approver name, client notes, completion progress bar (`x/10 Approved`), and automatic / manual sign-off synchronization to `company_profile.dossier_status`.
+  - **UI Component Utilities (`admin/src/components/ui/Input.tsx`)**: Exported accessible and theme-consistent `Textarea` component.
+  - **Application Routing (`admin/src/App.tsx`)**: Lazy-loaded and mounted all 4 new pages inside `<AdminLayout />`.
+- Zero changes to `fare.engine.ts` (strictly deferred to Step 4: Engine Wiring per scope pins).
+- Fully validated via `npm run verify`: 3x typechecks (`customer`, `admin`, `backend`), 25 vitest test suites (150 tests passed), customer SEO tests passed, 3x production builds succeeded.
+
 ## Known next work (Phase 3 — secure integrations)
 
 - Step 3.2: High-entropy token or OTP recovery for booking status retrieval (`/api/v1/bookings/status`).

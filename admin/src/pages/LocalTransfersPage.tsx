@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { Archive, Car, Check, MapPin, Pencil, Plane, Plus, Trash2 } from "lucide-react";
+import { Archive, Car, Check, Pencil, Plane, Plus, Trash2 } from "lucide-react";
 import { PageHeader } from "@/components/admin/PageHeader";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Dialog } from "@/components/ui/Dialog";
-import { Input, Label, Select, Textarea } from "@/components/ui/Input";
+import { Input, Label, Select } from "@/components/ui/Input";
 import {
   archiveAdminLocalPackage,
   archiveAdminTransferRoute,
@@ -128,7 +128,13 @@ export function LocalTransfersPage({ user }: { user: AdminUser }) {
       parkingNote: item.parkingNote ?? "",
       fleetPrices: { ...emptyLocal.fleetPrices, ...item.fleetPrices },
       usePerKm: item.usePerKm,
-      extraRates: item.extraRates ?? emptyLocal.extraRates,
+      extraRates: {
+        sedan: item.extraRates?.sedan ?? emptyLocal.extraRates.sedan,
+        ertiga: item.extraRates?.ertiga ?? emptyLocal.extraRates.ertiga,
+        innova: item.extraRates?.innova ?? emptyLocal.extraRates.innova,
+        tempo: item.extraRates?.tempo ?? emptyLocal.extraRates.tempo,
+        urbania: item.extraRates?.urbania ?? emptyLocal.extraRates.urbania,
+      },
       nightChargeInr: item.nightChargeInr,
       status: item.status,
       isActive: item.isActive,
@@ -245,9 +251,10 @@ export function LocalTransfersPage({ user }: { user: AdminUser }) {
   return (
     <div className="space-y-6">
       <PageHeader
+        eyebrow="Local & Transfers"
         title="Local Sightseeing & Transfers"
         description="Agra hourly sightseeing packages and station / airport transfer corridors with verified fleet pricing."
-        action={
+        actions={
           can(user.role, "catalog:edit") ? (
             <Button variant="gold" onClick={activeTab === "local" ? openNewLocal : openNewTransfer}>
               <Plus className="mr-1.5 h-4 w-4" /> {activeTab === "local" ? "New Local Package" : "New Transfer Route"}
@@ -408,7 +415,7 @@ export function LocalTransfersPage({ user }: { user: AdminUser }) {
       {/* Local Package Modal */}
       <Dialog
         open={localModalOpen}
-        onOpenChange={setLocalModalOpen}
+        onClose={() => setLocalModalOpen(false)}
         title={editingLocal ? `Edit: ${editingLocal.name}` : "New Local Sightseeing Package"}
         description="Configure duration, included km, covers, 5 fleet prices, and extra km/hr rates."
       >
@@ -545,7 +552,7 @@ export function LocalTransfersPage({ user }: { user: AdminUser }) {
       {/* Transfer Route Modal */}
       <Dialog
         open={transferModalOpen}
-        onOpenChange={setTransferModalOpen}
+        onClose={() => setTransferModalOpen(false)}
         title={editingTransfer ? `Edit: ${editingTransfer.name}` : "New Transfer Route"}
         description="Configure doorstep station or airport transfer corridor and 5 fleet prices."
       >
