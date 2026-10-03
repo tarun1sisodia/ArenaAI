@@ -36,7 +36,10 @@ export function createHmacPaymentAdapter(options: HmacAdapterOptions): PaymentPr
       }
       const providerOrderId = `${options.name}_order_${command.idempotencyKey.replace(/-/g, "").slice(0, 18)}`;
       const expires = new Date(clock().getTime() + 30 * 60 * 1000);
-      const checkoutUrl = `${options.checkoutBaseUrl}/${options.name}?order=${encodeURIComponent(providerOrderId)}`;
+      const checkoutUrl =
+        options.name === "razorpay"
+          ? null
+          : `${options.checkoutBaseUrl}/${options.name}?order=${encodeURIComponent(providerOrderId)}`;
       return {
         provider: options.name,
         providerOrderId,

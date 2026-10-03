@@ -715,10 +715,19 @@ export function BookingPage() {
 
       // Attempt to initiate real checkout
       try {
+        const idempotencyKey =
+          typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+            ? crypto.randomUUID()
+            : "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+                const r = (Math.random() * 16) | 0;
+                const v = c === "x" ? r : (r & 0x3) | 0x8;
+                return v.toString(16);
+              });
+
         const checkout = await createPaymentCheckout({
           ticketId: draft.ticketId,
           guestAccessToken: draft.guestAccessToken,
-          idempotencyKey: (typeof crypto !== "undefined" && crypto.randomUUID) ? crypto.randomUUID() : `idemp-${Date.now()}`,
+          idempotencyKey,
           provider: "razorpay",
           currency: "INR",
         });

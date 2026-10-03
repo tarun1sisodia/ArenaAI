@@ -22,9 +22,13 @@ console.log("  • Customer Site:      http://localhost:5173");
 console.log("  • Operations Desk:    http://localhost:5174");
 console.log("-------------------------------------------------------------\n");
 
+const isWindows = process.platform === "win32";
+const npmCmd = isWindows ? "npm.cmd" : "npm";
+
 for (const svc of services) {
-  const child = spawn(svc.cmd, svc.args, {
+  const child = spawn(isWindows ? npmCmd : svc.cmd, svc.args, {
     stdio: ["inherit", "pipe", "pipe"],
+    shell: isWindows,
     env: { ...process.env, FORCE_COLOR: "1" },
   });
 

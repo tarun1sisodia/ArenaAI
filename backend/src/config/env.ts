@@ -56,6 +56,17 @@ export type Env = z.infer<typeof EnvSchema>;
 let cached: Env | null = null;
 
 export function loadEnv(source: NodeJS.ProcessEnv = process.env): Env {
+  if (source === process.env) {
+    try {
+      process.loadEnvFile?.(".env");
+    } catch {
+      try {
+        process.loadEnvFile?.("backend/.env");
+      } catch {
+        // .env file is optional in production/container environments
+      }
+    }
+  }
   if (cached && source === process.env) return cached;
   const parsed = EnvSchema.safeParse(source);
   if (!parsed.success) {

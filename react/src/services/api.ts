@@ -14,7 +14,7 @@ export function getApiBaseUrl(): string {
   ) {
     return "http://localhost:4000";
   }
-  return "https://client-juj4.onrender.com";
+  return "https://skb-baghel-api-staging.onrender.com";
 }
 
 export type BackendTripType = "one-way" | "round-trip" | "local-tour" | "airport-transfer";
