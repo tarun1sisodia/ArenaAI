@@ -1,6 +1,6 @@
 import { useRef, useState, type ReactNode, type RefObject } from "react";
-import { packages, vehicles, type VehicleId } from "../../data/catalogue";
-import { LocationCombobox } from "../search/LocationCombobox";
+import { vehicles, type VehicleId } from "../../data/catalogue";
+import { STATIC_DESTINATIONS } from "../search/LocationCombobox";
 import { localTomorrow } from "../../fares";
 
 const modes = [
@@ -18,13 +18,6 @@ const fleetLabels: Record<VehicleId, string> = {
   tempo: "Tempo",
   urbania: "Urbania",
 };
-const localTours = packages.filter((tour) => tour.duration.toLowerCase().includes("1 day"));
-const localTourCards = [
-  { slug: "agra-sightseeing", title: "Agra Local", meta: "4–8 Hours", note: "Taj Mahal, Agra Fort", image: "/assets/booking/agra-fort.webp" },
-  { slug: "mathura-vrindavan", title: "Mathura Vrindavan", meta: "8–10 Hours", note: "Temples, Spiritual Tour", image: "/assets/booking/prem-mandir.webp" },
-  { slug: "jaipur-day-tour", title: "Jaipur Day Tour", meta: "10–12 Hours", note: "Amber Fort, City Palace", image: "/assets/booking/hawa-mahal.webp" },
-  { slug: "fatehpur-sikri", title: "Fatehpur Sikri", meta: "6–8 Hours", note: "Historic Monuments", image: "/assets/booking/fatehpur-sikri.webp" },
-];
 
 type IconName = "car" | "swap" | "pin" | "calendar" | "sedan" | "van" | "bus" | "shield" | "rupee" | "clock" | "support" | "arrow";
 function SvgIcon({ name, size = 18 }: { name: IconName; size?: number }) {
@@ -45,6 +38,18 @@ function SvgIcon({ name, size = 18 }: { name: IconName; size?: number }) {
   return <svg className="booking-svg-icon" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{paths[name]}</svg>;
 }
 
+function CityInput({ id, label, value, onChange, onFocus }: { id: string; label: string; value: string; onChange: (value: string) => void; onFocus: () => void }) {
+  const [focused, setFocused] = useState(false);
+  const suggestions = STATIC_DESTINATIONS.filter((item) => item.name.toLowerCase().includes(value.trim().toLowerCase())).slice(0, 5);
+  return <div className="booking-reference__text-input-wrap">
+    <SvgIcon name="pin" size={20} />
+    <input id={id} aria-label={label} value={value} onChange={(event) => onChange(event.target.value)} onFocus={() => { setFocused(true); onFocus(); }} onBlur={() => setFocused(false)} placeholder="Enter city or location" autoComplete="off" />
+    {focused && value && suggestions.length > 0 && <div className="booking-reference__suggestions" role="listbox" aria-label={`${label} suggestions`}>
+      {suggestions.map((item) => <button type="button" role="option" key={item.id} onMouseDown={(event) => event.preventDefault()} onClick={() => onChange(item.name)}>{item.name}</button>)}
+    </div>}
+  </div>;
+}
+
 function formatDate(value: string): string {
   if (!value) return "";
   const date = new Date(`${value}T00:00:00`);
@@ -62,28 +67,24 @@ export function HomeBookingWidget() {
   const [pickupDate, setPickupDate] = useState(localTomorrow());
   const [returnDate, setReturnDate] = useState(localTomorrow());
   const [selectedVehicle, setSelectedVehicle] = useState<VehicleId>("sedan");
-  const [localTourId, setLocalTourId] = useState(localTours[0]?.slug ?? "agra-sightseeing");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const pickupInputRef = useRef<HTMLInputElement>(null);
   const returnInputRef = useRef<HTMLInputElement>(null);
-  const selectedTour = localTours.find((tour) => tour.slug === localTourId) ?? localTours[0];
 
   const openPicker = (ref: RefObject<HTMLInputElement | null>) => {
     try { ref.current?.showPicker(); } catch { ref.current?.focus(); }
   };
   function validate(): boolean {
     const next: Record<string, string> = {};
-    if (mode !== "local" && !origin.trim()) next.origin = "Select pickup location.";
-    if (mode !== "local" && !destination.trim()) next.destination = "Select destination.";
+    if (!origin.trim()) next.origin = "Enter pickup location.";
+    if (!destination.trim()) next.destination = "Enter destination.";
     if (!pickupDate) next.pickupDate = mode === "local" ? "Select tour date." : "Select pickup date.";
     if (mode === "round" && (!returnDate || returnDate < pickupDate)) next.returnDate = "Select a valid return date.";
-    if (mode === "local" && !selectedTour) next.localTour = "Select a local tour.";
     setErrors(next);
     return Object.keys(next).length === 0;
   }
   function bookingHref(): string {
-    if (mode === "local") return `/book?trip=local&pkg=${encodeURIComponent(selectedTour?.slug ?? localTourId)}&vehicle=${selectedVehicle}&date=${encodeURIComponent(pickupDate)}`;
-    return `/book?from=${encodeURIComponent(origin)}&to=${encodeURIComponent(destination)}&vehicle=${selectedVehicle}&trip=${mode === "round" ? "round-trip" : "one-way"}&date=${encodeURIComponent(pickupDate)}${mode === "round" ? `&returnDate=${encodeURIComponent(returnDate)}` : ""}`;
+    return `/book?from=${encodeURIComponent(origin)}&to=${encodeURIComponent(destination)}&vehicle=${selectedVehicle}&trip=${mode === "round" ? "round-trip" : mode === "local" ? "local" : "one-way"}&date=${encodeURIComponent(pickupDate)}${mode === "round" ? `&returnDate=${encodeURIComponent(returnDate)}` : ""}`;
   }
 
   return (
@@ -100,26 +101,13 @@ export function HomeBookingWidget() {
         </div>
 
         <div className="booking-reference__controls">
-          {mode === "local" ? (
-            <div className="booking-reference__field booking-reference__field--tour">
-              <label htmlFor="home-local-tour">Select Tour</label>
-              <div className="booking-reference__select booking-reference__select--with-icon"><span className="booking-reference__thumb"><img src={localTourCards.find((card) => card.slug === localTourId)?.image ?? "/assets/booking/agra-fort.webp"} alt="" /></span><select id="home-local-tour" value={localTourId} onChange={(event) => setLocalTourId(event.target.value)}>{localTours.map((tour) => <option key={tour.slug} value={tour.slug}>{tour.name}</option>)}</select></div>
-              <FieldError>{errors.localTour}</FieldError>
-            </div>
-          ) : (
-            <>
-              <div className="booking-reference__field booking-reference__field--origin"><label>From</label><div className="booking-reference__location"><SvgIcon name="pin" size={20} /><LocationCombobox id="home-origin" value={origin} onChange={setOrigin} placeholder="Search pickup city..." label="Pickup origin city" triggerIcon="" showLocationIqBadge={false} className="booking-reference__combobox" /></div><FieldError>{errors.origin}</FieldError></div>
-              <div className="booking-reference__field booking-reference__field--destination"><label>To</label><div className="booking-reference__location"><SvgIcon name="pin" size={20} /><LocationCombobox id="home-destination" value={destination} onChange={setDestination} placeholder="Search destination city..." label="Destination city" triggerIcon="" showLocationIqBadge={false} className="booking-reference__combobox" /></div><FieldError>{errors.destination}</FieldError></div>
-            </>
-          )}
-          <div className="booking-reference__field booking-reference__field--date"><label htmlFor="home-pickup-date">{mode === "local" ? "Travel Date" : "Pickup Date"}</label><div className="booking-reference__date"><SvgIcon name="calendar" size={18} /><input ref={pickupInputRef} id="home-pickup-date" type="date" value={pickupDate} min={localTomorrow()} onChange={(event) => { setPickupDate(event.target.value); if (returnDate < event.target.value) setReturnDate(event.target.value); }} /><span>{pickupDate ? formatDate(pickupDate) : "Select date"}</span><button type="button" aria-label="Open pickup date picker" onClick={() => openPicker(pickupInputRef)} /></div><FieldError>{errors.pickupDate}</FieldError></div>
+          <div className="booking-reference__field booking-reference__field--origin"><label htmlFor="home-origin">From</label><CityInput id="home-origin" label="Pickup origin city" value={origin} onChange={setOrigin} onFocus={() => setErrors({})} /><FieldError>{errors.origin}</FieldError></div>
+          <div className="booking-reference__field booking-reference__field--destination"><label htmlFor="home-destination">To</label><CityInput id="home-destination" label="Destination city" value={destination} onChange={setDestination} onFocus={() => setErrors({})} /><FieldError>{errors.destination}</FieldError></div>
+          <div className="booking-reference__field booking-reference__field--date"><label htmlFor="home-pickup-date">Pickup Date</label><div className="booking-reference__date"><SvgIcon name="calendar" size={18} /><input ref={pickupInputRef} id="home-pickup-date" type="date" value={pickupDate} min={localTomorrow()} onChange={(event) => { setPickupDate(event.target.value); if (returnDate < event.target.value) setReturnDate(event.target.value); }} /><span>{pickupDate ? formatDate(pickupDate) : "Select date"}</span><button type="button" aria-label="Open pickup date picker" onClick={() => openPicker(pickupInputRef)} /></div><FieldError>{errors.pickupDate}</FieldError></div>
           {mode === "round" && <div className="booking-reference__field booking-reference__field--return"><label htmlFor="home-return-date">Return Date</label><div className="booking-reference__date"><SvgIcon name="calendar" size={18} /><input ref={returnInputRef} id="home-return-date" type="date" value={returnDate} min={pickupDate} onChange={(event) => setReturnDate(event.target.value)} /><span>{returnDate ? formatDate(returnDate) : "Select date"}</span><button type="button" aria-label="Open return date picker" onClick={() => openPicker(returnInputRef)} /></div><FieldError>{errors.returnDate}</FieldError></div>}
-          <div className="booking-reference__field booking-reference__field--fleet"><label>Vehicle</label><div className="booking-reference__vehicles" role="radiogroup" aria-label="Vehicle type">{fleetIds.map((id) => <button type="button" role="radio" aria-checked={selectedVehicle === id} className={`booking-reference__vehicle ${selectedVehicle === id ? "is-active" : ""}`} key={id} onClick={() => setSelectedVehicle(id)}><SvgIcon name={id === "urbania" ? "bus" : id === "tempo" ? "van" : id === "innova" ? "van" : id === "sedan" ? "sedan" : "car"} size={23} /><span>{fleetLabels[id]}</span></button>)}</div></div>
+          <div className="booking-reference__field booking-reference__field--fleet"><label>Vehicle</label><div className="booking-reference__vehicles" role="radiogroup" aria-label="Vehicle type">{fleetIds.map((id) => <button type="button" role="radio" aria-checked={selectedVehicle === id} className={`booking-reference__vehicle ${selectedVehicle === id ? "is-active" : ""}`} key={id} onClick={() => setSelectedVehicle(id)}><SvgIcon name={id === "urbania" ? "bus" : id === "tempo" || id === "innova" ? "van" : id === "sedan" ? "sedan" : "car"} size={23} /><span>{fleetLabels[id]}</span></button>)}</div></div>
           <div className="booking-reference__action"><button type="button" className="booking-reference__search" onClick={() => { if (!validate()) return; window.location.href = bookingHref(); }}>Book Now<SvgIcon name="arrow" size={19} /></button></div>
         </div>
-
-        {mode === "local" && <div className="booking-reference__tour-cards" aria-label="Popular local tours">{localTourCards.map((card) => <button type="button" key={card.slug} className={`booking-reference__tour-card ${localTourId === card.slug ? "is-active" : ""}`} onClick={() => setLocalTourId(card.slug)}><img src={card.image} alt="" /><span><strong>{card.title}</strong><small>{card.meta}</small><em>{card.note}</em></span><i>{localTourId === card.slug ? "●" : "○"}</i></button>)}</div>}
-
         <div className="booking-reference__trust"><span><SvgIcon name="shield" size={15} /> Verified Drivers</span><span><SvgIcon name="rupee" size={15} /> Transparent Pricing</span><span><SvgIcon name="clock" size={15} /> On-Time Pickup</span><span><SvgIcon name="support" size={15} /> 24/7 Support</span></div>
       </div>
     </div>
