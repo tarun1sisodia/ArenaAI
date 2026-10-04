@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from "react";
 import type { SupportedLanguage } from "../config";
 import { contact } from "../data/contact";
 import { packages as staticPackages, type TourPackage } from "../data";
+import generatedPublishedTourPackages from "../data/generated-published-tour-packages.json";
 import { WhatsAppIcon } from "../components/icons";
 import { Pagination } from "../components/ui/Pagination";
 import { LiveCatalogSection } from "../components/catalog/LiveCatalogSection";
@@ -326,11 +327,61 @@ const PACKAGES_FAQS = [
   },
 ];
 
+function getPackageImage(slug: string): string {
+  if (slug.includes("sunrise")) return "/assets/packages/taj-sunrise.webp";
+  if (slug.includes("gatimaan")) return "/assets/packages/gatimaan-express.webp";
+  if (slug.includes("mathura") || slug.includes("vrindavan")) return "/assets/packages/mathura-vrindavan.webp";
+  if (slug.includes("golden-triangle")) return "/assets/packages/golden-triangle.webp";
+  if (slug.includes("overnight") || slug.includes("unhurried")) return "/assets/packages/agra-day.webp";
+  return "/assets/packages/agra-day.webp";
+}
+
+function toDossierTourPackage(item: any): TourPackage {
+  const startingPrice = Number(item.startingPriceInr || item.fleetPrices?.sedan || 3499);
+  const slug = String(item.slug ?? item.packageCode ?? item.package_code);
+  return {
+    id: slug,
+    slug,
+    name: item.name,
+    kicker: `${item.days ?? 1} Day${(item.days ?? 1) > 1 ? "s" : ""} Private Tour`,
+    duration: item.durationText || `${item.days ?? 1} Day`,
+    from: startingPrice,
+    image: item.image || getPackageImage(slug),
+    places: [item.name, "Agra Heritage Sites"],
+    blurb: item.inclusionsHighlight || "Private sanitized AC cab, dedicated verified chauffeur & monument sightseeing.",
+    includes: [
+      "Private AC vehicle & dedicated verified chauffeur",
+      "All highway tolls & monument parking fees included",
+      "Doorstep pickup & drop-off from hotel or station",
+    ],
+    excludes: [
+      "Monument entry tickets",
+      "Meals & personal expenses",
+    ],
+  };
+}
+
+const dossierTourPackages: TourPackage[] = (generatedPublishedTourPackages as any[])
+  .filter((item) => item && (item.slug || item.packageCode || item.package_code) && item.name)
+  .map(toDossierTourPackage);
+
 export function PackagesPage({ language = "en" }: PackagesPageProps) {
   // Category Filter State
   const [activeCategory, setActiveCategory] = useState<PackageFilterCategory>("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [packageList, setPackageList] = useState<TourPackage[]>(() => [...staticPackages]);
+  
+  const initialPackageList = useMemo(() => {
+    const map = new Map<string, TourPackage>();
+    for (const p of staticPackages) {
+      map.set(p.slug, p);
+    }
+    for (const dp of dossierTourPackages) {
+      map.set(dp.slug, dp);
+    }
+    return Array.from(map.values());
+  }, []);
+
+  const [packageList, setPackageList] = useState<TourPackage[]>(initialPackageList);
   const [currentPage, setCurrentPage] = useState(() => {
     if (typeof window !== "undefined") {
       const page = Number(new URLSearchParams(window.location.search).get("page"));
@@ -345,7 +396,14 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
     loadPublishedPackages()
       .then((items) => {
         if (isMounted && items && items.length > 0) {
-          setPackageList(items);
+          const map = new Map<string, TourPackage>();
+          for (const p of items) {
+            map.set(p.slug, p);
+          }
+          for (const dp of dossierTourPackages) {
+            map.set(dp.slug, dp);
+          }
+          setPackageList(Array.from(map.values()));
         }
       })
       .catch(() => {});

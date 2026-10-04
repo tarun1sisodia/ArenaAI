@@ -699,6 +699,51 @@ export function HomePage({ language = "en" }: HomePageProps) {
           </div>
         </section>
 
+        {/* Quick Directory: Transfers, Local Packages & Monument Guides */}
+        <section className="w-full py-8 bg-surface-container-low/70 border-t border-border-warm/50">
+          <div className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+              <div>
+                <span className="font-label-caps text-body-sm text-primary uppercase tracking-widest font-bold block mb-1">
+                  Direct Charters &amp; Transfers
+                </span>
+                <h3 className="font-headline-sm text-base sm:text-headline-lg-mobile text-on-surface font-bold">
+                  Popular Station Drops, Airport Transfers &amp; Heritage Guides
+                </h3>
+              </div>
+              <a href="/en/packages/" className="text-xs text-primary font-bold hover:underline shrink-0">
+                View All Packages →
+              </a>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 text-xs">
+              <a href="/en/transfers/agc-station-drop/" className="p-2.5 rounded-lg bg-surface-container-lowest border border-border-warm/60 hover:border-primary/50 transition-all flex flex-col justify-between shadow-xs">
+                <span className="font-bold text-ink-charcoal truncate">Agra Cantt Drop</span>
+                <span className="text-primary font-semibold mt-1">From ₹800</span>
+              </a>
+              <a href="/en/transfers/delhi-igi-oneway/" className="p-2.5 rounded-lg bg-surface-container-lowest border border-border-warm/60 hover:border-primary/50 transition-all flex flex-col justify-between shadow-xs">
+                <span className="font-bold text-ink-charcoal truncate">Delhi IGI Transfer</span>
+                <span className="text-primary font-semibold mt-1">From ₹3,499</span>
+              </a>
+              <a href="/en/transfers/kheria-airport/" className="p-2.5 rounded-lg bg-surface-container-lowest border border-border-warm/60 hover:border-primary/50 transition-all flex flex-col justify-between shadow-xs">
+                <span className="font-bold text-ink-charcoal truncate">Agra Airport (AGR)</span>
+                <span className="text-primary font-semibold mt-1">From ₹900</span>
+              </a>
+              <a href="/en/local-packages/agra-standard-sightseeing/" className="p-2.5 rounded-lg bg-surface-container-lowest border border-border-warm/60 hover:border-primary/50 transition-all flex flex-col justify-between shadow-xs">
+                <span className="font-bold text-ink-charcoal truncate">Agra 8Hr / 80KM</span>
+                <span className="text-primary font-semibold mt-1">From ₹1,900</span>
+              </a>
+              <a href="/en/local-packages/agra-extended-city-tour/" className="p-2.5 rounded-lg bg-surface-container-lowest border border-border-warm/60 hover:border-primary/50 transition-all flex flex-col justify-between shadow-xs">
+                <span className="font-bold text-ink-charcoal truncate">Agra 12Hr City Tour</span>
+                <span className="text-primary font-semibold mt-1">From ₹2,200</span>
+              </a>
+              <a href="/en/monuments/taj-mahal/" className="p-2.5 rounded-lg bg-surface-container-lowest border border-border-warm/60 hover:border-primary/50 transition-all flex flex-col justify-between shadow-xs">
+                <span className="font-bold text-ink-charcoal truncate">Taj Mahal Guide</span>
+                <span className="text-primary font-semibold mt-1">Cab from ₹800</span>
+              </a>
+            </div>
+          </div>
+        </section>
+
         {/* ── CONTACT / INQUIRY ── 2-col layout (same as hero split, but this is the CTA section) */}
         {/* Third eyebrow (3 of 3 allowed) */}
         <section

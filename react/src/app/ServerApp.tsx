@@ -27,7 +27,15 @@ import { packages, routes, vehicles, type Route } from "../data/catalogue";
 import LivePackageDetailPage from "../pages/LivePackageDetailPage";
 import generatedPublishedCatalog from "../data/generated-published-catalog.json";
 import generatedPublishedRoutes from "../data/generated-published-routes.json";
+import generatedPublishedTourPackages from "../data/generated-published-tour-packages.json";
+import generatedPublishedTransferRoutes from "../data/generated-published-transfer-routes.json";
+import generatedPublishedLocalPackages from "../data/generated-published-local-packages.json";
+import generatedPublishedContent from "../data/generated-published-content.json";
 import type { PublicCatalogItem } from "../services/catalog";
+import DossierTourPackagePage, { type DossierTourPackageItem } from "../pages/DossierTourPackagePage";
+import TransferDetailPage, { type DossierTransferRouteItem } from "../pages/TransferDetailPage";
+import LocalPackageDetailPage, { type DossierLocalPackageItem } from "../pages/LocalPackageDetailPage";
+import MonumentDetailPage, { type DossierMonumentItem } from "../pages/MonumentDetailPage";
 
 type GeneratedCatalogItem = {
   slug: string;
@@ -54,6 +62,42 @@ const publishedCatalog = (generatedPublishedCatalog as GeneratedCatalogItem[]).f
 const publishedRoutes = (generatedPublishedRoutes as GeneratedRouteItem[]).filter(
   (item) => Boolean(item && item.slug && item.sourceCity),
 );
+const publishedTourPackages = (generatedPublishedTourPackages as DossierTourPackageItem[]).filter(
+  (item) => Boolean(item && item.slug && item.name),
+);
+const publishedTransferRoutes = (generatedPublishedTransferRoutes as DossierTransferRouteItem[]).filter(
+  (item) => Boolean(item && item.slug && item.name),
+);
+const publishedLocalPackages = (generatedPublishedLocalPackages as DossierLocalPackageItem[]).filter(
+  (item) => Boolean(item && item.slug && item.name),
+);
+const publishedMonuments = (
+  (generatedPublishedContent as { monuments?: DossierMonumentItem[] })?.monuments ?? []
+).filter((item) => Boolean(item && item.name));
+
+export function toDossierTransferRoute(item: DossierTransferRouteItem): Route {
+  const fares = item.fleetPrices ?? {};
+  return {
+    id: String(item.slug),
+    from: "agra",
+    to: String(item.slug),
+    origin: "Agra",
+    destination: String(item.name),
+    km: 20,
+    duration: String(item.distanceText ?? "Direct Transfer"),
+    kind: "one-way",
+    pricingModel: "oneway",
+    corridor: String(item.directionNote ?? "Express Point-to-Point Transfer"),
+    toll: 1,
+    fares: {
+      sedan: Number(fares.sedan ?? 800),
+      ertiga: Number(fares.ertiga ?? 900),
+      innova: Number(fares.innova ?? 1100),
+      tempo: Number(fares.tempo ?? 2200),
+      urbania: Number(fares.urbania ?? 3500),
+    },
+  };
+}
 
 function toFrontendRoute(item: GeneratedRouteItem): Route {
   const fares = item.faresInr ?? {};
@@ -99,6 +143,10 @@ function getSeoBase(
   isBooking: boolean,
   dynamicItem?: Pick<GeneratedCatalogItem, "title" | "shortDescription" | "coverImage">,
   dynamicRoute?: Route,
+  dossierTourPackage?: DossierTourPackageItem,
+  dossierTransferRoute?: DossierTransferRouteItem,
+  dossierLocalPackage?: DossierLocalPackageItem,
+  dossierMonument?: DossierMonumentItem,
 ): SeoMetadata {
   if (SEO_LANDING_SLUGS.includes(section as SeoLandingSlug)) {
     const labels: Record<string, string> = {
@@ -125,6 +173,78 @@ function getSeoBase(
     const item = publishedRoutes.find((entry) => pathname.replace(/\/$/, "").endsWith(`/${entry.slug}`));
     return item ? toFrontendRoute(item) : undefined;
   })();
+
+  const resolvedDossierTour = dossierTourPackage ?? (pathname.includes("/packages/")
+    ? publishedTourPackages.find((item) => pathname.replace(/\/$/, "").endsWith(`/packages/${item.slug}`))
+    : undefined);
+
+  const resolvedDossierTransfer = dossierTransferRoute ?? (pathname.includes("/transfers/")
+    ? publishedTransferRoutes.find((item) => pathname.replace(/\/$/, "").endsWith(`/transfers/${item.slug}`))
+    : undefined);
+
+  const resolvedDossierLocal = dossierLocalPackage ?? (pathname.includes("/local-packages/")
+    ? publishedLocalPackages.find((item) => pathname.replace(/\/$/, "").endsWith(`/local-packages/${item.slug}`))
+    : undefined);
+
+  const resolvedDossierMonument = dossierMonument ?? (pathname.includes("/monuments/")
+    ? publishedMonuments.find((item) => {
+        const slug = item.slug ?? item.monumentCode ?? (item.name ? item.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") : "");
+        return pathname.replace(/\/$/, "").endsWith(`/monuments/${slug}`);
+      })
+    : undefined);
+
+  if (resolvedDossierTour) {
+    const fare = Number(resolvedDossierTour.startingPriceInr || resolvedDossierTour.fleetPrices?.sedan || 3499);
+    const priceSuffix = ` @ ₹${fare.toLocaleString("en-IN")} | SK Baghel`;
+    const maxName = Math.max(10, 60 - priceSuffix.length);
+    const titleName = resolvedDossierTour.name.length > maxName ? `${resolvedDossierTour.name.slice(0, maxName - 1).trimEnd()}…` : resolvedDossierTour.name;
+    return {
+      title: `${titleName}${priceSuffix}`,
+      description: `${resolvedDossierTour.name} from ₹${fare.toLocaleString("en-IN")}. ${resolvedDossierTour.inclusionsHighlight || "Private sanitized AC cab, dedicated verified chauffeur & monument sightseeing."}`.slice(0, 155),
+      ogImage: "/assets/brand/og-banner.webp",
+      keywords: [resolvedDossierTour.name, "Agra tour package", "private guided tour Agra", "SK Baghel Tour & Travels"],
+    };
+  }
+
+  if (resolvedDossierTransfer) {
+    const fare = Number(resolvedDossierTransfer.fleetPrices?.sedan ?? 800);
+    const priceSuffix = ` Taxi @ ₹${fare.toLocaleString("en-IN")} | SK Baghel`;
+    const maxName = Math.max(10, 60 - priceSuffix.length);
+    const titleName = resolvedDossierTransfer.name.length > maxName ? `${resolvedDossierTransfer.name.slice(0, maxName - 1).trimEnd()}…` : resolvedDossierTransfer.name;
+    return {
+      title: `${titleName}${priceSuffix}`,
+      description: `${resolvedDossierTransfer.name} from ₹${fare.toLocaleString("en-IN")}. ${resolvedDossierTransfer.directionNote || "Doorstep pickup, zero surge pricing, verified commercial chauffeur & delay tracking."}`.slice(0, 155),
+      ogImage: "/assets/brand/og-banner.webp",
+      keywords: [resolvedDossierTransfer.name, "Agra airport transfer", "Agra station taxi", "SK Baghel Tour & Travels"],
+    };
+  }
+
+  if (resolvedDossierLocal) {
+    const fare = Number(resolvedDossierLocal.fleetPrices?.sedan ?? 1900);
+    const priceSuffix = ` @ ₹${fare.toLocaleString("en-IN")} | SK Baghel`;
+    const maxName = Math.max(10, 60 - priceSuffix.length);
+    const titleName = resolvedDossierLocal.name.length > maxName ? `${resolvedDossierLocal.name.slice(0, maxName - 1).trimEnd()}…` : resolvedDossierLocal.name;
+    return {
+      title: `${titleName}${priceSuffix}`,
+      description: `${resolvedDossierLocal.name} from ₹${fare.toLocaleString("en-IN")} (${resolvedDossierLocal.durationHours} hrs / ${resolvedDossierLocal.includedKm} km). Covering ${resolvedDossierLocal.covers}. AC cab with driver.`.slice(0, 155),
+      ogImage: "/assets/brand/og-banner.webp",
+      keywords: [resolvedDossierLocal.name, "Agra local sightseeing cab", "Agra full day taxi", "SK Baghel Tour & Travels"],
+    };
+  }
+
+  if (resolvedDossierMonument) {
+    const fare = 800;
+    const priceSuffix = ` Cab Tour @ ₹${fare} | SK Baghel`;
+    const maxName = Math.max(10, 60 - priceSuffix.length);
+    const titleName = resolvedDossierMonument.name.length > maxName ? `${resolvedDossierMonument.name.slice(0, maxName - 1).trimEnd()}…` : resolvedDossierMonument.name;
+    return {
+      title: `${titleName}${priceSuffix}`,
+      description: `Visit ${resolvedDossierMonument.name} in Agra (${resolvedDossierMonument.visitingHours}). ${resolvedDossierMonument.closedNote}. Book private AC cab from ₹${fare} with verified driver.`.slice(0, 155),
+      ogImage: "/assets/brand/og-banner.webp",
+      keywords: [resolvedDossierMonument.name, `${resolvedDossierMonument.name} timings`, "Agra monument taxi", "SK Baghel Tour & Travels"],
+    };
+  }
+
   if (resolvedDynamicItem) {
     return {
       title: `${resolvedDynamicItem.title} — Private Tour & Fares | Agra SK Baghel Tour and Travels`,
@@ -302,8 +422,23 @@ export function getSeo(
   isBooking: boolean,
   dynamicItem?: Pick<GeneratedCatalogItem, "title" | "shortDescription" | "coverImage">,
   dynamicRoute?: Route,
+  dossierTourPackage?: DossierTourPackageItem,
+  dossierTransferRoute?: DossierTransferRouteItem,
+  dossierLocalPackage?: DossierLocalPackageItem,
+  dossierMonument?: DossierMonumentItem,
 ): SeoMetadata {
-  const metadata = getSeoBase(pathname, section, language, isBooking, dynamicItem, dynamicRoute);
+  const metadata = getSeoBase(
+    pathname,
+    section,
+    language,
+    isBooking,
+    dynamicItem,
+    dynamicRoute,
+    dossierTourPackage,
+    dossierTransferRoute,
+    dossierLocalPackage,
+    dossierMonument,
+  );
   return {
     ...metadata,
     title: clampSeoText(metadata.title, 60),
@@ -358,6 +493,26 @@ export function ServerApp({ pathname: propPathname }: AppProps = {}) {
     ? publishedCatalog.find((item) => pathname.replace(/\/$/, "").endsWith(`/packages/${item.slug}`))
     : undefined;
 
+  // Phase 6 Dossier Resolvers
+  const dossierTourPackage = pathname.includes("/packages/")
+    ? publishedTourPackages.find((item) => pathname.replace(/\/$/, "").endsWith(`/packages/${item.slug}`))
+    : undefined;
+
+  const dossierTransferRoute = pathname.includes("/transfers/")
+    ? publishedTransferRoutes.find((item) => pathname.replace(/\/$/, "").endsWith(`/transfers/${item.slug}`))
+    : undefined;
+
+  const dossierLocalPackage = pathname.includes("/local-packages/")
+    ? publishedLocalPackages.find((item) => pathname.replace(/\/$/, "").endsWith(`/local-packages/${item.slug}`))
+    : undefined;
+
+  const dossierMonument = pathname.includes("/monuments/")
+    ? publishedMonuments.find((item) => {
+        const slug = item.slug ?? item.monumentCode ?? (item.name ? item.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") : "");
+        return pathname.replace(/\/$/, "").endsWith(`/monuments/${slug}`);
+      })
+    : undefined;
+
   const matchedVehicle =
     (pathname.includes("/vehicles/") || pathname.includes("/fleet/")) &&
     vehicles.find((item) => {
@@ -375,6 +530,10 @@ export function ServerApp({ pathname: propPathname }: AppProps = {}) {
     Boolean(dynamicRoute) ||
     Boolean(matchedPackage) ||
     Boolean(dynamicPackage) ||
+    Boolean(dossierTourPackage) ||
+    Boolean(dossierTransferRoute) ||
+    Boolean(dossierLocalPackage) ||
+    Boolean(dossierMonument) ||
     Boolean(matchedVehicle) ||
     isSeoLanding ||
     packages.some((item) => pathname.endsWith(item.slug) || pathname.endsWith(item.slug + "/"));
@@ -392,7 +551,18 @@ export function ServerApp({ pathname: propPathname }: AppProps = {}) {
     description: pageDescription,
     ogImage: pageOgImage,
     keywords: pageKeywords,
-  } = getSeo(pathname, effectiveSection, language, isBooking, dynamicPackage, dynamicRoute);
+  } = getSeo(
+    pathname,
+    effectiveSection,
+    language,
+    isBooking,
+    dynamicPackage,
+    dynamicRoute,
+    dossierTourPackage,
+    dossierTransferRoute,
+    dossierLocalPackage,
+    dossierMonument,
+  );
 
   return (
     <ErrorBoundary>
@@ -426,6 +596,14 @@ export function ServerApp({ pathname: propPathname }: AppProps = {}) {
           <PackageDetailPage language={language} pkg={matchedPackage} />
         ) : dynamicPackage ? (
           <LivePackageDetailPage slug={dynamicPackage.slug} initialItem={dynamicPackage as unknown as PublicCatalogItem} />
+        ) : dossierTourPackage ? (
+          <DossierTourPackagePage language={language} item={dossierTourPackage} />
+        ) : dossierTransferRoute ? (
+          <TransferDetailPage language={language} item={dossierTransferRoute} />
+        ) : dossierLocalPackage ? (
+          <LocalPackageDetailPage language={language} item={dossierLocalPackage} />
+        ) : dossierMonument ? (
+          <MonumentDetailPage language={language} item={dossierMonument} />
         ) : matchedVehicle ? (
           <VehicleDetailPage language={language} vehicle={matchedVehicle} />
         ) : isSeoLanding ? (

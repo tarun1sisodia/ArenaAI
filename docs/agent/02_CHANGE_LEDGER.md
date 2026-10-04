@@ -391,6 +391,38 @@ Implemented:
     - Confirmed seed rows restored to `draft` per Architectural Lock 4.
     - Verified full monorepo via `npm run verify`: 3× typechecks, 26 vitest test files (175 tests passing), customer SEO lifecycle tests passing, 3× builds succeeding.
 
+### 2026-10-04 — Dossier Content: Frontend Resolution, Detail Pages & Price-Led SEO (Phase 6)
+
+- Implemented Phase 6 (Frontend) with strict boundary in `react/src/` only (no backend, no admin, no scripts, no engine changes):
+  - **`react/src/app/ServerApp.tsx`**:
+    - Imported 4 snapshots: `generated-published-tour-packages.json`, `generated-published-transfer-routes.json`, `generated-published-local-packages.json`, `generated-published-content.json`.
+    - Added 4 resolvers using `pathname.replace(/\/$/, "").endsWith(...)` pattern:
+      - `/packages/<slug>` → dossier tour-packages snapshot (evaluated after existing static/catalog packages to preserve static routes).
+      - `/transfers/<slug>` → transfer-routes snapshot.
+      - `/local-packages/<slug>` → local-packages snapshot.
+      - `/monuments/<slug>` → `contentSnapshot.monuments`.
+    - Added all 4 to `isKnownRoute` gate to prevent spurious 404s.
+    - Updated `getSeoBase` & `getSeo` with price-led titles guaranteed to survive the 60-character clamp (e.g. `Taj Sunrise Tour @ ₹12,999 | SK Baghel`), unique descriptions ≤ 155 characters, and proper canonical & hreflang tags.
+    - Added render branches for `DossierTourPackagePage`, `TransferDetailPage`, `LocalPackageDetailPage`, and `MonumentDetailPage`.
+  - **Dedicated Page Components (`react/src/pages/`)**:
+    - **`DossierTourPackagePage.tsx`**: Dedicated page for dossier tour packages (days/nights, 5-tier dated fare table with `"Fares updated <date>"`, inclusions highlight, night-charge note, vehicle upgrade surcharges, 9 FAQs with JSON-LD, H1 title, phone in H2, breadcrumb navigation, booking funnel CTA).
+    - **`TransferDetailPage.tsx`**: Dedicated page for station/airport transfers and point-to-point transfers (distance text, direction note, 5-tier dated fare table, pickup bay protocol, 9 FAQs with JSON-LD, H1 title, phone in H2, breadcrumb navigation, booking funnel CTA). Built as dedicated component rather than overloading `RouteDetailPage` due to text-based distance formatting, direction notes, and custom transfer FAQ schema.
+    - **`LocalPackageDetailPage.tsx`**: Dedicated page for local sightseeing charters (duration hours & included km, areas covered, 5-tier dated fare table, extra per-km/per-hr rates table, parking/monument notes, 9 FAQs with JSON-LD, H1 title, phone in H2, breadcrumb navigation, booking funnel CTA).
+    - **`MonumentDetailPage.tsx`**: Dedicated informational and cab guide page for monuments (visiting hours, Friday closure notes, historical context, dated fare table, 9 FAQs with JSON-LD, H1 title, phone in H2, breadcrumb navigation, booking funnel CTA).
+  - **Listing & Internal Linking**:
+    - **`PackagesPage.tsx`**: Dynamically merges published dossier tour packages from the snapshot alongside static catalog packages.
+    - **`RoutesPage.tsx`**: Extended with a dedicated "Point-to-Point Transfers & Local Charters" section linking popular airport/station drops and local charters.
+    - **`HomePage.tsx`**: Extended with a compact directory ribbon ("Popular Station Drops, Airport Transfers & Heritage Guides") linking transfer routes, sightseeing charters, and monument guides while fully preserving the approved bento grid and `LOCK-N07`.
+  - **Verification**:
+    - Temporarily published 1 row per type via SQL (`chandigarh-famous-5-places-full-day-tour`, `agc-station-drop`, `agra-standard-sightseeing`, and `taj-mahal`).
+    - Verified raw HTML served from `react/dist/` for 1 URL per type:
+      - Tour Package (`/en/packages/chandigarh-famous-5-places-full-day-tour/`): Price in `<title>` (`3,499`), H1 present, dated fare table present, FAQ JSON-LD present.
+      - Transfer Route (`/en/transfers/agc-station-drop/`): Price in `<title>` (`800`), H1 present, dated fare table present, FAQ JSON-LD present.
+      - Local Package (`/en/local-packages/agra-standard-sightseeing/`): Price in `<title>` (`1,900`), H1 present, dated fare table present, FAQ JSON-LD present.
+      - Monument (`/en/monuments/taj-mahal/`): Price in `<title>` (`800`), H1 present, dated fare table present, FAQ JSON-LD present.
+    - Successfully reverted all test rows back to `draft` via SQL (0 published rows remain in the DB).
+    - Verified full monorepo via `npm run verify`: 3× typechecks, 26 vitest test files (175 tests passing), customer SEO lifecycle tests passing, 3× production builds green.
+
 ## Known next work (Phase 3 — secure integrations)
 
 - Step 3.2: High-entropy token or OTP recovery for booking status retrieval (`/api/v1/bookings/status`).
@@ -399,5 +431,6 @@ Implemented:
 - Step 3.5: Split staff roles into content, pricing, dispatch, finance, review, audit, and security.
 
 See `docs/agent/00_CONTEXT_HANDOFF.md` and section 8 of the root operating specification.
+
 
 

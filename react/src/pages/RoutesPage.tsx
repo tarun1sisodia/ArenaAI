@@ -516,8 +516,192 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
         )}
       </section>
 
-      {/* 3. OUTSTATION BILLING PRINCIPLES (Compact -20%) */}
+      {/* 2b. POINT-TO-POINT TRANSFERS & LOCAL SIGHTSEEING PACKAGES */}
       <section className="w-full bg-surface-container-low py-8 sm:py-10 border-t border-border-warm/60">
+        <div className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+            <div>
+              <span className="font-label-caps text-body-sm text-primary uppercase tracking-widest font-bold block mb-1">
+                Fixed Rate Transfers &amp; City Charters
+              </span>
+              <h2 className="font-headline-lg text-headline-lg text-ink-charcoal font-semibold">
+                Station Drops, Airport Transfers &amp; Local Sightseeing
+              </h2>
+              <p className="font-body-md text-xs text-on-surface-variant mt-1">
+                Fixed transparent fares with zero surge pricing, verified chauffeurs, and complimentary delay tracking.
+              </p>
+            </div>
+            <a
+              href="/en/packages/"
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline shrink-0"
+            >
+              <span>Explore All Tour Packages</span>
+              <span className="material-symbols-outlined text-icon-16">arrow_forward</span>
+            </a>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+            <a
+              href="/en/transfers/agc-station-drop/"
+              className="p-4 rounded-xl bg-surface-container-lowest border border-border-warm/70 shadow-2xs hover:shadow-sm hover:border-primary/50 transition-all flex flex-col justify-between group"
+            >
+              <div>
+                <div className="flex items-center justify-between gap-2 mb-1.5">
+                  <span className="px-2 py-0.5 rounded bg-sandstone-wash text-terracotta-sandstone text-label-caps font-bold uppercase">
+                    Railway Transfer
+                  </span>
+                  <span className="text-body-sm text-primary font-bold">From ₹800</span>
+                </div>
+                <h3 className="font-title-md text-sm font-bold text-ink-charcoal group-hover:text-primary transition-colors">
+                  Agra Cantt Station (AGC) Drop/Pickup
+                </h3>
+                <p className="font-body-sm text-xs text-on-surface-variant mt-1 leading-relaxed">
+                  Doorstep hotel drop or pickup synchronized with Gatimaan &amp; Shatabdi train schedules.
+                </p>
+              </div>
+              <div className="mt-3 pt-2 border-t border-border-warm/30 flex items-center justify-between text-xs text-secondary font-medium">
+                <span>~15–20 km</span>
+                <span className="text-primary font-bold group-hover:translate-x-0.5 transition-transform flex items-center gap-0.5">
+                  View Fares →
+                </span>
+              </div>
+            </a>
+
+            <a
+              href="/en/transfers/delhi-igi-oneway/"
+              className="p-4 rounded-xl bg-surface-container-lowest border border-border-warm/70 shadow-2xs hover:shadow-sm hover:border-primary/50 transition-all flex flex-col justify-between group"
+            >
+              <div>
+                <div className="flex items-center justify-between gap-2 mb-1.5">
+                  <span className="px-2 py-0.5 rounded bg-sandstone-wash text-terracotta-sandstone text-label-caps font-bold uppercase">
+                    Airport Corridor
+                  </span>
+                  <span className="text-body-sm text-primary font-bold">From ₹3,499</span>
+                </div>
+                <h3 className="font-title-md text-sm font-bold text-ink-charcoal group-hover:text-primary transition-colors">
+                  Delhi IGI Airport (DEL) Direct Transfer
+                </h3>
+                <p className="font-body-sm text-xs text-on-surface-variant mt-1 leading-relaxed">
+                  Direct express highway transfer via Yamuna Expressway with all tolls &amp; terminal parking included.
+                </p>
+              </div>
+              <div className="mt-3 pt-2 border-t border-border-warm/30 flex items-center justify-between text-xs text-secondary font-medium">
+                <span>225 km Express</span>
+                <span className="text-primary font-bold group-hover:translate-x-0.5 transition-transform flex items-center gap-0.5">
+                  View Fares →
+                </span>
+              </div>
+            </a>
+
+            <a
+              href="/en/transfers/kheria-airport/"
+              className="p-4 rounded-xl bg-surface-container-lowest border border-border-warm/70 shadow-2xs hover:shadow-sm hover:border-primary/50 transition-all flex flex-col justify-between group"
+            >
+              <div>
+                <div className="flex items-center justify-between gap-2 mb-1.5">
+                  <span className="px-2 py-0.5 rounded bg-sandstone-wash text-terracotta-sandstone text-label-caps font-bold uppercase">
+                    Airport Drop
+                  </span>
+                  <span className="text-body-sm text-primary font-bold">From ₹900</span>
+                </div>
+                <h3 className="font-title-md text-sm font-bold text-ink-charcoal group-hover:text-primary transition-colors">
+                  Agra Airport (Kheria AGR) Transfer
+                </h3>
+                <p className="font-body-sm text-xs text-on-surface-variant mt-1 leading-relaxed">
+                  Smooth doorstep pickup and luggage assistance for commercial flight departures from Kheria.
+                </p>
+              </div>
+              <div className="mt-3 pt-2 border-t border-border-warm/30 flex items-center justify-between text-xs text-secondary font-medium">
+                <span>~15–25 km</span>
+                <span className="text-primary font-bold group-hover:translate-x-0.5 transition-transform flex items-center gap-0.5">
+                  View Fares →
+                </span>
+              </div>
+            </a>
+
+            <a
+              href="/en/local-packages/agra-standard-sightseeing/"
+              className="p-4 rounded-xl bg-surface-container-lowest border border-border-warm/70 shadow-2xs hover:shadow-sm hover:border-primary/50 transition-all flex flex-col justify-between group"
+            >
+              <div>
+                <div className="flex items-center justify-between gap-2 mb-1.5">
+                  <span className="px-2 py-0.5 rounded bg-primary/10 text-primary text-label-caps font-bold uppercase">
+                    8 Hr / 80 KM
+                  </span>
+                  <span className="text-body-sm text-primary font-bold">From ₹1,900</span>
+                </div>
+                <h3 className="font-title-md text-sm font-bold text-ink-charcoal group-hover:text-primary transition-colors">
+                  Agra Standard Sightseeing Charter
+                </h3>
+                <p className="font-body-sm text-xs text-on-surface-variant mt-1 leading-relaxed">
+                  Taj Mahal, Agra Fort, Mehtab Bagh &amp; Baby Taj with dedicated private AC car and verified chauffeur.
+                </p>
+              </div>
+              <div className="mt-3 pt-2 border-t border-border-warm/30 flex items-center justify-between text-xs text-secondary font-medium">
+                <span>Full Day City Tour</span>
+                <span className="text-primary font-bold group-hover:translate-x-0.5 transition-transform flex items-center gap-0.5">
+                  View Details →
+                </span>
+              </div>
+            </a>
+
+            <a
+              href="/en/local-packages/agra-extended-city-tour/"
+              className="p-4 rounded-xl bg-surface-container-lowest border border-border-warm/70 shadow-2xs hover:shadow-sm hover:border-primary/50 transition-all flex flex-col justify-between group"
+            >
+              <div>
+                <div className="flex items-center justify-between gap-2 mb-1.5">
+                  <span className="px-2 py-0.5 rounded bg-primary/10 text-primary text-label-caps font-bold uppercase">
+                    12 Hr / 120 KM
+                  </span>
+                  <span className="text-body-sm text-primary font-bold">From ₹2,200</span>
+                </div>
+                <h3 className="font-title-md text-sm font-bold text-ink-charcoal group-hover:text-primary transition-colors">
+                  Agra Extended Heritage &amp; Fatehpur Sikri
+                </h3>
+                <p className="font-body-sm text-xs text-on-surface-variant mt-1 leading-relaxed">
+                  Complete heritage circuit including Emperor Akbar's ghost citadel at Fatehpur Sikri &amp; Taj Mahal.
+                </p>
+              </div>
+              <div className="mt-3 pt-2 border-t border-border-warm/30 flex items-center justify-between text-xs text-secondary font-medium">
+                <span>Extended Circuit</span>
+                <span className="text-primary font-bold group-hover:translate-x-0.5 transition-transform flex items-center gap-0.5">
+                  View Details →
+                </span>
+              </div>
+            </a>
+
+            <a
+              href="/en/transfers/af-station-drop/"
+              className="p-4 rounded-xl bg-surface-container-lowest border border-border-warm/70 shadow-2xs hover:shadow-sm hover:border-primary/50 transition-all flex flex-col justify-between group"
+            >
+              <div>
+                <div className="flex items-center justify-between gap-2 mb-1.5">
+                  <span className="px-2 py-0.5 rounded bg-sandstone-wash text-terracotta-sandstone text-label-caps font-bold uppercase">
+                    Station Transfer
+                  </span>
+                  <span className="text-body-sm text-primary font-bold">From ₹800</span>
+                </div>
+                <h3 className="font-title-md text-sm font-bold text-ink-charcoal group-hover:text-primary transition-colors">
+                  Agra Fort Railway Station (AF) Transfer
+                </h3>
+                <p className="font-body-sm text-xs text-on-surface-variant mt-1 leading-relaxed">
+                  Convenient doorstep cab transfers connecting Agra Fort railway station with local hotels &amp; monuments.
+                </p>
+              </div>
+              <div className="mt-3 pt-2 border-t border-border-warm/30 flex items-center justify-between text-xs text-secondary font-medium">
+                <span>~12–15 km</span>
+                <span className="text-primary font-bold group-hover:translate-x-0.5 transition-transform flex items-center gap-0.5">
+                  View Fares →
+                </span>
+              </div>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. OUTSTATION BILLING PRINCIPLES (Compact -20%) */}
+      <section className="w-full bg-surface py-8 sm:py-10 border-t border-border-warm/60">
         <div className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin">
           <div className="text-center max-w-2xl mx-auto mb-6">
             <span className="font-label-caps text-body-sm text-primary uppercase tracking-widest font-bold block mb-1">

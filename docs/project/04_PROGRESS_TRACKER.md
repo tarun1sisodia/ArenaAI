@@ -12,8 +12,8 @@ this file at commit `2c02ee3`. The table below is the condensed record.
 
 ## Current State
 
-- **Current Phase:** Phase I — live API integration and production hardening (active)
-- **Current Step:** Canonical booking-selection integrity fix complete on `fix/canonical-booking-selection`; production rollout and live payment drills remain.
+- **Current Phase:** Phase 6 — Frontend Dossier Resolution & Pages complete; ready for Phase 7 cleanup.
+- **Current Step:** Phase 6 verified green (ServerApp resolvers, DossierTourPackagePage, TransferDetailPage, LocalPackageDetailPage, MonumentDetailPage, price-led SEO, raw HTML verified, all rows reverted to draft).
 - **Last updated:** 2026-10-04
 - **Summary:** All HTML designs from `react/new_design/` are completely converted into the React application with ultra-luxury aesthetic styling, design tokens (`theme.css`), and the strict English-only mandate:
   * Multi-Agent Orchestration Engine (`agents/`): Automated agent pipeline with `code_extractor.py`, dynamic language templates (`task_template.py`), `tenacity` exponential retry logic, and specialized agents (`schema_agent.py`, `service_agent.py`, `frontend_agent.py`, `test_agent.py`, `seo_content_agent.py`, `orchestrator.py`).
