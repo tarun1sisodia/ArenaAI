@@ -114,10 +114,8 @@ export class StandardVehiclePricingStrategy implements PricingStrategy {
  * 
  * BUSINESS RULES ENFORCED:
  * 1. Trip Type Override: Must ALWAYS be calculated and charged as a Round Trip, regardless of the user's booking selection.
- * 2. Force Distance Rule: Force Tempo Traveller and Force Urbania are ALWAYS charged as a round trip.
- *    There is NO minimum-kilometre rule (NO 300 km floor).
- *    If the customer asked for a round trip, billableDistance = roundTripKm (do not double twice).
- *    If the customer asked for a one-way trip, billableDistance = oneWayKm * 2.
+ * 2. Distance Rule: destinations under 300 km are billed as a round trip;
+ *    destinations at or above 300 km use the vehicle's own per-km rate once.
  * 3. Pricing Structure: Locked fixed-rate pricing (billedKm * perKm rate).
  * 4. Driver Allowance: Daily driver allowance of strictly ₹500/day.
  * 5. Promo Codes: Zero promo discounts permitted on commercial group vehicles.
@@ -136,10 +134,9 @@ export class GroupCommercialVehicleStrategy implements PricingStrategy {
     // Calendar Days (minimum 1 day)
     const days = Math.max(1, calendarDaysInclusiveIst(input.pickupDatetime, input.returnDatetime));
 
-    // Rule 2: Force rule — NO 300 km floor.
-    // If round-trip: billedKm = input.distanceKm (do not double twice)
-    // If one-way: billedKm = input.distanceKm * 2
-    const billedKm = input.tripType === "round-trip" ? input.distanceKm : input.distanceKm * 2;
+    // Rule 2: Under 300 km is billed round trip; 300 km and above is billed
+    // once at the selected Tempo Traveller / Urbania per-km rate.
+    const billedKm = input.distanceKm < 300 ? input.distanceKm * 2 : input.distanceKm;
 
     // Rule 3: Fixed-rate pricing structure (billed km * perKm rate)
     const baseFare = roundRupees(billedKm * ctx.spec.perKm);
@@ -150,6 +147,8 @@ export class GroupCommercialVehicleStrategy implements PricingStrategy {
     const rules: string[] = [
       "commercial-group-vehicle-exception",
       "forced-round-trip",
+      "forced-round-trip-under-300km",
+      `distance-rule:${input.distanceKm < 300 ? "round-trip" : "per-km"}`,
       `days:${days}`,
       `billable-km:${billedKm}`,
       `driver-allowance:${driverAllowance}`,

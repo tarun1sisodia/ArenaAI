@@ -181,9 +181,9 @@ function packageByIdOrSlug(id?: string): (typeof PACKAGES)[number] | undefined {
 
 /**
  * Evaluates the dossier fare path with strict precedence per tier:
- * 1. Admin fleetPrices[tier] (when usePerKm is false)
- * 2. startingPrice + upgrade surcharge (per-package override or global matrix)
- * 3. per-km (perKmRateOverride ?? tier base rate) × km
+ * 1. Admin fleetPrices[tier] for dossier tour packages and fixed local/transfer prices
+ * 2. startingPrice + upgrade surcharge when no fleet-specific price exists
+ * 3. per-km only for routes and local-package extra-distance rules
  */
 export function evaluateDossierTierBaseFare(input: {
   vehicleTier: VehicleTier;
@@ -200,21 +200,23 @@ export function evaluateDossierTierBaseFare(input: {
     overrides.fleetPrices !== undefined ||
     overrides.usePerKm !== undefined ||
     overrides.perKmRateOverride !== undefined ||
-    overrides.upgradeSurcharges !== undefined;
+    overrides.upgradeSurcharges !== undefined ||
+    overrides.packageBasePrice !== undefined;
 
   if (!hasDossierFields) return null;
 
-  // Precedence 1: Admin fleetPrices[tier] when usePerKm is false
-  if (overrides.usePerKm === false && overrides.fleetPrices) {
+  // Tour packages are always fixed-price by vehicle tier. Never fall through
+  // to a per-km calculation for a tour package.
+  if ((overrides.catalogItemType === "tour" || overrides.usePerKm === false) && overrides.fleetPrices) {
     const rawPrice = overrides.fleetPrices[tierKey] ?? overrides.fleetPrices[tierPublic];
     if (typeof rawPrice === "number" && rawPrice > 0) {
       return { baseFare: rawPrice, rule: "dossier-admin-fleet-price" };
     }
   }
 
-  // Precedence 2: startingPrice + upgrade surcharge (when usePerKm is false)
+  // Fixed package fallback when a tier-specific fleet price is unavailable.
   if (
-    overrides.usePerKm === false &&
+    (overrides.catalogItemType !== "ride" || overrides.usePerKm === false) &&
     typeof overrides.packageBasePrice === "number" &&
     overrides.packageBasePrice > 0
   ) {
@@ -332,7 +334,9 @@ export function calculateFare(input: FareEngineInput): FareEngineResult {
       baseFare: dossierFare.baseFare,
       nightAllowance: 0,
       driverAllowance:
-        dossierFare.rule === "dossier-admin-fleet-price" ? 0 : isForce ? (input.ruleOverrides?.driverAllowance ?? 500) : 0,
+        isForce && (input.ruleOverrides?.catalogItemType === "tour" || input.ruleOverrides?.catalogItemType === "package")
+          ? (input.ruleOverrides?.driverAllowance ?? 500)
+          : 0,
       distanceKm: input.ruleOverrides?.catalogDistanceKm ?? input.distanceKm,
       billedKm: input.ruleOverrides?.catalogDistanceKm ?? input.distanceKm,
       alwaysRoundTrip: isForce,
@@ -353,7 +357,7 @@ export function calculateFare(input: FareEngineInput): FareEngineResult {
   if ((pack || input.ruleOverrides?.packageBasePrice !== undefined) && input.ruleOverrides?.catalogItemType !== "tour" && input.ruleOverrides?.catalogItemType !== "ride") {
     if (isGroupExceptionVehicle(input.vehicleTier)) {
       const days = Math.max(1, calendarDaysInclusiveIst(input.pickupDatetime, input.returnDatetime));
-      const billedKm = input.tripType === "round-trip" ? input.distanceKm : input.distanceKm * 2;
+      const billedKm = input.distanceKm < 300 ? input.distanceKm * 2 : input.distanceKm;
       const baseFare = roundRupees(billedKm * spec.perKm);
       const driverAllowance = (input.ruleOverrides?.driverAllowance !== undefined ? input.ruleOverrides.driverAllowance : 500) * days;
       return finalize({
@@ -415,11 +419,19 @@ export function calculateFare(input: FareEngineInput): FareEngineResult {
       promoCode: input.promoCode,
       allowPromo: !isForce,
       fareVersion,
-      baseFare: input.ruleOverrides.packageBasePrice + PACKAGE_UPGRADES[vehicleId],
+      baseFare: isForce
+        ? roundRupees((input.ruleOverrides.catalogDistanceKm ?? input.distanceKm) < 300
+            ? (input.ruleOverrides.catalogDistanceKm ?? input.distanceKm) * 2 * spec.perKm
+            : (input.ruleOverrides.catalogDistanceKm ?? input.distanceKm) * spec.perKm)
+        : input.ruleOverrides.packageBasePrice + PACKAGE_UPGRADES[vehicleId],
       nightAllowance: 0,
       driverAllowance: isForce ? 500 : 0,
       distanceKm: input.ruleOverrides.catalogDistanceKm ?? input.distanceKm,
-      billedKm: input.ruleOverrides.catalogDistanceKm ?? input.distanceKm,
+      billedKm: isForce
+        ? ((input.ruleOverrides.catalogDistanceKm ?? input.distanceKm) < 300
+            ? (input.ruleOverrides.catalogDistanceKm ?? input.distanceKm) * 2
+            : input.ruleOverrides.catalogDistanceKm ?? input.distanceKm)
+        : input.ruleOverrides.catalogDistanceKm ?? input.distanceKm,
       alwaysRoundTrip: isForce,
       label: input.ruleOverrides.packageName ?? (isAirport ? "Airport / Station Transfer" : "Local Tour"),
       duration: input.ruleOverrides.packageDuration ?? (isAirport ? "Point to Point" : "Full Day"),

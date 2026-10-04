@@ -36,9 +36,7 @@ const emptyPackage = {
   baseTierCode: "sedan",
   startingPriceInr: 3499,
   fleetPrices: { sedan: 3499, ertiga: 4299, innova: 5299, tempo: 6999, urbania: 8999 },
-  usePerKm: false,
   nightChargeInr: 300,
-  flatChargeInr: 0,
   inclusionsHighlight: "Private AC Cab, Chauffeur Allowance, Fuel & State Taxes",
   inclusionsNote: "",
   status: "draft" as CatalogStatus,
@@ -97,9 +95,7 @@ export function TourPackagesPage({ user }: { user: AdminUser }) {
         tempo: pkg.fleetPrices.tempo ?? pkg.startingPriceInr + 3500,
         urbania: pkg.fleetPrices.urbania ?? pkg.startingPriceInr + 5500,
       },
-      usePerKm: pkg.usePerKm,
       nightChargeInr: pkg.nightChargeInr,
-      flatChargeInr: pkg.flatChargeInr,
       inclusionsHighlight: pkg.inclusionsHighlight ?? "",
       inclusionsNote: pkg.inclusionsNote ?? "",
       status: pkg.status,
@@ -151,9 +147,7 @@ export function TourPackagesPage({ user }: { user: AdminUser }) {
         base_tier_code: form.baseTierCode,
         starting_price_inr: Number(form.startingPriceInr),
         fleet_prices: form.fleetPrices,
-        use_per_km: Boolean(form.usePerKm),
         night_charge_inr: Number(form.nightChargeInr) || 0,
-        flat_charge_inr: Number(form.flatChargeInr) || 0,
         inclusions_highlight: form.inclusionsHighlight.trim() || undefined,
         inclusions_note: form.inclusionsNote.trim() || undefined,
         is_active: form.isActive,
@@ -272,7 +266,6 @@ export function TourPackagesPage({ user }: { user: AdminUser }) {
                         {k}: {pkg.fleetPrices[k] ? formatINR(pkg.fleetPrices[k]) : "—"}
                       </span>
                     ))}
-                    {pkg.usePerKm && <span className="rounded bg-amber-500/10 text-amber-400 px-1.5 py-0.5 border border-amber-500/20">Per-km enabled</span>}
                   </div>
                 </div>
               </div>
@@ -313,7 +306,7 @@ export function TourPackagesPage({ user }: { user: AdminUser }) {
         open={modalOpen}
         onClose={() => setModalOpen(false)}
         title={editing ? `Edit: ${editing.name}` : "New Tour Package"}
-        description="Configure commercial fares across the 5 canonical vehicle tiers, durations, and inclusions."
+        description="Configure fixed commercial fares across the 5 canonical vehicle tiers, durations, and inclusions."
       >
         <div className="space-y-4 max-h-[75vh] overflow-y-auto pr-1">
           <div className="grid gap-3 sm:grid-cols-2">
@@ -394,24 +387,7 @@ export function TourPackagesPage({ user }: { user: AdminUser }) {
                 onChange={(e) => setForm((p) => ({ ...p, nightChargeInr: Number(e.target.value) }))}
               />
             </div>
-            <div>
-              <Label>Flat Surcharge (₹)</Label>
-              <Input
-                type="number"
-                value={form.flatChargeInr}
-                onChange={(e) => setForm((p) => ({ ...p, flatChargeInr: Number(e.target.value) }))}
-              />
-            </div>
-            <div>
-              <Label className="flex items-center gap-2 cursor-pointer mt-6">
-                <input
-                  type="checkbox"
-                  checked={form.usePerKm}
-                  onChange={(e) => setForm((p) => ({ ...p, usePerKm: e.target.checked }))}
-                />
-                <span className="text-xs text-ink font-medium">Use per-km calculation</span>
-              </Label>
-            </div>
+
           </div>
 
           <div>

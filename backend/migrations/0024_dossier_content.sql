@@ -59,9 +59,7 @@ CREATE TABLE IF NOT EXISTS tour_packages (
   base_tier_code TEXT NOT NULL DEFAULT 'sedan',
   starting_price_inr NUMERIC(10, 2) NOT NULL CHECK (starting_price_inr > 0),
   fleet_prices JSONB NOT NULL,
-  use_per_km BOOLEAN NOT NULL DEFAULT false,
   night_charge_inr NUMERIC(10, 2) NOT NULL DEFAULT 0,
-  flat_charge_inr NUMERIC(10, 2) NOT NULL DEFAULT 0,
   inclusions_highlight TEXT,
   inclusions_note TEXT,
   status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'published', 'archived')),
@@ -377,43 +375,43 @@ ON CONFLICT (route_code) DO NOTHING;
 -- Seed Tour Packages (6 signature tours, draft)
 INSERT INTO tour_packages (
   package_code, name, duration_text, days, nights, base_tier_code,
-  starting_price_inr, fleet_prices, use_per_km, night_charge_inr,
-  flat_charge_inr, inclusions_highlight, status
+  starting_price_inr, fleet_prices, night_charge_inr,
+  inclusions_highlight, status
 ) VALUES
 (
   'agra-sightseeing', 'Same Day Agra Taj Mahal Tour', '1 Day', 1, 0, 'sedan',
   3499, '{"sedan":3499,"ertiga":4299,"innova":5299,"tempo":6999,"urbania":8999}'::jsonb,
-  false, 300, 0,
+  300,
   'Taj Mahal & Agra Fort with dedicated guide & private AC car', 'draft'
 ),
 (
   'taj-mahal-sunrise-tour', 'Taj Mahal Sunrise Tour', '1 Day', 1, 0, 'sedan',
   12999, '{"sedan":12999,"ertiga":13799,"innova":14799,"tempo":16499,"urbania":18499}'::jsonb,
-  false, 300, 0,
+  300,
   'Sunrise VIP entry, Mehtab Bagh & breakfast at 5-star hotel', 'draft'
 ),
 (
   'mathura-vrindavan', 'Mathura & Vrindavan Darshan', '1 Day', 1, 0, 'sedan',
   4200, '{"sedan":4200,"ertiga":5000,"innova":6000,"tempo":7700,"urbania":9700}'::jsonb,
-  false, 300, 0,
+  300,
   'Krishna Janmabhoomi, Banke Bihari, Prem Mandir & evening Aarti', 'draft'
 ),
 (
   'gatimaan-express-agra-tour', 'Same Day Agra by Gatimaan Train', '1 Day', 1, 0, 'sedan',
   14999, '{"sedan":14999,"ertiga":15799,"innova":16799,"tempo":18499,"urbania":20499}'::jsonb,
-  false, 300, 0,
+  300,
   'Return Gatimaan train tickets, luxury station transfers & monument access', 'draft'
 ),
 (
   'agra-unhurried', 'Agra Overnight Experience', '2 Days / 1 Night', 2, 1, 'sedan',
   7800, '{"sedan":7800,"ertiga":8600,"innova":9600,"tempo":11300,"urbania":13300}'::jsonb,
-  false, 300, 0,
+  300,
   'Sunset at Mehtab Bagh, Sunrise at Taj Mahal, Baby Taj & Fatehpur Sikri', 'draft'
 ),
 (
   'golden-triangle', 'Golden Triangle Tour', '3 Days / 2 Nights', 3, 2, 'sedan',
   18500, '{"sedan":18500,"ertiga":19300,"innova":20300,"tempo":22000,"urbania":24000}'::jsonb,
-  false, 300, 0,
+  300,
   'Delhi, Agra & Jaipur circuit with highway tolls and chauffeur accommodation', 'draft'
 )
 ON CONFLICT (package_code) DO NOTHING;

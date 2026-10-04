@@ -40,7 +40,7 @@ describe("F2 — Force Vehicle Business Rule", () => {
     expect(fare.totalFare).toBe(3740 + 500); // ₹4,240
   });
 
-  it("200 km round trip in Tempo Traveller bills 200 km (do not double to 400 km)", () => {
+  it("200 km round trip in Tempo Traveller bills 400 km under the sub-300 km round-trip rule", () => {
     const fare = calculateFare({
       tripType: "round-trip",
       vehicleTier: "tempo-traveller",
@@ -51,12 +51,28 @@ describe("F2 — Force Vehicle Business Rule", () => {
       distanceKm: 200,
     });
 
-    expect(fare.billedKm).toBe(200);
+    expect(fare.billedKm).toBe(400);
     expect(fare.alwaysRoundTrip).toBe(true);
     expect(fare.tripType).toBe("round-trip");
-    expect(fare.baseFare).toBe(200 * 25); // ₹5,000
+    expect(fare.baseFare).toBe(400 * 25); // ₹10,000
     expect(fare.driverAllowance).toBe(500); // ₹500/day
-    expect(fare.totalFare).toBe(5000 + 500); // ₹5,500
+    expect(fare.totalFare).toBe(10000 + 500); // ₹10,500
+  });
+
+  it("300 km uses one-way per-km billing for both group vehicles and keeps ₹500 allowance", () => {
+    for (const [vehicleTier, rate] of [["tempo-traveller", 25], ["urbania", 34]] as const) {
+      const fare = calculateFare({
+        tripType: "one-way",
+        vehicleTier,
+        originName: "Agra",
+        destinationName: "Jaipur",
+        pickupDatetime: pickupDay,
+        distanceKm: 300,
+      });
+      expect(fare.billedKm).toBe(300);
+      expect(fare.baseFare).toBe(300 * rate);
+      expect(fare.driverAllowance).toBe(500);
+    }
   });
 
   it("55 km one-way in Sedan bills 55 km (Sedan is not Force)", () => {

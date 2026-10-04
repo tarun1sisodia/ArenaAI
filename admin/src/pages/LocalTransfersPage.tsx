@@ -34,6 +34,15 @@ const FLEET_LABELS: Record<string, string> = {
   urbania: "Urbania (16s)",
 };
 
+function slugify(value: string): string {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80);
+}
+
 const emptyLocal = {
   name: "",
   packageCode: "",
@@ -115,6 +124,14 @@ export function LocalTransfersPage({ user }: { user: AdminUser }) {
     setEditingLocal(null);
     setLocalForm(emptyLocal);
     setLocalModalOpen(true);
+  }
+
+  function handleLocalNameChange(name: string) {
+    setLocalForm((prev) => ({ ...prev, name, packageCode: editingLocal ? prev.packageCode : slugify(name) }));
+  }
+
+  function handleTransferNameChange(name: string) {
+    setTransferForm((prev) => ({ ...prev, name, routeCode: editingTransfer ? prev.routeCode : slugify(name) }));
   }
 
   function openEditLocal(item: LocalPackageItem) {
@@ -425,7 +442,7 @@ export function LocalTransfersPage({ user }: { user: AdminUser }) {
               <Label>Package Name</Label>
               <Input
                 value={localForm.name}
-                onChange={(e) => setLocalForm((p) => ({ ...p, name: e.target.value }))}
+                onChange={(e) => handleLocalNameChange(e.target.value)}
                 placeholder="e.g. Agra Standard Sightseeing"
               />
             </div>
@@ -562,7 +579,7 @@ export function LocalTransfersPage({ user }: { user: AdminUser }) {
               <Label>Route Name</Label>
               <Input
                 value={transferForm.name}
-                onChange={(e) => setTransferForm((p) => ({ ...p, name: e.target.value }))}
+                onChange={(e) => handleTransferNameChange(e.target.value)}
                 placeholder="e.g. Agra Cantt Railway Station (AGC) Drop/Pickup"
               />
             </div>

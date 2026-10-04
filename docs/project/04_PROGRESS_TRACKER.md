@@ -111,6 +111,7 @@ this file at commit `2c02ee3`. The table below is the condensed record.
 
 ---
 
+| 2026-10-04 | Commercial vehicle and tour-package pricing | Updated Tempo Traveller and Urbania to bill under 300 km as round-trip distance and at/above 300 km once at their own per-km rates, with ₹500/day driver allowance; removed tour-package flat surcharge/per-km controls from backend, admin, customer contracts, SQL, and migration; added name-to-slug generation for new local packages and transfer routes; added boundary regression coverage. Root `npm run verify` passed (176 tests). |
 ## Checklist
 
 ### Customer site (`react/`)

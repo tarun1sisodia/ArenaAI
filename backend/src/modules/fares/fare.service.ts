@@ -88,7 +88,6 @@ export function createFareService(fareVersion: string, db?: Repositories) {
             (await db.tourPackages.getByCode(input.packageId));
           if (tourPkg && tourPkg.status === "published") {
             dossierFleetPrices = tourPkg.fleetPrices;
-            dossierUsePerKm = tourPkg.usePerKm;
             dossierNightChargeInr = tourPkg.nightChargeInr;
             dossierNights = tourPkg.nights;
             dossierPackageName = tourPkg.name;

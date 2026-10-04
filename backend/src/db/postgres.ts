@@ -88,9 +88,7 @@ function mapTourPackage(row: Record<string, unknown>): TourPackageRecord {
     baseTierCode: String(row.base_tier_code),
     startingPriceInr: num(row.starting_price_inr),
     fleetPrices: (row.fleet_prices as Record<string, number>) ?? {},
-    usePerKm: Boolean(row.use_per_km),
     nightChargeInr: num(row.night_charge_inr),
-    flatChargeInr: num(row.flat_charge_inr),
     inclusionsHighlight: row.inclusions_highlight ? String(row.inclusions_highlight) : null,
     inclusionsNote: row.inclusions_note ? String(row.inclusions_note) : null,
     status: row.status as ContentStatus,
@@ -730,17 +728,17 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
         async create(record: TourPackageRecord) {
           await query(
             client,
-            `insert into tour_packages (id, package_code, name, duration_text, days, nights, base_tier_code, starting_price_inr, fleet_prices, use_per_km, night_charge_inr, flat_charge_inr, inclusions_highlight, inclusions_note, status, is_active, created_at, updated_at)
-             values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)`,
-            [record.id, record.packageCode, record.name, record.durationText, record.days, record.nights, record.baseTierCode, record.startingPriceInr, JSON.stringify(record.fleetPrices), record.usePerKm, record.nightChargeInr, record.flatChargeInr, record.inclusionsHighlight, record.inclusionsNote, record.status, record.isActive, record.createdAt, record.updatedAt]
+            `insert into tour_packages (id, package_code, name, duration_text, days, nights, base_tier_code, starting_price_inr, fleet_prices, night_charge_inr, inclusions_highlight, inclusions_note, status, is_active, created_at, updated_at)
+             values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)`,
+            [record.id, record.packageCode, record.name, record.durationText, record.days, record.nights, record.baseTierCode, record.startingPriceInr, JSON.stringify(record.fleetPrices), record.nightChargeInr, record.inclusionsHighlight, record.inclusionsNote, record.status, record.isActive, record.createdAt, record.updatedAt]
           );
           return record;
         },
         async update(record: TourPackageRecord) {
           await query(
             client,
-            `update tour_packages set package_code=$2, name=$3, duration_text=$4, days=$5, nights=$6, base_tier_code=$7, starting_price_inr=$8, fleet_prices=$9, use_per_km=$10, night_charge_inr=$11, flat_charge_inr=$12, inclusions_highlight=$13, inclusions_note=$14, status=$15, is_active=$16, updated_at=$17 where id=$1`,
-            [record.id, record.packageCode, record.name, record.durationText, record.days, record.nights, record.baseTierCode, record.startingPriceInr, JSON.stringify(record.fleetPrices), record.usePerKm, record.nightChargeInr, record.flatChargeInr, record.inclusionsHighlight, record.inclusionsNote, record.status, record.isActive, record.updatedAt]
+            `update tour_packages set package_code=$2, name=$3, duration_text=$4, days=$5, nights=$6, base_tier_code=$7, starting_price_inr=$8, fleet_prices=$9, night_charge_inr=$10, inclusions_highlight=$11, inclusions_note=$12, status=$13, is_active=$14, updated_at=$15 where id=$1`,
+            [record.id, record.packageCode, record.name, record.durationText, record.days, record.nights, record.baseTierCode, record.startingPriceInr, JSON.stringify(record.fleetPrices), record.nightChargeInr, record.inclusionsHighlight, record.inclusionsNote, record.status, record.isActive, record.updatedAt]
           );
           return record;
         },

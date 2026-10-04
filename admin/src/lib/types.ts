@@ -307,9 +307,7 @@ export interface TourPackageItem {
   baseTierCode: string;
   startingPriceInr: number;
   fleetPrices: Record<string, number>;
-  usePerKm: boolean;
   nightChargeInr: number;
-  flatChargeInr: number;
   inclusionsHighlight: string | null;
   inclusionsNote: string | null;
   status: CatalogStatus;
