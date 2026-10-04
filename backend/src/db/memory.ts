@@ -66,6 +66,7 @@ import type {
   RentalEnquiryListFilter,
 } from "./types.js";
 import { ConcurrencyError } from "./concurrency.js";
+import { AppError } from "../shared/errors.js";
 
 function clone<T>(value: T): T {
   return structuredClone(value);
@@ -137,7 +138,7 @@ export function createMemoryRepositories(nowIso = new Date().toISOString()): Rep
       fareRules.set(fr.id, clone(fr));
     }
     for (const pm of SEED_PROMO_CODES) {
-      promos.set(pm.code, clone(pm));
+      promos.set(pm.id, clone(pm));
     }
     for (const it of SEED_CATALOG_ITEMS) {
       catalog.set(it.id, clone(it));
@@ -750,19 +751,56 @@ export function createMemoryRepositories(nowIso = new Date().toISOString()): Rep
     },
     promos: {
       async getByCode(code) {
-        const found = promos.get(code.trim().toUpperCase());
+        const target = code.trim().toUpperCase();
+        const found = [...promos.values()].find((p) => p.code.trim().toUpperCase() === target);
+        return found ? clone(found) : null;
+      },
+      async getById(id) {
+        const found = promos.get(id) || [...promos.values()].find((p) => p.id === id);
         return found ? clone(found) : null;
       },
       async list() {
-        return [...promos.values()].map(clone);
+        return [...promos.values()].sort((a, b) => a.code.localeCompare(b.code)).map(clone);
+      },
+      async getFeatured() {
+        const now = new Date().toISOString();
+        const found = [...promos.values()].find(
+          (p) =>
+            p.isBroadcast &&
+            p.isActive &&
+            (!p.validFrom || p.validFrom <= now) &&
+            (!p.validTo || p.validTo >= now) &&
+            (p.maxRedemptions === null || p.maxRedemptions === undefined || p.redemptionCount < p.maxRedemptions),
+        );
+        return found ? clone(found) : null;
       },
       async create(record) {
-        promos.set(record.code, clone(record));
+        if (record.isBroadcast) {
+          const anotherLive = [...promos.values()].find((p) => p.isBroadcast && p.id !== record.id);
+          if (anotherLive) {
+            throw new AppError("BROADCAST_CONFLICT", "Another code is already broadcast. Turn it off first.", 409);
+          }
+        }
+        promos.set(record.id, clone(record));
         return clone(record);
       },
       async update(record) {
-        promos.set(record.code, clone(record));
+        if (record.isBroadcast) {
+          const anotherLive = [...promos.values()].find((p) => p.isBroadcast && p.id !== record.id);
+          if (anotherLive) {
+            throw new AppError("BROADCAST_CONFLICT", "Another code is already broadcast. Turn it off first.", 409);
+          }
+        }
+        promos.set(record.id, clone(record));
         return clone(record);
+      },
+      async delete(id) {
+        const target = promos.get(id) ? id : [...promos.entries()].find(([, p]) => p.id === id)?.[0];
+        if (target) {
+          promos.delete(target);
+          return true;
+        }
+        return false;
       },
     },
     audit: {

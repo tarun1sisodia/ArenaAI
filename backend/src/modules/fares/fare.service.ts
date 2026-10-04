@@ -294,11 +294,14 @@ export function createFareService(fareVersion: string, db?: Repositories) {
             validTo?: string | null;
             maxRedemptions?: number | null;
             redemptionCount?: number;
+            allowGroupVehicles?: boolean;
           } | null)
         | undefined;
+      let lookupAllowGroupVehicles = false;
       if (db && input.promoCode) {
         const promo = await db.promos.getByCode(input.promoCode);
         if (promo) {
+          lookupAllowGroupVehicles = promo.allowGroupVehicles;
           lookup = () => ({
             discount: promo.discountAmount,
             minTotal: promo.minTotal,
@@ -308,12 +311,17 @@ export function createFareService(fareVersion: string, db?: Repositories) {
             validTo: promo.validTo,
             maxRedemptions: promo.maxRedemptions,
             redemptionCount: promo.redemptionCount,
+            allowGroupVehicles: promo.allowGroupVehicles,
           });
         }
       }
 
-      const resultWithoutPromoLookup = calculateFare({ ...engineInput, promoCode: undefined });
-      if (!input.promoCode || isGroupExceptionVehicle(input.vehicleTier)) return resultWithoutPromoLookup;
+      const resultWithoutPromoLookup = calculateFare({
+        ...engineInput,
+        promoCode: undefined,
+        promoAllowGroupVehicles: lookupAllowGroupVehicles,
+      });
+      if (!input.promoCode || (isGroupExceptionVehicle(input.vehicleTier) && !lookupAllowGroupVehicles)) return resultWithoutPromoLookup;
 
       // Re-apply promo with DB validation
       const promoEval = applyPromo(

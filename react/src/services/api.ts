@@ -291,3 +291,23 @@ export async function createInquiry(
 
   return json.data as CreateInquiryResponse;
 }
+
+export interface FeaturedPromo {
+  code: string;
+  discountAmount: number;
+  minTotal: number;
+  description: string;
+  allowGroupVehicles: boolean;
+}
+
+export async function fetchFeaturedPromo(): Promise<FeaturedPromo | null> {
+  try {
+    const baseUrl = getApiBaseUrl();
+    const res = await fetch(`${baseUrl}/api/v1/promos/featured`);
+    if (!res.ok) return null;
+    const json = await res.json().catch(() => ({}));
+    return (json?.data as FeaturedPromo) ?? null;
+  } catch {
+    return null;
+  }
+}

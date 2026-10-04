@@ -413,3 +413,33 @@ export interface DossierSignoffItem {
   updatedAt: string;
 }
 
+export interface PromoCodeItem {
+  id: string;
+  code: string;
+  discountAmount: number;
+  minTotal: number;
+  description: string;
+  isActive: boolean;
+  maxRedemptions: number | null;
+  redemptionCount: number;
+  validFrom: string | null;
+  validTo: string | null;
+  allowGroupVehicles: boolean;
+  isBroadcast: boolean;
+}
+
+export interface CreatePromoCodeInput {
+  code: string;
+  discountAmount: number;
+  minTotal?: number;
+  description: string;
+  isActive?: boolean;
+  maxRedemptions?: number | null;
+  validFrom?: string | null;
+  validTo?: string | null;
+  allowGroupVehicles?: boolean;
+  isBroadcast?: boolean;
+}
+
+export type UpdatePromoCodeInput = Partial<CreatePromoCodeInput>;
+

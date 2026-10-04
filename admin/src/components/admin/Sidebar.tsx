@@ -16,6 +16,7 @@ import {
   MessageSquare,
   ScrollText,
   Star,
+  Tag,
 } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import { BrandMark } from "./BrandMark";
@@ -43,6 +44,7 @@ export const NAV_ITEMS: NavItem[] = [
   { to: "/inquiries", label: "Inquiries", icon: MessageSquare },
   { to: "/rental-requests", label: "Rental Requests", icon: Car },
   { to: "/fares", label: "Fare Rules", icon: Compass },
+  { to: "/promos", label: "Promo Codes", icon: Tag },
   { to: "/audit", label: "Audit Log", icon: ScrollText },
 ];
 

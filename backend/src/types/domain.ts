@@ -322,6 +322,8 @@ export type PromoCodeRecord = {
   redemptionCount: number;
   validFrom: string | null;
   validTo: string | null;
+  allowGroupVehicles: boolean;
+  isBroadcast: boolean;
 };
 
 export type AuditLogRecord = {

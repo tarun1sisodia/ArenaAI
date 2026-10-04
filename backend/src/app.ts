@@ -75,6 +75,9 @@ import { createCompanyProfileService } from "./modules/company-profile/company-p
 import { createDossierSignoffsController } from "./modules/dossier-signoffs/dossier-signoffs.controller.js";
 import { registerDossierSignoffsRoutes } from "./modules/dossier-signoffs/dossier-signoffs.routes.js";
 import { createDossierSignoffsService } from "./modules/dossier-signoffs/dossier-signoffs.service.js";
+import { createPromosController } from "./modules/promos/promos.controller.js";
+import { registerPromosRoutes } from "./modules/promos/promos.routes.js";
+import { createPromosService } from "./modules/promos/promos.service.js";
 import { registerContentManifestRoutes } from "./modules/content/content.routes.js";
 import { createReviewService } from "./modules/reviews/review.service.js";
 import {
@@ -250,6 +253,7 @@ export async function buildApp(options: AppOptions): Promise<BuiltApp> {
   const petPolicyService = createPetPolicyService({ db, clock });
   const companyProfileService = createCompanyProfileService({ db, clock });
   const dossierSignoffsService = createDossierSignoffsService({ db, clock });
+  const promosService = createPromosService({ db });
 
   const healthHandler = async () => ({ success: true, data: { status: "ok", version: env.FARE_RULES_VERSION } });
   const readyHandler = async (_request: unknown, reply: { code: (statusCode: number) => { send: (payload: unknown) => unknown } }) => {
@@ -298,6 +302,7 @@ export async function buildApp(options: AppOptions): Promise<BuiltApp> {
   });
   await registerInquiryRoutes(app, createInquiryController(inquiryService));
   await registerRentalEnquiryRoutes(app, createRentalEnquiryController(rentalEnquiryService));
+  await registerPromosRoutes(app, createPromosController(promosService));
   await registerAdminRoutes(app, createAdminController(adminService, paymentService, bookingService));
 
   app.post("/api/v1/devices/register", {

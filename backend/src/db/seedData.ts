@@ -108,6 +108,8 @@ export const SEED_PROMO_CODES: PromoCodeRecord[] = [
     redemptionCount: 42,
     validFrom: "2026-01-01T00:00:00.000Z",
     validTo: "2026-12-31T23:59:59.000Z",
+    allowGroupVehicles: false,
+    isBroadcast: false,
   },
   {
     id: "20000000-0000-4000-a000-000000000002",
@@ -120,6 +122,8 @@ export const SEED_PROMO_CODES: PromoCodeRecord[] = [
     redemptionCount: 18,
     validFrom: "2026-05-01T00:00:00.000Z",
     validTo: "2026-11-30T23:59:59.000Z",
+    allowGroupVehicles: false,
+    isBroadcast: false,
   },
   {
     id: "20000000-0000-4000-a000-000000000003",
@@ -132,6 +136,8 @@ export const SEED_PROMO_CODES: PromoCodeRecord[] = [
     redemptionCount: 29,
     validFrom: "2026-08-01T00:00:00.000Z",
     validTo: "2026-10-31T23:59:59.000Z",
+    allowGroupVehicles: false,
+    isBroadcast: false,
   },
   {
     id: "20000000-0000-4000-a000-000000000004",
@@ -144,6 +150,8 @@ export const SEED_PROMO_CODES: PromoCodeRecord[] = [
     redemptionCount: 50,
     validFrom: "2026-01-01T00:00:00.000Z",
     validTo: "2026-06-30T23:59:59.000Z",
+    allowGroupVehicles: false,
+    isBroadcast: false,
   },
 ];
 

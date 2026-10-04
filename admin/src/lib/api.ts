@@ -37,6 +37,7 @@ import type {
   LocalPackageItem, TransferRouteItem,
   CancellationPolicyItem, MonumentItem,
   PetPolicyItem, CompanyProfileItem, DossierSignoffItem,
+  PromoCodeItem, CreatePromoCodeInput, UpdatePromoCodeInput,
 } from "./types";
 
 async function apiFetch(path: string, init?: RequestInit): Promise<any> {
@@ -795,5 +796,34 @@ export async function updateAdminDossierSignoff(id: string, payload: Partial<Dos
   if (payload.clientNotes !== undefined) body.client_notes = payload.clientNotes;
   const json = await apiFetch(`/api/v1/ops/admin/dossier-signoffs/${encodeURIComponent(id)}`, { method: "PATCH", body: JSON.stringify(body) });
   return json?.data;
+}
+
+/* ── Promo Codes ─────────────────────────────────────────────────────────── */
+
+export async function fetchAdminPromos(): Promise<PromoCodeItem[]> {
+  const json = await apiFetch(`/api/v1/ops/admin/promos`);
+  return json?.data ?? [];
+}
+
+export async function createAdminPromo(payload: CreatePromoCodeInput): Promise<PromoCodeItem> {
+  const json = await apiFetch(`/api/v1/ops/admin/promos`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+  return json?.data;
+}
+
+export async function updateAdminPromo(id: string, payload: UpdatePromoCodeInput): Promise<PromoCodeItem> {
+  const json = await apiFetch(`/api/v1/ops/admin/promos/${encodeURIComponent(id)}`, {
+    method: "PATCH",
+    body: JSON.stringify(payload),
+  });
+  return json?.data;
+}
+
+export async function deleteAdminPromo(id: string): Promise<void> {
+  await apiFetch(`/api/v1/ops/admin/promos/${encodeURIComponent(id)}`, {
+    method: "DELETE",
+  });
 }
 

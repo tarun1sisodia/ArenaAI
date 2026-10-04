@@ -32,6 +32,7 @@ import type {
 } from "./dossier-types.js";
 import { createPoolConfig } from "./poolConfig.js";
 import { ConcurrencyError } from "./concurrency.js";
+import { AppError } from "../shared/errors.js";
 import { phonesMatch } from "../shared/privacy.js";
 
 type PoolClient = pg.PoolClient;
@@ -1108,29 +1109,99 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
           const rows = await query(client, "select * from promo_codes where code=$1", [code.trim().toUpperCase()]);
           return rows[0] ? mapPromo(rows[0]) : null;
         },
+        async getById(id: string) {
+          const rows = await query(client, "select * from promo_codes where id=$1", [id]);
+          return rows[0] ? mapPromo(rows[0]) : null;
+        },
         async list() {
           const rows = await query(client, "select * from promo_codes order by code");
           return rows.map(mapPromo);
         },
-        async create(record: PromoCodeRecord) {
-          await query(
+        async getFeatured() {
+          const rows = await query(
             client,
-            `insert into promo_codes (id, code, discount_amount, min_total, description, is_active, max_redemptions, redemption_count, valid_from, valid_to)
-             values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`,
-            [
-              record.id, record.code, record.discountAmount, record.minTotal, record.description, record.isActive,
-              record.maxRedemptions, record.redemptionCount, record.validFrom, record.validTo,
-            ],
+            `select * from promo_codes
+             where is_broadcast = true
+               and is_active = true
+               and (valid_from is null or valid_from <= now())
+               and (valid_to is null or valid_to >= now())
+               and (max_redemptions is null or redemption_count < max_redemptions)
+             order by valid_from desc nulls last
+             limit 1`,
           );
-          return record;
+          return rows[0] ? mapPromo(rows[0]) : null;
+        },
+        async create(record: PromoCodeRecord) {
+          try {
+            await query(
+              client,
+              `insert into promo_codes (id, code, discount_amount, min_total, description, is_active, max_redemptions, redemption_count, valid_from, valid_to, allow_group_vehicles, is_broadcast)
+               values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`,
+              [
+                record.id, record.code, record.discountAmount, record.minTotal, record.description, record.isActive,
+                record.maxRedemptions, record.redemptionCount, record.validFrom, record.validTo,
+                record.allowGroupVehicles, record.isBroadcast,
+              ],
+            );
+            return record;
+          } catch (error: any) {
+            if (
+              error?.code === "23505" &&
+              (error?.constraint === "idx_promo_codes_single_broadcast" ||
+                String(error?.message).includes("idx_promo_codes_single_broadcast"))
+            ) {
+              throw new AppError("BROADCAST_CONFLICT", "Another code is already broadcast. Turn it off first.", 409);
+            }
+            throw error;
+          }
         },
         async update(record: PromoCodeRecord) {
-          await query(
-            client,
-            `update promo_codes set discount_amount=$2, min_total=$3, is_active=$4, redemption_count=$5 where id=$1`,
-            [record.id, record.discountAmount, record.minTotal, record.isActive, record.redemptionCount],
-          );
-          return record;
+          try {
+            await query(
+              client,
+              `update promo_codes set
+                 code=$2,
+                 discount_amount=$3,
+                 min_total=$4,
+                 description=$5,
+                 is_active=$6,
+                 max_redemptions=$7,
+                 redemption_count=$8,
+                 valid_from=$9,
+                 valid_to=$10,
+                 allow_group_vehicles=$11,
+                 is_broadcast=$12
+               where id=$1`,
+              [
+                record.id,
+                record.code,
+                record.discountAmount,
+                record.minTotal,
+                record.description,
+                record.isActive,
+                record.maxRedemptions,
+                record.redemptionCount,
+                record.validFrom,
+                record.validTo,
+                record.allowGroupVehicles,
+                record.isBroadcast,
+              ],
+            );
+            return record;
+          } catch (error: any) {
+            if (
+              error?.code === "23505" &&
+              (error?.constraint === "idx_promo_codes_single_broadcast" ||
+                String(error?.message).includes("idx_promo_codes_single_broadcast"))
+            ) {
+              throw new AppError("BROADCAST_CONFLICT", "Another code is already broadcast. Turn it off first.", 409);
+            }
+            throw error;
+          }
+        },
+        async delete(id: string) {
+          const res = await query(client, "delete from promo_codes where id=$1", [id]);
+          return ((res as any).rowCount ?? 0) > 0;
         },
       },
       audit: {
@@ -1538,6 +1609,8 @@ function mapPromo(row: Record<string, unknown>): PromoCodeRecord {
     redemptionCount: num(row.redemption_count),
     validFrom: row.valid_from ? new Date(String(row.valid_from)).toISOString() : null,
     validTo: row.valid_to ? new Date(String(row.valid_to)).toISOString() : null,
+    allowGroupVehicles: Boolean(row.allow_group_vehicles),
+    isBroadcast: Boolean(row.is_broadcast),
   };
 }
 

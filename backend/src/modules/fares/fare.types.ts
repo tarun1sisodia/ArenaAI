@@ -45,6 +45,7 @@ export type FareEngineInput = {
   returnDatetime?: string;
   distanceKm: number;
   promoCode?: string;
+  promoAllowGroupVehicles?: boolean;
   packageId?: string;
   localPackageKey?: "8hr-80km" | "12hr-120km" | "airport-transfer";
   fareVersion?: string;

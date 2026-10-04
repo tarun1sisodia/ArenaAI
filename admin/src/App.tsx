@@ -16,6 +16,7 @@ const ReviewsPage = lazy(() => import("@/pages/ReviewsPage").then((m) => ({ defa
 const RentalRequestsPage = lazy(() => import("@/pages/RentalRequestsPage").then((m) => ({ default: m.RentalRequestsPage })));
 const InquiriesPage = lazy(() => import("@/pages/InquiriesPage").then((m) => ({ default: m.InquiriesPage })));
 const FaresPage = lazy(() => import("@/pages/FaresPage").then((m) => ({ default: m.FaresPage })));
+const PromosPage = lazy(() => import("@/pages/PromosPage").then((m) => ({ default: m.PromosPage })));
 const AuditPage = lazy(() => import("@/pages/AuditPage").then((m) => ({ default: m.AuditPage })));
 import { AUTH_EXPIRED_EVENT, clearSession, getStoredSession, saveSession, validateStoredSession } from "@/lib/auth";
 import type { AdminUser } from "@/lib/types";
@@ -100,6 +101,7 @@ function Root({ user, onLogin, onLogout }: { user: AdminUser | null; onLogin: (u
                       <Route path="inquiries" element={<InquiriesPage user={user} />} />
                       <Route path="rental-requests" element={<RentalRequestsPage user={user} />} />
                       <Route path="fares" element={<FaresPage user={user} />} />
+                      <Route path="promos" element={<PromosPage user={user} />} />
                       <Route path="audit" element={<AuditPage user={user} />} />
                     </Route>
                     <Route path="*" element={<Navigate to="/" replace />} />

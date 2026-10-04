@@ -161,11 +161,14 @@ export function createBookingService(deps: {
               validTo?: string | null;
               maxRedemptions?: number | null;
               redemptionCount?: number;
+              allowGroupVehicles?: boolean;
             } | null)
           | undefined;
+        let promoAllowGroupVehicles = false;
         if (input.promoCode) {
           const promo = await database.promos.getByCode(input.promoCode);
           if (promo) {
+            promoAllowGroupVehicles = promo.allowGroupVehicles;
             promoLookup = () => ({
               discount: promo.discountAmount,
               minTotal: promo.minTotal,
@@ -175,6 +178,7 @@ export function createBookingService(deps: {
               validTo: promo.validTo,
               maxRedemptions: promo.maxRedemptions,
               redemptionCount: promo.redemptionCount,
+              allowGroupVehicles: promo.allowGroupVehicles,
             });
           }
         }
@@ -198,6 +202,7 @@ export function createBookingService(deps: {
           returnDatetime: input.returnDatetime,
           distanceKm: serverDistanceKm,
           promoCode: input.promoCode,
+          promoAllowGroupVehicles,
           packageId: input.packageId,
           localPackageKey: input.localPackageKey,
           fareVersion: deps.fareVersion,
@@ -207,7 +212,7 @@ export function createBookingService(deps: {
           promoLookup &&
           input.promoCode &&
           fare.promoValid !== false &&
-          !isGroupExceptionVehicle(input.vehicleTier)
+          (!isGroupExceptionVehicle(input.vehicleTier) || promoAllowGroupVehicles)
         ) {
           const { applyPromo } = await import("../fares/fare.engine.js");
           const subtotal = fare.baseFare + fare.nightAllowance + fare.driverAllowance;

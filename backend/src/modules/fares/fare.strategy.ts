@@ -164,7 +164,7 @@ export class GroupCommercialVehicleStrategy implements PricingStrategy {
       alwaysRoundTrip: true,
       roundMultiplierApplied: false,
       rules,
-      allowPromo: false, // Rule 5: Zero promo discounts permitted on commercial group vehicles
+      allowPromo: Boolean(input.promoAllowGroupVehicles),
     };
   }
 }

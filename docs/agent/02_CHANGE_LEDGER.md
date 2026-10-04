@@ -457,6 +457,48 @@ Implemented:
   - Added package alias resolution in `react/src/features/booking/BookingPage.tsx` for robust handling of tour cards.
   - Verified with `npm --prefix react run typecheck`, `npm run customer:build` (SSG 47 pages), and end-to-end browser subagent session.
 
+### 2026-10-04 — Universal Coupon Codes + Broadcast-to-Website
+
+- **Migration 0026 (`0026_promo_broadcast_and_group_vehicles.sql`)**:
+  - Added `allow_group_vehicles` (`boolean DEFAULT false NOT NULL`) and `is_broadcast` (`boolean DEFAULT false NOT NULL`) to `promo_codes`.
+  - Added partial unique index `idx_promo_codes_single_broadcast` on `(is_broadcast) WHERE (is_broadcast = true)` to guarantee at the database level that at most one coupon can be broadcast live at any moment.
+- **Database Layer**:
+  - Updated `PromoCodeRecord` in `backend/src/types/domain.ts` and repository interfaces in `backend/src/db/types.ts` (`getById`, `getFeatured`, `delete`).
+  - Updated `backend/src/db/postgres.ts` and `backend/src/db/memory.ts` mappers, `create`, `update`, and queries.
+  - Catches Postgres error `23505` on `idx_promo_codes_single_broadcast` and surfaces user-friendly error: `"Another code is already broadcast. Turn it off first."`.
+- **Admin Module & Public Endpoint (`backend/src/modules/promos/`)**:
+  - Created `promos.schema.ts` (Zod strict, code validation regex `^[A-Z0-9_-]{3,30}$`).
+  - Created `promos.service.ts` with broadcast conflict checks and featured promo resolution.
+  - Created `promos.controller.ts` with `requireRole(request, ADMIN_ROLES)` on admin endpoints.
+  - Created `promos.routes.ts` exposing:
+    - Public: `GET /api/v1/promos/featured` (rate-limited, no auth).
+    - Admin: `GET /api/v1/ops/admin/promos`, `GET /api/v1/ops/admin/promos/:id`, `POST /api/v1/ops/admin/promos`, `PUT /api/v1/ops/admin/promos/:id`, `DELETE /api/v1/ops/admin/promos/:id`.
+  - Wired in `backend/src/app.ts`.
+- **Fare Engine & Group Commercial Vehicle Opt-in**:
+  - Added `promoAllowGroupVehicles?: boolean` to `FareEngineInput` in `fare.types.ts`.
+  - In `fare.engine.ts`, updated `PROMO_NOT_ALLOWED` throw and `allowPromo` evaluations across all trip categories to permit promos on group vehicles (`tempo-traveller`, `force-urbania`) when `promoAllowGroupVehicles` is true.
+  - Updated `CommercialGroupPricingStrategy` in `fare.strategy.ts` to allow promo application when opted in.
+  - In `fare.service.ts`, passed DB promo's `allowGroupVehicles` to the fare engine and updated early return check.
+  - In `booking.service.ts`, ensured group vehicle opt-in is honored during draft creation and refund calculations.
+  - Default is `false` everywhere; legacy codes (including `ASTTCAR500OFF`) retain existing behavior.
+- **Admin Operations Desk UI (`admin/src/pages/PromosPage.tsx`)**:
+  - Added Promos route `/promos` with `Tag` icon in `Sidebar.tsx`.
+  - Implemented full promo management table with active filters, redemption tracker, validity formatting, and delete confirmation.
+  - Implemented modal dialog for create/edit supporting `allow_group_vehicles` checkbox, `is_broadcast` toggle, and live warning if another broadcast code is active.
+  - Added typed API functions in `admin/src/lib/api.ts` and types in `admin/src/lib/types.ts`.
+- **Customer Booking Page Broadcast Callout (`react/src/features/booking/BookingPage.tsx`)**:
+  - Added `fetchFeaturedPromo()` in `react/src/services/api.ts`.
+  - On Step 2 mount, fetches featured promo once.
+  - If returned, no promo applied, and vehicle is eligible, displays animated callout: `"🎉 Congrats! You've got an exclusive discount: {code} — tap to apply."`.
+  - Tapping automatically populates the voucher input and applies the discount.
+  - Unlocks promo voucher input for commercial group vehicles when promo opts in.
+  - Styled in `react/src/styles/global.css` strictly adhering to `ANIMATION_RULES.md` (vanilla CSS, transforms/opacity only, `@media (prefers-reduced-motion: reduce)` zero-motion fallback).
+- **Verification**:
+  - Postgres migration 0026 applied cleanly; `\d promo_codes` shows columns + partial unique index.
+  - Single broadcast constraint enforced in Postgres and application layer.
+  - Unit & integration tests in `backend/tests/unit/promos.test.ts` (8/8 passed).
+  - Monorepo `npm run verify` passed 100% green across all 3 applications (3× typechecks, 184 vitest tests, customer SEO lifecycle test, and 3× production builds).
+
 ## Known next work (Phase 3 — secure integrations)
 
 - Step 3.2: High-entropy token or OTP recovery for booking status retrieval (`/api/v1/bookings/status`).
@@ -465,6 +507,7 @@ Implemented:
 - Step 3.5: Split staff roles into content, pricing, dispatch, finance, review, audit, and security.
 
 See `docs/agent/00_CONTEXT_HANDOFF.md` and section 8 of the root operating specification.
+
 
 
 

@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 1600 1000"
+     role="img"
+     aria-labelledby="title desc">
+  <title id="title">Executive Sedan</title>
+  <desc id="desc">Clean side-profile executive sedan illustration for taxi and travel booking interfaces.</desc>
+
+  <defs>
+    <linearGradient id="paint" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="0.55" stop-color="#EEF1F3"/>
+      <stop offset="1" stop-color="#C9D0D5"/>
+    </linearGradient>
+
+    <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E4EEF3"/>
+      <stop offset="1" stop-color="#A5BAC7"/>
+    </linearGradient>
+
+    <linearGradient id="rubber" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2D343A"/>
+      <stop offset="1" stop-color="#101418"/>
+    </linearGradient>
+
+    <linearGradient id="rim" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FAFBFC"/>
+      <stop offset="1" stop-color="#A7B0B7"/>
+    </linearGradient>
+
+    <filter id="softShadow" x="-20%" y="-100%" width="140%" height="300%">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+  </defs>
+
+  <!-- Ground shadow -->
+  <ellipse cx="800" cy="715" rx="575" ry="34"
+           fill="#3F4850" opacity="0.15" filter="url(#softShadow)"/>
+  <ellipse cx="800" cy="708" rx="520" ry="13"
+           fill="#3F4850" opacity="0.13"/>
+
+  <!-- Main body -->
+  <path d="
+    M235 620
+    C248 588 278 558 322 543
+    L475 496
+    C518 483 558 450 600 395
+    L660 330
+    C692 296 735 278 787 276
+    L1013 276
+    C1064 276 1106 296 1140 331
+    L1240 432
+    C1266 458 1294 474 1337 482
+    L1390 492
+    C1440 501 1477 527 1494 559
+    L1507 591
+    L1504 625
+    L218 625
+    L224 607
+    C226 601 230 594 235 588
+    Z"
+    fill="url(#paint)"
+    stroke="#27313A"
+    stroke-width="10"
+    stroke-linejoin="round"/>
+
+  <!-- Lower sill -->
+  <path d="M227 590 H1494
+           C1499 601 1502 614 1503 623
+           H219 C220 611 223 599 227 590Z"
+        fill="#B9C1C6" opacity="0.62"/>
+
+  <!-- Window house -->
+  <path d="
+    M507 491
+    C550 476 581 445 619 397
+    L672 338
+    C701 306 738 289 785 289
+    H1007
+    C1047 289 1081 304 1110 334
+    L1220 445
+    C1181 456 1134 466 1084 473
+    L544 490
+    C531 491 519 492 507 491Z"
+    fill="url(#glass)"
+    stroke="#27313A"
+    stroke-width="8"
+    stroke-linejoin="round"/>
+
+  <!-- Rear window -->
+  <path d="
+    M627 397
+    L676 344
+    C702 315 739 301 782 301
+    H862
+    L857 469
+    L545 479
+    C569 460 595 434 627 397Z"
+    fill="#B7C9D3"
+    stroke="#3A4750"
+    stroke-width="4"/>
+
+  <!-- Front window -->
+  <path d="
+    M878 301
+    H1004
+    C1039 301 1069 314 1095 341
+    L1203 446
+    C1166 455 1128 463 1080 469
+    H876Z"
+    fill="#AFC2CD"
+    stroke="#3A4750"
+    stroke-width="4"/>
+
+  <!-- B pillar -->
+  <path d="M862 298 L872 473"
+        stroke="#354149"
+        stroke-width="13"/>
+
+  <!-- Glass highlights -->
+  <path d="M716 321 C755 305 795 301 834 301"
+        fill="none" stroke="#FFFFFF" stroke-width="11"
+        opacity="0.45" stroke-linecap="round"/>
+  <path d="M1046 320 L1167 438"
+        fill="none" stroke="#FFFFFF" stroke-width="9"
+        opacity="0.27" stroke-linecap="round"/>
+
+  <!-- Door seams -->
+  <path d="M541 492 L533 612"
+        fill="none" stroke="#89949B" stroke-width="4"/>
+  <path d="M873 474 L869 613"
+        fill="none" stroke="#89949B" stroke-width="4"/>
+  <path d="M1198 449 L1216 609"
+        fill="none" stroke="#89949B" stroke-width="4"/>
+
+  <!-- Handles -->
+  <g fill="#5D676E">
+    <rect x="703" y="506" width="53" height="9" rx="4.5"/>
+    <rect x="956" y="506" width="53" height="9" rx="4.5"/>
+  </g>
+
+  <!-- Character line -->
+  <path d="M360 548 C600 532 970 530 1316 547"
+        fill="none"
+        stroke="#A7B0B6"
+        stroke-width="7"
+        opacity="0.72"/>
+
+  <!-- Rear lamp -->
+  <path d="
+    M236 537
+    C261 525 289 525 317 531
+    L300 564
+    L235 571Z"
+    fill="#F4E4CF"
+    stroke="#7F4B34"
+    stroke-width="4"/>
+
+  <!-- Front lamp -->
+  <path d="
+    M1400 516
+    C1432 518 1458 530 1477 550
+    L1422 559
+    C1410 542 1399 530 1387 524Z"
+    fill="#C34E3A"
+    stroke="#7B3025"
+    stroke-width="4"/>
+
+  <!-- Front grille / bumper -->
+  <path d="M1431 562 H1480
+           C1492 574 1499 590 1502 605
+           H1440Z"
+        fill="#3E474E"/>
+  <path d="M1452 577 H1481"
+        stroke="#ABB2B7"
+        stroke-width="4"
+        stroke-linecap="round"/>
+
+  <!-- Rear bumper -->
+  <path d="M218 565 H270 L252 614 H210Z"
+        fill="#707A81"/>
+
+  <!-- Wheels -->
+  <g>
+    <circle cx="455" cy="615" r="92"
+            fill="url(#rubber)"
+            stroke="#171D21"
+            stroke-width="10"/>
+    <circle cx="455" cy="615" r="57"
+            fill="url(#rim)"
+            stroke="#6B747B"
+            stroke-width="7"/>
+    <circle cx="455" cy="615" r="19" fill="#818B92"/>
+
+    <g stroke="#8D969D" stroke-width="5" stroke-linecap="round">
+      <path d="M455 564 V594"/>
+      <path d="M455 636 V666"/>
+      <path d="M404 615 H434"/>
+      <path d="M476 615 H506"/>
+      <path d="M419 579 L440 600"/>
+      <path d="M470 630 L491 651"/>
+      <path d="M491 579 L470 600"/>
+      <path d="M440 630 L419 651"/>
+    </g>
+  </g>
+
+  <g>
+    <circle cx="1180" cy="615" r="92"
+            fill="url(#rubber)"
+            stroke="#171D21"
+            stroke-width="10"/>
+    <circle cx="1180" cy="615" r="57"
+            fill="url(#rim)"
+            stroke="#6B747B"
+            stroke-width="7"/>
+    <circle cx="1180" cy="615" r="19" fill="#818B92"/>
+
+    <g stroke="#8D969D" stroke-width="5" stroke-linecap="round">
+      <path d="M1180 564 V594"/>
+      <path d="M1180 636 V666"/>
+      <path d="M1129 615 H1159"/>
+      <path d="M1201 615 H1231"/>
+      <path d="M1144 579 L1165 600"/>
+      <path d="M1195 630 L1216 651"/>
+      <path d="M1216 579 L1195 600"/>
+      <path d="M1165 630 L1144 651"/>
+    </g>
+  </g>
+
+  <!-- Wheel arches -->
+  <path d="M363 611
+           C368 551 405 517 455 517
+           C505 517 542 551 547 611"
+        fill="none" stroke="#68737B" stroke-width="10"/>
+
+  <path d="M1088 611
+           C1093 551 1130 517 1180 517
+           C1230 517 1267 551 1272 611"
+        fill="none" stroke="#68737B" stroke-width="10"/>
+
+  <!-- Subtle brand accent -->
+  <path d="M244 625 H1484"
+        stroke="#A83F16"
+        stroke-width="7"
+        stroke-linecap="round"
+        opacity="0.88"/>
+</svg>

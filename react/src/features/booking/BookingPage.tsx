@@ -7,6 +7,8 @@ import {
   mapVehicleTier,
   formatInquiryPhone,
   sanitizeInquiryName,
+  fetchFeaturedPromo,
+  type FeaturedPromo,
   type ServerFareBreakdown,
   type BookingSelectionPayload,
 } from "../../services/api";
@@ -218,6 +220,8 @@ export function BookingPage() {
   const [promoCodeInput, setPromoCodeInput] = useState<string>("");
   const [activePromoCode, setActivePromoCode] = useState<string>("");
   const [promoMessage, setPromoMessage] = useState<string | null>(null);
+  const [featuredPromo, setFeaturedPromo] = useState<FeaturedPromo | null>(null);
+  const featuredFetchedRef = useRef<boolean>(false);
 
   // Authoritative Server Fare State (Single Source of Truth)
   const [serverFare, setServerFare] = useState<ServerFareBreakdown | null>(null);
@@ -637,18 +641,37 @@ export function BookingPage() {
     return () => clearTimeout(timer);
   }, [fetchAuthoritativeFare, isAvailabilityBlocked]);
 
+  // Fetch featured broadcast promo once on step 2
+  useEffect(() => {
+    let active = true;
+    if (step === 2 && !featuredFetchedRef.current) {
+      featuredFetchedRef.current = true;
+      void fetchFeaturedPromo().then((promo) => {
+        if (active && promo) {
+          setFeaturedPromo(promo);
+        }
+      });
+    }
+    return () => {
+      active = false;
+    };
+  }, [step]);
+
   // Handle promo code submit
-  const handleApplyPromo = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (selectedVehicle.alwaysRoundTrip) {
+  const handleApplyPromo = (e?: React.FormEvent, overrideCode?: string) => {
+    if (e) e.preventDefault();
+    const clean = (overrideCode ?? promoCodeInput).trim().toUpperCase();
+    if (selectedVehicle.alwaysRoundTrip && !featuredPromo?.allowGroupVehicles) {
       setPromoMessage("Group commercial vehicles (Tempo / Urbania) cannot use promo codes.");
       return;
     }
-    const clean = promoCodeInput.trim().toUpperCase();
     if (!clean) {
       setActivePromoCode("");
       setPromoMessage(null);
       return;
+    }
+    if (overrideCode) {
+      setPromoCodeInput(clean);
     }
     setActivePromoCode(clean);
   };
@@ -1580,20 +1603,42 @@ export function BookingPage() {
                     <label className="font-title-md text-xs font-bold text-ink-charcoal" htmlFor="promo-input">
                       Promotional Voucher Code
                     </label>
+                    {featuredPromo &&
+                      !activePromoCode &&
+                      (!selectedVehicle.alwaysRoundTrip || featuredPromo.allowGroupVehicles) && (
+                        <button
+                          type="button"
+                          onClick={() => handleApplyPromo(undefined, featuredPromo.code)}
+                          className="promo-broadcast-callout group mb-1 flex items-center justify-between gap-2 rounded-lg border border-primary/40 bg-sandstone-wash/80 px-3 py-2 text-left text-xs transition-colors hover:bg-sandstone-wash focus-visible:outline-2 focus-visible:outline-primary cursor-pointer"
+                        >
+                          <span className="text-ink-charcoal font-medium">
+                            <span aria-hidden="true" className="mr-1">🎉</span>
+                            Congrats! You've got an exclusive discount:{" "}
+                            <span className="font-mono font-bold text-ink-midnight underline decoration-primary underline-offset-2">
+                              {featuredPromo.code}
+                            </span>
+                            {" "}— tap to apply.
+                          </span>
+                        </button>
+                    )}
                     <div className="flex gap-2">
                       <input
                         id="promo-input"
                         type="text"
-                        disabled={selectedVehicle.alwaysRoundTrip}
+                        disabled={selectedVehicle.alwaysRoundTrip && !featuredPromo?.allowGroupVehicles}
                         value={promoCodeInput}
                         onChange={(e) => setPromoCodeInput(e.target.value)}
-                        placeholder={selectedVehicle.alwaysRoundTrip ? "N/A for group vans" : "e.g. ASTTCAR500OFF"}
+                        placeholder={
+                          selectedVehicle.alwaysRoundTrip && !featuredPromo?.allowGroupVehicles
+                            ? "N/A for group vans"
+                            : "e.g. ASTTCAR500OFF"
+                        }
                         className="flex-1 px-3 py-2 rounded-lg border border-border-warm bg-surface font-body-md text-on-surface uppercase disabled:bg-surface-container-low"
                       />
                       <button
                         type="button"
                         onClick={handleApplyPromo}
-                        disabled={selectedVehicle.alwaysRoundTrip}
+                        disabled={selectedVehicle.alwaysRoundTrip && !featuredPromo?.allowGroupVehicles}
                         className="px-4 py-2 rounded-lg bg-surface-container-high text-ink-charcoal font-semibold text-xs hover:bg-surface-container-highest transition-colors disabled:opacity-40"
                       >
                         Apply
