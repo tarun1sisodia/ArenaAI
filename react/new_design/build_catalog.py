@@ -554,8 +554,8 @@ def build_complete_dataset():
             "company_info": {
                 "name": "Agra Shiv Tour And Travels (ASTT)",
                 "experience": "15+ Years Trusted Taxi & Tour Operator in Agra",
-                "phone_numbers": ["+91 9759000249", "+91 9068888587", "+91 9058016350"],
-                "landline": "+91 0562 430 6350",
+                "phone_numbers": ["+91 97628 17598", "+91 97628 17598", "+91 97628 17598"],
+                "landline": "+91 97628 17598",
                 "email": "contact@agrashivtourandtravels.com",
                 "headquarters": "Agra, Uttar Pradesh, India"
             },
@@ -653,8 +653,8 @@ def build_complete_dataset():
         mf.write("## 1. Company & Contact Details\n\n")
         mf.write("- **Company Name**: Agra Shiv Tour And Travels (ASTT)\n")
         mf.write("- **Experience**: 15+ Years Trusted Local & Outstation Taxi Provider in Agra & North India\n")
-        mf.write("- **Mobile Bookings**: +91 9759000249 / +91 9068888587 / +91 9058016350\n")
-        mf.write("- **Customer Care / Landline**: +91 0562 430 6350\n")
+        mf.write("- **Mobile Bookings**: +91 97628 17598 / +91 97628 17598 / +91 97628 17598\n")
+        mf.write("- **Customer Care / Landline**: +91 97628 17598\n")
         mf.write("- **Email**: contact@agrashivtourandtravels.com\n")
         mf.write(f"- **Total Routes & Pages Extracted**: {len(routes_database)} complete route entries\n\n")
 

@@ -118,7 +118,7 @@ export function NotFoundPage({ language = "en" }: NotFoundPageProps) {
                     <div className="absolute inset-0 bg-gradient-to-t from-ink-midnight/80 via-transparent to-transparent" />
                     <div className="absolute bottom-3 left-3 right-3 text-ivory-surface">
                       <span className="font-title-md text-xs font-semibold block">Agra Dispatch Station</span>
-                      <span className="font-body-sm text-label-md text-surface-dim">Taj Ganj Control Room · +91 63958 67598</span>
+                      <span className="font-body-sm text-label-md text-surface-dim">Taj Ganj Control Room · +91 97628 17598</span>
                     </div>
                   </div>
 

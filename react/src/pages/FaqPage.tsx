@@ -255,14 +255,14 @@ export function FaqPage({ language = "en" }: FaqPageProps) {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <a
-              href="tel:+916395867598"
+              href="tel:+919762817598"
               className="p-3.5 rounded-xl bg-surface-container-lowest border border-border-warm/70 hover:border-primary transition-all flex flex-col items-center text-center shadow-xs"
             >
               <div className="w-8 h-8 rounded-full bg-sandstone-wash flex items-center justify-center text-primary mb-2">
                 <span className="material-symbols-outlined text-lg">phone_in_talk</span>
               </div>
               <h3 className="font-title-md text-xs font-bold text-ink-charcoal">Call 24×7 Desk</h3>
-              <p className="text-body-md text-primary font-bold mt-0.5">+91 63958 67598</p>
+              <p className="text-body-md text-primary font-bold mt-0.5">+91 97628 17598</p>
             </a>
 
             <a

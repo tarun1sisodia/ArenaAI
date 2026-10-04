@@ -330,7 +330,7 @@ export async function prerender(): Promise<void> {
       // 4. Update only the accessibility fallback; preserve GTM's noscript iframe
       html = html.replace(
         /<noscript id="js-fallback">[\s\S]*?<\/noscript>/,
-        `<noscript id="js-fallback"><p class="skip-link" style="position:static;padding:12px;background:#fff3cd;color:#856404;margin:0;text-align:center;font-size:14px;">JavaScript is recommended for dynamic calculations and interactive booking. Call us 24×7 at <a href="tel:+916395867598" style="color:#b8941f;font-weight:700;">+91 63958 67598</a>.</p></noscript>`
+        `<noscript id="js-fallback"><p class="skip-link" style="position:static;padding:12px;background:#fff3cd;color:#856404;margin:0;text-align:center;font-size:14px;">JavaScript is recommended for dynamic calculations and interactive booking. Call us 24×7 at <a href="tel:+919762817598" style="color:#b8941f;font-weight:700;">+91 97628 17598</a>.</p></noscript>`
       );
 
       // 5. Ensure relative assets work correctly across directory depths if requested

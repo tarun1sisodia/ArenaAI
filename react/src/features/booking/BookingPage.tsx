@@ -1487,7 +1487,7 @@ export function BookingPage() {
                       type="tel"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      placeholder="+91 63958 67598"
+                      placeholder="+91 97628 17598"
                       className="px-3 py-2.5 rounded-lg border border-border-warm bg-surface font-body-md text-on-surface focus:ring-1 focus:ring-primary focus:outline-none"
                     />
                   </div>
@@ -1633,14 +1633,14 @@ export function BookingPage() {
                   </div>
                   <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto">
                     <a
-                      href="tel:+916395867598"
+                      href="tel:+919762817598"
                       className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg bg-surface border border-border-warm text-ink-charcoal font-label-lg text-xs font-bold hover:bg-surface-container-high transition-colors shadow-2xs"
                     >
                       <span className="material-symbols-outlined text-icon-16 text-primary">call</span>
                       <span>Call Desk</span>
                     </a>
                     <a
-                      href="https://wa.me/916395867598?text=Hello%20SK%20Baghel%20Travels%2C%20I%20have%20a%20question%20regarding%20my%20local%20tour%20booking%20before%20payment."
+                      href="https://wa.me/919762817598?text=Hello%20SK%20Baghel%20Travels%2C%20I%20have%20a%20question%20regarding%20my%20local%20tour%20booking%20before%20payment."
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#25D366] text-white font-label-lg text-xs font-bold hover:bg-[#1EBE5D] transition-colors shadow-2xs"

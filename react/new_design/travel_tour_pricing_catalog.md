@@ -7,8 +7,8 @@
 
 - **Company Name**: Agra Shiv Tour And Travels (ASTT)
 - **Experience**: 15+ Years Trusted Local & Outstation Taxi Provider in Agra & North India
-- **Mobile Bookings**: +91 9759000249 / +91 9068888587 / +91 9058016350
-- **Customer Care / Landline**: +91 0562 430 6350
+- **Mobile Bookings**: +91 97628 17598 / +91 97628 17598 / +91 97628 17598
+- **Customer Care / Landline**: +91 97628 17598
 - **Email**: contact@agrashivtourandtravels.com
 - **Total Routes & Pages Extracted**: 983 complete route entries
 

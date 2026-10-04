@@ -195,10 +195,10 @@ export function HomePage({ language = "en" }: HomePageProps) {
               <div className="flex flex-wrap items-center gap-space-sm">
                 <a
                   className="inline-flex items-center gap-space-xs px-space-lg py-3 rounded-lg bg-primary hover:bg-primary-container text-white font-label-lg text-label-lg shadow-md transition-all font-semibold active:scale-[0.98]"
-                  href="tel:+916395867598"
+                  href="tel:+919762817598"
                 >
                   <span className="material-symbols-outlined text-icon-18">call</span>
-                  <span className="text-white">Call +91 63958 67598</span>
+                  <span className="text-white">Call +91 97628 17598</span>
                 </a>
                 <a
                   className="inline-flex items-center gap-space-xs px-space-lg py-3 rounded-lg bg-black hover:bg-neutral-900 text-white font-label-lg text-label-lg shadow-md transition-all font-semibold active:scale-[0.98] border border-white/10"
@@ -718,13 +718,13 @@ export function HomePage({ language = "en" }: HomePageProps) {
                   </p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-space-sm">
-                  <a className="p-3.5 rounded-xl bg-surface-container-lowest hover:bg-surface-container transition-all flex items-center gap-3 shadow-sm border border-border-warm/40" href="tel:+916395867598">
+                  <a className="p-3.5 rounded-xl bg-surface-container-lowest hover:bg-surface-container transition-all flex items-center gap-3 shadow-sm border border-border-warm/40" href="tel:+919762817598">
                     <div className="w-9 h-9 rounded-full bg-sandstone-wash flex items-center justify-center text-primary shrink-0">
                       <span className="material-symbols-outlined text-icon-18">call</span>
                     </div>
                     <div>
                       <span className="font-label-caps text-body-sm text-on-surface-variant block uppercase font-bold">Call 24×7</span>
-                      <span className="font-title-md text-title-lg text-on-surface font-bold">+91 63958 67598</span>
+                      <span className="font-title-md text-title-lg text-on-surface font-bold">+91 97628 17598</span>
                     </div>
                   </a>
                   <a className="p-3.5 rounded-xl bg-surface-container-lowest hover:bg-surface-container transition-all flex items-center gap-3 shadow-sm border border-border-warm/40" href={`https://wa.me/${contact.whatsapp}`} target="_blank" rel="noreferrer">
@@ -777,7 +777,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
                           required
                           value={inquiryPhone}
                           onChange={(e) => setInquiryPhone(e.target.value)}
-                          placeholder="+91 63958 67598"
+                          placeholder="+91 97628 17598"
                           className="w-full px-3 py-2 rounded-lg bg-surface-container-low border border-border-warm/50 text-on-surface focus:outline-none focus:border-primary text-xs"
                         />
                       </div>

@@ -1,6 +1,6 @@
 export const contact = {
-  phone: "+916395867598",
-  phoneDisplay: "+91 63958 67598",
+  phone: "+919762817598",
+  phoneDisplay: "+91 97628 17598",
   whatsapp: "919762817598",
   onlineBooking: "919762817598",
   email: "bookings@agraskbagheltourandtravels.com",
