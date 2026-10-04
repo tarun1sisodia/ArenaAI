@@ -14325,6 +14325,148 @@ html.dark .loc-empty {
   }
 }
 
+/* Horizontal homepage booking bar. The base home-booking-* rules above remain
+   the mobile-first card contract; these variants only change the desktop grid. */
+.home-booking-widget--horizontal {
+  max-width: none;
+}
+
+.home-booking-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.home-booking-field {
+  min-width: 0;
+}
+
+.home-booking-fare {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  margin-bottom: 8px;
+}
+
+.home-booking-fare .home-booking-label {
+  margin-bottom: 2px;
+}
+
+.home-booking-fare strong {
+  color: var(--color-primary);
+  font: 700 20px/1.1 var(--font-title-md);
+}
+
+.home-booking-fare > span:last-child {
+  overflow: hidden;
+  color: var(--color-on-surface-variant);
+  font: 600 9px/1.25 var(--font-body-md);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.home-booking-microcopy {
+  margin-top: 8px;
+  text-align: right;
+}
+
+@media (min-width: 1024px) {
+  .home-booking-widget--horizontal {
+    padding: 20px;
+  }
+
+  .home-booking-widget--horizontal .home-booking-tabs {
+    display: inline-grid;
+    width: auto;
+    min-width: 360px;
+  }
+
+  .home-booking-widget--horizontal .home-booking-fields {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    align-items: end;
+    gap: 0;
+  }
+
+  .home-booking-widget--horizontal .home-booking-field {
+    padding: 0 12px;
+  }
+
+  .home-booking-widget--horizontal .home-booking-field:first-child {
+    padding-left: 0;
+  }
+
+  .home-booking-widget--horizontal .home-booking-field + .home-booking-field {
+    border-left: 1px solid color-mix(in srgb, var(--color-border-warm) 60%, transparent);
+  }
+
+  .home-booking-widget--horizontal .home-booking-route-field,
+  .home-booking-widget--horizontal .home-booking-date-field {
+    grid-column: span 2;
+  }
+
+  .home-booking-widget--horizontal .home-booking-vehicle-field {
+    grid-column: span 4;
+  }
+
+  .home-booking-widget--horizontal .home-booking-action {
+    grid-column: span 4;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(126px, 0.9fr);
+    align-items: center;
+    column-gap: 12px;
+  }
+
+  .home-booking-widget--horizontal .home-booking-cta {
+    min-height: 78px;
+  }
+
+  .home-booking-widget--horizontal .home-booking-microcopy {
+    grid-column: 1 / -1;
+  }
+
+  .home-booking-widget--horizontal .home-booking-fleet {
+    gap: 4px;
+  }
+
+  .home-booking-widget--horizontal .home-booking-fleet-option {
+    min-height: 54px;
+    padding-inline: 2px;
+  }
+
+  .home-booking-widget--horizontal.mode-round .home-booking-route-field,
+  .home-booking-widget--horizontal.mode-round .home-booking-date-field {
+    grid-column: span 2;
+  }
+
+  .home-booking-widget--horizontal.mode-round .home-booking-vehicle-field,
+  .home-booking-widget--horizontal.mode-round .home-booking-action {
+    grid-column: span 2;
+  }
+
+  .home-booking-widget--horizontal.mode-local .home-booking-local-field {
+    grid-column: span 4;
+  }
+
+  .home-booking-widget--horizontal.mode-local .home-booking-date-field {
+    grid-column: span 2;
+  }
+
+  .home-booking-widget--horizontal.mode-local .home-booking-vehicle-field {
+    display: none;
+  }
+
+  .home-booking-widget--horizontal.mode-local .home-booking-action {
+    grid-column: span 6;
+  }
+}
+
+@media (max-width: 1023px) {
+  .home-booking-widget--horizontal .home-booking-microcopy {
+    text-align: center;
+  }
+}
+
 
 /* Booking guest-details summary stays readable at every form width. */
 .booking-prefill-summary {

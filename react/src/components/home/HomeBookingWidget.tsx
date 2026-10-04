@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { packages, vehicles, type VehicleId } from "../../data/catalogue";
 import { LocationCombobox } from "../search/LocationCombobox";
-import { localTomorrow } from "../../fares";
+import { calcFare, formatInr, localTomorrow } from "../../fares";
 
 const modes = [
   { id: "oneway", label: "One Way" },
@@ -62,6 +62,15 @@ export function HomeBookingWidget() {
   };
 
   const selectedTour = localTours.find((tour) => tour.slug === localTourId) ?? localTours[0];
+  const quote = mode === "local"
+    ? calcFare({ packageId: selectedTour?.slug, vehicleId: selectedVehicle })
+    : calcFare({
+        from: origin.split(" (")[0],
+        to: destination.split(" (")[0],
+        vehicleId: selectedVehicle,
+        tripType: mode === "round" ? "round" : "one-way",
+      });
+
   function validate(): boolean {
     const next: Record<string, string> = {};
     if (mode !== "local" && !origin.trim()) next.origin = "Select pickup location.";
@@ -87,154 +96,152 @@ export function HomeBookingWidget() {
   }
 
   return (
-    <div id="home-booking-widget" className="home-booking-widget w-full max-w-[430px] min-h-[460px] flex flex-col justify-between rounded-xl border border-border-warm/70 bg-surface-container-lowest p-3.5 text-on-surface shadow-xl sm:p-4">
-      <div>
-        <div className="home-booking-tabs" role="tablist" aria-label="Booking type">
-          {modes.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              role="tab"
-              aria-selected={mode === item.id}
-              className={`home-booking-tab ${mode === item.id ? "is-active" : ""}`}
-              onClick={() => { setMode(item.id); setErrors({}); }}
-            >
-              {item.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="mt-4 space-y-3">
-          {mode === "local" ? (
-            <div>
-              <label htmlFor="home-local-tour" className="home-booking-label">Local Tour</label>
-              <div className="home-booking-select-wrap">
-                <span className="material-symbols-outlined home-booking-field-icon" aria-hidden="true">landscape</span>
-                <select id="home-local-tour" value={localTourId} onChange={(event) => setLocalTourId(event.target.value)} className="home-booking-select">
-                  {localTours.map((tour) => <option key={tour.slug} value={tour.slug}>{tour.name}</option>)}
-                </select>
-              </div>
-              <FieldError>{errors.localTour}</FieldError>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <div className="min-w-0">
-                <label className="home-booking-label">From</label>
-                <LocationCombobox id="home-origin" value={origin} onChange={setOrigin} placeholder="Search pickup city..." label="Pickup origin city" triggerIcon="trip_origin" showLocationIqBadge={false} />
-                <FieldError>{errors.origin}</FieldError>
-              </div>
-              <div className="min-w-0">
-                <label className="home-booking-label">To</label>
-                <LocationCombobox id="home-destination" value={destination} onChange={setDestination} placeholder="Search destination city..." label="Destination city" triggerIcon="pin_drop" showLocationIqBadge={false} />
-                <FieldError>{errors.destination}</FieldError>
-              </div>
-            </div>
-          )}
-
-          <div className={`grid grid-cols-1 gap-3 ${mode === "round" ? "sm:grid-cols-2" : ""}`}>
-            <div>
-              <label htmlFor="home-pickup-date" className="home-booking-label">{mode === "local" ? "Tour Date" : "Pickup Date"}</label>
-              <div
-                className="home-booking-date-wrap cursor-pointer"
-                onClick={openPickupPicker}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    openPickupPicker();
-                  }
-                }}
-                tabIndex={0}
-                role="button"
-                aria-label={mode === "local" ? "Open tour date picker" : "Open pickup date picker"}
-              >
-                <input
-                  ref={pickupInputRef}
-                  id="home-pickup-date"
-                  type="date"
-                  value={pickupDate}
-                  min={localTomorrow()}
-                  onChange={(event) => {
-                    const next = event.target.value;
-                    setPickupDate(next);
-                    if (returnDate && returnDate < next) {
-                      setReturnDate(next);
-                    }
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    openPickupPicker();
-                  }}
-                  className="home-booking-date"
-                  aria-label={mode === "local" ? "Tour date" : "Pickup date"}
-                />
-                <span className={`home-booking-date-display ${pickupDate ? "has-value" : ""}`} aria-hidden="true">{pickupDate ? formatDate(pickupDate) : "Select date"}</span>
-                <span className="material-symbols-outlined home-booking-field-icon" aria-hidden="true">calendar_today</span>
-              </div>
-              <FieldError>{errors.pickupDate}</FieldError>
-            </div>
-            {mode === "round" && (
-              <div>
-                <label htmlFor="home-return-date" className="home-booking-label">Return Date</label>
-                <div
-                  className="home-booking-date-wrap cursor-pointer"
-                  onClick={openReturnPicker}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      openReturnPicker();
-                    }
-                  }}
-                  tabIndex={0}
-                  role="button"
-                  aria-label="Open return date picker"
-                >
-                  <input
-                    ref={returnInputRef}
-                    id="home-return-date"
-                    type="date"
-                    value={returnDate}
-                    min={pickupDate || localTomorrow()}
-                    onChange={(event) => setReturnDate(event.target.value)}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      openReturnPicker();
-                    }}
-                    className="home-booking-date"
-                    aria-label="Return date"
-                  />
-                  <span className={`home-booking-date-display ${returnDate ? "has-value" : ""}`} aria-hidden="true">{returnDate ? formatDate(returnDate) : "Select date"}</span>
-                  <span className="material-symbols-outlined home-booking-field-icon" aria-hidden="true">calendar_today</span>
-                </div>
-                <FieldError>{errors.returnDate}</FieldError>
-              </div>
-            )}
-          </div>
-
-          <fieldset className="min-w-0">
-            <legend className="home-booking-label">Vehicle</legend>
-            <div className="home-booking-fleet" role="radiogroup" aria-label="Choose a vehicle">
-              {fleetIds.map((id) => {
-                const vehicle = vehicles.find((item) => item.id === id);
-                const label = id === "innova" ? "Crysta" : id === "tempo" ? "Tempo" : id === "urbania" ? "Urbania" : vehicle?.name ?? id;
-                return (
-                  <button key={id} type="button" role="radio" aria-checked={selectedVehicle === id} className={`home-booking-fleet-option ${selectedVehicle === id ? "is-active" : ""}`} onClick={() => setSelectedVehicle(id)}>
-                    <span className="material-symbols-outlined" aria-hidden="true">{fleetIcons[id]}</span>
-                    <span>{label}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </fieldset>
-        </div>
+    <div id="home-booking-widget" className={`home-booking-widget home-booking-widget--horizontal mode-${mode} w-full rounded-2xl border border-border-warm/70 bg-surface-container-lowest p-3.5 text-on-surface shadow-xl sm:p-4 lg:p-5`}>
+      <div className="home-booking-tabs" role="tablist" aria-label="Booking type">
+        {modes.map((item) => (
+          <button
+            key={item.id}
+            type="button"
+            role="tab"
+            aria-selected={mode === item.id}
+            className={`home-booking-tab ${mode === item.id ? "is-active" : ""}`}
+            onClick={() => { setMode(item.id); setErrors({}); }}
+          >
+            {item.label}
+          </button>
+        ))}
       </div>
 
-      <div>
-        <div className="home-booking-action mt-4 border-t border-border-warm/70 pt-3.5">
+      <div className="home-booking-fields mt-4">
+        {mode === "local" ? (
+          <div className="home-booking-field home-booking-local-field">
+            <label htmlFor="home-local-tour" className="home-booking-label">Local Tour</label>
+            <div className="home-booking-select-wrap">
+              <span className="material-symbols-outlined home-booking-field-icon" aria-hidden="true">landscape</span>
+              <select id="home-local-tour" value={localTourId} onChange={(event) => setLocalTourId(event.target.value)} className="home-booking-select">
+                {localTours.map((tour) => <option key={tour.slug} value={tour.slug}>{tour.name}</option>)}
+              </select>
+            </div>
+            <FieldError>{errors.localTour}</FieldError>
+          </div>
+        ) : (
+          <>
+            <div className="home-booking-field home-booking-route-field min-w-0">
+              <label className="home-booking-label">From</label>
+              <LocationCombobox id="home-origin" value={origin} onChange={setOrigin} placeholder="Search pickup city..." label="Pickup origin city" triggerIcon="trip_origin" showLocationIqBadge={false} />
+              <FieldError>{errors.origin}</FieldError>
+            </div>
+            <div className="home-booking-field home-booking-route-field min-w-0">
+              <label className="home-booking-label">To</label>
+              <LocationCombobox id="home-destination" value={destination} onChange={setDestination} placeholder="Search destination city..." label="Destination city" triggerIcon="pin_drop" showLocationIqBadge={false} />
+              <FieldError>{errors.destination}</FieldError>
+            </div>
+          </>
+        )}
+
+        <div className="home-booking-field home-booking-date-field">
+          <label htmlFor="home-pickup-date" className="home-booking-label">{mode === "local" ? "Tour Date" : "Pickup Date"}</label>
+          <div
+            className="home-booking-date-wrap cursor-pointer"
+            onClick={openPickupPicker}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                openPickupPicker();
+              }
+            }}
+            tabIndex={0}
+            role="button"
+            aria-label={mode === "local" ? "Open tour date picker" : "Open pickup date picker"}
+          >
+            <input
+              ref={pickupInputRef}
+              id="home-pickup-date"
+              type="date"
+              value={pickupDate}
+              min={localTomorrow()}
+              onChange={(event) => {
+                const next = event.target.value;
+                setPickupDate(next);
+                if (returnDate && returnDate < next) setReturnDate(next);
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                openPickupPicker();
+              }}
+              className="home-booking-date"
+              aria-label={mode === "local" ? "Tour date" : "Pickup date"}
+            />
+            <span className={`home-booking-date-display ${pickupDate ? "has-value" : ""}`} aria-hidden="true">{pickupDate ? formatDate(pickupDate) : "Select date"}</span>
+            <span className="material-symbols-outlined home-booking-field-icon" aria-hidden="true">calendar_today</span>
+          </div>
+          <FieldError>{errors.pickupDate}</FieldError>
+        </div>
+
+        {mode === "round" && (
+          <div className="home-booking-field home-booking-date-field">
+            <label htmlFor="home-return-date" className="home-booking-label">Return Date</label>
+            <div
+              className="home-booking-date-wrap cursor-pointer"
+              onClick={openReturnPicker}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  openReturnPicker();
+                }
+              }}
+              tabIndex={0}
+              role="button"
+              aria-label="Open return date picker"
+            >
+              <input
+                ref={returnInputRef}
+                id="home-return-date"
+                type="date"
+                value={returnDate}
+                min={pickupDate || localTomorrow()}
+                onChange={(event) => setReturnDate(event.target.value)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openReturnPicker();
+                }}
+                className="home-booking-date"
+                aria-label="Return date"
+              />
+              <span className={`home-booking-date-display ${returnDate ? "has-value" : ""}`} aria-hidden="true">{returnDate ? formatDate(returnDate) : "Select date"}</span>
+              <span className="material-symbols-outlined home-booking-field-icon" aria-hidden="true">calendar_today</span>
+            </div>
+            <FieldError>{errors.returnDate}</FieldError>
+          </div>
+        )}
+
+        <fieldset className="home-booking-field home-booking-vehicle-field min-w-0">
+          <legend className="home-booking-label">Vehicle</legend>
+          <div className="home-booking-fleet" role="radiogroup" aria-label="Choose a vehicle">
+            {fleetIds.map((id) => {
+              const vehicle = vehicles.find((item) => item.id === id);
+              const label = id === "innova" ? "Crysta" : id === "tempo" ? "Tempo" : id === "urbania" ? "Urbania" : vehicle?.name ?? id;
+              return (
+                <button key={id} type="button" role="radio" aria-checked={selectedVehicle === id} className={`home-booking-fleet-option ${selectedVehicle === id ? "is-active" : ""}`} onClick={() => setSelectedVehicle(id)}>
+                  <span className="material-symbols-outlined" aria-hidden="true">{fleetIcons[id]}</span>
+                  <span>{label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </fieldset>
+
+        <div className="home-booking-action home-booking-field">
+          <div className="home-booking-fare" aria-live="polite" aria-atomic="true">
+            <span className="home-booking-label">Estimated fare</span>
+            <strong>{quote ? formatInr(quote.total) : "—"}</strong>
+            {quote && quote.advance < quote.total && <span>28% advance from {formatInr(quote.advance)}</span>}
+          </div>
           <a href={bookingHref()} onClick={(event) => { if (!validate()) { event.preventDefault(); document.getElementById("home-booking-widget")?.scrollIntoView({ behavior: "smooth", block: "center" }); } }} className="home-booking-cta">
             Book Now <span className="material-symbols-outlined text-icon-17" aria-hidden="true">east</span>
           </a>
+          <p className="home-booking-microcopy text-label-caps leading-relaxed text-on-surface-variant">Toll-inclusive · booking receipt · 28% advance only</p>
         </div>
-        <p className="mt-3 text-center text-label-caps leading-relaxed text-on-surface-variant">Toll-inclusive · booking receipt · 28% advance only</p>
       </div>
     </div>
   );

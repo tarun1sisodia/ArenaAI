@@ -125,7 +125,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
 
           <div className="relative z-10 w-full max-w-[1280px] mx-auto px-margin-mobile lg:px-margin grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             {/* Left — headline + two CTAs only (hero stack discipline: 3 elements max) */}
-            <div className="lg:col-span-6 flex flex-col items-start gap-space-md">
+            <div className="lg:col-span-12 max-w-3xl flex flex-col items-start gap-space-md">
 
               {/* 100% SEO-Safe Headline with Letter-by-Letter Handwriting Reveal */}
               <div className="flex flex-col items-start gap-1 w-full max-w-[640px]">
@@ -213,10 +213,6 @@ export function HomePage({ language = "en" }: HomePageProps) {
               </div>
             </div>
 
-            {/* Right — compact first-step booking widget */}
-            <div className="lg:col-span-6 w-full flex justify-end">
-              <HomeBookingWidget />
-            </div>
           </div>
         </section>
 
@@ -245,6 +241,13 @@ export function HomePage({ language = "en" }: HomePageProps) {
             ))}
           </div>
         </div>
+
+        {/* ── BOOKING WIDGET ── Horizontal bar; Popular Routes moved directly below per client request */}
+        <section className="w-full py-space-2xl" aria-label="Book your taxi">
+          <div className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin">
+            <HomeBookingWidget />
+          </div>
+        </section>
 
         {/* ── POPULAR ROUTES ── Editorial horizontal rows, not a card grid */}
         <section
