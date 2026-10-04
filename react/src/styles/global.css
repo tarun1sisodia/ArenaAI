@@ -14279,24 +14279,12 @@ html.dark .loc-empty {
 }
 
 .home-booking-action {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.home-booking-fare {
   display: block;
-  max-width: 180px;
-  overflow: hidden;
-  color: var(--color-primary);
-  font: 700 18px/1.15 var(--font-price-display);
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .home-booking-cta {
   display: inline-flex;
+  width: 100%;
   min-width: 124px;
   min-height: 44px;
   flex: 0 0 auto;
@@ -14321,15 +14309,6 @@ html.dark .loc-empty {
 }
 
 @media (max-width: 520px) {
-  .home-booking-action {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .home-booking-fare {
-    max-width: none;
-  }
-
   .home-booking-cta {
     width: 100%;
   }

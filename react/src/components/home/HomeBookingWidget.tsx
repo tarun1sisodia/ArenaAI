@@ -1,7 +1,7 @@
-import { useMemo, useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { packages, vehicles, type VehicleId } from "../../data/catalogue";
 import { LocationCombobox } from "../search/LocationCombobox";
-import { calcFare, localTomorrow } from "../../fares";
+import { localTomorrow } from "../../fares";
 
 const modes = [
   { id: "oneway", label: "One Way" },
@@ -19,10 +19,6 @@ const fleetIcons: Record<VehicleId, string> = {
   tempo: "rv_hookup",
   urbania: "directions_bus",
 };
-
-function cleanLocation(value: string): string {
-  return value.trim().toLowerCase();
-}
 
 function formatDate(value: string): string {
   if (!value) return "";
@@ -66,19 +62,6 @@ export function HomeBookingWidget() {
   };
 
   const selectedTour = localTours.find((tour) => tour.slug === localTourId) ?? localTours[0];
-  const quote = useMemo(() => {
-    if (mode === "local") return selectedTour ? { total: selectedTour.from } : null;
-    if (!origin || !destination) return null;
-    return calcFare({
-      from: cleanLocation(origin),
-      to: cleanLocation(destination),
-      vehicleId: selectedVehicle,
-      tripType: mode === "round" ? "round" : "one-way",
-    });
-  }, [destination, mode, origin, selectedTour, selectedVehicle]);
-
-  const estimatedFare = quote?.total && quote.total > 0 ? `₹${quote.total.toLocaleString("en-IN")}` : "Fare on request";
-
   function validate(): boolean {
     const next: Record<string, string> = {};
     if (mode !== "local" && !origin.trim()) next.origin = "Select pickup location.";
@@ -247,10 +230,6 @@ export function HomeBookingWidget() {
 
       <div>
         <div className="home-booking-action mt-4 border-t border-border-warm/70 pt-3.5">
-          <div className="min-w-0">
-            <span className="home-booking-label mb-0.5 block">Estimated Fare</span>
-            <strong className="home-booking-fare">{estimatedFare}</strong>
-          </div>
           <a href={bookingHref()} onClick={(event) => { if (!validate()) { event.preventDefault(); document.getElementById("home-booking-widget")?.scrollIntoView({ behavior: "smooth", block: "center" }); } }} className="home-booking-cta">
             Book Now <span className="material-symbols-outlined text-icon-17" aria-hidden="true">east</span>
           </a>
@@ -260,4 +239,3 @@ export function HomeBookingWidget() {
     </div>
   );
 }
-
