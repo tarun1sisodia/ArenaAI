@@ -695,6 +695,17 @@ export function BookingPage() {
       return;
     }
 
+    if (pickupAddress.trim().length < 5) {
+      setSubmitError("Please enter a specific pickup address (at least 5 characters).");
+      return;
+    }
+
+    const pickupDateObj = new Date(pickupDatetimeIso);
+    if (Number.isNaN(pickupDateObj.getTime()) || pickupDateObj.getTime() < Date.now() + 55 * 60 * 1000) {
+      setSubmitError("Pickup time must be at least 1 hour in the future. Please select a future date and time.");
+      return;
+    }
+
     setIsSubmitting(true);
     setSubmitError(null);
     try {

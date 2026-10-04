@@ -28,7 +28,17 @@ async function apiCall<T>(path: string, options: { method?: string; token?: stri
   });
   const json = await response.json().catch(() => ({})) as { data?: T; error?: { code?: string; message?: string; details?: unknown } };
   if (!response.ok) {
-    throw new CustomerApiError(json.error?.message || `Request failed (${response.status}).`, response.status, json.error?.code ?? null, json.error?.details);
+    let errorMsg = json.error?.message || `Request failed (${response.status}).`;
+    if (Array.isArray(json.error?.details) && json.error.details.length > 0) {
+      const issueDetails = (json.error.details as Array<{ path?: string; message?: string }>)
+        .map((issue) => (issue.message ? `${issue.path ? issue.path + ": " : ""}${issue.message}` : ""))
+        .filter(Boolean)
+        .join("; ");
+      if (issueDetails) {
+        errorMsg = `${errorMsg} (${issueDetails})`;
+      }
+    }
+    throw new CustomerApiError(errorMsg, response.status, json.error?.code ?? null, json.error?.details);
   }
   return (json.data ?? json) as T;
 }
