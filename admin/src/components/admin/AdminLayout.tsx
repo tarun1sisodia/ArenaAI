@@ -4,7 +4,7 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
 import { fetchAdminAuditLogs } from "@/lib/api";
-import { timeAgo } from "@/lib/utils";
+import { cn, timeAgo } from "@/lib/utils";
 import type { AdminUser } from "@/lib/types";
 
 const TITLES: Record<string, string> = {
@@ -28,6 +28,17 @@ export function AdminLayout({
   const reduce = useReducedMotion();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState<boolean>(
+    () => localStorage.getItem("skb-admin-collapsed") === "1"
+  );
+
+  const toggleCollapsed = () => {
+    setCollapsed((prev) => {
+      const next = !prev;
+      localStorage.setItem("skb-admin-collapsed", next ? "1" : "0");
+      return next;
+    });
+  };
   const [theme, setTheme] = useState<"light" | "dark">(
     () => (localStorage.getItem("skb-admin-theme") as "light" | "dark") || "light"
   );
@@ -70,8 +81,15 @@ export function AdminLayout({
         onLogout={onLogout}
         mobileOpen={mobileOpen}
         onMobileClose={() => setMobileOpen(false)}
+        collapsed={collapsed}
+        onToggleCollapse={toggleCollapsed}
       />
-      <div className="lg:pl-64">
+      <div
+        className={cn(
+          "transition-[padding] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none",
+          collapsed ? "lg:pl-[76px]" : "lg:pl-64"
+        )}
+      >
         <Topbar
           title={TITLES[location.pathname] ?? "Admin"}
           onMenu={() => setMobileOpen(true)}

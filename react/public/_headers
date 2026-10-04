@@ -6,6 +6,7 @@
   X-Frame-Options: SAMEORIGIN
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: geolocation=(), microphone=(), camera=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
   Alt-Svc: h3=":443"; ma=86400
 
 # Vite emits content-hashed filenames — safe to cache for 1 year.
