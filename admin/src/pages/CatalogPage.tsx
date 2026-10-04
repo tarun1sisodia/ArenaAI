@@ -72,6 +72,8 @@ const CATEGORY_LABEL: Record<CatalogCategory, string> = {
   place: "Famous Place & Monument (multi-image gallery)",
 };
 
+const GENERAL_CATALOG_CATEGORIES: CatalogCategory[] = ["place", "vehicle"];
+
 const TRIP_TYPE_OPTIONS: { value: CatalogTripType; label: string }[] = [
   { value: "local-tour", label: "Local tour / sightseeing" },
   { value: "one-way", label: "One-way outstation drop" },
@@ -259,15 +261,15 @@ export function CatalogPage({ user }: { user: AdminUser }) {
   function resetForm() {
     setFormTitle("");
     setFormSlug("");
-    setFormCategory("package");
+    setFormCategory("place");
     setFormSummary("");
-    setFormDuration("8 hrs / 80 km");
-    setFormPrice(1900);
+    setFormDuration("");
+    setFormPrice(1000);
     setFormDistance("");
     setFormAvailability("available");
     setFormSeatsLeft("");
-    setFormTripType("local-tour");
-    setFormPlaces("Taj Mahal, Agra Fort");
+    setFormTripType("");
+    setFormPlaces("");
     setFormStops("");
     setFormStatus("draft");
     setFormError(null);
@@ -917,12 +919,20 @@ export function CatalogPage({ user }: { user: AdminUser }) {
                 value={formCategory}
                 onChange={(e) => handleFormCategoryChange(e.target.value as CatalogCategory)}
               >
-                {(Object.keys(CATEGORY_LABEL) as CatalogCategory[]).map((c) => (
+                {GENERAL_CATALOG_CATEGORIES.map((c) => (
                   <option key={c} value={c}>
                     {CATEGORY_LABEL[c]}
                   </option>
                 ))}
+                {editingItem && !GENERAL_CATALOG_CATEGORIES.includes(editingItem.category) && (
+                  <option value={editingItem.category}>
+                    {CATEGORY_LABEL[editingItem.category]} (Archived legacy vertical)
+                  </option>
+                )}
               </Select>
+              <p className="mt-1.5 text-[11px] leading-normal text-ink-soft">
+                Packages, tours, transfers and routes are now managed under Tour Packages / Local &amp; Transfers / Catalog &rarr; Routes.
+              </p>
             </div>
             <div>
               <Label htmlFor="form-triptype">Trip Type (customer view)</Label>

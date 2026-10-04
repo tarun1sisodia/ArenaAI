@@ -423,6 +423,26 @@ Implemented:
     - Successfully reverted all test rows back to `draft` via SQL (0 published rows remain in the DB).
     - Verified full monorepo via `npm run verify`: 3× typechecks, 26 vitest test files (175 tests passing), customer SEO lifecycle tests passing, 3× production builds green.
 
+### 2026-10-04 — Dedup + Publish-Prep: Admin Catalog Scope & Legacy Item Archival
+
+- **`admin/src/pages/CatalogPage.tsx`**:
+  - In the "General catalog" tab's item type selector, restricted options to only `place` and `vehicle` (`GENERAL_CATALOG_CATEGORIES = ["place", "vehicle"]`), removing `package`, `tour`, `ride`, and `route`.
+  - Added hint line: *"Packages, tours, transfers and routes are now managed under Tour Packages / Local & Transfers / Catalog → Routes."*
+  - Updated `resetForm()` to default `formCategory` to `"place"` (with sensible blank/default values for places).
+  - Maintained backward compatibility when editing legacy archived rows by preserving their original category label in the select.
+- **Legacy Catalog Items Archival (One-off Migration)**:
+  - Ran one-off migration script against PostgreSQL to archive legacy published items in `catalog_items`:
+    - Before counts: `package` published: 7, `package` archived: 8, `place` archived: 1, `tour` archived: 2.
+    - Updated 7 rows (`gu-tour`, `taj-mahal-sunrise-tour`, `gatimaan-express-agra-tour`, `agra-unhurried`, `mathura-vrindavan`, `agra-sightseeing`, `golden-triangle`) to `status = 'archived'`.
+    - After counts: `package` archived: 15, `place` archived: 1, `tour` archived: 2.
+    - Verified `type IN ('package', 'tour', 'ride', 'route') AND status = 'published'` count is strictly 0.
+    - Completely untouched `place` and `vehicle` rows.
+    - Migration script deleted after execution.
+- **Verification**:
+  - `GET /api/v1/catalog`: Verified returns zero items of types `package`, `tour`, `ride`, or `route` (0 total published legacy items).
+  - `/packages/` and `/routes/`: Verified static and client rendering has zero duplicate cards.
+  - `npm run verify`: Passed green (3× typechecks, 175 vitest tests across 26 test files, SEO lifecycle tests, and 3× builds).
+
 ## Known next work (Phase 3 — secure integrations)
 
 - Step 3.2: High-entropy token or OTP recovery for booking status retrieval (`/api/v1/bookings/status`).
