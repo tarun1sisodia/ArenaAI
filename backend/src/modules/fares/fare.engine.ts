@@ -8,7 +8,6 @@ import {
   DIST_MAP,
   FARE_RULES_VERSION_DEFAULT,
   LOCAL_PACKAGES,
-  OUTSTATION_RULES,
   PACKAGES,
   PACKAGE_UPGRADES,
   ROUTES,
@@ -22,13 +21,26 @@ import {
   type RouteFare,
 } from "./fare.catalogue.js";
 import { PricingEngineContext } from "./fare.strategy.js";
-import type { FareEngineInput, FareEngineResult, PromoEvaluation } from "./fare.types.js";
+import type { FareEngineInput, FareEngineResult, PromoEvaluation, FareRuleOverrides } from "./fare.types.js";
+export {
+  calculateCancellationRefund,
+  DEFAULT_CANCELLATION_SLABS,
+  type CancellationPolicyType,
+  type CancellationRefundResult,
+  type CancellationPolicySlab,
+} from "./cancellation.engine.js";
 
-export function isNightPickup(pickupDatetime: string): boolean {
+export function isNightPickup(
+  pickupDatetime: string,
+  overrides?: { nightStartHour?: number; nightEndHour?: number } | FareRuleOverrides,
+): boolean {
   try {
     const hour = hourInIst(pickupDatetime);
-    // Night window: 22:00-05:00 IST (spec)
-    return hour >= OUTSTATION_RULES.nightStartHour || hour < OUTSTATION_RULES.nightEndHour;
+    // Default night window: 20:00-06:00 IST (Dossier §5)
+    // Supports override from fare_rules.config.outstation
+    const startHour = typeof overrides?.nightStartHour === "number" ? overrides.nightStartHour : 20;
+    const endHour = typeof overrides?.nightEndHour === "number" ? overrides.nightEndHour : 6;
+    return hour >= startHour || hour < endHour;
   } catch {
     // If datetime invalid, don't apply night allowance but don't crash
     return false;
@@ -155,7 +167,7 @@ function matchAirportTransfer(originName: string, destinationName: string): keyo
   if (haystack.includes("kheria") || haystack.includes("agra airport")) {
     return "agra-airport";
   }
-  if (haystack.includes("cantt") || haystack.includes("railway") || haystack.includes("agra fort station")) {
+  if (haystack.includes("cantt") || haystack.includes("agra cantt") || haystack.includes("agra fort station")) {
     return "agra-station";
   }
   return null;
@@ -168,12 +180,73 @@ function packageByIdOrSlug(id?: string): (typeof PACKAGES)[number] | undefined {
 }
 
 /**
+ * Evaluates the dossier fare path with strict precedence per tier:
+ * 1. Admin fleetPrices[tier] (when usePerKm is false)
+ * 2. startingPrice + upgrade surcharge (per-package override or global matrix)
+ * 3. per-km (perKmRateOverride ?? tier base rate) × km
+ */
+export function evaluateDossierTierBaseFare(input: {
+  vehicleTier: VehicleTier;
+  distanceKm: number;
+  spec: { perKm: number };
+  ruleOverrides?: FareRuleOverrides;
+}): { baseFare: number; rule: string } | null {
+  const overrides = input.ruleOverrides;
+  if (!overrides) return null;
+  const tierKey = toInternalVehicleId(input.vehicleTier);
+  const tierPublic = input.vehicleTier;
+
+  const hasDossierFields =
+    overrides.fleetPrices !== undefined ||
+    overrides.usePerKm !== undefined ||
+    overrides.perKmRateOverride !== undefined ||
+    overrides.upgradeSurcharges !== undefined;
+
+  if (!hasDossierFields) return null;
+
+  // Precedence 1: Admin fleetPrices[tier] when usePerKm is false
+  if (overrides.usePerKm === false && overrides.fleetPrices) {
+    const rawPrice = overrides.fleetPrices[tierKey] ?? overrides.fleetPrices[tierPublic];
+    if (typeof rawPrice === "number" && rawPrice > 0) {
+      return { baseFare: rawPrice, rule: "dossier-admin-fleet-price" };
+    }
+  }
+
+  // Precedence 2: startingPrice + upgrade surcharge (when usePerKm is false)
+  if (
+    overrides.usePerKm === false &&
+    typeof overrides.packageBasePrice === "number" &&
+    overrides.packageBasePrice > 0
+  ) {
+    const upgradeSurcharge =
+      overrides.upgradeSurcharges?.[tierKey] ??
+      overrides.upgradeSurcharges?.[tierPublic] ??
+      PACKAGE_UPGRADES[tierKey] ??
+      0;
+    return {
+      baseFare: overrides.packageBasePrice + upgradeSurcharge,
+      rule: "dossier-starting-price-upgrade",
+    };
+  }
+
+  // Precedence 3: per-km (perKmRateOverride ?? tier base rate) × km
+  const rate =
+    typeof overrides.perKmRateOverride === "number" && overrides.perKmRateOverride > 0
+      ? overrides.perKmRateOverride
+      : input.spec.perKm;
+  return {
+    baseFare: roundRupees(rate * input.distanceKm),
+    rule: "dossier-per-km-rate",
+  };
+}
+
+/**
  * Pure fare engine. No I/O. Client totals are ignored because they never enter this function.
  * Edge cases handled:
  * - distance <=0 throws
  * - return before pickup throws
  * - NaN/Infinity distance throws
- * - Night allowance correctly applied for 22-5 IST
+ * - Night allowance correctly applied for 20-6 IST (or configurable window)
  * - 300km/day minimum for multi-day outstation
  * - Tempo/Urbania 300km minimum outside corridors
  * - Promo validation with expiry and redemption limits when lookup provided
@@ -218,6 +291,60 @@ export function calculateFare(input: FareEngineInput): FareEngineResult {
   }
 
   const fareVersion = input.fareVersion ?? FARE_RULES_VERSION_DEFAULT;
+
+  // Dossier Authoritative Path: check dossier strict precedence per tier
+  const dossierFare = evaluateDossierTierBaseFare({
+    vehicleTier: input.vehicleTier,
+    distanceKm: input.distanceKm,
+    spec,
+    ruleOverrides: input.ruleOverrides,
+  });
+
+  if (dossierFare) {
+    const isAirport =
+      input.ruleOverrides?.catalogItemType === "ride" ||
+      input.tripType === "airport-transfer" ||
+      input.localPackageKey === "airport-transfer";
+    const isLocal =
+      input.tripType === "local-tour" ||
+      input.localPackageKey === "8hr-80km" ||
+      input.localPackageKey === "12hr-120km";
+    const isForce = isGroupExceptionVehicle(input.vehicleTier);
+
+    let effectiveTripType = input.tripType;
+    if (isAirport) effectiveTripType = "airport-transfer";
+    else if (isLocal) effectiveTripType = "local-tour";
+
+    const label =
+      input.ruleOverrides?.packageName ??
+      (isAirport ? "Airport / Station Transfer" : isLocal ? "Local Sightseeing Tour" : "Tour Package");
+    const duration =
+      input.ruleOverrides?.packageDuration ??
+      (isAirport ? "Point to Point" : isLocal ? "Sightseeing Tour" : "Tour Package");
+
+    return finalize({
+      tripType: effectiveTripType,
+      vehicleTier: input.vehicleTier,
+      pickupDatetime: input.pickupDatetime,
+      promoCode: input.promoCode,
+      allowPromo: !isForce,
+      fareVersion,
+      baseFare: dossierFare.baseFare,
+      nightAllowance: 0,
+      driverAllowance:
+        dossierFare.rule === "dossier-admin-fleet-price" ? 0 : isForce ? (input.ruleOverrides?.driverAllowance ?? 500) : 0,
+      distanceKm: input.ruleOverrides?.catalogDistanceKm ?? input.distanceKm,
+      billedKm: input.ruleOverrides?.catalogDistanceKm ?? input.distanceKm,
+      alwaysRoundTrip: isForce,
+      label,
+      duration,
+      roundMultiplierApplied: false,
+      applyNight: true,
+      rules: ["dossier-authoritative", dossierFare.rule],
+      ruleOverrides: input.ruleOverrides,
+    });
+  }
+
   const pack = packageByIdOrSlug(input.packageId);
   const packageBasePrice = input.ruleOverrides?.packageBasePrice ?? pack?.from;
   const packageName = input.ruleOverrides?.packageName ?? pack?.name;
@@ -445,12 +572,35 @@ function finalize(args: {
   rules: string[];
   ruleOverrides?: import("./fare.types.js").FareRuleOverrides;
 }): FareEngineResult {
+  const overrides = args.ruleOverrides;
+  const isNight = isNightPickup(args.pickupDatetime, overrides);
+
   const standardNight = isGroupExceptionVehicle(args.vehicleTier)
-    ? (args.ruleOverrides?.nightAllowanceTempo ?? nightAllowanceFor(args.vehicleTier))
-    : (args.ruleOverrides?.nightAllowanceCab ?? nightAllowanceFor(args.vehicleTier));
-  const nightAllowance =
-    args.applyNight && isNightPickup(args.pickupDatetime) ? standardNight : args.nightAllowance;
-  if (nightAllowance > 0) args.rules.push("night-allowance");
+    ? (overrides?.nightAllowanceTempo ?? nightAllowanceFor(args.vehicleTier))
+    : (overrides?.nightAllowanceCab ?? nightAllowanceFor(args.vehicleTier));
+
+  let nightRate = standardNight;
+  if (typeof overrides?.nightChargeInr === "number" && overrides.nightChargeInr > 0) {
+    nightRate = overrides.nightChargeInr;
+  } else if (typeof overrides?.nightHaltInr === "number" && overrides.nightHaltInr > 0) {
+    nightRate = overrides.nightHaltInr;
+  }
+
+  // Multi-day packages multiply per-night charge by nights (default 1 night on night pickup)
+  const effectiveNights = overrides?.nights && overrides.nights > 0 ? overrides.nights : 1;
+
+  let nightAllowance = 0;
+  if (isNight) {
+    if (args.applyNight || typeof overrides?.nightChargeInr === "number" || typeof overrides?.nightHaltInr === "number") {
+      nightAllowance = nightRate * effectiveNights;
+    }
+  } else if (args.nightAllowance > 0) {
+    nightAllowance = args.nightAllowance;
+  }
+
+  if (nightAllowance > 0 && !args.rules.includes("night-allowance")) {
+    args.rules.push("night-allowance");
+  }
 
   const subtotal = args.baseFare + nightAllowance + args.driverAllowance;
   const promo =

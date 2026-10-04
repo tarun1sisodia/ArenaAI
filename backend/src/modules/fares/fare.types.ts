@@ -21,6 +21,19 @@ export type FareRuleOverrides = {
   packageDuration?: string;
   catalogItemType?: "package" | "tour" | "ride";
   catalogDistanceKm?: number;
+
+  // Phase 4 Dossier & Route Catalog row fields
+  fleetPrices?: Record<string, number>;
+  usePerKm?: boolean;
+  perKmRateOverride?: number | null;
+  nightChargeInr?: number;
+  nights?: number;
+  upgradeSurcharges?: Record<string, number>;
+  nightHaltInr?: number;
+
+  // Phase 4 Configurable night window (defaults to 20:00–06:00)
+  nightStartHour?: number;
+  nightEndHour?: number;
 };
 
 export type FareEngineInput = {

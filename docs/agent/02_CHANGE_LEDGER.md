@@ -333,6 +333,31 @@ Implemented:
 - Zero changes to `fare.engine.ts` (strictly deferred to Step 4: Engine Wiring per scope pins).
 - Fully validated via `npm run verify`: 3x typechecks (`customer`, `admin`, `backend`), 25 vitest test suites (150 tests passed), customer SEO tests passed, 3x production builds succeeded.
 
+### 2026-10-04 — Dossier Content: Engine Wiring & Server Pricing Math (Step 4)
+
+- Implemented Phase 4 (Engine Wiring) from `arenaai-dossier-admin-frontend-seo-build-spec.md` (§6, Phase 4):
+  - **`backend/src/modules/fares/fare.types.ts`**: Extended `FareRuleOverrides` with `fleetPrices`, `usePerKm`, `perKmRateOverride`, `nightChargeInr`, `nights`, `upgradeSurcharges`, `nightHaltInr`, `nightStartHour`, and `nightEndHour`.
+  - **`backend/src/modules/fares/cancellation.engine.ts`**: Implemented pure `calculateCancellationRefund` engine supporting all 9 Confirmation Dossier §6 & §8 slabs (3 cab slabs: >= 24h 100% refund, < 24h 0% refund, no-show 0% refund; 6 tour package slabs: > 60d 100%, 46-60d 90%, 31-45d 80%, 16-30d 70%, 6-15d 45%, 0-5d 0%).
+  - **`backend/src/modules/fares/fare.engine.ts`**:
+    - `isNightPickup`: Updated default night window to 20:00–06:00 IST (Dossier §5) while preferring configurable override hours (`nightStartHour` and `nightEndHour`).
+    - `evaluateDossierTierBaseFare`: Implemented strict tier precedence per dossier spec:
+      1. Priority 1: Admin `fleetPrices[tier]` (when `usePerKm` is false)
+      2. Priority 2: `startingPrice + upgrade surcharge` (package-specific override else global matrix)
+      3. Priority 3: `per-km (perKmRateOverride ?? tier base rate) × km`
+    - Preserved quote-vs-charge parity: admin-set fleet price exactly matches engine output for all 5 canonical fleet tiers (`sedan`, `ertiga`, `innova-crysta`, `tempo-traveller`, `urbania`).
+    - Multi-night math: Multiplies `nightChargeInr` / `nightHaltInr` by `nights` on night pickups (default 1 night on 1-day trips with night pickup).
+    - Preserved backward compatibility: published dossier rows take precedence over legacy constants; constants serve as seamless fallback.
+  - **`backend/src/modules/fares/fare.service.ts`**:
+    - In `calculate()`: Resolves published dossier rows from `tour_packages` (including package upgrades matrix), `transfer_routes`, `local_packages`, and `route_catalog`. Populates `ruleOverrides` and passes outstation `nightStartHour` / `nightEndHour`.
+    - In `calculateSync()`: Properly maps `ruleOverrides.catalogDistanceKm`.
+  - **`backend/src/modules/bookings/booking.service.ts`**:
+    - In `transition()`: On booking cancellation (`to === "cancelled"`), evaluates cancellation policies against the booking's trip/package type and notice hours, and writes an authoritative `RefundRecord` into the `refunds` table.
+  - **Comprehensive Unit & Integration Test Suites**:
+    - `backend/tests/unit/fare.engine.test.ts`: Added 23 new unit test cases covering night boundaries (`19:59` no charge, `20:00` charge, `05:59` charge, `06:00` no charge), strict tier precedence, multi-night math, quote-vs-charge parity for all 5 tiers, and all 9 cancellation policy slabs. (47 passing tests total).
+    - `backend/tests/integration/booking-cancellation-refund.test.ts`: Created integration test suite verifying that cancelling a paid booking generates the correct refund record according to the cancellation slab.
+- Strictly maintained Phase 4 scope boundary: pricing math and engine wiring only (no admin UI edits, no frontend edits, no new database tables).
+- Verified with full monorepo `npm run verify`: 3× typechecks (`customer`, `admin`, `backend`), 26 vitest test suites (175 tests passed), customer SEO checks passed, 3× production builds succeeded.
+
 ## Known next work (Phase 3 — secure integrations)
 
 - Step 3.2: High-entropy token or OTP recovery for booking status retrieval (`/api/v1/bookings/status`).

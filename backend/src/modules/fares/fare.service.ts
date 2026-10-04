@@ -1,5 +1,5 @@
 import { applyPromo, calculateFare, findRoute } from "./fare.engine.js";
-import { isGroupExceptionVehicle, VEHICLES } from "./fare.catalogue.js";
+import { isGroupExceptionVehicle, PACKAGE_UPGRADES, slugifyPlace, VEHICLES } from "./fare.catalogue.js";
 import type {
   CalculateFareInput,
   FareEngineInput,
@@ -8,6 +8,7 @@ import type {
   FareVehicleOverride,
 } from "./fare.types.js";
 import type { Repositories } from "../../db/types.js";
+import type { RouteCatalogRecord } from "../../db/route-catalog-types.js";
 import { Errors } from "../../shared/errors.js";
 
 export type PublicFleetVehicle = {
@@ -65,10 +66,134 @@ export function createFareService(fareVersion: string, db?: Repositories) {
         ? (await db.catalog.getById(input.packageId)) ?? (await db.catalog.getBySlug(input.packageId))
         : null;
 
+      // Check for published dossier entities (tour_packages, transfer_routes, local_packages, route_catalog)
+      let dossierFleetPrices: Record<string, number> | undefined;
+      let dossierUsePerKm: boolean | undefined;
+      let dossierPerKmRateOverride: number | null | undefined;
+      let dossierNightChargeInr: number | undefined;
+      let dossierNights: number | undefined;
+      let dossierUpgradeSurcharges: Record<string, number> | undefined;
+      let dossierNightHaltInr: number | undefined;
+      let dossierPackageName: string | undefined;
+      let dossierPackageDuration: string | undefined;
+      let dossierCatalogItemType: "package" | "tour" | "ride" | undefined;
+      let dossierDistanceKm: number | undefined;
+      let dossierPackageBasePrice: number | undefined;
+
+      if (db) {
+        // 1. Tour packages
+        if (input.packageId) {
+          const tourPkg =
+            (await db.tourPackages.getById(input.packageId)) ??
+            (await db.tourPackages.getByCode(input.packageId));
+          if (tourPkg && tourPkg.status === "published") {
+            dossierFleetPrices = tourPkg.fleetPrices;
+            dossierUsePerKm = tourPkg.usePerKm;
+            dossierNightChargeInr = tourPkg.nightChargeInr;
+            dossierNights = tourPkg.nights;
+            dossierPackageName = tourPkg.name;
+            dossierPackageDuration = tourPkg.durationText;
+            dossierPackageBasePrice = tourPkg.startingPriceInr;
+            dossierCatalogItemType = "tour";
+            dossierDistanceKm = tourPkg.days ? tourPkg.days * 300 : undefined;
+
+            const [globalUpgrades, pkgUpgrades] = await Promise.all([
+              db.tourPackages.listUpgrades(null),
+              db.tourPackages.listUpgrades(tourPkg.id),
+            ]);
+            const upgradesMap: Record<string, number> = { ...PACKAGE_UPGRADES };
+            for (const u of globalUpgrades) {
+              upgradesMap[u.tierCode] = u.surchargeInr;
+            }
+            for (const u of pkgUpgrades) {
+              upgradesMap[u.tierCode] = u.surchargeInr;
+            }
+            dossierUpgradeSurcharges = upgradesMap;
+          }
+        }
+
+        // 2. Transfer routes
+        if (
+          !dossierFleetPrices &&
+          (input.packageId ||
+            input.localPackageKey === "airport-transfer" ||
+            input.tripType === "airport-transfer")
+        ) {
+          const lookupCode =
+            input.packageId ??
+            (input.localPackageKey === "airport-transfer" ? "kheria-airport" : undefined);
+          const xfer = lookupCode
+            ? (await db.transferRoutes.getById(lookupCode)) ??
+              (await db.transferRoutes.getByCode(lookupCode))
+            : null;
+          if (xfer && xfer.status === "published") {
+            dossierFleetPrices = xfer.fleetPrices;
+            dossierUsePerKm = xfer.usePerKm;
+            dossierNightChargeInr = xfer.nightChargeInr;
+            dossierPackageName = xfer.name;
+            dossierPackageDuration = xfer.distanceText ?? undefined;
+            dossierCatalogItemType = "ride";
+            dossierDistanceKm =
+              xfer.distanceText && /\d+/.test(xfer.distanceText)
+                ? parseInt(xfer.distanceText.match(/\d+/)![0], 10)
+                : undefined;
+          }
+        }
+
+        // 3. Local packages
+        if (!dossierFleetPrices) {
+          let localCode = input.packageId;
+          if (!localCode) {
+            if (input.localPackageKey === "8hr-80km") localCode = "agra-standard-sightseeing";
+            else if (input.localPackageKey === "12hr-120km") localCode = "agra-extended-city-tour";
+          }
+          if (localCode) {
+            const localPkg =
+              (await db.localPackages.getById(localCode)) ??
+              (await db.localPackages.getByCode(localCode));
+            if (localPkg && localPkg.status === "published") {
+              dossierFleetPrices = localPkg.fleetPrices;
+              dossierUsePerKm = localPkg.usePerKm;
+              dossierPerKmRateOverride =
+                localPkg.extraRates?.[input.vehicleTier]?.per_km ?? undefined;
+              dossierNightChargeInr = localPkg.nightChargeInr;
+              dossierPackageName = localPkg.name;
+              dossierPackageDuration = `${localPkg.durationHours} hrs / ${localPkg.includedKm} km`;
+              dossierCatalogItemType = "package";
+              dossierDistanceKm = localPkg.includedKm;
+            }
+          }
+        }
+
+        // 4. Route catalog
+        if (!dossierFleetPrices) {
+          let routeRow: RouteCatalogRecord | null = null;
+          if (input.packageId) {
+            routeRow =
+              (await db.routeCatalog.getById(input.packageId)) ??
+              (await db.routeCatalog.getBySlug(input.packageId));
+          }
+          if (!routeRow && input.originName && input.destinationName) {
+            const routeSlug = `${slugifyPlace(input.originName)}-to-${slugifyPlace(input.destinationName)}`;
+            routeRow = await db.routeCatalog.getBySlug(routeSlug);
+          }
+          if (routeRow && routeRow.status === "published") {
+            dossierFleetPrices = routeRow.faresInr;
+            dossierUsePerKm = false;
+            dossierNightHaltInr = routeRow.nightHaltInr;
+            dossierDistanceKm = routeRow.distanceKm ?? undefined;
+            dossierPackageName = `${routeRow.sourceCity} to ${routeRow.destinationCity ?? ""}`;
+            dossierPackageDuration = routeRow.durationText ?? undefined;
+          }
+        }
+      }
+
       // Derive distanceKm from catalogue if omitted by client
       let distanceKm = input.distanceKm;
       if (!distanceKm || !Number.isFinite(distanceKm) || distanceKm <= 0) {
-        if (catalogItem?.distanceKm && catalogItem.distanceKm > 0) {
+        if (dossierDistanceKm && dossierDistanceKm > 0) {
+          distanceKm = dossierDistanceKm;
+        } else if (catalogItem?.distanceKm && catalogItem.distanceKm > 0) {
           distanceKm = catalogItem.distanceKm;
         } else if (input.packageId) {
           distanceKm = 100;
@@ -92,6 +217,11 @@ export function createFareService(fareVersion: string, db?: Repositories) {
         typeof cfg.outstation === "object" && cfg.outstation !== null
           ? (cfg.outstation as Record<string, unknown>)
           : {};
+
+      const nightStartHour =
+        typeof outstationCfg.nightStartHour === "number" ? outstationCfg.nightStartHour : undefined;
+      const nightEndHour =
+        typeof outstationCfg.nightEndHour === "number" ? outstationCfg.nightEndHour : undefined;
 
       // Check package in db.catalog if packageId provided
       let packageBasePrice: number | undefined;
@@ -123,14 +253,28 @@ export function createFareService(fareVersion: string, db?: Repositories) {
           typeof outstationCfg.nightAllowanceTempo === "number" ? outstationCfg.nightAllowanceTempo : undefined,
         driverAllowance:
           typeof outstationCfg.driverAllowance === "number" ? outstationCfg.driverAllowance : undefined,
-        packageBasePrice,
-        packageName,
-        packageDuration,
+        packageBasePrice: dossierPackageBasePrice ?? packageBasePrice,
+        packageName: dossierPackageName ?? packageName,
+        packageDuration: dossierPackageDuration ?? packageDuration,
         catalogItemType:
-          catalogItem?.type === "package" || catalogItem?.type === "tour" || catalogItem?.type === "ride"
+          dossierCatalogItemType ??
+          (catalogItem?.type === "package" || catalogItem?.type === "tour" || catalogItem?.type === "ride"
             ? catalogItem.type
-            : undefined,
-        catalogDistanceKm: catalogItem?.distanceKm ?? undefined,
+            : undefined),
+        catalogDistanceKm: dossierDistanceKm ?? catalogItem?.distanceKm ?? undefined,
+
+        fleetPrices: dossierFleetPrices,
+        usePerKm: dossierUsePerKm,
+        perKmRateOverride: dossierPerKmRateOverride,
+        nightChargeInr: dossierNightChargeInr,
+        nights: dossierNights,
+        upgradeSurcharges: dossierUpgradeSurcharges,
+        nightHaltInr: dossierNightHaltInr,
+
+        nightStartHour,
+        nightEndHour,
+
+        ...input.ruleOverrides,
       };
 
       const engineInput: FareEngineInput = {
@@ -201,7 +345,9 @@ export function createFareService(fareVersion: string, db?: Repositories) {
     calculateSync(input: CalculateFareInput): FareEngineResult {
       let distanceKm = input.distanceKm;
       if (!distanceKm || !Number.isFinite(distanceKm) || distanceKm <= 0) {
-        if (input.packageId) {
+        if (input.ruleOverrides?.catalogDistanceKm && input.ruleOverrides.catalogDistanceKm > 0) {
+          distanceKm = input.ruleOverrides.catalogDistanceKm;
+        } else if (input.packageId) {
           distanceKm = 100;
         } else if (input.localPackageKey === "8hr-80km") {
           distanceKm = 80;
@@ -214,7 +360,7 @@ export function createFareService(fareVersion: string, db?: Repositories) {
           distanceKm = route.km;
         }
       }
-      return calculateFare({ ...input, distanceKm, fareVersion });
+      return calculateFare({ ...input, distanceKm, fareVersion: input.fareVersion ?? fareVersion });
     },
   };
 }

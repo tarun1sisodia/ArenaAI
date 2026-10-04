@@ -5,9 +5,10 @@ import { AppError, Errors } from "../../shared/errors.js";
 import { newGuestAccessToken, newId, newTicketId, timingSafeEqualString } from "../../shared/ids.js";
 import { maskEmail, maskPhone, phonesMatch, sanitizeText } from "../../shared/privacy.js";
 import { assertTransition } from "../../shared/stateMachine.js";
-import type { AuthUser, BookingRecord } from "../../types/domain.js";
+import type { AuthUser, BookingRecord, RefundRecord } from "../../types/domain.js";
 import type { BookingSelection } from "../../shared/bookingSelection.js";
 import { calculateFare, findRoute } from "../fares/fare.engine.js";
+import { calculateCancellationRefund } from "../fares/cancellation.engine.js";
 import { isGroupExceptionVehicle, LOCAL_PACKAGES, PACKAGES } from "../fares/fare.catalogue.js";
 import type { CreateDraftBookingRequest } from "./booking.schema.js";
 
@@ -371,12 +372,56 @@ export function createBookingService(deps: {
           throw Errors.conflict("VERSION_CONFLICT", "Booking was modified concurrently.");
         }
         assertTransition(booking.status, to);
+        const now = deps.clock.now();
         const updated: BookingRecord = {
           ...booking,
           status: to,
           version: booking.version + 1,
-          updatedAt: toIso(deps.clock.now()),
+          updatedAt: toIso(now),
         };
+
+        if (to === "cancelled") {
+          const payments = await trx.payments.listByBookingId(booking.id);
+          const capturedPayments = payments.filter((p) => p.status === "captured");
+          if (capturedPayments.length > 0) {
+            const totalPaidMinor = capturedPayments.reduce((sum, p) => sum + p.amountMinor, 0);
+            const pickupTime = new Date(booking.pickupDatetime).getTime();
+            const noticeHours = Math.max(0, (pickupTime - now.getTime()) / (1000 * 60 * 60));
+
+            const isTour =
+              booking.bookingSelection?.kind === "package" ||
+              (Boolean(booking.packageId) &&
+                booking.tripType !== "local-tour" &&
+                booking.tripType !== "airport-transfer");
+            const policyType = isTour ? "tour_package" : "cab";
+
+            const dbPolicies = await trx.cancellationPolicies.list();
+            const refundEval = calculateCancellationRefund({
+              policyType,
+              noticeHours,
+              paidAmountMinor: totalPaidMinor,
+              customPolicies: dbPolicies,
+            });
+
+            const primaryPayment = capturedPayments[0];
+            if (primaryPayment) {
+              const refundRecord: RefundRecord = {
+                id: newId(),
+                paymentId: primaryPayment.id,
+                bookingId: booking.id,
+                providerRefundId: null,
+                amountMinor: refundEval.refundAmountMinor,
+                currency: primaryPayment.currency ?? "INR",
+                reason: `Cancellation (${refundEval.noticePeriodText}): ${refundEval.ruleText}`,
+                status: refundEval.refundAmountMinor > 0 ? "pending" : "processed",
+                idempotencyKey: `cancel-${booking.id}-v${booking.version + 1}`,
+                createdAt: toIso(now),
+              };
+              await trx.refunds.create(refundRecord);
+            }
+          }
+        }
+
         return trx.bookings.update(updated);
       });
     },
