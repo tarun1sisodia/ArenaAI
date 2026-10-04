@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { motion } from "framer-motion";
 
-const ORIGINAL_TITLE = "SK BAGHEL";
+const ORIGINAL_TITLE = "AGRA SK BAGHEL";
 const CHARSET = "SKBAGHEL0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 export interface BrandLogoProps {
@@ -13,7 +13,7 @@ export interface BrandLogoProps {
 
 export function BrandLogo({
   href = "/",
-  subtitle = "TOUR & TRAVELS AGRA",
+  subtitle = "TOUR AND TRAVELS",
   className = "",
   onClick,
 }: BrandLogoProps) {
@@ -70,7 +70,7 @@ export function BrandLogo({
     <a
       href={href}
       className={`flex items-center gap-space-sm group select-none ${className}`.trim()}
-      aria-label="SK Baghel Tour & Travels"
+      aria-label="Agra SK Baghel Tour and Travels"
       onMouseEnter={startScramble}
       onMouseLeave={stopScramble}
       onFocus={startScramble}

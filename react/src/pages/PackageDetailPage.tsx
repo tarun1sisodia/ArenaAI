@@ -152,7 +152,7 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
         },
         provider: {
           "@type": "LocalBusiness",
-          name: "SK Baghel Tour & Travels",
+          name: "Agra SK Baghel Tour and Travels",
           telephone: contact.phone,
           address: {
             "@type": "PostalAddress",
@@ -204,7 +204,7 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
   // Step 1 booking link (Vehicle Selection screen)
   const bookStep1Url = `/book.html?package=${encodeURIComponent(pkg.slug)}&step=1`;
   const whatsappUrl = `https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
-    `Hello SK Baghel Travels, I wish to reserve the ${pkg.name} (Starting ₹${pkg.from.toLocaleString("en-IN")}).`
+    `Hello Agra SK Baghel Tour and Travels, I wish to reserve the ${pkg.name} (Starting ₹${pkg.from.toLocaleString("en-IN")}).`
   )}`;
 
   return (
@@ -730,7 +730,7 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
                   "Honest, prompt and completely free of tourist shopping tricks."
                 </p>
                 <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
-                  Having been to India before, we were wary of driver commission stops. SK Baghel's agency stayed true to their promise: not a single pressured stop. Just pure history, magnificent views of Agra Fort, and smooth expressway cruising back to Gurgaon by 4 PM.
+                  Having been to India before, we were wary of driver commission stops. Agra SK Baghel Tour and Travels's agency stayed true to their promise: not a single pressured stop. Just pure history, magnificent views of Agra Fort, and smooth expressway cruising back to Gurgaon by 4 PM.
                 </p>
               </div>
               <div className="flex items-center gap-space-sm pt-space-xs">

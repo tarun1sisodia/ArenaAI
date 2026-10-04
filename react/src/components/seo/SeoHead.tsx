@@ -175,7 +175,7 @@ export function SeoHead({
   ogType = "website",
   noindex = false,
   keywords,
-  author = "SK Baghel Tour & Travels",
+  author = "Agra SK Baghel Tour and Travels",
   schema,
   children,
 }: SeoHeadProps) {
@@ -248,7 +248,7 @@ export function SeoHead({
     canonical.href = resolvedCanonical;
 
     // 4. Open Graph Social Graph
-    setMeta("property", "og:site_name", "SK Baghel Tour & Travels");
+    setMeta("property", "og:site_name", "Agra SK Baghel Tour and Travels");
     setMeta("property", "og:type", ogType);
     setMeta("property", "og:title", title);
     setMeta("property", "og:description", description);
@@ -305,7 +305,7 @@ export function SeoHead({
       {
         "@type": ["TravelAgency", "TaxiService", "LocalBusiness"],
         "@id": `${CANONICAL_DOMAIN}/#business`,
-        name: "SK Baghel Tour & Travels",
+        name: "Agra SK Baghel Tour and Travels",
         url: CANONICAL_DOMAIN,
         telephone: contact.phone,
         email: contact.email,
@@ -339,7 +339,7 @@ export function SeoHead({
       {
         "@type": "WebSite",
         "@id": `${CANONICAL_DOMAIN}/#website`,
-        name: "SK Baghel Tour & Travels",
+        name: "Agra SK Baghel Tour and Travels",
         url: CANONICAL_DOMAIN,
         inLanguage: language === "hi" ? "hi-IN" : "en-IN",
       },

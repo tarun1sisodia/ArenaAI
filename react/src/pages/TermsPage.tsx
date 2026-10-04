@@ -46,7 +46,7 @@ export function TermsPage({ language = "en" }: TermsPageProps) {
               Terms of Service &amp; Operational Charter
             </h1>
             <p className="text-on-surface-variant font-body-lg text-xs sm:text-title-lg leading-relaxed mb-6">
-              Binding operational agreement between SK Baghel Tour &amp; Travels (Agra) and the reserving guest or corporate
+              Binding operational agreement between Agra SK Baghel Tour and Travels (Agra) and the reserving guest or corporate
               client. Transparent commercial tariffs with zero hidden conditions.
             </p>
           </div>
@@ -73,7 +73,7 @@ export function TermsPage({ language = "en" }: TermsPageProps) {
         <div className="p-4 sm:p-5 rounded-xl bg-sandstone-wash/40 border border-border-warm/70">
           <h2 className="font-headline-sm text-sm sm:text-base font-bold text-ink-charcoal mb-2">Charter Purpose &amp; Enforceability</h2>
           <p className="text-body-md sm:text-xs text-on-surface-variant leading-relaxed">
-            This document constitutes a binding operational agreement between <strong>SK Baghel Tour &amp; Travels Agra</strong> and
+            This document constitutes a binding operational agreement between <strong>Agra SK Baghel Tour and Travels Agra</strong> and
             the reserving passenger or corporate institution. All chauffeurs, fleet categories, point-to-point drops, and multi-day
             heritage circuits are regulated strictly according to the transparent commercial tariffs established below. No verbal
             modification by individual drivers is recognized.
@@ -208,7 +208,7 @@ export function TermsPage({ language = "en" }: TermsPageProps) {
             <h2 className="font-headline-md text-sm sm:text-base font-bold text-ink-charcoal">Agra Legal Jurisdiction</h2>
           </div>
           <p className="text-body-md sm:text-xs text-on-surface-variant leading-relaxed">
-            Any dispute, controversy, or claim arising out of or relating to services rendered by SK Baghel Tour &amp; Travels shall
+            Any dispute, controversy, or claim arising out of or relating to services rendered by Agra SK Baghel Tour and Travels shall
             be subject exclusively to the jurisdiction of the competent courts of law located in Agra, Uttar Pradesh, India.
           </p>
         </div>

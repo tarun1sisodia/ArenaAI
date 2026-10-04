@@ -196,7 +196,7 @@ const FLEET_FAQS = [
   },
   {
     q: "Are the vehicles yellow-plate commercial tourist cabs?",
-    a: "Every vehicle operated by SK Baghel Tour & Travels carries a registered commercial yellow plate, All-India Tourist Permit (AITP), up-to-date fitness certificates, and comprehensive passenger insurance.",
+    a: "Every vehicle operated by Agra SK Baghel Tour and Travels carries a registered commercial yellow plate, All-India Tourist Permit (AITP), up-to-date fitness certificates, and comprehensive passenger insurance.",
   },
 ];
 

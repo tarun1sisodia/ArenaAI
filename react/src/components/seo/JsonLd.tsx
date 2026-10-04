@@ -164,7 +164,7 @@ export function buildFaqSchema(
  */
 export function buildLocalBusinessSchema(options?: LocalBusinessSchemaOptions) {
   const businessId = options?.id || `${CANONICAL_DOMAIN}/#business`;
-  const name = options?.name || "SK Baghel Tour & Travels";
+  const name = options?.name || "Agra SK Baghel Tour and Travels";
   const url = options?.url || CANONICAL_DOMAIN;
   const image = options?.image || DEFAULT_OG_IMAGE;
   const includeRating = options?.includeAggregateRating ?? false;
@@ -238,7 +238,7 @@ export function buildTaxiServiceSchema(options: TaxiServiceSchemaOptions) {
     provider: {
       "@type": "LocalBusiness",
       "@id": `${CANONICAL_DOMAIN}/#business`,
-      name: "SK Baghel Tour & Travels",
+      name: "Agra SK Baghel Tour and Travels",
     },
     areaServed: options.areaServed || ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior"],
     serviceType: options.serviceType || "Outstation & Local Cab Service",
@@ -270,7 +270,7 @@ export function buildTouristTripSchema(options: TouristTripSchemaOptions) {
     provider: {
       "@type": "LocalBusiness",
       "@id": `${CANONICAL_DOMAIN}/#business`,
-      name: "SK Baghel Tour & Travels",
+      name: "Agra SK Baghel Tour and Travels",
     },
     ...(options.itinerary && options.itinerary.length > 0
       ? {
@@ -339,7 +339,7 @@ export function buildWebSiteSchema(
   return {
     "@type": "WebSite",
     "@id": id,
-    name: "SK Baghel Tour & Travels",
+    name: "Agra SK Baghel Tour and Travels",
     url: CANONICAL_DOMAIN,
     inLanguage: language === "hi" ? "hi-IN" : "en-IN",
     potentialAction: {

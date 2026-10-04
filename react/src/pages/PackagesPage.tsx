@@ -432,11 +432,11 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
       {
         "@type": "TaxiService",
         "@id": "https://agraskbagheltourandtravels.com/#service",
-        name: "SK Baghel Tour & Travels Private Sightseeing Packages",
+        name: "Agra SK Baghel Tour and Travels Private Sightseeing Packages",
         serviceType: "Private Heritage & Outstation Tour Packages",
         provider: {
           "@type": "LocalBusiness",
-          name: "SK Baghel Tour & Travels",
+          name: "Agra SK Baghel Tour and Travels",
           telephone: contact.phone,
           address: {
             "@type": "PostalAddress",
@@ -700,7 +700,7 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
             const packageDetailUrl = `/en/packages/${pkg.slug}`;
             const bookStep1Url = `/book.html?package=${encodeURIComponent(pkg.slug)}&step=1`;
             const whatsappPackageUrl = `https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
-              `Hello SK Baghel Travels, I am interested in the ${pkg.name}.`
+              `Hello Agra SK Baghel Tour and Travels, I am interested in the ${pkg.name}.`
             )}`;
 
             return (
@@ -1166,7 +1166,7 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
                     className="flex items-center justify-between p-space-md rounded-lg bg-black hover:bg-neutral-900 text-white transition-colors border border-white/10 group shadow-sm active:scale-[0.98]"
                     style={{ color: "#ffffff" }}
                     href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
-                      "Hello SK Baghel Travels, I would like a custom tour quote."
+                      "Hello Agra SK Baghel Tour and Travels, I would like a custom tour quote."
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"

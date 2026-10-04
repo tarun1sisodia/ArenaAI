@@ -65,7 +65,7 @@ function UnavailableBookingRequest({ request, selectedVehicleId, message }: { re
   }
   return <section className="rounded-2xl border border-primary/30 bg-sandstone-wash/70 p-space-lg md:p-space-xl" role="alert" aria-live="polite">
     <div className="flex items-start gap-3"><span className="material-symbols-outlined text-icon-28 text-primary" aria-hidden="true">route</span><div><p className="font-label-caps text-label-caps uppercase tracking-widest text-terracotta-sandstone font-bold">Route not in our catalogue</p><h2 className="font-headline-sm text-headline-sm text-ink-midnight font-bold mt-1">{request.kind === "route" ? `${request.origin} → ${request.destination} is not currently available` : "That tour is not currently available"}</h2><p className="font-body-md text-on-surface-variant mt-2 leading-relaxed">We do not have a published route, package, or trip for this search, so we have not shown vehicle availability. Our desk can still check a custom charter by phone or WhatsApp.</p></div></div>
-    <div className="flex flex-col sm:flex-row gap-2 mt-space-md"><a className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-white font-semibold" href={`tel:${contact.phone}`}><span className="material-symbols-outlined text-icon-18" aria-hidden="true">call</span>Call {contact.phoneDisplay}</a><a className="inline-flex items-center justify-center gap-2 rounded-xl bg-black px-4 py-3 text-white font-semibold" href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(`Hello SK Baghel Travels, please check a custom booking for ${request.origin ?? request.name ?? "my requested tour"}${request.destination ? ` to ${request.destination}` : ""}.`)}`} target="_blank" rel="noreferrer"><WhatsAppIcon className="w-4 h-4 shrink-0 text-white" />WhatsApp the desk</a></div>
+    <div className="flex flex-col sm:flex-row gap-2 mt-space-md"><a className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-white font-semibold" href={`tel:${contact.phone}`}><span className="material-symbols-outlined text-icon-18" aria-hidden="true">call</span>Call {contact.phoneDisplay}</a><a className="inline-flex items-center justify-center gap-2 rounded-xl bg-black px-4 py-3 text-white font-semibold" href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(`Hello Agra SK Baghel Tour and Travels, please check a custom booking for ${request.origin ?? request.name ?? "my requested tour"}${request.destination ? ` to ${request.destination}` : ""}.`)}`} target="_blank" rel="noreferrer"><WhatsAppIcon className="w-4 h-4 shrink-0 text-white" />WhatsApp the desk</a></div>
     {request.suggestions.length > 0 && <div className="mt-space-lg"><h3 className="font-title-lg text-title-lg text-ink-charcoal font-semibold">Try one of these supported routes</h3><div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3">{request.suggestions.map((route) => { const from = cities.find((city) => city.id === route.from)?.name ?? route.from; const to = cities.find((city) => city.id === route.to)?.name ?? route.to; return <a key={route.id} className="rounded-xl border border-border-warm bg-surface-container-lowest px-3 py-3 hover:border-primary transition-colors" href={`/book.html?from=${encodeURIComponent(route.from)}&to=${encodeURIComponent(route.to)}&vehicle=${selectedVehicleId}&trip=one-way`}><span className="block font-semibold text-ink-charcoal">{from} → {to}</span><span className="text-xs text-on-surface-variant">From {formatInr(route.fares.sedan)} by Sedan</span></a>; })}</div></div>}
     <a className="inline-flex mt-space-md text-primary font-semibold hover:underline" href="/en/routes/">Browse all supported routes ↗</a>
   </section>;
@@ -1405,7 +1405,7 @@ export function BookingPage() {
                     className="flex items-center justify-center gap-2 py-2.5 px-space-sm rounded-lg bg-black hover:bg-neutral-900 border border-white/10 text-white font-label-lg text-label-lg transition-colors text-center"
                     style={{ color: "#ffffff" }}
                     href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
-                      `Hello SK Baghel Travels, I have a question about ${selectedTripName} with ${selectedVehicle.name}.`
+                      `Hello Agra SK Baghel Tour and Travels, I have a question about ${selectedTripName} with ${selectedVehicle.name}.`
                     )}`}
                     rel="noopener noreferrer"
                     target="_blank"
@@ -1710,7 +1710,7 @@ export function BookingPage() {
                     Booking Confirmed — Transit Voucher Issued
                   </h1>
                   <p className="font-body-sm text-body-sm text-on-surface-variant">
-                    Your ride has been registered and verified by SK Baghel Tour &amp; Travels central dispatch.
+                    Your ride has been registered and verified by Agra SK Baghel Tour and Travels central dispatch.
                   </p>
                 </div>
               </div>
@@ -1727,7 +1727,7 @@ export function BookingPage() {
               <div className="bg-ink-charcoal text-ivory-surface p-space-md flex items-center justify-between">
                 <div>
                   <span className="text-label-lg tracking-widest text-gold-accent uppercase font-bold">
-                    SK Baghel Imperial Fleet Charter
+                    Agra SK Baghel Tour and Travels Imperial Fleet Charter
                   </span>
                   <h2 className="text-lg font-bold text-white">Chauffeur Transit Voucher</h2>
                 </div>
@@ -1788,7 +1788,7 @@ export function BookingPage() {
             <div className="flex flex-col sm:flex-row gap-space-sm">
               <a
                 href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
-                  `*SK Baghel Tour & Travels — Booking Confirmation*\nTicket ID: ${confirmedTicketId || "AGR-20260927-4821"}\nTrip: ${serverFare?.label || selectedTripName}\nVehicle: ${selectedVehicle.name}\nPickup: ${pickupDate} at ${pickupTime}\nPorch: ${pickupAddress}\nTotal: ${formatInr(serverFare?.totalFare ?? 2500)}\nPaid: ${formatInr(amountPaid)}\nBalance on Pickup: ${formatInr(Math.max(0, (serverFare?.totalFare ?? 2500) - amountPaid))}`
+                  `*Agra SK Baghel Tour and Travels — Booking Confirmation*\nTicket ID: ${confirmedTicketId || "AGR-20260927-4821"}\nTrip: ${serverFare?.label || selectedTripName}\nVehicle: ${selectedVehicle.name}\nPickup: ${pickupDate} at ${pickupTime}\nPorch: ${pickupAddress}\nTotal: ${formatInr(serverFare?.totalFare ?? 2500)}\nPaid: ${formatInr(amountPaid)}\nBalance on Pickup: ${formatInr(Math.max(0, (serverFare?.totalFare ?? 2500) - amountPaid))}`
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"

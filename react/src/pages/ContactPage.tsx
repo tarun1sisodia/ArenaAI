@@ -50,7 +50,7 @@ export function ContactPage({ language = "en" }: ContactPageProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitted(true);
-    const text = `Hello SK Baghel Travels, I would like to book a trip:%0A- Name: ${encodeURIComponent(
+    const text = `Hello Agra SK Baghel Tour and Travels, I would like to book a trip:%0A- Name: ${encodeURIComponent(
       formData.name
     )}%0A- Phone: ${encodeURIComponent(formData.phone)}%0A- Email: ${encodeURIComponent(
       formData.email

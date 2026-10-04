@@ -110,7 +110,7 @@ export function Footer({ className = "" }: FooterProps) {
                   href="https://www.facebook.com/share/19Le5PLBDo/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="SK Baghel Tour & Travels on Facebook"
+                  aria-label="Agra SK Baghel Tour and Travels on Facebook"
                   title="Facebook"
                   className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border-warm bg-surface text-on-surface hover:border-primary hover:bg-primary hover:text-on-primary transition-colors"
                 >
@@ -120,7 +120,7 @@ export function Footer({ className = "" }: FooterProps) {
                   href="https://www.instagram.com/agra_skbaghel_tourandtravels?stkn=dTZrMjU4bGYza3hx"
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="SK Baghel Tour & Travels on Instagram"
+                  aria-label="Agra SK Baghel Tour and Travels on Instagram"
                   title="Instagram"
                   className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border-warm bg-surface text-on-surface hover:border-primary hover:bg-primary hover:text-on-primary transition-colors"
                 >
@@ -130,7 +130,7 @@ export function Footer({ className = "" }: FooterProps) {
                   href="https://youtube.com/@agraskbaghel_tourandtravels?si=paXJ1oLHgGZvgXxN"
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="SK Baghel Tour & Travels on YouTube"
+                  aria-label="Agra SK Baghel Tour and Travels on YouTube"
                   title="YouTube"
                   className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border-warm bg-surface text-on-surface hover:border-primary hover:bg-primary hover:text-on-primary transition-colors"
                 >
@@ -207,7 +207,7 @@ export function Footer({ className = "" }: FooterProps) {
       <div className="border-t border-border-warm bg-surface-container/40">
         <div className="max-w-7xl mx-auto px-margin-mobile lg:px-margin py-space-md flex flex-col sm:flex-row items-center justify-between gap-space-sm text-center sm:text-left">
           <p className="font-body-sm text-body-sm text-on-surface-variant text-title-lg">
-            © {new Date().getFullYear()} SK Baghel Tour & Travels. All rights reserved.
+            © {new Date().getFullYear()} Agra SK Baghel Tour and Travels. All rights reserved.
           </p>
           <div className="flex flex-wrap items-center gap-space-md font-body-sm text-body-sm text-title-lg">
             <a href="/privacy" className="hover:text-primary transition-colors">Privacy Policy</a>

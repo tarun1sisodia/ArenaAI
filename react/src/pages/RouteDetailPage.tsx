@@ -159,7 +159,7 @@ export function RouteDetailPage({ route }: RouteDetailPageProps) {
   const primaryFare = route.fares.sedan;
   const advanceToken = Math.round(primaryFare * 0.28);
   const bookingUrl = `/book?from=${encodeURIComponent(fromEn)}&to=${encodeURIComponent(toEn)}&vehicle=sedan&route=${encodeURIComponent(route.id)}`;
-  const whatsappUrl = `https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(`Hello SK Baghel Desk, I would like to inquire about taxi booking from ${fromEn} to ${toEn}.`)}`;
+  const whatsappUrl = `https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(`Hello Agra SK Baghel Tour and Travels Desk, I would like to inquire about taxi booking from ${fromEn} to ${toEn}.`)}`;
 
   return (
     <div className="flex flex-col w-full bg-surface">

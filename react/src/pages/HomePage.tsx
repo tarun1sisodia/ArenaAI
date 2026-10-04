@@ -41,7 +41,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
 
   const handleInquirySubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const text = `Hello SK Baghel Travels, I would like to inquire about a cab:%0A- Name: ${encodeURIComponent(inquiryName)}%0A- Phone: ${encodeURIComponent(inquiryPhone)}%0A- Date: ${encodeURIComponent(inquiryDate)}%0A- Route: ${encodeURIComponent(origin)} to ${encodeURIComponent(destination)} (${tripType})%0A- Vehicle: ${encodeURIComponent(selectedVehicle)}%0A- Details: ${encodeURIComponent(inquiryNotes)}`;
+    const text = `Hello Agra SK Baghel Tour and Travels, I would like to inquire about a cab:%0A- Name: ${encodeURIComponent(inquiryName)}%0A- Phone: ${encodeURIComponent(inquiryPhone)}%0A- Date: ${encodeURIComponent(inquiryDate)}%0A- Route: ${encodeURIComponent(origin)} to ${encodeURIComponent(destination)} (${tripType})%0A- Vehicle: ${encodeURIComponent(selectedVehicle)}%0A- Details: ${encodeURIComponent(inquiryNotes)}`;
     window.open(`https://wa.me/919762817598?text=${text}`, "_blank");
   };
 
@@ -51,7 +51,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
       {
         "@type": ["TravelAgency", "TaxiService", "LocalBusiness"],
         "@id": "https://agraskbagheltourandtravels.com/#business",
-        name: "SK Baghel Tour & Travels",
+        name: "Agra SK Baghel Tour and Travels",
         url: "https://agraskbagheltourandtravels.com",
         telephone: contact.phone,
         email: contact.email,

@@ -55,7 +55,7 @@ export function PaymentResumePage() {
       order_id: checkout.providerOrderId,
       amount: checkout.amountMinor,
       currency: checkout.currency || "INR",
-      name: "SK Baghel Tour & Travels",
+      name: "Agra SK Baghel Tour and Travels",
       description: `Trip booking ${current.ticketId}`,
       image: `${window.location.origin}/assets/brand/favicon.svg`,
       prefill: { name: getCustomerDisplayName(user), email: user?.email ?? undefined },

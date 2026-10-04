@@ -1,4 +1,4 @@
-# Logo options — SK Baghel Tour & Travels
+# Logo options — Agra SK Baghel Tour and Travels
 
 Five logo directions, all built from the approved **Dark Navy + Golden** system in
 `DESIGN.md` (navy `#0B171E`, gold `#E5A044` / `#F3C36C`, paper `#F5F0E8`,

@@ -527,7 +527,7 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
               The 4 Rules of Outstation Pricing
             </h2>
             <p className="font-body-md text-xs text-on-surface-variant mt-1.5">
-              Every fare calculated by SK Baghel Tour &amp; Travels adheres to these strict principles.
+              Every fare calculated by Agra SK Baghel Tour and Travels adheres to these strict principles.
             </p>
           </div>
 

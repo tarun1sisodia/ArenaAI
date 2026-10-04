@@ -161,7 +161,7 @@ export interface WhatsAppButtonProps extends Omit<AnchorHTMLAttributes<HTMLAncho
 
 export function WhatsAppButton({
   size = "md",
-  inquiryText = "Hello SK Baghel Desk, I would like to inquire about cab bookings.",
+  inquiryText = "Hello Agra SK Baghel Tour and Travels Desk, I would like to inquire about cab bookings.",
   phone = contact.whatsapp,
   label = "WhatsApp Inquiry",
   className = "",
@@ -446,7 +446,7 @@ export function EditorialHero({
   backgroundImage,
   breadcrumbs = [{ label: "Home", href: "/" }],
   primaryAction,
-  whatsAppText = "Hello SK Baghel Desk, I would like to inquire about cab bookings.",
+  whatsAppText = "Hello Agra SK Baghel Tour and Travels Desk, I would like to inquire about cab bookings.",
   trustRibbon,
   children,
 }: EditorialHeroProps) {

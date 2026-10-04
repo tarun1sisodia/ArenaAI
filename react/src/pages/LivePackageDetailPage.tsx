@@ -49,7 +49,7 @@ export function LivePackageDetailPage({ slug, initialItem }: LivePackageDetailPa
   // Dynamic SEO for runtime catalog items.
   useEffect(() => {
     if (status !== "ready" || !item) return;
-    document.title = `${item.title} — Private Tour & Fares | SK Baghel`;
+    document.title = `${item.title} — Private Tour & Fares | Agra SK Baghel Tour and Travels`;
     const setMeta = (selector: string, attr: string, value: string) => {
       let el = document.head.querySelector<HTMLMetaElement>(selector);
       if (!el) {
@@ -61,7 +61,7 @@ export function LivePackageDetailPage({ slug, initialItem }: LivePackageDetailPa
       el.setAttribute(attr, value);
     };
     setMeta('meta[name="description"]', "content", item.shortDescription);
-    setMeta('meta[property="og:title"]', "content", `${item.title} | SK Baghel`);
+    setMeta('meta[property="og:title"]', "content", `${item.title} | Agra SK Baghel Tour and Travels`);
     setMeta('meta[property="og:description"]', "content", item.shortDescription);
     if (item.coverImage?.url) {
       setMeta('meta[property="og:image"]', "content", resolveCatalogMediaUrl(item.coverImage.url));
@@ -85,7 +85,7 @@ export function LivePackageDetailPage({ slug, initialItem }: LivePackageDetailPa
   }
 
   const whatsappUrl = `https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
-    `Hello SK Baghel Travels, I am interested in the ${item.title}${item.availability === "unavailable" ? " (custom availability enquiry)" : ` (from ₹${item.startingPriceInr.toLocaleString("en-IN")})`}.`,
+    `Hello Agra SK Baghel Tour and Travels, I am interested in the ${item.title}${item.availability === "unavailable" ? " (custom availability enquiry)" : ` (from ₹${item.startingPriceInr.toLocaleString("en-IN")})`}.`,
   )}`;
   const galleryImages = item.gallery.filter((g) => g.mediaType === "image");
   const active = galleryImages[Math.min(activeImage, Math.max(0, galleryImages.length - 1))];

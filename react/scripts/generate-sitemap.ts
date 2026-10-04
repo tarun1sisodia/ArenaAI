@@ -243,7 +243,7 @@ ${xmlUrls}
 }
 
 export function generateRobotsTxt(): string {
-  return `# Robots.txt — SK Baghel Tour & Travels Agra
+  return `# Robots.txt — Agra SK Baghel Tour and Travels Agra
 User-agent: *
 Allow: /
 Disallow: /book.html

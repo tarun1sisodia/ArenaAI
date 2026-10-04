@@ -292,7 +292,7 @@ export async function prerender(): Promise<void> {
         `<meta property="og:image:alt" content="${escapeHtml(seo.title)}" />`,
         `<meta property="og:locale" content="${ogLocale}" />`,
         `<meta property="og:locale:alternate" content="${ogLocaleAlt}" />`,
-        `<meta property="og:site_name" content="SK Baghel Tour & Travels" />`,
+        `<meta property="og:site_name" content="Agra SK Baghel Tour and Travels" />`,
         `<meta property="og:type" content="website" />`,
         `<meta name="twitter:card" content="summary_large_image" />`,
         `<meta name="twitter:title" content="${escapeHtml(seo.title)}" />`,

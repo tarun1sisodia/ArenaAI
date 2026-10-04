@@ -220,7 +220,7 @@ export function ServicesPage({ language = "en" }: ServicesPageProps) {
                   Book Cab Online
                 </PrimaryButton>
                 <WhatsAppButton
-                  inquiryText="Hello SK Baghel Desk, I would like to inquire about cab bookings."
+                  inquiryText="Hello Agra SK Baghel Tour and Travels Desk, I would like to inquire about cab bookings."
                   label="WhatsApp Desk"
                 />
               </div>
@@ -345,7 +345,7 @@ export function ServicesPage({ language = "en" }: ServicesPageProps) {
               The 4 Uncompromising Standards
             </span>
             <h2 className={`${EDITORIAL_TYPOGRAPHY.sectionH2} mt-1`}>
-              Why Discerning Travelers Choose SK Baghel
+              Why Discerning Travelers Choose Agra SK Baghel Tour and Travels
             </h2>
             <p className={`${EDITORIAL_TYPOGRAPHY.body} mt-1.5`}>
               Over two decades serving Agra and North India with zero complaints and unmatched reliability.

@@ -142,7 +142,7 @@ export function PrivacyPage({ language = "en" }: PrivacyPageProps) {
         <div id="zero-selling" className="scroll-mt-28 space-y-2.5 border-t border-border-warm/60 pt-6">
           <h2 className="font-headline-md text-sm sm:text-base font-bold text-ink-charcoal">3. Zero Data Selling Guarantee</h2>
           <p className="text-body-md sm:text-xs text-on-surface-variant leading-relaxed">
-            Unlike mass online aggregators, SK Baghel Tour &amp; Travels operates as an independent, private fleet. We do not
+            Unlike mass online aggregators, Agra SK Baghel Tour and Travels operates as an independent, private fleet. We do not
             monetize guest telemetry or share personal contact details with commercial telemarketers, shopping emporiums, or tourist
             commission networks.
           </p>

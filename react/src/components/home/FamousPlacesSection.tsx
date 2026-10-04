@@ -560,7 +560,7 @@ export function FamousPlacesSection() {
                     className="px-3 py-2 rounded-lg bg-black hover:bg-neutral-900 border border-white/20 text-white font-label-lg text-xs font-semibold shadow-xs transition-all active:scale-[0.98] inline-flex items-center gap-1.5 shrink-0"
                     style={{ color: "#ffffff" }}
                     href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
-                      `Hello SK Baghel Desk, I would like to inquire about a taxi trip to ${place.name} (${place.distance}).`
+                      `Hello Agra SK Baghel Tour and Travels Desk, I would like to inquire about a taxi trip to ${place.name} (${place.distance}).`
                     )}`}
                     target="_blank"
                     rel="noreferrer"
@@ -618,7 +618,7 @@ export function FamousPlacesSection() {
                   className="px-4 py-2 rounded-lg bg-black hover:bg-neutral-900 border border-white/20 text-white font-label-lg text-xs font-semibold inline-flex items-center gap-2 active:scale-[0.98]"
                   style={{ color: "#ffffff" }}
                   href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
-                    `Hello SK Baghel Travels, I am inquiring about visiting ${modalImage.title}.`
+                    `Hello Agra SK Baghel Tour and Travels, I am inquiring about visiting ${modalImage.title}.`
                   )}`}
                   target="_blank"
                   rel="noreferrer"

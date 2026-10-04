@@ -25,7 +25,7 @@ export type SiteConfig = {
 };
 
 export const siteConfig: SiteConfig = {
-  name: "SK Baghel Tour & Travels",
+  name: "Agra SK Baghel Tour and Travels",
   domain: "https://agraskbagheltourandtravels.com",
   defaultLanguage: "en",
   supportedLanguages: ["en", "hi"],
