@@ -194,8 +194,8 @@ export function TermsPage({ language = "en" }: TermsPageProps) {
           </div>
           <p className="text-body-md sm:text-xs text-on-surface-variant leading-relaxed">
             All vehicles are strictly non-smoking. Carrying contraband, illegal narcotics, or weapons is strictly prohibited and
-            will result in immediate termination of the trip without refund. Pets are warmly welcomed on advance notice with
-            appropriate protective seat hammocks.
+            will result in immediate termination of the trip without refund. To maintain vehicle hygiene and protect guests with
+            severe allergies, pets and domestic animals are strictly not permitted inside our vehicles.
           </p>
         </div>
 

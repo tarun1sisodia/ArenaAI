@@ -410,7 +410,7 @@ export const SEED_DOSSIER_SIGNOFFS: DossierSignoffRecord[] = [
   { id: "90000000-0000-4000-a000-000000000007", sectionKey: "coupon", sectionTitle: "Promotional Coupon ASTTCAR500OFF", status: "pending", clientNotes: null, approvedBy: null, approvedAt: null, createdAt: BASE_TIME, updatedAt: BASE_TIME },
   { id: "90000000-0000-4000-a000-000000000008", sectionKey: "tour_packages", sectionTitle: "Signature Tour Packages & Pricing", status: "pending", clientNotes: null, approvedBy: null, approvedAt: null, createdAt: BASE_TIME, updatedAt: BASE_TIME },
   { id: "90000000-0000-4000-a000-000000000009", sectionKey: "cancellation", sectionTitle: "Cancellation & Refund Tier Schedules", status: "pending", clientNotes: null, approvedBy: null, approvedAt: null, createdAt: BASE_TIME, updatedAt: BASE_TIME },
-  { id: "90000000-0000-4000-a000-000000000010", sectionKey: "specialized_offerings", sectionTitle: "Pet Taxi & Monument Operating Protocols", status: "pending", clientNotes: null, approvedBy: null, approvedAt: null, createdAt: BASE_TIME, updatedAt: BASE_TIME },
+  { id: "90000000-0000-4000-a000-000000000010", sectionKey: "specialized_offerings", sectionTitle: "Monument Operating Protocols & Heritage Guidelines", status: "pending", clientNotes: null, approvedBy: null, approvedAt: null, createdAt: BASE_TIME, updatedAt: BASE_TIME },
 ];
 
 export const SEED_MONUMENTS: MonumentRecord[] = [
@@ -428,11 +428,11 @@ export const SEED_MONUMENTS: MonumentRecord[] = [
 
 export const SEED_PET_POLICY: PetTaxiPolicyRecord = {
   id: "b0000000-0000-4000-a000-000000000001",
-  isOffered: true,
-  seatProtectionNote: "Waterproof heavy-duty seat covers and safety barriers provided.",
-  breedRestrictionNote: "No breed or size restrictions for domestic pets.",
-  comfortStopNote: "Chauffeurs accommodate comfort, hydration, and relief stops on expressways upon request.",
-  bookingInstruction: "Customer must inform pet travel requirements during booking.",
+  isOffered: false,
+  seatProtectionNote: "Not applicable — pet taxi service discontinued per client policy.",
+  breedRestrictionNote: "Pets and animals are not permitted inside vehicles.",
+  comfortStopNote: "Standard comfort and hydration stops provided for human passengers.",
+  bookingInstruction: "Pets are strictly not permitted in vehicles to maintain passenger hygiene.",
   createdAt: BASE_TIME,
   updatedAt: BASE_TIME,
 };

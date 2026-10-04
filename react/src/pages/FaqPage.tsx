@@ -80,7 +80,7 @@ const FAQS_DATA: FaqItem[] = [
     id: "fleet-3",
     category: "fleet",
     q: "Are pets allowed in your vehicles?",
-    a: "Yes! We offer pet-friendly travel in our sanitized cabs. We provide protective seat hammocks and schedule gentle hydration stops along expressways upon request.",
+    a: "To ensure the highest hygiene standards, allergen safety, and upholstery care for all subsequent guests, pets and animals are strictly not permitted inside our cabs.",
   },
 
   // 4. Agra Sightseeing & Monument Rules

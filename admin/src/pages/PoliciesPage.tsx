@@ -368,7 +368,14 @@ export function PoliciesPage({ user }: { user: AdminUser }) {
             <Card className="p-6">
               <div className="mb-6 flex items-center justify-between border-b border-hairline pb-4">
                 <div>
-                  <h2 className="text-base font-semibold text-white">Pet Taxi Policy (Dossier §9)</h2>
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-base font-semibold text-white">Pet Taxi Policy (Dossier §9)</h2>
+                    {!Boolean(petForm.isOffered) && (
+                      <span className="rounded bg-rose-500/20 px-2 py-0.5 text-[10px] font-semibold text-rose-400">
+                        Discontinued / Not Offered
+                      </span>
+                    )}
+                  </div>
                   <p className="text-xs text-slate-400">
                     Official rules and guidelines for passengers traveling with pets in SK Baghel cabs.
                   </p>

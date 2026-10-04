@@ -894,7 +894,7 @@ export const outstationDestinations: readonly TouristDestination[] = [
 ];
 
 export const petFriendlyService = {
-  enabled: true,
+  enabled: false,
   title: { en: "Pet-Friendly Cabs in Agra", hi: "Pet-Friendly Cabs in Agra" },
   blurb: {
     en: "Travel comfortably across Agra and outstation destinations with your dogs, cats, and pets. Dedicated sanitized vehicles with carrier space and scheduled relief stops.",
@@ -913,7 +913,7 @@ export const trustSignals = [
   "booking receipt INVOICE",
   "4.9/5 · 3,800+ GOOGLE REVIEWS",
   "24×7 ON-ROUTE SUPPORT",
-  "PET-FRIENDLY VEHICLES AVAILABLE",
+  "GPS-TRACKED SANITIZED CABS",
 ] as const;
 
 export const cancellationPolicyCab = {
@@ -983,8 +983,8 @@ export const faqs: readonly FaqItem[] = [
     category: "pet",
     question: { en: "Can I travel with my pets in your taxis?", hi: "Can I travel with my pets in your taxis?" },
     answer: {
-      en: "Yes, we provide dedicated pet-friendly cabs equipped with protective seat covers and carrier space. There are no breed or size restrictions; please mention your pet while reserving so we can arrange relief stops.",
-      hi: "Yes, we provide dedicated pet-friendly cabs equipped with protective seat covers and carrier space. There are no breed or size restrictions; please mention your pet while reserving so we can arrange relief stops.",
+      en: "To ensure maximum vehicle hygiene, allergen safety, and upholstery comfort for subsequent guests, pets and domestic animals are strictly not permitted inside our cabs.",
+      hi: "To ensure maximum vehicle hygiene, allergen safety, and upholstery comfort for subsequent guests, pets and domestic animals are strictly not permitted inside our cabs.",
     },
   },
   {

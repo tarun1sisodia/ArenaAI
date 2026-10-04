@@ -497,7 +497,39 @@ Implemented:
   - Postgres migration 0026 applied cleanly; `\d promo_codes` shows columns + partial unique index.
   - Single broadcast constraint enforced in Postgres and application layer.
   - Unit & integration tests in `backend/tests/unit/promos.test.ts` (8/8 passed).
-  - Monorepo `npm run verify` passed 100% green across all 3 applications (3× typechecks, 184 vitest tests, customer SEO lifecycle test, and 3× production builds).
+  ### 2026-10-05 — Fix Dossier Sign-Offs Foreign Key & Booking Validation UX
+
+- **Migration 0027 (`0027_fix_dossier_signoffs_approved_by_fkey.sql`)**:
+  - Replaced foreign key constraint `dossier_signoffs_approved_by_fkey` on `dossier_signoffs (approved_by)` to reference `auth.users(id)` instead of `profiles(id)` (`ON DELETE SET NULL`).
+  - Guaranteed staff/admin users authenticating via Supabase can approve dossier sections without requiring a pre-existing customer record in `public.profiles`.
+  - Provisioned corresponding `super_admin` record in `public.profiles` for `skbagheltravels@gmail.com`.
+- **Booking Form Validation UX (`react/src/services/customerAuthApi.ts` & `BookingPage.tsx`)**:
+  - Enhanced `CustomerApiError` in `customerAuthApi.ts` to surface detailed Zod field issues (e.g. `pickupAddress: String must contain at least 5 character(s)`) in alert banners instead of generic error strings.
+  - Added client-side pre-submission validation in `BookingPage.tsx` preventing submission of sub-5-character addresses and past pickup datetimes.
+- **Verification**:
+  - Migration 0027 applied to PostgreSQL (`schema_migrations` updated).
+  - Live signoff update verified against Supabase database.
+  - Full `npm run verify` passed green (184 unit/integration tests, 3× typechecks, 3× builds).
+
+### 2026-10-05 — Relax Advance Amount Check Constraint & Discontinue Pet Taxi Service
+
+- **Migration 0028 (`0028_relax_advance_amount_check.sql`)**:
+  - Relaxed `bookings_advance_amount_check` on table `bookings` from `advance_amount >= 500` to `CHECK (advance_amount >= 1 AND advance_amount <= total_fare)`.
+  - Enables promotional fares (such as ₹1 test voucher `TEST99` or promotional discounts) to finalize and create draft bookings without database constraint violations, while preserving positive non-zero advance payment integrity.
+  - Standard 28% deposit with ₹500 floor for standard commercial fares remains enforced server-side by `fare.engine.ts`.
+- **Migration 0029 (`0029_remove_pet_taxi_offering.sql`)**:
+  - Discontinued Pet Taxi service per client instruction.
+  - Updated `pet_taxi_policy` to `is_offered = false` with guidance notes.
+  - Renamed `dossier_signoffs` section `specialized_offerings` from `Pet Taxi & Monument Operating Protocols` to `Monument Operating Protocols & Heritage Guidelines`.
+  - Updated `react/` frontend FAQ, Terms, and data constants to explicitly specify pets and animals are not permitted inside vehicles to maintain passenger hygiene and allergen safety.
+  - Added visual "Discontinued / Not Offered" indicator in Admin desk `PoliciesPage.tsx`.
+- **Supermemory Script (`scripts/supermemory.ps1`)**:
+  - Added native Windows PowerShell CLI script for Supermemory queries, remember, and profile retrieval.
+  - Remembered the `bookings_advance_amount_check` relaxation permanently in Supermemory under tag `sk_baghel_travels`.
+- **Verification**:
+  - Migrations 0028 and 0029 applied cleanly to Supabase PostgreSQL database.
+  - Verified constraints on `bookings` and `dossier_signoffs`.
+  - Monorepo `npm run verify` passed green.
 
 ## Known next work (Phase 3 — secure integrations)
 
@@ -507,6 +539,7 @@ Implemented:
 - Step 3.5: Split staff roles into content, pricing, dispatch, finance, review, audit, and security.
 
 See `docs/agent/00_CONTEXT_HANDOFF.md` and section 8 of the root operating specification.
+
 
 
 

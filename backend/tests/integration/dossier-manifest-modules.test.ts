@@ -22,7 +22,7 @@ describe("Dossier Content Modules & Manifest Endpoints", () => {
 
     expect(body.data.cancellationPolicies.length).toBe(9);
     expect(body.data.monuments.length).toBe(10);
-    expect(body.data.petPolicy.isOffered).toBe(true);
+    expect(body.data.petPolicy.isOffered).toBe(false);
     expect(body.data.companyProfile.primaryPhone).toBe("+91 97628 17598");
     expect(body.data.dossierSignoffs.length).toBe(10);
   });

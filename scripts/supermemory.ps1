@@ -1,13 +1,13 @@
 # scripts/supermemory.ps1 — Native Windows PowerShell Supermemory Context CLI for SK Baghel Tour & Travels
 [CmdletBinding()]
 param(
-    [Parameter(Position=0)]
+    [Parameter(Position = 0)]
     [string]$Command = "help",
 
-    [Parameter(Position=1)]
+    [Parameter(Position = 1)]
     [string]$Arg1,
 
-    [Parameter(Position=2)]
+    [Parameter(Position = 2)]
     [string]$Arg2
 )
 
@@ -58,7 +58,8 @@ switch ($Command.ToLower()) {
         }
         if ($Arg2) {
             npx -y supermemory add --tag $Tag $Arg1 --title $Arg2 --json
-        } else {
+        }
+        else {
             npx -y supermemory add --tag $Tag $Arg1 --json
         }
     }
