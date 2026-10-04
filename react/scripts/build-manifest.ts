@@ -223,6 +223,7 @@ export async function buildRouteCatalogAndManifest(): Promise<void> {
   // keep the customer UI fresh, while this snapshot gives crawlers complete
   // HTML for catalog pages instead of a client-only loading shell.
   const publishedCatalogPath = join(reactRoot, "src", "data", "generated-published-catalog.json");
+  const apiBase = (process.env.VITE_API_BASE_URL || process.env.CATALOG_API_URL || "").replace(/\/+$/, "");
   const catalogUrl = process.env.CATALOG_API_URL || process.env.VITE_API_BASE_URL;
   let publishedCatalog: unknown[] = [];
   if (catalogUrl) {
@@ -243,6 +244,134 @@ export async function buildRouteCatalogAndManifest(): Promise<void> {
   }
   writeFileSync(publishedCatalogPath, JSON.stringify(publishedCatalog, null, 2), "utf-8");
   writeFileSync(join(reactRoot, "src", "data", "generated-published-routes.json"), JSON.stringify(publishedRouteItems, null, 2), "utf-8");
+
+  // Fleet prices sanitizer: canonical 5-key tier mapping (sedan, ertiga, innova, tempo, urbania). No crysta.
+  const CANONICAL_FLEET_TIERS = ["sedan", "ertiga", "innova", "tempo", "urbania"] as const;
+  const sanitizeFleetPrices = (raw: any): Record<string, number> => {
+    const sanitized: Record<string, number> = {};
+    if (!raw || typeof raw !== "object") return sanitized;
+    for (const tier of CANONICAL_FLEET_TIERS) {
+      if (typeof raw[tier] === "number") {
+        sanitized[tier] = raw[tier];
+      } else if (raw[tier] !== undefined && raw[tier] !== null && !Number.isNaN(Number(raw[tier]))) {
+        sanitized[tier] = Number(raw[tier]);
+      }
+    }
+    return sanitized;
+  };
+
+  // 1. Tour Packages manifest (GET /api/v1/tour-packages/manifest)
+  const tourPackagesManifestUrl = process.env.TOUR_PACKAGES_MANIFEST_URL || (apiBase ? `${apiBase}/api/v1/tour-packages/manifest` : undefined);
+  let publishedTourPackages: any[] = [];
+  if (tourPackagesManifestUrl) {
+    try {
+      const response = await fetch(tourPackagesManifestUrl, {
+        headers: { accept: "application/json" },
+        signal: AbortSignal.timeout(15_000),
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const payload = await response.json() as { data?: any[] };
+      const rawItems = Array.isArray(payload.data) ? payload.data : [];
+      publishedTourPackages = rawItems
+        .filter((item) => item.status === "published")
+        .map((item) => ({
+          ...item,
+          slug: item.slug ?? item.packageCode ?? item.package_code,
+          fleetPrices: sanitizeFleetPrices(item.fleetPrices ?? item.fleet_prices),
+        }));
+      console.log(`✅ [Manifest Builder] Snapshotted ${publishedTourPackages.length} published tour packages from ${tourPackagesManifestUrl}.`);
+    } catch (error) {
+      console.warn(`⚠️ [Manifest Builder] Tour packages manifest unavailable; using empty snapshot (${error instanceof Error ? error.message : String(error)}).`);
+    }
+  } else {
+    console.warn("⚠️ [Manifest Builder] TOUR_PACKAGES_MANIFEST_URL not set; published tour packages SSG snapshot is empty.");
+  }
+  writeFileSync(join(reactRoot, "src", "data", "generated-published-tour-packages.json"), JSON.stringify(publishedTourPackages, null, 2), "utf-8");
+
+  // 2. Transfer Routes manifest (GET /api/v1/transfer-routes/manifest)
+  const transferRoutesManifestUrl = process.env.TRANSFER_ROUTES_MANIFEST_URL || (apiBase ? `${apiBase}/api/v1/transfer-routes/manifest` : undefined);
+  let publishedTransferRoutes: any[] = [];
+  if (transferRoutesManifestUrl) {
+    try {
+      const response = await fetch(transferRoutesManifestUrl, {
+        headers: { accept: "application/json" },
+        signal: AbortSignal.timeout(15_000),
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const payload = await response.json() as { data?: any[] };
+      const rawItems = Array.isArray(payload.data) ? payload.data : [];
+      publishedTransferRoutes = rawItems
+        .filter((item) => item.status === "published")
+        .map((item) => ({
+          ...item,
+          slug: item.slug ?? item.routeCode ?? item.route_code,
+          fleetPrices: sanitizeFleetPrices(item.fleetPrices ?? item.fleet_prices),
+        }));
+      console.log(`✅ [Manifest Builder] Snapshotted ${publishedTransferRoutes.length} published transfer routes from ${transferRoutesManifestUrl}.`);
+    } catch (error) {
+      console.warn(`⚠️ [Manifest Builder] Transfer routes manifest unavailable; using empty snapshot (${error instanceof Error ? error.message : String(error)}).`);
+    }
+  } else {
+    console.warn("⚠️ [Manifest Builder] TRANSFER_ROUTES_MANIFEST_URL not set; published transfer routes SSG snapshot is empty.");
+  }
+  writeFileSync(join(reactRoot, "src", "data", "generated-published-transfer-routes.json"), JSON.stringify(publishedTransferRoutes, null, 2), "utf-8");
+
+  // 3. Local Packages manifest (GET /api/v1/local-packages/manifest)
+  const localPackagesManifestUrl = process.env.LOCAL_PACKAGES_MANIFEST_URL || (apiBase ? `${apiBase}/api/v1/local-packages/manifest` : undefined);
+  let publishedLocalPackages: any[] = [];
+  if (localPackagesManifestUrl) {
+    try {
+      const response = await fetch(localPackagesManifestUrl, {
+        headers: { accept: "application/json" },
+        signal: AbortSignal.timeout(15_000),
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const payload = await response.json() as { data?: any[] };
+      const rawItems = Array.isArray(payload.data) ? payload.data : [];
+      publishedLocalPackages = rawItems
+        .filter((item) => item.status === "published")
+        .map((item) => ({
+          ...item,
+          slug: item.slug ?? item.packageCode ?? item.package_code,
+          fleetPrices: sanitizeFleetPrices(item.fleetPrices ?? item.fleet_prices),
+        }));
+      console.log(`✅ [Manifest Builder] Snapshotted ${publishedLocalPackages.length} published local packages from ${localPackagesManifestUrl}.`);
+    } catch (error) {
+      console.warn(`⚠️ [Manifest Builder] Local packages manifest unavailable; using empty snapshot (${error instanceof Error ? error.message : String(error)}).`);
+    }
+  } else {
+    console.warn("⚠️ [Manifest Builder] LOCAL_PACKAGES_MANIFEST_URL not set; published local packages SSG snapshot is empty.");
+  }
+  writeFileSync(join(reactRoot, "src", "data", "generated-published-local-packages.json"), JSON.stringify(publishedLocalPackages, null, 2), "utf-8");
+
+  // 4. Combined Content manifest (GET /api/v1/content/manifest)
+  const contentManifestUrl = process.env.CONTENT_MANIFEST_URL || (apiBase ? `${apiBase}/api/v1/content/manifest` : undefined);
+  let publishedContent: Record<string, any> = {
+    cancellationPolicies: [],
+    monuments: [],
+    petPolicy: null,
+    companyProfile: null,
+    dossierSignoffs: [],
+  };
+  if (contentManifestUrl) {
+    try {
+      const response = await fetch(contentManifestUrl, {
+        headers: { accept: "application/json" },
+        signal: AbortSignal.timeout(15_000),
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const payload = await response.json() as { data?: Record<string, any> };
+      if (payload.data && typeof payload.data === "object") {
+        publishedContent = payload.data;
+      }
+      console.log(`✅ [Manifest Builder] Snapshotted content manifest (${Object.keys(publishedContent).length} sections) from ${contentManifestUrl}.`);
+    } catch (error) {
+      console.warn(`⚠️ [Manifest Builder] Content manifest unavailable; using fallback snapshot (${error instanceof Error ? error.message : String(error)}).`);
+    }
+  } else {
+    console.warn("⚠️ [Manifest Builder] CONTENT_MANIFEST_URL not set; content SSG snapshot is empty.");
+  }
+  writeFileSync(join(reactRoot, "src", "data", "generated-published-content.json"), JSON.stringify(publishedContent, null, 2), "utf-8");
 }
 
 await buildRouteCatalogAndManifest();

@@ -13,7 +13,7 @@ import { fileURLToPath } from "node:url";
 import { createServer } from "vite";
 import { renderToString } from "react-dom/server";
 import { createElement } from "react";
-import { generateSitemapAndRobots } from "./generate-sitemap.ts";
+import { generateSitemapAndRobots, isSitemapSafeSlug } from "./generate-sitemap.ts";
 import { assertBuildSafeSeo, inspectSeoHtml } from "./seo-content-guardrails.ts";
 import { SEO_LANDING_SLUGS } from "../src/data/seoLandingSlugs.ts";
 import { FLEETS } from "../src/data/fleets.ts";
@@ -79,7 +79,7 @@ function getPublishedPackageRoutes(): string[] {
   try {
     const snapshot = JSON.parse(readFileSync(snapshotPath, "utf8")) as Array<{ type?: string; slug?: string }>;
     return snapshot
-      .filter((item) => (item.type === "package" || item.type === "tour") && /^[a-z0-9-]{2,80}$/.test(item.slug ?? ""))
+      .filter((item) => (item.type === "package" || item.type === "tour") && isSitemapSafeSlug(item.slug))
       .map((item) => `/en/packages/${item.slug}/`);
   } catch {
     return [];
@@ -92,8 +92,92 @@ function getPublishedRoutePages(): string[] {
   try {
     const snapshot = JSON.parse(readFileSync(snapshotPath, "utf8")) as Array<{ slug?: string }>;
     return snapshot
-      .filter((item) => /^[a-z0-9-]{2,80}$/.test(item.slug ?? ""))
+      .filter((item) => isSitemapSafeSlug(item.slug))
       .map((item) => `/en/${item.slug}/`);
+  } catch {
+    return [];
+  }
+}
+
+function getPublishedTourPackageRoutes(): string[] {
+  const snapshotPath = join(reactRoot, "src", "data", "generated-published-tour-packages.json");
+  if (!existsSync(snapshotPath)) return [];
+  try {
+    const snapshot = JSON.parse(readFileSync(snapshotPath, "utf8")) as Array<{
+      slug?: string;
+      packageCode?: string;
+      package_code?: string;
+      status?: string;
+    }>;
+    return snapshot
+      .filter((item) => !item.status || item.status === "published")
+      .map((item) => item.slug ?? item.packageCode ?? item.package_code)
+      .filter(isSitemapSafeSlug)
+      .map((slug) => `/en/packages/${slug}/`);
+  } catch {
+    return [];
+  }
+}
+
+function getPublishedTransferRouteRoutes(): string[] {
+  const snapshotPath = join(reactRoot, "src", "data", "generated-published-transfer-routes.json");
+  if (!existsSync(snapshotPath)) return [];
+  try {
+    const snapshot = JSON.parse(readFileSync(snapshotPath, "utf8")) as Array<{
+      slug?: string;
+      routeCode?: string;
+      route_code?: string;
+      status?: string;
+    }>;
+    return snapshot
+      .filter((item) => !item.status || item.status === "published")
+      .map((item) => item.slug ?? item.routeCode ?? item.route_code)
+      .filter(isSitemapSafeSlug)
+      .map((slug) => `/en/transfers/${slug}/`);
+  } catch {
+    return [];
+  }
+}
+
+function getPublishedLocalPackageRoutes(): string[] {
+  const snapshotPath = join(reactRoot, "src", "data", "generated-published-local-packages.json");
+  if (!existsSync(snapshotPath)) return [];
+  try {
+    const snapshot = JSON.parse(readFileSync(snapshotPath, "utf8")) as Array<{
+      slug?: string;
+      packageCode?: string;
+      package_code?: string;
+      status?: string;
+    }>;
+    return snapshot
+      .filter((item) => !item.status || item.status === "published")
+      .map((item) => item.slug ?? item.packageCode ?? item.package_code)
+      .filter(isSitemapSafeSlug)
+      .map((slug) => `/en/local-packages/${slug}/`);
+  } catch {
+    return [];
+  }
+}
+
+function getPublishedMonumentRoutes(): string[] {
+  const snapshotPath = join(reactRoot, "src", "data", "generated-published-content.json");
+  if (!existsSync(snapshotPath)) return [];
+  try {
+    const snapshot = JSON.parse(readFileSync(snapshotPath, "utf8")) as {
+      monuments?: Array<{
+        name?: string;
+        slug?: string;
+        monumentCode?: string;
+        monument_code?: string;
+        status?: string;
+      }>;
+    };
+    const list = Array.isArray(snapshot.monuments) ? snapshot.monuments : [];
+    return list
+      .filter((item) => !item.status || item.status === "published")
+      .map((item) => item.slug ?? item.monumentCode ?? item.monument_code ?? (item.name ? item.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") : undefined))
+      .filter(isSitemapSafeSlug)
+      .map((slug) => `/en/monuments/${slug}/`);
   } catch {
     return [];
   }
@@ -122,7 +206,7 @@ const hindiRoutePairs = [
 ];
 
 // Full manifest of static paths to render (English only)
-const routesToRender: string[] = [
+const routesToRender: string[] = Array.from(new Set([
   // Root & Home
   "/",
   "/en/",
@@ -147,11 +231,15 @@ const routesToRender: string[] = [
   ...packageRoutes.map((p) => `/en/packages/${p}/`),
   ...getPublishedPackageRoutes(),
   ...getPublishedRoutePages(),
+  ...getPublishedTourPackageRoutes(),
+  ...getPublishedTransferRouteRoutes(),
+  ...getPublishedLocalPackageRoutes(),
+  ...getPublishedMonumentRoutes(),
 
   // English Routes (8)
   ...routePairs.map((r) => `/en/${r}/`),
   ...SEO_LANDING_SLUGS.map((slug) => `/en/${slug}/`),
-];
+]));
 
 // Legacy HTML redirect stubs for backward compatibility
 const legacyRedirects = [

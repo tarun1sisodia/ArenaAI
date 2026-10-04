@@ -33,6 +33,24 @@ export interface SitemapEntry {
   hiPath?: string;
 }
 
+export function isSitemapSafeSlug(slug: unknown): slug is string {
+  if (typeof slug !== "string") return false;
+  const s = slug.trim();
+  if (!/^[a-z0-9-]{2,80}$/.test(s)) return false;
+  if (/^\d+-btn-/.test(s)) return false;
+  if (/command/i.test(s)) return false;
+  if (/--/.test(s)) return false;
+  if (s.startsWith("-") || s.endsWith("-")) return false;
+  return true;
+}
+
+function slugify(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 function getPublishedCatalogEntries(): SitemapEntry[] {
   const snapshotPath = join(reactRoot, "src", "data", "generated-published-catalog.json");
   if (!existsSync(snapshotPath)) return [];
@@ -44,7 +62,7 @@ function getPublishedCatalogEntries(): SitemapEntry[] {
       publishedAt?: string | null;
     }>;
     return snapshot
-      .filter((item) => (item.type === "package" || item.type === "tour") && /^[a-z0-9-]{2,80}$/.test(item.slug ?? ""))
+      .filter((item) => (item.type === "package" || item.type === "tour") && isSitemapSafeSlug(item.slug))
       .map((item) => ({
         path: `/en/packages/${item.slug}/`,
         hiPath: `/hi/packages/${item.slug}/`,
@@ -64,7 +82,7 @@ function getPublishedRouteEntries(): SitemapEntry[] {
   try {
     const snapshot = JSON.parse(readFileSync(snapshotPath, "utf8")) as Array<{ slug?: string; updatedAt?: string | null }>;
     return snapshot
-      .filter((item) => /^[a-z0-9-]{2,80}$/.test(item.slug ?? ""))
+      .filter((item) => isSitemapSafeSlug(item.slug))
       .map((item) => ({
         path: `/en/${item.slug}/`,
         hiPath: `/hi/${item.slug}/`,
@@ -72,6 +90,142 @@ function getPublishedRouteEntries(): SitemapEntry[] {
         priority: 0.85,
         changefreq: "weekly" as const,
         lastmod: item.updatedAt?.slice(0, 10),
+      }));
+  } catch {
+    return [];
+  }
+}
+
+function getPublishedTourPackageEntries(): SitemapEntry[] {
+  const snapshotPath = join(reactRoot, "src", "data", "generated-published-tour-packages.json");
+  if (!existsSync(snapshotPath)) return [];
+  try {
+    const snapshot = JSON.parse(readFileSync(snapshotPath, "utf8")) as Array<{
+      slug?: string;
+      packageCode?: string;
+      package_code?: string;
+      status?: string;
+      updatedAt?: string | null;
+      updated_at?: string | null;
+      publishedAt?: string | null;
+    }>;
+    return snapshot
+      .map((item) => ({ item, slug: String(item.slug ?? item.packageCode ?? item.package_code ?? "") }))
+      .filter(({ item, slug }) => {
+        if (!isSitemapSafeSlug(slug)) return false;
+        if (item.status && item.status !== "published") return false;
+        return true;
+      })
+      .map(({ item, slug }) => ({
+        path: `/en/packages/${slug}/`,
+        hiPath: `/hi/packages/${slug}/`,
+        enPath: `/en/packages/${slug}/`,
+        priority: 0.8,
+        changefreq: "weekly" as const,
+        lastmod: (item.updatedAt || item.updated_at || item.publishedAt || undefined)?.slice(0, 10),
+      }));
+  } catch {
+    return [];
+  }
+}
+
+function getPublishedTransferRouteEntries(): SitemapEntry[] {
+  const snapshotPath = join(reactRoot, "src", "data", "generated-published-transfer-routes.json");
+  if (!existsSync(snapshotPath)) return [];
+  try {
+    const snapshot = JSON.parse(readFileSync(snapshotPath, "utf8")) as Array<{
+      slug?: string;
+      routeCode?: string;
+      route_code?: string;
+      status?: string;
+      updatedAt?: string | null;
+      updated_at?: string | null;
+    }>;
+    return snapshot
+      .map((item) => ({ item, slug: String(item.slug ?? item.routeCode ?? item.route_code ?? "") }))
+      .filter(({ item, slug }) => {
+        if (!isSitemapSafeSlug(slug)) return false;
+        if (item.status && item.status !== "published") return false;
+        return true;
+      })
+      .map(({ item, slug }) => ({
+        path: `/en/transfers/${slug}/`,
+        hiPath: `/hi/transfers/${slug}/`,
+        enPath: `/en/transfers/${slug}/`,
+        priority: 0.7,
+        changefreq: "weekly" as const,
+        lastmod: (item.updatedAt || item.updated_at || undefined)?.slice(0, 10),
+      }));
+  } catch {
+    return [];
+  }
+}
+
+function getPublishedLocalPackageEntries(): SitemapEntry[] {
+  const snapshotPath = join(reactRoot, "src", "data", "generated-published-local-packages.json");
+  if (!existsSync(snapshotPath)) return [];
+  try {
+    const snapshot = JSON.parse(readFileSync(snapshotPath, "utf8")) as Array<{
+      slug?: string;
+      packageCode?: string;
+      package_code?: string;
+      status?: string;
+      updatedAt?: string | null;
+      updated_at?: string | null;
+    }>;
+    return snapshot
+      .map((item) => ({ item, slug: String(item.slug ?? item.packageCode ?? item.package_code ?? "") }))
+      .filter(({ item, slug }) => {
+        if (!isSitemapSafeSlug(slug)) return false;
+        if (item.status && item.status !== "published") return false;
+        return true;
+      })
+      .map(({ item, slug }) => ({
+        path: `/en/local-packages/${slug}/`,
+        hiPath: `/hi/local-packages/${slug}/`,
+        enPath: `/en/local-packages/${slug}/`,
+        priority: 0.7,
+        changefreq: "weekly" as const,
+        lastmod: (item.updatedAt || item.updated_at || undefined)?.slice(0, 10),
+      }));
+  } catch {
+    return [];
+  }
+}
+
+function getPublishedMonumentEntries(): SitemapEntry[] {
+  const snapshotPath = join(reactRoot, "src", "data", "generated-published-content.json");
+  if (!existsSync(snapshotPath)) return [];
+  try {
+    const snapshot = JSON.parse(readFileSync(snapshotPath, "utf8")) as {
+      monuments?: Array<{
+        name?: string;
+        slug?: string;
+        monumentCode?: string;
+        monument_code?: string;
+        status?: string;
+        updatedAt?: string | null;
+        updated_at?: string | null;
+      }>;
+    };
+    const list = Array.isArray(snapshot.monuments) ? snapshot.monuments : [];
+    return list
+      .map((item) => {
+        const rawSlug = item.slug ?? item.monumentCode ?? item.monument_code ?? (item.name ? slugify(item.name) : "");
+        return { item, slug: String(rawSlug) };
+      })
+      .filter(({ item, slug }) => {
+        if (!isSitemapSafeSlug(slug)) return false;
+        if (item.status && item.status !== "published") return false;
+        return true;
+      })
+      .map(({ item, slug }) => ({
+        path: `/en/monuments/${slug}/`,
+        hiPath: `/hi/monuments/${slug}/`,
+        enPath: `/en/monuments/${slug}/`,
+        priority: 0.5,
+        changefreq: "monthly" as const,
+        lastmod: (item.updatedAt || item.updated_at || undefined)?.slice(0, 10),
       }));
   } catch {
     return [];
@@ -208,6 +362,30 @@ export function getSitemapEntries(): SitemapEntry[] {
     }
   }
   for (const entry of getPublishedRouteEntries()) {
+    if (!existingPaths.has(entry.path)) {
+      existingPaths.add(entry.path);
+      entries.push(entry);
+    }
+  }
+  for (const entry of getPublishedTourPackageEntries()) {
+    if (!existingPaths.has(entry.path)) {
+      existingPaths.add(entry.path);
+      entries.push(entry);
+    }
+  }
+  for (const entry of getPublishedTransferRouteEntries()) {
+    if (!existingPaths.has(entry.path)) {
+      existingPaths.add(entry.path);
+      entries.push(entry);
+    }
+  }
+  for (const entry of getPublishedLocalPackageEntries()) {
+    if (!existingPaths.has(entry.path)) {
+      existingPaths.add(entry.path);
+      entries.push(entry);
+    }
+  }
+  for (const entry of getPublishedMonumentEntries()) {
     if (!existingPaths.has(entry.path)) {
       existingPaths.add(entry.path);
       entries.push(entry);

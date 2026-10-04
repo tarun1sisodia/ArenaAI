@@ -358,6 +358,39 @@ Implemented:
 - Strictly maintained Phase 4 scope boundary: pricing math and engine wiring only (no admin UI edits, no frontend edits, no new database tables).
 - Verified with full monorepo `npm run verify`: 3× typechecks (`customer`, `admin`, `backend`), 26 vitest test suites (175 tests passed), customer SEO checks passed, 3× production builds succeeded.
 
+### 2026-10-04 — Dossier Content: Build Scripts & SSG SEO Pipeline (Step 5)
+
+- Implemented Phase 5 (Build Scripts) from `arenaai-dossier-admin-frontend-seo-build-spec.md` (§6, Phase 5) with strict boundary in `react/scripts/` (no ServerApp or page component changes; deferred to Phase 6):
+  - **`react/scripts/build-manifest.ts`**:
+    - Mirrored the manifest fetch block for 4 new endpoints:
+      - `TOUR_PACKAGES_MANIFEST_URL` → `GET /api/v1/tour-packages/manifest`
+      - `TRANSFER_ROUTES_MANIFEST_URL` → `GET /api/v1/transfer-routes/manifest`
+      - `LOCAL_PACKAGES_MANIFEST_URL` → `GET /api/v1/local-packages/manifest`
+      - `CONTENT_MANIFEST_URL` → `GET /api/v1/content/manifest`
+    - Filtered strictly on `status === 'published'`.
+    - Implemented `sanitizeFleetPrices` enforcing exactly the 5 canonical tiers (`sedan`, `ertiga`, `innova`, `tempo`, `urbania`), omitting any extraneous keys (`crysta`).
+    - Standardized snapshot writing with try/catch warn-and-continue to:
+      - `react/src/data/generated-published-tour-packages.json`
+      - `react/src/data/generated-published-transfer-routes.json`
+      - `react/src/data/generated-published-local-packages.json`
+      - `react/src/data/generated-published-content.json`
+  - **`react/scripts/prerender.ts`**:
+    - Added snapshot readers: `getPublishedTourPackageRoutes()`, `getPublishedTransferRouteRoutes()`, `getPublishedLocalPackageRoutes()`, and `getPublishedMonumentRoutes()`.
+    - Extended `routesToRender` to push `/en/packages/<slug>/`, `/en/transfers/<slug>/`, and `/en/local-packages/<slug>/` for all published rows in English set per existing conventions.
+  - **`react/scripts/generate-sitemap.ts`**:
+    - Exported `isSitemapSafeSlug(slug)` denylist guard rejecting reserved or invalid patterns (`^\d+-btn-`, `command`, `--`, leading/trailing hyphens, length outside 2-80).
+    - Added snapshot readers with source-owned `updatedAt` / `updated_at` lastmod timestamps (never build time):
+      - Tour packages: priority `0.80`, `weekly`
+      - Transfers: priority `0.70`, `weekly`
+      - Local packages: priority `0.70`, `weekly`
+      - Monuments: priority `0.50`, `monthly`
+    - Appended unique entries to `sitemap.xml`.
+  - **Verification**:
+    - Verified all 4 snapshot files exist.
+    - Verified end-to-end manifest fetching against live API, confirmed published slugs in `dist/sitemap.xml` and `public/sitemap.xml`, and verified prerendered HTML output per URL in `dist/`.
+    - Confirmed seed rows restored to `draft` per Architectural Lock 4.
+    - Verified full monorepo via `npm run verify`: 3× typechecks, 26 vitest test files (175 tests passing), customer SEO lifecycle tests passing, 3× builds succeeding.
+
 ## Known next work (Phase 3 — secure integrations)
 
 - Step 3.2: High-entropy token or OTP recovery for booking status retrieval (`/api/v1/bookings/status`).
