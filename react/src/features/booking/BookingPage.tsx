@@ -401,7 +401,13 @@ export function BookingPage() {
         setBookingMode("local");
         setLocalPackageKey(qPkg as LocalPackageKey);
       } else {
-        const matchTour = packages.find((p) => p.slug === qPkg || p.id === qPkg);
+        const matchTour = packages.find(
+          (p) =>
+            p.slug === qPkg ||
+            p.id === qPkg ||
+            (qPkg === "jaipur-day-tour" && (p.id === "jaipur-excursion" || p.slug === "same-day-tour-of-jaipur")) ||
+            (qPkg === "fatehpur-sikri" && (p.id === "fatehpur-sikri" || p.slug === "same-day-tour-of-fatehpur-sikri"))
+        );
         if (matchTour) {
           // Homepage Local Taxi selections use the existing package catalogue;
           // keep the package fare/payment contract while preserving the local-tour UI intent.

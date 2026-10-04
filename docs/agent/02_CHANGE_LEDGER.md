@@ -443,6 +443,20 @@ Implemented:
   - `/packages/` and `/routes/`: Verified static and client rendering has zero duplicate cards.
   - `npm run verify`: Passed green (3× typechecks, 175 vitest tests across 26 test files, SEO lifecycle tests, and 3× builds).
 
+### 2026-10-04 — Homepage Local Tour Booking Widget Correction
+
+- **HomeBookingWidget Restoration**:
+  - Corrected regression in `react/src/components/home/HomeBookingWidget.tsx` where selecting the Local Tour tab mistakenly displayed Outstation "From" and "To" input fields instead of the local tour package catalogue.
+  - Restored dynamic local tour controls under `booking-reference--local`:
+    - "Select Local Tour" dropdown with package thumbnail and canonical 1-day tours (`localTours`).
+    - "Tour Date" single date picker.
+    - Fleet vehicle selection and "Book Now" CTA.
+    - 4 popular tour quick-select cards: Agra Local, Mathura Vrindavan, Jaipur Day Tour, and Fatehpur Sikri with active state synchronization.
+  - Updated `bookingHref()` to pass `/book?trip=local&pkg=${tourSlug}&vehicle=${vehicle}&date=${date}` without outstation parameters, routing directly to the local tour booking funnel.
+  - Added CSS grid positioning for `.booking-reference--local .booking-reference__field--tour` and date in `react/src/styles/global.css`.
+  - Added package alias resolution in `react/src/features/booking/BookingPage.tsx` for robust handling of tour cards.
+  - Verified with `npm --prefix react run typecheck`, `npm run customer:build` (SSG 47 pages), and end-to-end browser subagent session.
+
 ## Known next work (Phase 3 — secure integrations)
 
 - Step 3.2: High-entropy token or OTP recovery for booking status retrieval (`/api/v1/bookings/status`).
@@ -451,6 +465,7 @@ Implemented:
 - Step 3.5: Split staff roles into content, pricing, dispatch, finance, review, audit, and security.
 
 See `docs/agent/00_CONTEXT_HANDOFF.md` and section 8 of the root operating specification.
+
 
 
 
