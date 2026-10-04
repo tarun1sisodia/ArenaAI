@@ -592,12 +592,12 @@ export function ServerApp({ pathname: propPathname }: AppProps = {}) {
           <RouteDetailPage language={language} route={matchedRoute} />
         ) : dynamicRoute ? (
           <RouteDetailPage language={language} route={dynamicRoute} />
+        ) : dossierTourPackage ? (
+          <DossierTourPackagePage language={language} item={dossierTourPackage} />
         ) : matchedPackage ? (
           <PackageDetailPage language={language} pkg={matchedPackage} />
         ) : dynamicPackage ? (
           <LivePackageDetailPage slug={dynamicPackage.slug} initialItem={dynamicPackage as unknown as PublicCatalogItem} />
-        ) : dossierTourPackage ? (
-          <DossierTourPackagePage language={language} item={dossierTourPackage} />
         ) : dossierTransferRoute ? (
           <TransferDetailPage language={language} item={dossierTransferRoute} />
         ) : dossierLocalPackage ? (
