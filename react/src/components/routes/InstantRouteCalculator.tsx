@@ -282,6 +282,7 @@ export function InstantRouteCalculator({
                 applyRouteSelection(matchedEntry.slug, matchedEntry);
               }}
               className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-ink-charcoal text-ivory-surface font-label-lg text-xs font-semibold hover:bg-ink-slate transition-colors"
+              style={{ color: "#FDF8F5" }}
             >
               <span>View Route Details</span>
               <span className="material-symbols-outlined text-icon-14">arrow_forward</span>
