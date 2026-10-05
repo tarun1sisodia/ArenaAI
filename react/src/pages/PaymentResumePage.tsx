@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useCustomerAuth, getCustomerDisplayName } from "../auth/customerAuth";
 import { clearPaymentResumeReference, getPaymentResumeReference, storePaymentResumeReference } from "../auth/bookingIntentStorage";
-import { createOwnerPaymentCheckout, getMyBooking, getOwnerPaymentStatus, type CustomerBookingDetails, type PaymentCheckoutResponse } from "../services/customerAuthApi";
+import { createOwnerPaymentCheckout, getMyBooking, getOwnerPaymentStatus, verifyOwnerPayment, type CustomerBookingDetails, type PaymentCheckoutResponse } from "../services/customerAuthApi";
 import { loadRazorpayScript } from "../features/booking/razorpay";
 
 function makeKey(): string {
@@ -61,9 +61,23 @@ export function PaymentResumePage() {
       prefill: { name: getCustomerDisplayName(user), email: user?.email ?? undefined },
       theme: { color: "#8B1E1E" },
       modal: { ondismiss: () => { setBusy(false); setStatus("Checkout was closed. Your booking is still saved; you can reopen the same payment safely."); } },
-      handler: async () => {
+      handler: async (response) => {
         setStatus("Payment submitted. Waiting for server-side confirmation…");
         try {
+          const verified = await verifyOwnerPayment(checkout.paymentId, accessToken!, {
+            providerOrderId: response.razorpay_order_id,
+            providerPaymentId: response.razorpay_payment_id,
+            signature: response.razorpay_signature,
+          });
+          if (verified.status === "captured" && verified.bookingStatus === "paid_confirmed") {
+            try { setConfirmedBooking(await getMyBooking(current.bookingId, accessToken!)); }
+            catch { setError("Payment is verified. Your voucher details are not available yet; open My Bookings to retrieve them."); }
+            clearPaymentResumeReference();
+            setReference(null);
+            setStatus("Payment verified. Your booking is confirmed.");
+            setBusy(false);
+            return;
+          }
           for (let attempt = 0; attempt < 10; attempt += 1) {
             const result = await getOwnerPaymentStatus(checkout.paymentId, accessToken!);
             if (result.status === "captured" && result.bookingStatus === "paid_confirmed") {

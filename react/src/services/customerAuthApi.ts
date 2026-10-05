@@ -193,3 +193,15 @@ export interface PaymentStatusResponse {
 export function getOwnerPaymentStatus(paymentId: string, accessToken: string): Promise<PaymentStatusResponse> {
   return apiCall<PaymentStatusResponse>(`/api/v1/payments/${encodeURIComponent(paymentId)}/status`, { token: accessToken });
 }
+
+export function verifyOwnerPayment(
+  paymentId: string,
+  accessToken: string,
+  payload: { providerOrderId: string; providerPaymentId: string; signature: string },
+): Promise<{ paymentId: string; status: string; bookingStatus: string }> {
+  return apiCall<{ paymentId: string; status: string; bookingStatus: string }>(`/api/v1/payments/${encodeURIComponent(paymentId)}/verify`, {
+    method: "POST",
+    token: accessToken,
+    body: payload,
+  });
+}

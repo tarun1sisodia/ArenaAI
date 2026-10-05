@@ -56,6 +56,24 @@ export function createHmacPaymentAdapter(options: HmacAdapterOptions): PaymentPr
       if (!signature) return false;
       return verifyHmacSha256Hex(options.webhookSecret, rawBody, signature);
     },
+    async verifyCheckoutPayment(command) {
+      const valid = verifyHmacSha256Hex(
+        options.webhookSecret,
+        `${command.providerOrderId}|${command.providerPaymentId}`,
+        command.signature,
+      );
+      if (!valid) return null;
+      return {
+        providerOrderId: command.providerOrderId,
+        providerPaymentId: command.providerPaymentId,
+        amountMinor: 0,
+        currency: "INR",
+        status: "captured",
+        paymentMethod: "netbanking",
+        feeMinor: 0,
+        taxMinor: 0,
+      };
+    },
     parseEvent(rawBody) {
       let payload: Record<string, unknown>;
       try {

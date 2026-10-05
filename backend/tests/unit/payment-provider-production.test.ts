@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { createRazorpayAdapter } from "../../src/providers/adapters/razorpay.js";
 import { loadEnv } from "../../src/config/env.js";
+import { hmacSha256Hex } from "../../src/shared/hmac.js";
 
 describe("Phase 1 - Step 1.1: Production Payment Provider Enforcement", () => {
   it("prohibits HMAC adapter and throws when isProduction is true and credentials are dummy/missing", () => {
@@ -80,6 +81,36 @@ describe("Phase 1 - Step 1.1: Production Payment Provider Enforcement", () => {
       idempotencyKey: "00000000-0000-4000-8000-000000000002",
     });
     expect(requested).toBe(true);
+  });
+
+  it("verifies the Checkout signature and confirms the payment from Razorpay server data", async () => {
+    const adapter = createRazorpayAdapter({
+      keyId: "rzp_test_real_key_id",
+      keySecret: "real_secret_value",
+      webhookSecret: "real_webhook_secret",
+      isProduction: false,
+      fetchImpl: async () => new Response(JSON.stringify({
+        id: "pay_test_1",
+        order_id: "order_test_1",
+        amount: 100,
+        currency: "INR",
+        status: "captured",
+        method: "netbanking",
+        fee: 2,
+        tax: 0,
+      }), { status: 200 }),
+    });
+    const signature = hmacSha256Hex("real_secret_value", "order_test_1|pay_test_1");
+    await expect(adapter.verifyCheckoutPayment({
+      providerOrderId: "order_test_1",
+      providerPaymentId: "pay_test_1",
+      signature,
+    })).resolves.toMatchObject({ status: "captured", amountMinor: 100, currency: "INR" });
+    await expect(adapter.verifyCheckoutPayment({
+      providerOrderId: "order_test_1",
+      providerPaymentId: "pay_test_1",
+      signature: "0".repeat(64),
+    })).resolves.toBeNull();
   });
 
   it("allows test HMAC adapter fallback in non-production environments", () => {

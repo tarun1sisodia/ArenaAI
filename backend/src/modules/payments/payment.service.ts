@@ -171,6 +171,76 @@ export function createPaymentService(deps: {
       };
     },
 
+    async verifyCheckoutPayment(
+      paymentId: string,
+      input: { providerOrderId: string; providerPaymentId: string; signature: string },
+      actor?: AuthUser | null,
+    ) {
+      const payment = await deps.db.payments.getById(paymentId);
+      if (!payment) throw Errors.notFound("PAYMENT_NOT_FOUND", "Payment not found.");
+      const booking = await deps.db.bookings.getById(payment.bookingId);
+      if (!booking) throw Errors.notFound("BOOKING_NOT_FOUND", "Booking not found for payment.");
+      if (!actor?.id || booking.userId !== actor.id) {
+        throw Errors.unauthorized("Booking ownership proof is required.");
+      }
+      if (payment.providerOrderId !== input.providerOrderId) {
+        throw Errors.validation([{ path: "providerOrderId", message: "Payment order does not match this payment." }]);
+      }
+
+      const adapter = deps.providers[payment.provider];
+      const verified = await adapter.verifyCheckoutPayment(input);
+      if (!verified || verified.status !== "captured") {
+        return { paymentId: payment.id, status: verified?.status ?? "pending", bookingStatus: booking.status };
+      }
+      if (verified.amountMinor !== payment.amountMinor || verified.currency !== payment.currency) {
+        throw new AppError("PAYMENT_AMOUNT_MISMATCH", "Payment amount or currency does not match the booking.", 409);
+      }
+
+      let shouldNotify = false;
+      let confirmedBooking: Awaited<ReturnType<typeof deps.db.bookings.getById>> = null;
+      await deps.db.transaction(async (trx) => {
+        const freshPayment = await trx.payments.getById(payment.id);
+        const freshBooking = await trx.bookings.getById(payment.bookingId);
+        if (!freshPayment || !freshBooking) throw Errors.notFound("BOOKING_NOT_FOUND", "Booking not found for payment.");
+        if (freshPayment.status === "captured" && freshBooking.status === "paid_confirmed") return;
+        if (["cancelled", "refunded"].includes(freshBooking.status)) {
+          throw new AppError("BOOKING_NOT_PAYABLE", "This booking is no longer payable.", 409);
+        }
+        const now = toIso(deps.clock.now());
+        await trx.payments.update({
+          ...freshPayment,
+          providerPaymentId: verified.providerPaymentId,
+          status: "captured",
+          paymentMethod: verified.paymentMethod,
+          feeMinor: verified.feeMinor,
+          taxMinor: verified.taxMinor,
+          reconciliationStatus: "matched",
+          verifiedAt: now,
+          updatedAt: now,
+        });
+        if (freshBooking.status !== "paid_confirmed") {
+          assertTransition(freshBooking.status, "paid_confirmed");
+          confirmedBooking = await trx.bookings.update({
+            ...freshBooking,
+            status: "paid_confirmed",
+            version: freshBooking.version + 1,
+            updatedAt: now,
+          });
+          shouldNotify = true;
+          if (freshBooking.promoCode) {
+            try {
+              const promo = await trx.promos.getByCode(freshBooking.promoCode);
+              if (promo) await trx.promos.update({ ...promo, redemptionCount: promo.redemptionCount + 1 });
+            } catch {
+              // Non-critical: payment confirmation must not fail because of promo analytics.
+            }
+          }
+        }
+      });
+      if (shouldNotify && confirmedBooking) await deps.notifications.queuePaymentConfirmed(confirmedBooking);
+      return { paymentId: payment.id, status: "captured" as const, bookingStatus: "paid_confirmed" as const };
+    },
+
     async reconcileWebhook(input: {
       provider: "razorpay";
       rawBody: Buffer;

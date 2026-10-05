@@ -5,6 +5,7 @@ import {
   CreatePaymentCheckoutSchema,
   PaymentAccessSchema,
   PaymentIdParamSchema,
+  VerifyPaymentSchema,
   WebhookProviderParamSchema,
 } from "./payment.schema.js";
 import { assertNoClientAmount, type createPaymentService } from "./payment.service.js";
@@ -28,6 +29,14 @@ export function createPaymentController(service: ReturnType<typeof createPayment
       const token = query.token ?? headerToken;
       if (!token && !request.user) throw Errors.unauthorized("Booking ownership proof is required.");
       const data = await service.getStatus(params.paymentId, token, request.user ?? null);
+      return sendSuccess(reply, data);
+    },
+
+    async verifyPayment(request: FastifyRequest, reply: FastifyReply) {
+      if (!request.user) throw Errors.unauthorized("Authenticated booking ownership is required.");
+      const params = PaymentIdParamSchema.parse(request.params);
+      const body = VerifyPaymentSchema.parse(request.body);
+      const data = await service.verifyCheckoutPayment(params.paymentId, body, request.user);
       return sendSuccess(reply, data);
     },
 

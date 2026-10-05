@@ -110,6 +110,30 @@ export function createRazorpayAdapter(options: RazorpayOptions): PaymentProvider
       }
       return verifyHmacSha256Hex(webhookSecret, rawBody, signature);
     },
+    async verifyCheckoutPayment(command) {
+      const signaturePayload = `${command.providerOrderId}|${command.providerPaymentId}`;
+      if (!verifyHmacSha256Hex(keySecret, signaturePayload, command.signature)) return null;
+
+      const auth = Buffer.from(`${keyId}:${keySecret}`).toString("base64");
+      const response = await fetchImpl(`https://api.razorpay.com/v1/payments/${encodeURIComponent(command.providerPaymentId)}`, {
+        method: "GET",
+        headers: { Authorization: `Basic ${auth}` },
+      });
+      if (!response.ok) return null;
+      const body = (await response.json()) as RazorpayPaymentEntity;
+      if (!body.id || body.order_id !== command.providerOrderId) return null;
+      const status = body.status === "captured" ? "captured" : body.status === "failed" ? "failed" : "pending";
+      return {
+        providerOrderId: command.providerOrderId,
+        providerPaymentId: body.id,
+        amountMinor: Number(body.amount ?? 0),
+        currency: String(body.currency ?? "INR") as Currency,
+        status,
+        paymentMethod: body.method ?? null,
+        feeMinor: Number(body.fee ?? 0),
+        taxMinor: Number(body.tax ?? 0),
+      };
+    },
     parseEvent(rawBody) {
       let payload: RazorpayWebhook;
       try {

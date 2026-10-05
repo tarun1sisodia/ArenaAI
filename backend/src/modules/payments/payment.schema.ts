@@ -24,3 +24,9 @@ export const WebhookProviderParamSchema = z.object({
 export const PaymentAccessSchema = z.object({
   token: z.string().min(16).max(128).optional(),
 });
+
+export const VerifyPaymentSchema = z.object({
+  providerOrderId: z.string().min(1).max(100),
+  providerPaymentId: z.string().min(1).max(100),
+  signature: z.string().regex(/^[a-f0-9]{64}$/i),
+});
