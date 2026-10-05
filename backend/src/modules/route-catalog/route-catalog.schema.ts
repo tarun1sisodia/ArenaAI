@@ -24,6 +24,10 @@ const base = z.object({
   interstate_charges: z.array(z.object({ state: cleanText(2, 60), amount_inr: z.number().positive().max(1_000_000), note: cleanOptional(200) }).strict()).max(20).default([]),
   min_km_per_day: z.number().int().min(50).max(1000).default(300),
   stops: z.array(z.object({ name: cleanText(2, 80), halt_mins: z.number().int().min(0).max(1440).optional() }).strict()).max(24).default([]),
+  use_per_km: z.boolean().default(true),
+  per_km_rate_override: z.number().positive().max(100_000).finite().nullable().optional(),
+  highway: cleanOptional(160),
+  all_inclusive_note: cleanOptional(500),
   status: z.enum(["draft", "published", "archived"]).optional(),
   needs_review: z.boolean().default(false),
 }).strict();

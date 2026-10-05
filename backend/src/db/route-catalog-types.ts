@@ -18,6 +18,10 @@ export type RouteCatalogRecord = {
   interstateCharges: Array<{ state: string; amount_inr: number; note?: string }>;
   minKmPerDay: number;
   stops: Array<{ name: string; halt_mins?: number }>;
+  usePerKm: boolean;
+  perKmRateOverride: number | null;
+  highway: string | null;
+  allInclusiveNote: string | null;
   status: RouteCatalogStatus;
   needsReview: boolean;
   createdAt: string;
