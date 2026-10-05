@@ -182,8 +182,8 @@ export function createTourPackagesService(deps: {
             buffer,
             mimeType: input.mimeType,
           });
-        } catch {
-          // In-memory cache keeps image available even if remote storage times out
+        } catch (err) {
+          console.warn("[TourPackages] Remote media storage upload failed (image kept in cache):", err);
         }
       }
 
