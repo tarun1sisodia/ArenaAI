@@ -20,6 +20,8 @@ import { WhatsAppIcon } from "../../components/icons";
 import { BookingAssistant } from "./BookingAssistant";
 import { fetchLiveFleet, fetchPublishedCatalog, type PublicCatalogItem, type PublicFleetVehicle } from "../../services/catalog";
 import { LocationCombobox } from "../../components/search/LocationCombobox";
+import generatedPublishedTourPackages from "../../data/generated-published-tour-packages.json";
+import { loadPublishedPackages, toDossierTourPackage } from "../../services/catalogManifest";
 
 interface UnsupportedRequest {
   kind: "route" | "tour";
@@ -281,13 +283,41 @@ export function BookingPage() {
     return fleetOptions.find((v) => v.id === selectedVehicleId) || fleetOptions[0] || VEHICLE_OPTIONS[0];
   }, [fleetOptions, selectedVehicleId]);
 
+  const initialTourPackages = useMemo<TourPackage[]>(() => {
+    const map = new Map<string, TourPackage>();
+    for (const p of packages) map.set(p.slug, p);
+    for (const item of (generatedPublishedTourPackages as any[])) {
+      const mapped = toDossierTourPackage(item);
+      map.set(mapped.slug, mapped);
+    }
+    return Array.from(map.values());
+  }, []);
+
+  const [catalogPackages, setCatalogPackages] = useState<TourPackage[]>(initialTourPackages);
+
+  useEffect(() => {
+    let isMounted = true;
+    loadPublishedPackages().then((items) => {
+      if (isMounted && items && items.length > 0) {
+        setCatalogPackages((prev) => {
+          const map = new Map<string, TourPackage>();
+          for (const p of initialTourPackages) map.set(p.slug, p);
+          for (const p of items) map.set(p.slug, p);
+          return Array.from(map.values());
+        });
+      }
+    }).catch(() => {});
+    return () => { isMounted = false; };
+  }, [initialTourPackages]);
+
   // Selected tour package metadata
   const selectedPackage = useMemo<TourPackage>(() => {
     return (
-      packages.find((p) => p.slug === packageSlug || p.id === packageSlug) ||
+      catalogPackages.find((p) => p.slug === packageSlug || p.id === packageSlug) ||
+      catalogPackages[0] ||
       packages[0]
     );
-  }, [packageSlug]);
+  }, [catalogPackages, packageSlug]);
 
   // Published admin-managed offerings shown in the three service-mode controls.
   // Unavailable items remain visible in admin but must not be bookable.
@@ -320,8 +350,24 @@ export function BookingPage() {
   const bookingSelection = useMemo<BookingSelectionPayload>(() => {
     if (bookingMode === "package") {
       return selectedPackageCatalog
-        ? { kind: "package", id: selectedPackageCatalog.id, source: "catalog", slug: selectedPackageCatalog.slug }
-        : { kind: "package", id: selectedPackage.id, source: "curated", slug: selectedPackage.slug };
+        ? {
+            kind: "package",
+            id: selectedPackageCatalog.id,
+            source: "catalog",
+            slug: selectedPackageCatalog.slug,
+            name: selectedPackageCatalog.title,
+            originName: originName.trim() || selectedPackage.source || "Agra",
+            destinationName: destinationName.trim() || selectedPackage.destination || selectedPackageCatalog.title,
+          }
+        : {
+            kind: "package",
+            id: selectedPackage.slug || selectedPackage.id,
+            source: "catalog",
+            slug: selectedPackage.slug || selectedPackage.id,
+            name: selectedPackage.name,
+            originName: originName.trim() || selectedPackage.source || "Agra",
+            destinationName: destinationName.trim() || selectedPackage.destination || selectedPackage.name,
+          };
     }
     if (bookingMode === "local") {
       const pickupLocation = localPickupName.trim() || "Agra";
@@ -362,9 +408,39 @@ export function BookingPage() {
     const params = new URLSearchParams(window.location.search);
 
     const qTrip = params.get("trip");
-    if (qTrip === "local") {
+    const qFrom = params.get("from");
+    const qTo = params.get("to");
+    const qPkg = params.get("package") || params.get("pkg");
+
+    const isPackageTrip = qTrip === "package" || Boolean(qPkg && qPkg !== "8hr-80km" && qPkg !== "12hr-120km" && qPkg !== "airport-transfer");
+
+    if (qTrip === "local" || qPkg === "8hr-80km" || qPkg === "12hr-120km" || qPkg === "airport-transfer") {
       setIsLocalTourEntry(true);
       setBookingMode("local");
+      if (qPkg === "8hr-80km" || qPkg === "12hr-120km" || qPkg === "airport-transfer") {
+        setLocalPackageKey(qPkg as LocalPackageKey);
+      }
+    } else if (isPackageTrip) {
+      setBookingMode("package");
+      setUnsupportedRequest(null);
+      if (qPkg) {
+        const matchTour = catalogPackages.find(
+          (p) =>
+            p.slug === qPkg ||
+            p.id === qPkg ||
+            (qPkg === "jaipur-day-tour" && (p.id === "jaipur-excursion" || p.slug === "same-day-tour-of-jaipur")) ||
+            (qPkg === "fatehpur-sikri" && (p.id === "fatehpur-sikri" || p.slug === "same-day-tour-of-fatehpur-sikri"))
+        );
+        if (matchTour) {
+          setPackageSlug(matchTour.slug);
+          setOriginName(qFrom || matchTour.source || "Agra");
+          setDestinationName(qTo || matchTour.destination || matchTour.name);
+        } else {
+          setPackageSlug(qPkg);
+          setOriginName(qFrom || "Agra");
+          setDestinationName(qTo || qPkg.replaceAll("-", " "));
+        }
+      }
     } else if (qTrip === "round" || qTrip === "round-trip") {
       setBookingMode("outstation");
       setTripType("round-trip");
@@ -373,9 +449,7 @@ export function BookingPage() {
       setTripType("one-way");
     }
 
-    const qFrom = params.get("from");
-    const qTo = params.get("to");
-    if (qFrom && qTo) {
+    if (!isPackageTrip && qFrom && qTo) {
       setHasPreselectedRoute(true);
       setBookingMode("outstation");
       if (!findSupportedRoute(qFrom, qTo)) {
@@ -388,39 +462,15 @@ export function BookingPage() {
       }
     }
 
-    if (qFrom) {
+    if (qFrom && !isPackageTrip) {
       const matchCity = cities.find((c) => c.id === qFrom.toLowerCase());
       setOriginName(matchCity ? matchCity.name : qFrom);
       setLocalPickupName(matchCity ? matchCity.name : qFrom);
     }
 
-    if (qTo) {
+    if (qTo && !isPackageTrip) {
       const matchCity = cities.find((c) => c.id === qTo.toLowerCase());
       setDestinationName(matchCity ? matchCity.name : qTo);
-    }
-
-    const qPkg = params.get("package") || params.get("pkg");
-    if (qPkg) {
-      if (qPkg === "8hr-80km" || qPkg === "12hr-120km" || qPkg === "airport-transfer") {
-        setBookingMode("local");
-        setLocalPackageKey(qPkg as LocalPackageKey);
-      } else {
-        const matchTour = packages.find(
-          (p) =>
-            p.slug === qPkg ||
-            p.id === qPkg ||
-            (qPkg === "jaipur-day-tour" && (p.id === "jaipur-excursion" || p.slug === "same-day-tour-of-jaipur")) ||
-            (qPkg === "fatehpur-sikri" && (p.id === "fatehpur-sikri" || p.slug === "same-day-tour-of-fatehpur-sikri"))
-        );
-        if (matchTour) {
-          // Homepage Local Taxi selections use the existing package catalogue;
-          // keep the package fare/payment contract while preserving the local-tour UI intent.
-          setBookingMode("package");
-          setPackageSlug(matchTour.slug);
-        } else {
-          setUnsupportedRequest({ kind: "tour", name: qPkg, suggestions: routes.slice(0, 5) });
-        }
-      }
     }
 
     const qVeh = params.get("vehicle");
@@ -589,12 +639,16 @@ export function BookingPage() {
     ? bookingSelection.originName
     : bookingSelection.kind === "local"
       ? bookingSelection.pickupLocation
-      : "";
+      : bookingSelection.kind === "package"
+        ? (bookingSelection.originName || originName.trim() || selectedPackage.source || "Agra")
+        : "";
   const effectiveDestination = bookingSelection.kind === "outstation"
     ? bookingSelection.destinationName
     : bookingSelection.kind === "local"
       ? bookingSelection.transferTarget ?? (bookingSelection.tripType === "airport-transfer" ? "Agra Cantt Airport / Station" : selectedTripName)
-      : "";
+      : bookingSelection.kind === "package"
+        ? (bookingSelection.destinationName || destinationName.trim() || selectedPackage.destination || selectedPackage.name)
+        : "";
 
   // Primary Server Fare Fetcher: calls POST /api/v1/fares/calculate
   // Rule F3: Never compute or send money or distance from client!
@@ -1092,37 +1146,53 @@ export function BookingPage() {
                     <label htmlFor="package-select" className="font-label-lg text-xs font-bold text-ink-slate">{isLocalTourEntry ? "Selected Local Tour" : "Select Tour Package"}</label>
                     <select
                       id="package-select"
-                      value={selectedPackageCatalogId ? `live:${selectedPackageCatalogId}` : `static:${packageSlug}`}
+                      value={selectedPackageCatalogId ? `live:${selectedPackageCatalogId}` : packageSlug}
                       onChange={(e) => {
                         const value = e.target.value;
                         if (value.startsWith("live:")) {
                           const item = packageCatalogTrips.find((entry) => entry.id === value.slice(5));
                           setSelectedPackageCatalogId(value.slice(5));
-                          if (item) setPackageSlug(item.slug);
+                          if (item) {
+                            setPackageSlug(item.slug);
+                            setOriginName("Agra");
+                            setDestinationName(item.title);
+                          }
                         } else {
                           setSelectedPackageCatalogId(null);
-                          setPackageSlug(value.slice(7));
+                          setPackageSlug(value);
+                          const match = catalogPackages.find((pkg) => pkg.slug === value || pkg.id === value);
+                          if (match) {
+                            setOriginName(match.source || "Agra");
+                            setDestinationName(match.destination || match.name);
+                          }
                         }
                       }}
                       className="px-3 py-2 rounded-lg border border-border-warm bg-surface font-body-md text-on-surface focus:ring-1 focus:ring-primary focus:outline-none"
                     >
-                      <optgroup label="Curated heritage packages">
-                        {packages.map((pkg) => (
-                          <option key={pkg.slug} value={`static:${pkg.slug}`}>
-                            {pkg.name} ({pkg.duration})
+                      <optgroup label="Available Tour Packages &amp; Sightseeing">
+                        {catalogPackages.map((pkg) => (
+                          <option key={pkg.slug || pkg.id} value={pkg.slug || pkg.id}>
+                            {pkg.name} ({pkg.duration}) • 📍 {pkg.source || "Agra"} → {pkg.destination || pkg.name}
                           </option>
                         ))}
                       </optgroup>
-                      {packageCatalogTrips.length > 0 && (
-                        <optgroup label="Published desk packages">
-                          {packageCatalogTrips.map((item) => (
-                            <option key={item.id} value={`live:${item.id}`}>
-                              {item.title} — {item.durationText || "Custom itinerary"}
-                            </option>
-                          ))}
+                      {packageCatalogTrips.filter((item) => !catalogPackages.some((cp) => cp.slug === item.slug || cp.id === item.id)).length > 0 && (
+                        <optgroup label="Additional Published Desk Packages">
+                          {packageCatalogTrips
+                            .filter((item) => !catalogPackages.some((cp) => cp.slug === item.slug || cp.id === item.id))
+                            .map((item) => (
+                              <option key={item.id} value={`live:${item.id}`}>
+                                {item.title} — {item.durationText || "Custom itinerary"}
+                              </option>
+                            ))}
                         </optgroup>
                       )}
                     </select>
+                    <div className="flex items-center gap-1.5 text-xs text-secondary mt-0.5">
+                      <span className="material-symbols-outlined text-[15px] text-primary">route</span>
+                      <span>Corridor: <strong className="text-on-surface font-semibold">{selectedPackage.source || originName || "Agra"}</strong> → <strong className="text-on-surface font-semibold">{selectedPackage.destination || destinationName || selectedPackage.name}</strong></span>
+                      {selectedPackage.days ? <span className="text-on-surface-variant">({selectedPackage.days}D / {selectedPackage.nights || 0}N)</span> : null}
+                    </div>
                   </div>
                 )}
 
@@ -1225,7 +1295,9 @@ export function BookingPage() {
                   const localTourPrice = selectedLocalCatalog && selectedLocalCatalog.startingPriceInr > 0
                     ? selectedLocalCatalog.startingPriceInr + (PACKAGE_UPGRADES[veh.id] ?? 0)
                     : localPackages[localPackageKey]?.fares[veh.id];
-                  const packageTourPrice = (selectedPackageCatalog?.startingPriceInr || selectedPackage.from) + (PACKAGE_UPGRADES[veh.id] ?? 0);
+                  const packageTourPrice = (selectedPackage.fleetPrices?.[veh.id] && selectedPackage.fleetPrices[veh.id] > 0)
+                    ? selectedPackage.fleetPrices[veh.id]
+                    : (selectedPackageCatalog?.startingPriceInr || selectedPackage.from) + (PACKAGE_UPGRADES[veh.id] ?? 0);
                   const liveVehicleRate = liveFleet.find((f) => f.id === veh.id || f.tier === mapVehicleTier(veh.id))?.perKm;
 
                   return (
@@ -1494,8 +1566,30 @@ export function BookingPage() {
                 {/* Clean prefilled booking summary — mirrors the homepage selection. */}
                 <div className="booking-prefill-summary grid grid-cols-2 sm:grid-cols-4 gap-space-sm rounded-lg border border-border-warm/70 bg-surface-container-low p-space-sm">
                   <div><span className="booking-summary-label">Trip</span><strong>{selectedTripName}</strong></div>
-                  <div><span className="booking-summary-label">{bookingSelection.kind === "outstation" ? "From" : bookingSelection.kind === "local" ? "Pickup location" : "Pickup address"}</span><strong>{bookingSelection.kind === "outstation" ? effectiveOrigin : bookingSelection.kind === "local" ? bookingSelection.pickupLocation : pickupAddress || "Add pickup address"}</strong></div>
-                  <div><span className="booking-summary-label">{bookingSelection.kind === "outstation" ? "To" : bookingSelection.kind === "local" ? "Service" : "Package"}</span><strong>{bookingSelection.kind === "outstation" ? effectiveDestination : bookingSelection.kind === "local" ? selectedTripName : "Itinerary included"}</strong></div>
+                  <div>
+                    <span className="booking-summary-label">
+                      {bookingSelection.kind === "outstation" ? "From" : bookingSelection.kind === "local" ? "Pickup location" : "From (Source)"}
+                    </span>
+                    <strong>
+                      {bookingSelection.kind === "outstation"
+                        ? effectiveOrigin
+                        : bookingSelection.kind === "local"
+                          ? bookingSelection.pickupLocation
+                          : (effectiveOrigin || "Agra")}
+                    </strong>
+                  </div>
+                  <div>
+                    <span className="booking-summary-label">
+                      {bookingSelection.kind === "outstation" ? "To" : bookingSelection.kind === "local" ? "Service" : "To (Destination)"}
+                    </span>
+                    <strong>
+                      {bookingSelection.kind === "outstation"
+                        ? effectiveDestination
+                        : bookingSelection.kind === "local"
+                          ? selectedTripName
+                          : (effectiveDestination || selectedTripName)}
+                    </strong>
+                  </div>
                   <div><span className="booking-summary-label">Pickup date</span><strong>{formatBookingDate(pickupDate)}</strong></div>
                   <div><span className="booking-summary-label">Vehicle</span><strong>{selectedVehicle.name}</strong></div>
                   {bookingSelection.kind === "outstation" && bookingSelection.tripType === "round-trip" && <div><span className="booking-summary-label">Return</span><strong>{formatBookingDate(returnDate)}</strong></div>}

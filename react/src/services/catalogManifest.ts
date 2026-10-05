@@ -211,26 +211,8 @@ export async function loadPublishedPackages(): Promise<TourPackage[]> {
       const items = Array.isArray(json?.data) ? json.data : [];
       for (const item of items) {
         if (item.status && item.status !== "published") continue;
-        const slug = String(item.slug ?? item.packageCode ?? item.package_code);
-        const startingPrice = Number(item.startingPriceInr || item.fleetPrices?.sedan || 3499);
-        bySlug.set(slug, {
-          id: slug,
-          slug,
-          name: item.name,
-          kicker: `${item.days ?? 1} Day${(item.days ?? 1) > 1 ? "s" : ""} Private Tour`,
-          duration: item.durationText || `${item.days ?? 1} Day`,
-          from: startingPrice,
-          image: item.imageUrl || item.image_url || item.image || "/assets/packages/taj-dawn.webp",
-          gallery: Array.isArray(item.gallery) ? item.gallery : [],
-          places: [item.name, "Agra Heritage Sites"],
-          blurb: item.inclusionsHighlight || "Private sanitized AC cab, dedicated verified chauffeur & monument sightseeing.",
-          includes: [
-            "Private AC vehicle & dedicated verified chauffeur",
-            "All highway tolls & monument parking fees included",
-            "Doorstep pickup & drop-off from hotel or station",
-          ],
-          excludes: ["Monument entry tickets", "Meals & personal expenses"],
-        });
+        const mapped = toDossierTourPackage(item);
+        bySlug.set(mapped.slug, mapped);
       }
     }
   } catch {
@@ -239,3 +221,76 @@ export async function loadPublishedPackages(): Promise<TourPackage[]> {
 
   return Array.from(bySlug.values());
 }
+
+export function toDossierTourPackage(item: any): TourPackage {
+  const startingPrice = Number(item.startingPriceInr || item.fleetPrices?.sedan || item.from || 3499);
+  const slug = String(item.slug ?? item.packageCode ?? item.package_code ?? item.id);
+  const inclusions = Array.isArray(item.inclusions) && item.inclusions.length > 0
+    ? item.inclusions
+    : [
+        "Private AC vehicle & dedicated verified chauffeur",
+        "All highway tolls & monument parking fees included",
+        "Doorstep pickup & drop-off from hotel or station",
+      ];
+  const exclusions = Array.isArray(item.exclusions) && item.exclusions.length > 0
+    ? item.exclusions
+    : [
+        "Monument entry tickets",
+        "Meals & personal expenses",
+      ];
+  const source = item.source || "Agra";
+  const destination = item.destination || item.name;
+
+  return {
+    id: slug,
+    slug,
+    name: item.name,
+    kicker: `${item.days ?? 1} Day${(item.days ?? 1) > 1 ? "s" : ""} Private Tour`,
+    duration: item.durationText || `${item.days ?? 1} Day`,
+    from: startingPrice,
+    image: item.imageUrl || item.image_url || item.image || "/assets/packages/taj-dawn.webp",
+    gallery: Array.isArray(item.gallery) ? item.gallery : [],
+    source,
+    destination,
+    fleetPrices: item.fleetPrices || item.fleet_prices || {},
+    days: item.days,
+    nights: item.nights,
+    places: [source, destination, "Heritage Sites"],
+    blurb: item.inclusionsHighlight || "Private sanitized AC cab, dedicated verified chauffeur & monument sightseeing.",
+    includes: inclusions,
+    excludes: exclusions,
+    itinerary: Array.isArray(item.itinerary) ? item.itinerary : [],
+  };
+}
+
+export async function fetchTourPackageBySlug(slug: string): Promise<TourPackage | null> {
+  const normalizedSlug = slug.trim().toLowerCase();
+
+  // 1. Check in loaded published packages
+  try {
+    const published = await loadPublishedPackages();
+    const match = published.find((p) => p.slug === normalizedSlug || p.id === normalizedSlug);
+    if (match) return match;
+  } catch {
+    // Continue
+  }
+
+  // 2. Fetch directly from Fastify API by-code endpoint
+  try {
+    const apiBase = getApiBaseUrl();
+    const res = await fetch(`${apiBase}/api/v1/tour-packages/by-code/${encodeURIComponent(normalizedSlug)}`, {
+      headers: { Accept: "application/json" },
+    });
+    if (res.ok) {
+      const json = await res.json();
+      if (json?.data) {
+        return toDossierTourPackage(json.data);
+      }
+    }
+  } catch {
+    // Continue
+  }
+
+  return null;
+}
+

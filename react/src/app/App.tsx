@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState, useEffect } from "react";
+import { lazy, Suspense, useState, useEffect, useMemo } from "react";
 import { ErrorBoundary } from "../components/ErrorBoundary";
 import { SiteLayout } from "../layouts/SiteLayout";
 import { HomePage } from "../pages/HomePage";
@@ -16,7 +16,7 @@ const PrivacyPage = lazy(() => import("../pages/PrivacyPage").then((m) => ({ def
 const NotFoundPage = lazy(() => import("../pages/NotFoundPage").then((m) => ({ default: m.NotFoundPage })));
 const RouteDetailPage = lazy(() => import("../pages/RouteDetailPage").then((m) => ({ default: m.RouteDetailPage })));
 const PackageDetailPage = lazy(() => import("../pages/PackageDetailPage").then((m) => ({ default: m.PackageDetailPage })));
-const LivePackageDetailPage = lazy(() => import("../pages/LivePackageDetailPage").then((m) => ({ default: m.LivePackageDetailPage })));
+const DynamicPackageDetailPage = lazy(() => import("../pages/DynamicPackageDetailPage").then((m) => ({ default: m.DynamicPackageDetailPage })));
 const VehicleDetailPage = lazy(() => import("../pages/VehicleDetailPage").then((m) => ({ default: m.VehicleDetailPage })));
 const BookingPage = lazy(() => import("../features/booking/BookingPage").then((m) => ({ default: m.BookingPage })));
 const MarketingPage = lazy(() => import("../pages/MarketingPage").then((m) => ({ default: m.MarketingPage })));
@@ -27,8 +27,9 @@ const PaymentResumePage = lazy(() => import("../pages/PaymentResumePage").then((
 import { SEO_LANDING_SLUGS, type SeoLandingSlug } from "../data/seoLandingSlugs";
 import { marketingHubs } from "./routes";
 import { SeoHead } from "../components/seo/SeoHead";
-import { packages, routes, vehicles, type Route } from "../data/catalogue";
-import { loadRoutesManifest } from "../services/catalogManifest";
+import { packages, routes, vehicles, type Route, type TourPackage } from "../data/catalogue";
+import { loadRoutesManifest, loadPublishedPackages, toDossierTourPackage } from "../services/catalogManifest";
+import generatedPublishedTourPackages from "../data/generated-published-tour-packages.json";
 
 export function getMarketingPath(pathname: string) {
   const segments = pathname.split("/").filter(Boolean);
@@ -241,6 +242,31 @@ export function App({ pathname: propPathname }: AppProps = {}) {
 
   const [manifestRoute, setManifestRoute] = useState<Route | null>(null);
 
+  const initialTourPackages = useMemo<TourPackage[]>(() => {
+    const map = new Map<string, TourPackage>();
+    for (const p of packages) map.set(p.slug, p);
+    for (const item of (generatedPublishedTourPackages as any[])) {
+      const mapped = toDossierTourPackage(item);
+      map.set(mapped.slug, mapped);
+    }
+    return Array.from(map.values());
+  }, []);
+
+  const [publishedPackages, setPublishedPackages] = useState<TourPackage[]>(initialTourPackages);
+
+  useEffect(() => {
+    let isMounted = true;
+    loadPublishedPackages().then((items) => {
+      if (isMounted && items && items.length > 0) {
+        const map = new Map<string, TourPackage>();
+        for (const p of initialTourPackages) map.set(p.slug, p);
+        for (const p of items) map.set(p.slug, p);
+        setPublishedPackages(Array.from(map.values()));
+      }
+    }).catch(() => {});
+    return () => { isMounted = false; };
+  }, [initialTourPackages]);
+
   const matchedRoute = routes.find((item) => {
     const from = item.from === "agra" && item.to === "agra" ? "agra-sightseeing" : `${item.from}-to-${item.to}`;
     return (
@@ -291,7 +317,7 @@ export function App({ pathname: propPathname }: AppProps = {}) {
     };
   }, [section, pathname, matchedRoute, isHome, isBooking, isMarketingHub]);
 
-  const matchedPackage = pathname.includes("/packages/") && packages.find((item) => {
+  const matchedPackage = pathname.includes("/packages/") && publishedPackages.find((item) => {
     const p = pathname.replace(/\/$/, "");
     return p.endsWith(`/${item.slug}`) || p.endsWith(item.slug);
   });
@@ -323,7 +349,7 @@ export function App({ pathname: propPathname }: AppProps = {}) {
     Boolean(matchedVehicle) ||
     isSeoLanding ||
     Boolean(livePackageSlug) ||
-    packages.some((item) => pathname.endsWith(item.slug) || pathname.endsWith(item.slug + "/"));
+    publishedPackages.some((item) => pathname.endsWith(item.slug) || pathname.endsWith(item.slug + "/"));
 
   const is404 =
     !isKnownRoute ||
@@ -370,7 +396,7 @@ export function App({ pathname: propPathname }: AppProps = {}) {
           ) : matchedPackage ? (
             <PackageDetailPage language={language} pkg={matchedPackage} />
           ) : livePackageSlug ? (
-            <LivePackageDetailPage slug={livePackageSlug} />
+            <DynamicPackageDetailPage language={language} slug={livePackageSlug} />
         ) : matchedVehicle ? (
           <VehicleDetailPage language={language} vehicle={matchedVehicle} />
         ) : isSeoLanding ? (

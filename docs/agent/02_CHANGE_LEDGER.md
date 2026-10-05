@@ -1,6 +1,29 @@
 # ArenaAI Agent Change Ledger
 
-## 2026-09-27
+## 2026-10-05
+
+### 2026-10-05 — Tour Packages Corridor (Source & Destination), Inclusions/Exclusions Management, Dynamic Detail Page Parity & Booking Flow
+
+- **Database Migration (`0031_tour_packages_source_dest_inclusions.sql`)**:
+  - Added `source` (VARCHAR(120)), `destination` (VARCHAR(160)), `inclusions` (TEXT[]), `exclusions` (TEXT[]), and `itinerary` (JSONB) columns to `tour_packages` table in PostgreSQL.
+- **Backend Schema & Service (`tour-packages.schema.ts`, `tour-packages.service.ts`, `postgres.ts`)**:
+  - Added input validation & XSS sanitization for source, destination, inclusions, exclusions, and itinerary.
+  - Updated CRUD operations and manifest emitters to serve the corridor routes, inclusions, and exclusions.
+  - Updated `CalculateFareSchema` and `CreateDraftBookingSchema` in `fare.schema.ts` and `booking.schema.ts` to accept `originName` and `destinationName` for package bookings and retain them in `BookingRecord`.
+- **Admin Operations Desk (`admin/src/pages/TourPackagesPage.tsx`, `admin/src/lib/types.ts`)**:
+  - Added Source (e.g., Agra) and Destination (e.g., Jaipur / Taj Mahal) input fields with quick corridor preset buttons.
+  - Added interactive Inclusions & Exclusions chip tag managers with one-click standard presets ("AC Vehicle", "Fuel & Tolls", "Monument Tickets", etc.).
+  - Displayed corridor route badges (`📍 Source → Destination`) in the packages table.
+- **Customer Frontend Dynamic Detail Page (`PackageDetailPage.tsx`, `DynamicPackageDetailPage.tsx`)**:
+  - Generalized `PackageDetailPage` so all admin-added packages render with the exact same rich, comprehensive layout as `/en/packages/agra-sightseeing/`.
+  - Added dynamic fallback loader in `App.tsx` and SSG/SSR support in `ServerApp.tsx`.
+  - Displayed Corridor route badges in the hero and dynamic itinerary stops, verified inclusions, and exclusions.
+- **Customer Booking Flow Funnel (`BookingPage.tsx`, `PackagesPage.tsx`)**:
+  - Fixed booking flow for admin-created packages by registering dynamic packages in `catalogPackages` and routing cleanly without triggering "That tour is not currently available".
+  - Passed corridor source and destination to pre-fill pickup/drop details.
+  - Supported per-vehicle fleet tariffs set by admin desk (`selectedPackage.fleetPrices[veh.id]`).
+- **Verification**:
+  - Verified full `npm run verify` passing 100% across customer, admin, and backend (3x typecheck, 27 backend test files / 184 tests, SEO lifecycle, 3x production builds).
 
 ### 2026-09-28 — Razorpay audit and production hardening
 

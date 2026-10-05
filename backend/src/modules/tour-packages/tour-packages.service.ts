@@ -31,6 +31,11 @@ function toRecord(input: CreateTourPackageInput, now: string, id = newId()): Tou
     nightChargeInr: input.night_charge_inr,
     inclusionsHighlight: input.inclusions_highlight ?? null,
     inclusionsNote: input.inclusions_note ?? null,
+    source: input.source ?? "Agra",
+    destination: input.destination ?? "",
+    inclusions: input.inclusions ?? [],
+    exclusions: input.exclusions ?? [],
+    itinerary: input.itinerary ?? [],
     imageUrl: input.image_url ?? null,
     gallery: input.gallery ?? [],
     status: input.status ?? "draft",
@@ -86,6 +91,11 @@ export function createTourPackagesService(deps: {
         (input.fleet_prices !== undefined && JSON.stringify(input.fleet_prices) !== JSON.stringify(current.fleetPrices));
       const contentEdited =
         priceEdited ||
+        (input.source !== undefined && input.source !== current.source) ||
+        (input.destination !== undefined && input.destination !== current.destination) ||
+        (input.inclusions !== undefined && JSON.stringify(input.inclusions) !== JSON.stringify(current.inclusions)) ||
+        (input.exclusions !== undefined && JSON.stringify(input.exclusions) !== JSON.stringify(current.exclusions)) ||
+        (input.itinerary !== undefined && JSON.stringify(input.itinerary) !== JSON.stringify(current.itinerary)) ||
         (input.image_url !== undefined && input.image_url !== current.imageUrl) ||
         (input.gallery !== undefined && JSON.stringify(input.gallery) !== JSON.stringify(current.gallery));
 
@@ -102,6 +112,11 @@ export function createTourPackagesService(deps: {
         inclusionsHighlight:
           input.inclusions_highlight === undefined ? current.inclusionsHighlight : input.inclusions_highlight,
         inclusionsNote: input.inclusions_note === undefined ? current.inclusionsNote : input.inclusions_note,
+        source: input.source !== undefined ? input.source : (current.source ?? "Agra"),
+        destination: input.destination !== undefined ? input.destination : (current.destination ?? ""),
+        inclusions: input.inclusions !== undefined ? input.inclusions : (current.inclusions ?? []),
+        exclusions: input.exclusions !== undefined ? input.exclusions : (current.exclusions ?? []),
+        itinerary: input.itinerary !== undefined ? input.itinerary : (current.itinerary ?? []),
         imageUrl: input.image_url !== undefined ? input.image_url : current.imageUrl,
         gallery: input.gallery !== undefined ? input.gallery : (current.gallery ?? []),
         status: input.status ?? current.status,

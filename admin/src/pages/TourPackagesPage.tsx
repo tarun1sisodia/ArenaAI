@@ -40,6 +40,26 @@ export const HERITAGE_PHOTO_PRESETS = [
   { url: "/assets/places/gallery/jaipur-pink-city-01.jpg", caption: "Hawa Mahal Palace of Winds", alt: "Hawa Mahal facade Jaipur" },
 ];
 
+export const INCLUSION_PRESETS = [
+  "Private AC Cab dedicated exclusively to your group",
+  "Police-verified professional chauffeur & fuel charges",
+  "All highway toll taxes & state border permits",
+  "Parking charges at all monument sites",
+  "Doorstep hotel / railway station pickup & drop",
+  "Government approved ASI heritage guide assistance",
+  "Chilled packaged drinking water bottles",
+  "Prem Mandir & Krishna Janmabhoomi darshan coordination",
+];
+
+export const EXCLUSION_PRESETS = [
+  "Monument entry tickets & camera/drone permits",
+  "Meals, buffet lunches & personal snacks/dining",
+  "Chauffeur / guide discretionary tips & gratuities",
+  "Special temple VIP pooja / express darshan passes",
+  "Personal shopping & handicraft purchases",
+  "Unscheduled out-of-route deviations & waiting halts",
+];
+
 const emptyPackage = {
   name: "",
   packageCode: "",
@@ -50,6 +70,20 @@ const emptyPackage = {
   startingPriceInr: 3499,
   fleetPrices: { sedan: 3499, ertiga: 4299, innova: 5299, tempo: 6999, urbania: 8999 },
   nightChargeInr: 300,
+  source: "Agra",
+  destination: "",
+  inclusions: [
+    "Private AC Cab dedicated exclusively to your group",
+    "Police-verified professional chauffeur & fuel charges",
+    "All highway toll taxes & state border permits",
+    "Doorstep hotel / railway station pickup & drop",
+    "Chilled packaged drinking water bottles",
+  ] as string[],
+  exclusions: [
+    "Monument entry tickets & camera/drone permits",
+    "Meals, buffet lunches & personal snacks/dining",
+    "Chauffeur / guide discretionary tips & gratuities",
+  ] as string[],
   inclusionsHighlight: "Private AC Cab, Chauffeur Allowance, Fuel & State Taxes",
   inclusionsNote: "",
   imageUrl: "/assets/packages/taj-dawn.webp",
@@ -76,6 +110,10 @@ export function TourPackagesPage({ user }: { user: AdminUser }) {
   const [customImageCaption, setCustomImageCaption] = useState("");
   const [customImageAlt, setCustomImageAlt] = useState("");
 
+  // Inclusions and Exclusions inputs
+  const [newInclusion, setNewInclusion] = useState("");
+  const [newExclusion, setNewExclusion] = useState("");
+
   const reload = async () => {
     setLoading(true);
     setError(null);
@@ -99,6 +137,8 @@ export function TourPackagesPage({ user }: { user: AdminUser }) {
     setCustomImageUrl("");
     setCustomImageCaption("");
     setCustomImageAlt("");
+    setNewInclusion("");
+    setNewExclusion("");
     setModalOpen(true);
   }
 
@@ -120,6 +160,10 @@ export function TourPackagesPage({ user }: { user: AdminUser }) {
         urbania: pkg.fleetPrices.urbania ?? pkg.startingPriceInr + 5500,
       },
       nightChargeInr: pkg.nightChargeInr,
+      source: pkg.source ?? "Agra",
+      destination: pkg.destination ?? "",
+      inclusions: Array.isArray(pkg.inclusions) && pkg.inclusions.length > 0 ? [...pkg.inclusions] : [...emptyPackage.inclusions],
+      exclusions: Array.isArray(pkg.exclusions) && pkg.exclusions.length > 0 ? [...pkg.exclusions] : [...emptyPackage.exclusions],
       inclusionsHighlight: pkg.inclusionsHighlight ?? "",
       inclusionsNote: pkg.inclusionsNote ?? "",
       imageUrl: pkg.imageUrl ?? "/assets/packages/taj-dawn.webp",
@@ -130,7 +174,41 @@ export function TourPackagesPage({ user }: { user: AdminUser }) {
     setCustomImageUrl("");
     setCustomImageCaption("");
     setCustomImageAlt("");
+    setNewInclusion("");
+    setNewExclusion("");
     setModalOpen(true);
+  }
+
+  function addInclusion(text: string) {
+    const trimmed = text.trim();
+    if (!trimmed || form.inclusions.includes(trimmed)) return;
+    setForm((p) => ({ ...p, inclusions: [...p.inclusions, trimmed] }));
+  }
+
+  function addCustomInclusion() {
+    if (!newInclusion.trim()) return;
+    addInclusion(newInclusion);
+    setNewInclusion("");
+  }
+
+  function removeInclusion(idx: number) {
+    setForm((p) => ({ ...p, inclusions: p.inclusions.filter((_, i) => i !== idx) }));
+  }
+
+  function addExclusion(text: string) {
+    const trimmed = text.trim();
+    if (!trimmed || form.exclusions.includes(trimmed)) return;
+    setForm((p) => ({ ...p, exclusions: [...p.exclusions, trimmed] }));
+  }
+
+  function addCustomExclusion() {
+    if (!newExclusion.trim()) return;
+    addExclusion(newExclusion);
+    setNewExclusion("");
+  }
+
+  function removeExclusion(idx: number) {
+    setForm((p) => ({ ...p, exclusions: p.exclusions.filter((_, i) => i !== idx) }));
   }
 
   function handleNameChange(name: string) {
@@ -266,6 +344,10 @@ export function TourPackagesPage({ user }: { user: AdminUser }) {
         starting_price_inr: Number(form.startingPriceInr),
         fleet_prices: form.fleetPrices,
         night_charge_inr: Number(form.nightChargeInr) || 0,
+        source: form.source.trim() || "Agra",
+        destination: form.destination.trim() || "",
+        inclusions: form.inclusions,
+        exclusions: form.exclusions,
         inclusions_highlight: form.inclusionsHighlight.trim() || undefined,
         inclusions_note: form.inclusionsNote.trim() || undefined,
         image_url: form.imageUrl?.trim() || undefined,
@@ -392,8 +474,18 @@ export function TourPackagesPage({ user }: { user: AdminUser }) {
                     )}
                     <span className="text-xs text-ink-soft">({pkg.durationText})</span>
                   </div>
-                  <p className="mt-1 font-mono text-xs text-ink-soft">
-                    /packages/{pkg.packageCode} · From {formatINR(pkg.startingPriceInr)}
+                  <p className="mt-1 font-mono text-xs text-ink-soft flex items-center gap-2 flex-wrap">
+                    <span>/packages/{pkg.packageCode}</span>
+                    <span>·</span>
+                    <span className="text-primary font-medium">📍 {pkg.source || "Agra"} → {pkg.destination || "Tour"}</span>
+                    <span>·</span>
+                    <span>From {formatINR(pkg.startingPriceInr)}</span>
+                    {Array.isArray(pkg.inclusions) && pkg.inclusions.length > 0 && (
+                      <span className="text-emerald-400 font-sans text-[11px] font-medium">✓ {pkg.inclusions.length} incl</span>
+                    )}
+                    {Array.isArray(pkg.exclusions) && pkg.exclusions.length > 0 && (
+                      <span className="text-rose-400 font-sans text-[11px] font-medium">✗ {pkg.exclusions.length} excl</span>
+                    )}
                   </p>
                   <div className="mt-2 flex flex-wrap gap-2 text-[11px] text-ink-soft">
                     {FLEET_KEYS.map((k) => (
@@ -522,8 +614,28 @@ export function TourPackagesPage({ user }: { user: AdminUser }) {
 
           </div>
 
+          {/* Source and Destination Corridor */}
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div>
+              <Label>Source / Pickup Location</Label>
+              <Input
+                value={form.source}
+                onChange={(e) => setForm((p) => ({ ...p, source: e.target.value }))}
+                placeholder="e.g. Agra, Delhi NCR, Jaipur"
+              />
+            </div>
+            <div>
+              <Label>Destination / Route Covered</Label>
+              <Input
+                value={form.destination}
+                onChange={(e) => setForm((p) => ({ ...p, destination: e.target.value }))}
+                placeholder="e.g. Mathura & Vrindavan, Taj Mahal & Fatehpur Sikri"
+              />
+            </div>
+          </div>
+
           <div>
-            <Label>Inclusions Highlight</Label>
+            <Label>Inclusions Highlight (Short summary)</Label>
             <Input
               value={form.inclusionsHighlight}
               onChange={(e) => setForm((p) => ({ ...p, inclusionsHighlight: e.target.value }))}
@@ -531,8 +643,116 @@ export function TourPackagesPage({ user }: { user: AdminUser }) {
             />
           </div>
 
+          {/* Interactive Inclusions Manager */}
+          <div className="rounded-lg border border-hairline p-4 bg-surface-raised/20 space-y-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="font-semibold text-ink text-sm">Package Inclusions (What is included)</h4>
+                <p className="text-xs text-ink-soft">Displays as verified green checkmarks on customer cards and detail pages.</p>
+              </div>
+              <span className="rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 text-xs font-semibold">
+                {form.inclusions.length} {form.inclusions.length === 1 ? "Item" : "Items"}
+              </span>
+            </div>
+
+            {/* Quick Presets */}
+            <div>
+              <span className="text-[11px] font-medium text-ink-soft block mb-1">Quick Presets:</span>
+              <div className="flex flex-wrap gap-1.5">
+                {INCLUSION_PRESETS.map((preset) => (
+                  <button
+                    key={preset}
+                    type="button"
+                    onClick={() => addInclusion(preset)}
+                    disabled={form.inclusions.includes(preset)}
+                    className="text-[11px] rounded-full border border-hairline px-2.5 py-0.5 bg-surface hover:bg-surface-raised text-ink disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                  >
+                    + {preset}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Custom Input */}
+            <div className="flex gap-2">
+              <Input
+                value={newInclusion}
+                onChange={(e) => setNewInclusion(e.target.value)}
+                placeholder="Add custom inclusion..."
+                onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addCustomInclusion(); } }}
+              />
+              <Button type="button" variant="outline" size="sm" onClick={addCustomInclusion}>
+                Add
+              </Button>
+            </div>
+
+            {/* Active Inclusions Chips */}
+            <div className="flex flex-wrap gap-1.5 pt-1">
+              {form.inclusions.map((item, idx) => (
+                <span key={idx} className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 text-xs">
+                  <span>✓</span> {item}
+                  <button type="button" onClick={() => removeInclusion(idx)} className="hover:text-red-400 font-bold ml-1">×</button>
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Interactive Exclusions Manager */}
+          <div className="rounded-lg border border-hairline p-4 bg-surface-raised/20 space-y-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="font-semibold text-ink text-sm">Package Exclusions (What is NOT included)</h4>
+                <p className="text-xs text-ink-soft">Displays as clear exclusion items to prevent customer confusion.</p>
+              </div>
+              <span className="rounded bg-rose-500/10 text-rose-400 border border-rose-500/20 px-2 py-0.5 text-xs font-semibold">
+                {form.exclusions.length} {form.exclusions.length === 1 ? "Item" : "Items"}
+              </span>
+            </div>
+
+            {/* Quick Presets */}
+            <div>
+              <span className="text-[11px] font-medium text-ink-soft block mb-1">Quick Presets:</span>
+              <div className="flex flex-wrap gap-1.5">
+                {EXCLUSION_PRESETS.map((preset) => (
+                  <button
+                    key={preset}
+                    type="button"
+                    onClick={() => addExclusion(preset)}
+                    disabled={form.exclusions.includes(preset)}
+                    className="text-[11px] rounded-full border border-hairline px-2.5 py-0.5 bg-surface hover:bg-surface-raised text-ink disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                  >
+                    + {preset}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Custom Input */}
+            <div className="flex gap-2">
+              <Input
+                value={newExclusion}
+                onChange={(e) => setNewExclusion(e.target.value)}
+                placeholder="Add custom exclusion..."
+                onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addCustomExclusion(); } }}
+              />
+              <Button type="button" variant="outline" size="sm" onClick={addCustomExclusion}>
+                Add
+              </Button>
+            </div>
+
+            {/* Active Exclusions Chips */}
+            <div className="flex flex-wrap gap-1.5 pt-1">
+              {form.exclusions.map((item, idx) => (
+                <span key={idx} className="inline-flex items-center gap-1.5 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20 px-3 py-1 text-xs">
+                  <span>✗</span> {item}
+                  <button type="button" onClick={() => removeExclusion(idx)} className="hover:text-red-400 font-bold ml-1">×</button>
+                </span>
+              ))}
+            </div>
+          </div>
+
           <div>
-            <Label>Inclusions & Exclusions Detail Note</Label>
+            <Label>Inclusions & Exclusions Detail Note (Optional)</Label>
             <Textarea
               rows={2}
               value={form.inclusionsNote ?? ""}

@@ -53,7 +53,14 @@ export const CalculateFareSchema = CalculateFareBaseSchema
         localPackageKey: selection.source === "curated" ? selection.localPackageKey : undefined,
       };
     }
-    return { ...data, tripType: "round-trip" as const, originName: "", destinationName: "", packageId: selection.id, localPackageKey: undefined };
+    return {
+      ...data,
+      tripType: "round-trip" as const,
+      originName: data.originName || "",
+      destinationName: data.destinationName || "",
+      packageId: selection.id,
+      localPackageKey: undefined,
+    };
   });
 
 export type CalculateFareRequest = z.infer<typeof CalculateFareSchema>;

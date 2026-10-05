@@ -24,6 +24,7 @@ import { SEO_LANDING_SLUGS, type SeoLandingSlug } from "../data/seoLandingSlugs"
 import { marketingHubs } from "./routes";
 import { SeoHead } from "../components/seo/SeoHead";
 import { packages, routes, vehicles, type Route } from "../data/catalogue";
+import { toDossierTourPackage } from "../services/catalogManifest";
 import LivePackageDetailPage from "../pages/LivePackageDetailPage";
 import generatedPublishedCatalog from "../data/generated-published-catalog.json";
 import generatedPublishedRoutes from "../data/generated-published-routes.json";
@@ -593,7 +594,7 @@ export function ServerApp({ pathname: propPathname }: AppProps = {}) {
         ) : dynamicRoute ? (
           <RouteDetailPage language={language} route={dynamicRoute} />
         ) : dossierTourPackage ? (
-          <DossierTourPackagePage language={language} item={dossierTourPackage} />
+          <PackageDetailPage language={language} pkg={toDossierTourPackage(dossierTourPackage)} />
         ) : matchedPackage ? (
           <PackageDetailPage language={language} pkg={matchedPackage} />
         ) : dynamicPackage ? (

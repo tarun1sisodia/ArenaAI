@@ -92,6 +92,11 @@ function mapTourPackage(row: Record<string, unknown>): TourPackageRecord {
     nightChargeInr: num(row.night_charge_inr),
     inclusionsHighlight: row.inclusions_highlight ? String(row.inclusions_highlight) : null,
     inclusionsNote: row.inclusions_note ? String(row.inclusions_note) : null,
+    source: String(row.source ?? "Agra"),
+    destination: String(row.destination ?? ""),
+    inclusions: Array.isArray(row.inclusions) ? (row.inclusions as string[]) : [],
+    exclusions: Array.isArray(row.exclusions) ? (row.exclusions as string[]) : [],
+    itinerary: Array.isArray(row.itinerary) ? (row.itinerary as any[]) : [],
     imageUrl: row.image_url ? String(row.image_url) : null,
     gallery: Array.isArray(row.gallery) ? (row.gallery as any) : [],
     status: row.status as ContentStatus,
@@ -731,26 +736,38 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
         async create(record: TourPackageRecord) {
           await query(
             client,
-            `insert into tour_packages (id, package_code, name, duration_text, days, nights, base_tier_code, starting_price_inr, fleet_prices, night_charge_inr, inclusions_highlight, inclusions_note, image_url, gallery, status, is_active, created_at, updated_at)
-             values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)`,
-            [record.id, record.packageCode, record.name, record.durationText, record.days, record.nights, record.baseTierCode, record.startingPriceInr, JSON.stringify(record.fleetPrices), record.nightChargeInr, record.inclusionsHighlight, record.inclusionsNote, record.imageUrl ?? null, JSON.stringify(record.gallery ?? []), record.status, record.isActive, record.createdAt, record.updatedAt]
+            `insert into tour_packages (id, package_code, name, duration_text, days, nights, base_tier_code, starting_price_inr, fleet_prices, night_charge_inr, inclusions_highlight, inclusions_note, source, destination, inclusions, exclusions, itinerary, image_url, gallery, status, is_active, created_at, updated_at)
+             values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23)`,
+            [
+              record.id, record.packageCode, record.name, record.durationText, record.days, record.nights,
+              record.baseTierCode, record.startingPriceInr, JSON.stringify(record.fleetPrices), record.nightChargeInr,
+              record.inclusionsHighlight, record.inclusionsNote, record.source ?? "Agra", record.destination ?? "",
+              JSON.stringify(record.inclusions ?? []), JSON.stringify(record.exclusions ?? []), JSON.stringify(record.itinerary ?? []),
+              record.imageUrl ?? null, JSON.stringify(record.gallery ?? []), record.status, record.isActive, record.createdAt, record.updatedAt
+            ]
           );
           return record;
         },
         async update(record: TourPackageRecord) {
           await query(
             client,
-            `update tour_packages set package_code=$2, name=$3, duration_text=$4, days=$5, nights=$6, base_tier_code=$7, starting_price_inr=$8, fleet_prices=$9, night_charge_inr=$10, inclusions_highlight=$11, inclusions_note=$12, image_url=$13, gallery=$14, status=$15, is_active=$16, updated_at=$17 where id=$1`,
-            [record.id, record.packageCode, record.name, record.durationText, record.days, record.nights, record.baseTierCode, record.startingPriceInr, JSON.stringify(record.fleetPrices), record.nightChargeInr, record.inclusionsHighlight, record.inclusionsNote, record.imageUrl ?? null, JSON.stringify(record.gallery ?? []), record.status, record.isActive, record.updatedAt]
+            `update tour_packages set package_code=$2, name=$3, duration_text=$4, days=$5, nights=$6, base_tier_code=$7, starting_price_inr=$8, fleet_prices=$9, night_charge_inr=$10, inclusions_highlight=$11, inclusions_note=$12, source=$13, destination=$14, inclusions=$15, exclusions=$16, itinerary=$17, image_url=$18, gallery=$19, status=$20, is_active=$21, updated_at=$22 where id=$1`,
+            [
+              record.id, record.packageCode, record.name, record.durationText, record.days, record.nights,
+              record.baseTierCode, record.startingPriceInr, JSON.stringify(record.fleetPrices), record.nightChargeInr,
+              record.inclusionsHighlight, record.inclusionsNote, record.source ?? "Agra", record.destination ?? "",
+              JSON.stringify(record.inclusions ?? []), JSON.stringify(record.exclusions ?? []), JSON.stringify(record.itinerary ?? []),
+              record.imageUrl ?? null, JSON.stringify(record.gallery ?? []), record.status, record.isActive, record.updatedAt
+            ]
           );
           return record;
         },
         async getById(id: string) {
-          const rows = await query(client, "select * from tour_packages where id=$1", [id]);
+          const rows = await query(client, "select * from tour_packages where id=$1 or package_code=$1", [id]);
           return rows[0] ? mapTourPackage(rows[0]) : null;
         },
         async getByCode(code: string) {
-          const rows = await query(client, "select * from tour_packages where package_code=$1", [code]);
+          const rows = await query(client, "select * from tour_packages where package_code=$1 or id=$1", [code]);
           return rows[0] ? mapTourPackage(rows[0]) : null;
         },
         async list(filter = {}) {

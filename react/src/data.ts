@@ -82,6 +82,12 @@ export type TourPackage = {
   blurb: string;
   includes: readonly string[];
   excludes: readonly string[];
+  source?: string;
+  destination?: string;
+  fleetPrices?: Record<string, number>;
+  days?: number;
+  nights?: number;
+  itinerary?: readonly { time?: string; title: string; desc: string }[];
   timeline?: readonly TourItineraryStop[];
   upgrades?: readonly VehicleUpgrade[];
 };

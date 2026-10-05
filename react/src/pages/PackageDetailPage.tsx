@@ -108,6 +108,13 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
 
   // Resolve timeline stops
   const timelineStops = useMemo<ItineraryItem[]>(() => {
+    if (pkg.itinerary && pkg.itinerary.length > 0) {
+      return pkg.itinerary.map((stop: any, idx: number) => ({
+        time: stop.time || `Stop 0${idx + 1}`,
+        title: typeof stop.title === "string" ? stop.title : stop.title?.en || stop.name || `Sightseeing Stop ${idx + 1}`,
+        desc: typeof stop.desc === "string" ? stop.desc : stop.desc?.en || stop.description || "Chauffeured sightseeing and heritage exploration.",
+      }));
+    }
     if (pkg.timeline && pkg.timeline.length > 0) {
       return pkg.timeline.map((stop) => ({
         time: stop.time,
@@ -115,11 +122,12 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
         desc: typeof stop.desc === "string" ? stop.desc : stop.desc.en,
       }));
     }
-    if (PACKAGE_DEFAULT_TIMELINES[pkg.id]) {
-      return PACKAGE_DEFAULT_TIMELINES[pkg.id];
+    if (PACKAGE_DEFAULT_TIMELINES[pkg.id] || PACKAGE_DEFAULT_TIMELINES[pkg.slug]) {
+      return PACKAGE_DEFAULT_TIMELINES[pkg.id] || PACKAGE_DEFAULT_TIMELINES[pkg.slug];
     }
     // Dynamic fallback stops generated from places
-    return pkg.places.map((place, idx) => ({
+    const placesList = pkg.places && pkg.places.length > 0 ? pkg.places : [pkg.source || "Agra", pkg.destination || pkg.name];
+    return placesList.map((place, idx) => ({
       time: `Stop 0${idx + 1}`,
       title: place,
       desc: `Chauffeured visit and guided architectural exploration of ${place} with dedicated waiting time and parking assistance.`,
@@ -202,7 +210,9 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
   };
 
   // Step 1 booking link (Vehicle Selection screen)
-  const bookStep1Url = `/book.html?package=${encodeURIComponent(pkg.slug)}&step=1`;
+  const fromParam = encodeURIComponent(pkg.source || "Agra");
+  const toParam = encodeURIComponent(pkg.destination || pkg.name);
+  const bookStep1Url = `/book.html?trip=package&package=${encodeURIComponent(pkg.slug)}&from=${fromParam}&to=${toParam}&step=1`;
   const whatsappUrl = `https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
     `Hello Agra SK Baghel Tour and Travels, I wish to reserve the ${pkg.name} (Starting ₹${pkg.from.toLocaleString("en-IN")}).`
   )}`;
@@ -239,8 +249,9 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
             <span className="bg-primary-fixed text-on-primary-fixed px-3 py-1 rounded-lg text-label-caps uppercase font-semibold tracking-widest">
               {pkg.kicker || "Signature Tour"}
             </span>
-            <span className="bg-sandstone-wash text-terracotta-sandstone px-3 py-1 rounded-lg text-label-caps uppercase font-semibold tracking-wider">
-              Private Expedition
+            <span className="bg-sandstone-wash text-terracotta-sandstone px-3 py-1 rounded-lg text-label-caps uppercase font-semibold tracking-wider flex items-center gap-1">
+              <span className="material-symbols-outlined text-icon-14">route</span>
+              {pkg.source || "Agra"} → {pkg.destination || pkg.name}
             </span>
             <span className="bg-surface-container-high text-on-surface px-3 py-1 rounded-lg text-label-caps uppercase font-semibold">
               All-Inclusive Chauffeur &amp; Guide
@@ -366,24 +377,33 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
                     <span className="font-title-md text-title-md font-semibold text-on-surface">What is Fully Included</span>
                   </div>
                   <ul className="flex flex-col gap-space-xs text-body-sm font-body-sm text-on-surface-variant">
-                    {pkg.includes.map((inc, i) => (
-                      <li key={i} className="flex items-start gap-space-xs">
-                        <span className="material-symbols-outlined text-success-jade text-icon-18 shrink-0 mt-0.5">check</span>
-                        <span>{inc}</span>
-                      </li>
-                    ))}
-                    <li className="flex items-start gap-space-xs">
-                      <span className="material-symbols-outlined text-success-jade text-icon-18 shrink-0 mt-0.5">check</span>
-                      <span>Chauffeur-driven AC vehicle dedicated exclusively to your group</span>
-                    </li>
-                    <li className="flex items-start gap-space-xs">
-                      <span className="material-symbols-outlined text-success-jade text-icon-18 shrink-0 mt-0.5">check</span>
-                      <span>All expressway FASTag tolls, parking fees, and state entry permits</span>
-                    </li>
-                    <li className="flex items-start gap-space-xs">
-                      <span className="material-symbols-outlined text-success-jade text-icon-18 shrink-0 mt-0.5">check</span>
-                      <span>Chilled Himalayan mineral water, sanitizing wipes &amp; confectionary</span>
-                    </li>
+                    {pkg.includes && pkg.includes.length > 0 ? (
+                      pkg.includes.map((inc, i) => (
+                        <li key={i} className="flex items-start gap-space-xs">
+                          <span className="material-symbols-outlined text-success-jade text-icon-18 shrink-0 mt-0.5">check_circle</span>
+                          <span>{inc}</span>
+                        </li>
+                      ))
+                    ) : (
+                      <>
+                        <li className="flex items-start gap-space-xs">
+                          <span className="material-symbols-outlined text-success-jade text-icon-18 shrink-0 mt-0.5">check_circle</span>
+                          <span>Chauffeur-driven AC vehicle dedicated exclusively to your group</span>
+                        </li>
+                        <li className="flex items-start gap-space-xs">
+                          <span className="material-symbols-outlined text-success-jade text-icon-18 shrink-0 mt-0.5">check_circle</span>
+                          <span>All highway tolls, state entry permits &amp; monument parking fees</span>
+                        </li>
+                        <li className="flex items-start gap-space-xs">
+                          <span className="material-symbols-outlined text-success-jade text-icon-18 shrink-0 mt-0.5">check_circle</span>
+                          <span>Doorstep pickup &amp; drop-off from hotel or station</span>
+                        </li>
+                        <li className="flex items-start gap-space-xs">
+                          <span className="material-symbols-outlined text-success-jade text-icon-18 shrink-0 mt-0.5">check_circle</span>
+                          <span>Chilled Himalayan mineral water &amp; sanitizing wipes</span>
+                        </li>
+                      </>
+                    )}
                   </ul>
                 </div>
 
@@ -394,24 +414,29 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
                     <span className="font-title-md text-title-md font-semibold text-on-surface">What is Excluded</span>
                   </div>
                   <ul className="flex flex-col gap-space-xs text-body-sm font-body-sm text-on-surface-variant">
-                    {pkg.excludes.map((exc, i) => (
-                      <li key={i} className="flex items-start gap-space-xs">
-                        <span className="material-symbols-outlined text-secondary text-icon-18 shrink-0 mt-0.5">remove</span>
-                        <span>{exc}</span>
-                      </li>
-                    ))}
-                    <li className="flex items-start gap-space-xs">
-                      <span className="material-symbols-outlined text-secondary text-icon-18 shrink-0 mt-0.5">remove</span>
-                      <span>Monument entrance tickets (Pay direct or request concierge pre-booking: ₹1,100 foreign national / ₹50 Indian national)</span>
-                    </li>
-                    <li className="flex items-start gap-space-xs">
-                      <span className="material-symbols-outlined text-secondary text-icon-18 shrink-0 mt-0.5">remove</span>
-                      <span>Personal purchases, marble handicraft souvenirs &amp; artisan items</span>
-                    </li>
-                    <li className="flex items-start gap-space-xs">
-                      <span className="material-symbols-outlined text-secondary text-icon-18 shrink-0 mt-0.5">remove</span>
-                      <span>Driver &amp; Guide discretionary gratuity / tips</span>
-                    </li>
+                    {pkg.excludes && pkg.excludes.length > 0 ? (
+                      pkg.excludes.map((exc, i) => (
+                        <li key={i} className="flex items-start gap-space-xs">
+                          <span className="material-symbols-outlined text-secondary text-icon-18 shrink-0 mt-0.5">cancel</span>
+                          <span>{exc}</span>
+                        </li>
+                      ))
+                    ) : (
+                      <>
+                        <li className="flex items-start gap-space-xs">
+                          <span className="material-symbols-outlined text-secondary text-icon-18 shrink-0 mt-0.5">cancel</span>
+                          <span>Monument entrance tickets (Pay direct or request concierge pre-booking)</span>
+                        </li>
+                        <li className="flex items-start gap-space-xs">
+                          <span className="material-symbols-outlined text-secondary text-icon-18 shrink-0 mt-0.5">cancel</span>
+                          <span>Personal purchases, meals &amp; souvenir artisan items</span>
+                        </li>
+                        <li className="flex items-start gap-space-xs">
+                          <span className="material-symbols-outlined text-secondary text-icon-18 shrink-0 mt-0.5">cancel</span>
+                          <span>Driver &amp; Guide discretionary gratuity / tips</span>
+                        </li>
+                      </>
+                    )}
                   </ul>
                 </div>
               </div>
@@ -624,8 +649,8 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
                 <div className="absolute inset-0 bg-ink-charcoal/20"></div>
                 <div className="absolute bottom-4 left-4 bg-surface/95 backdrop-blur-md p-space-sm rounded-lg shadow-md max-w-xs border border-border-warm">
                   <span className="text-label-caps uppercase text-primary font-bold">Corridor Analytics</span>
-                  <p className="text-body-sm font-semibold text-on-surface">Delhi NCR → Yamuna Expressway → Taj Ganj</p>
-                  <p className="text-body-lg text-secondary">210 km • Average Transit: 3h 15m • 0 Traffic Jams</p>
+                  <p className="text-body-sm font-semibold text-on-surface">{pkg.source || "Agra"} → {pkg.destination || pkg.name}</p>
+                  <p className="text-body-lg text-secondary">{pkg.duration} Private Charter • Verified Chauffeur • All Tolls &amp; Permits Included</p>
                 </div>
               </div>
             </div>

@@ -6,7 +6,7 @@ import generatedPublishedTourPackages from "../data/generated-published-tour-pac
 import { WhatsAppIcon } from "../components/icons";
 import { Pagination } from "../components/ui/Pagination";
 import { LiveCatalogSection } from "../components/catalog/LiveCatalogSection";
-import { loadPublishedPackages } from "../services/catalogManifest";
+import { loadPublishedPackages, toDossierTourPackage } from "../services/catalogManifest";
 
 interface PackagesPageProps {
   language?: SupportedLanguage;
@@ -383,31 +383,6 @@ function getPackageImage(slug: string): string {
   return "/assets/packages/agra-day.webp";
 }
 
-function toDossierTourPackage(item: any): TourPackage {
-  const startingPrice = Number(item.startingPriceInr || item.fleetPrices?.sedan || 3499);
-  const slug = String(item.slug ?? item.packageCode ?? item.package_code);
-  return {
-    id: slug,
-    slug,
-    name: item.name,
-    kicker: `${item.days ?? 1} Day${(item.days ?? 1) > 1 ? "s" : ""} Private Tour`,
-    duration: item.durationText || `${item.days ?? 1} Day`,
-    from: startingPrice,
-    image: item.imageUrl || item.image_url || item.image || getPackageImage(slug),
-    gallery: Array.isArray(item.gallery) ? item.gallery : undefined,
-    places: [item.name, "Agra Heritage Sites"],
-    blurb: item.inclusionsHighlight || "Private sanitized AC cab, dedicated verified chauffeur & monument sightseeing.",
-    includes: [
-      "Private AC vehicle & dedicated verified chauffeur",
-      "All highway tolls & monument parking fees included",
-      "Doorstep pickup & drop-off from hotel or station",
-    ],
-    excludes: [
-      "Monument entry tickets",
-      "Meals & personal expenses",
-    ],
-  };
-}
 
 const dossierTourPackages: TourPackage[] = (generatedPublishedTourPackages as any[])
   .filter((item) => item && (item.slug || item.packageCode || item.package_code) && item.name)
@@ -806,7 +781,9 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
           {displayedPackages.map((item) => {
             const { pkg } = item;
             const packageDetailUrl = `/en/packages/${pkg.slug}`;
-            const bookStep1Url = `/book.html?package=${encodeURIComponent(pkg.slug)}&step=1`;
+            const fromParam = encodeURIComponent(pkg.source || "Agra");
+            const toParam = encodeURIComponent(pkg.destination || pkg.name);
+            const bookStep1Url = `/book.html?trip=package&package=${encodeURIComponent(pkg.slug)}&from=${fromParam}&to=${toParam}&step=1`;
             const whatsappPackageUrl = `https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
               `Hello Agra SK Baghel Tour and Travels, I am interested in the ${pkg.name}.`
             )}`;
@@ -924,6 +901,10 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
                         {pkg.name}
                       </h3>
                     </a>
+                    <div className="inline-flex items-center gap-1.5 text-xs text-primary font-semibold">
+                      <span className="material-symbols-outlined text-icon-14">route</span>
+                      <span>{pkg.source || "Agra"} → {pkg.destination || pkg.name}</span>
+                    </div>
                     <p className="font-body-sm text-body-md text-on-surface-variant line-clamp-2 leading-relaxed">
                       {pkg.blurb}
                     </p>
@@ -972,9 +953,15 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
                         ))}
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-1.5 pt-0.5">
+                    <div className="grid grid-cols-3 gap-1.5 pt-0.5">
                       <a
-                        className="inline-flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-black text-white text-xs font-semibold hover:bg-neutral-900 border border-white/10 transition-colors active:scale-[0.98]"
+                        className="inline-flex items-center justify-center gap-1 px-2 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high border border-border-warm text-on-surface text-xs font-semibold transition-colors"
+                        href={packageDetailUrl}
+                      >
+                        <span>Details</span>
+                      </a>
+                      <a
+                        className="inline-flex items-center justify-center gap-1 px-2 py-1.5 rounded-lg bg-black text-white text-xs font-semibold hover:bg-neutral-900 border border-white/10 transition-colors active:scale-[0.98]"
                         style={{ color: "#ffffff" }}
                         href={whatsappPackageUrl}
                         target="_blank"
@@ -984,10 +971,11 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
                         <span className="text-white" style={{ color: "#ffffff" }}>WhatsApp</span>
                       </a>
                       <a
-                        className="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-lg bg-primary text-on-primary text-xs font-semibold hover:bg-primary-container transition-colors shadow-xs"
-                        href={packageDetailUrl}
+                        className="inline-flex items-center justify-center gap-1 px-2 py-1.5 rounded-lg bg-terracotta-deep text-white text-xs font-semibold hover:bg-terracotta-sunlit transition-colors shadow-xs"
+                        href={bookStep1Url}
                       >
-                        <span>View Details</span> →
+                        <span>Book Now</span>
+                        <span className="material-symbols-outlined text-icon-14">arrow_forward</span>
                       </a>
                     </div>
                   </div>

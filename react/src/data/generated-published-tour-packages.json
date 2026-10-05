@@ -18,6 +18,8 @@
     "nightChargeInr": 500,
     "inclusionsHighlight": "Private AC Cab, Chauffeur Allowance, Fuel",
     "inclusionsNote": "State Taxes, Toll Taxes",
+    "imageUrl": null,
+    "gallery": [],
     "status": "published",
     "isActive": true,
     "createdAt": "2026-10-04T10:13:03.000Z",
@@ -61,7 +63,6 @@
       }
     ],
     "slug": "same-day-prem-mandir-tour",
-    "image": "/assets/packages/taj-dawn.webp",
-    "gallery": []
+    "image": "/assets/packages/taj-dawn.webp"
   }
 ]

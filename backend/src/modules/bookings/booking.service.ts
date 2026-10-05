@@ -269,8 +269,12 @@ export function createBookingService(deps: {
         guestAccessToken: newGuestAccessToken(),
         tripType: fare.tripType,
         vehicleTier: input.vehicleTier,
-        originName: resolvedSelection.selection && resolvedSelection.selection.kind !== "outstation" ? null : input.originName.trim(),
-        destinationName: resolvedSelection.selection && resolvedSelection.selection.kind !== "outstation" ? null : input.destinationName.trim(),
+        originName: resolvedSelection.selection && resolvedSelection.selection.kind !== "outstation"
+          ? (resolvedSelection.selection.kind === "package" ? (input.originName?.trim() || "Agra") : null)
+          : input.originName.trim(),
+        destinationName: resolvedSelection.selection && resolvedSelection.selection.kind !== "outstation"
+          ? (resolvedSelection.selection.kind === "package" ? (input.destinationName?.trim() || null) : null)
+          : input.destinationName.trim(),
         bookingSelection: resolvedSelection.selection,
         selectedCatalogItemId: resolvedSelection.selectedCatalogItemId,
         pickupAddress,

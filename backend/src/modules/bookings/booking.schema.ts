@@ -113,8 +113,8 @@ export const CreateDraftBookingSchema = CreateDraftBookingBaseSchema
     return {
       ...data,
       tripType: "round-trip" as const,
-      originName: "",
-      destinationName: "",
+      originName: data.originName || "",
+      destinationName: data.destinationName || "",
       packageId: selection.id,
       localPackageKey: undefined,
     };

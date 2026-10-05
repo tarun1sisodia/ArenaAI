@@ -316,6 +316,11 @@ export interface TourPackageItem {
   nightChargeInr: number;
   inclusionsHighlight: string | null;
   inclusionsNote: string | null;
+  source?: string;
+  destination?: string;
+  inclusions?: string[];
+  exclusions?: string[];
+  itinerary?: Array<{ time?: string; title: string; desc: string }>;
   imageUrl?: string | null;
   gallery?: TourPackageGalleryImage[];
   status: CatalogStatus;
