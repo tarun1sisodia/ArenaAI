@@ -223,8 +223,8 @@ export async function buildRouteCatalogAndManifest(): Promise<void> {
   // keep the customer UI fresh, while this snapshot gives crawlers complete
   // HTML for catalog pages instead of a client-only loading shell.
   const publishedCatalogPath = join(reactRoot, "src", "data", "generated-published-catalog.json");
-  const apiBase = (process.env.VITE_API_BASE_URL || process.env.CATALOG_API_URL || "").replace(/\/+$/, "");
-  const catalogUrl = process.env.CATALOG_API_URL || process.env.VITE_API_BASE_URL;
+  const apiBase = (process.env.VITE_API_BASE_URL || process.env.CATALOG_API_URL || "https://skb-baghel-api-staging.onrender.com").replace(/\/+$/, "");
+  const catalogUrl = process.env.CATALOG_API_URL || process.env.VITE_API_BASE_URL || apiBase;
   let publishedCatalog: unknown[] = [];
   if (catalogUrl) {
     try {

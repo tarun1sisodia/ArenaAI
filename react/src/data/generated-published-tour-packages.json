@@ -1,1 +1,65 @@
-[]
+[
+  {
+    "id": "8e7587fe-45f2-45d7-b1dc-25b34758960c",
+    "packageCode": "same-day-prem-mandir-tour",
+    "name": "Same Day Prem mandir Tour",
+    "durationText": "1 Day",
+    "days": 1,
+    "nights": 1,
+    "baseTierCode": "sedan",
+    "startingPriceInr": 3518,
+    "fleetPrices": {
+      "sedan": 3518,
+      "ertiga": 4314,
+      "innova": 5322,
+      "tempo": 7013,
+      "urbania": 9016
+    },
+    "nightChargeInr": 500,
+    "inclusionsHighlight": "Private AC Cab, Chauffeur Allowance, Fuel",
+    "inclusionsNote": "State Taxes, Toll Taxes",
+    "status": "published",
+    "isActive": true,
+    "createdAt": "2026-10-04T10:13:03.000Z",
+    "updatedAt": "2026-10-04T10:13:20.000Z",
+    "upgrades": [
+      {
+        "id": "5d4969b3-2d29-4675-9adb-400d280b019b",
+        "packageId": null,
+        "tierCode": "ertiga",
+        "passengerNote": "Up to 6 Passengers",
+        "surchargeInr": 800,
+        "createdAt": "2026-10-03T22:32:29.000Z",
+        "updatedAt": "2026-10-03T22:32:29.000Z"
+      },
+      {
+        "id": "927bde12-fb80-4c3f-8562-f5ddaf9c21d2",
+        "packageId": null,
+        "tierCode": "innova",
+        "passengerNote": "VIP Executive Comfort (6–7 Passengers)",
+        "surchargeInr": 1800,
+        "createdAt": "2026-10-03T22:32:29.000Z",
+        "updatedAt": "2026-10-03T22:32:29.000Z"
+      },
+      {
+        "id": "f4795561-7295-4475-a97c-a300784b238a",
+        "packageId": null,
+        "tierCode": "tempo",
+        "passengerNote": "Large Family / Group (12–16 Passengers)",
+        "surchargeInr": 3500,
+        "createdAt": "2026-10-03T22:32:29.000Z",
+        "updatedAt": "2026-10-03T22:32:29.000Z"
+      },
+      {
+        "id": "2164971f-4a68-4bfc-a73f-9bbc3b44227d",
+        "packageId": null,
+        "tierCode": "urbania",
+        "passengerNote": "Ultra-Luxury Luxury Van (10–17 Passengers)",
+        "surchargeInr": 5500,
+        "createdAt": "2026-10-03T22:32:29.000Z",
+        "updatedAt": "2026-10-03T22:32:29.000Z"
+      }
+    ],
+    "slug": "same-day-prem-mandir-tour"
+  }
+]

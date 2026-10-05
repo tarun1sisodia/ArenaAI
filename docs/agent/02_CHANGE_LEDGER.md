@@ -529,7 +529,17 @@ Implemented:
 - **Verification**:
   - Migrations 0028 and 0029 applied cleanly to Supabase PostgreSQL database.
   - Verified constraints on `bookings` and `dossier_signoffs`.
-  - Monorepo `npm run verify` passed green.
+  ### 2026-10-05 — Live Tour Packages Hydration & Manifest Build Staging Fallback
+
+- **Live Dynamic Tour Packages Hydration (`react/src/services/catalogManifest.ts` & `react/src/pages/PackagesPage.tsx`)**:
+  - Enhanced `loadPublishedPackages()` to fetch live tour packages from `/api/v1/tour-packages/manifest` alongside static baseline and manifest snapshots.
+  - Re-ordered `PackagesPage.tsx` hydration map so dynamic packages published in the Admin desk take precedence over static baseline arrays without waiting for SSG rebuilds.
+  - Added fallback in `react/src/services/catalog.ts` (`fetchCatalogItemBySlug`) to resolve `/api/v1/tour-packages/by-code/:code` for newly published packages (e.g. `same-day-prem-mandir-tour`).
+- **Build Manifest Staging Fallback (`react/scripts/build-manifest.ts`)**:
+  - Provided default fallback `apiBase` pointing to staging API (`https://skb-baghel-api-staging.onrender.com`) when `VITE_API_BASE_URL` or `CATALOG_API_URL` is omitted.
+  - Generates 63 static SSG pages (including `/en/packages/same-day-prem-mandir-tour/`, 3 transfer route pages, 2 local packages, and content sections) and expands sitemap to 55 URLs.
+- **Verification**:
+  - `npm run verify` passed cleanly (184/184 tests across 27 files, 3x typechecks, SEO lifecycle, 3x builds).
 
 ## Known next work (Phase 3 — secure integrations)
 
@@ -539,6 +549,7 @@ Implemented:
 - Step 3.5: Split staff roles into content, pricing, dispatch, finance, review, audit, and security.
 
 See `docs/agent/00_CONTEXT_HANDOFF.md` and section 8 of the root operating specification.
+
 
 
 

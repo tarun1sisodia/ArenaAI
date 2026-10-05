@@ -1,1 +1,65 @@
-[]
+[
+  {
+    "id": "1a9c04c3-2f1d-47b0-9c05-3f8f1a789565",
+    "routeCode": "delhi-igi-oneway",
+    "name": "Delhi IGI Airport (DEL) Direct Transfer (One-Way)",
+    "distanceText": "225 km",
+    "directionNote": "Direct expressway express transfer between Agra and Delhi IGI Airport",
+    "fleetPrices": {
+      "sedan": 3499,
+      "ertiga": 4200,
+      "innova": 5200,
+      "tempo": 8500,
+      "urbania": 11500
+    },
+    "usePerKm": false,
+    "nightChargeInr": 0,
+    "status": "published",
+    "isActive": true,
+    "createdAt": "2026-10-03T22:32:29.000Z",
+    "updatedAt": "2026-10-04T10:21:36.000Z",
+    "slug": "delhi-igi-oneway"
+  },
+  {
+    "id": "1ba5683b-8b18-4015-ad65-e93968b717a1",
+    "routeCode": "agra-to-airport-noida",
+    "name": "Agra to Noida Airport",
+    "distanceText": "160",
+    "directionNote": "yamuna Expressway",
+    "fleetPrices": {
+      "sedan": 3000,
+      "ertiga": 4000,
+      "innova": 5000,
+      "tempo": 6000,
+      "urbania": 7000
+    },
+    "usePerKm": false,
+    "nightChargeInr": 0,
+    "status": "published",
+    "isActive": true,
+    "createdAt": "2026-10-04T10:20:44.000Z",
+    "updatedAt": "2026-10-04T10:20:44.000Z",
+    "slug": "agra-to-airport-noida"
+  },
+  {
+    "id": "7f72d9f7-fc5d-4f3b-86fd-1e7f28dbd364",
+    "routeCode": "agra-cantt-to-agra-airport",
+    "name": "Agra Cantt to Agra Airport",
+    "distanceText": "~15–20 km",
+    "directionNote": "Doorstep pickup or drop at station / airport",
+    "fleetPrices": {
+      "sedan": 800,
+      "ertiga": 900,
+      "innova": 1100,
+      "tempo": 2200,
+      "urbania": 3500
+    },
+    "usePerKm": false,
+    "nightChargeInr": 0,
+    "status": "published",
+    "isActive": true,
+    "createdAt": "2026-10-04T12:12:44.000Z",
+    "updatedAt": "2026-10-04T12:12:44.000Z",
+    "slug": "agra-cantt-to-agra-airport"
+  }
+]

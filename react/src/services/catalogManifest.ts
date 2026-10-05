@@ -177,9 +177,64 @@ export async function loadRoutesManifest(): Promise<Record<string, CompressedRou
 }
 
 export async function loadPublishedPackages(): Promise<TourPackage[]> {
-  const manifest = await fetchCatalogManifest();
-  if (manifest?.packages && manifest.packages.length > 0) {
-    return manifest.packages;
+  const bySlug = new Map<string, TourPackage>();
+
+  // 1. Static baseline
+  for (const p of staticPackages) {
+    bySlug.set(p.slug, p);
   }
-  return [...staticPackages];
+
+  // 2. Manifest snapshot if available
+  try {
+    const manifest = await fetchCatalogManifest();
+    if (manifest?.packages && manifest.packages.length > 0) {
+      for (const p of manifest.packages) {
+        bySlug.set(p.slug, p);
+      }
+    }
+  } catch {
+    // Ignore fallback
+  }
+
+  // 3. Live tour-packages manifest from Fastify API
+  try {
+    const apiBase = getApiBaseUrl();
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 3500);
+    const res = await fetch(`${apiBase}/api/v1/tour-packages/manifest`, {
+      headers: { Accept: "application/json" },
+      signal: controller.signal,
+    });
+    clearTimeout(timer);
+    if (res.ok) {
+      const json = await res.json();
+      const items = Array.isArray(json?.data) ? json.data : [];
+      for (const item of items) {
+        if (item.status && item.status !== "published") continue;
+        const slug = String(item.slug ?? item.packageCode ?? item.package_code);
+        const startingPrice = Number(item.startingPriceInr || item.fleetPrices?.sedan || 3499);
+        bySlug.set(slug, {
+          id: slug,
+          slug,
+          name: item.name,
+          kicker: `${item.days ?? 1} Day${(item.days ?? 1) > 1 ? "s" : ""} Private Tour`,
+          duration: item.durationText || `${item.days ?? 1} Day`,
+          from: startingPrice,
+          image: item.image || "/assets/packages/taj-dawn.webp",
+          places: [item.name, "Agra Heritage Sites"],
+          blurb: item.inclusionsHighlight || "Private sanitized AC cab, dedicated verified chauffeur & monument sightseeing.",
+          includes: [
+            "Private AC vehicle & dedicated verified chauffeur",
+            "All highway tolls & monument parking fees included",
+            "Doorstep pickup & drop-off from hotel or station",
+          ],
+          excludes: ["Monument entry tickets", "Meals & personal expenses"],
+        });
+      }
+    }
+  } catch {
+    // Ignore and return existing map
+  }
+
+  return Array.from(bySlug.values());
 }

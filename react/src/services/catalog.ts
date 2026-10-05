@@ -141,8 +141,37 @@ export async function fetchPublishedCatalog(
 
 /** Published catalog item by slug (used by dynamic detail pages). */
 export async function fetchCatalogItemBySlug(slug: string): Promise<PublicCatalogItem> {
-  const raw = await getJson<Record<string, unknown>>(`/api/v1/catalog/${encodeURIComponent(slug)}`);
-  return normalizeItem(raw);
+  try {
+    const raw = await getJson<Record<string, unknown>>(`/api/v1/catalog/${encodeURIComponent(slug)}`);
+    return normalizeItem(raw);
+  } catch (err) {
+    // Fallback to dedicated tour-packages endpoint
+    const res = await getJson<Record<string, unknown>>(`/api/v1/tour-packages/by-code/${encodeURIComponent(slug)}`);
+    if (res && res.name) {
+      const startingPrice = Number(res.startingPriceInr || (res.fleetPrices as any)?.sedan || 3499);
+      return {
+        id: String(res.id ?? slug),
+        type: "package",
+        slug: String(res.packageCode ?? res.package_code ?? slug),
+        title: String(res.name ?? ""),
+        shortDescription: String(res.inclusionsHighlight ?? "Private AC Cab & Chauffeur Tour"),
+        description: String(res.inclusionsNote ?? res.inclusionsHighlight ?? "All inclusive private sightseeing tour"),
+        durationText: String(res.durationText ?? `${res.days ?? 1} Day`),
+        routeSummary: String(res.name ?? ""),
+        startingPriceInr: startingPrice,
+        distanceKm: null,
+        availability: "available",
+        seatsLeft: null,
+        stops: [String(res.name ?? "Agra Heritage Sites")],
+        tripType: "local-tour",
+        publishedAt: String(res.createdAt ?? ""),
+        updatedAt: String(res.updatedAt ?? ""),
+        coverImage: { url: "/assets/packages/taj-dawn.webp" },
+        gallery: [],
+      };
+    }
+    throw err;
+  }
 }
 
 /** Live fleet from the active fare rules (admin Fleet & Fare editor). */

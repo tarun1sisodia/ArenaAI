@@ -397,11 +397,11 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
       .then((items) => {
         if (isMounted && items && items.length > 0) {
           const map = new Map<string, TourPackage>();
-          for (const p of items) {
-            map.set(p.slug, p);
-          }
           for (const dp of dossierTourPackages) {
             map.set(dp.slug, dp);
+          }
+          for (const p of items) {
+            map.set(p.slug, p);
           }
           setPackageList(Array.from(map.values()));
         }

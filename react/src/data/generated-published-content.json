@@ -1,7 +1,351 @@
 {
-  "cancellationPolicies": [],
-  "monuments": [],
-  "petPolicy": null,
-  "companyProfile": null,
-  "dossierSignoffs": []
+  "cancellationPolicies": [
+    {
+      "id": "759db8e9-751a-44d5-b378-6c76e965b6f6",
+      "policyType": "cab",
+      "noticePeriodText": "24+ hours before departure",
+      "sortOrder": 1,
+      "feeRetainedPercent": 0,
+      "refundPercent": 100,
+      "ruleText": "Full refund, no questions asked.",
+      "refundTimelineNote": "5–7 business days to original bank/UPI",
+      "createdAt": "2026-10-03T22:32:29.000Z",
+      "updatedAt": "2026-10-03T22:32:29.000Z"
+    },
+    {
+      "id": "a06e9395-f3c1-4f9e-9097-59e7848f176a",
+      "policyType": "cab",
+      "noticePeriodText": "<24 hours before departure",
+      "sortOrder": 2,
+      "feeRetainedPercent": 100,
+      "refundPercent": 0,
+      "ruleText": "Advance retained to compensate driver and vehicle allocation.",
+      "refundTimelineNote": "5–7 business days to original bank/UPI",
+      "createdAt": "2026-10-03T22:32:29.000Z",
+      "updatedAt": "2026-10-03T22:32:29.000Z"
+    },
+    {
+      "id": "c75e614a-5f67-41fe-93ce-851ce47f7a71",
+      "policyType": "cab",
+      "noticePeriodText": "No-show / Driver arrival dispatch",
+      "sortOrder": 3,
+      "feeRetainedPercent": 100,
+      "refundPercent": 0,
+      "ruleText": "Advance forfeited.",
+      "refundTimelineNote": "5–7 business days to original bank/UPI",
+      "createdAt": "2026-10-03T22:32:29.000Z",
+      "updatedAt": "2026-10-03T22:32:29.000Z"
+    },
+    {
+      "id": "6be22ab8-4582-4623-a295-fc5acb096804",
+      "policyType": "tour_package",
+      "noticePeriodText": "61+ days prior to departure",
+      "sortOrder": 10,
+      "feeRetainedPercent": 0,
+      "refundPercent": 100,
+      "ruleText": "Full refund minus payment gateway transaction fee.",
+      "refundTimelineNote": "5–7 business days to original bank/UPI",
+      "createdAt": "2026-10-03T22:32:29.000Z",
+      "updatedAt": "2026-10-03T22:32:29.000Z"
+    },
+    {
+      "id": "a4dc6a41-667e-4eea-9657-2b84d35a5a41",
+      "policyType": "tour_package",
+      "noticePeriodText": "46–60 days prior to departure",
+      "sortOrder": 11,
+      "feeRetainedPercent": 10,
+      "refundPercent": 90,
+      "ruleText": "10% cancellation charge.",
+      "refundTimelineNote": "5–7 business days to original bank/UPI",
+      "createdAt": "2026-10-03T22:32:29.000Z",
+      "updatedAt": "2026-10-03T22:32:29.000Z"
+    },
+    {
+      "id": "3f7180a0-a56b-413c-8095-79d9ea29f311",
+      "policyType": "tour_package",
+      "noticePeriodText": "31–45 days prior to departure",
+      "sortOrder": 12,
+      "feeRetainedPercent": 20,
+      "refundPercent": 80,
+      "ruleText": "20% cancellation charge.",
+      "refundTimelineNote": "5–7 business days to original bank/UPI",
+      "createdAt": "2026-10-03T22:32:29.000Z",
+      "updatedAt": "2026-10-03T22:32:29.000Z"
+    },
+    {
+      "id": "24f65545-1073-41b0-b5b3-0896ecad62ee",
+      "policyType": "tour_package",
+      "noticePeriodText": "16–30 days prior to departure",
+      "sortOrder": 13,
+      "feeRetainedPercent": 30,
+      "refundPercent": 70,
+      "ruleText": "30% cancellation charge.",
+      "refundTimelineNote": "5–7 business days to original bank/UPI",
+      "createdAt": "2026-10-03T22:32:29.000Z",
+      "updatedAt": "2026-10-03T22:32:29.000Z"
+    },
+    {
+      "id": "a18ceee3-8673-4949-b041-cdcb80f642cd",
+      "policyType": "tour_package",
+      "noticePeriodText": "6–15 days prior to departure",
+      "sortOrder": 14,
+      "feeRetainedPercent": 55,
+      "refundPercent": 45,
+      "ruleText": "55% cancellation charge.",
+      "refundTimelineNote": "5–7 business days to original bank/UPI",
+      "createdAt": "2026-10-03T22:32:29.000Z",
+      "updatedAt": "2026-10-03T22:32:29.000Z"
+    },
+    {
+      "id": "f26b7446-be13-48c1-963d-bf942ae42475",
+      "policyType": "tour_package",
+      "noticePeriodText": "0–5 days / No-show",
+      "sortOrder": 15,
+      "feeRetainedPercent": 100,
+      "refundPercent": 0,
+      "ruleText": "No refund applicable.",
+      "refundTimelineNote": "5–7 business days to original bank/UPI",
+      "createdAt": "2026-10-03T22:32:29.000Z",
+      "updatedAt": "2026-10-03T22:32:29.000Z"
+    }
+  ],
+  "monuments": [
+    {
+      "id": "f54495ce-1852-426e-9bc2-4b6a4fbba796",
+      "name": "Taj Mahal",
+      "visitingHours": "06:00 – 18:30 (Sunrise to Sunset)",
+      "closedNote": "Closed on Fridays",
+      "historicalContext": "Crown jewel of Mughal architecture, UNESCO World Heritage site built by Shah Jahan.",
+      "sortOrder": 1,
+      "createdAt": "2026-10-03T22:32:29.000Z",
+      "updatedAt": "2026-10-03T22:32:29.000Z"
+    },
+    {
+      "id": "1821c31c-9d14-4ec4-9009-6784835a1af8",
+      "name": "Agra Red Fort",
+      "visitingHours": "06:00 – 18:00",
+      "closedNote": "Open all days",
+      "historicalContext": "Main residence of the emperors of the Mughal Dynasty until 1638.",
+      "sortOrder": 2,
+      "createdAt": "2026-10-03T22:32:29.000Z",
+      "updatedAt": "2026-10-03T22:32:29.000Z"
+    },
+    {
+      "id": "b1fcdcc5-4095-40b6-bc54-bf940a46a5a5",
+      "name": "Fatehpur Sikri",
+      "visitingHours": "06:00 – 18:00",
+      "closedNote": "Open all days",
+      "historicalContext": "Imperial red sandstone city founded by Emperor Akbar in 1571.",
+      "sortOrder": 3,
+      "createdAt": "2026-10-03T22:32:29.000Z",
+      "updatedAt": "2026-10-03T22:32:29.000Z"
+    },
+    {
+      "id": "4682b46d-9668-40e9-92b7-ea6bef5b0616",
+      "name": "Itmad-Ud-Daulah (Baby Taj)",
+      "visitingHours": "08:00 – 00:00 (Midnight)",
+      "closedNote": "Open all days",
+      "historicalContext": "Tomb of Mirza Ghiyas Beg, precursor to the Taj Mahal with intricate pietra dura inlay.",
+      "sortOrder": 4,
+      "createdAt": "2026-10-03T22:32:29.000Z",
+      "updatedAt": "2026-10-03T22:32:29.000Z"
+    },
+    {
+      "id": "39070b68-10af-4ae2-ab74-0a651045621f",
+      "name": "Mehtab Bagh",
+      "visitingHours": "06:00 – 21:00",
+      "closedNote": "Open all days",
+      "historicalContext": "Moonlight garden providing sunset views of the Taj Mahal across the Yamuna River.",
+      "sortOrder": 5,
+      "createdAt": "2026-10-03T22:32:29.000Z",
+      "updatedAt": "2026-10-03T22:32:29.000Z"
+    },
+    {
+      "id": "e8931d43-a214-43e1-a230-b7bb1b48a43b",
+      "name": "Sikandra (Akbar Tomb)",
+      "visitingHours": "08:00 – 18:00",
+      "closedNote": "Open all days",
+      "historicalContext": "Final resting place of Mughal Emperor Akbar, blending Islamic, Hindu, and Buddhist motifs.",
+      "sortOrder": 6,
+      "createdAt": "2026-10-03T22:32:29.000Z",
+      "updatedAt": "2026-10-03T22:32:29.000Z"
+    },
+    {
+      "id": "6b71d34b-73e3-420a-b0ec-e7cc511eaf6e",
+      "name": "Jama Masjid Agra",
+      "visitingHours": "08:00 – 18:00",
+      "closedNote": "Open all days (Prayer hours restricted)",
+      "historicalContext": "Opposite Agra Fort, built by Jahanara Begum in 1648.",
+      "sortOrder": 7,
+      "createdAt": "2026-10-03T22:32:29.000Z",
+      "updatedAt": "2026-10-03T22:32:29.000Z"
+    },
+    {
+      "id": "e6e7a0c8-10e4-4de2-8533-3453dc1fa430",
+      "name": "Moti Masjid (Pearl Mosque)",
+      "visitingHours": "06:00 – 18:00",
+      "closedNote": "Inside Agra Fort",
+      "historicalContext": "Lustrous white marble mosque commissioned by Shah Jahan.",
+      "sortOrder": 8,
+      "createdAt": "2026-10-03T22:32:29.000Z",
+      "updatedAt": "2026-10-03T22:32:29.000Z"
+    },
+    {
+      "id": "2abb62e7-0a33-4646-a1b7-326b3da2a07f",
+      "name": "Jodha Bai Ka Rauza",
+      "visitingHours": "10:00 – 19:00",
+      "closedNote": "Open all days",
+      "historicalContext": "Largest residential palace complex inside Fatehpur Sikri.",
+      "sortOrder": 9,
+      "createdAt": "2026-10-03T22:32:29.000Z",
+      "updatedAt": "2026-10-03T22:32:29.000Z"
+    },
+    {
+      "id": "287f412f-c5ef-454e-9c5e-d36b74bcea14",
+      "name": "Mariam-Uz-Zamani Palace",
+      "visitingHours": "10:00 – 19:00",
+      "closedNote": "Open all days",
+      "historicalContext": "Palace dedicated to Akbar Portuguese-Christian / Rajput consort.",
+      "sortOrder": 10,
+      "createdAt": "2026-10-03T22:32:29.000Z",
+      "updatedAt": "2026-10-03T22:32:29.000Z"
+    }
+  ],
+  "petPolicy": {
+    "id": "618d264c-ca84-4b0a-a736-05ca41e69791",
+    "isOffered": false,
+    "seatProtectionNote": "Not applicable — pet taxi service discontinued per client policy.",
+    "breedRestrictionNote": "Pets and animals are not permitted inside vehicles.",
+    "comfortStopNote": "Standard comfort and hydration stops provided for human passengers.",
+    "bookingInstruction": "Pets are strictly not permitted in vehicles to maintain passenger hygiene.",
+    "createdAt": "2026-10-03T22:32:29.000Z",
+    "updatedAt": "2026-10-04T20:27:38.000Z"
+  },
+  "companyProfile": {
+    "id": "6d430618-2f34-4398-8f04-20c9b34a99ee",
+    "brandName": "Agra SK Baghel Tour & Travels",
+    "officeAddress": "NandlalPur, Agra, Uttar Pradesh 282001",
+    "primaryPhone": "+91 97628 17598",
+    "whatsappNumber": "+91 97628 17598",
+    "email": "skbagheltravels@gmail.com",
+    "gstin": "NoT Available",
+    "operatingHours": "Bookings Open 24×7, 365 Days",
+    "mapsLocation": "https://www.google.com/maps?q=27.248679,78.0488753&z=17&hl=en",
+    "dossierVersion": "1.0",
+    "dossierStatus": "signed_off",
+    "createdAt": "2026-10-03T22:32:29.000Z",
+    "updatedAt": "2026-10-04T20:25:30.000Z"
+  },
+  "dossierSignoffs": [
+    {
+      "id": "3ac94278-950f-4499-9740-68b4e8cf997e",
+      "sectionKey": "advance_deposit",
+      "sectionTitle": "28% Advance Deposit Booking Formula",
+      "status": "approved",
+      "clientNotes": null,
+      "approvedBy": "b3c86792-3e65-436e-b606-3fddfcbcdbe7",
+      "approvedAt": "2026-10-04T20:13:52.000Z",
+      "createdAt": "2026-10-03T22:32:29.000Z",
+      "updatedAt": "2026-10-04T20:13:52.000Z"
+    },
+    {
+      "id": "926f8a0d-62e6-4618-9722-6eb7ce1ad500",
+      "sectionKey": "cancellation",
+      "sectionTitle": "Cancellation & Refund Tier Schedules",
+      "status": "approved",
+      "clientNotes": null,
+      "approvedBy": "b3c86792-3e65-436e-b606-3fddfcbcdbe7",
+      "approvedAt": "2026-10-04T20:14:53.000Z",
+      "createdAt": "2026-10-03T22:32:29.000Z",
+      "updatedAt": "2026-10-04T20:17:52.000Z"
+    },
+    {
+      "id": "f7967808-86bd-4cb6-802f-666a035ee92a",
+      "sectionKey": "coupon",
+      "sectionTitle": "Promotional Coupon ASTTCAR500OFF",
+      "status": "approved",
+      "clientNotes": null,
+      "approvedBy": "b3c86792-3e65-436e-b606-3fddfcbcdbe7",
+      "approvedAt": "2026-10-04T20:14:53.000Z",
+      "createdAt": "2026-10-03T22:32:29.000Z",
+      "updatedAt": "2026-10-04T20:14:53.000Z"
+    },
+    {
+      "id": "f3a4e346-ce20-4b26-9301-4e3cbd33e6cc",
+      "sectionKey": "fleet_rates",
+      "sectionTitle": "Fleet Specifications & Base Per-KM Rates",
+      "status": "approved",
+      "clientNotes": null,
+      "approvedBy": "b3c86792-3e65-436e-b606-3fddfcbcdbe7",
+      "approvedAt": "2026-10-04T20:14:55.000Z",
+      "createdAt": "2026-10-03T22:32:29.000Z",
+      "updatedAt": "2026-10-04T20:14:55.000Z"
+    },
+    {
+      "id": "ce1fb702-9220-4efc-9aa2-a318dc7b8124",
+      "sectionKey": "local_transfers",
+      "sectionTitle": "Local Sightseeing & Airport/Railway Transfers",
+      "status": "approved",
+      "clientNotes": null,
+      "approvedBy": "b3c86792-3e65-436e-b606-3fddfcbcdbe7",
+      "approvedAt": "2026-10-04T20:14:59.000Z",
+      "createdAt": "2026-10-03T22:32:29.000Z",
+      "updatedAt": "2026-10-04T20:14:59.000Z"
+    },
+    {
+      "id": "c2d831f2-f43f-42cd-9a9d-3e403bbb3e83",
+      "sectionKey": "night_allowance",
+      "sectionTitle": "Driver Night Allowance Window & Charges",
+      "status": "approved",
+      "clientNotes": null,
+      "approvedBy": "b3c86792-3e65-436e-b606-3fddfcbcdbe7",
+      "approvedAt": "2026-10-04T20:15:03.000Z",
+      "createdAt": "2026-10-03T22:32:29.000Z",
+      "updatedAt": "2026-10-04T20:15:03.000Z"
+    },
+    {
+      "id": "4bbe5494-e1a4-4029-8288-28c6a21b7472",
+      "sectionKey": "one_way_routes",
+      "sectionTitle": "Intercity One-Way Expressway Corridors",
+      "status": "approved",
+      "clientNotes": null,
+      "approvedBy": "b3c86792-3e65-436e-b606-3fddfcbcdbe7",
+      "approvedAt": "2026-10-04T20:16:50.000Z",
+      "createdAt": "2026-10-03T22:32:29.000Z",
+      "updatedAt": "2026-10-04T20:16:50.000Z"
+    },
+    {
+      "id": "d0f0c8de-63c7-456e-9ac4-0fd00b9049df",
+      "sectionKey": "outstation_rules",
+      "sectionTitle": "Outstation Round-Trip Rules & Daily Benchmarks",
+      "status": "approved",
+      "clientNotes": null,
+      "approvedBy": "b3c86792-3e65-436e-b606-3fddfcbcdbe7",
+      "approvedAt": "2026-10-04T20:16:49.000Z",
+      "createdAt": "2026-10-03T22:32:29.000Z",
+      "updatedAt": "2026-10-04T20:16:49.000Z"
+    },
+    {
+      "id": "7d158dd1-659c-4706-a258-e1b3422a31bd",
+      "sectionKey": "specialized_offerings",
+      "sectionTitle": "Monument Operating Protocols & Heritage Guidelines",
+      "status": "pending",
+      "clientNotes": null,
+      "approvedBy": null,
+      "approvedAt": null,
+      "createdAt": "2026-10-03T22:32:29.000Z",
+      "updatedAt": "2026-10-04T20:27:38.000Z"
+    },
+    {
+      "id": "20e4e035-4dd4-4fcf-81cb-b3768e263ee5",
+      "sectionKey": "tour_packages",
+      "sectionTitle": "Signature Tour Packages & Pricing",
+      "status": "approved",
+      "clientNotes": null,
+      "approvedBy": "b3c86792-3e65-436e-b606-3fddfcbcdbe7",
+      "approvedAt": "2026-10-04T20:17:05.000Z",
+      "createdAt": "2026-10-03T22:32:29.000Z",
+      "updatedAt": "2026-10-04T20:17:05.000Z"
+    }
+  ]
 }

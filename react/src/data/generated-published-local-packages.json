@@ -1,1 +1,92 @@
-[]
+[
+  {
+    "id": "68310c06-4228-4c7b-8ca0-9304e793f63d",
+    "packageCode": "knowledge-parak-2-sightseeing",
+    "name": "Knowledge parak 2 SightSeeing",
+    "durationHours": 8,
+    "includedKm": 80,
+    "covers": "Galgotias College, Miraj Mall",
+    "parkingNote": "Monument entry fees & parking billed at actuals",
+    "fleetPrices": {
+      "sedan": 1900,
+      "ertiga": 2600,
+      "innova": 2850,
+      "tempo": 5500,
+      "urbania": 7500
+    },
+    "usePerKm": false,
+    "extraRates": {
+      "sedan": {
+        "per_hr": 300,
+        "per_km": 15
+      },
+      "tempo": {
+        "per_hr": 500,
+        "per_km": 30
+      },
+      "ertiga": {
+        "per_hr": 300,
+        "per_km": 20
+      },
+      "innova": {
+        "per_hr": 300,
+        "per_km": 25
+      },
+      "urbania": {
+        "per_hr": 500,
+        "per_km": 35
+      }
+    },
+    "nightChargeInr": 0,
+    "status": "published",
+    "isActive": true,
+    "createdAt": "2026-10-04T12:11:32.000Z",
+    "updatedAt": "2026-10-04T12:11:33.000Z",
+    "slug": "knowledge-parak-2-sightseeing"
+  },
+  {
+    "id": "01d35be8-8148-43f2-ae89-f090b49fca92",
+    "packageCode": "agra-extended-city-tour",
+    "name": "Agra Extended City Tour",
+    "durationHours": 12,
+    "includedKm": 120,
+    "covers": "Complete Agra heritage circuit including Fatehpur Sikri, Taj Mahal, and Agra Fort",
+    "parkingNote": "Monument entry fees & parking billed at actuals",
+    "fleetPrices": {
+      "sedan": 2200,
+      "ertiga": 2950,
+      "innova": 3100,
+      "tempo": 6500,
+      "urbania": 8500
+    },
+    "usePerKm": false,
+    "extraRates": {
+      "sedan": {
+        "per_hr": 150,
+        "per_km": 10
+      },
+      "tempo": {
+        "per_hr": 400,
+        "per_km": 25
+      },
+      "ertiga": {
+        "per_hr": 200,
+        "per_km": 14
+      },
+      "innova": {
+        "per_hr": 250,
+        "per_km": 18
+      },
+      "urbania": {
+        "per_hr": 600,
+        "per_km": 34
+      }
+    },
+    "nightChargeInr": 0,
+    "status": "published",
+    "isActive": true,
+    "createdAt": "2026-10-03T22:32:29.000Z",
+    "updatedAt": "2026-10-04T20:02:34.000Z",
+    "slug": "agra-extended-city-tour"
+  }
+]
