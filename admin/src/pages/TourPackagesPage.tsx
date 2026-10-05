@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { Archive, Check, MapPin, Pencil, Plus, Trash2 } from "lucide-react";
+import { Archive, Check, Image as ImageIcon, Pencil, Plus, Trash2, Upload, X } from "lucide-react";
 import { PageHeader } from "@/components/admin/PageHeader";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Dialog } from "@/components/ui/Dialog";
-import { Input, Label, Select, Textarea } from "@/components/ui/Input";
+import { Input, Label, NumberInput, Select, Textarea } from "@/components/ui/Input";
 import {
   archiveAdminTourPackage,
   checkTourPackageCode,
@@ -14,8 +14,9 @@ import {
   fetchAdminTourPackages,
   publishAdminTourPackage,
   updateAdminTourPackage,
+  uploadTourPackageImage,
 } from "@/lib/api";
-import { can, type AdminUser, type CatalogStatus, type TourPackageItem } from "@/lib/types";
+import { can, type AdminUser, type CatalogStatus, type TourPackageGalleryImage, type TourPackageItem } from "@/lib/types";
 import { formatINR } from "@/lib/utils";
 
 const FLEET_KEYS = ["sedan", "ertiga", "innova", "tempo", "urbania"] as const;
@@ -26,6 +27,18 @@ const FLEET_LABELS: Record<string, string> = {
   tempo: "Tempo Traveller (12 Seater)",
   urbania: "Force Urbania (16 Seater)",
 };
+
+export const HERITAGE_PHOTO_PRESETS = [
+  { url: "/assets/places/gallery/taj-mahal-01.jpg", caption: "Taj Mahal reflection pool at dawn", alt: "Taj Mahal dawn reflection Agra" },
+  { url: "/assets/places/gallery/taj-mahal-02.jpg", caption: "Taj Mahal marble archways & minarets", alt: "Taj Mahal dome architecture" },
+  { url: "/assets/places/gallery/taj-mahal-03.jpg", caption: "Intricate floral pietra dura marble inlay", alt: "Pietra dura marble inlay details" },
+  { url: "/assets/places/gallery/agra-fort-01.jpg", caption: "Amar Singh Gate at Agra Red Fort", alt: "Agra Fort red sandstone entrance" },
+  { url: "/assets/places/gallery/agra-fort-02.jpg", caption: "Diwan-i-Khas marble royal pavilion", alt: "Diwan-i-Khas Agra Fort" },
+  { url: "/assets/places/gallery/mehtab-bagh-01.jpg", caption: "Mehtab Bagh sunset vantage point", alt: "Mehtab Bagh across Yamuna River" },
+  { url: "/assets/places/gallery/mathura-vrindavan-01.jpg", caption: "Prem Mandir & Banke Bihari illumination", alt: "Prem Mandir illuminated at night" },
+  { url: "/assets/places/gallery/fatehpur-sikri-01.jpg", caption: "Buland Darwaza imperial gate", alt: "Buland Darwaza Fatehpur Sikri" },
+  { url: "/assets/places/gallery/jaipur-pink-city-01.jpg", caption: "Hawa Mahal Palace of Winds", alt: "Hawa Mahal facade Jaipur" },
+];
 
 const emptyPackage = {
   name: "",
@@ -39,6 +52,8 @@ const emptyPackage = {
   nightChargeInr: 300,
   inclusionsHighlight: "Private AC Cab, Chauffeur Allowance, Fuel & State Taxes",
   inclusionsNote: "",
+  imageUrl: "/assets/packages/taj-dawn.webp",
+  gallery: [] as TourPackageGalleryImage[],
   status: "draft" as CatalogStatus,
   isActive: true,
 };
@@ -54,6 +69,12 @@ export function TourPackagesPage({ user }: { user: AdminUser }) {
   const [editing, setEditing] = useState<TourPackageItem | null>(null);
   const [form, setForm] = useState(emptyPackage);
   const [busy, setBusy] = useState(false);
+
+  // Gallery and image upload states
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [customImageUrl, setCustomImageUrl] = useState("");
+  const [customImageCaption, setCustomImageCaption] = useState("");
+  const [customImageAlt, setCustomImageAlt] = useState("");
 
   const reload = async () => {
     setLoading(true);
@@ -75,6 +96,9 @@ export function TourPackagesPage({ user }: { user: AdminUser }) {
   function openNew() {
     setEditing(null);
     setForm(emptyPackage);
+    setCustomImageUrl("");
+    setCustomImageCaption("");
+    setCustomImageAlt("");
     setModalOpen(true);
   }
 
@@ -98,9 +122,14 @@ export function TourPackagesPage({ user }: { user: AdminUser }) {
       nightChargeInr: pkg.nightChargeInr,
       inclusionsHighlight: pkg.inclusionsHighlight ?? "",
       inclusionsNote: pkg.inclusionsNote ?? "",
+      imageUrl: pkg.imageUrl ?? "/assets/packages/taj-dawn.webp",
+      gallery: Array.isArray(pkg.gallery) ? [...pkg.gallery] : [],
       status: pkg.status,
       isActive: pkg.isActive,
     });
+    setCustomImageUrl("");
+    setCustomImageCaption("");
+    setCustomImageAlt("");
     setModalOpen(true);
   }
 
@@ -123,6 +152,95 @@ export function TourPackagesPage({ user }: { user: AdminUser }) {
       fleetPrices: { ...prev.fleetPrices, [tier]: value },
       startingPriceInr: tier === prev.baseTierCode ? value : prev.startingPriceInr,
     }));
+  }
+
+  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIsUploadingImage(true);
+    setError(null);
+    try {
+      const reader = new FileReader();
+      const dataBase64 = await new Promise<string>((resolve, reject) => {
+        reader.onload = () => {
+          const result = reader.result as string;
+          const base64 = result.includes(",") ? result.split(",")[1] : result;
+          resolve(base64);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+
+      const res = await uploadTourPackageImage({
+        dataBase64,
+        mimeType: file.type as any,
+        altText: customImageAlt.trim() || form.name || "Tour photo",
+        caption: customImageCaption.trim() || undefined,
+      });
+
+      if (res.url) {
+        const newImg: TourPackageGalleryImage = {
+          url: res.url,
+          caption: customImageCaption.trim() || file.name.replace(/\.[^/.]+$/, ""),
+          alt: customImageAlt.trim() || form.name || "Tour photo",
+        };
+        setForm((prev) => ({
+          ...prev,
+          imageUrl: prev.imageUrl || res.url,
+          gallery: [...prev.gallery, newImg],
+        }));
+        setCustomImageUrl("");
+        setCustomImageCaption("");
+        setCustomImageAlt("");
+      }
+    } catch (err: any) {
+      setError(err.message || "Failed to upload image.");
+    } finally {
+      setIsUploadingImage(false);
+      e.target.value = "";
+    }
+  }
+
+  function addPresetPhoto(preset: { url: string; caption: string; alt: string }) {
+    if (form.gallery.some((g) => g.url === preset.url)) return;
+    setForm((prev) => ({
+      ...prev,
+      imageUrl: prev.imageUrl || preset.url,
+      gallery: [...prev.gallery, { url: preset.url, caption: preset.caption, alt: preset.alt }],
+    }));
+  }
+
+  function addCustomPhoto() {
+    const url = customImageUrl.trim();
+    if (!url) return;
+    if (form.gallery.some((g) => g.url === url)) return;
+    setForm((prev) => ({
+      ...prev,
+      imageUrl: prev.imageUrl || url,
+      gallery: [
+        ...prev.gallery,
+        {
+          url,
+          caption: customImageCaption.trim() || form.name,
+          alt: customImageAlt.trim() || form.name,
+        },
+      ],
+    }));
+    setCustomImageUrl("");
+    setCustomImageCaption("");
+    setCustomImageAlt("");
+  }
+
+  function removeGalleryPhoto(idx: number) {
+    setForm((prev) => {
+      const next = prev.gallery.filter((_, i) => i !== idx);
+      const nextCover = prev.imageUrl === prev.gallery[idx]?.url ? (next[0]?.url ?? null) : prev.imageUrl;
+      return { ...prev, gallery: next, imageUrl: nextCover };
+    });
+  }
+
+  function setCoverPhoto(url: string) {
+    setForm((prev) => ({ ...prev, imageUrl: url }));
   }
 
   async function handleSave(publish = false) {
@@ -150,6 +268,8 @@ export function TourPackagesPage({ user }: { user: AdminUser }) {
         night_charge_inr: Number(form.nightChargeInr) || 0,
         inclusions_highlight: form.inclusionsHighlight.trim() || undefined,
         inclusions_note: form.inclusionsNote.trim() || undefined,
+        image_url: form.imageUrl?.trim() || undefined,
+        gallery: form.gallery,
         is_active: form.isActive,
       };
 
@@ -247,14 +367,29 @@ export function TourPackagesPage({ user }: { user: AdminUser }) {
         <div className="divide-y divide-hairline">
           {items.map((pkg) => (
             <div key={pkg.id} className="flex flex-wrap items-center justify-between gap-4 p-4 transition-colors hover:bg-surface-raised/40">
-              <div className="flex items-start gap-3">
-                <MapPin className="mt-0.5 h-5 w-5 text-gold shrink-0" />
+              <div className="flex items-start gap-3.5">
+                {pkg.imageUrl ? (
+                  <img
+                    src={pkg.imageUrl}
+                    alt={pkg.name}
+                    className="h-14 w-20 rounded-lg object-cover border border-hairline shrink-0 bg-surface-raised shadow-xs"
+                  />
+                ) : (
+                  <div className="h-14 w-20 rounded-lg border border-hairline bg-surface-raised/60 flex items-center justify-center shrink-0 text-ink-soft">
+                    <ImageIcon className="h-6 w-6" />
+                  </div>
+                )}
                 <div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-semibold text-ink">{pkg.name}</span>
                     <Badge tone={pkg.status === "published" ? "success" : pkg.status === "draft" ? "gold" : "neutral"}>
                       {pkg.status}
                     </Badge>
+                    {pkg.gallery && pkg.gallery.length > 0 && (
+                      <span className="rounded bg-surface-raised px-1.5 py-0.5 text-[10px] text-ink font-semibold border border-hairline flex items-center gap-1">
+                        <ImageIcon className="h-3 w-3 text-gold" /> {pkg.gallery.length} photos
+                      </span>
+                    )}
                     <span className="text-xs text-ink-soft">({pkg.durationText})</span>
                   </div>
                   <p className="mt-1 font-mono text-xs text-ink-soft">
@@ -340,22 +475,20 @@ export function TourPackagesPage({ user }: { user: AdminUser }) {
             </div>
             <div>
               <Label>Days</Label>
-              <Input
-                type="number"
+              <NumberInput
                 min={1}
                 max={30}
                 value={form.days}
-                onChange={(e) => setForm((p) => ({ ...p, days: Number(e.target.value) }))}
+                onChange={(v) => setForm((p) => ({ ...p, days: v || 1 }))}
               />
             </div>
             <div>
               <Label>Nights</Label>
-              <Input
-                type="number"
+              <NumberInput
                 min={0}
                 max={30}
                 value={form.nights}
-                onChange={(e) => setForm((p) => ({ ...p, nights: Number(e.target.value) }))}
+                onChange={(v) => setForm((p) => ({ ...p, nights: v }))}
               />
             </div>
           </div>
@@ -367,10 +500,9 @@ export function TourPackagesPage({ user }: { user: AdminUser }) {
               {FLEET_KEYS.map((k) => (
                 <div key={k}>
                   <Label className="text-xs">{FLEET_LABELS[k]}</Label>
-                  <Input
-                    type="number"
-                    value={form.fleetPrices[k] ?? ""}
-                    onChange={(e) => setFleetPrice(k, Number(e.target.value))}
+                  <NumberInput
+                    value={form.fleetPrices[k] ?? 0}
+                    onChange={(v) => setFleetPrice(k, v)}
                     placeholder="₹"
                   />
                 </div>
@@ -381,10 +513,10 @@ export function TourPackagesPage({ user }: { user: AdminUser }) {
           <div className="grid gap-3 sm:grid-cols-3">
             <div>
               <Label>Night Charge per Night (₹)</Label>
-              <Input
-                type="number"
+              <NumberInput
                 value={form.nightChargeInr}
-                onChange={(e) => setForm((p) => ({ ...p, nightChargeInr: Number(e.target.value) }))}
+                onChange={(v) => setForm((p) => ({ ...p, nightChargeInr: v }))}
+                placeholder="₹"
               />
             </div>
 
@@ -407,6 +539,135 @@ export function TourPackagesPage({ user }: { user: AdminUser }) {
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setForm((p) => ({ ...p, inclusionsNote: e.target.value }))}
               placeholder="Monument entrance tickets and personal meals not included..."
             />
+          </div>
+
+          {/* Showcase Photos & Multi-Image Gallery Manager */}
+          <div className="rounded-lg border border-hairline p-4 bg-surface-raised/20 space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="font-semibold text-ink text-sm flex items-center gap-1.5">
+                  <ImageIcon className="h-4 w-4 text-gold" /> Cover Image & Showcase Gallery
+                </h4>
+                <p className="text-xs text-ink-soft mt-0.5">
+                  Attach multiple real photos. The customer site displays an interactive thumbnail switcher, counter badge, and full-resolution lightbox modal.
+                </p>
+              </div>
+              <span className="rounded bg-gold/15 px-2 py-0.5 text-xs text-gold font-semibold">
+                {form.gallery.length} {form.gallery.length === 1 ? "Photo" : "Photos"}
+              </span>
+            </div>
+
+            {/* Active Gallery Thumbnails Grid */}
+            {form.gallery.length > 0 && (
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                {form.gallery.map((img, idx) => {
+                  const isCover = form.imageUrl === img.url;
+                  return (
+                    <div
+                      key={idx}
+                      className={`relative rounded-lg overflow-hidden border p-1 bg-surface-1 transition-all ${
+                        isCover ? "border-gold ring-2 ring-gold/30" : "border-hairline"
+                      }`}
+                    >
+                      <div className="aspect-[16/10] w-full rounded overflow-hidden relative bg-black/10">
+                        <img src={img.url} alt={img.alt || form.name} className="w-full h-full object-cover" />
+                        {isCover && (
+                          <span className="absolute top-1 left-1 px-1.5 py-0.5 rounded bg-gold text-ink-charcoal font-bold text-[10px] uppercase shadow-xs">
+                            Cover
+                          </span>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => removeGalleryPhoto(idx)}
+                          className="absolute top-1 right-1 h-5 w-5 rounded-full bg-black/70 hover:bg-red-600 text-white flex items-center justify-center transition-colors"
+                          title="Remove photo"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </div>
+                      <div className="mt-1 px-1">
+                        <p className="text-[11px] font-medium text-ink truncate" title={img.caption || img.url}>
+                          {img.caption || "Photo " + (idx + 1)}
+                        </p>
+                        {!isCover && (
+                          <button
+                            type="button"
+                            onClick={() => setCoverPhoto(img.url)}
+                            className="mt-0.5 text-[10px] text-gold hover:underline font-semibold block"
+                          >
+                            Make Cover Photo
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Add Photos Toolbar */}
+            <div className="rounded border border-hairline/80 bg-surface-raised/40 p-3 space-y-3">
+              <span className="text-xs font-semibold text-ink block">Add Photos to Gallery</span>
+
+              {/* Option A: Direct File Upload */}
+              <div className="flex flex-wrap items-center gap-3">
+                <label className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-gold text-ink-charcoal text-xs font-semibold hover:bg-gold-dark transition-colors cursor-pointer shadow-xs">
+                  <Upload className="h-3.5 w-3.5" />
+                  <span>{isUploadingImage ? "Uploading Photo..." : "Upload Photo File"}</span>
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp,image/avif"
+                    onChange={handleFileUpload}
+                    disabled={isUploadingImage}
+                    className="hidden"
+                  />
+                </label>
+                <span className="text-xs text-ink-soft">or choose from verified Agra heritage library below</span>
+              </div>
+
+              {/* Option B: Choose from Presets */}
+              <div>
+                <Label className="text-[11px] text-ink-soft mb-1.5">Quick Presets (Agra Heritage & Monument Photos)</Label>
+                <div className="flex flex-wrap gap-1.5">
+                  {HERITAGE_PHOTO_PRESETS.map((preset) => {
+                    const alreadyAdded = form.gallery.some((g) => g.url === preset.url);
+                    return (
+                      <button
+                        key={preset.url}
+                        type="button"
+                        onClick={() => addPresetPhoto(preset)}
+                        disabled={alreadyAdded}
+                        className={`text-[11px] px-2 py-1 rounded border transition-all flex items-center gap-1 ${
+                          alreadyAdded
+                            ? "border-hairline text-ink-soft opacity-50 cursor-not-allowed bg-surface-raised"
+                            : "border-hairline text-ink hover:border-gold hover:text-gold bg-canvas-pure"
+                        }`}
+                      >
+                        <span>{preset.caption}</span>
+                        {alreadyAdded && <Check className="h-2.5 w-2.5 text-green-500" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Option C: Custom URL or Site Asset Path */}
+              <div className="grid gap-2 sm:grid-cols-3 pt-1 border-t border-hairline/60">
+                <div className="sm:col-span-2">
+                  <Input
+                    value={customImageUrl}
+                    onChange={(e) => setCustomImageUrl(e.target.value)}
+                    placeholder="Paste Image URL or /assets/... path"
+                    className="text-xs"
+                  />
+                </div>
+                <div>
+                  <Button size="sm" variant="outline" className="w-full text-xs" onClick={addCustomPhoto} disabled={!customImageUrl.trim()}>
+                    Add to Gallery
+                  </Button>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div className="flex justify-end gap-2 pt-3 border-t border-hairline">

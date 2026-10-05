@@ -277,6 +277,8 @@ export async function buildRouteCatalogAndManifest(): Promise<void> {
         .map((item) => ({
           ...item,
           slug: item.slug ?? item.packageCode ?? item.package_code,
+          image: item.imageUrl ?? item.image_url ?? item.image ?? "/assets/packages/taj-dawn.webp",
+          gallery: Array.isArray(item.gallery) ? item.gallery : [],
           fleetPrices: sanitizeFleetPrices(item.fleetPrices ?? item.fleet_prices),
         }));
       console.log(`✅ [Manifest Builder] Snapshotted ${publishedTourPackages.length} published tour packages from ${tourPackagesManifestUrl}.`);

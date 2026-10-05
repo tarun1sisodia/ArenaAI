@@ -297,6 +297,12 @@ export interface TourPackageUpgrade {
   updatedAt: string;
 }
 
+export interface TourPackageGalleryImage {
+  url: string;
+  caption?: string;
+  alt?: string;
+}
+
 export interface TourPackageItem {
   id: string;
   packageCode: string;
@@ -310,6 +316,8 @@ export interface TourPackageItem {
   nightChargeInr: number;
   inclusionsHighlight: string | null;
   inclusionsNote: string | null;
+  imageUrl?: string | null;
+  gallery?: TourPackageGalleryImage[];
   status: CatalogStatus;
   isActive: boolean;
   createdAt: string;

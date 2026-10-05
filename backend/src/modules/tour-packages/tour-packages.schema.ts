@@ -17,6 +17,12 @@ const cleanOptional = (max: number) =>
     .transform((value) => value.replace(/<[^>]*>/g, "").trim())
     .optional();
 
+export const GalleryImageSchema = z.object({
+  url: z.string().trim().min(1).max(1000),
+  caption: z.string().trim().max(300).optional().default(""),
+  alt: z.string().trim().max(300).optional().default(""),
+});
+
 const base = z
   .object({
     package_code: z
@@ -37,6 +43,8 @@ const base = z
     night_charge_inr: z.number().nonnegative().max(100_000).default(0),
     inclusions_highlight: cleanOptional(500),
     inclusions_note: cleanOptional(1000),
+    image_url: z.string().trim().max(1000).optional().nullable(),
+    gallery: z.array(GalleryImageSchema).max(30).optional().default([]),
     status: z.enum(["draft", "published", "archived"]).optional(),
     is_active: z.boolean().default(true),
   })
@@ -46,6 +54,13 @@ export const CreateTourPackageSchema = base;
 export const UpdateTourPackageSchema = base.partial().omit({ status: true }).extend({
   status: z.enum(["draft", "published", "archived"]).optional(),
 });
+export const UploadTourPackageImageSchema = z.object({
+  dataBase64: z.string().min(10),
+  mimeType: z.enum(["image/jpeg", "image/png", "image/webp", "image/avif"]),
+  altText: z.string().trim().min(1).max(300).optional().default("Tour package image"),
+  caption: z.string().trim().max(300).optional().default(""),
+});
+export type UploadTourPackageImageInput = z.infer<typeof UploadTourPackageImageSchema>;
 export const TourPackageIdSchema = z.object({ id: z.string().uuid() });
 export const TourPackageCodeSchema = z.object({ code: z.string().trim().min(2).max(80) });
 export const TourPackageQuerySchema = z.object({

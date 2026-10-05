@@ -36,6 +36,12 @@ export type TransferRouteRecord = {
   updatedAt: string;
 };
 
+export type TourPackageGalleryImage = {
+  url: string;
+  caption?: string;
+  alt?: string;
+};
+
 export type TourPackageRecord = {
   id: string;
   packageCode: string;
@@ -49,6 +55,8 @@ export type TourPackageRecord = {
   nightChargeInr: number;
   inclusionsHighlight: string | null;
   inclusionsNote: string | null;
+  imageUrl?: string | null;
+  gallery?: TourPackageGalleryImage[];
   status: ContentStatus;
   isActive: boolean;
   createdAt: string;

@@ -123,7 +123,7 @@ async function processQueued(deps: {
         if (!to || !to.includes("@")) throw new Error("Invalid email recipient");
         const result = await deps.email.send({
           to,
-          subject: String(job.payload.subject ?? "SK Baghel Tour & Travels"),
+          subject: String(job.payload.subject ?? "Agra SK Baghel Tour & Travels"),
           text: String(job.payload.text ?? ""),
         });
         await deps.db.notifications.update({

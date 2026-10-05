@@ -63,6 +63,12 @@ export type VehicleUpgrade = {
   price: number;
 };
 
+export type TourPackageGalleryImage = {
+  url: string;
+  caption?: string;
+  alt?: string;
+};
+
 export type TourPackage = {
   id: string;
   slug: string;
@@ -71,6 +77,7 @@ export type TourPackage = {
   duration: string;
   from: number;
   image: string;
+  gallery?: readonly TourPackageGalleryImage[];
   places: readonly string[];
   blurb: string;
   includes: readonly string[];
@@ -284,6 +291,12 @@ export const packages: readonly TourPackage[] = [
     duration: "1 day",
     from: 3499,
     image: "/assets/packages/taj-dawn.webp",
+    gallery: [
+      { url: "/assets/places/gallery/taj-mahal-01.jpg", caption: "Taj Mahal reflection pool at golden dawn", alt: "Taj Mahal reflection pool dawn Agra" },
+      { url: "/assets/places/gallery/agra-fort-01.jpg", caption: "Grand Amar Singh Gate at Agra Red Fort", alt: "Agra Fort red sandstone entrance gate" },
+      { url: "/assets/places/gallery/mehtab-bagh-01.jpg", caption: "Sunset vantage point over Yamuna", alt: "Mehtab Bagh sunset over Taj Mahal" },
+      { url: "/assets/places/gallery/taj-mahal-02.jpg", caption: "Intricate marble archways & minarets", alt: "Taj Mahal dome architecture" },
+    ],
     places: ["Taj Mahal", "Agra Fort", "Itimad-ud-Daulah (Baby Taj)", "Mehtab Bagh"],
     blurb: "One-day private guided tour covering all iconic Mughal monuments with doorstep hotel or station pickup.",
     includes: ["Private AC vehicle", "Professional chauffeur", "All tolls, parking & state tax", "Guide assistance", "Bottled water"],
@@ -311,6 +324,11 @@ export const packages: readonly TourPackage[] = [
     duration: "1 day",
     from: 12999,
     image: "/assets/packages/taj-dawn.webp",
+    gallery: [
+      { url: "/assets/places/gallery/taj-mahal-02.jpg", caption: "Dawn glow across ivory marble", alt: "Taj Mahal at sunrise" },
+      { url: "/assets/places/gallery/mehtab-bagh-02.jpg", caption: "Reflections from Charbagh gardens", alt: "Mehtab Bagh sunrise view" },
+      { url: "/assets/places/gallery/taj-mahal-03.jpg", caption: "Intricate pietra dura floral inlays", alt: "Pietra dura marble inlay details" },
+    ],
     places: ["Taj Mahal at Dawn", "Agra Fort", "Mehtab Bagh"],
     blurb: "Early 2:30 AM departure from Delhi to witness the breathtaking sunrise over the Taj Mahal before the crowds arrive.",
     includes: ["Dedicated luxury AC car", "Yamuna Expressway toll & taxes", "Sunrise guided entry", "Breakfast stop", "Agra Fort tour"],
@@ -324,6 +342,11 @@ export const packages: readonly TourPackage[] = [
     duration: "1 day",
     from: 4200,
     image: "/assets/packages/mathura.webp",
+    gallery: [
+      { url: "/assets/places/gallery/mathura-vrindavan-01.jpg", caption: "Prem Mandir & Banke Bihari illumination", alt: "Prem Mandir illuminated at night" },
+      { url: "/assets/places/gallery/mathura-vrindavan-02.jpg", caption: "Sacred Yamuna Ghats at sunset", alt: "Yamuna river ghats Mathura" },
+      { url: "/assets/places/gallery/mathura-vrindavan-03.jpg", caption: "Evening aarti ceremony at Vrindavan", alt: "Evening temple ceremony Vrindavan" },
+    ],
     places: ["Krishna Janmabhoomi", "Dwarkadhish Temple", "Prem Mandir", "Banke Bihari"],
     blurb: "A spiritual day trip timed around sacred temple aarti schedules, with a local driver who knows the temple lanes.",
     includes: ["AC vehicle with fuel", "Temple parking & waiting", "Driver allowance", "Pickup & drop"],
@@ -337,6 +360,10 @@ export const packages: readonly TourPackage[] = [
     duration: "1 day",
     from: 14999,
     image: "/assets/packages/agra-fort.webp",
+    gallery: [
+      { url: "/assets/places/gallery/agra-fort-02.jpg", caption: "Diwan-i-Khas marble royal pavilion", alt: "Diwan-i-Khas inside Agra Fort" },
+      { url: "/assets/places/gallery/taj-mahal-01.jpg", caption: "Taj Mahal express afternoon visit", alt: "Taj Mahal express" },
+    ],
     places: ["Gatimaan Express (100 mins)", "Taj Mahal", "Agra Fort", "Buffet Lunch"],
     blurb: "Travel on India's premier high-speed train from Delhi to Agra in 100 minutes. Includes train tickets, private AC car in Agra, and lunch.",
     includes: ["Roundtrip Gatimaan train tickets", "Delhi station transfers", "Private AC car in Agra", "Approved guide", "Buffet lunch"],
@@ -350,6 +377,11 @@ export const packages: readonly TourPackage[] = [
     duration: "2 days / 1 night",
     from: 7800,
     image: "/assets/packages/agra-fort.webp",
+    gallery: [
+      { url: "/assets/places/gallery/agra-fort-03.jpg", caption: "Mughal courtyards & archways", alt: "Agra Fort royal courtyard" },
+      { url: "/assets/places/gallery/fatehpur-sikri-01.jpg", caption: "Buland Darwaza imperial gate", alt: "Buland Darwaza at Fatehpur Sikri" },
+      { url: "/assets/places/gallery/fatehpur-sikri-02.jpg", caption: "Panch Mahal royal pavilion", alt: "Panch Mahal palace" },
+    ],
     places: ["Taj Mahal Dawn", "Agra Fort", "Fatehpur Sikri", "Mehtab Bagh Sunset"],
     blurb: "Stay overnight in Agra to capture sunset at Mehtab Bagh and sunrise at the Taj, with an excursion to royal Fatehpur Sikri.",
     includes: ["AC vehicle for 2 full days", "Driver overnight allowance", "Tolls & parking", "Fatehpur Sikri trip"],
@@ -363,6 +395,11 @@ export const packages: readonly TourPackage[] = [
     duration: "3 days / 2 nights",
     from: 18500,
     image: "/assets/packages/golden-triangle.webp",
+    gallery: [
+      { url: "/assets/places/gallery/jaipur-pink-city-01.jpg", caption: "Hawa Mahal (Palace of Winds)", alt: "Hawa Mahal facade Jaipur" },
+      { url: "/assets/places/gallery/taj-mahal-01.jpg", caption: "Agra Taj Mahal sunrise visit", alt: "Taj Mahal Agra" },
+      { url: "/assets/places/gallery/jaipur-pink-city-02.jpg", caption: "Amber Fort hilltop ramparts", alt: "Amber Fort Jaipur" },
+    ],
     places: ["Delhi", "Agra", "Fatehpur Sikri", "Jaipur"],
     blurb: "The iconic North India circuit — chauffeured, perfectly paced, and timed so monuments have breathing room.",
     includes: ["Dedicated AC car for 3 days", "Driver stay & fuel", "All interstate taxes & tolls", "Hotel pickups"],

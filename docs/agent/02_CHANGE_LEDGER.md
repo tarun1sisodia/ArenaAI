@@ -541,6 +541,39 @@ Implemented:
 - **Verification**:
   - `npm run verify` passed cleanly (184/184 tests across 27 files, 3x typechecks, SEO lifecycle, 3x builds).
 
+### 2026-10-05 — Tour Packages Showcase Gallery, Image Upload Pipeline & Flexible Number Inputs
+
+- **Migration 0030 (`0030_tour_packages_gallery.sql`)**:
+  - Added `image_url TEXT` and `gallery JSONB NOT NULL DEFAULT '[]'::jsonb` to `tour_packages` table in PostgreSQL.
+  - Seeded canonical high-resolution heritage photo galleries for all baseline packages (Taj Mahal sunrise/sunset, Agra Fort, Fatehpur Sikri, Mathura-Vrindavan Krishna Janmabhoomi & Prem Mandir, Bharatpur Bird Sanctuary, and Golden Triangle).
+- **Backend Media Upload & Public Serve Pipeline**:
+  - Extended `TourPackageRecord` and Zod schemas (`image_url`, `gallery`, `UploadTourPackageImageSchema`).
+  - Added `POST /api/v1/ops/admin/tour-packages/upload-image` with authentication and admin role enforcement. Saves images to configured object storage or fast in-memory media cache.
+  - Added public `GET /api/v1/tour-packages/media/:file` route with 1-year immutable caching headers.
+  - Appended `image_url` and `gallery` to `/api/v1/tour-packages/manifest` for SSG snapshots and client hydration.
+- **Admin Desk Showcase Gallery Manager (`admin/src/pages/TourPackagesPage.tsx`)**:
+  - Added cover image preview thumbnail with photo count indicator (`📷 X photos`) in the Tour Packages management table.
+  - Built comprehensive Showcase Gallery Manager inside the package editor dialog:
+    - Direct image file uploader (`Upload Photo File`) automatically uploading to the backend and appending to gallery.
+    - Quick-select gallery presets from verified local Agra Heritage photo library.
+    - Custom URL or CDN image input with caption field.
+    - Interactive thumbnail grid with "Cover" badge indicator, "Make Cover Photo" action, caption display, and single-click photo removal.
+- **Flexible Numeric Inputs Across Admin Desk**:
+  - Added `NumberInput` component in `admin/src/components/ui/Input.tsx` and applied CSS rules (`[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`) to eliminate forced browser stepper arrows.
+  - Enables direct keyboard typing, easy backspacing, and editing of prices and quantities without snapping to zero.
+  - Replaced numeric inputs across `TourPackagesPage.tsx`, `LocalTransfersPage.tsx`, and `FaresPage.tsx`.
+- **Customer Frontend Interactive Multi-Image Gallery (`react/src/pages/PackagesPage.tsx`)**:
+  - Upgraded "Handpicked Itineraries / Curated North India Tours" package cards into an interactive multi-image showcase matching the `#famous-places` UX.
+  - Integrated high-performance `PackagePhoto` component utilizing responsive `<picture>` with AVIF/WebP sources (480w, 960w, 1600w), `loading="lazy"`, and `decoding="async"`.
+  - Added interactive thumbnail strip allowing instant image switching on the card stage.
+  - Added full-screen high-resolution Lightbox modal with zoom, image captions, and counter (`1 / X`).
+  - Updated `react/scripts/build-manifest.ts` and `react/src/services/catalogManifest.ts` to snapshot and hydrate `image` and `gallery` fields for all published packages.
+- **Verification**:
+  - Migration 0030 executed cleanly against Postgres database.
+  - 184/184 vitest tests passed across 27 test files.
+  - SEO lifecycle tests passed.
+  - Monorepo verification `npm run verify` passed cleanly (3× typechecks, 3× builds: React SSG 63 pages + 14 redirects, Admin Desk SPA, Backend).
+
 ## Known next work (Phase 3 — secure integrations)
 
 - Step 3.2: High-entropy token or OTP recovery for booking status retrieval (`/api/v1/bookings/status`).

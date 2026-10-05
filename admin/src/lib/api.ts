@@ -647,6 +647,18 @@ export async function saveTourPackageUpgrade(payload: any): Promise<TourPackageU
 export async function deleteTourPackageUpgrade(id: string): Promise<void> {
   await apiFetch(`/api/v1/ops/admin/tour-packages/upgrades/${encodeURIComponent(id)}`, { method: "DELETE" });
 }
+export async function uploadTourPackageImage(payload: {
+  dataBase64: string;
+  mimeType: "image/jpeg" | "image/png" | "image/webp" | "image/avif";
+  altText?: string;
+  caption?: string;
+}): Promise<{ url: string; alt?: string; caption?: string }> {
+  const json = await apiFetch(`/api/v1/ops/admin/tour-packages/upload-image`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+  return json?.data ?? { url: "" };
+}
 
 // ==================== LOCAL PACKAGES ====================
 export async function fetchAdminLocalPackages(filter?: { status?: CatalogStatus | "all"; q?: string }): Promise<LocalPackageItem[]> {

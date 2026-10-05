@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Dialog } from "@/components/ui/Dialog";
-import { Input, Label, Select } from "@/components/ui/Input";
+import { Input, Label, NumberInput, Select } from "@/components/ui/Input";
 import {
   archiveAdminLocalPackage,
   archiveAdminTransferRoute,
@@ -460,18 +460,18 @@ export function LocalTransfersPage({ user }: { user: AdminUser }) {
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
               <Label>Duration (Hours)</Label>
-              <Input
-                type="number"
+              <NumberInput
+                min={1}
                 value={localForm.durationHours}
-                onChange={(e) => setLocalForm((p) => ({ ...p, durationHours: Number(e.target.value) }))}
+                onChange={(v) => setLocalForm((p) => ({ ...p, durationHours: v || 1 }))}
               />
             </div>
             <div>
               <Label>Included Distance (Km)</Label>
-              <Input
-                type="number"
+              <NumberInput
+                min={1}
                 value={localForm.includedKm}
-                onChange={(e) => setLocalForm((p) => ({ ...p, includedKm: Number(e.target.value) }))}
+                onChange={(v) => setLocalForm((p) => ({ ...p, includedKm: v || 1 }))}
               />
             </div>
           </div>
@@ -501,10 +501,9 @@ export function LocalTransfersPage({ user }: { user: AdminUser }) {
               {FLEET_KEYS.map((k) => (
                 <div key={k}>
                   <Label className="text-xs">{FLEET_LABELS[k]}</Label>
-                  <Input
-                    type="number"
-                    value={localForm.fleetPrices[k] ?? ""}
-                    onChange={(e) => setLocalForm((p) => ({ ...p, fleetPrices: { ...p.fleetPrices, [k]: Number(e.target.value) } }))}
+                  <NumberInput
+                    value={localForm.fleetPrices[k] ?? 0}
+                    onChange={(v) => setLocalForm((p) => ({ ...p, fleetPrices: { ...p.fleetPrices, [k]: v } }))}
                     placeholder="₹"
                   />
                 </div>
@@ -521,15 +520,14 @@ export function LocalTransfersPage({ user }: { user: AdminUser }) {
                   <span className="text-xs font-medium text-ink">{FLEET_LABELS[k]}</span>
                   <div>
                     <Label className="text-[10px]">₹ / Extra Km</Label>
-                    <Input
-                      type="number"
+                    <NumberInput
                       value={localForm.extraRates[k]?.per_km ?? 10}
-                      onChange={(e) =>
+                      onChange={(v) =>
                         setLocalForm((p) => ({
                           ...p,
                           extraRates: {
                             ...p.extraRates,
-                            [k]: { ...(p.extraRates[k] ?? { per_hr: 150 }), per_km: Number(e.target.value) },
+                            [k]: { ...(p.extraRates[k] ?? { per_hr: 150 }), per_km: v },
                           },
                         }))
                       }
@@ -537,15 +535,14 @@ export function LocalTransfersPage({ user }: { user: AdminUser }) {
                   </div>
                   <div>
                     <Label className="text-[10px]">₹ / Extra Hr</Label>
-                    <Input
-                      type="number"
+                    <NumberInput
                       value={localForm.extraRates[k]?.per_hr ?? 150}
-                      onChange={(e) =>
+                      onChange={(v) =>
                         setLocalForm((p) => ({
                           ...p,
                           extraRates: {
                             ...p.extraRates,
-                            [k]: { ...(p.extraRates[k] ?? { per_km: 10 }), per_hr: Number(e.target.value) },
+                            [k]: { ...(p.extraRates[k] ?? { per_km: 10 }), per_hr: v },
                           },
                         }))
                       }
@@ -620,10 +617,9 @@ export function LocalTransfersPage({ user }: { user: AdminUser }) {
               {FLEET_KEYS.map((k) => (
                 <div key={k}>
                   <Label className="text-xs">{FLEET_LABELS[k]}</Label>
-                  <Input
-                    type="number"
-                    value={transferForm.fleetPrices[k] ?? ""}
-                    onChange={(e) => setTransferForm((p) => ({ ...p, fleetPrices: { ...p.fleetPrices, [k]: Number(e.target.value) } }))}
+                  <NumberInput
+                    value={transferForm.fleetPrices[k] ?? 0}
+                    onChange={(v) => setTransferForm((p) => ({ ...p, fleetPrices: { ...p.fleetPrices, [k]: v } }))}
                     placeholder="₹"
                   />
                 </div>

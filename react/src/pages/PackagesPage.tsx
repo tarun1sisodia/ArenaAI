@@ -327,6 +327,53 @@ const PACKAGES_FAQS = [
   },
 ];
 
+const GALLERY_PREFIX = "/assets/places/gallery/";
+const GALLERY_SIZES = "(max-width: 640px) 480px, (max-width: 1100px) 960px, 1600px";
+
+function galleryBase(url: string): string | null {
+  return url.startsWith(GALLERY_PREFIX) && url.endsWith(".jpg")
+    ? url.slice(0, -".jpg".length)
+    : null;
+}
+
+interface PackagePhotoProps {
+  url: string;
+  alt: string;
+  className?: string;
+  eager?: boolean;
+  onClick?: () => void;
+}
+
+function PackagePhoto({ url, alt, className, eager, onClick }: PackagePhotoProps) {
+  const base = galleryBase(url);
+  const img = (
+    <img
+      src={base ? `${base}.jpg` : url}
+      alt={alt}
+      loading={eager ? "eager" : "lazy"}
+      decoding="async"
+      className={className}
+      onClick={onClick}
+    />
+  );
+  if (!base) return img;
+  return (
+    <picture>
+      <source
+        type="image/avif"
+        srcSet={`${base}-480.avif 480w, ${base}-960.avif 960w, ${base}-1600.avif 1600w`}
+        sizes={GALLERY_SIZES}
+      />
+      <source
+        type="image/webp"
+        srcSet={`${base}-480.webp 480w, ${base}-960.webp 960w, ${base}-1600.webp 1600w`}
+        sizes={GALLERY_SIZES}
+      />
+      {img}
+    </picture>
+  );
+}
+
 function getPackageImage(slug: string): string {
   if (slug.includes("sunrise")) return "/assets/packages/taj-sunrise.webp";
   if (slug.includes("gatimaan")) return "/assets/packages/gatimaan-express.webp";
@@ -346,7 +393,8 @@ function toDossierTourPackage(item: any): TourPackage {
     kicker: `${item.days ?? 1} Day${(item.days ?? 1) > 1 ? "s" : ""} Private Tour`,
     duration: item.durationText || `${item.days ?? 1} Day`,
     from: startingPrice,
-    image: item.image || getPackageImage(slug),
+    image: item.imageUrl || item.image_url || item.image || getPackageImage(slug),
+    gallery: Array.isArray(item.gallery) ? item.gallery : undefined,
     places: [item.name, "Agra Heritage Sites"],
     blurb: item.inclusionsHighlight || "Private sanitized AC cab, dedicated verified chauffeur & monument sightseeing.",
     includes: [
@@ -369,6 +417,8 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
   // Category Filter State
   const [activeCategory, setActiveCategory] = useState<PackageFilterCategory>("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [activeImageIndices, setActiveImageIndices] = useState<Record<string, number>>({});
+  const [modalImage, setModalImage] = useState<{ url: string; title: string; caption?: string } | null>(null);
   
   const initialPackageList = useMemo(() => {
     const map = new Map<string, TourPackage>();
@@ -761,17 +811,44 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
               `Hello Agra SK Baghel Tour and Travels, I am interested in the ${pkg.name}.`
             )}`;
 
+            const images: Array<{ url: string; caption: string; alt: string }> =
+              pkg.gallery && pkg.gallery.length > 0
+                ? pkg.gallery.map((g, i) => ({
+                    url: g.url,
+                    caption: g.caption || `${pkg.name} — Photo ${i + 1}`,
+                    alt: g.alt || `${pkg.name} view ${i + 1}`,
+                  }))
+                : [
+                    {
+                      url: pkg.image,
+                      caption: `${pkg.name} signature route`,
+                      alt: pkg.name,
+                    },
+                  ];
+            const currentImgIdx = activeImageIndices[pkg.id] ?? 0;
+            const activeImg = images[currentImgIdx] ?? images[0];
+
             return (
               <article
                 key={pkg.id}
                 className="flex flex-col bg-surface-container-lowest rounded-xl shadow-xs hover:shadow-md transition-all duration-300 overflow-hidden border border-border-warm"
               >
-                <div className="relative h-44 sm:h-48 bg-surface-container overflow-hidden group">
-                  <img
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    alt={pkg.name}
-                    src={pkg.image}
+                {/* Main Image Showcase Stage */}
+                <div className="relative aspect-[16/10] sm:h-48 w-full bg-surface-container overflow-hidden group">
+                  <PackagePhoto
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 cursor-pointer"
+                    alt={activeImg.alt}
+                    url={activeImg.url}
+                    onClick={() =>
+                      setModalImage({
+                        url: activeImg.url,
+                        title: pkg.name,
+                        caption: activeImg.caption,
+                      })
+                    }
                   />
+
+                  {/* Top Badges: Category & Kicker */}
                   <div className="absolute top-2.5 left-2.5 flex gap-1.5 flex-wrap">
                     <span className={`px-2 py-0.5 rounded text-label-caps font-label-caps uppercase tracking-wider shadow-xs font-bold ${item.badgeClass}`}>
                       {item.badgeTag}
@@ -780,11 +857,65 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
                       {pkg.kicker}
                     </span>
                   </div>
-                  <div className="absolute bottom-2.5 right-2.5 px-2 py-0.5 rounded bg-surface-container-lowest/90 backdrop-blur-sm text-ink-charcoal text-label-caps font-label-caps font-semibold flex items-center gap-1 shadow-xs">
-                    <span className="material-symbols-outlined text-icon-13">{item.durationIcon}</span>
-                    <span>{item.durationBadge}</span>
+
+                  {/* Top Right: Expand Lightbox Button */}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setModalImage({
+                        url: activeImg.url,
+                        title: pkg.name,
+                        caption: activeImg.caption,
+                      })
+                    }
+                    className="absolute top-2.5 right-2.5 w-7 h-7 rounded-full bg-ink-charcoal/70 hover:bg-ink-charcoal text-white flex items-center justify-center backdrop-blur-md transition-colors shadow-xs"
+                    aria-label="View photo in high-resolution lightbox"
+                    title="Expand photo lightbox"
+                  >
+                    <span className="material-symbols-outlined text-icon-14">zoom_in</span>
+                  </button>
+
+                  {/* Bottom Overlay: Photo Caption & Image Counter */}
+                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink-charcoal/90 via-ink-charcoal/40 to-transparent p-2.5 pt-6 flex items-end justify-between">
+                    <span className="text-label-caps text-white/95 font-medium truncate max-w-[70%] drop-shadow-xs text-[11px]">
+                      {activeImg.caption}
+                    </span>
+                    <div className="flex items-center gap-1.5">
+                      <span className="px-1.5 py-0.5 rounded bg-black/60 text-white text-[10px] font-mono tracking-wider backdrop-blur-xs font-semibold">
+                        {currentImgIdx + 1} / {images.length}
+                      </span>
+                      <div className="px-1.5 py-0.5 rounded bg-surface-container-lowest/90 backdrop-blur-sm text-ink-charcoal text-[10px] font-semibold flex items-center gap-1 shadow-xs">
+                        <span className="material-symbols-outlined text-icon-12">{item.durationIcon}</span>
+                        <span>{item.durationBadge}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
+
+                {/* Multi-Image Interactive Thumbnails Strip */}
+                {images.length > 1 && (
+                  <div className="p-2 bg-surface-container-low/80 border-b border-border-warm/50 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+                    {images.map((img, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => setActiveImageIndices((prev) => ({ ...prev, [pkg.id]: idx }))}
+                        className={`relative w-12 h-9 rounded overflow-hidden shrink-0 transition-all border ${
+                          currentImgIdx === idx
+                            ? "ring-2 ring-primary border-primary scale-[1.03] shadow-xs"
+                            : "opacity-65 hover:opacity-100 border-border-warm/60"
+                        }`}
+                        title={img.caption}
+                        aria-label={`View photo ${idx + 1}: ${img.caption}`}
+                      >
+                        <PackagePhoto url={img.url} alt={img.alt} className="w-full h-full object-cover" />
+                      </button>
+                    ))}
+                    <span className="text-label-caps text-on-surface-variant font-label-caps ml-auto pr-1 shrink-0 font-semibold text-[10px]">
+                      {images.length} Real Photos
+                    </span>
+                  </div>
+                )}
 
                 <div className="p-3.5 sm:p-4 flex-1 flex flex-col justify-between gap-3">
                   <div className="flex flex-col gap-1">
@@ -1255,6 +1386,48 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
           </div>
         </div>
       </section>
+
+      {/* High-Resolution Photo Lightbox Modal */}
+      {modalImage && (
+        <div
+          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 sm:p-6"
+          onClick={() => setModalImage(null)}
+          role="dialog"
+          aria-modal="true"
+        >
+          <div
+            className="relative max-w-4xl w-full bg-surface-container-lowest rounded-2xl overflow-hidden shadow-2xl border border-border-warm/40 flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="relative aspect-[16/10] sm:aspect-[16/9] w-full bg-black">
+              <PackagePhoto url={modalImage.url} alt={modalImage.title} className="w-full h-full object-contain" eager />
+              <button
+                type="button"
+                onClick={() => setModalImage(null)}
+                className="absolute top-3 right-3 w-9 h-9 rounded-full bg-black/60 hover:bg-black text-white flex items-center justify-center transition-colors backdrop-blur-sm"
+                aria-label="Close high-res lightbox"
+              >
+                <span className="material-symbols-outlined text-icon-18">close</span>
+              </button>
+            </div>
+            <div className="p-4 bg-surface-container flex items-center justify-between gap-3">
+              <div>
+                <h4 className="font-headline-sm text-sm sm:text-base font-bold text-on-surface">{modalImage.title}</h4>
+                {modalImage.caption && (
+                  <p className="text-xs text-on-surface-variant mt-0.5">{modalImage.caption}</p>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={() => setModalImage(null)}
+                className="px-3 py-1.5 rounded-lg bg-primary text-on-primary text-xs font-semibold hover:bg-primary-container transition-colors shrink-0"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

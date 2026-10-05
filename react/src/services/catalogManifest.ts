@@ -220,7 +220,8 @@ export async function loadPublishedPackages(): Promise<TourPackage[]> {
           kicker: `${item.days ?? 1} Day${(item.days ?? 1) > 1 ? "s" : ""} Private Tour`,
           duration: item.durationText || `${item.days ?? 1} Day`,
           from: startingPrice,
-          image: item.image || "/assets/packages/taj-dawn.webp",
+          image: item.imageUrl || item.image_url || item.image || "/assets/packages/taj-dawn.webp",
+          gallery: Array.isArray(item.gallery) ? item.gallery : [],
           places: [item.name, "Agra Heritage Sites"],
           blurb: item.inclusionsHighlight || "Private sanitized AC cab, dedicated verified chauffeur & monument sightseeing.",
           includes: [

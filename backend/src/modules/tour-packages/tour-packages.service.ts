@@ -6,11 +6,16 @@ import { toIso } from "../../shared/clock.js";
 import { Errors } from "../../shared/errors.js";
 import { newId } from "../../shared/ids.js";
 import { triggerFrontendRebuild } from "../../shared/deploy-hook.js";
+import type { MediaStorage } from "../catalog/media.storage.js";
+import { mediaExtensionFor } from "../catalog/media.storage.js";
 import type {
   CreateTourPackageInput,
   TourPackageUpgradeInput,
   UpdateTourPackageInput,
+  UploadTourPackageImageInput,
 } from "./tour-packages.schema.js";
+
+const inMemoryMediaCache = new Map<string, { buffer: Buffer; mimeType: string }>();
 
 function toRecord(input: CreateTourPackageInput, now: string, id = newId()): TourPackageRecord {
   return {
@@ -26,6 +31,8 @@ function toRecord(input: CreateTourPackageInput, now: string, id = newId()): Tou
     nightChargeInr: input.night_charge_inr,
     inclusionsHighlight: input.inclusions_highlight ?? null,
     inclusionsNote: input.inclusions_note ?? null,
+    imageUrl: input.image_url ?? null,
+    gallery: input.gallery ?? [],
     status: input.status ?? "draft",
     isActive: input.is_active,
     createdAt: now,
@@ -33,7 +40,11 @@ function toRecord(input: CreateTourPackageInput, now: string, id = newId()): Tou
   };
 }
 
-export function createTourPackagesService(deps: { db: Repositories; clock: Clock }) {
+export function createTourPackagesService(deps: {
+  db: Repositories;
+  clock: Clock;
+  mediaStorage?: MediaStorage | null;
+}) {
   return {
     async list(query: { status?: string; q?: string; page?: number; limit?: number }) {
       return deps.db.tourPackages.list(query as any);
@@ -73,6 +84,10 @@ export function createTourPackagesService(deps: { db: Repositories; clock: Clock
       const priceEdited =
         (input.starting_price_inr !== undefined && input.starting_price_inr !== current.startingPriceInr) ||
         (input.fleet_prices !== undefined && JSON.stringify(input.fleet_prices) !== JSON.stringify(current.fleetPrices));
+      const contentEdited =
+        priceEdited ||
+        (input.image_url !== undefined && input.image_url !== current.imageUrl) ||
+        (input.gallery !== undefined && JSON.stringify(input.gallery) !== JSON.stringify(current.gallery));
 
       const merged: TourPackageRecord = {
         ...current,
@@ -87,14 +102,16 @@ export function createTourPackagesService(deps: { db: Repositories; clock: Clock
         inclusionsHighlight:
           input.inclusions_highlight === undefined ? current.inclusionsHighlight : input.inclusions_highlight,
         inclusionsNote: input.inclusions_note === undefined ? current.inclusionsNote : input.inclusions_note,
+        imageUrl: input.image_url !== undefined ? input.image_url : current.imageUrl,
+        gallery: input.gallery !== undefined ? input.gallery : (current.gallery ?? []),
         status: input.status ?? current.status,
         isActive: input.is_active !== undefined ? input.is_active : current.isActive,
         updatedAt: now,
       };
 
       const updated = await deps.db.tourPackages.update(merged);
-      if (current.status === "published" && priceEdited) {
-        await triggerFrontendRebuild("tour-package-price-edited");
+      if (current.status === "published" && contentEdited) {
+        await triggerFrontendRebuild("tour-package-content-edited");
       }
       return updated;
     },
@@ -149,6 +166,56 @@ export function createTourPackagesService(deps: { db: Repositories; clock: Clock
     async deleteUpgrade(id: string) {
       await deps.db.tourPackages.deleteUpgrade(id);
       await triggerFrontendRebuild("upgrade-matrix-updated");
+    },
+    async uploadImage(input: UploadTourPackageImageInput) {
+      const mediaId = newId();
+      const ext = mediaExtensionFor(input.mimeType);
+      const filename = `${mediaId}.${ext}`;
+      const buffer = Buffer.from(input.dataBase64, "base64");
+
+      inMemoryMediaCache.set(filename, { buffer, mimeType: input.mimeType });
+
+      if (deps.mediaStorage) {
+        try {
+          await deps.mediaStorage.upload({
+            path: `packages/${filename}`,
+            buffer,
+            mimeType: input.mimeType,
+          });
+        } catch {
+          // In-memory cache keeps image available even if remote storage times out
+        }
+      }
+
+      return {
+        url: `/api/v1/tour-packages/media/${filename}`,
+        alt: input.altText,
+        caption: input.caption,
+      };
+    },
+    async getMedia(filename: string) {
+      const cached = inMemoryMediaCache.get(filename);
+      if (cached) return cached;
+
+      if (deps.mediaStorage) {
+        try {
+          const buffer = await deps.mediaStorage.download(`packages/${filename}`);
+          const ext = filename.split(".").pop()?.toLowerCase() || "";
+          const mimeMap: Record<string, string> = {
+            jpg: "image/jpeg",
+            jpeg: "image/jpeg",
+            png: "image/png",
+            webp: "image/webp",
+            avif: "image/avif",
+          };
+          const mimeType = mimeMap[ext] || "application/octet-stream";
+          inMemoryMediaCache.set(filename, { buffer, mimeType });
+          return { buffer, mimeType };
+        } catch {
+          return null;
+        }
+      }
+      return null;
     },
   };
 }

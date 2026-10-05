@@ -245,7 +245,7 @@ export async function buildApp(options: AppOptions): Promise<BuiltApp> {
   const inquiryService = createInquiryService({ db, clock });
   const rentalEnquiryService = createRentalEnquiryService({ db, clock });
   const routeCatalogService = createRouteCatalogService({ db, clock });
-  const tourPackagesService = createTourPackagesService({ db, clock });
+  const tourPackagesService = createTourPackagesService({ db, clock, mediaStorage });
   const transferRoutesService = createTransferRoutesService({ db, clock });
   const localPackagesService = createLocalPackagesService({ db, clock });
   const cancellationPoliciesService = createCancellationPoliciesService({ db, clock });

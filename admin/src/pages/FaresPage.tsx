@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Dialog } from "@/components/ui/Dialog";
-import { Input } from "@/components/ui/Input";
+import { Input, NumberInput } from "@/components/ui/Input";
 import { Table, TBody, THead, TD, TH, TRow } from "@/components/ui/Table";
 import { fetchAdminFareRules, updateAdminFareRules } from "@/lib/api";
 import { can, type AdminUser, type FareRuleset, type VehicleTier } from "@/lib/types";
@@ -378,35 +378,32 @@ export function FaresPage({ user }: { user: AdminUser }) {
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             <div>
               <label className="mb-1 block text-xs font-semibold text-ink">Min Daily Km (Outstation)</label>
-              <Input
-                type="number"
-                min="100"
-                max="1000"
+              <NumberInput
+                min={100}
+                max={1000}
                 required
                 value={editForm.minKmPerDay}
-                onChange={(e) => setEditForm((f) => ({ ...f, minKmPerDay: Number(e.target.value) }))}
+                onChange={(val) => setEditForm((f) => ({ ...f, minKmPerDay: val }))}
               />
             </div>
             <div>
               <label className="mb-1 block text-xs font-semibold text-ink">Cab Driver/Night (₹)</label>
-              <Input
-                type="number"
-                min="100"
-                max="2000"
+              <NumberInput
+                min={100}
+                max={2000}
                 required
                 value={editForm.nightAllowanceCab}
-                onChange={(e) => setEditForm((f) => ({ ...f, nightAllowanceCab: Number(e.target.value) }))}
+                onChange={(val) => setEditForm((f) => ({ ...f, nightAllowanceCab: val }))}
               />
             </div>
             <div>
               <label className="mb-1 block text-xs font-semibold text-ink">Tempo Driver/Night (₹)</label>
-              <Input
-                type="number"
-                min="200"
-                max="3000"
+              <NumberInput
+                min={200}
+                max={3000}
                 required
                 value={editForm.nightAllowanceTempo}
-                onChange={(e) => setEditForm((f) => ({ ...f, nightAllowanceTempo: Number(e.target.value) }))}
+                onChange={(val) => setEditForm((f) => ({ ...f, nightAllowanceTempo: val }))}
               />
             </div>
           </div>
@@ -443,31 +440,28 @@ export function FaresPage({ user }: { user: AdminUser }) {
                       <label className="mb-1 block text-[11px] font-semibold text-ink" htmlFor={`v-seats-${v.tier}`}>
                         Seats
                       </label>
-                      <Input
+                      <NumberInput
                         id={`v-seats-${v.tier}`}
-                        type="number"
-                        min="1"
-                        max="60"
+                        min={1}
+                        max={60}
                         required
-                        inputMode="numeric"
                         value={v.seats}
-                        onChange={(e) => handleVehicleChange(v.tier, { seats: Number(e.target.value) })}
+                        onChange={(val) => handleVehicleChange(v.tier, { seats: val })}
                       />
                     </div>
                     <div className="sm:col-span-2">
                       <label className="mb-1 block text-[11px] font-semibold text-ink" htmlFor={`v-perkm-${v.tier}`}>
                         ₹ / km
                       </label>
-                      <Input
+                      <NumberInput
                         id={`v-perkm-${v.tier}`}
-                        type="number"
-                        min="1"
-                        max="400"
+                        min={1}
+                        max={400}
                         step="0.5"
-                        required
                         inputMode="decimal"
+                        required
                         value={v.perKm}
-                        onChange={(e) => handleVehicleChange(v.tier, { perKm: Number(e.target.value) })}
+                        onChange={(val) => handleVehicleChange(v.tier, { perKm: val })}
                       />
                     </div>
                     <label className="flex cursor-pointer items-center gap-2 rounded-sm px-1 py-2 text-xs font-medium text-ink sm:col-span-3 sm:justify-self-end">

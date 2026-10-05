@@ -11,6 +11,7 @@ import {
   TourPackageQuerySchema,
   TourPackageUpgradeSchema,
   UpdateTourPackageSchema,
+  UploadTourPackageImageSchema,
 } from "./tour-packages.schema.js";
 
 export function createTourPackagesController(service: ReturnType<typeof createTourPackagesService>) {
@@ -101,6 +102,24 @@ export function createTourPackagesController(service: ReturnType<typeof createTo
       const { id } = TourPackageIdSchema.parse(request.params);
       await service.deleteUpgrade(id);
       return sendSuccess(reply, { deleted: true });
+    },
+    async uploadImage(request: FastifyRequest, reply: FastifyReply) {
+      admin(request);
+      requireUser(request);
+      const input = UploadTourPackageImageSchema.parse(request.body);
+      return sendSuccess(reply, await service.uploadImage(input), 201);
+    },
+    async getMedia(request: FastifyRequest, reply: FastifyReply) {
+      const { file } = request.params as { file: string };
+      const media = await service.getMedia(file);
+      if (!media) {
+        reply.code(404);
+        return reply.send({ success: false, error: { code: "NOT_FOUND", message: "Image not found" } });
+      }
+      return reply
+        .header("Content-Type", media.mimeType)
+        .header("Cache-Control", "public, max-age=31536000, immutable")
+        .send(media.buffer);
     },
   };
 }

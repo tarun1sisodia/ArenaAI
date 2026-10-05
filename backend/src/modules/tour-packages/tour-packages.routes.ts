@@ -61,4 +61,13 @@ export async function registerTourPackagesRoutes(
     config: { rateLimit: { max: 20, timeWindow: "1 minute" } },
     handler: controller.deleteUpgrade,
   });
+  app.post("/api/v1/ops/admin/tour-packages/upload-image", {
+    bodyLimit: 5_000_000,
+    config: { rateLimit: { max: 30, timeWindow: "1 minute" } },
+    handler: controller.uploadImage,
+  });
+  app.get("/api/v1/tour-packages/media/:file", {
+    config: { rateLimit: { max: 300, timeWindow: "1 minute" } },
+    handler: controller.getMedia,
+  });
 }
