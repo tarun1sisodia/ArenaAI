@@ -21,6 +21,7 @@ const BookingPage = lazy(() => import("../features/booking/BookingPage").then((m
 const MarketingPage = lazy(() => import("../pages/MarketingPage").then((m) => ({ default: m.MarketingPage })));
 const SeoLandingPage = lazy(() => import("../pages/SeoLandingPage").then((m) => ({ default: m.SeoLandingPage })));
 import { SEO_LANDING_SLUGS, type SeoLandingSlug } from "../data/seoLandingSlugs";
+import { SEO_LANDING_META } from "../data/seoLandingMeta";
 import { marketingHubs } from "./routes";
 import { SeoHead } from "../components/seo/SeoHead";
 import { packages, routes, vehicles, type Route } from "../data/catalogue";
@@ -42,8 +43,9 @@ export interface SeoMetadata {
 
 export function getSeo(pathname: string, section: string, language: "en" | "hi", isBooking: boolean): SeoMetadata {
   if (SEO_LANDING_SLUGS.includes(section as SeoLandingSlug)) {
-    const title = `${section.replaceAll("-", " ")} | SK Baghel Tour & Travels`;
-    return { title, description: `${title}. Verified drivers, transparent fare confirmation and easy phone or WhatsApp booking.`, ogImage: "/assets/brand/og-banner.webp", keywords: [title, "Agra taxi", "Agra cab booking"] };
+    // Titles/descriptions: SEO_LANDING_META (ideas 25–26) — keep in sync with ServerApp.tsx.
+    const meta = SEO_LANDING_META[section as SeoLandingSlug];
+    return { title: meta.title, description: meta.description, ogImage: "/assets/brand/og-banner.webp", keywords: [meta.title, "Agra taxi", "Agra cab booking"] };
   }
   if (isBooking) {
     return {

@@ -18,6 +18,7 @@ import { BookingPage } from "../features/booking/BookingPage";
 import { MarketingPage } from "../pages/MarketingPage";
 import { SeoLandingPage } from "../pages/SeoLandingPage";
 import { SEO_LANDING_SLUGS, type SeoLandingSlug } from "../data/seoLandingSlugs";
+import { SEO_LANDING_META } from "../data/seoLandingMeta";
 import { marketingHubs } from "./routes";
 import { SeoHead } from "../components/seo/SeoHead";
 import { packages, routes, vehicles, type Route } from "../data/catalogue";
@@ -98,14 +99,9 @@ function getSeoBase(
   dynamicRoute?: Route,
 ): SeoMetadata {
   if (SEO_LANDING_SLUGS.includes(section as SeoLandingSlug)) {
-    const labels: Record<string, string> = {
-      "tempo-traveller-on-rent-agra": "Tempo Traveller on Rent in Agra | 12–24 Seater, ₹25/km",
-      "same-day-agra-tour-from-delhi": "Same Day Agra Tour from Delhi | Private Car",
-      "delhi-to-agra-taxi": "Delhi to Agra Taxi | One-Way ₹3,499 | SK Baghel",
-      "taj-mahal-taxi-service": "Taj Mahal Taxi Service Agra | One-Day & Full-Day Cabs",
-    };
-    const title = labels[section] || `${section.replaceAll("-", " ")} | SK Baghel Tour & Travels`;
-    return { title, description: `${title}. Verified drivers, transparent fare confirmation and easy phone or WhatsApp booking.`, ogImage: "/assets/brand/og-banner.webp", keywords: [title, "Agra taxi", "Agra cab booking"] };
+    // Titles/descriptions: SEO_LANDING_META (ideas 25–26) — keep in sync with App.tsx.
+    const meta = SEO_LANDING_META[section as SeoLandingSlug];
+    return { title: meta.title, description: meta.description, ogImage: "/assets/brand/og-banner.webp", keywords: [meta.title, "Agra taxi", "Agra cab booking"] };
   }
   if (isBooking) {
     return {
