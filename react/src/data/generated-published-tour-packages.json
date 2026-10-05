@@ -18,6 +18,64 @@
     "nightChargeInr": 500,
     "inclusionsHighlight": "Private AC Cab, Chauffeur Allowance, Fuel",
     "inclusionsNote": "State Taxes, Toll Taxes",
+    "source": "Agra",
+    "destination": "Mathura & Vrindavan",
+    "inclusions": [
+      "Private Sanitized AC Cab for Entire Day",
+      "Experienced Commercial Chauffeur Allowance & Fuel",
+      "All Highway Tolls, State Taxes & Parking Charges",
+      "Complimentary Doorstep Hotel / Railway Station Pickup & Drop",
+      "Prem Mandir, Banke Bihari & Krishna Janmabhoomi Darshan Assistance",
+      "Chilled Packaged Drinking Water Bottles"
+    ],
+    "exclusions": [
+      "Monument / Temple Entry Tickets & Special VIP Darshan Passes",
+      "Meals, Snacks & Personal Dining Expenses",
+      "Personal Gratuities & Chauffeur Tips",
+      "Camera / Video Recording Fee at Designated Sites"
+    ],
+    "itinerary": [
+      {
+        "desc": "Chauffeur receives you at your hotel or Agra Cantt station in a sanitized AC cab.",
+        "time": "07:00 AM",
+        "title": "Doorstep Pickup in Agra"
+      },
+      {
+        "desc": "Visit the sacred birthplace of Lord Krishna, the ancient prison cell sanctum, and Keshavdev temple.",
+        "time": "08:30 AM",
+        "title": "Shri Krishna Janmabhoomi, Mathura"
+      },
+      {
+        "desc": "Experience historic temple darshan followed by sacred Yamuna Aarti steps at Vishram Ghat.",
+        "time": "11:00 AM",
+        "title": "Dwarkadhish Temple & Vishram Ghat"
+      },
+      {
+        "desc": "Enjoy authentic satvik vegetarian lunch with famous Mathura khoya pedas.",
+        "time": "01:00 PM",
+        "title": "Traditional Satvik Braj Bhojan"
+      },
+      {
+        "desc": "Navigate smoothly through sacred Vrindavan to witness Thakur Jis mesmerizing darshan.",
+        "time": "02:30 PM",
+        "title": "Banke Bihari Ji Mandir, Vrindavan"
+      },
+      {
+        "desc": "Immerse in joyful evening kirtan and peaceful white marble temple corridors.",
+        "time": "05:00 PM",
+        "title": "ISKCON Krishna Balaram Temple"
+      },
+      {
+        "desc": "Behold the magnificent Italian marble temple illuminated in majestic evening color displays.",
+        "time": "06:30 PM",
+        "title": "Prem Mandir Musical Light Show"
+      },
+      {
+        "desc": "Relax in your private AC cab on the highway back to your Agra hotel or station.",
+        "time": "08:00 PM",
+        "title": "Expressway Return Journey to Agra"
+      }
+    ],
     "imageUrl": null,
     "gallery": [],
     "status": "published",

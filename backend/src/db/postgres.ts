@@ -41,6 +41,11 @@ function num(value: unknown): number {
   return typeof value === "number" ? value : Number(value);
 }
 
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+function isUuid(val: unknown): boolean {
+  return typeof val === "string" && UUID_REGEX.test(val.trim());
+}
+
 function mapLocalPackage(row: Record<string, unknown>): LocalSightseeingPackageRecord {
   return {
     id: String(row.id),
@@ -763,11 +768,15 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
           return record;
         },
         async getById(id: string) {
-          const rows = await query(client, "select * from tour_packages where id=$1 or package_code=$1", [id]);
+          const rows = isUuid(id)
+            ? await query(client, "select * from tour_packages where id = $1::uuid or package_code = $1", [id])
+            : await query(client, "select * from tour_packages where package_code = $1", [id]);
           return rows[0] ? mapTourPackage(rows[0]) : null;
         },
         async getByCode(code: string) {
-          const rows = await query(client, "select * from tour_packages where package_code=$1 or id=$1", [code]);
+          const rows = isUuid(code)
+            ? await query(client, "select * from tour_packages where package_code = $1 or id = $1::uuid", [code])
+            : await query(client, "select * from tour_packages where package_code = $1", [code]);
           return rows[0] ? mapTourPackage(rows[0]) : null;
         },
         async list(filter = {}) {
@@ -829,11 +838,15 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
           return record;
         },
         async getById(id: string) {
-          const rows = await query(client, "select * from transfer_routes where id=$1", [id]);
+          const rows = isUuid(id)
+            ? await query(client, "select * from transfer_routes where id = $1::uuid or route_code = $1", [id])
+            : await query(client, "select * from transfer_routes where route_code = $1", [id]);
           return rows[0] ? mapTransferRoute(rows[0]) : null;
         },
         async getByCode(code: string) {
-          const rows = await query(client, "select * from transfer_routes where route_code=$1", [code]);
+          const rows = isUuid(code)
+            ? await query(client, "select * from transfer_routes where route_code = $1 or id = $1::uuid", [code])
+            : await query(client, "select * from transfer_routes where route_code = $1", [code]);
           return rows[0] ? mapTransferRoute(rows[0]) : null;
         },
         async list(filter = {}) {
@@ -876,11 +889,15 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
           return record;
         },
         async getById(id: string) {
-          const rows = await query(client, "select * from local_sightseeing_packages where id=$1", [id]);
+          const rows = isUuid(id)
+            ? await query(client, "select * from local_sightseeing_packages where id = $1::uuid or package_code = $1", [id])
+            : await query(client, "select * from local_sightseeing_packages where package_code = $1", [id]);
           return rows[0] ? mapLocalPackage(rows[0]) : null;
         },
         async getByCode(code: string) {
-          const rows = await query(client, "select * from local_sightseeing_packages where package_code=$1", [code]);
+          const rows = isUuid(code)
+            ? await query(client, "select * from local_sightseeing_packages where package_code = $1 or id = $1::uuid", [code])
+            : await query(client, "select * from local_sightseeing_packages where package_code = $1", [code]);
           return rows[0] ? mapLocalPackage(rows[0]) : null;
         },
         async list(filter = {}) {

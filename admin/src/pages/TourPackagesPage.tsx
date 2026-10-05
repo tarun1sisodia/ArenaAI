@@ -232,26 +232,68 @@ export function TourPackagesPage({ user }: { user: AdminUser }) {
     }));
   }
 
+  async function optimizeImageForUpload(file: File, maxDim = 1920, quality = 0.85): Promise<{ base64: string; mimeType: "image/jpeg" | "image/png" | "image/webp" }> {
+    if (file.size < 800 * 1024 && ["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      const reader = new FileReader();
+      const base64 = await new Promise<string>((resolve, reject) => {
+        reader.onload = () => {
+          const result = reader.result as string;
+          resolve(result.includes(",") ? result.split(",")[1] : result);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+      return { base64, mimeType: file.type as any };
+    }
+
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      const objectUrl = URL.createObjectURL(file);
+      img.onload = () => {
+        URL.revokeObjectURL(objectUrl);
+        let { width, height } = img;
+        if (width > maxDim || height > maxDim) {
+          if (width > height) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          reject(new Error("Canvas context creation failed"));
+          return;
+        }
+        ctx.drawImage(img, 0, 0, width, height);
+        const outputType = file.type === "image/png" ? "image/png" : "image/jpeg";
+        const dataUrl = canvas.toDataURL(outputType, quality);
+        const base64 = dataUrl.includes(",") ? dataUrl.split(",")[1] : dataUrl;
+        resolve({ base64, mimeType: outputType as any });
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(objectUrl);
+        reject(new Error("Failed to load image for optimization"));
+      };
+      img.src = objectUrl;
+    });
+  }
+
   async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
     setIsUploadingImage(true);
     setError(null);
     try {
-      const reader = new FileReader();
-      const dataBase64 = await new Promise<string>((resolve, reject) => {
-        reader.onload = () => {
-          const result = reader.result as string;
-          const base64 = result.includes(",") ? result.split(",")[1] : result;
-          resolve(base64);
-        };
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
+      const { base64, mimeType } = await optimizeImageForUpload(file);
 
       const res = await uploadTourPackageImage({
-        dataBase64,
-        mimeType: file.type as any,
+        dataBase64: base64,
+        mimeType,
         altText: customImageAlt.trim() || form.name || "Tour photo",
         caption: customImageCaption.trim() || undefined,
       });

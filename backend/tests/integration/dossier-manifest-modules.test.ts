@@ -209,4 +209,52 @@ describe("Dossier Content Modules & Manifest Endpoints", () => {
     expect(profileRes.statusCode).toBe(200);
     expect(profileRes.json().data.dossierStatus).toBe("signed_off");
   });
+
+  it("admin check-code handles arbitrary non-UUID text slugs without PostgreSQL error", async () => {
+    const { app } = await createTestApp();
+    const adminHeaders = { authorization: "Bearer test-super_admin" };
+
+    const checkRes = await app.inject({
+      method: "GET",
+      url: "/api/v1/ops/admin/tour-packages/check-code?code=delhi-to-bijnor-same-day-tour",
+      headers: adminHeaders,
+    });
+    expect(checkRes.statusCode).toBe(200);
+    expect(checkRes.json()).toEqual({ success: true, data: { available: true } });
+
+    // Create the package
+    const createRes = await app.inject({
+      method: "POST",
+      url: "/api/v1/ops/admin/tour-packages",
+      headers: adminHeaders,
+      payload: {
+        package_code: "delhi-to-bijnor-same-day-tour",
+        name: "Delhi to Bijnor Same Day Tour",
+        duration_text: "Same Day (12h)",
+        days: 1,
+        nights: 0,
+        base_tier_code: "sedan",
+        starting_price_inr: 4500,
+        fleet_prices: { sedan: 4500, ertiga: 5500, innova: 7000, tempo: 10000, urbania: 14000 },
+        source: "Delhi",
+        destination: "Bijnor",
+        inclusions: ["AC Commercial Vehicle", "Fuel & Tolls"],
+        exclusions: ["Monument Entry"],
+        itinerary: [{ title: "Delhi Departure", desc: "Early morning pickup from Delhi." }],
+        status: "published",
+        is_active: true,
+      },
+    });
+    expect(createRes.statusCode).toBe(201);
+    expect(createRes.json().success).toBe(true);
+
+    // Check code again
+    const checkAgainRes = await app.inject({
+      method: "GET",
+      url: "/api/v1/ops/admin/tour-packages/check-code?code=delhi-to-bijnor-same-day-tour",
+      headers: adminHeaders,
+    });
+    expect(checkAgainRes.statusCode).toBe(200);
+    expect(checkAgainRes.json()).toEqual({ success: true, data: { available: false } });
+  });
 });

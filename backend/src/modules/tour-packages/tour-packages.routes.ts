@@ -34,10 +34,12 @@ export async function registerTourPackagesRoutes(
     handler: controller.get,
   });
   app.post("/api/v1/ops/admin/tour-packages", {
+    bodyLimit: 15_000_000,
     config: { rateLimit: { max: 30, timeWindow: "1 minute" } },
     handler: controller.create,
   });
   app.patch("/api/v1/ops/admin/tour-packages/:id", {
+    bodyLimit: 15_000_000,
     config: { rateLimit: { max: 30, timeWindow: "1 minute" } },
     handler: controller.update,
   });
@@ -62,7 +64,7 @@ export async function registerTourPackagesRoutes(
     handler: controller.deleteUpgrade,
   });
   app.post("/api/v1/ops/admin/tour-packages/upload-image", {
-    bodyLimit: 5_000_000,
+    bodyLimit: 15_000_000,
     config: { rateLimit: { max: 30, timeWindow: "1 minute" } },
     handler: controller.uploadImage,
   });
