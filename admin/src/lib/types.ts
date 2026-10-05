@@ -88,6 +88,11 @@ export interface Payment {
   provider: PaymentProvider;
   method: PaymentMethod;
   providerPaymentId: string;
+  providerOrderId: string;
+  checkoutSessionId: string | null;
+  checkoutUrl: string | null;
+  webhookEventId: string | null;
+  reconciliationStatus: "pending" | "matched" | "needs_review";
   amount: number;
   status: PaymentStatus;
   capturedAt: string;
@@ -455,4 +460,3 @@ export interface CreatePromoCodeInput {
 }
 
 export type UpdatePromoCodeInput = Partial<CreatePromoCodeInput>;
-

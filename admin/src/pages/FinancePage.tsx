@@ -151,9 +151,11 @@ export function FinancePage({ user }: { user: AdminUser }) {
               <TRow>
                 <TH>Booking</TH>
                 <TH>Provider</TH>
+                <TH>Gateway reference</TH>
                 <TH>Method</TH>
                 <TH className="text-right">Amount</TH>
                 <TH>Captured</TH>
+                <TH>Reconciliation</TH>
                 <TH>Status</TH>
                 <TH className="w-24" />
               </TRow>
@@ -174,6 +176,10 @@ export function FinancePage({ user }: { user: AdminUser }) {
                   >
                     <TD className="font-mono text-[12px] font-medium">{p.bookingTicketId}</TD>
                     <TD className="text-[13px] capitalize text-ink-soft">{p.provider}</TD>
+                    <TD className="max-w-44 font-mono text-[11px] text-ink-soft" title={p.providerOrderId}>
+                      <span className="block truncate">{p.providerOrderId}</span>
+                      {p.webhookEventId ? <span className="block truncate text-[10px] text-ink-faint">webhook: {p.webhookEventId}</span> : <span className="block text-[10px] text-ink-faint">browser-verified</span>}
+                    </TD>
                     <TD>
                       <span className="flex items-center gap-1.5 text-[13px] text-ink-soft">
                         <MethodIcon className="h-3.5 w-3.5 text-ink-faint" />
@@ -184,6 +190,7 @@ export function FinancePage({ user }: { user: AdminUser }) {
                       {p.amount === 0 ? "—" : formatINR(p.amount)}
                     </TD>
                     <TD className="font-mono text-[12px] text-ink-soft">{formatDateTime(p.capturedAt)}</TD>
+                    <TD><StatusBadge status={p.reconciliationStatus === "matched" ? "captured" : p.reconciliationStatus} /></TD>
                     <TD><StatusBadge status={p.status} /></TD>
                     <TD className="text-right">
                       {canRefund && eligible && (

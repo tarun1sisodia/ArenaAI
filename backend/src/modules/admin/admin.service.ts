@@ -104,14 +104,23 @@ export function createAdminService(deps: { db: Repositories; clock?: Clock }) {
 
     async listPayments(filter: PaymentListFilter) {
       const result = await deps.db.payments.list(filter);
+      const items = await Promise.all(result.items.map(async (payment) => {
+        const booking = await deps.db.bookings.getById(payment.bookingId);
+        return {
+          ...payment,
+          bookingTicketId: booking?.ticketId ?? payment.bookingId,
+          method: payment.paymentMethod,
+          capturedAt: payment.verifiedAt ?? payment.updatedAt,
+        };
+      }));
       return {
         total: result.total,
         totalCapturedPaise: result.totalCapturedPaise,
         totalRefundedPaise: result.totalRefundedPaise,
         page: filter.page ?? 1,
         limit: filter.limit ?? 50,
-        items: result.items,
-        payments: result.items,
+        items,
+        payments: items,
       };
     },
 
