@@ -30,6 +30,7 @@ const STATUSES: (BookingStatus | "all")[] = [
   "all",
   "pending_payment",
   "paid_confirmed",
+  "driver_assigned",
   "in_transit",
   "completed",
   "cancelled",
@@ -58,6 +59,12 @@ function bookingSubtitle(booking: Booking): string {
 /** Valid staff transitions per TRD §4.1 state machine */
 const TRANSITIONS: Partial<Record<BookingStatus, { to: BookingStatus; label: string; tone: "gold" | "default" | "destructive" | "outline" }[]>> = {
   paid_confirmed: [
+    { to: "driver_assigned", label: "Assign driver", tone: "gold" },
+    { to: "in_transit", label: "Start trip", tone: "gold" },
+    { to: "completed", label: "Mark completed", tone: "default" },
+    { to: "cancelled", label: "Cancel booking", tone: "destructive" },
+  ],
+  driver_assigned: [
     { to: "in_transit", label: "Start trip", tone: "gold" },
     { to: "completed", label: "Mark completed", tone: "default" },
     { to: "cancelled", label: "Cancel booking", tone: "destructive" },
