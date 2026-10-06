@@ -12,9 +12,9 @@ this file at commit `2c02ee3`. The table below is the condensed record.
 
 ## Current State
 
-- **Current Phase:** Publish-Prep & Cleanup complete; ready for Phase 7 final deployment release sequence.
-- **Current Step:** Dedup + publish-prep complete (General catalog type selector restricted to place/vehicle with hint line, legacy published packages archived, GET /api/v1/catalog zero legacy items verified, zero duplicate cards verified, npm run verify green).
-- **Last updated:** 2026-10-04
+- **Current Phase:** Admin Desk 3-Section Live API Audit & PostgreSQL Operator Bugfix Complete; Staging-Ready for Production Deployment.
+- **Current Step:** CLI Mode E2E verification complete across 3 sections (Route Catalog, Local & Transfers, Tour Packages); fixed PostgreSQL `text = uuid` operator collision in `postgres.ts`; widened customer corridor search resolver in `BookingPage.tsx` for all 963 catalog corridors; `npm run verify` passed cleanly (3x typecheck, 29 test suites / 192 tests, 3x builds).
+- **Last updated:** 2026-10-06
 - **Summary:** All HTML designs from `react/new_design/` are completely converted into the React application with ultra-luxury aesthetic styling, design tokens (`theme.css`), and the strict English-only mandate:
   * Multi-Agent Orchestration Engine (`agents/`): Automated agent pipeline with `code_extractor.py`, dynamic language templates (`task_template.py`), `tenacity` exponential retry logic, and specialized agents (`schema_agent.py`, `service_agent.py`, `frontend_agent.py`, `test_agent.py`, `seo_content_agent.py`, `orchestrator.py`).
   * Commercial Exception Rules & Strategy Pattern (`backend/src/modules/fares/fare.strategy.ts`): Implemented strict commercial booking rules for group vehicles ("Urbania", "Force Tempo", and any "Force" variants): forced round-trip billing (`km * 2`), 300 km/day minimum distance floor (`Math.max(km * 2, 300 * days)`), ₹500/day driver allowance, and locked fixed-rate pricing structure (zero promo discounts).

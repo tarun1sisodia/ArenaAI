@@ -31,7 +31,8 @@ interface UnsupportedRequest {
   suggestions: Route[];
 }
 
-function normalizePlace(value: string): string {
+function normalizePlace(value?: string | null): string {
+  if (!value) return "";
   return value.trim().toLowerCase().replace(/[^a-z0-9]+/g, " ").replace(/\s+/g, " ").trim();
 }
 
@@ -46,10 +47,33 @@ function stableSerialize(value: unknown): string {
 
 function cityIdForSearch(value: string): string | null {
   const normalized = normalizePlace(value);
-  return cities.find((city) => normalized === city.id || normalized === normalizePlace(city.name))?.id ?? null;
+  if (!normalized) return null;
+  const directCity = cities.find((city) => normalized === city.id || normalized === normalizePlace(city.name));
+  if (directCity) return directCity.id;
+  const slugified = normalized.replace(/\s+/g, "-");
+  const directEndpoint = routes.find(
+    (r) => r.from === slugified || r.to === slugified || normalizePlace(r.origin) === normalized || normalizePlace(r.destination) === normalized
+  );
+  if (directEndpoint) {
+    if (directEndpoint.from === slugified || normalizePlace(directEndpoint.origin) === normalized) {
+      return directEndpoint.from;
+    }
+    return directEndpoint.to;
+  }
+  return null;
 }
 
 function findSupportedRoute(origin: string, destination: string): Route | null {
+  const normOrigin = normalizePlace(origin);
+  const normDest = normalizePlace(destination);
+  if (!normOrigin || !normDest) return null;
+  const direct = routes.find((route) => {
+    return (
+      (normalizePlace(route.origin) === normOrigin || route.from === normOrigin.replace(/\s+/g, "-")) &&
+      (normalizePlace(route.destination) === normDest || route.to === normDest.replace(/\s+/g, "-"))
+    );
+  });
+  if (direct) return direct;
   const from = cityIdForSearch(origin);
   const to = cityIdForSearch(destination);
   if (!from || !to) return null;
@@ -59,7 +83,18 @@ function findSupportedRoute(origin: string, destination: string): Route | null {
 function supportedRouteSuggestions(origin: string, destination: string): Route[] {
   const from = cityIdForSearch(origin);
   const to = cityIdForSearch(destination);
-  const nearby = routes.filter((route) => (from && (route.from === from || route.to === from)) || (to && (route.from === to || route.to === to)));
+  const normOrigin = normalizePlace(origin);
+  const normDest = normalizePlace(destination);
+  const nearby = routes.filter((route) => {
+    const routeOriginNorm = normalizePlace(route.origin);
+    const routeDestNorm = normalizePlace(route.destination);
+    return (
+      (from && (route.from === from || route.to === from)) ||
+      (to && (route.from === to || route.to === to)) ||
+      (normOrigin && (routeOriginNorm.includes(normOrigin) || normOrigin.includes(routeOriginNorm))) ||
+      (normDest && (routeDestNorm.includes(normDest) || normDest.includes(routeDestNorm)))
+    );
+  });
   return [...new Map([...nearby, ...routes].map((route) => [route.id, route])).values()].slice(0, 5);
 }
 
@@ -70,7 +105,7 @@ function UnavailableBookingRequest({ request, selectedVehicleId, message }: { re
   return <section className="rounded-2xl border border-primary/30 bg-sandstone-wash/70 p-space-lg md:p-space-xl" role="alert" aria-live="polite">
     <div className="flex items-start gap-3"><span className="material-symbols-outlined text-icon-28 text-primary" aria-hidden="true">route</span><div><p className="font-label-caps text-label-caps uppercase tracking-widest text-terracotta-sandstone font-bold">Route not in our catalogue</p><h2 className="font-headline-sm text-headline-sm text-ink-midnight font-bold mt-1">{request.kind === "route" ? `${request.origin} → ${request.destination} is not currently available` : "That tour is not currently available"}</h2><p className="font-body-md text-on-surface-variant mt-2 leading-relaxed">We do not have a published route, package, or trip for this search, so we have not shown vehicle availability. Our desk can still check a custom charter by phone or WhatsApp.</p></div></div>
     <div className="flex flex-col sm:flex-row gap-2 mt-space-md"><a className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-white font-semibold" href={`tel:${contact.phone}`}><span className="material-symbols-outlined text-icon-18" aria-hidden="true">call</span>Call {contact.phoneDisplay}</a><a className="inline-flex items-center justify-center gap-2 rounded-xl bg-black px-4 py-3 text-white font-semibold" href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(`Hello Agra SK Baghel Tour and Travels, please check a custom booking for ${request.origin ?? request.name ?? "my requested tour"}${request.destination ? ` to ${request.destination}` : ""}.`)}`} target="_blank" rel="noreferrer"><WhatsAppIcon className="w-4 h-4 shrink-0 text-white" />WhatsApp the desk</a></div>
-    {request.suggestions.length > 0 && <div className="mt-space-lg"><h3 className="font-title-lg text-title-lg text-ink-charcoal font-semibold">Try one of these supported routes</h3><div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3">{request.suggestions.map((route) => { const from = cities.find((city) => city.id === route.from)?.name ?? route.from; const to = cities.find((city) => city.id === route.to)?.name ?? route.to; return <a key={route.id} className="rounded-xl border border-border-warm bg-surface-container-lowest px-3 py-3 hover:border-primary transition-colors" href={`/book.html?from=${encodeURIComponent(route.from)}&to=${encodeURIComponent(route.to)}&vehicle=${selectedVehicleId}&trip=one-way`}><span className="block font-semibold text-ink-charcoal">{from} → {to}</span><span className="text-xs text-on-surface-variant">From {formatInr(route.fares.sedan)} by Sedan</span></a>; })}</div></div>}
+    {request.suggestions.length > 0 && <div className="mt-space-lg"><h3 className="font-title-lg text-title-lg text-ink-charcoal font-semibold">Try one of these supported routes</h3><div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3">{request.suggestions.map((route) => { const from = route.origin ?? cities.find((city) => city.id === route.from)?.name ?? route.from; const to = route.destination ?? cities.find((city) => city.id === route.to)?.name ?? route.to; return <a key={route.id} className="rounded-xl border border-border-warm bg-surface-container-lowest px-3 py-3 hover:border-primary transition-colors" href={`/book.html?from=${encodeURIComponent(route.from)}&to=${encodeURIComponent(route.to)}&vehicle=${selectedVehicleId}&trip=one-way`}><span className="block font-semibold text-ink-charcoal">{from} → {to}</span><span className="text-xs text-on-surface-variant">From {formatInr(route.fares.sedan)} by Sedan</span></a>; })}</div></div>}
     <a className="inline-flex mt-space-md text-primary font-semibold hover:underline" href="/en/routes/">Browse all supported routes ↗</a>
   </section>;
 }

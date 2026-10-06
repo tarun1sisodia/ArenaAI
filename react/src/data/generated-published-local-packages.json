@@ -1,5 +1,50 @@
 [
   {
+    "id": "ace891c5-2eb4-49e4-ad84-175d851529f8",
+    "packageCode": "cli-local-tour-7126",
+    "name": "Agra Full Day Heritage Exploration",
+    "durationHours": 8,
+    "includedKm": 80,
+    "covers": "Taj Mahal, Agra Fort, Itmad-ud-Daulah, Mehtab Bagh sunset view",
+    "parkingNote": "Parking at Shilpgram / monument premises included",
+    "fleetPrices": {
+      "sedan": 1950,
+      "ertiga": 2650,
+      "innova": 2950,
+      "tempo": 5500,
+      "urbania": 7500
+    },
+    "usePerKm": false,
+    "extraRates": {
+      "sedan": {
+        "per_hr": 150,
+        "per_km": 11
+      },
+      "tempo": {
+        "per_hr": 400,
+        "per_km": 26
+      },
+      "ertiga": {
+        "per_hr": 200,
+        "per_km": 15
+      },
+      "innova": {
+        "per_hr": 250,
+        "per_km": 19
+      },
+      "urbania": {
+        "per_hr": 600,
+        "per_km": 35
+      }
+    },
+    "nightChargeInr": 300,
+    "status": "published",
+    "isActive": true,
+    "createdAt": "2026-10-06T06:37:20.000Z",
+    "updatedAt": "2026-10-06T06:37:21.000Z",
+    "slug": "cli-local-tour-7126"
+  },
+  {
     "id": "68310c06-4228-4c7b-8ca0-9304e793f63d",
     "packageCode": "knowledge-parak-2-sightseeing",
     "name": "Knowledge parak 2 SightSeeing",

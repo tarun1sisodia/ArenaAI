@@ -122,5 +122,114 @@
     ],
     "slug": "same-day-prem-mandir-tour",
     "image": "/assets/packages/taj-dawn.webp"
+  },
+  {
+    "id": "e0ad6298-e4f4-44bb-ab2a-d5dfaa022064",
+    "packageCode": "cli-pkg-golden-triangle-7126",
+    "name": "Golden Triangle 3-Day Royal Circuit",
+    "durationText": "3 Days / 2 Nights",
+    "days": 3,
+    "nights": 2,
+    "baseTierCode": "sedan",
+    "startingPriceInr": 18500,
+    "fleetPrices": {
+      "sedan": 18500,
+      "ertiga": 22500,
+      "innova": 27500,
+      "tempo": 36500,
+      "urbania": 45000
+    },
+    "nightChargeInr": 500,
+    "inclusionsHighlight": "Private AC Cab, Tolls & Parking, Chauffeur Allowance Included",
+    "inclusionsNote": "Doorstep Delhi NCR pickup to Jaipur return drop",
+    "source": "Delhi",
+    "destination": "Agra & Jaipur",
+    "inclusions": [
+      "Private AC Cab dedicated exclusively to your group for 3 days",
+      "Police-verified chauffeur allowance, fuel & interstate taxes (UP, DL, RJ)",
+      "All highway toll taxes & parking charges",
+      "Doorstep hotel / airport pickup and return drop",
+      "Chilled packaged drinking water bottles"
+    ],
+    "exclusions": [
+      "Monument entry tickets & camera/drone permits",
+      "Hotel accommodations & room stays",
+      "Meals, buffet lunches & personal snacks",
+      "Chauffeur / guide discretionary tips & gratuities"
+    ],
+    "itinerary": [
+      {
+        "desc": "Pickup in Delhi NCR, transit to Agra, evening Mehtab Bagh sunset.",
+        "time": "Day 1",
+        "title": "Delhi to Agra via Yamuna Expressway"
+      },
+      {
+        "desc": "Sunrise Taj Mahal visit, Agra Fort, stop at Fatehpur Sikri, arrival in Jaipur.",
+        "time": "Day 2",
+        "title": "Taj Mahal Dawn & Transit to Jaipur"
+      },
+      {
+        "desc": "Amber Fort, Hawa Mahal, City Palace, evening drop back in Delhi or Jaipur.",
+        "time": "Day 3",
+        "title": "Jaipur Pink City & Return Transit"
+      }
+    ],
+    "imageUrl": null,
+    "gallery": [
+      {
+        "alt": "Taj Mahal dawn Agra",
+        "url": "/assets/places/gallery/taj-mahal-01.jpg",
+        "caption": "Taj Mahal reflection pool at dawn"
+      },
+      {
+        "alt": "Hawa Mahal facade Jaipur",
+        "url": "/assets/places/gallery/jaipur-pink-city-01.jpg",
+        "caption": "Hawa Mahal Palace of Winds"
+      }
+    ],
+    "status": "published",
+    "isActive": true,
+    "createdAt": "2026-10-06T06:37:25.000Z",
+    "updatedAt": "2026-10-06T06:37:26.000Z",
+    "upgrades": [
+      {
+        "id": "5d4969b3-2d29-4675-9adb-400d280b019b",
+        "packageId": null,
+        "tierCode": "ertiga",
+        "passengerNote": "Up to 6 Passengers",
+        "surchargeInr": 800,
+        "createdAt": "2026-10-03T22:32:29.000Z",
+        "updatedAt": "2026-10-03T22:32:29.000Z"
+      },
+      {
+        "id": "927bde12-fb80-4c3f-8562-f5ddaf9c21d2",
+        "packageId": null,
+        "tierCode": "innova",
+        "passengerNote": "VIP Executive Comfort (6–7 Passengers)",
+        "surchargeInr": 1800,
+        "createdAt": "2026-10-03T22:32:29.000Z",
+        "updatedAt": "2026-10-03T22:32:29.000Z"
+      },
+      {
+        "id": "f4795561-7295-4475-a97c-a300784b238a",
+        "packageId": null,
+        "tierCode": "tempo",
+        "passengerNote": "Large Family / Group (12–16 Passengers)",
+        "surchargeInr": 3500,
+        "createdAt": "2026-10-03T22:32:29.000Z",
+        "updatedAt": "2026-10-03T22:32:29.000Z"
+      },
+      {
+        "id": "2164971f-4a68-4bfc-a73f-9bbc3b44227d",
+        "packageId": null,
+        "tierCode": "urbania",
+        "passengerNote": "Ultra-Luxury Luxury Van (10–17 Passengers)",
+        "surchargeInr": 5500,
+        "createdAt": "2026-10-03T22:32:29.000Z",
+        "updatedAt": "2026-10-03T22:32:29.000Z"
+      }
+    ],
+    "slug": "cli-pkg-golden-triangle-7126",
+    "image": "/assets/packages/taj-dawn.webp"
   }
 ]
