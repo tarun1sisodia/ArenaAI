@@ -116,6 +116,7 @@ async function processQueued(deps: {
           status: "sent",
           attemptCount: job.attemptCount + 1,
           providerMessageId: result.providerMessageId,
+          lastError: null,
           updatedAt: now,
         });
       } else {
@@ -131,6 +132,7 @@ async function processQueued(deps: {
           status: "sent",
           attemptCount: job.attemptCount + 1,
           providerMessageId: result.providerMessageId,
+          lastError: null,
           updatedAt: now,
         });
       }
