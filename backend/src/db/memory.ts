@@ -379,6 +379,10 @@ export function createMemoryRepositories(nowIso = new Date().toISOString()): Rep
         const found = payments.get(id);
         return found ? clone(found) : null;
       },
+      async getByProviderPaymentId(providerPaymentId) {
+        const found = [...payments.values()].find((item) => item.providerPaymentId === providerPaymentId);
+        return found ? clone(found) : null;
+      },
       async listByBookingId(bookingId) {
         return [...payments.values()].filter((item) => item.bookingId === bookingId).map(clone);
       },
@@ -424,10 +428,19 @@ export function createMemoryRepositories(nowIso = new Date().toISOString()): Rep
         refundsByIdempotency.set(record.idempotencyKey, record.id);
         return clone(record);
       },
+      async update(record) {
+        refunds.set(record.id, clone(record));
+        refundsByIdempotency.set(record.idempotencyKey, record.id);
+        return clone(record);
+      },
       async getByIdempotencyKey(key) {
         const id = refundsByIdempotency.get(key);
         if (!id) return null;
         const found = refunds.get(id);
+        return found ? clone(found) : null;
+      },
+      async getByProviderRefundId(providerRefundId) {
+        const found = [...refunds.values()].find((item) => item.providerRefundId === providerRefundId);
         return found ? clone(found) : null;
       },
       async listByBookingId(bookingId) {

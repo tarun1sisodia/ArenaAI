@@ -141,7 +141,9 @@ export function createRazorpayAdapter(options: RazorpayOptions): PaymentProvider
       } catch {
         throw new Error("Invalid Razorpay webhook JSON");
       }
-      const entity = payload.payload?.payment?.entity ?? payload.payload?.order?.entity;
+      const refundEntity = payload.payload?.refund?.entity;
+      const paymentEntity = payload.payload?.payment?.entity;
+      const entity = paymentEntity ?? payload.payload?.order?.entity ?? refundEntity;
       if (!entity) throw new Error("Missing entity in Razorpay webhook");
       const amount = Number(entity?.amount ?? 0);
       if (!Number.isFinite(amount) || amount < 0) throw new Error("Invalid amount in Razorpay webhook");
@@ -152,13 +154,15 @@ export function createRazorpayAdapter(options: RazorpayOptions): PaymentProvider
         eventId: payload.id || entity?.id || newId(),
         eventType: payload.event,
         providerOrderId: String(entity?.order_id ?? entity?.id ?? ""),
-        providerPaymentId: payload.payload?.payment?.entity?.id ?? null,
+        providerPaymentId: payload.payload?.payment?.entity?.id ?? refundEntity?.payment_id ?? null,
+        providerRefundId: refundEntity?.id ?? null,
+        refundAmountMinor: refundEntity ? amount : null,
         amountMinor: amount,
         currency,
         status,
-        paymentMethod: entity?.method ?? null,
-        feeMinor: Number(entity?.fee ?? 0),
-        taxMinor: Number(entity?.tax ?? 0),
+        paymentMethod: paymentEntity?.method ?? null,
+        feeMinor: Number(paymentEntity?.fee ?? 0),
+        taxMinor: Number(paymentEntity?.tax ?? 0),
         raw: payload,
       };
     },
@@ -194,6 +198,7 @@ type RazorpayWebhook = {
   payload?: {
     payment?: { entity?: RazorpayPaymentEntity };
     order?: { entity?: RazorpayPaymentEntity };
+    refund?: { entity?: RazorpayRefundEntity };
   };
 };
 
@@ -206,6 +211,15 @@ type RazorpayPaymentEntity = {
   method?: string;
   fee?: number;
   tax?: number;
+};
+
+type RazorpayRefundEntity = {
+  id?: string;
+  payment_id?: string;
+  order_id?: string;
+  amount?: number;
+  currency?: string;
+  status?: string;
 };
 
 function mapRazorpayStatus(event: string, status?: string): NormalizedProviderEvent["status"] {

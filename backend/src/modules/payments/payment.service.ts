@@ -280,7 +280,11 @@ export function createPaymentService(deps: {
         return { duplicate: true, status: "already_processed" as const };
       }
 
-      const payment = await deps.db.payments.getByProviderOrderId(event.providerOrderId);
+      const payment =
+        (event.status === "refunded" && event.providerPaymentId
+          ? await deps.db.payments.getByProviderPaymentId(event.providerPaymentId)
+          : null) ??
+        (await deps.db.payments.getByProviderOrderId(event.providerOrderId));
       if (!payment) {
         // Unknown order - could be race where webhook arrives before checkout creation
         // Return 200 to prevent provider retry storm, but log for investigation
@@ -301,12 +305,44 @@ export function createPaymentService(deps: {
       }
 
       if (event.status === "refunded") {
-        await deps.db.payments.update({
-          ...payment,
-          status: "refunded",
-          webhookEventId: event.eventId,
-          reconciliationStatus: "matched",
-          updatedAt: toIso(deps.clock.now()),
+        await deps.db.transaction(async (trx) => {
+          const now = toIso(deps.clock.now());
+          const freshPayment = await trx.payments.getById(payment.id);
+          const booking = await trx.bookings.getById(payment.bookingId);
+          if (!freshPayment || !booking) return;
+
+          await trx.payments.update({
+            ...freshPayment,
+            status: "refunded",
+            webhookEventId: event.eventId,
+            reconciliationStatus: "matched",
+            updatedAt: now,
+          });
+
+          const bookingRefunds = await trx.refunds.listByBookingId(booking.id);
+          const refund = (event.providerRefundId
+            ? await trx.refunds.getByProviderRefundId(event.providerRefundId)
+            : null) ?? bookingRefunds.find((item) => item.paymentId === freshPayment.id && item.status === "pending");
+          if (refund && refund.status !== "processed") {
+            await trx.refunds.update({
+              ...refund,
+              providerRefundId: event.providerRefundId ?? refund.providerRefundId,
+              status: "processed",
+            });
+          }
+
+          // Cancellation already moves the booking to cancelled; a later
+          // provider refund must not attempt an invalid cancelled -> refunded
+          // transition. Other paid bookings become refunded here.
+          if (["paid_confirmed", "in_transit"].includes(booking.status)) {
+            assertTransition(booking.status, "refunded");
+            await trx.bookings.update({
+              ...booking,
+              status: "refunded",
+              version: booking.version + 1,
+              updatedAt: now,
+            });
+          }
         });
         await deps.db.webhooks.markProcessed(event.eventId);
         return { duplicate: false, status: "refunded" as const };

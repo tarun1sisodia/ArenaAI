@@ -79,7 +79,7 @@ describe("Booking Cancellation Refund Engine Wiring", () => {
     await app.close();
   });
 
-  it("creates a 0% refund record (advance retained) when confirmed booking is cancelled with < 24h notice", async () => {
+  it("does not create a refund record when the advance is retained for < 24h cancellation", async () => {
     const { app, db } = await createTestApp();
 
     // 1. Create booking with pickup 6 hours in future
@@ -143,13 +143,10 @@ describe("Booking Cancellation Refund Engine Wiring", () => {
     expect(cancelRes.statusCode).toBe(200);
     expect(cancelRes.json().data.status).toBe("cancelled");
 
-    // 4. Verify refund record created in DB matching Slab 2 (0% refund, 100% retained)
+    // 4. A retained advance is not a refund. The refunds table requires a
+    // strictly positive amount, so cancellation must leave no refund row.
     const refunds = await db.refunds.listByBookingId(bookingId);
-    expect(refunds.length).toBe(1);
-    expect(refunds[0]!.amountMinor).toBe(0);
-    expect(refunds[0]!.status).toBe("processed");
-    expect(refunds[0]!.reason).toContain("<24 hours before departure");
-    expect(refunds[0]!.reason).toContain("Advance retained");
+    expect(refunds).toHaveLength(0);
 
     await app.close();
   });

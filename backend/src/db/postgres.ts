@@ -591,6 +591,10 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
           const rows = await query(client, "select * from payments where provider_order_id=$1", [providerOrderId]);
           return rows[0] ? mapPayment(rows[0]) : null;
         },
+        async getByProviderPaymentId(providerPaymentId: string) {
+          const rows = await query(client, "select * from payments where provider_payment_id=$1", [providerPaymentId]);
+          return rows[0] ? mapPayment(rows[0]) : null;
+        },
         async listByBookingId(bookingId: string) {
           const rows = await query(client, "select * from payments where booking_id=$1 order by created_at desc", [bookingId]);
           return rows.map(mapPayment);
@@ -658,8 +662,33 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
           );
           return record;
         },
+        async update(record: RefundRecord) {
+          await query(
+            client,
+            `update refunds set provider_refund_id=$2, amount_minor=$3, currency=$4, reason=$5, status=$6 where id=$1`,
+            [record.id, record.providerRefundId, record.amountMinor, record.currency, record.reason, record.status],
+          );
+          return record;
+        },
         async getByIdempotencyKey(key: string) {
           const rows = await query(client, "select * from refunds where idempotency_key=$1", [key]);
+          const row = rows[0];
+          if (!row) return null;
+          return {
+            id: String(row.id),
+            paymentId: String(row.payment_id),
+            bookingId: String(row.booking_id),
+            providerRefundId: row.provider_refund_id ? String(row.provider_refund_id) : null,
+            amountMinor: num(row.amount_minor),
+            currency: row.currency as RefundRecord["currency"],
+            reason: String(row.reason),
+            status: row.status as RefundRecord["status"],
+            idempotencyKey: String(row.idempotency_key),
+            createdAt: new Date(String(row.created_at)).toISOString(),
+          };
+        },
+        async getByProviderRefundId(providerRefundId: string) {
+          const rows = await query(client, "select * from refunds where provider_refund_id=$1", [providerRefundId]);
           const row = rows[0];
           if (!row) return null;
           return {

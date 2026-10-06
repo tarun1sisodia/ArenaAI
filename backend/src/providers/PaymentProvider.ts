@@ -30,6 +30,8 @@ export type NormalizedProviderEvent = {
   eventType: string;
   providerOrderId: string;
   providerPaymentId: string | null;
+  providerRefundId?: string | null;
+  refundAmountMinor?: number | null;
   amountMinor: number;
   currency: Currency;
   status: "captured" | "failed" | "refunded" | "pending";

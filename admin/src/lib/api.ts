@@ -207,18 +207,18 @@ export async function fetchAdminPayments(filter?: {
   const mapped: Payment[] = Array.isArray(items)
     ? items.map((p: any) => ({
         id: p.id,
-        bookingTicketId: p.bookingTicketId || p.bookingId || "—",
+        bookingTicketId: p.bookingTicketId || "—",
         provider: (p.provider as PaymentProvider) || "razorpay",
-        method: (p.method || p.paymentMethod) as PaymentMethod || "card",
-        providerPaymentId: p.providerPaymentId || p.id,
+        method: (p.method ?? p.paymentMethod ?? null) as PaymentMethod | null,
+        providerPaymentId: p.providerPaymentId ?? null,
         providerOrderId: p.providerOrderId || "—",
         checkoutSessionId: p.checkoutSessionId ?? null,
         checkoutUrl: p.checkoutUrl ?? null,
         webhookEventId: p.webhookEventId ?? null,
         reconciliationStatus: (p.reconciliationStatus as Payment["reconciliationStatus"]) || "pending",
         amount: Math.round(Number(p.amountMinor ?? p.amountPaise ?? 0) / 100),
-        status: (p.status as PaymentStatus) || "captured",
-        capturedAt: p.capturedAt || p.verifiedAt || p.updatedAt || p.createdAt || new Date().toISOString(),
+        status: (p.status as PaymentStatus) || "pending",
+        capturedAt: p.capturedAt ?? p.verifiedAt ?? null,
       }))
     : [];
 

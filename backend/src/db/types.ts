@@ -103,6 +103,7 @@ export type Repositories = {
     getById(id: string): Promise<PaymentRecord | null>;
     getByIdempotencyKey(key: string): Promise<PaymentRecord | null>;
     getByProviderOrderId(providerOrderId: string): Promise<PaymentRecord | null>;
+    getByProviderPaymentId(providerPaymentId: string): Promise<PaymentRecord | null>;
     listByBookingId(bookingId: string): Promise<PaymentRecord[]>;
     getOpenByBookingId(bookingId: string): Promise<PaymentRecord | null>;
     list(filter?: PaymentListFilter): Promise<{
@@ -115,7 +116,9 @@ export type Repositories = {
 
   refunds: {
     create(record: RefundRecord): Promise<RefundRecord>;
+    update(record: RefundRecord): Promise<RefundRecord>;
     getByIdempotencyKey(key: string): Promise<RefundRecord | null>;
+    getByProviderRefundId(providerRefundId: string): Promise<RefundRecord | null>;
     listByBookingId(bookingId: string): Promise<RefundRecord[]>;
   };
 

@@ -63,7 +63,9 @@ export function FinancePage({ user }: { user: AdminUser }) {
 
   const methodTotals = useMemo(() => {
     const acc: Record<string, number> = {};
-    for (const p of captured) acc[p.method] = (acc[p.method] ?? 0) + p.amount;
+    for (const p of captured) {
+      if (p.method) acc[p.method] = (acc[p.method] ?? 0) + p.amount;
+    }
     return Object.entries(acc).map(([method, value]) => ({
       label: METHOD_META[method as keyof typeof METHOD_META]?.label ?? method,
       value,
@@ -183,13 +185,13 @@ export function FinancePage({ user }: { user: AdminUser }) {
                     <TD>
                       <span className="flex items-center gap-1.5 text-[13px] text-ink-soft">
                         <MethodIcon className="h-3.5 w-3.5 text-ink-faint" />
-                        {methodMeta?.label ?? p.method}
+                        {methodMeta?.label ?? p.method ?? "—"}
                       </span>
                     </TD>
                     <TD className="text-right font-mono text-[13px] font-medium">
                       {p.amount === 0 ? "—" : formatINR(p.amount)}
                     </TD>
-                    <TD className="font-mono text-[12px] text-ink-soft">{formatDateTime(p.capturedAt)}</TD>
+                    <TD className="font-mono text-[12px] text-ink-soft">{p.capturedAt ? formatDateTime(p.capturedAt) : "—"}</TD>
                     <TD><StatusBadge status={p.reconciliationStatus === "matched" ? "captured" : p.reconciliationStatus} /></TD>
                     <TD><StatusBadge status={p.status} /></TD>
                     <TD className="text-right">

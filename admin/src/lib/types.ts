@@ -86,8 +86,8 @@ export interface Payment {
   id: string;
   bookingTicketId: string;
   provider: PaymentProvider;
-  method: PaymentMethod;
-  providerPaymentId: string;
+  method: PaymentMethod | null;
+  providerPaymentId: string | null;
   providerOrderId: string;
   checkoutSessionId: string | null;
   checkoutUrl: string | null;
@@ -95,7 +95,7 @@ export interface Payment {
   reconciliationStatus: "pending" | "matched" | "needs_review";
   amount: number;
   status: PaymentStatus;
-  capturedAt: string;
+  capturedAt: string | null;
 }
 
 export type CatalogStatus = "draft" | "published" | "archived";

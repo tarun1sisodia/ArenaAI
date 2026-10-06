@@ -110,7 +110,7 @@ export function createAdminService(deps: { db: Repositories; clock?: Clock }) {
           ...payment,
           bookingTicketId: booking?.ticketId ?? payment.bookingId,
           method: payment.paymentMethod,
-          capturedAt: payment.verifiedAt ?? payment.updatedAt,
+          capturedAt: payment.verifiedAt,
         };
       }));
       return {

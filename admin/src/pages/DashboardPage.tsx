@@ -92,11 +92,11 @@ export function DashboardPage() {
   const captured = useMemo(() => payments.filter((p) => p.status === "captured"), [payments]);
 
   const revenueThisMonth = useMemo(
-    () => captured.filter((p) => monthKey(p.capturedAt) === thisMonth).reduce((s, p) => s + p.amount, 0),
+    () => captured.filter((p) => p.capturedAt && monthKey(p.capturedAt) === thisMonth).reduce((s, p) => s + p.amount, 0),
     [captured, thisMonth],
   );
   const revenuePrevMonth = useMemo(
-    () => captured.filter((p) => monthKey(p.capturedAt) === prevMonth).reduce((s, p) => s + p.amount, 0),
+    () => captured.filter((p) => p.capturedAt && monthKey(p.capturedAt) === prevMonth).reduce((s, p) => s + p.amount, 0),
     [captured, prevMonth],
   );
   const bookingsThisMonth = useMemo(
@@ -139,7 +139,7 @@ export function DashboardPage() {
     for (let i = 11; i >= 0; i--) {
       const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - i, 1));
       const key = d.toISOString().slice(0, 7);
-      const inMonth = captured.filter((p) => monthKey(p.capturedAt) === key);
+      const inMonth = captured.filter((p) => p.capturedAt && monthKey(p.capturedAt) === key);
       buckets.push({
         label: shortMonth(d),
         value: inMonth.reduce((s, p) => s + p.amount, 0),

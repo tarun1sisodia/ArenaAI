@@ -92,6 +92,8 @@ export function createHmacPaymentAdapter(options: HmacAdapterOptions): PaymentPr
         eventType: String(payload.eventType ?? payload.event ?? "payment.captured"),
         providerOrderId: String(payload.providerOrderId ?? payload.order_id ?? ""),
         providerPaymentId: payload.providerPaymentId ? String(payload.providerPaymentId) : payload.payment_id ? String(payload.payment_id) : null,
+        providerRefundId: payload.providerRefundId ? String(payload.providerRefundId) : payload.refund_id ? String(payload.refund_id) : null,
+        refundAmountMinor: payload.refundAmountMinor == null ? null : Number(payload.refundAmountMinor),
         amountMinor,
         currency,
         status: normalizeStatus(String(payload.status ?? "captured")),

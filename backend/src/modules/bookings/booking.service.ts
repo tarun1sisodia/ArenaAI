@@ -413,7 +413,10 @@ export function createBookingService(deps: {
             });
 
             const primaryPayment = capturedPayments[0];
-            if (primaryPayment) {
+            // A zero-refund policy means the advance is retained. The refunds
+            // table intentionally enforces amount_minor > 0, so do not create
+            // a synthetic zero-value refund row that would fail at the DB.
+            if (primaryPayment && refundEval.refundAmountMinor > 0) {
               const refundRecord: RefundRecord = {
                 id: newId(),
                 paymentId: primaryPayment.id,
