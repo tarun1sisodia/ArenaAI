@@ -86,7 +86,7 @@ export function createFareService(fareVersion: string, db?: Repositories) {
           const tourPkg =
             (await db.tourPackages.getById(input.packageId)) ??
             (await db.tourPackages.getByCode(input.packageId));
-          if (tourPkg && tourPkg.status === "published") {
+          if (tourPkg && tourPkg.status === "published" && tourPkg.isActive) {
             dossierFleetPrices = tourPkg.fleetPrices;
             dossierNightChargeInr = tourPkg.nightChargeInr;
             dossierNights = tourPkg.nights;
@@ -125,7 +125,7 @@ export function createFareService(fareVersion: string, db?: Repositories) {
             ? (await db.transferRoutes.getById(lookupCode)) ??
               (await db.transferRoutes.getByCode(lookupCode))
             : null;
-          if (xfer && xfer.status === "published") {
+          if (xfer && xfer.status === "published" && xfer.isActive) {
             dossierFleetPrices = xfer.fleetPrices;
             dossierUsePerKm = xfer.usePerKm;
             dossierNightChargeInr = xfer.nightChargeInr;
@@ -150,7 +150,7 @@ export function createFareService(fareVersion: string, db?: Repositories) {
             const localPkg =
               (await db.localPackages.getById(localCode)) ??
               (await db.localPackages.getByCode(localCode));
-            if (localPkg && localPkg.status === "published") {
+            if (localPkg && localPkg.status === "published" && localPkg.isActive) {
               dossierFleetPrices = localPkg.fleetPrices;
               dossierUsePerKm = localPkg.usePerKm;
               dossierPerKmRateOverride =
@@ -176,7 +176,7 @@ export function createFareService(fareVersion: string, db?: Repositories) {
             const routeSlug = `${slugifyPlace(input.originName)}-to-${slugifyPlace(input.destinationName)}`;
             routeRow = await db.routeCatalog.getBySlug(routeSlug);
           }
-          if (routeRow && routeRow.status === "published") {
+          if (routeRow && routeRow.status === "published" && !routeRow.needsReview) {
             dossierFleetPrices = routeRow.faresInr;
             dossierUsePerKm = false;
             dossierNightHaltInr = routeRow.nightHaltInr;
