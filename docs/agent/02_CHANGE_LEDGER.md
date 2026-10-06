@@ -1,5 +1,28 @@
 # ArenaAI Agent Change Ledger
 
+## 2026-10-06
+
+### 2026-10-06 — Admin Desk 3-Section Live API & Database Audit (CLI Mode), PostgreSQL Text=UUID Driver Fix, and Customer Corridor Search Resolver Parity
+
+- **Database & Backend Driver Fix (`backend/src/db/postgres.ts`)**:
+  - Investigated and definitively root-caused PostgreSQL `operator does not exist: text = uuid` (code 42883, position 65) occurring when Admin Desk saves/publishes Tour Packages (`PATCH /api/v1/ops/admin/tour-packages/:id`) and Local Packages (`POST /api/v1/ops/admin/local-packages/:id/publish`).
+  - Identified that the deployed code on Render (`origin/main`) contained `select * from tour_packages where id = $1::uuid or package_code = $1` which causes PostgreSQL's query compiler to bind `$1` as `UUID`, subsequently failing on `package_code (TEXT) = $1 (UUID)` with position 65 pointing to `$1`.
+  - Disjoined the query branches completely based on `isUuid(val)` for `tourPackages`, `localPackages`, and `transferRoutes`.
+  - Added defensive `isUuid` checks to `routeCatalog.getById`, `catalog.getById`, and `packageVehicleUpgrades.listUpgrades` so arbitrary non-UUID inputs never crash PostgreSQL.
+  - Added automated integration regression test `admin update and publish on created tour package with UUID succeeds without text=uuid type error` in `backend/tests/integration/dossier-manifest-modules.test.ts` (all 9 tests passed).
+  - Synchronized architectural root cause and fix pattern to Supermemory tag `sk_baghel_travels` and updated `docs/agent/CURRENT_SYSTEM_DEBUGGING_MAP.md`.
+- **Admin Desk 3-Section Live CLI Testing**:
+  - Executed end-to-end CLI validation creating and publishing entities across all three sections:
+    1. **Route Catalog (Outstation Corridors)**: Agon Gurgaon → Agra with 300 km/day Tempo/Urbania rule and ₹500 driver allowance (HTTP 201 Created -> 200 Published -> verified in PostgreSQL & `/api/v1/route-catalog/manifest`).
+    2. **Local & Transfers**: Agra 8h/80km Sightseeing and Delhi Airport Transfer (HTTP 201 Created -> 200 Published -> verified in PostgreSQL & manifests).
+    3. **Tour Packages**: Golden Triangle 3-Day with corridor source/destination, inclusions/exclusions, and fleet prices (HTTP 201 Created -> 200 Published -> verified in PostgreSQL & `/api/v1/tour-packages/manifest`).
+- **Customer Frontend Search Resolver Upgrade (`BookingPage.tsx`)**:
+  - Widened `cityIdForSearch` and `findSupportedRoute` so all 963 verified corridors in the catalog (including NCR localities such as Agon Gurgaon → Agra) resolve without triggering the 6-city whitelist restriction.
+- **SSG Manifest & Rebuild Parity**:
+  - Verified `scripts/build-manifest.ts` emits `routes-manifest.json` (963 routes) and snapshots published packages into static JSON files for SSG.
+- **Verification**:
+  - Monorepo verification `npm run verify` passed cleanly (3x typechecks, 29 backend test suites / 192 tests, SEO lifecycle, and 3x builds).
+
 ## 2026-10-05
 
 ### 2026-10-05 — Tour Packages Corridor (Source & Destination), Inclusions/Exclusions Management, Dynamic Detail Page Parity & Booking Flow

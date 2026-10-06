@@ -257,4 +257,54 @@ describe("Dossier Content Modules & Manifest Endpoints", () => {
     expect(checkAgainRes.statusCode).toBe(200);
     expect(checkAgainRes.json()).toEqual({ success: true, data: { available: false } });
   });
+
+  it("admin update and publish on created tour package with UUID succeeds without text=uuid type error", async () => {
+    const { app } = await createTestApp();
+    const adminHeaders = { authorization: "Bearer test-super_admin" };
+
+    const createRes = await app.inject({
+      method: "POST",
+      url: "/api/v1/ops/admin/tour-packages",
+      headers: adminHeaders,
+      payload: {
+        package_code: "agra-fatehpur-sikri-day-trip",
+        name: "Agra to Fatehpur Sikri Day Trip",
+        duration_text: "1 Day (8h)",
+        days: 1,
+        nights: 0,
+        base_tier_code: "sedan",
+        starting_price_inr: 2500,
+        fleet_prices: { sedan: 2500, ertiga: 3500, innova: 4500, tempo: 7000, urbania: 9500 },
+        source: "Agra",
+        destination: "Fatehpur Sikri",
+        inclusions: ["AC Car", "Toll & Parking"],
+        exclusions: ["Entry Tickets"],
+        status: "draft",
+        is_active: true,
+      },
+    });
+    expect(createRes.statusCode).toBe(201);
+    const created = createRes.json().data;
+    expect(created.id).toBeDefined();
+
+    const patchRes = await app.inject({
+      method: "PATCH",
+      url: `/api/v1/ops/admin/tour-packages/${created.id}`,
+      headers: adminHeaders,
+      payload: {
+        starting_price_inr: 2600,
+        fleet_prices: { sedan: 2600, ertiga: 3600, innova: 4600, tempo: 7100, urbania: 9600 },
+      },
+    });
+    expect(patchRes.statusCode).toBe(200);
+    expect(patchRes.json().success).toBe(true);
+
+    const publishRes = await app.inject({
+      method: "POST",
+      url: `/api/v1/ops/admin/tour-packages/${created.id}/publish`,
+      headers: adminHeaders,
+    });
+    expect(publishRes.statusCode).toBe(200);
+    expect(publishRes.json().data.status).toBe("published");
+  });
 });

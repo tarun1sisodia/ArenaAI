@@ -180,6 +180,14 @@ The public-media publication rule, including parent catalog publication, require
 
 - `POST /api/v1/devices/register`
 
+- `GET /api/v1/tour-packages/manifest`, `GET /api/v1/tour-packages/by-code/:code`, `GET /api/v1/tour-packages/upgrades`
+
+- `GET /api/v1/transfer-routes/manifest`, `GET /api/v1/transfer-routes/by-code/:code`
+
+- `GET /api/v1/local-packages/manifest`, `GET /api/v1/local-packages/by-code/:code`
+
+- `GET /api/v1/content/manifest`, `GET /api/v1/company-profile`, `GET /api/v1/cancellation-policies`, `GET /api/v1/monuments`, `GET /api/v1/pet-policy`
+
 ### Admin routes
 
 - `GET /api/v1/ops/admin/audit-logs`
@@ -206,11 +214,19 @@ The public-media publication rule, including parent catalog publication, require
 
 - Review moderation routes: list, approve, reject, publish, archive
 
+- Tour packages CRUD: `GET /api/v1/ops/admin/tour-packages`, `GET /:id`, `POST /`, `PATCH /:id`, `POST /:id/publish`, `POST /:id/archive`, `DELETE /:id`, `POST /upgrades`, `DELETE /upgrades/:id`, `POST /upload-image`
+
+- Local sightseeing packages CRUD: `GET /api/v1/ops/admin/local-packages`, `GET /:id`, `POST /`, `PATCH /:id`, `POST /:id/publish`, `POST /:id/archive`, `DELETE /:id`
+
+- Transfer routes CRUD: `GET /api/v1/ops/admin/transfer-routes`, `GET /:id`, `POST /`, `PATCH /:id`, `POST /:id/publish`, `POST /:id/archive`, `DELETE /:id`
+
+- Content & Dossier CRUD: `GET|PUT /company-profile`, `GET|PATCH /cancellation-policies/:id`, `GET|PUT /monuments/:id`, `GET|PUT /pet-policy`, `GET|PUT /dossier-signoffs/:sectionKey`
+
 ## Persistence and deployment map
 
 ### Persistence
 
-- Migrations: `backend/migrations/0001_enable_extensions.sql` through `0020_unique_active_fare_rule.sql`.
+- Migrations: `backend/migrations/0001_enable_extensions.sql` through `0032_phase1_security_hardening.sql`.
 
 - Repository contract: `backend/src/db/types.ts`.
 
@@ -222,7 +238,7 @@ The public-media publication rule, including parent catalog publication, require
 
 - Runtime repository selection: `backend/src/db/client.ts`.
 
-- Domains represented in repositories include bookings, payments, refunds, profiles, catalog, media, reviews, promos, audit, inquiries, notifications, webhooks, location cache, devices, and fare rules.
+- Domains represented in repositories include bookings, payments, refunds, profiles, catalog, media, reviews, promos, audit, inquiries, notifications, webhooks, location cache, devices, fare rules, route catalog, tour packages, package vehicle upgrades, transfer routes, local sightseeing packages, cancellation policies, monuments, pet taxi policy, company profile, and dossier signoffs.
 
 ### Deployment
 
@@ -244,6 +260,23 @@ Render Docker service
 - Production env validation: `backend/src/config/env.ts` requires PostgreSQL, Supabase, and live Razorpay configuration.
 
 - CI gates are split into customer, admin, backend, shared-root, uptime, and main-branch monitor workflows under `.github/workflows/`.
+
+## Resolved and analyzed issues
+
+### BUG-UUID-001: PostgreSQL parameter typing conflict (`operator does not exist: text = uuid`)
+
+- **Failure symptom:** Admin clicking "Save & Publish" on a new/existing Tour Package or Local Sightseeing package received HTTP 500:
+  `DatabaseError: operator does not exist: text = uuid` (code 42883, position 65).
+- **Execution chain:** Admin UI (`TourPackagesPage.tsx` / `LocalTransfersPage.tsx`) → `PATCH /api/v1/ops/admin/tour-packages/:id` or `POST /:id/publish` → Fastify Controller (`update`) → Service (`tourPackagesService.update(id)` → `this.get(id)`) → Repository (`deps.db.tourPackages.getById(id)`).
+- **First failing boundary:** Repository ↔ PostgreSQL query compilation boundary.
+- **Root cause:** In `backend/src/db/postgres.ts`, the query was written as:
+  `select * from tour_packages where id = $1::uuid or package_code = $1`
+  When PostgreSQL analyzes the query, the explicit type cast `$1::uuid` binds parameter `$1` to type `UUID` for the entire statement. When evaluating the subsequent clause `package_code = $1`, PostgreSQL attempts to compare `package_code` (type `TEXT`) with `$1` (typed as `UUID`). Because PostgreSQL does not provide an implicit equality operator between `TEXT` and `UUID`, query parsing fails with error 42883 at position 65 (pointing to `$1`).
+- **Fix pattern:** Disjoin the query branches completely based on `isUuid(val)`:
+  - If input is a valid UUID: `select * from tour_packages where id = $1::uuid`
+  - If input is a slug/code: `select * from tour_packages where package_code = $1`
+  Never combine `$1::uuid` and `text_col = $1` within the same SQL statement with a shared parameter. Guard all UUID-keyed lookups (`routeCatalog`, `catalog`, `packageVehicleUpgrades`) with `isUuid(val)` before querying UUID columns.
+- **Verification:** Unit and integration tests verify direct query execution, route invocation with UUIDs, and route invocation with text slugs.
 
 ## Evidence-based risk ledger for follow-up
 
