@@ -1196,6 +1196,21 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
           );
           return rows[0] ? mapPromo(rows[0]) : null;
         },
+        async consume(code: string) {
+          const rows = await query(
+            client,
+            `update promo_codes
+             set redemption_count = redemption_count + 1
+             where code=$1
+               and is_active = true
+               and (valid_from is null or valid_from <= now())
+               and (valid_to is null or valid_to >= now())
+               and (max_redemptions is null or redemption_count < max_redemptions)
+             returning *`,
+            [code.trim().toUpperCase()],
+          );
+          return rows[0] ? mapPromo(rows[0]) : null;
+        },
         async create(record: PromoCodeRecord) {
           try {
             await query(

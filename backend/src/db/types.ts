@@ -221,6 +221,7 @@ export type Repositories = {
     getById(id: string): Promise<PromoCodeRecord | null>;
     list(): Promise<PromoCodeRecord[]>;
     getFeatured(): Promise<PromoCodeRecord | null>;
+    consume(code: string): Promise<PromoCodeRecord | null>;
     create(record: PromoCodeRecord): Promise<PromoCodeRecord>;
     update(record: PromoCodeRecord): Promise<PromoCodeRecord>;
     delete(id: string): Promise<boolean>;

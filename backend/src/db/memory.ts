@@ -787,6 +787,18 @@ export function createMemoryRepositories(nowIso = new Date().toISOString()): Rep
         );
         return found ? clone(found) : null;
       },
+      async consume(code) {
+        const target = code.trim().toUpperCase();
+        const found = [...promos.values()].find((p) => p.code.trim().toUpperCase() === target);
+        if (!found || !found.isActive) return null;
+        const now = new Date().toISOString();
+        if (found.validFrom && found.validFrom > now) return null;
+        if (found.validTo && found.validTo < now) return null;
+        if (found.maxRedemptions !== null && found.maxRedemptions !== undefined && found.redemptionCount >= found.maxRedemptions) return null;
+        const consumed = { ...found, redemptionCount: found.redemptionCount + 1 };
+        promos.set(found.id, clone(consumed));
+        return clone(consumed);
+      },
       async create(record) {
         if (record.isBroadcast) {
           const anotherLive = [...promos.values()].find((p) => p.isBroadcast && p.id !== record.id);

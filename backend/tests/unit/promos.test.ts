@@ -392,3 +392,29 @@ describe("Promos HTTP Endpoints (Public Featured & Admin CRUD)", () => {
   });
 });
 
+describe("Promo redemption accounting", () => {
+  it("consumes a code once and refuses redemption after the limit", async () => {
+    const db = createMemoryRepositories();
+    await db.promos.create({
+      id: "limited-redemption",
+      code: "LIMITED100",
+      discountAmount: 100,
+      minTotal: 0,
+      description: "One redemption only",
+      isActive: true,
+      maxRedemptions: 1,
+      redemptionCount: 0,
+      validFrom: null,
+      validTo: null,
+      allowGroupVehicles: false,
+      isBroadcast: false,
+    });
+
+    const first = await db.promos.consume("limited100");
+    const second = await db.promos.consume("LIMITED100");
+
+    expect(first?.redemptionCount).toBe(1);
+    expect(second).toBeNull();
+    expect((await db.promos.getByCode("LIMITED100"))?.redemptionCount).toBe(1);
+  });
+});

@@ -290,7 +290,7 @@ export function createBookingService(deps: {
         nightAllowance: fare.nightAllowance,
         driverAllowance: fare.driverAllowance,
         discountAmount: fare.discountAmount,
-        promoCode: fare.promoValid ? fare.promoCode : input.promoCode?.toUpperCase() ?? null,
+        promoCode: fare.promoValid ? fare.promoCode : null,
         totalFare: fare.totalFare,
         advanceAmount: fare.advanceAmount,
         balanceAmount: fare.balanceAmount,

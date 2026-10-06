@@ -418,16 +418,9 @@ export function createPaymentService(deps: {
 
           // Increment promo redemption count if promo was used
           if (booking.promoCode) {
-            try {
-              const promo = await trx.promos.getByCode(booking.promoCode);
-              if (promo) {
-                await trx.promos.update({
-                  ...promo,
-                  redemptionCount: promo.redemptionCount + 1,
-                });
-              }
-            } catch {
-              // Non-critical: don't fail payment confirmation if promo update fails
+            const consumed = await trx.promos.consume(booking.promoCode);
+            if (!consumed) {
+              throw Errors.conflict("PROMO_UNAVAILABLE", "The applied promo code is no longer available.");
             }
           }
         }
