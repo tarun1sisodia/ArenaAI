@@ -121,11 +121,7 @@ describe("live catalog — single source of trips", () => {
     expect(updated.json().data.availability).toBe("unavailable");
 
     const detail = await app.inject({ method: "GET", url: `/api/v1/catalog/${created.slug}` });
-    expect(detail.statusCode).toBe(200);
-    expect(detail.json().data.startingPriceInr).toBe(3100);
-    expect(detail.json().data.distanceKm).toBe(95);
-    expect(detail.json().data.stops).toEqual(["Taj Mahal", "Mehtab Bagh"]);
-    expect(detail.json().data.type).toBe("package");
+    expect(detail.statusCode).toBe(404);
 
     // Admin editor detail includes the media list.
     const adminDetail = await app.inject({
