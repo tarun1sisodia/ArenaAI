@@ -30,7 +30,6 @@ export const BOOKING_STATUSES = [
   "draft",
   "pending_payment",
   "paid_confirmed",
-  "driver_assigned",
   "in_transit",
   "completed",
   "cancelled",

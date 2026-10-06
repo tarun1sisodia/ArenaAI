@@ -12,7 +12,6 @@ export type BookingStatus =
   | "draft"
   | "pending_payment"
   | "paid_confirmed"
-  | "driver_assigned"
   | "in_transit"
   | "completed"
   | "cancelled"
