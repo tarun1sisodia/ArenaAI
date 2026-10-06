@@ -18,12 +18,12 @@ export function createLocalPackagesController(service: ReturnType<typeof createL
   return {
     async manifest(_request: FastifyRequest, reply: FastifyReply) {
       const result = await service.list({ status: "published", limit: 100 });
-      return sendSuccess(reply, result.items);
+      return sendSuccess(reply, result.items.filter((item) => item.isActive));
     },
     async publicGetByCode(request: FastifyRequest, reply: FastifyReply) {
       const { code } = LocalPackageCodeSchema.parse(request.params);
       const item = await service.getByCode(code);
-      if (item.status !== "published") {
+      if (item.status !== "published" || !item.isActive) {
         reply.code(404);
         return reply.send({ success: false, error: { code: "NOT_FOUND", message: "Local package not found" } });
       }

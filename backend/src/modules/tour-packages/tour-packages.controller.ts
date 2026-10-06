@@ -22,7 +22,7 @@ export function createTourPackagesController(service: ReturnType<typeof createTo
       const result = await service.list({ status: "published", limit: 100 });
       const globalUpgrades = await service.listUpgrades(null);
       const itemsWithUpgrades = await Promise.all(
-        result.items.map(async (item) => {
+        result.items.filter((item) => item.isActive).map(async (item) => {
           const specificUpgrades = await service.listUpgrades(item.id);
           return {
             ...item,
@@ -35,7 +35,7 @@ export function createTourPackagesController(service: ReturnType<typeof createTo
     async publicGetByCode(request: FastifyRequest, reply: FastifyReply) {
       const { code } = TourPackageCodeSchema.parse(request.params);
       const item = await service.getByCode(code);
-      if (item.status !== "published") {
+      if (item.status !== "published" || !item.isActive) {
         reply.code(404);
         return reply.send({ success: false, error: { code: "NOT_FOUND", message: "Package not found" } });
       }
