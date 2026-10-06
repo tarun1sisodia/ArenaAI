@@ -95,7 +95,7 @@ export function createCatalogService(deps: { db: Repositories; clock: Clock; med
       }
     }
 
-    const allPublished = allDbItems.filter((i) => i.status === "published");
+    const allPublished = allDbItems.filter((i) => i.status === "published" && i.availability !== "unavailable");
 
     const packages = await Promise.all(
       allPublished
@@ -171,7 +171,8 @@ export function createCatalogService(deps: { db: Repositories; clock: Clock; med
      */
     async listPublished(filter: z.infer<typeof PublicCatalogQuerySchema>) {
       const items = await deps.db.catalog.list({ status: "published", type: filter.type });
-      const published = filter.tripType ? items.filter((item) => item.tripType === filter.tripType) : items;
+      const available = items.filter((item) => item.availability !== "unavailable");
+      const published = filter.tripType ? available.filter((item) => item.tripType === filter.tripType) : available;
       return Promise.all(
         published.map(async (item) => {
           const media = (await deps.db.media.listByCatalogItem(item.id))
@@ -224,7 +225,7 @@ export function createCatalogService(deps: { db: Repositories; clock: Clock; med
 
     async getPublished(slug: string) {
       const item = await deps.db.catalog.getBySlug(slug) ?? await deps.db.catalog.getById(slug);
-      if (!item || item.status !== "published") {
+      if (!item || item.status !== "published" || item.availability === "unavailable") {
         throw Errors.notFound("CATALOG_NOT_FOUND", "Published catalog item not found.");
       }
       const media = (await deps.db.media.listByCatalogItem(item.id)).filter((entry) => entry.status === "published");
