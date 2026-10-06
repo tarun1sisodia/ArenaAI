@@ -835,14 +835,27 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
           return rows.map(mapPackageUpgrade);
         },
         async saveUpgrade(record: PackageVehicleUpgradeRecord) {
-          await query(
-            client,
-            `insert into package_vehicle_upgrades (id, package_id, tier_code, passenger_note, surcharge_inr, created_at, updated_at)
-             values ($1,$2,$3,$4,$5,$6,$7)
-             on conflict (package_id, tier_code) do update set passenger_note=excluded.passenger_note, surcharge_inr=excluded.surcharge_inr, updated_at=excluded.updated_at`,
-            [record.id, record.packageId, record.tierCode, record.passengerNote, record.surchargeInr, record.createdAt, record.updatedAt]
-          );
-          return record;
+          const values = [record.id, record.packageId, record.tierCode, record.passengerNote, record.surchargeInr, record.createdAt, record.updatedAt];
+          const rows = record.packageId
+            ? await query(
+                client,
+                `insert into package_vehicle_upgrades (id, package_id, tier_code, passenger_note, surcharge_inr, created_at, updated_at)
+                 values ($1,$2,$3,$4,$5,$6,$7)
+                 on conflict (package_id, tier_code) do update
+                 set passenger_note=excluded.passenger_note, surcharge_inr=excluded.surcharge_inr, updated_at=excluded.updated_at
+                 returning *`,
+                values,
+              )
+            : await query(
+                client,
+                `insert into package_vehicle_upgrades (id, package_id, tier_code, passenger_note, surcharge_inr, created_at, updated_at)
+                 values ($1,$2,$3,$4,$5,$6,$7)
+                 on conflict (tier_code) where package_id is null do update
+                 set passenger_note=excluded.passenger_note, surcharge_inr=excluded.surcharge_inr, updated_at=excluded.updated_at
+                 returning *`,
+                values,
+              );
+          return rows[0] ? mapPackageUpgrade(rows[0]) : record;
         },
         async deleteUpgrade(id: string) {
           await query(client, "delete from package_vehicle_upgrades where id=$1", [id]);
