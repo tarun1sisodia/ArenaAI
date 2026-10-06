@@ -13,7 +13,7 @@ export function createReviewService(deps: { db: Repositories; clock: Clock }) {
       const item =
         await deps.db.catalog.getBySlug(catalogIdOrSlug) ??
         await deps.db.catalog.getById(catalogIdOrSlug);
-      if (!item || item.status !== "published") {
+      if (!item || item.status !== "published" || item.availability === "unavailable") {
         throw Errors.notFound("CATALOG_NOT_FOUND", "Published catalog item not found.");
       }
       const reviews = await deps.db.reviews.listPublishedByCatalog(item.id);
@@ -38,6 +38,10 @@ export function createReviewService(deps: { db: Repositories; clock: Clock }) {
         const item = await deps.db.catalog.getBySlug(input.catalogSlug);
         catalogItemId = item?.id ?? null;
       }
+      const catalogItem = catalogItemId ? await deps.db.catalog.getById(catalogItemId) : null;
+      if (!catalogItem || catalogItem.status !== "published" || catalogItem.availability === "unavailable") {
+        throw Errors.notFound("CATALOG_NOT_FOUND", "Reviews can only be submitted for an available published trip.");
+      }
       let bookingId: string | null = null;
       let verificationStatus: ReviewRecord["verificationStatus"] = input.socialProfileUrl
         ? "social_link_submitted"
@@ -45,6 +49,9 @@ export function createReviewService(deps: { db: Repositories; clock: Clock }) {
       if (input.bookingTicketId && input.guestAccessToken) {
         const booking = await deps.db.bookings.getByTicketId(input.bookingTicketId);
         if (booking && booking.guestAccessToken === input.guestAccessToken && booking.status === "completed") {
+          if (booking.selectedCatalogItemId !== catalogItem.id) {
+            throw Errors.conflict("REVIEW_BOOKING_MISMATCH", "The completed booking does not match this catalogue trip.");
+          }
           bookingId = booking.id;
           verificationStatus = "booking_verified";
         }
