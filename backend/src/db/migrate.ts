@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import pg from "pg";
 import { loadEnv } from "../config/env.js";
 
-const MIGRATION_LOCK_KEY = "7265616c6f726169";
+const MIGRATION_LOCK_KEY = "arenaai:migrations";
 
 function migrationChecksum(sql: string): string {
   return createHash("sha256").update(sql).digest("hex");
@@ -32,7 +32,7 @@ export async function runMigrations(options?: {
   let lockHeld = false;
   try {
     // Serialize migration inspection/application across concurrent instances.
-    await client.query("select pg_advisory_lock($1::bigint)", [MIGRATION_LOCK_KEY]);
+    await client.query("select pg_advisory_lock(hashtext($1))", [MIGRATION_LOCK_KEY]);
     lockHeld = true;
     await client.query(
       "create table if not exists schema_migrations (id text primary key, checksum text, applied_at timestamptz not null default now())",
@@ -72,7 +72,7 @@ export async function runMigrations(options?: {
     return { applied, total: files.length };
   } finally {
     if (lockHeld) {
-      await client.query("select pg_advisory_unlock($1::bigint)", [MIGRATION_LOCK_KEY]).catch(() => undefined);
+      await client.query("select pg_advisory_unlock(hashtext($1))", [MIGRATION_LOCK_KEY]).catch(() => undefined);
     }
     await client.end();
   }
