@@ -1,5 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { useCustomerAuth, getCustomerSupabaseClient, getStoredAuthReturnTo } from "../auth/customerAuth";
+import {
+  useCustomerAuth,
+  getCustomerSupabaseClient,
+  getStoredAuthReturnTo,
+  isStaleOAuthStateError,
+  clearStaleCustomerAuthState,
+} from "../auth/customerAuth";
 import { clearPendingBookingIntent, getPendingBookingIntent, storePaymentResumeReference } from "../auth/bookingIntentStorage";
 import { CustomerApiError, finalizeBookingIntent, getBookingIntent } from "../services/customerAuthApi";
 
@@ -71,10 +77,34 @@ export function AuthCallbackPage() {
         const client = getCustomerSupabaseClient();
         const code = query.get("code");
         let session = (await client.auth.getSession()).data.session;
-        if (code) {
+        if (code && !session) {
+          // The Supabase client auto-exchanges the PKCE `code` on page load
+          // (detectSessionInUrl). Give that automatic exchange a short window
+          // to land before falling back to a manual exchange, so the same
+          // code is never exchanged twice.
+          const deadline = Date.now() + 2500;
+          while (!session && Date.now() < deadline) {
+            await new Promise((resolve) => setTimeout(resolve, 150));
+            session = (await client.auth.getSession()).data.session;
+          }
+        }
+        if (code && !session) {
+          // Manual fallback exchange (auto-detect did not produce a session).
           const exchanged = await client.auth.exchangeCodeForSession(code);
-          if (exchanged.error) throw exchanged.error;
+          if (exchanged.error) {
+            if (isStaleOAuthStateError(exchanged.error)) {
+              // The PKCE round-trip lost its state (e.g. cross-origin
+              // redirect or expired attempt). Drop the stale verifier so a
+              // fresh sign-in can start cleanly.
+              await clearStaleCustomerAuthState();
+              throw new Error("Your sign-in session expired before it could be completed. Please try signing in again.");
+            }
+            throw exchanged.error;
+          }
           session = exchanged.data.session;
+          window.history.replaceState({}, document.title, window.location.pathname);
+        } else if (code) {
+          // Auto-detect already exchanged the code; just clean the URL.
           window.history.replaceState({}, document.title, window.location.pathname);
         }
         if (!session?.access_token) throw new Error("Google did not return a session. Please try signing in again.");

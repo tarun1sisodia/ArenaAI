@@ -24,7 +24,11 @@ export function getCustomerSupabaseClient(): SupabaseClient {
   customerClient = createClient(url, key, {
     auth: {
       flowType: "pkce",
-      detectSessionInUrl: false,
+      // Auto-detect the PKCE `code` in the callback URL and exchange it for a
+      // session on page load (standard PKCE flow). The manual exchange in
+      // AuthCallbackPage remains as a fallback for edge cases where the
+      // automatic exchange has not completed yet.
+      detectSessionInUrl: true,
       persistSession: true,
       autoRefreshToken: true,
     },
@@ -35,6 +39,88 @@ export function getCustomerSupabaseClient(): SupabaseClient {
 export function safeInternalReturnTo(value: string | null | undefined): string {
   if (!value || !value.startsWith("/") || value.startsWith("//") || value.startsWith("/\\")) return "/";
   return value;
+}
+
+/**
+ * Returns a human-friendly message when the current URL carries an OAuth
+ * error (e.g. after a failed Supabase/Google redirect), otherwise null.
+ * The raw provider error is intentionally NOT surfaced to the user.
+ */
+export function friendlyOAuthSignInError(search: string): string | null {
+  let params: URLSearchParams;
+  try {
+    params = new URLSearchParams(search.startsWith("?") ? search : `?${search}`);
+  } catch {
+    return null;
+  }
+  const error = params.get("error");
+  const errorCode = params.get("error_code");
+  const description = (params.get("error_description") || "").toLowerCase();
+  if (!error && !errorCode) return null;
+  if (errorCode === "bad_oauth_state" || description.includes("oauth state") || description.includes("expired")) {
+    return "Your sign-in session expired before it could be completed. Please try signing in again.";
+  }
+  if (error === "access_denied" || description.includes("cancel")) {
+    return "Sign-in was cancelled. Nothing was booked or charged.";
+  }
+  if (error === "server_error" || error === "temporarily_unavailable") {
+    return "The sign-in service is temporarily unavailable. Please try again in a moment.";
+  }
+  return "Sign-in didn't complete. Please try again.";
+}
+
+/**
+ * Strips OAuth error params (`error`, `error_code`, `error_description`) from
+ * the current URL, keeping every other query param intact.
+ */
+export function clearOAuthErrorFromUrl(): void {
+  if (typeof window === "undefined") return;
+  try {
+    const url = new URL(window.location.href);
+    if (!url.searchParams.has("error") && !url.searchParams.has("error_code")) return;
+    url.searchParams.delete("error");
+    url.searchParams.delete("error_code");
+    url.searchParams.delete("error_description");
+    window.history.replaceState({}, document.title, `${url.pathname}${url.search}${url.hash}`);
+  } catch { /* leave the URL untouched on unexpected failures */ }
+}
+
+/**
+ * Detects errors that mean the PKCE/OAuth round-trip lost its state
+ * (stale or missing code verifier), e.g. after a cross-origin redirect or
+ * an expired OAuth attempt. Retrying the same exchange will never succeed;
+ * the user must start a fresh sign-in.
+ */
+export function isStaleOAuthStateError(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error ?? "");
+  const haystack = message.toLowerCase();
+  const code =
+    typeof error === "object" && error !== null && "code" in error
+      ? String((error as { code?: unknown }).code ?? "").toLowerCase()
+      : "";
+  const needle = `${code} ${haystack}`;
+  return (
+    needle.includes("bad_oauth") ||
+    needle.includes("oauth state") ||
+    needle.includes("code verifier") ||
+    needle.includes("code_verifier") ||
+    needle.includes("pkce") ||
+    needle.includes("invalid_grant") ||
+    needle.includes("invalid code") ||
+    needle.includes("auth code and code verifier should be non-empty")
+  );
+}
+
+/**
+ * Clears any locally persisted Supabase auth state (including a stale PKCE
+ * code verifier) without touching the server session. Use before asking the
+ * user to retry sign-in after a stale-state failure.
+ */
+export async function clearStaleCustomerAuthState(): Promise<void> {
+  try {
+    const client = getCustomerSupabaseClient();
+    await client.auth.signOut({ scope: "local" });
+  } catch { /* not configured or already cleared — nothing to do */ }
 }
 
 export interface CustomerAuthValue {
