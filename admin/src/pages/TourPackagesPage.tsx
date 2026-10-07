@@ -103,6 +103,7 @@ export function TourPackagesPage({ user }: { user: AdminUser }) {
   const [editing, setEditing] = useState<TourPackageItem | null>(null);
   const [form, setForm] = useState(emptyPackage);
   const [busy, setBusy] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<TourPackageItem | null>(null);
 
   // Gallery and image upload states
   const [isUploadingImage, setIsUploadingImage] = useState(false);
@@ -438,12 +439,13 @@ export function TourPackagesPage({ user }: { user: AdminUser }) {
     }
   }
 
-  async function handleDelete(id: string) {
-    if (!confirm("Are you sure you want to permanently delete this draft tour package?")) return;
+  async function handleDelete() {
+    if (!deleteTarget) return;
     setBusy(true);
     try {
-      await deleteAdminTourPackage(id);
+      await deleteAdminTourPackage(deleteTarget.id);
       await reload();
+      setDeleteTarget(null);
     } catch (e: any) {
       setError(e.message);
     } finally {
@@ -556,7 +558,7 @@ export function TourPackagesPage({ user }: { user: AdminUser }) {
                   </Button>
                 )}
                 {pkg.status === "draft" && (
-                  <Button size="sm" variant="ghost" className="text-red-400 hover:text-red-300" onClick={() => void handleDelete(pkg.id)} disabled={busy} title="Delete draft">
+                  <Button size="sm" variant="ghost" className="text-red-400 hover:text-red-300" onClick={() => setDeleteTarget(pkg)} disabled={busy} title="Delete draft">
                     <Trash2 className="h-3.5 w-3.5" />
                   </Button>
                 )}
@@ -943,6 +945,27 @@ export function TourPackagesPage({ user }: { user: AdminUser }) {
               <Check className="mr-1 h-3.5 w-3.5" /> Save & Publish
             </Button>
           </div>
+        </div>
+      </Dialog>
+
+      {/* Delete confirmation */}
+      <Dialog
+        open={deleteTarget !== null}
+        onClose={() => setDeleteTarget(null)}
+        title="Delete draft package"
+        description={
+          deleteTarget
+            ? `Are you sure you want to permanently delete "${deleteTarget.name}"? This action cannot be undone.`
+            : undefined
+        }
+      >
+        <div className="flex justify-end gap-2 pt-1">
+          <Button variant="outline" onClick={() => setDeleteTarget(null)} disabled={busy}>
+            Cancel
+          </Button>
+          <Button variant="destructive" onClick={() => void handleDelete()} disabled={busy}>
+            <Trash2 className="mr-1 h-3.5 w-3.5" /> Delete draft
+          </Button>
         </div>
       </Dialog>
     </div>

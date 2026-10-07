@@ -21,6 +21,18 @@ const TYPE_META: Record<InquiryType, { label: string; icon: typeof Plane; tone: 
   outstation: { label: "Outstation", icon: ArrowRight, tone: "gold" },
 };
 
+// Defensive lookup: the backend may return a type outside the known union
+// (or null). Without a fallback the page throws during render and the SPA
+// goes blank, since there is no error boundary above this route.
+const UNKNOWN_TYPE_META = { label: "Inquiry", icon: MessageSquare, tone: "neutral" as const };
+
+function typeMeta(type: string): { label: string; icon: typeof Plane; tone: "gold" | "teal" | "neutral" } {
+  return (
+    (TYPE_META as Record<string, { label: string; icon: typeof Plane; tone: "gold" | "teal" | "neutral" }>)[type] ??
+    UNKNOWN_TYPE_META
+  );
+}
+
 export function InquiriesPage({ user }: { user: AdminUser }) {
   const reduce = useReducedMotion();
   const [items, setItems] = useState<Inquiry[]>([]);
@@ -131,7 +143,7 @@ export function InquiriesPage({ user }: { user: AdminUser }) {
             </Card>
           )}
           {items.map((item, i) => {
-            const TypeIcon = TYPE_META[item.type].icon;
+            const TypeIcon = typeMeta(item.type).icon;
             return (
               <motion.button
                 key={item.id}
@@ -155,7 +167,7 @@ export function InquiriesPage({ user }: { user: AdminUser }) {
                 </div>
                 <p className="mt-1 line-clamp-1 text-[12.5px] text-ink-soft">{item.subject}</p>
                 <p className="mt-1 font-mono text-[10px] uppercase tracking-wide text-ink-faint">
-                  {TYPE_META[item.type].label} · {timeAgo(item.createdAt)}
+                  {typeMeta(item.type).label} · {timeAgo(item.createdAt)}
                 </p>
               </motion.button>
             );
@@ -184,7 +196,7 @@ export function InquiriesPage({ user }: { user: AdminUser }) {
                     <div className="mt-1.5 flex flex-wrap items-center gap-3 text-[13px] text-ink-soft">
                       <span className="flex items-center gap-1.5"><Building2 className="h-3.5 w-3.5 text-gold" />{selected.name}</span>
                       <span className="flex items-center gap-1.5 font-mono text-[12px]"><Phone className="h-3.5 w-3.5 text-gold" />{selected.phone}</span>
-                      <Badge tone={TYPE_META[selected.type].tone}>{TYPE_META[selected.type].label}</Badge>
+                      <Badge tone={typeMeta(selected.type).tone}>{typeMeta(selected.type).label}</Badge>
                     </div>
                   </div>
                   <StatusBadge status={selected.status} />

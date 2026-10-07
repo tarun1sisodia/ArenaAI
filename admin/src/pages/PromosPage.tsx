@@ -38,6 +38,7 @@ export function PromosPage({ user: _user }: { user: AdminUser }) {
   const [form, setForm] = useState(emptyPromo);
   const [busy, setBusy] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<PromoCodeItem | null>(null);
 
   const reload = async () => {
     setLoading(true);
@@ -128,14 +129,16 @@ export function PromosPage({ user: _user }: { user: AdminUser }) {
     }
   }
 
-  async function handleDelete(id: string, code: string) {
-    if (!window.confirm(`Delete promo code "${code}"? This action cannot be undone.`)) return;
+  async function handleDelete() {
+    if (!deleteTarget) return;
     setBusy(true);
     try {
-      await deleteAdminPromo(id);
+      await deleteAdminPromo(deleteTarget.id);
       await reload();
+      setDeleteTarget(null);
     } catch (e: any) {
-      alert(e.message || "Failed to delete promo code.");
+      setError(e.message || "Failed to delete promo code.");
+      setDeleteTarget(null);
     } finally {
       setBusy(false);
     }
@@ -275,7 +278,7 @@ export function PromosPage({ user: _user }: { user: AdminUser }) {
                         size="sm"
                         variant="ghost"
                         className="text-red-400 hover:text-red-300"
-                        onClick={() => void handleDelete(promo.id, promo.code)}
+                        onClick={() => setDeleteTarget(promo)}
                         disabled={busy}
                         title="Delete code"
                       >
@@ -443,6 +446,27 @@ export function PromosPage({ user: _user }: { user: AdminUser }) {
               {busy ? "Saving..." : editing ? "Save Changes" : "Create Code"}
             </Button>
           </div>
+        </div>
+      </Dialog>
+
+      {/* Delete confirmation */}
+      <Dialog
+        open={deleteTarget !== null}
+        onClose={() => setDeleteTarget(null)}
+        title="Delete promo code"
+        description={
+          deleteTarget
+            ? `Delete promo code "${deleteTarget.code}"? This action cannot be undone.`
+            : undefined
+        }
+      >
+        <div className="flex justify-end gap-2 pt-1">
+          <Button variant="outline" onClick={() => setDeleteTarget(null)} disabled={busy}>
+            Cancel
+          </Button>
+          <Button variant="destructive" onClick={() => void handleDelete()} disabled={busy}>
+            <Trash2 className="mr-1 h-3.5 w-3.5" /> Delete code
+          </Button>
         </div>
       </Dialog>
     </div>

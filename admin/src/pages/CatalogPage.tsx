@@ -1020,7 +1020,7 @@ export function CatalogPage({ user }: { user: AdminUser }) {
           </div>
 
           <div>
-            <Label htmlFor="form-summary">Summary Description</Label>
+            <Label htmlFor="form-summary">Summary Description *</Label>
             <Input
               id="form-summary"
               value={formSummary}
