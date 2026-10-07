@@ -1,5 +1,16 @@
 # ArenaAI Agent Change Ledger
 
+## 2026-10-07
+
+### 2026-10-07 — Admin Route Catalog "+ New Route" Modal Dialog UX Upgrade
+
+- **Admin Operations Desk (`admin/src/components/admin/RouteCatalogPanel.tsx`)**:
+  - Replaced permanently visible bottom `<Card>` with an interactive modal `<Dialog>` (`className="max-w-4xl"`) that triggers when clicking "+ New route" or "Edit".
+  - Added `isFormOpen` state and `closeForm()` handler, ensuring the draft form cleanly opens on demand and dismisses on Cancel or successful Save/Publish.
+  - Added dedicated form error display banner within the dialog for immediate inline validation feedback (missing destination, fleet selections, distances).
+  - Preserved auto-fill from fare engine, multi-fleet pricing matrix, corridor metadata, and immutable slug editing safeguards.
+  - Verified with `npm run admin:typecheck`, `npm run admin:build`, and full monorepo pipeline `npm run verify` (3x typecheck, 30 test files / 202 tests passing, SSG 72 pages pre-rendered, 3x builds).
+
 ## 2026-10-06
 
 ### 2026-10-06 — Admin Desk 3-Section Live API & Database Audit (CLI Mode), PostgreSQL Text=UUID Driver Fix, and Customer Corridor Search Resolver Parity
