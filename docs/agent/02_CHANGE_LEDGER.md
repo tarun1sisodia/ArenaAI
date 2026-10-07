@@ -620,6 +620,35 @@ Implemented:
   - SEO lifecycle tests passed.
   - Monorepo verification `npm run verify` passed cleanly (3× typechecks, 3× builds: React SSG 63 pages + 14 redirects, Admin Desk SPA, Backend).
 
+### 2026-10-07 — Seed Customer Account & Frontend Seed Login Portal
+
+- **Database Customer Account Seeding (`backend/scripts/seed-customer-account.ts`)**:
+  - Provisioned verified customer user in Supabase Auth via admin API:
+    - Email: `test.customer@agraskbagheltourandtravels.com`
+    - Password: `CustomerTest@2026!`
+    - ID: `e7023d17-a836-47b0-8ce3-36d2781e20f9`
+    - `email_confirm: true`, `app_metadata.role: "customer"`
+  - Upserted matching `profiles` record in PostgreSQL database:
+    - `id`: `e7023d17-a836-47b0-8ce3-36d2781e20f9`
+    - `full_name`: `Test Customer`
+    - `phone`: `+919876543299`
+    - `email`: `test.customer@agraskbagheltourandtravels.com`
+    - `role`: `customer`
+- **Customer Auth & Frontend Login Expansion**:
+  - `react/src/auth/customerAuth.tsx`:
+    - Added `signInWithPassword(email, password)` and `signInWithSeedCustomer()` to `useCustomerAuth()`.
+    - Exported `SEED_CUSTOMER_CREDENTIALS` for fast developer testing.
+  - Added `react/src/pages/LoginPage.tsx` with Mughal Terracotta tokens:
+    - 1-Click "⚡ Seed Customer Login" for instant local and staging testing.
+    - Google OAuth sign-in option.
+    - Standard Email & Password sign-in form.
+    - Post-login redirection to `returnTo` target (defaults to `/my-bookings`).
+  - Added `/login` route in `react/src/app/App.tsx` and `react/src/app/ServerApp.tsx`.
+  - Added 1-Click Seed Customer Login and `/login` link directly to unauthenticated views in `MyBookingsPage.tsx` and `PaymentResumePage.tsx`.
+- **Verification**:
+  - Verified backend `authGuard.ts` accepts Supabase access token for the seeded customer.
+  - Verified `npm run verify` passed cleanly (193/193 tests, 3× typechecks, SEO checks, 3× builds).
+
 ## Known next work (Phase 3 — secure integrations)
 
 - Step 3.2: High-entropy token or OTP recovery for booking status retrieval (`/api/v1/bookings/status`).
@@ -628,6 +657,7 @@ Implemented:
 - Step 3.5: Split staff roles into content, pricing, dispatch, finance, review, audit, and security.
 
 See `docs/agent/00_CONTEXT_HANDOFF.md` and section 8 of the root operating specification.
+
 
 
 

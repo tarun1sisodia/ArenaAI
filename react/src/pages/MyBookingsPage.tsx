@@ -31,7 +31,7 @@ function bookingSubtitle(booking: CustomerBookingSummary): string {
 }
 
 export function MyBookingsPage() {
-  const { user, accessToken, loading: authLoading, configured, signInWithGoogle, signOut } = useCustomerAuth();
+  const { user, accessToken, loading: authLoading, configured, signInWithGoogle, signInWithSeedCustomer, signOut } = useCustomerAuth();
   const [items, setItems] = useState<CustomerBookingSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -70,7 +70,18 @@ export function MyBookingsPage() {
 
   if (authLoading) return <main className="min-h-[60vh] p-8 grid place-items-center"><section className="text-center"><h1 className="text-2xl font-bold text-ink-midnight">My bookings</h1><p className="mt-2 text-on-surface-variant">Checking your account…</p></section></main>;
   if (!user || !accessToken) return (
-    <main className="min-h-[65vh] px-4 py-16 grid place-items-center"><section className="max-w-lg rounded-2xl border border-border-warm bg-surface-container-lowest p-8 text-center shadow-md"><h1 className="text-2xl font-bold text-ink-midnight">Your bookings</h1><p className="mt-3 text-on-surface-variant">Sign in with Google to see pending, confirmed, and paid bookings associated with your account.</p><button type="button" disabled={!configured} onClick={() => void signInWithGoogle("/my-bookings/").catch((cause) => setError(cause.message))} className="mt-6 rounded-xl bg-primary px-5 py-3 font-semibold text-white disabled:opacity-50">Continue with Google</button>{error && <p className="mt-3 text-sm text-red-700" role="alert">{error}</p>}</section></main>
+    <main className="min-h-[65vh] px-4 py-16 grid place-items-center">
+      <section className="max-w-lg rounded-2xl border border-border-warm bg-surface-container-lowest p-8 text-center shadow-md">
+        <h1 className="text-2xl font-bold text-ink-midnight">Your bookings</h1>
+        <p className="mt-3 text-on-surface-variant">Sign in to view pending, confirmed, and paid bookings associated with your account.</p>
+        <div className="mt-6 flex flex-col gap-3">
+          <button type="button" disabled={!configured} onClick={() => void signInWithGoogle("/my-bookings/").catch((cause) => setError(cause.message))} className="w-full rounded-xl bg-primary px-5 py-3 font-semibold text-white disabled:opacity-50 cursor-pointer shadow-xs">Continue with Google</button>
+          <button type="button" onClick={() => void signInWithSeedCustomer().catch((cause) => setError(cause.message))} className="w-full rounded-xl border border-primary/25 bg-sandstone-wash/60 px-5 py-2.5 text-xs font-bold text-primary hover:bg-sandstone-wash transition-colors cursor-pointer">⚡ 1-Click Seed Customer Login</button>
+          <a href="/login?returnTo=/my-bookings" className="text-xs text-on-surface-variant hover:text-primary transition-colors underline">Sign in with email & password</a>
+        </div>
+        {error && <p className="mt-3 text-sm text-red-700" role="alert">{error}</p>}
+      </section>
+    </main>
   );
 
   return (

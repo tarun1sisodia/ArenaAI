@@ -123,6 +123,13 @@ export async function clearStaleCustomerAuthState(): Promise<void> {
   } catch { /* not configured or already cleared — nothing to do */ }
 }
 
+export const SEED_CUSTOMER_CREDENTIALS = {
+  email: "test.customer@agraskbagheltourandtravels.com",
+  password: "CustomerTest@2026!",
+  fullName: "Test Customer",
+  phone: "+919876543299",
+};
+
 export interface CustomerAuthValue {
   session: Session | null;
   user: User | null;
@@ -131,6 +138,8 @@ export interface CustomerAuthValue {
   configured: boolean;
   error: string | null;
   signInWithGoogle(returnTo?: string): Promise<void>;
+  signInWithPassword(email: string, password: string): Promise<void>;
+  signInWithSeedCustomer(): Promise<void>;
   signOut(): Promise<void>;
 }
 
@@ -142,6 +151,8 @@ const defaultContext: CustomerAuthValue = {
   configured: hasCustomerSupabaseConfig(),
   error: null,
   async signInWithGoogle() { throw new Error("Google sign-in is not available in this render context."); },
+  async signInWithPassword() { throw new Error("Sign-in is not available in this render context."); },
+  async signInWithSeedCustomer() { throw new Error("Seed sign-in is not available in this render context."); },
   async signOut() { throw new Error("Sign-out is not available in this render context."); },
 };
 
@@ -210,6 +221,20 @@ export function CustomerAuthProvider({ children }: { children: ReactNode }) {
     if (signInError) throw signInError;
   }, []);
 
+  const signInWithPassword = useCallback(async (email: string, password: string) => {
+    const client = getCustomerSupabaseClient();
+    const { data, error: signInError } = await client.auth.signInWithPassword({
+      email: email.trim(),
+      password,
+    });
+    if (signInError) throw signInError;
+    setSession(data.session);
+  }, []);
+
+  const signInWithSeedCustomer = useCallback(async () => {
+    await signInWithPassword(SEED_CUSTOMER_CREDENTIALS.email, SEED_CUSTOMER_CREDENTIALS.password);
+  }, [signInWithPassword]);
+
   const signOut = useCallback(async () => {
     const client = getCustomerSupabaseClient();
     const { error: signOutError } = await client.auth.signOut();
@@ -225,8 +250,10 @@ export function CustomerAuthProvider({ children }: { children: ReactNode }) {
     configured,
     error,
     signInWithGoogle,
+    signInWithPassword,
+    signInWithSeedCustomer,
     signOut,
-  }), [session, loading, configured, error, signInWithGoogle, signOut]);
+  }), [session, loading, configured, error, signInWithGoogle, signInWithPassword, signInWithSeedCustomer, signOut]);
 
   return <CustomerAuthContext.Provider value={value}>{children}</CustomerAuthContext.Provider>;
 }

@@ -24,6 +24,7 @@ const SeoLandingPage = lazy(() => import("../pages/SeoLandingPage").then((m) => 
 const AuthCallbackPage = lazy(() => import("../pages/AuthCallbackPage").then((m) => ({ default: m.AuthCallbackPage })));
 const MyBookingsPage = lazy(() => import("../pages/MyBookingsPage").then((m) => ({ default: m.MyBookingsPage })));
 const PaymentResumePage = lazy(() => import("../pages/PaymentResumePage").then((m) => ({ default: m.PaymentResumePage })));
+const LoginPage = lazy(() => import("../pages/LoginPage").then((m) => ({ default: m.LoginPage })));
 import { SEO_LANDING_SLUGS, type SeoLandingSlug } from "../data/seoLandingSlugs";
 import { marketingHubs } from "./routes";
 import { SeoHead } from "../components/seo/SeoHead";
@@ -231,7 +232,8 @@ export function App({ pathname: propPathname }: AppProps = {}) {
   const isAuthCallback = cleanPath === "/auth/callback";
   const isMyBookings = cleanPath === "/my-bookings";
   const isPaymentResume = cleanPath === "/payment/resume";
-  const isPrivateCustomerPage = isAuthCallback || isMyBookings || isPaymentResume;
+  const isLogin = cleanPath === "/login" || cleanPath === "/auth/login";
+  const isPrivateCustomerPage = isAuthCallback || isMyBookings || isPaymentResume || isLogin;
   const isBooking =
     cleanPath.endsWith("book.html") ||
     section === "book" ||
@@ -387,6 +389,8 @@ export function App({ pathname: propPathname }: AppProps = {}) {
             <MyBookingsPage />
           ) : isPaymentResume ? (
             <PaymentResumePage />
+          ) : isLogin ? (
+            <LoginPage />
           ) : isBooking ? (
             <BookingPage />
           ) : isHome ? (

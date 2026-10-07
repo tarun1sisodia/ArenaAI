@@ -18,6 +18,7 @@ import { BookingPage } from "../features/booking/BookingPage";
 import { AuthCallbackPage } from "../pages/AuthCallbackPage";
 import { MyBookingsPage } from "../pages/MyBookingsPage";
 import { PaymentResumePage } from "../pages/PaymentResumePage";
+import { LoginPage } from "../pages/LoginPage";
 import { MarketingPage } from "../pages/MarketingPage";
 import { SeoLandingPage } from "../pages/SeoLandingPage";
 import { SEO_LANDING_SLUGS, type SeoLandingSlug } from "../data/seoLandingSlugs";
@@ -468,7 +469,8 @@ export function ServerApp({ pathname: propPathname }: AppProps = {}) {
   const isAuthCallback = cleanPath === "/auth/callback";
   const isMyBookings = cleanPath === "/my-bookings";
   const isPaymentResume = cleanPath === "/payment/resume";
-  const isPrivateCustomerPage = isAuthCallback || isMyBookings || isPaymentResume;
+  const isLogin = cleanPath === "/login" || cleanPath === "/auth/login";
+  const isPrivateCustomerPage = isAuthCallback || isMyBookings || isPaymentResume || isLogin;
   const isBooking =
     cleanPath.endsWith("book.html") ||
     section === "book" ||
@@ -585,6 +587,8 @@ export function ServerApp({ pathname: propPathname }: AppProps = {}) {
           <MyBookingsPage />
         ) : isPaymentResume ? (
           <PaymentResumePage />
+        ) : isLogin ? (
+          <LoginPage />
         ) : isBooking ? (
           <BookingPage />
         ) : isHome ? (

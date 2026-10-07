@@ -30,7 +30,7 @@ function displayDate(value: string): string {
 }
 
 export function PaymentResumePage() {
-  const { user, accessToken, loading: authLoading, configured, signInWithGoogle } = useCustomerAuth();
+  const { user, accessToken, loading: authLoading, configured, signInWithGoogle, signInWithSeedCustomer } = useCustomerAuth();
   const [reference, setReference] = useState(() => getPaymentResumeReference());
   const [confirmedBooking, setConfirmedBooking] = useState<CustomerBookingDetails | null>(null);
   const [status, setStatus] = useState("Preparing your secure payment…");
@@ -150,7 +150,20 @@ export function PaymentResumePage() {
   }, [authLoading, accessToken, reference]);
 
   if (authLoading) return <main className="min-h-[65vh] p-8 grid place-items-center"><section className="text-center"><h1 className="text-2xl font-bold text-ink-midnight">Secure payment recovery</h1><p className="mt-2 text-on-surface-variant">Restoring your account and booking…</p></section></main>;
-  if (!accessToken) return <main className="min-h-[65vh] px-4 py-16 grid place-items-center"><section className="max-w-lg rounded-2xl border border-border-warm bg-surface-container-lowest p-8 text-center"><h1 className="text-2xl font-bold text-ink-midnight">Sign in to continue payment</h1><p className="mt-3 text-on-surface-variant">Your booking is saved. Sign in with the Google account used to book, and we’ll reopen the secure checkout.</p><button type="button" disabled={!configured} onClick={() => void signInWithGoogle("/payment/resume/").catch((cause) => setError(cause.message))} className="mt-6 rounded-xl bg-primary px-5 py-3 font-semibold text-white disabled:opacity-50">Continue with Google</button>{error && <p className="mt-3 text-sm text-red-700" role="alert">{error}</p>}</section></main>;
+  if (!accessToken) return (
+    <main className="min-h-[65vh] px-4 py-16 grid place-items-center">
+      <section className="max-w-lg rounded-2xl border border-border-warm bg-surface-container-lowest p-8 text-center shadow-md">
+        <h1 className="text-2xl font-bold text-ink-midnight">Sign in to continue payment</h1>
+        <p className="mt-3 text-on-surface-variant">Your booking is saved. Sign in to reopen secure checkout and complete your payment.</p>
+        <div className="mt-6 flex flex-col gap-3">
+          <button type="button" disabled={!configured} onClick={() => void signInWithGoogle("/payment/resume/").catch((cause) => setError(cause.message))} className="w-full rounded-xl bg-primary px-5 py-3 font-semibold text-white disabled:opacity-50 cursor-pointer shadow-xs">Continue with Google</button>
+          <button type="button" onClick={() => void signInWithSeedCustomer().catch((cause) => setError(cause.message))} className="w-full rounded-xl border border-primary/25 bg-sandstone-wash/60 px-5 py-2.5 text-xs font-bold text-primary hover:bg-sandstone-wash transition-colors cursor-pointer">⚡ 1-Click Seed Customer Login</button>
+          <a href="/login?returnTo=/payment/resume/" className="text-xs text-on-surface-variant hover:text-primary transition-colors underline">Sign in with email & password</a>
+        </div>
+        {error && <p className="mt-3 text-sm text-red-700" role="alert">{error}</p>}
+      </section>
+    </main>
+  );
 
   const canRetrySame = Boolean(reference && (error || status.includes("closed") || status.includes("not been started")) && !paymentFailed);
   return (
