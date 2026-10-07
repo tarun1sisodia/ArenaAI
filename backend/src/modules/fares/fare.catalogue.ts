@@ -1,4 +1,5 @@
 import type { InternalVehicleId, VehicleTier } from "../../types/domain.js";
+import { toCanonicalTierKey } from "../../contracts/vehicle-tiers.js";
 
 export type FareByVehicle = Record<InternalVehicleId, number>;
 
@@ -225,14 +226,12 @@ export function toInternalVehicleId(tier: string): InternalVehicleId {
 }
 
 export function toVehicleTier(id: InternalVehicleId): VehicleTier {
-  switch (id) {
-    case "innova":
-      return "innova-crysta";
-    case "tempo":
-      return "tempo-traveller";
-    default:
-      return id;
+  // Single source of truth: C-ENUM-001 (contracts/enums/vehicle-tiers.ts).
+  const canonical = toCanonicalTierKey(id);
+  if (!canonical) {
+    throw new Error(`Unknown vehicle tier id: ${id}`);
   }
+  return canonical;
 }
 
 export function vehicleSpec(tier: string): VehicleSpec {

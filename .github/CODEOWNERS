@@ -1,0 +1,4 @@
+# Contract lock: only Tarun reviews changes to contracts or contract tests.
+# See contracts/LOCKED.md for the change process.
+contracts/ @tarun1sisodia
+backend/tests/contract/ @tarun1sisodia
