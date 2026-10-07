@@ -10,6 +10,7 @@ import type {
 import type { Repositories } from "../../db/types.js";
 import type { RouteCatalogRecord } from "../../db/route-catalog-types.js";
 import { Errors } from "../../shared/errors.js";
+import { resolveTierKey, toCanonicalTierKey } from "../../contracts/vehicle-tiers.js";
 
 export type PublicFleetVehicle = {
   id: string;
@@ -44,7 +45,12 @@ export function createFareService(fareVersion: string, db?: Repositories) {
         ? ((rule.config as Record<string, unknown>).vehicles as Array<Record<string, unknown>>)
         : [];
       const vehicles = base.map((v) => {
-        const override = cfgVehicles.find((ov) => ov.tier === v.tier || ov.id === v.tier);
+        // C-ENUM-001: override keys are normalized to canonical tier keys, so
+        // desk-side entries keyed by legacy short ids (innova/tempo) still match.
+        const override = cfgVehicles.find((ov) => {
+          const key = toCanonicalTierKey(String(ov.tier ?? ov.id ?? ""));
+          return key !== undefined && key === v.tier;
+        });
         if (!override) return v;
         return {
           ...v,
@@ -153,8 +159,11 @@ export function createFareService(fareVersion: string, db?: Repositories) {
             if (localPkg && localPkg.status === "published" && localPkg.isActive) {
               dossierFleetPrices = localPkg.fleetPrices;
               dossierUsePerKm = localPkg.usePerKm;
-              dossierPerKmRateOverride =
-                localPkg.extraRates?.[input.vehicleTier]?.per_km ?? undefined;
+              // C-ENUM-001: extra_rates may still be keyed by legacy short ids in
+              // old rows — resolveTierKey tries canonical first, then legacy.
+              // TODO(G2): log when hit.via === "legacy" so unmigrated rows surface.
+              const extraRateHit = resolveTierKey(localPkg.extraRates, input.vehicleTier);
+              dossierPerKmRateOverride = extraRateHit.value?.per_km ?? undefined;
               dossierNightChargeInr = localPkg.nightChargeInr;
               dossierPackageName = localPkg.name;
               dossierPackageDuration = `${localPkg.durationHours} hrs / ${localPkg.includedKm} km`;

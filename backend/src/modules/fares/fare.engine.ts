@@ -21,6 +21,7 @@ import {
   type RouteFare,
 } from "./fare.catalogue.js";
 import { PricingEngineContext } from "./fare.strategy.js";
+import { resolveTierKey } from "../../contracts/vehicle-tiers.js";
 import type { FareEngineInput, FareEngineResult, PromoEvaluation, FareRuleOverrides } from "./fare.types.js";
 export {
   calculateCancellationRefund,
@@ -194,7 +195,6 @@ export function evaluateDossierTierBaseFare(input: {
   const overrides = input.ruleOverrides;
   if (!overrides) return null;
   const tierKey = toInternalVehicleId(input.vehicleTier);
-  const tierPublic = input.vehicleTier;
 
   const hasDossierFields =
     overrides.fleetPrices !== undefined ||
@@ -208,10 +208,14 @@ export function evaluateDossierTierBaseFare(input: {
   // Tour packages are always fixed-price by vehicle tier. Never fall through
   // to a per-km calculation for a tour package.
   if ((overrides.catalogItemType === "tour" || overrides.usePerKm === false) && overrides.fleetPrices) {
-    const rawPrice = overrides.fleetPrices[tierKey] ?? overrides.fleetPrices[tierPublic];
+    // C-ENUM-001: canonical key first, legacy short id as fallback for old rows.
+    // TODO(G2): log when hit.via === "legacy" so unmigrated rows surface.
+    const hit = resolveTierKey(overrides.fleetPrices, input.vehicleTier);
+    const rawPrice = hit.value;
     if (typeof rawPrice === "number" && rawPrice > 0) {
       return { baseFare: rawPrice, rule: "dossier-admin-fleet-price" };
     }
+    // No throw here: block 2 (packageBasePrice fallback) may still apply below.
   }
 
   // Fixed package fallback when a tier-specific fleet price is unavailable.
@@ -220,11 +224,9 @@ export function evaluateDossierTierBaseFare(input: {
     typeof overrides.packageBasePrice === "number" &&
     overrides.packageBasePrice > 0
   ) {
-    const upgradeSurcharge =
-      overrides.upgradeSurcharges?.[tierKey] ??
-      overrides.upgradeSurcharges?.[tierPublic] ??
-      PACKAGE_UPGRADES[tierKey] ??
-      0;
+    // C-ENUM-001: canonical key first, legacy short id as fallback for old rows.
+    const upgradeHit = resolveTierKey(overrides.upgradeSurcharges, input.vehicleTier);
+    const upgradeSurcharge = upgradeHit.value ?? PACKAGE_UPGRADES[tierKey] ?? 0;
     return {
       baseFare: overrides.packageBasePrice + upgradeSurcharge,
       rule: "dossier-starting-price-upgrade",
@@ -232,6 +234,16 @@ export function evaluateDossierTierBaseFare(input: {
   }
 
   // Precedence 3: per-km (perKmRateOverride ?? tier base rate) × km
+  // F2: a fixed-price row (usePerKm === false) must NEVER be priced per-km.
+  // If no tier price and no packageBasePrice resolved above, fail loud — a
+  // silent per-km fare would ignore the published fixed price.
+  if (overrides.usePerKm === false) {
+    throw new AppError(
+      "TIER_NOT_PRICED",
+      `No fixed price configured for tier "${input.vehicleTier}" on this route/package.`,
+      400,
+    );
+  }
   const rate =
     typeof overrides.perKmRateOverride === "number" && overrides.perKmRateOverride > 0
       ? overrides.perKmRateOverride

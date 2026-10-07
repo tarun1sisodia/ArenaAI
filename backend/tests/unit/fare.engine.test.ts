@@ -465,6 +465,31 @@ describe("Phase 4 Dossier Engine Wiring", () => {
       expect(fare.baseFare).toBe(3800);
       expect(fare.rules).toContain("dossier-admin-fleet-price");
     });
+
+    it("F2/C-API: fixed-price row with no price for the tier fails loud (no silent per-km fallthrough)", () => {
+      // usePerKm === false (route_catalog fixed-price row) + tier missing from
+      // fleetPrices + no packageBasePrice -> must throw TIER_NOT_PRICED, never
+      // price per-km.
+      let caught: unknown;
+      try {
+        calculateFare({
+          tripType: "one-way",
+          vehicleTier: "ertiga",
+          originName: "Agra",
+          destinationName: "Delhi",
+          pickupDatetime: "2026-10-01T10:00:00+05:30",
+          distanceKm: 200,
+          ruleOverrides: {
+            usePerKm: false,
+            fleetPrices: { sedan: 3499 }, // ertiga omitted
+          },
+        });
+      } catch (e) {
+        caught = e;
+      }
+      expect(caught).toBeDefined();
+      expect((caught as { code?: string }).code).toBe("TIER_NOT_PRICED");
+    });
   });
 
   describe("Per-Night × Nights Math", () => {
