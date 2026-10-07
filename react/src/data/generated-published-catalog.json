@@ -1,1 +1,25 @@
-[]
+[
+  {
+    "id": "2fbe65cc-5ec4-4b9d-b608-70e3fc94ecee",
+    "type": "place",
+    "slug": "thora-top-5-shops",
+    "title": "Thora 5 SHOPS",
+    "shortDescription": "Testing the prices",
+    "description": "Testing the prices",
+    "durationText": "Full Day",
+    "routeSummary": "Toll ---1",
+    "startingPriceInr": 4000,
+    "distanceKm": 5220,
+    "availability": "available",
+    "seatsLeft": null,
+    "stops": [
+      "jewar toll plaza"
+    ],
+    "tripType": null,
+    "version": 2,
+    "publishedAt": "2026-10-07T01:43:35.000Z",
+    "updatedAt": "2026-10-07T01:43:35.000Z",
+    "coverImage": null,
+    "gallery": []
+  }
+]

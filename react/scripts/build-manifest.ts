@@ -1,7 +1,18 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { VEHICLES } from "../../backend/src/modules/fares/fare.catalogue.ts";
+// NOTE: react/ must stay self-contained — never import from backend/ here.
+// Node's --experimental-strip-types cannot resolve cross-project `.js` -> `.ts`
+// imports (ERR_MODULE_NOT_FOUND), which crashed `npm run build`.
+// These specs mirror backend/src/modules/fares/fare.catalogue.ts VEHICLES;
+// keep them in sync if the catalogue changes (future: move to contracts/).
+const VEHICLE_SPECS = [
+  { id: "sedan", perKm: 10, alwaysRoundTrip: false },
+  { id: "ertiga", perKm: 14, alwaysRoundTrip: false },
+  { id: "innova", perKm: 18, alwaysRoundTrip: false },
+  { id: "tempo", perKm: 25, alwaysRoundTrip: true },
+  { id: "urbania", perKm: 34, alwaysRoundTrip: true },
+];
 
 const __filename = fileURLToPath(import.meta.url);
 const scriptsDir = dirname(__filename);
@@ -126,8 +137,8 @@ export async function buildRouteCatalogAndManifest(): Promise<void> {
   console.log(`✅ [Manifest Builder] Emitted public/routes-manifest.json (${Object.keys(manifest).length} routes) from backend catalog.`);
 
   // 2. Emit react/src/data/generated-catalog.json
-  const getRate = (id: string) => VEHICLES.find((v) => v.id === id)?.perKm ?? 10;
-  const isAlwaysRoundTrip = (id: string) => Boolean(VEHICLES.find((v) => v.id === id)?.alwaysRoundTrip);
+  const getRate = (id: string) => VEHICLE_SPECS.find((v) => v.id === id)?.perKm ?? 10;
+  const isAlwaysRoundTrip = (id: string) => Boolean(VEHICLE_SPECS.find((v) => v.id === id)?.alwaysRoundTrip);
 
   const catalogPayload = {
     routes: allRoutesList,

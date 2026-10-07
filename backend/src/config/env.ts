@@ -55,6 +55,8 @@ const EnvSchema = z.object({
   RESEND_API_KEY: z.string().optional().default(""),
   EMAIL_FROM: z.string().default("bookings@agraskbagheltourandtravels.com"),
   ADMIN_EMAIL: z.string().trim().optional().default(""),
+  // Cloudflare deploy hook fired after admin publishes content (routes, packages, monuments).
+  PAGES_DEPLOY_HOOK_URL: z.string().optional().default(""),
 });
 
 export type Env = z.infer<typeof EnvSchema>;

@@ -16,7 +16,8 @@ import React, { useEffect } from "react";
 import { contact } from "../../data/contact";
 import { JsonLd } from "./JsonLd";
 
-export const CANONICAL_DOMAIN = "https://agraskbagheltourandtravels.com";
+export const CANONICAL_DOMAIN =
+  import.meta.env.VITE_SITE_URL || "https://skbagheltravels-customer.coccoder999.workers.dev";
 export const DEFAULT_OG_IMAGE = `${CANONICAL_DOMAIN}/assets/brand/og-banner.webp`;
 
 export interface HreflangAlternate {

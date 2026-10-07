@@ -60,3 +60,5 @@ services:
         sync: false
       - key: EMAIL_FROM
         value: bookings@agraskbagheltourandtravels.com
+      - key: PAGES_DEPLOY_HOOK_URL
+        sync: false

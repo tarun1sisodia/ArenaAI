@@ -10,7 +10,7 @@
       "ruleText": "Full refund, no questions asked.",
       "refundTimelineNote": "5–7 business days to original bank/UPI",
       "createdAt": "2026-10-03T22:32:29.000Z",
-      "updatedAt": "2026-10-03T22:32:29.000Z"
+      "updatedAt": "2026-10-07T11:34:18.000Z"
     },
     {
       "id": "a06e9395-f3c1-4f9e-9097-59e7848f176a",
@@ -118,7 +118,7 @@
       "historicalContext": "Crown jewel of Mughal architecture, UNESCO World Heritage site built by Shah Jahan.",
       "sortOrder": 1,
       "createdAt": "2026-10-03T22:32:29.000Z",
-      "updatedAt": "2026-10-03T22:32:29.000Z"
+      "updatedAt": "2026-10-07T12:05:23.000Z"
     },
     {
       "id": "1821c31c-9d14-4ec4-9009-6784835a1af8",
@@ -219,7 +219,7 @@
     "comfortStopNote": "Standard comfort and hydration stops provided for human passengers.",
     "bookingInstruction": "Pets are strictly not permitted in vehicles to maintain passenger hygiene.",
     "createdAt": "2026-10-03T22:32:29.000Z",
-    "updatedAt": "2026-10-04T20:27:38.000Z"
+    "updatedAt": "2026-10-07T11:35:04.000Z"
   },
   "companyProfile": {
     "id": "6d430618-2f34-4398-8f04-20c9b34a99ee",
@@ -232,9 +232,9 @@
     "operatingHours": "Bookings Open 24×7, 365 Days",
     "mapsLocation": "https://www.google.com/maps?q=27.248679,78.0488753&z=17&hl=en",
     "dossierVersion": "1.0",
-    "dossierStatus": "signed_off",
+    "dossierStatus": "pending_review",
     "createdAt": "2026-10-03T22:32:29.000Z",
-    "updatedAt": "2026-10-04T20:25:30.000Z"
+    "updatedAt": "2026-10-07T11:34:54.000Z"
   },
   "dossierSignoffs": [
     {
@@ -246,7 +246,7 @@
       "approvedBy": "b3c86792-3e65-436e-b606-3fddfcbcdbe7",
       "approvedAt": "2026-10-04T20:13:52.000Z",
       "createdAt": "2026-10-03T22:32:29.000Z",
-      "updatedAt": "2026-10-04T20:13:52.000Z"
+      "updatedAt": "2026-10-07T11:34:57.000Z"
     },
     {
       "id": "926f8a0d-62e6-4618-9722-6eb7ce1ad500",
