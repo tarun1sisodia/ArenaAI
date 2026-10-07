@@ -11,7 +11,7 @@ import {
 } from "../../types/domain.js";
 import { CATALOG_RAW_DATA, VEHICLES } from "../fares/fare.catalogue.js";
 import type { AttachMediaSchema, CreateCatalogSchema, PublicCatalogQuerySchema, UpdateCatalogSchema, UpdateMediaSchema } from "./catalog.schema.js";
-import { mediaObjectPath, type MediaStorage } from "./media.storage.js";
+import { mediaObjectPath, mimeTypeForPath, type MediaStorage } from "./media.storage.js";
 import type { z } from "zod";
 
 import { triggerFrontendRebuild } from "../../shared/deploy-hook.js";
@@ -442,7 +442,7 @@ export function createCatalogService(deps: { db: Repositories; clock: Clock; med
         status: "published",
         sourceType: "admin_upload",
         copyrightOwner: null,
-        mimeType: inline ? (input.mimeType as string) : null,
+        mimeType: inline ? (input.mimeType as string) : mimeTypeForPath(storagePath),
         contentBase64,
         sizeBytes,
         createdBy: actor.id,

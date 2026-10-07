@@ -525,7 +525,7 @@ export function createMemoryRepositories(nowIso = new Date().toISOString()): Rep
         return clone(record);
       },
       async deleteUpgrade(id) {
-        packageUpgrades.delete(id);
+        return packageUpgrades.delete(id);
       },
     },
     transferRoutes: {

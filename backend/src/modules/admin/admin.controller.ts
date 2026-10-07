@@ -35,7 +35,12 @@ export function createAdminController(
       requireRole(request, ADMIN_ROLES);
       const { id } = BookingIdParamSchema.parse(request.params);
       const body = TransitionBookingSchema.parse(request.body);
-      const updated = await bookings.transition(id, body.to, body.expectedVersion);
+      const actor = requireUser(request);
+      const updated = await bookings.transition(id, body.to, body.expectedVersion, {
+        actorId: actor.id,
+        actorRole: actor.role,
+        requestId: request.id,
+      });
       return sendSuccess(reply, updated);
     },
 

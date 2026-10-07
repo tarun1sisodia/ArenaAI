@@ -858,7 +858,8 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
           return rows[0] ? mapPackageUpgrade(rows[0]) : record;
         },
         async deleteUpgrade(id: string) {
-          await query(client, "delete from package_vehicle_upgrades where id=$1", [id]);
+          const result = await client.query("delete from package_vehicle_upgrades where id=$1", [id]);
+          return (result.rowCount ?? 0) > 0;
         },
       },
       transferRoutes: {

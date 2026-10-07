@@ -179,7 +179,8 @@ export function createTourPackagesService(deps: {
       return saved;
     },
     async deleteUpgrade(id: string) {
-      await deps.db.tourPackages.deleteUpgrade(id);
+      const deleted = await deps.db.tourPackages.deleteUpgrade(id);
+      if (!deleted) throw Errors.notFound("PACKAGE_UPGRADE_NOT_FOUND", "Package vehicle upgrade not found.");
       await triggerFrontendRebuild("upgrade-matrix-updated");
     },
     async uploadImage(input: UploadTourPackageImageInput) {

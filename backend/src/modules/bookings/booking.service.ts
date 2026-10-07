@@ -5,7 +5,7 @@ import { AppError, Errors } from "../../shared/errors.js";
 import { newGuestAccessToken, newId, newTicketId, timingSafeEqualString } from "../../shared/ids.js";
 import { maskEmail, maskPhone, phonesMatch, sanitizeText } from "../../shared/privacy.js";
 import { assertTransition } from "../../shared/stateMachine.js";
-import type { AuthUser, BookingRecord, RefundRecord } from "../../types/domain.js";
+import type { AuthUser, BookingRecord, RefundRecord, UserRole } from "../../types/domain.js";
 import type { BookingSelection } from "../../shared/bookingSelection.js";
 import { calculateFare, findRoute } from "../fares/fare.engine.js";
 import { calculateCancellationRefund } from "../fares/cancellation.engine.js";
@@ -373,6 +373,7 @@ export function createBookingService(deps: {
       bookingId: string,
       to: BookingRecord["status"],
       expectedVersion?: number,
+      audit?: { actorId: string; actorRole: UserRole; requestId: string },
     ): Promise<BookingRecord> {
       return deps.db.transaction(async (trx) => {
         const booking = await trx.bookings.getById(bookingId);
@@ -434,7 +435,23 @@ export function createBookingService(deps: {
           }
         }
 
-        return trx.bookings.update(updated);
+        const persisted = await trx.bookings.update(updated);
+        if (audit) {
+          await trx.audit.append({
+            id: newId(),
+            actorId: audit.actorId,
+            actorRole: audit.actorRole,
+            resourceType: "booking",
+            resourceId: booking.id,
+            action: "booking.status_transition",
+            before: { status: booking.status, version: booking.version },
+            after: { status: to, version: updated.version },
+            reason: null,
+            requestId: audit.requestId,
+            createdAt: toIso(now),
+          });
+        }
+        return persisted;
       });
     },
   };

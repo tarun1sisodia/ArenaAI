@@ -47,6 +47,22 @@ export function mediaExtensionFor(mimeType: string | null | undefined): string {
   return MIME_EXTENSIONS[mimeType] ?? "bin";
 }
 
+const EXTENSION_MIME_TYPES: Record<string, string> = Object.fromEntries(
+  Object.entries(MIME_EXTENSIONS).map(([mime, ext]) => [ext, mime]),
+);
+
+/** Infer a mimeType from a storage path/URL file extension. Returns null when unknown. */
+export function mimeTypeForPath(path: string | null | undefined): string | null {
+  if (!path) return null;
+  const withoutQuery = path.split("?")[0] ?? "";
+  const clean = withoutQuery.split("#")[0] ?? "";
+  const dot = clean.lastIndexOf(".");
+  if (dot < 0) return null;
+  const ext = clean.slice(dot + 1).toLowerCase();
+  if (!ext) return null;
+  return EXTENSION_MIME_TYPES[ext] ?? null;
+}
+
 /** Deterministic object key so uploads/downloads/deletes never need a side table. */
 export function mediaObjectPath(catalogItemId: string, mediaId: string, mimeType: string | null): string {
   return `catalog/${catalogItemId}/${mediaId}.${mediaExtensionFor(mimeType)}`;

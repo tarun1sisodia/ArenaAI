@@ -44,7 +44,9 @@ const base = z
     inclusions_highlight: cleanOptional(500),
     inclusions_note: cleanOptional(1000),
     source: cleanText(1, 100).default("Agra"),
-    destination: cleanText(1, 200).default(""),
+    // Destination may be empty (DB column is NOT NULL DEFAULT ''). min(1) would
+    // contradict the default(""), so empty strings are accepted here.
+    destination: z.string().trim().max(200).transform((value) => value.replace(/<[^>]*>/g, "").trim()).default(""),
     inclusions: z.array(z.string().trim().max(300)).max(50).optional().default([]),
     exclusions: z.array(z.string().trim().max(300)).max(50).optional().default([]),
     itinerary: z.array(z.object({

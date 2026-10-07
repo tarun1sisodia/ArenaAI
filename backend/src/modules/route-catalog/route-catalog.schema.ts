@@ -1,8 +1,32 @@
 import { z } from "zod";
-import { VEHICLES } from "../fares/fare.catalogue.js";
+import { VEHICLE_TIERS, toCanonicalTierKey, type VehicleTier } from "../../contracts/vehicle-tiers.js";
 
 export const ROUTE_TRIP_TYPES = ["one-way", "round-trip", "local-tour"] as const;
-export const ROUTE_FLEET_IDS = VEHICLES.map((vehicle) => vehicle.id) as [string, ...string[]];
+
+// Contract C-ENUM-001: canonical LONG tier keys are the only valid keys at API
+// boundaries. Legacy short ids (innova, tempo) are normalized to canonical form
+// via toCanonicalTierKey; unknown keys are rejected loudly (400).
+const fleetKeySchema = z.string().trim().transform((value, ctx) => {
+  const canonical = toCanonicalTierKey(value);
+  if (!canonical) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: `Unknown fleet key "${value}". Expected one of: ${VEHICLE_TIERS.join(", ")}.` });
+    return z.NEVER;
+  }
+  return canonical;
+});
+
+const faresInrSchema = z.record(z.number().positive().max(1_000_000).finite()).transform((record, ctx) => {
+  const normalized: Record<VehicleTier, number> = {} as Record<VehicleTier, number>;
+  for (const [key, amount] of Object.entries(record)) {
+    const canonical = toCanonicalTierKey(key);
+    if (!canonical) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: `Unknown fleet key "${key}" in fares_inr. Expected one of: ${VEHICLE_TIERS.join(", ")}.` });
+      return z.NEVER;
+    }
+    normalized[canonical] = amount;
+  }
+  return normalized;
+});
 
 const cleanText = (min: number, max: number) => z.string().trim().min(min).max(max).transform((value) => value.replace(/<[^>]*>/g, "").trim());
 const cleanOptional = (max: number) => z.string().trim().max(max).transform((value) => value.replace(/<[^>]*>/g, "").trim()).optional();
@@ -15,8 +39,8 @@ const base = z.object({
   slug: z.string().trim().regex(/^[a-z0-9-]{2,80}$/).refine((value) => !/^\d+-btn-/.test(value) && !/command/i.test(value) && !/--/.test(value), "Slug contains a reserved or junk pattern."),
   distance_km: z.number().positive().max(10000).finite().optional(),
   duration_text: cleanOptional(80),
-  available_fleets: z.array(z.enum(ROUTE_FLEET_IDS as [typeof ROUTE_FLEET_IDS[number], ...typeof ROUTE_FLEET_IDS[number][]])).min(1),
-  fares_inr: z.record(z.number().positive().max(1_000_000).finite()),
+  available_fleets: z.array(fleetKeySchema).min(1),
+  fares_inr: faresInrSchema,
   driver_charge_inr: z.number().nonnegative().max(1_000_000).default(0),
   night_halt_inr: z.number().nonnegative().max(1_000_000).default(0),
   toll_included: z.boolean().default(true),

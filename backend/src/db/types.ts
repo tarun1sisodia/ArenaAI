@@ -146,7 +146,7 @@ export type Repositories = {
     delete(id: string): Promise<void>;
     listUpgrades(packageId?: string | null): Promise<PackageVehicleUpgradeRecord[]>;
     saveUpgrade(record: PackageVehicleUpgradeRecord): Promise<PackageVehicleUpgradeRecord>;
-    deleteUpgrade(id: string): Promise<void>;
+    deleteUpgrade(id: string): Promise<boolean>;
   };
 
   transferRoutes: {
