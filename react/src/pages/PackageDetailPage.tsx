@@ -107,25 +107,30 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
   const advanceAmount = Math.round(grossPrice * 0.28);
   const balanceAmount = grossPrice - advanceAmount;
 
-  // Media URL resolution with gallery support
-  const mainImg = resolveCatalogMediaUrl(pkg.image || "/assets/packages/taj-dawn.webp");
-  const secImg1 = pkg.gallery && pkg.gallery[1]?.url
-    ? resolveCatalogMediaUrl(pkg.gallery[1].url)
-    : "https://lh3.googleusercontent.com/aida-public/AB6AXuA2yf-yBU3hlsj0yoDvKQuP0oe6WgHmL9Zp1It3UX4nt2DQnx758CLagwRSUfUyxP1x94bKKqwL8EeD-VILb9XhvYHbrj9ajEPX9oXgLEMY_ksbGoFyGii8FeQlpfiDsaJEaBiElqArswBsy-Szo9P1AiuEHzAqAHIBl2U5mryTmHPcxLdKPwyvoEk7Pc17rJDEn76H1pc-eP1-8L2SqkX8sVvPSIZZAjXjDDd2o__BhvpU5Aw0v4WFIw";
-  const secCap1 = pkg.gallery && pkg.gallery[1]?.caption
-    ? pkg.gallery[1].caption
-    : "Priority Entry & Prime Photography";
+  // Selected hero image state if customer clicks on gallery thumbnail strip
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
 
-  const secImg2 = pkg.gallery && pkg.gallery[2]?.url
-    ? resolveCatalogMediaUrl(pkg.gallery[2].url)
-    : (pkg.gallery && pkg.gallery[0]?.url && pkg.gallery[0].url !== pkg.image
-        ? resolveCatalogMediaUrl(pkg.gallery[0].url)
-        : "https://lh3.googleusercontent.com/aida-public/AB6AXuBI1YNHnPOUMAYZXIn-msx_lCMvf_qW2T2cwxbtIVgvOgnUSQ5Es3br-96fv0T8NuwFm4EFi6bGA_QPKTGF6yKCLYfa279a_zZA8U4Dud5Ex6k0QTPqUTiymsfL4UhCGp9nhedjTOV-2Dg9Q4Y4MHN9bs0U-F_FF0lT2CBiiB1gfW0n8kVIE_azmlZqxA6lKnKD5AJXt2lZTxubG2rf9Grv4GXrmpphWD5jUJHc04_9DLcyq3sYwDVQ7Q");
-  const secCap2 = pkg.gallery && pkg.gallery[2]?.caption
-    ? pkg.gallery[2].caption
-    : (pkg.gallery && pkg.gallery[0]?.caption
-        ? pkg.gallery[0].caption
-        : "5-Star Royal Palace Buffet");
+  // Normalized gallery list
+  const galleryItems = useMemo(() => {
+    if (pkg.gallery && pkg.gallery.length > 0) return pkg.gallery;
+    if (pkg.image) return [{ url: pkg.image, caption: "Signature Tour View" }];
+    return [];
+  }, [pkg]);
+
+  // Media URL resolution with gallery support (exactly 3 bento hero images)
+  const mainImg = selectedImageIndex !== null && galleryItems[selectedImageIndex]
+    ? resolveCatalogMediaUrl(galleryItems[selectedImageIndex].url)
+    : resolveCatalogMediaUrl(galleryItems[0]?.url || pkg.image || "/assets/packages/taj-dawn.webp");
+
+  const secImg1 = galleryItems[1]?.url
+    ? resolveCatalogMediaUrl(galleryItems[1].url)
+    : "https://lh3.googleusercontent.com/aida-public/AB6AXuA2yf-yBU3hlsj0yoDvKQuP0oe6WgHmL9Zp1It3UX4nt2DQnx758CLagwRSUfUyxP1x94bKKqwL8EeD-VILb9XhvYHbrj9ajEPX9oXgLEMY_ksbGoFyGii8FeQlpfiDsaJEaBiElqArswBsy-Szo9P1AiuEHzAqAHIBl2U5mryTmHPcxLdKPwyvoEk7Pc17rJDEn76H1pc-eP1-8L2SqkX8sVvPSIZZAjXjDDd2o__BhvpU5Aw0v4WFIw";
+  const secCap1 = galleryItems[1]?.caption || "Grand Amar Singh Gate at Agra Red Fort";
+
+  const secImg2 = galleryItems[2]?.url
+    ? resolveCatalogMediaUrl(galleryItems[2].url)
+    : "https://lh3.googleusercontent.com/aida-public/AB6AXuBI1YNHnPOUMAYZXIn-msx_lCMvf_qW2T2cwxbtIVgvOgnUSQ5Es3br-96fv0T8NuwFm4EFi6bGA_QPKTGF6yKCLYfa279a_zZA8U4Dud5Ex6k0QTPqUTiymsfL4UhCGp9nhedjTOV-2Dg9Q4Y4MHN9bs0U-F_FF0lT2CBiiB1gfW0n8kVIE_azmlZqxA6lKnKD5AJXt2lZTxubG2rf9Grv4GXrmpphWD5jUJHc04_9DLcyq3sYwDVQ7Q";
+  const secCap2 = galleryItems[2]?.caption || "Sunset vantage point over Yamuna";
 
   // Resolve timeline stops
   const timelineStops = useMemo<ItineraryItem[]>(() => {
@@ -366,26 +371,34 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
             </div>
           </div>
 
-          {/* Additional Gallery Strip if Package Has Real Photos */}
-          {pkg.gallery && pkg.gallery.length > 3 && (
+          {/* Additional Gallery Strip with all verified photos */}
+          {galleryItems.length > 0 && (
             <div className="flex items-center gap-2 overflow-x-auto p-2 bg-surface-container-low rounded-xl border border-border-warm/60 no-scrollbar">
-              {pkg.gallery.map((g, idx) => {
+              {galleryItems.map((g, idx) => {
                 const url = resolveCatalogMediaUrl(g.url);
+                const isSelected = (selectedImageIndex === null && idx === 0) || selectedImageIndex === idx;
                 return (
-                  <div key={idx} className="relative w-24 h-16 rounded-lg overflow-hidden shrink-0 border border-border-warm shadow-xs">
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => setSelectedImageIndex(idx)}
+                    className={`relative w-24 h-16 rounded-lg overflow-hidden shrink-0 border transition-all cursor-pointer ${
+                      isSelected ? "border-primary ring-2 ring-primary/50 scale-102" : "border-border-warm opacity-80 hover:opacity-100"
+                    } shadow-xs`}
+                  >
                     <img
                       src={url}
                       alt={g.alt || `${pkg.name} photo ${idx + 1}`}
-                      className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
+                      className="w-full h-full object-cover"
                       onError={(e) => {
                         (e.currentTarget as HTMLImageElement).src = "/assets/packages/taj-dawn.webp";
                       }}
                     />
-                  </div>
+                  </button>
                 );
               })}
               <span className="text-xs text-on-surface-variant font-semibold pl-2 shrink-0">
-                {pkg.gallery.length} Verified Photos
+                {galleryItems.length} Verified Photo{galleryItems.length > 1 ? "s" : ""}
               </span>
             </div>
           )}
@@ -675,6 +688,90 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 5 CANONICAL FLEET TIER FARE COMPARISON MATRIX */}
+      <section className="w-full bg-surface-container-low py-space-3xl border-t border-b border-border-warm/50">
+        <div className="max-w-7xl mx-auto px-margin-mobile lg:px-margin">
+          <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-space-2xl">
+            <span className="text-label-caps uppercase text-terracotta-sandstone font-bold tracking-widest mb-space-xs">
+              Transparent Fleet Pricing
+            </span>
+            <h2 className="font-headline-lg text-headline-lg text-on-surface font-serif font-bold">
+              Guaranteed Fares Across All 5 Vehicle Classes
+            </h2>
+            <p className="font-body-md text-body-md text-on-surface-variant mt-1">
+              Select your preferred vehicle. Every fare includes dedicated chauffeur custody, all expressway tolls, interstate permits, and luggage assistance.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-space-md">
+            {[
+              { id: "sedan", name: "Maruti Dzire / Etios", desc: "Private AC sedan for couples or small families.", seats: "4 Passengers", bags: "2 Bags", ac: "Climate Controlled" },
+              { id: "ertiga", name: "Maruti Ertiga Hybrid", desc: "Spacious 6-seater MUV with ample legroom.", seats: "6 Passengers", bags: "3 Bags", ac: "Dual AC Vents" },
+              { id: "innova-crysta", name: "Toyota Innova Crysta VIP", desc: "Premier executive comfort with captain reclining seats.", seats: "6-7 Passengers", bags: "4 Bags", ac: "Triple-Zone Climate" },
+              { id: "tempo-traveller", name: "Force Tempo Traveller", desc: "Luxury group coach for family & corporate delegations.", seats: "12-16 Passengers", bags: "8+ Bags", ac: "Roof-Mounted AC" },
+              { id: "urbania", name: "Force Urbania VIP", desc: "European monocoque luxury touring van with plush seats.", seats: "10-13 Passengers", bags: "10 Bags", ac: "Individual AC Louvers" },
+            ].map((fleet) => {
+              const tierPrice = pkg.fleetPrices?.[fleet.id] ?? (
+                fleet.id === "sedan" ? pkg.from :
+                fleet.id === "ertiga" ? (pkg.from + 800) :
+                fleet.id === "innova-crysta" ? (pkg.from + 1800) :
+                fleet.id === "tempo-traveller" ? (pkg.from + 3500) :
+                (pkg.from + 5500)
+              );
+              const tierToken = Math.round(tierPrice * 0.28);
+              const tierBookingUrl = `/book.html?trip=package&package=${encodeURIComponent(pkg.slug)}&vehicle=${fleet.id}&from=${fromParam}&to=${toParam}&step=1`;
+
+              return (
+                <div
+                  key={fleet.id}
+                  className="bg-surface rounded-xl p-space-lg shadow-sm border border-border-warm flex flex-col justify-between hover:shadow-md transition-shadow"
+                >
+                  <div className="flex flex-col gap-space-xs">
+                    <div className="flex items-center justify-between">
+                      <span className="px-2 py-0.5 rounded bg-sandstone-wash text-terracotta-sandstone font-label-caps text-label-md uppercase tracking-wider font-bold">
+                        {fleet.id}
+                      </span>
+                      <span className="text-body-sm text-secondary font-medium">{fleet.seats}</span>
+                    </div>
+                    <h3 className="font-title-lg text-title-lg text-on-surface font-semibold mt-1">{fleet.name}</h3>
+                    <p className="text-body-sm text-on-surface-variant leading-snug">{fleet.desc}</p>
+
+                    <div className="flex flex-col gap-1 py-space-xs border-y border-border-warm/40 text-body-sm text-on-surface-variant mt-2">
+                      <div className="flex items-center justify-between">
+                        <span>Luggage:</span>
+                        <span className="font-medium text-on-surface">{fleet.bags}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span>Air Conditioning:</span>
+                        <span className="font-medium text-success-jade">{fleet.ac}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col pt-2">
+                      <span className="text-label-md font-label-caps text-secondary uppercase font-semibold">Total Fare</span>
+                      <span className="font-headline-md text-headline-md text-primary font-bold">
+                        ₹{tierPrice.toLocaleString("en-IN")}
+                      </span>
+                      <span className="text-label-md text-secondary">
+                        ₹{tierToken.toLocaleString("en-IN")} (28% advance)
+                      </span>
+                    </div>
+                  </div>
+
+                  <a
+                    className="mt-space-md w-full inline-flex items-center justify-center gap-1 bg-primary text-on-primary py-2.5 rounded-lg text-label-lg font-label-lg shadow-sm hover:bg-terracotta-sunlit transition-all text-center font-semibold"
+                    href={tierBookingUrl}
+                  >
+                    <span>Reserve {fleet.name.split(" ")[0]}</span>
+                    <span className="material-symbols-outlined text-icon-18">arrow_forward</span>
+                  </a>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>

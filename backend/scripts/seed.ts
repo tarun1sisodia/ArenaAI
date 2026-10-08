@@ -500,7 +500,7 @@ export async function seedDatabase(connectionString: string): Promise<TableSeedR
         `INSERT INTO device_registrations (
            id, user_id, booking_id, device_id, platform, fcm_token, is_active, last_seen_at, created_at
          ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-         ON CONFLICT (user_id, device_id) DO UPDATE SET
+         ON CONFLICT (id) DO UPDATE SET
            fcm_token = EXCLUDED.fcm_token,
            is_active = EXCLUDED.is_active,
            last_seen_at = EXCLUDED.last_seen_at`,

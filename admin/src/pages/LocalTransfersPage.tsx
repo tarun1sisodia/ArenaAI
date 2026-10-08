@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Dialog } from "@/components/ui/Dialog";
 import { Input, Label, NumberInput, Select } from "@/components/ui/Input";
+import { LocationAutocompleteInput } from "@/components/admin/LocationAutocompleteInput";
 import {
   archiveAdminLocalPackage,
   archiveAdminTransferRoute,
@@ -127,11 +128,19 @@ export function LocalTransfersPage({ user }: { user: AdminUser }) {
   }
 
   function handleLocalNameChange(name: string) {
-    setLocalForm((prev) => ({ ...prev, name, packageCode: editingLocal ? prev.packageCode : slugify(name) }));
+    setLocalForm((prev) => ({ ...prev, name, packageCode: !editingLocal || !prev.packageCode ? slugify(name) : prev.packageCode }));
+  }
+
+  function syncLocalSlug() {
+    setLocalForm((prev) => ({ ...prev, packageCode: slugify(prev.name) }));
   }
 
   function handleTransferNameChange(name: string) {
-    setTransferForm((prev) => ({ ...prev, name, routeCode: editingTransfer ? prev.routeCode : slugify(name) }));
+    setTransferForm((prev) => ({ ...prev, name, routeCode: !editingTransfer || !prev.routeCode ? slugify(name) : prev.routeCode }));
+  }
+
+  function syncTransferSlug() {
+    setTransferForm((prev) => ({ ...prev, routeCode: slugify(prev.name) }));
   }
 
   function openEditLocal(item: LocalPackageItem) {
@@ -465,10 +474,18 @@ export function LocalTransfersPage({ user }: { user: AdminUser }) {
               />
             </div>
             <div>
-              <Label>Package Slug / Code {editingLocal && "(immutable)"}</Label>
+              <div className="flex items-center justify-between mb-1">
+                <Label className="mb-0">Package Slug / Code</Label>
+                <button
+                  type="button"
+                  onClick={syncLocalSlug}
+                  className="text-[11px] text-gold hover:underline font-medium"
+                >
+                  ⚡ Auto-generate from name
+                </button>
+              </div>
               <Input
                 value={localForm.packageCode}
-                readOnly={Boolean(editingLocal)}
                 onChange={(e) => setLocalForm((p) => ({ ...p, packageCode: e.target.value }))}
                 placeholder="e.g. agra-standard-sightseeing"
               />
@@ -495,11 +512,11 @@ export function LocalTransfersPage({ user }: { user: AdminUser }) {
           </div>
 
           <div>
-            <Label>Places Covered</Label>
-            <Input
+            <LocationAutocompleteInput
+              label="Places Covered (LocationIQ)"
               value={localForm.covers}
-              onChange={(e) => setLocalForm((p) => ({ ...p, covers: e.target.value }))}
-              placeholder="Taj Mahal, Agra Fort, Mehtab Bagh..."
+              onChange={(val) => setLocalForm((p) => ({ ...p, covers: val }))}
+              placeholder="e.g. Taj Mahal, Agra Fort, Mehtab Bagh"
             />
           </div>
 
@@ -599,10 +616,18 @@ export function LocalTransfersPage({ user }: { user: AdminUser }) {
               />
             </div>
             <div>
-              <Label>Route Slug / Code {editingTransfer && "(immutable)"}</Label>
+              <div className="flex items-center justify-between mb-1">
+                <Label className="mb-0">Route Slug / Code</Label>
+                <button
+                  type="button"
+                  onClick={syncTransferSlug}
+                  className="text-[11px] text-gold hover:underline font-medium"
+                >
+                  ⚡ Auto-generate from name
+                </button>
+              </div>
               <Input
                 value={transferForm.routeCode}
-                readOnly={Boolean(editingTransfer)}
                 onChange={(e) => setTransferForm((p) => ({ ...p, routeCode: e.target.value }))}
                 placeholder="e.g. agc-station-drop"
               />
@@ -619,11 +644,11 @@ export function LocalTransfersPage({ user }: { user: AdminUser }) {
               />
             </div>
             <div>
-              <Label>Direction / Service Note</Label>
-              <Input
+              <LocationAutocompleteInput
+                label="Station / Destination Location (LocationIQ)"
                 value={transferForm.directionNote}
-                onChange={(e) => setTransferForm((p) => ({ ...p, directionNote: e.target.value }))}
-                placeholder="Doorstep pickup or drop at Agra Cantt Railway Station"
+                onChange={(val) => setTransferForm((p) => ({ ...p, directionNote: val }))}
+                placeholder="e.g. Agra Cantt Railway Station, Idgah, Kheria"
               />
             </div>
           </div>

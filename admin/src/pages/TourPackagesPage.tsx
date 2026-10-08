@@ -108,6 +108,7 @@ export function TourPackagesPage({ user }: { user: AdminUser }) {
 
   // Gallery and image upload states
   const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState("");
   const [customImageUrl, setCustomImageUrl] = useState("");
   const [customImageCaption, setCustomImageCaption] = useState("");
   const [customImageAlt, setCustomImageAlt] = useState("");
@@ -215,15 +216,26 @@ export function TourPackagesPage({ user }: { user: AdminUser }) {
 
   function handleNameChange(name: string) {
     setForm((prev) => {
-      const autoSlug = !editing
-        ? name
-            .toLowerCase()
-            .trim()
-            .replace(/[^a-z0-9]+/g, "-")
-            .replace(/^-+|-+$/g, "")
-        : prev.packageCode;
-      return { ...prev, name, packageCode: autoSlug };
+      const autoSlug = name
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+      return {
+        ...prev,
+        name,
+        packageCode: !editing || !prev.packageCode ? autoSlug : prev.packageCode,
+      };
     });
+  }
+
+  function syncSlugFromName() {
+    const autoSlug = (form.name || `${form.source} to ${form.destination}`)
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+    setForm((prev) => ({ ...prev, packageCode: autoSlug }));
   }
 
   function setFleetPrice(tier: string, value: number) {
@@ -286,39 +298,48 @@ export function TourPackagesPage({ user }: { user: AdminUser }) {
   }
 
   async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = e.target.files ? Array.from(e.target.files) : [];
+    if (files.length === 0) return;
     setIsUploadingImage(true);
     setError(null);
     try {
-      const { base64, mimeType } = await optimizeImageForUpload(file);
+      let firstUrl = form.imageUrl;
+      const uploadedImages: TourPackageGalleryImage[] = [];
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        setUploadProgress(`Uploading ${i + 1} of ${files.length}: ${file.name}...`);
+        const { base64, mimeType } = await optimizeImageForUpload(file);
 
-      const res = await uploadTourPackageImage({
-        dataBase64: base64,
-        mimeType,
-        altText: customImageAlt.trim() || form.name || "Tour photo",
-        caption: customImageCaption.trim() || undefined,
-      });
-
-      if (res.url) {
-        const newImg: TourPackageGalleryImage = {
-          url: res.url,
+        const res = await uploadTourPackageImage({
+          dataBase64: base64,
+          mimeType,
+          altText: customImageAlt.trim() || form.name || file.name.replace(/\.[^/.]+$/, ""),
           caption: customImageCaption.trim() || file.name.replace(/\.[^/.]+$/, ""),
-          alt: customImageAlt.trim() || form.name || "Tour photo",
-        };
-        setForm((prev) => ({
-          ...prev,
-          imageUrl: prev.imageUrl || res.url,
-          gallery: [...prev.gallery, newImg],
-        }));
-        setCustomImageUrl("");
-        setCustomImageCaption("");
-        setCustomImageAlt("");
+        });
+
+        if (res.url) {
+          if (!firstUrl) firstUrl = res.url;
+          uploadedImages.push({
+            url: res.url,
+            caption: customImageCaption.trim() || file.name.replace(/\.[^/.]+$/, ""),
+            alt: customImageAlt.trim() || form.name || "Tour photo",
+          });
+        }
       }
+
+      setForm((prev) => ({
+        ...prev,
+        imageUrl: prev.imageUrl || firstUrl,
+        gallery: [...prev.gallery, ...uploadedImages],
+      }));
+      setCustomImageUrl("");
+      setCustomImageCaption("");
+      setCustomImageAlt("");
     } catch (err: any) {
       setError(err.message || "Failed to upload image.");
     } finally {
       setIsUploadingImage(false);
+      setUploadProgress("");
       e.target.value = "";
     }
   }
@@ -594,10 +615,18 @@ export function TourPackagesPage({ user }: { user: AdminUser }) {
               />
             </div>
             <div>
-              <Label>Package Slug / Code {editing && "(immutable)"}</Label>
+              <div className="flex items-center justify-between mb-1">
+                <Label className="mb-0">Package Slug / Code</Label>
+                <button
+                  type="button"
+                  onClick={syncSlugFromName}
+                  className="text-[11px] text-gold hover:underline font-medium"
+                >
+                  ⚡ Auto-generate from name
+                </button>
+              </div>
               <Input
                 value={form.packageCode}
-                readOnly={Boolean(editing)}
                 onChange={(e) => setForm((p) => ({ ...p, packageCode: e.target.value }))}
                 placeholder="e.g. same-day-agra-tour"
               />
@@ -877,9 +906,10 @@ export function TourPackagesPage({ user }: { user: AdminUser }) {
               <div className="flex flex-wrap items-center gap-3">
                 <label className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-gold text-ink-charcoal text-xs font-semibold hover:bg-gold-dark transition-colors cursor-pointer shadow-xs">
                   <Upload className="h-3.5 w-3.5" />
-                  <span>{isUploadingImage ? "Uploading Photo..." : "Upload Photo File"}</span>
+                  <span>{isUploadingImage ? uploadProgress || "Uploading Photos..." : "Upload Photos from Device"}</span>
                   <input
                     type="file"
+                    multiple
                     accept="image/jpeg,image/png,image/webp,image/avif"
                     onChange={handleFileUpload}
                     disabled={isUploadingImage}

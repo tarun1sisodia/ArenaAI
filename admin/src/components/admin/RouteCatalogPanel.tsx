@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Dialog } from "@/components/ui/Dialog";
 import { Input, Label, Select } from "@/components/ui/Input";
+import { LocationAutocompleteInput } from "./LocationAutocompleteInput";
 import {
   archiveAdminRoute,
   createAdminRoute,
@@ -92,10 +93,11 @@ export function RouteCatalogPanel({ user }: { user: AdminUser }) {
       if (!editing && (key === "sourceCity" || key === "destinationCity")) {
         const src = (key === "sourceCity" ? String(value) : next.sourceCity) || "agra";
         const dst = (key === "destinationCity" ? String(value) : next.destinationCity) || "";
-        next.slug = `${src}-to-${dst}`
-          .toLowerCase()
+        const cleanSrc = src.split(",")[0].trim().toLowerCase().replace(/[^a-z0-9]+/g, "-");
+        const cleanDst = dst.split(",")[0].trim().toLowerCase().replace(/[^a-z0-9]+/g, "-");
+        next.slug = `${cleanSrc}-to-${cleanDst}-taxi`
           .replace(/[^a-z0-9]+/g, "-")
-          .replace(/^-+|-+$/g, "") + "-taxi";
+          .replace(/^-+|-+$/g, "");
       }
       return next;
     });
@@ -335,16 +337,19 @@ export function RouteCatalogPanel({ user }: { user: AdminUser }) {
               </Select>
             </div>
             <div>
-              <Label>Source city</Label>
-              <Input value={form.sourceCity} onChange={(e) => setField("sourceCity", e.target.value)} />
+              <LocationAutocompleteInput
+                label="Source City (LocationIQ)"
+                value={form.sourceCity}
+                onChange={(val) => setField("sourceCity", val)}
+                placeholder="e.g. Agra, Uttar Pradesh"
+              />
             </div>
             <div>
-              <Label>Destination city</Label>
-              <Input
+              <LocationAutocompleteInput
+                label="Destination City (LocationIQ)"
                 value={form.destinationCity}
-                disabled={tripType === "local-tour"}
-                onChange={(e) => setField("destinationCity", e.target.value)}
-                placeholder={tripType === "local-tour" ? "N/A for local tour" : "e.g. Delhi"}
+                onChange={(val) => setField("destinationCity", val)}
+                placeholder={tripType === "local-tour" ? "N/A for local tour" : "e.g. Delhi, New Delhi"}
               />
             </div>
             <div>

@@ -39,8 +39,8 @@ interface DossierTourPackagePageProps {
 const FLEET_SPECIFICATIONS = [
   { id: "sedan", name: "Sedan (Dzire / Etios)", seats: "4 Passengers", bags: "2 Bags", ac: "Dual Climate AC", desc: "Ideal for couples and small families." },
   { id: "ertiga", name: "Ertiga MPV", seats: "6 Passengers", bags: "3 Bags", ac: "Roof-Mounted AC", desc: "Extra legroom and flexible 3rd row seating." },
-  { id: "innova", name: "Innova Crysta", seats: "6 Passengers", bags: "4 Bags", ac: "VIP Climate Cabin", desc: "Plush captain seats and whisper-quiet suspension." },
-  { id: "tempo", name: "Tempo Traveller", seats: "12–16 Passengers", bags: "Luggage Bay", ac: "Individual AC Vents", desc: "Spacious pushback seats for large families and groups." },
+  { id: "innova-crysta", name: "Innova Crysta", seats: "6 Passengers", bags: "4 Bags", ac: "VIP Climate Cabin", desc: "Plush captain seats and whisper-quiet suspension." },
+  { id: "tempo-traveller", name: "Tempo Traveller", seats: "12–16 Passengers", bags: "Luggage Bay", ac: "Individual AC Vents", desc: "Spacious pushback seats for large families and groups." },
   { id: "urbania", name: "Force Urbania", seats: "10–17 Passengers", bags: "Full Luggage Bay", ac: "Monocoque Luxury AC", desc: "Chauffeur-grade luxury executive travel." },
 ];
 

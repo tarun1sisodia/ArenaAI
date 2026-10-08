@@ -22,6 +22,7 @@ import { Input, Select } from "@/components/ui/Input";
 import { Tabs } from "@/components/ui/Tabs";
 import { Table, TBody, THead, TD, TH, TRow } from "@/components/ui/Table";
 import { AlertTriangle, RotateCw } from "lucide-react";
+import { LocationAutocompleteInput } from "@/components/admin/LocationAutocompleteInput";
 import { createAdminBooking, fetchAdminBookings, transitionAdminBooking } from "@/lib/api";
 import { VEHICLE_LABELS, can, type AdminUser, type Booking, type BookingStatus } from "@/lib/types";
 import { cn, formatDate, formatINR, maskEmail, maskPhone, timeAgo } from "@/lib/utils";
@@ -619,44 +620,33 @@ export function BookingsPage({ user }: { user: AdminUser }) {
           </div>
 
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <div>
-              <label className="mb-1 block text-xs font-semibold text-ink">Pickup City / Landmark *</label>
-              <Input
-                required
-                placeholder="Agra"
-                value={newForm.originName}
-                onChange={(e) => setNewForm((f) => ({ ...f, originName: e.target.value }))}
-              />
-            </div>
-            <div>
-              <label className="mb-1 block text-xs font-semibold text-ink">Destination City / Landmark *</label>
-              <Input
-                required
-                placeholder="Delhi Airport T3"
-                value={newForm.destinationName}
-                onChange={(e) => setNewForm((f) => ({ ...f, destinationName: e.target.value }))}
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="mb-1 block text-xs font-semibold text-ink">Pickup Street Address *</label>
-            <Input
-              required
-              placeholder="e.g. Hotel Clarks Shiraz, 54 Taj Road, Agra Cantt"
-              value={newForm.pickupAddress}
-              onChange={(e) => setNewForm((f) => ({ ...f, pickupAddress: e.target.value }))}
+            <LocationAutocompleteInput
+              label="Pickup City / Landmark *"
+              placeholder="e.g. Agra, Uttar Pradesh"
+              value={newForm.originName}
+              onChange={(val) => setNewForm((f) => ({ ...f, originName: val }))}
+            />
+            <LocationAutocompleteInput
+              label="Destination City / Landmark *"
+              placeholder="e.g. Indira Gandhi International Airport, New Delhi"
+              value={newForm.destinationName}
+              onChange={(val) => setNewForm((f) => ({ ...f, destinationName: val }))}
             />
           </div>
 
-          <div>
-            <label className="mb-1 block text-xs font-semibold text-ink">Drop Street Address (Optional)</label>
-            <Input
-              placeholder="e.g. Terminal 3 Departures, IGI Airport, New Delhi"
-              value={newForm.dropAddress}
-              onChange={(e) => setNewForm((f) => ({ ...f, dropAddress: e.target.value }))}
-            />
-          </div>
+          <LocationAutocompleteInput
+            label="Pickup Street Address *"
+            placeholder="e.g. Hotel Clarks Shiraz, 54 Taj Road, Agra Cantt"
+            value={newForm.pickupAddress}
+            onChange={(val) => setNewForm((f) => ({ ...f, pickupAddress: val }))}
+          />
+
+          <LocationAutocompleteInput
+            label="Drop Street Address (Optional)"
+            placeholder="e.g. Terminal 3 Departures, IGI Airport, New Delhi"
+            value={newForm.dropAddress}
+            onChange={(val) => setNewForm((f) => ({ ...f, dropAddress: val }))}
+          />
 
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
