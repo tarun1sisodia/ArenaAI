@@ -2,6 +2,7 @@ import type { Clock } from "../../shared/clock.js";
 import { toIso } from "../../shared/clock.js";
 import { Errors } from "../../shared/errors.js";
 import { newId } from "../../shared/ids.js";
+import { triggerFrontendRebuild } from "../../shared/deploy-hook.js";
 import type { FareRuleRecord, InquiryListFilter, PaymentListFilter, Repositories } from "../../db/types.js";
 import { maskEmail, maskPhone } from "../../shared/privacy.js";
 import type { BookingRecord, InquiryStatus } from "../../types/domain.js";
@@ -17,6 +18,7 @@ import {
   ROUTES,
   VEHICLES,
 } from "../fares/fare.catalogue.js";
+import { toCanonicalTierKey } from "../../contracts/vehicle-tiers.js";
 
 function toUuid(id?: string | null): string {
   if (id && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)) {
@@ -130,7 +132,10 @@ export function createAdminService(deps: { db: Repositories; clock?: Clock }) {
 
       const mergedVehicles = Array.isArray(cfg.vehicles)
         ? VEHICLES.map((v) => {
-            const override = cfg.vehicles.find((ov: any) => ov.tier === v.tier || ov.id === v.tier);
+            const override = cfg.vehicles.find((ov: any) => {
+              const k = toCanonicalTierKey(String(ov.tier ?? ov.id ?? ""));
+              return k !== undefined && k === v.tier;
+            });
             return override ? { ...v, ...override } : v;
           })
         : VEHICLES;
@@ -174,6 +179,7 @@ export function createAdminService(deps: { db: Repositories; clock?: Clock }) {
       };
 
       await deps.db.fareRules.save(record);
+      await triggerFrontendRebuild("fare-rules-updated");
 
       if (deps.db.audit) {
         await deps.db.audit.append({

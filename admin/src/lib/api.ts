@@ -843,3 +843,24 @@ export async function deleteAdminPromo(id: string): Promise<void> {
     method: "DELETE",
   });
 }
+
+export interface LocationSuggestion {
+  placeId: string;
+  displayName: string;
+  city: string | null;
+  state: string | null;
+  country: string;
+  lat: number | null;
+  lon: number | null;
+}
+
+export async function fetchLocationSuggestions(query: string): Promise<LocationSuggestion[]> {
+  const clean = query.trim();
+  if (clean.length < 2) return [];
+  try {
+    const json = await apiFetch(`/api/v1/locations/autocomplete?q=${encodeURIComponent(clean)}`);
+    return json?.data?.suggestions ?? [];
+  } catch {
+    return [];
+  }
+}

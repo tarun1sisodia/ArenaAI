@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Dialog } from "@/components/ui/Dialog";
 import { Input, Label, NumberInput, Select, Textarea } from "@/components/ui/Input";
+import { LocationAutocompleteInput } from "@/components/admin/LocationAutocompleteInput";
 import {
   archiveAdminTourPackage,
   checkTourPackageCode,
@@ -19,12 +20,12 @@ import {
 import { can, type AdminUser, type CatalogStatus, type TourPackageGalleryImage, type TourPackageItem } from "@/lib/types";
 import { formatINR } from "@/lib/utils";
 
-const FLEET_KEYS = ["sedan", "ertiga", "innova", "tempo", "urbania"] as const;
+const FLEET_KEYS = ["sedan", "ertiga", "innova-crysta", "tempo-traveller", "urbania"] as const;
 const FLEET_LABELS: Record<string, string> = {
   sedan: "Sedan (4 Seater)",
   ertiga: "Ertiga (6 Seater)",
-  innova: "Innova Crysta (6-7 Seater)",
-  tempo: "Tempo Traveller (12 Seater)",
+  "innova-crysta": "Innova Crysta (6-7 Seater)",
+  "tempo-traveller": "Tempo Traveller (12 Seater)",
   urbania: "Force Urbania (16 Seater)",
 };
 
@@ -68,8 +69,8 @@ const emptyPackage = {
   nights: 0,
   baseTierCode: "sedan",
   startingPriceInr: 3499,
-  fleetPrices: { sedan: 3499, ertiga: 4299, innova: 5299, tempo: 6999, urbania: 8999 },
-  nightChargeInr: 300,
+  fleetPrices: { sedan: 3499, ertiga: 4299, "innova-crysta": 5299, "tempo-traveller": 6999, urbania: 8999 } as Record<string, number>,
+  nightChargeInr: 0,
   source: "Agra",
   destination: "",
   inclusions: [
@@ -154,11 +155,11 @@ export function TourPackagesPage({ user }: { user: AdminUser }) {
       baseTierCode: pkg.baseTierCode,
       startingPriceInr: pkg.startingPriceInr,
       fleetPrices: {
-        sedan: pkg.fleetPrices.sedan ?? pkg.startingPriceInr,
-        ertiga: pkg.fleetPrices.ertiga ?? pkg.startingPriceInr + 800,
-        innova: pkg.fleetPrices.innova ?? pkg.startingPriceInr + 1800,
-        tempo: pkg.fleetPrices.tempo ?? pkg.startingPriceInr + 3500,
-        urbania: pkg.fleetPrices.urbania ?? pkg.startingPriceInr + 5500,
+        sedan: pkg.fleetPrices?.sedan ?? pkg.startingPriceInr,
+        ertiga: pkg.fleetPrices?.ertiga ?? (pkg.startingPriceInr + 800),
+        "innova-crysta": pkg.fleetPrices?.["innova-crysta"] ?? pkg.fleetPrices?.innova ?? (pkg.startingPriceInr + 1800),
+        "tempo-traveller": pkg.fleetPrices?.["tempo-traveller"] ?? pkg.fleetPrices?.tempo ?? (pkg.startingPriceInr + 3500),
+        urbania: pkg.fleetPrices?.urbania ?? (pkg.startingPriceInr + 5500),
       },
       nightChargeInr: pkg.nightChargeInr,
       source: pkg.source ?? "Agra",
@@ -532,11 +533,14 @@ export function TourPackagesPage({ user }: { user: AdminUser }) {
                     )}
                   </p>
                   <div className="mt-2 flex flex-wrap gap-2 text-[11px] text-ink-soft">
-                    {FLEET_KEYS.map((k) => (
-                      <span key={k} className="rounded bg-surface-raised px-1.5 py-0.5 border border-hairline font-mono">
-                        {k}: {pkg.fleetPrices[k] ? formatINR(pkg.fleetPrices[k]) : "—"}
-                      </span>
-                    ))}
+                    {FLEET_KEYS.map((k) => {
+                      const val = pkg.fleetPrices[k] ?? (k === "innova-crysta" ? pkg.fleetPrices.innova : k === "tempo-traveller" ? pkg.fleetPrices.tempo : undefined);
+                      return (
+                        <span key={k} className="rounded bg-surface-raised px-1.5 py-0.5 border border-hairline font-mono">
+                          {k}: {val ? formatINR(val) : "—"}
+                        </span>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
@@ -660,22 +664,18 @@ export function TourPackagesPage({ user }: { user: AdminUser }) {
 
           {/* Source and Destination Corridor */}
           <div className="grid gap-3 sm:grid-cols-2">
-            <div>
-              <Label>Source / Pickup Location</Label>
-              <Input
-                value={form.source}
-                onChange={(e) => setForm((p) => ({ ...p, source: e.target.value }))}
-                placeholder="e.g. Agra, Delhi NCR, Jaipur"
-              />
-            </div>
-            <div>
-              <Label>Destination / Route Covered</Label>
-              <Input
-                value={form.destination}
-                onChange={(e) => setForm((p) => ({ ...p, destination: e.target.value }))}
-                placeholder="e.g. Mathura & Vrindavan, Taj Mahal & Fatehpur Sikri"
-              />
-            </div>
+            <LocationAutocompleteInput
+              label="Source / Pickup Location (LocationIQ)"
+              value={form.source}
+              onChange={(val) => setForm((p) => ({ ...p, source: val }))}
+              placeholder="e.g. Agra, Uttar Pradesh"
+            />
+            <LocationAutocompleteInput
+              label="Destination / Route Covered (LocationIQ)"
+              value={form.destination}
+              onChange={(val) => setForm((p) => ({ ...p, destination: val }))}
+              placeholder="e.g. Mathura, Vrindavan, Jaipur"
+            />
           </div>
 
           <div>

@@ -42,8 +42,30 @@ export function createRouteCatalogService(deps: { db: Repositories; clock: Clock
       if (input.slug && input.slug !== current.slug) throw Errors.unprocessable("ROUTE_SLUG_IMMUTABLE", "Slug never changes after creation — it is the public URL.");
       const now = toIso(deps.clock.now());
       const merged = { ...current, updatedAt: now, tripType: input.trip_type ?? current.tripType, sourceCity: input.source_city ?? current.sourceCity, sourceDetail: input.source_detail === undefined ? current.sourceDetail : input.source_detail, destinationCity: input.destination_city === undefined ? current.destinationCity : input.destination_city, distanceKm: input.distance_km === undefined ? current.distanceKm : input.distance_km, durationText: input.duration_text === undefined ? current.durationText : input.duration_text, availableFleets: input.available_fleets ?? current.availableFleets, faresInr: input.fares_inr ?? current.faresInr, driverChargeInr: input.driver_charge_inr ?? current.driverChargeInr, nightHaltInr: input.night_halt_inr ?? current.nightHaltInr, tollIncluded: input.toll_included ?? current.tollIncluded, tollAmountInr: input.toll_amount_inr === undefined ? current.tollAmountInr : input.toll_amount_inr, interstateCharges: input.interstate_charges ?? current.interstateCharges, minKmPerDay: input.min_km_per_day ?? current.minKmPerDay, stops: input.stops ?? current.stops, usePerKm: input.use_per_km ?? current.usePerKm, perKmRateOverride: input.per_km_rate_override === undefined ? current.perKmRateOverride : input.per_km_rate_override, highway: input.highway === undefined ? current.highway : input.highway, allInclusiveNote: input.all_inclusive_note === undefined ? current.allInclusiveNote : input.all_inclusive_note, needsReview: input.needs_review ?? current.needsReview } as RouteCatalogRecord;
+      const priceEdited =
+        (input.distance_km !== undefined && input.distance_km !== current.distanceKm) ||
+        (input.fares_inr !== undefined && JSON.stringify(input.fares_inr) !== JSON.stringify(current.faresInr)) ||
+        (input.driver_charge_inr !== undefined && input.driver_charge_inr !== current.driverChargeInr) ||
+        (input.night_halt_inr !== undefined && input.night_halt_inr !== current.nightHaltInr) ||
+        (input.toll_amount_inr !== undefined && input.toll_amount_inr !== current.tollAmountInr) ||
+        (input.toll_included !== undefined && input.toll_included !== current.tollIncluded) ||
+        (input.use_per_km !== undefined && input.use_per_km !== current.usePerKm) ||
+        (input.per_km_rate_override !== undefined && input.per_km_rate_override !== current.perKmRateOverride);
+
+      const contentEdited =
+        priceEdited ||
+        (input.source_city !== undefined && input.source_city !== current.sourceCity) ||
+        (input.destination_city !== undefined && input.destination_city !== current.destinationCity) ||
+        (input.duration_text !== undefined && input.duration_text !== current.durationText) ||
+        (input.stops !== undefined && JSON.stringify(input.stops) !== JSON.stringify(current.stops)) ||
+        (input.highway !== undefined && input.highway !== current.highway) ||
+        (input.all_inclusive_note !== undefined && input.all_inclusive_note !== current.allInclusiveNote);
+
       const updated = await deps.db.routeCatalog.update(merged);
       deps.bumpManifest?.();
+      if (current.status === "published" && contentEdited) {
+        await triggerFrontendRebuild("route-price-edited");
+      }
       return updated;
     },
     async publish(id: string) {

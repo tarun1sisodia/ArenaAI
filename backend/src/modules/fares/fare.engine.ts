@@ -21,7 +21,7 @@ import {
   type RouteFare,
 } from "./fare.catalogue.js";
 import { PricingEngineContext } from "./fare.strategy.js";
-import { resolveTierKey } from "../../contracts/vehicle-tiers.js";
+import { resolveTierKey, toCanonicalTierKey } from "../../contracts/vehicle-tiers.js";
 import type { FareEngineInput, FareEngineResult, PromoEvaluation, FareRuleOverrides } from "./fare.types.js";
 export {
   calculateCancellationRefund,
@@ -290,16 +290,17 @@ export function calculateFare(input: FareEngineInput): FareEngineResult {
   }
 
   // Check vehicle availability from overrides
-  const vehicleOverride = input.ruleOverrides?.vehicles?.find(
-    (v) => v.tier === input.vehicleTier || (v as any).id === input.vehicleTier
-  );
+  const vehicleOverride = input.ruleOverrides?.vehicles?.find((v) => {
+    const k = toCanonicalTierKey(String(v.tier ?? (v as any).id ?? ""));
+    return k !== undefined && k === input.vehicleTier;
+  });
   if (vehicleOverride?.active === false) {
     throw new AppError("VEHICLE_UNAVAILABLE", `Vehicle tier "${input.vehicleTier}" is currently not available for booking.`, 400);
   }
 
   let spec = vehicleSpec(input.vehicleTier);
   let hasCustomRate = false;
-  if (vehicleOverride && typeof vehicleOverride.perKm === "number" && vehicleOverride.perKm > 0 && vehicleOverride.perKm !== spec.perKm) {
+  if (vehicleOverride && typeof vehicleOverride.perKm === "number" && vehicleOverride.perKm > 0) {
     spec = { ...spec, perKm: vehicleOverride.perKm };
     hasCustomRate = true;
   }
@@ -611,7 +612,7 @@ function finalize(args: {
     : (overrides?.nightAllowanceCab ?? nightAllowanceFor(args.vehicleTier));
 
   let nightRate = standardNight;
-  if (typeof overrides?.nightChargeInr === "number" && overrides.nightChargeInr > 0) {
+  if (typeof overrides?.nightChargeInr === "number") {
     nightRate = overrides.nightChargeInr;
   } else if (typeof overrides?.nightHaltInr === "number" && overrides.nightHaltInr > 0) {
     nightRate = overrides.nightHaltInr;
@@ -622,7 +623,7 @@ function finalize(args: {
 
   let nightAllowance = 0;
   if (isNight) {
-    if (args.applyNight || typeof overrides?.nightChargeInr === "number" || typeof overrides?.nightHaltInr === "number") {
+    if (nightRate > 0 && (args.applyNight || typeof overrides?.nightChargeInr === "number" || typeof overrides?.nightHaltInr === "number")) {
       nightAllowance = nightRate * effectiveNights;
     }
   } else if (args.nightAllowance > 0) {
@@ -633,7 +634,12 @@ function finalize(args: {
     args.rules.push("night-allowance");
   }
 
-  const subtotal = args.baseFare + nightAllowance + args.driverAllowance;
+  const tollAmount = typeof overrides?.tollAmountInr === "number" && overrides.tollAmountInr > 0 ? overrides.tollAmountInr : 0;
+  if (tollAmount > 0 && !args.rules.includes("toll-charge")) {
+    args.rules.push("toll-charge");
+  }
+
+  const subtotal = args.baseFare + nightAllowance + args.driverAllowance + tollAmount;
   const promo =
     args.allowPromo !== false ? applyPromo(args.promoCode, subtotal) : { valid: false, discount: 0, code: null };
   const totalFare = Math.max(1, subtotal - promo.discount);

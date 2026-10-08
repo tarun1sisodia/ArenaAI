@@ -191,6 +191,7 @@ export function createTourPackagesService(deps: {
 
       inMemoryMediaCache.set(filename, { buffer, mimeType: input.mimeType });
 
+      let url = `/api/v1/tour-packages/media/${filename}`;
       if (deps.mediaStorage) {
         try {
           await deps.mediaStorage.upload({
@@ -198,13 +199,15 @@ export function createTourPackagesService(deps: {
             buffer,
             mimeType: input.mimeType,
           });
+          const publicUrl = deps.mediaStorage.getPublicUrl?.(`packages/${filename}`);
+          if (publicUrl) url = publicUrl;
         } catch (err) {
           console.warn("[TourPackages] Remote media storage upload failed (image kept in cache):", err);
         }
       }
 
       return {
-        url: `/api/v1/tour-packages/media/${filename}`,
+        url,
         alt: input.altText,
         caption: input.caption,
       };

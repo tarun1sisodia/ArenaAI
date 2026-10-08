@@ -25,12 +25,12 @@ import {
 import { can, type AdminUser, type CatalogStatus, type LocalPackageItem, type TransferRouteItem } from "@/lib/types";
 import { formatINR } from "@/lib/utils";
 
-const FLEET_KEYS = ["sedan", "ertiga", "innova", "tempo", "urbania"] as const;
+const FLEET_KEYS = ["sedan", "ertiga", "innova-crysta", "tempo-traveller", "urbania"] as const;
 const FLEET_LABELS: Record<string, string> = {
   sedan: "Sedan (4s)",
   ertiga: "Ertiga (6s)",
-  innova: "Innova (6-7s)",
-  tempo: "Tempo (12s)",
+  "innova-crysta": "Innova (6-7s)",
+  "tempo-traveller": "Tempo (12s)",
   urbania: "Urbania (16s)",
 };
 
@@ -50,15 +50,15 @@ const emptyLocal = {
   includedKm: 80,
   covers: "Taj Mahal, Agra Fort, Mehtab Bagh",
   parkingNote: "Monument entry fees & parking billed at actuals",
-  fleetPrices: { sedan: 1900, ertiga: 2600, innova: 2850, tempo: 5500, urbania: 7500 },
+  fleetPrices: { sedan: 1900, ertiga: 2600, "innova-crysta": 2850, "tempo-traveller": 5500, urbania: 7500 } as Record<string, number>,
   usePerKm: false,
   extraRates: {
     sedan: { per_km: 10, per_hr: 150 },
     ertiga: { per_km: 14, per_hr: 200 },
-    innova: { per_km: 18, per_hr: 250 },
-    tempo: { per_km: 25, per_hr: 400 },
+    "innova-crysta": { per_km: 18, per_hr: 250 },
+    "tempo-traveller": { per_km: 25, per_hr: 400 },
     urbania: { per_km: 34, per_hr: 600 },
-  },
+  } as Record<string, { per_km: number; per_hr: number }>,
   nightChargeInr: 0,
   status: "draft" as CatalogStatus,
   isActive: true,
@@ -69,7 +69,7 @@ const emptyTransfer = {
   routeCode: "",
   distanceText: "~15–20 km",
   directionNote: "Doorstep pickup or drop at station / airport",
-  fleetPrices: { sedan: 800, ertiga: 900, innova: 1100, tempo: 2200, urbania: 3500 },
+  fleetPrices: { sedan: 800, ertiga: 900, "innova-crysta": 1100, "tempo-traveller": 2200, urbania: 3500 } as Record<string, number>,
   usePerKm: false,
   nightChargeInr: 0,
   status: "draft" as CatalogStatus,
@@ -143,13 +143,19 @@ export function LocalTransfersPage({ user }: { user: AdminUser }) {
       includedKm: item.includedKm,
       covers: item.covers,
       parkingNote: item.parkingNote ?? "",
-      fleetPrices: { ...emptyLocal.fleetPrices, ...item.fleetPrices },
+      fleetPrices: {
+        sedan: item.fleetPrices?.sedan ?? emptyLocal.fleetPrices.sedan,
+        ertiga: item.fleetPrices?.ertiga ?? emptyLocal.fleetPrices.ertiga,
+        "innova-crysta": item.fleetPrices?.["innova-crysta"] ?? item.fleetPrices?.innova ?? emptyLocal.fleetPrices["innova-crysta"],
+        "tempo-traveller": item.fleetPrices?.["tempo-traveller"] ?? item.fleetPrices?.tempo ?? emptyLocal.fleetPrices["tempo-traveller"],
+        urbania: item.fleetPrices?.urbania ?? emptyLocal.fleetPrices.urbania,
+      },
       usePerKm: item.usePerKm,
       extraRates: {
         sedan: item.extraRates?.sedan ?? emptyLocal.extraRates.sedan,
         ertiga: item.extraRates?.ertiga ?? emptyLocal.extraRates.ertiga,
-        innova: item.extraRates?.innova ?? emptyLocal.extraRates.innova,
-        tempo: item.extraRates?.tempo ?? emptyLocal.extraRates.tempo,
+        "innova-crysta": item.extraRates?.["innova-crysta"] ?? item.extraRates?.innova ?? emptyLocal.extraRates["innova-crysta"],
+        "tempo-traveller": item.extraRates?.["tempo-traveller"] ?? item.extraRates?.tempo ?? emptyLocal.extraRates["tempo-traveller"],
         urbania: item.extraRates?.urbania ?? emptyLocal.extraRates.urbania,
       },
       nightChargeInr: item.nightChargeInr,
@@ -216,7 +222,13 @@ export function LocalTransfersPage({ user }: { user: AdminUser }) {
       routeCode: item.routeCode,
       distanceText: item.distanceText ?? "",
       directionNote: item.directionNote ?? "",
-      fleetPrices: { ...emptyTransfer.fleetPrices, ...item.fleetPrices },
+      fleetPrices: {
+        sedan: item.fleetPrices?.sedan ?? emptyTransfer.fleetPrices.sedan,
+        ertiga: item.fleetPrices?.ertiga ?? emptyTransfer.fleetPrices.ertiga,
+        "innova-crysta": item.fleetPrices?.["innova-crysta"] ?? item.fleetPrices?.innova ?? emptyTransfer.fleetPrices["innova-crysta"],
+        "tempo-traveller": item.fleetPrices?.["tempo-traveller"] ?? item.fleetPrices?.tempo ?? emptyTransfer.fleetPrices["tempo-traveller"],
+        urbania: item.fleetPrices?.urbania ?? emptyTransfer.fleetPrices.urbania,
+      },
       usePerKm: item.usePerKm,
       nightChargeInr: item.nightChargeInr,
       status: item.status,
@@ -340,11 +352,14 @@ export function LocalTransfersPage({ user }: { user: AdminUser }) {
                   </p>
                   <p className="text-xs text-ink-soft mt-1">Covers: {item.covers}</p>
                   <div className="mt-2 flex flex-wrap gap-2 text-[11px] text-ink-soft">
-                    {FLEET_KEYS.map((k) => (
-                      <span key={k} className="rounded bg-surface-raised px-1.5 py-0.5 border border-hairline font-mono">
-                        {k}: {item.fleetPrices[k] ? formatINR(item.fleetPrices[k]) : "—"}
-                      </span>
-                    ))}
+                    {FLEET_KEYS.map((k) => {
+                      const val = item.fleetPrices[k] ?? (k === "innova-crysta" ? item.fleetPrices.innova : k === "tempo-traveller" ? item.fleetPrices.tempo : undefined);
+                      return (
+                        <span key={k} className="rounded bg-surface-raised px-1.5 py-0.5 border border-hairline font-mono">
+                          {k}: {val ? formatINR(val) : "—"}
+                        </span>
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -388,11 +403,14 @@ export function LocalTransfersPage({ user }: { user: AdminUser }) {
                     /transfers/{item.routeCode} · Sedan {formatINR(item.fleetPrices.sedan ?? 0)}
                   </p>
                   <div className="mt-2 flex flex-wrap gap-2 text-[11px] text-ink-soft">
-                    {FLEET_KEYS.map((k) => (
-                      <span key={k} className="rounded bg-surface-raised px-1.5 py-0.5 border border-hairline font-mono">
-                        {k}: {item.fleetPrices[k] ? formatINR(item.fleetPrices[k]) : "—"}
-                      </span>
-                    ))}
+                    {FLEET_KEYS.map((k) => {
+                      const val = item.fleetPrices[k] ?? (k === "innova-crysta" ? item.fleetPrices.innova : k === "tempo-traveller" ? item.fleetPrices.tempo : undefined);
+                      return (
+                        <span key={k} className="rounded bg-surface-raised px-1.5 py-0.5 border border-hairline font-mono">
+                          {k}: {val ? formatINR(val) : "—"}
+                        </span>
+                      );
+                    })}
                   </div>
                 </div>
 

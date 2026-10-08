@@ -30,6 +30,7 @@ export type FareRuleOverrides = {
   nights?: number;
   upgradeSurcharges?: Record<string, number>;
   nightHaltInr?: number;
+  tollAmountInr?: number;
 
   // Phase 4 Configurable night window (defaults to 20:00–06:00)
   nightStartHour?: number;

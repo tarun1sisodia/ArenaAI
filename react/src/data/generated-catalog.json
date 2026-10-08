@@ -19261,11 +19261,106 @@
       }
     },
     {
+      "id": "agra-to-noida-taxi",
+      "from": "Agra",
+      "to": "Noida",
+      "origin": "Agra",
+      "destination": "Noida",
+      "km": 190,
+      "duration": "3.0 Hours",
+      "kind": "one-way",
+      "pricingModel": "oneway",
+      "toll": 1,
+      "fares": {
+        "sedan": 3499,
+        "ertiga": 4200,
+        "innova": 5200,
+        "tempo": 8500,
+        "urbania": 11500
+      }
+    },
+    {
+      "id": "noida-to-agra-taxi",
+      "from": "Noida",
+      "to": "Agra",
+      "origin": "Noida",
+      "destination": "Agra",
+      "km": 190,
+      "duration": "3.0 Hours",
+      "kind": "one-way",
+      "pricingModel": "oneway",
+      "toll": 1,
+      "fares": {
+        "sedan": 3499,
+        "ertiga": 4200,
+        "innova": 5200,
+        "tempo": 8500,
+        "urbania": 11500
+      }
+    },
+    {
+      "id": "delhi-to-jaipur-taxi",
+      "from": "Delhi",
+      "to": "Jaipur",
+      "origin": "Delhi",
+      "destination": "Jaipur",
+      "km": 280,
+      "duration": "4.5 Hours",
+      "kind": "one-way",
+      "pricingModel": "oneway",
+      "toll": 1,
+      "fares": {
+        "sedan": 4200,
+        "ertiga": 5400,
+        "innova": 6800,
+        "tempo": 10500,
+        "urbania": 14200
+      }
+    },
+    {
+      "id": "jaipur-to-delhi-taxi",
+      "from": "Jaipur",
+      "to": "Delhi",
+      "origin": "Jaipur",
+      "destination": "Delhi",
+      "km": 280,
+      "duration": "4.5 Hours",
+      "kind": "one-way",
+      "pricingModel": "oneway",
+      "toll": 1,
+      "fares": {
+        "sedan": 4200,
+        "ertiga": 5400,
+        "innova": 6800,
+        "tempo": 10500,
+        "urbania": 14200
+      }
+    },
+    {
       "id": "thora-to-jewar-taxi",
       "from": "Thora",
       "to": "Jewar",
       "origin": "Thora",
       "destination": "Jewar",
+      "km": 7,
+      "duration": "10 min",
+      "kind": "one-way",
+      "pricingModel": "oneway",
+      "toll": 1,
+      "fares": {
+        "sedan": 70,
+        "ertiga": 98,
+        "innova": 126,
+        "tempo": 175,
+        "urbania": 238
+      }
+    },
+    {
+      "id": "jewar-to-thora-taxi",
+      "from": "Jewar",
+      "to": "Thora",
+      "origin": "Jewar",
+      "destination": "Thora",
       "km": 7,
       "duration": "10 min",
       "kind": "one-way",
@@ -19318,11 +19413,49 @@
       }
     },
     {
+      "id": "gwalior-to-agra-taxi",
+      "from": "Gwalior",
+      "to": "Agra",
+      "origin": "Gwalior",
+      "destination": "Agra",
+      "km": 120,
+      "duration": "2.5 Hours",
+      "kind": "one-way",
+      "pricingModel": "oneway",
+      "toll": 1,
+      "fares": {
+        "sedan": 2800,
+        "ertiga": 3600,
+        "innova": 4600,
+        "tempo": 7200,
+        "urbania": 9800
+      }
+    },
+    {
       "id": "cli-test-agon-gurgaon-to-agra-7126",
       "from": "Agon Gurgaon",
       "to": "Agra",
       "origin": "Agon Gurgaon",
       "destination": "Agra",
+      "km": 165,
+      "duration": "3h 15m approx",
+      "kind": "one-way",
+      "pricingModel": "oneway",
+      "toll": 1,
+      "fares": {
+        "sedan": 2900,
+        "ertiga": 4200,
+        "innova": 4800,
+        "tempo": 5500,
+        "urbania": 7500
+      }
+    },
+    {
+      "id": "agra-to-agon-gurgaon-taxi",
+      "from": "Agra",
+      "to": "Agon Gurgaon",
+      "origin": "Agra",
+      "destination": "Agon Gurgaon",
       "km": 165,
       "duration": "3h 15m approx",
       "kind": "one-way",
@@ -19380,6 +19513,25 @@
       "to": "dfd",
       "origin": "anb",
       "destination": "dfd",
+      "km": 1,
+      "duration": "",
+      "kind": "one-way",
+      "pricingModel": "oneway",
+      "toll": 0,
+      "fares": {
+        "sedan": 1,
+        "ertiga": 2,
+        "innova": 3,
+        "tempo": 4,
+        "urbania": 5
+      }
+    },
+    {
+      "id": "dfd-to-anb-taxi",
+      "from": "dfd",
+      "to": "anb",
+      "origin": "dfd",
+      "destination": "anb",
       "km": 1,
       "duration": "",
       "kind": "one-way",

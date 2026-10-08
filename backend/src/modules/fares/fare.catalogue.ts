@@ -44,6 +44,13 @@ export const OUTSTATION_RULES = {
   sameDayRoundMultiplier: 1.85,
 } as const;
 
+export const DEFAULT_PROMO = {
+  code: "ASTTCAR500OFF",
+  discount: 500,
+  minTotal: 2000,
+  desc: "Flat ₹500 OFF on car bookings",
+} as const;
+
 export const VEHICLES: readonly VehicleSpec[] = [
   { id: "sedan", tier: "sedan", name: "Sedan", seats: 4, bags: 2, perKm: 10, alwaysRoundTrip: false },
   { id: "ertiga", tier: "ertiga", name: "Ertiga", seats: 6, bags: 3, perKm: 14, alwaysRoundTrip: false },
@@ -130,12 +137,6 @@ export const PACKAGES: readonly TourPackageFare[] = [
   { id: "golden-triangle", slug: "golden-triangle", name: "Golden Triangle Tour", duration: "3 days / 2 nights", from: 18500 },
 ];
 
-export const DEFAULT_PROMO = {
-  code: "ASTTCAR500OFF",
-  discount: 500,
-  minTotal: 2000,
-  desc: "Flat ₹500 OFF on car bookings",
-} as const;
 
 export const DIST_MAP: Record<string, number> = {
   agra: 0,

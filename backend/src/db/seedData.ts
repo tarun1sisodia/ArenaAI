@@ -306,7 +306,7 @@ export const SEED_CATALOG_ITEMS: CatalogItemRecord[] = [
 export const SEED_CATALOG_MEDIA: CatalogMediaRecord[] = [
   {
     id: "30000000-0000-4000-a000-000000000001",
-    catalogItemId: "pkg_same_day_agra",
+    catalogItemId: "agra-day",
     storagePath: "/images/packages/taj-mahal-sunrise.webp",
     mediaType: "image",
     altText: "Taj Mahal at sunrise with reflective pool",
@@ -325,7 +325,7 @@ export const SEED_CATALOG_MEDIA: CatalogMediaRecord[] = [
   },
   {
     id: "30000000-0000-4000-a000-000000000002",
-    catalogItemId: "pkg_fatehpur_sikri",
+    catalogItemId: "taj-sunrise",
     storagePath: "/images/packages/buland-darwaza.webp",
     mediaType: "image",
     altText: "Buland Darwaza at Fatehpur Sikri",

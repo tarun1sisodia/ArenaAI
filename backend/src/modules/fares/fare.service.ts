@@ -87,6 +87,7 @@ export function createFareService(fareVersion: string, db?: Repositories) {
       let dossierCatalogItemType: "package" | "tour" | "ride" | undefined;
       let dossierDistanceKm: number | undefined;
       let dossierPackageBasePrice: number | undefined;
+      let dossierTollAmountInr: number | undefined;
 
       if (db) {
         // 1. Tour packages
@@ -204,11 +205,12 @@ export function createFareService(fareVersion: string, db?: Repositories) {
             }
           }
           if (routeRow && routeRow.status === "published" && !routeRow.needsReview) {
-            dossierFleetPrices = routeRow.faresInr;
+            dossierFleetPrices = routeRow.usePerKm ? undefined : routeRow.faresInr;
             dossierUsePerKm = routeRow.usePerKm;
             dossierNightHaltInr = routeRow.nightHaltInr;
             dossierDriverAllowance = routeRow.driverChargeInr;
             dossierMinKmPerDay = routeRow.minKmPerDay;
+            dossierTollAmountInr = routeRow.tollIncluded ? undefined : (routeRow.tollAmountInr ?? undefined);
             dossierDistanceKm = routeRow.distanceKm ?? undefined;
             dossierPackageName = `${routeRow.sourceCity} to ${routeRow.destinationCity ?? ""}`;
             dossierPackageDuration = routeRow.durationText ?? undefined;
@@ -307,6 +309,7 @@ export function createFareService(fareVersion: string, db?: Repositories) {
         nights: dossierNights,
         upgradeSurcharges: dossierUpgradeSurcharges,
         nightHaltInr: dossierNightHaltInr,
+        tollAmountInr: dossierTollAmountInr,
 
         nightStartHour,
         nightEndHour,

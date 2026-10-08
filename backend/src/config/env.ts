@@ -47,7 +47,7 @@ const EnvSchema = z.object({
   RAZORPAY_KEY_SECRET: z.string().trim().optional().default(""),
   RAZORPAY_WEBHOOK_SECRET: z.string().trim().optional().default(""),
 
-  LOCATIONIQ_TOKEN: z.string().optional().default(""),
+  LOCATIONIQ_TOKEN: z.string().trim().optional().default(""),
 
   WHATSAPP_TOKEN: z.string().optional().default(""),
   WHATSAPP_PHONE_NUMBER_ID: z.string().optional().default(""),

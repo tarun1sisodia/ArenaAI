@@ -33,6 +33,7 @@ export type MediaStorage = {
   upload(params: { path: string; buffer: Buffer; mimeType: string }): Promise<void>;
   download(path: string): Promise<Buffer>;
   remove(path: string): Promise<void>;
+  getPublicUrl?(path: string): string | null;
 };
 
 const MIME_EXTENSIONS: Record<string, string> = {
@@ -153,6 +154,10 @@ function createSupabaseSdkMediaStorage(env: Env): MediaStorage | null {
     },
     async remove(path) {
       await client.storage.from(bucket).remove([path]).catch(() => undefined);
+    },
+    getPublicUrl(path: string) {
+      const { data } = client.storage.from(bucket).getPublicUrl(path);
+      return data?.publicUrl ?? null;
     },
   };
 }

@@ -193,4 +193,110 @@ describe("Fare Engine Active DB Rules & Catalog Sync (Step 1.3)", () => {
     expect(draft.booking.fareRulesVersion).toBe("custom-v4");
     expect(draft.booking.totalFare).toBe(draft.booking.fareSnapshot.billedKm * 30);
   });
+
+  it("normalizes legacy tier keys in DB fare_rules and applies active rates across all fleets", async () => {
+    const db = createMemoryRepositories();
+    const fareService = createFareService("v1", db);
+
+    await db.fareRules.save({
+      id: newId(),
+      version: "fleet-master-v1",
+      effectiveFrom: new Date().toISOString(),
+      isActive: true,
+      createdAt: new Date().toISOString(),
+      config: {
+        vehicles: [
+          { tier: "sedan", perKm: 12, active: true },
+          { tier: "ertiga", perKm: 15, active: true },
+          { tier: "innova", perKm: 20, active: true }, // legacy short id
+          { tier: "tempo_traveller", perKm: 28, active: true }, // legacy snake id
+          { tier: "urbania", perKm: 36, active: true },
+        ],
+      },
+    });
+
+    // Test innova-crysta matches legacy 'innova'
+    const innovaFare = await fareService.calculate({
+      originName: "Agra",
+      destinationName: "Delhi",
+      tripType: "one-way",
+      vehicleTier: "innova-crysta",
+      pickupDatetime: "2026-10-01T10:00:00Z",
+      distanceKm: 230,
+    });
+    expect(innovaFare.baseFare).toBe(230 * 20);
+
+    // Test tempo-traveller matches legacy 'tempo_traveller' with group commercial rule (<300km forced round-trip + 500 DA)
+    const tempoFare = await fareService.calculate({
+      originName: "Agra",
+      destinationName: "Delhi",
+      tripType: "one-way",
+      vehicleTier: "tempo-traveller",
+      pickupDatetime: "2026-10-01T10:00:00Z",
+      distanceKm: 230,
+    });
+    expect(tempoFare.billedKm).toBe(460); // 230 * 2
+    expect(tempoFare.baseFare).toBe(460 * 28);
+    expect(tempoFare.driverAllowance).toBe(500);
+  });
+
+  it("published route_catalog outstation route derives per-km rate from active fare_rules and includes tolls", async () => {
+    const db = createMemoryRepositories();
+    const fareService = createFareService("v1", db);
+
+    await db.fareRules.save({
+      id: newId(),
+      version: "active-ruleset",
+      effectiveFrom: new Date().toISOString(),
+      isActive: true,
+      createdAt: new Date().toISOString(),
+      config: {
+        vehicles: [
+          { tier: "sedan", perKm: 14, active: true },
+        ],
+      },
+    });
+
+    const routeId = newId();
+    await db.routeCatalog.create({
+      id: routeId,
+      slug: "agra-to-mathura-expressway-taxi",
+      sourceCity: "Agra",
+      sourceDetail: "Cantt",
+      destinationCity: "Mathura",
+      tripType: "one-way",
+      distanceKm: 60,
+      durationText: "1.5 hrs",
+      availableFleets: ["sedan", "ertiga", "innova-crysta"],
+      faresInr: { sedan: 1500, ertiga: 1900 }, // static fallback must NOT override active perKm when usePerKm=true
+      driverChargeInr: 0,
+      nightHaltInr: 0,
+      tollIncluded: false,
+      tollAmountInr: 150,
+      interstateCharges: [],
+      minKmPerDay: 250,
+      stops: [],
+      usePerKm: true,
+      perKmRateOverride: null,
+      highway: "NH 19",
+      allInclusiveNote: null,
+      status: "published",
+      needsReview: false,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
+
+    const routeFare = await fareService.calculate({
+      originName: "Agra",
+      destinationName: "Mathura",
+      tripType: "one-way",
+      vehicleTier: "sedan",
+      packageId: routeId,
+      pickupDatetime: "2026-10-01T10:00:00Z",
+    });
+
+    // 60 km * 14 rate = 840 baseFare + 150 toll = 990 subtotal
+    expect(routeFare.baseFare).toBe(60 * 14);
+    expect(routeFare.totalFare).toBe(60 * 14 + 150);
+  });
 });
