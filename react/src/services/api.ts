@@ -19,8 +19,10 @@ export function getApiBaseUrl(): string {
   return "https://skb-baghel-api-staging.onrender.com";
 }
 
+import { toCanonicalTierKey, type VehicleTier } from "../contracts/vehicle-tiers";
+
 export type BackendTripType = "one-way" | "round-trip" | "local-tour" | "airport-transfer";
-export type BackendVehicleTier = "sedan" | "ertiga" | "innova-crysta" | "tempo-traveller" | "urbania";
+export type BackendVehicleTier = VehicleTier;
 
 export type BookingSelectionPayload =
   | { kind: "outstation"; id: string; tripType: "one-way" | "round-trip"; originName: string; destinationName: string; name?: string }
@@ -219,26 +221,10 @@ export async function createPaymentCheckout(
 }
 
 /**
- * Maps React VehicleId to Fastify backend vehicleTier
+ * Maps React VehicleId to Fastify backend vehicleTier using canonical C-ENUM-001 normalizer.
  */
 export function mapVehicleTier(vehicleId: string): BackendVehicleTier {
-  switch (vehicleId) {
-    case "ertiga":
-      return "ertiga";
-    case "innova":
-    case "innova-crysta":
-      return "innova-crysta";
-    case "tempo":
-    case "tempo-12":
-    case "tempo-16":
-    case "tempo-traveller":
-      return "tempo-traveller";
-    case "urbania":
-      return "urbania";
-    case "sedan":
-    default:
-      return "sedan";
-  }
+  return toCanonicalTierKey(vehicleId) ?? "sedan";
 }
 
 export interface CreateInquiryPayload {

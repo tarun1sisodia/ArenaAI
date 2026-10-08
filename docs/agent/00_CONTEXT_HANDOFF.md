@@ -40,18 +40,27 @@ draft → published → paused → archived → retired
 
 Do not delete trips, routes, packages, verticals, fleet pages, or useful media merely because they are unavailable. Preserve stable URLs and SEO/AEO/GEO value. Archived/paused content is not bookable. Draft and retired content are excluded from public APIs unless an intentional redirect policy applies.
 
-## High-priority unfinished work
+## Active Objective & High-priority unfinished work
 
-1. Make active database fare rules drive every production fare calculation.
-2. Make catalog route identity the same source used by fare and booking services.
-3. Persist manifest revision/ETag state across backend instances.
-4. Add server-side LocationIQ proxy with secret protection, caching and rate limits.
-5. Run one deployed Razorpay Test Mode transaction and confirm Render webhook logs; code now requires `rzp_live_*` in production and prohibits fake/HMAC payment outside explicit local/test mode.
-6. Validate uploaded image magic bytes, decoding, dimensions and decompression limits.
-7. Restrict public media to published media with published parent items.
-8. Lock down device registration ownership and strengthen booking lookup recovery.
-9. Confirm the new production container migration startup in Render and keep `/ready` unhealthy when DB is unavailable.
-10. Implement least-privilege admin roles and actor-correct audit records.
+1. **Fleet Pricing Standardization Across Entire Platform** (Active: `docs/FLEET_PRICING_MASTER_IMPLEMENTATION_PLAN.md` & `docs/MIGRATION_PLAN.md`):
+   - Admin Fare Rules → PostgreSQL `fare_rules` is single commercial truth for fleet rates.
+   - Canonical 5 Fleets normalized (`sedan`, `ertiga`, `innova-crysta`, `tempo-traveller`, `urbania`).
+   - Route Pricing Engine (<300km forced round-trip + ₹500 DA for Tempo/Urbania; >=300km per-km + ₹500 DA).
+   - Package Pricing isolation (fixed `tour_packages.fleet_prices`, no route math).
+   - Monument transfer pricing deriving from route context.
+   - Zero frontend pricing math (`FleetPriceOption` contract).
+   - Dedicated Quote APIs (`POST /quotes/route`, `POST /quotes/package`).
+   - Fix package booking draft resolution (`booking.service.ts` slug/code lookup bug #18).
+2. Make active database fare rules drive every production fare calculation.
+3. Make catalog route identity the same source used by fare and booking services.
+4. Persist manifest revision/ETag state across backend instances.
+5. Add server-side LocationIQ proxy with secret protection, caching and rate limits.
+6. Run one deployed Razorpay Test Mode transaction and confirm Render webhook logs; code now requires `rzp_live_*` in production and prohibits fake/HMAC payment outside explicit local/test mode.
+7. Validate uploaded image magic bytes, decoding, dimensions and decompression limits.
+8. Restrict public media to published media with published parent items.
+9. Lock down device registration ownership and strengthen booking lookup recovery.
+10. Confirm the new production container migration startup in Render and keep `/ready` unhealthy when DB is unavailable.
+11. Implement least-privilege admin roles and actor-correct audit records.
 
 ## Latest completed safety fixes
 

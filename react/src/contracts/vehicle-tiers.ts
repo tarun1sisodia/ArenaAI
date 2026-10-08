@@ -55,13 +55,17 @@ const SHORT_TO_CANONICAL: Record<string, VehicleTier> = {
   sedan: "sedan",
   ertiga: "ertiga",
   innova: "innova-crysta",
+  innova_crysta: "innova-crysta",
   tempo: "tempo-traveller",
+  tempo_traveller: "tempo-traveller",
+  "tempo-12": "tempo-traveller",
+  "tempo-16": "tempo-traveller",
   urbania: "urbania",
 };
 
 /**
- * Normalize any tier key (canonical long form or legacy short id) to the
- * canonical VehicleTier. Returns undefined for unknown keys — callers must
+ * Normalize any tier key (canonical long form, legacy short id, or snake_case alias)
+ * to the canonical VehicleTier. Returns undefined for unknown keys — callers must
  * reject those loudly (400), never silently ignore.
  */
 export function toCanonicalTierKey(input: string): VehicleTier | undefined {
@@ -69,21 +73,33 @@ export function toCanonicalTierKey(input: string): VehicleTier | undefined {
   if ((VEHICLE_TIERS as readonly string[]).includes(clean)) {
     return clean as VehicleTier;
   }
-  return SHORT_TO_CANONICAL[clean];
+  const dashed = clean.replace(/_/g, "-");
+  if ((VEHICLE_TIERS as readonly string[]).includes(dashed)) {
+    return dashed as VehicleTier;
+  }
+  return SHORT_TO_CANONICAL[clean] ?? SHORT_TO_CANONICAL[dashed];
+}
+
+/**
+ * Normalizes any fleet code, alias, or legacy tier id to a canonical VehicleTier.
+ * If unrecognized, falls back to a safe canonical default ("sedan").
+ */
+export function normalizeFleetCode(input: string, fallback: VehicleTier = "sedan"): VehicleTier {
+  return toCanonicalTierKey(input) ?? fallback;
 }
 
 export type TierKeySource = "canonical" | "legacy" | "miss";
 
 export interface TierKeyResolution<T> {
   value: T | undefined;
-  /** "canonical" = long-form key hit · "legacy" = short-id key hit (old data — migrate it) · "miss" = no key */
+  /** "canonical" = long-form key hit · "legacy" = short-id or snake-case key hit (old data — migrate it) · "miss" = no key */
   via: TierKeySource;
 }
 
 /**
- * Read a tier-keyed record (fleetPrices, extraRates, upgradeSurcharges, ...).
- * Canonical long-form key wins; legacy short id is accepted for old rows so
- * reads don't break during the data migration — but every "legacy" hit is a
+ * Read a tier-keyed record (fleetPrices, extraRates, upgradeSurcharges, prices.fleet_per_km, ...).
+ * Canonical long-form key wins; legacy short id or snake_case key is accepted for old rows
+ * so reads don't break during the data migration — but every "legacy" hit is a
  * row that still needs migrating. Never silently fall through on "miss".
  */
 export function resolveTierKey<T>(
@@ -96,5 +112,10 @@ export function resolveTierKey<T>(
   if (shortId !== tier && shortId in record) {
     return { value: record[shortId], via: "legacy" };
   }
+  const snakeId = tier.replace(/-/g, "_");
+  if (snakeId !== tier && snakeId in record) {
+    return { value: record[snakeId], via: "legacy" };
+  }
   return { value: undefined, via: "miss" };
 }
+

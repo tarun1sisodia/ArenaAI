@@ -1,5 +1,11 @@
 # Contract changelog
 
+## 0.1.1 — 2026-10-08
+- **C-ENUM-001 (extension):** Extended `toCanonicalTierKey()` and `resolveTierKey()`
+  to handle snake_case aliases (`innova_crysta`, `tempo_traveller`) and compound forms
+  (`tempo-12`, `tempo-16`), and added `normalizeFleetCode()` helper. Zero drift in
+  canonical tier keys (`sedan`, `ertiga`, `innova-crysta`, `tempo-traveller`, `urbania`).
+
 ## 0.1.0 — 2026-10-07 (pilot)
 - **C-ENUM-001 (new, PILOT):** canonical vehicle tiers = long form
   (`sedan`, `ertiga`, `innova-crysta`, `tempo-traveller`, `urbania`).

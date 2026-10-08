@@ -2,6 +2,47 @@
 
 ## 2026-10-08
 
+### 2026-10-08 — Step 5: Fleet Master Normalization (Contract C-ENUM-001 v0.1.1)
+
+- **Canonical Contract Extension (`contracts/enums/vehicle-tiers.ts`, `contracts/CHANGELOG.md`)**:
+  - Bumped contract to v0.1.1 with non-breaking extension for legacy readers.
+  - Enhanced `toCanonicalTierKey()` and `SHORT_TO_CANONICAL` to normalize snake_case aliases (`innova_crysta`, `tempo_traveller`) and compound variants (`tempo-12`, `tempo-16`).
+  - Extended `resolveTierKey()` to resolve snake_case keys in tier-keyed records (e.g. `prices.fleet_per_km`) without missing.
+  - Exported canonical helper `normalizeFleetCode(input, fallback)`.
+- **Cross-App Sync (`contracts/scripts/sync-contracts.ts`)**:
+  - Synced byte-identical generated copies to `backend/src/contracts/vehicle-tiers.ts`, `admin/src/contracts/vehicle-tiers.ts`, and `react/src/contracts/vehicle-tiers.ts`.
+  - Verified 0 drift with `sync-contracts.ts --check`.
+- **Customer API Simplification (`react/src/services/api.ts`)**:
+  - Re-exported `BackendVehicleTier` directly from `VehicleTier`.
+  - Replaced manual switch statement in `mapVehicleTier()` with `toCanonicalTierKey(vehicleId) ?? "sedan"`.
+- **Verification**:
+  - `backend/tests/contract/vehicle-tiers.contract.test.ts`: Added test cases for snake_case normalizations, compound forms, and `normalizeFleetCode`; all 9/9 contract tests passing.
+  - Backend full suite: 32 test files, 210 tests passing (100% pass rate).
+  - Typecheck: 0 errors across `backend`, `admin`, and `customer`.
+
+### 2026-10-08 — Step 4: Fleet Pricing Master Implementation Plan & Complete Testing Matrix
+
+- **Master Implementation Plan (`docs/FLEET_PRICING_MASTER_IMPLEMENTATION_PLAN.md`)**:
+  - Authored comprehensive 15-phase rollout plan standardizing commercial fleet pricing across the complete platform:
+    `ADMIN → FARE RULES → DATABASE → PRICING RESOLUTION → CUSTOMER PRESENTATION → BOOKING QUOTE → PAYMENT`.
+  - Defined 16 Non-Negotiable Operational Rules (zero client math, canonical 5 fleets, isolated package pricing, route context monument pricing, server-authoritative quotes, immutable booking snapshots, minor-unit payment binding).
+  - Specified Canonical Fleet Master (Contract C-ENUM-001): `sedan`, `ertiga`, `innova-crysta`, `tempo-traveller`, `urbania` with legacy alias normalization.
+  - Formulated 4 isolated pricing resolution engines:
+    1. Route Pricing (`resolveRouteFleetPrice`) with <300km forced round-trip + ₹500 DA, >=300km per-km + ₹500 DA.
+    2. Tour Package Pricing (`resolvePackageFleetPrice`) strictly from `tour_packages.fleet_prices`.
+    3. Local Sightseeing Pricing (`resolveLocalSightseeingFleetPrice`) from `local_sightseeing_packages`.
+    4. Monument Transfer Pricing (`resolveMonumentTransferFleetPrice`) deriving from corridor distance.
+  - Defined unified customer presentation contract `FleetPriceOption`.
+  - Authored rigorous 8-part testing matrix covering:
+    - Distance boundaries: 1 km, 100 km, 240 km, 299 km, 299.9 km, 300.0 km, 300.1 km, 350 km, multi-day.
+    - Admin mutations & price propagation (route rates change without touching packages or historical bookings).
+    - Package price isolation & Bug #18 resolution (package lookup by slug/code in `tour_packages` without UUID crashes).
+    - Booking snapshot immutability & Razorpay minor-unit checkout binding.
+    - Customer UI surface parity (`/`, `/routes/*`, `/packages/*`, `/monuments/*`, `/book`).
+- **Context Maintenance & Supermemory Ingestion**:
+  - Updated `docs/agent/00_CONTEXT_HANDOFF.md` and `docs/project/PROGRESS.md` with active milestone and 15-phase breakdown.
+  - Ingested all audit documents and master implementation plan into Supermemory container `sk_baghel_travels`.
+
 ### 2026-10-08 — Step 3: Device Registration Unique Constraints & Group Commercial Fleet Pricing Rules
 
 - **Group Commercial Fleet Pricing Strategy (`backend/src/modules/fares/fare.strategy.ts`, `backend/src/modules/fares/fare.engine.ts`, `backend/src/modules/fares/fare.service.ts`)**:

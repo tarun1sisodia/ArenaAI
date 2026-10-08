@@ -24,8 +24,8 @@
 
 ## Current Milestone
 
-**Milestone:** Clean booking & fare calculation backend without drivers/vehicles management.  
-**Completion target:** Verified on live Supabase & MongoDB; all 6 test suites (31 tests) passing; 0 lint/build errors.
+**Milestone:** Complete Fleet Pricing Rewiring Across Whole Website & Dedicated Quote APIs (Phases 1–15).  
+**Completion target:** Single pricing authority (`fare_rules`, `tour_packages`, `local_packages`), zero client math, normalized customer contract (`FleetPriceOption`), dedicated quote endpoints, and 100% test pass rate (`npm run verify`).
 
 ## Completed
 
@@ -46,18 +46,27 @@
 - [x] Purged all driver and physical vehicle models, repositories, and state transitions from backend codebase.
 - [x] Dissolved `dispatch/` module into `admin/` module (`GET /api/v1/ops/admin/bookings` and `POST /api/v1/ops/admin/refunds`).
 - [x] Verified full build, typecheck, lint, and test suite pass (31/31 tests passing).
+- [x] **Phase 0 Fleet Pricing Audit:** Completed and committed 6 comprehensive audit documents (`CURRENT_SYSTEM_AUDIT.md`, `PRICE_FLOW_AUDIT.md`, `PRICE_SOURCE_MATRIX.md`, `CUSTOMER_RENDERING_AUDIT.md`, `BOOKING_PRICE_AUDIT.md`, `MIGRATION_PLAN.md`).
+- [x] **Phase 1 Master Plan & Supermemory Ingestion:** Created `docs/FLEET_PRICING_MASTER_IMPLEMENTATION_PLAN.md` with complete 8-part testing matrix; ingested all architecture, rules, and audit artifacts into Supermemory container `sk_baghel_travels`.
+- [x] **Phase 2 Fleet Master Normalization:** Extended C-ENUM-001 (v0.1.1) in `contracts/enums/vehicle-tiers.ts` with snake_case aliases (`innova_crysta`, `tempo_traveller`) and compound forms (`tempo-12`, `tempo-16`), added `normalizeFleetCode`, synced byte-identical generated copies to `backend/`, `admin/`, and `react/`, unified `react/src/services/api.ts` `mapVehicleTier`, and validated with 9/9 contract tests passing and 0 sync drift.
 
 ## Next Actions
 
-- [ ] Apply `0023_add_canonical_booking_selection.sql` through the staged release; this task did not apply it to live Supabase.
-- [ ] Run Razorpay/PayPal sandbox drills against a public HTTPS webhook.
-- [ ] Review remaining critical items in [BUGS.md](BUGS.md) with staging evidence.
-- [ ] Deploy Mumbai-region API host and production webhook endpoints after sandbox sign-off.
+- [ ] **Phase 3:** Route Fare Rule Source Normalization (PostgreSQL `fare_rules` as single rate authority).
+- [ ] **Phase 4:** Route Fleet-Price Resolver (<300km forced round-trip + ₹500 DA, >=300km per-km + ₹500 DA).
+- [ ] **Phase 5:** Package Fleet-Price Resolver (`tour_packages.fleet_prices`).
+- [ ] **Phase 6:** Normalized Customer Contract (`FleetPriceOption`).
+- [ ] **Phase 7–10:** Customer Surfaces Rewiring (Homepage, Routes, Monuments, Packages).
+- [ ] **Phase 11:** Fix Package Booking Flow (`booking.service.ts` lookup bug #18).
+- [ ] **Phase 12:** Dedicated Authoritative Quote Endpoints (`POST /quotes/route`, `POST /quotes/package`).
+- [ ] **Phase 13–15:** Revalidation, Full Verification (`npm run verify`), and Decommission of legacy client math.
 
 ## Change Log
 
 | Date | Change | Owner |
 |---|---|---|
+| 2026-10-08 | Completed Phase 2: Fleet Master Normalization (Contract C-ENUM-001 v0.1.1) across contracts, backend, admin, and react | Antigravity AI |
+| 2026-10-08 | Authored `docs/FLEET_PRICING_MASTER_IMPLEMENTATION_PLAN.md` with 8-part testing matrix, completed Phase 0 audit ingestion into Supermemory | Antigravity AI |
 | 2026-09-13 | Created the documentation baseline from the master architecture plan | Manus AI |
 | 2026-09-14 | Implemented `backend/` service: fare engine, bookings, payments, dispatch, catalog, reviews, tests | Arena Agent |
 | 2026-09-14 | Connected live Supabase PostgreSQL & MongoDB Atlas, applied all 10 migrations, and seeded base data | Antigravity AI |

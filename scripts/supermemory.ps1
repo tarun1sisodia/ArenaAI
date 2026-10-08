@@ -26,20 +26,16 @@ $tag = "sk_baghel_travels"
 switch ($cmd) {
   "search" {
     $threshold = if ($arg2) { $arg2 } else { "0.25" }
-    npx -y supermemory search --tag $tag "$arg1" --threshold $threshold --json
+    npx -y supermemory search --namespace $tag "$arg1" --json
   }
   "remember" {
-    npx -y supermemory remember --tag $tag --static "$arg1" --json
+    npx -y supermemory add --namespace $tag "$arg1" --json
   }
   "add" {
-    if ($arg2) {
-      npx -y supermemory add --tag $tag "$arg1" --title "$arg2" --json
-    } else {
-      npx -y supermemory add --tag $tag "$arg1" --json
-    }
+    npx -y supermemory add --namespace $tag "$arg1" --json
   }
   "profile" {
-    npx -y supermemory profile --tag $tag --json
+    npx -y supermemory profile --namespace $tag --json
   }
   "whoami" {
     npx -y supermemory whoami

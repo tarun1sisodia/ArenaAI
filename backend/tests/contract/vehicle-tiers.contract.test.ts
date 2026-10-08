@@ -4,6 +4,7 @@ import { createTestApp } from "../helpers.js";
 import {
   VEHICLE_TIERS as CONTRACT_TIERS,
   VEHICLE_TIER_META,
+  normalizeFleetCode,
   resolveTierKey,
   toCanonicalTierKey,
 } from "../../src/contracts/vehicle-tiers.js";
@@ -43,14 +44,26 @@ describe("C-ENUM-001: canonical vehicle tiers (contract lock)", () => {
     expect(new Set(dbValues)).toEqual(new Set(CONTRACT_TIERS));
   });
 
-  it("toCanonicalTierKey normalizes short ids and passes canonical through", () => {
+  it("toCanonicalTierKey normalizes short ids, snake_case aliases, compound forms and passes canonical through", () => {
     expect(toCanonicalTierKey("innova")).toBe("innova-crysta");
+    expect(toCanonicalTierKey("innova_crysta")).toBe("innova-crysta");
     expect(toCanonicalTierKey("tempo")).toBe("tempo-traveller");
+    expect(toCanonicalTierKey("tempo_traveller")).toBe("tempo-traveller");
+    expect(toCanonicalTierKey("tempo-12")).toBe("tempo-traveller");
+    expect(toCanonicalTierKey("tempo-16")).toBe("tempo-traveller");
     expect(toCanonicalTierKey("sedan")).toBe("sedan");
     expect(toCanonicalTierKey("innova-crysta")).toBe("innova-crysta");
     expect(toCanonicalTierKey("  Tempo-Traveller ")).toBe("tempo-traveller");
+    expect(toCanonicalTierKey("  innova_crysta  ")).toBe("innova-crysta");
     expect(toCanonicalTierKey("suv")).toBeUndefined();
     expect(toCanonicalTierKey("")).toBeUndefined();
+  });
+
+  it("normalizeFleetCode normalizes known tiers and falls back cleanly", () => {
+    expect(normalizeFleetCode("innova_crysta")).toBe("innova-crysta");
+    expect(normalizeFleetCode("tempo")).toBe("tempo-traveller");
+    expect(normalizeFleetCode("unknown_model")).toBe("sedan");
+    expect(normalizeFleetCode("unknown_model", "ertiga")).toBe("ertiga");
   });
 
   it("every tier has meta with a shortId", () => {
@@ -63,12 +76,19 @@ describe("C-ENUM-001: canonical vehicle tiers (contract lock)", () => {
     expect(VEHICLE_TIER_META["tempo-traveller"].shortId).toBe("tempo");
   });
 
-  it("resolveTierKey prefers canonical, falls back to legacy short id, never throws", () => {
+  it("resolveTierKey prefers canonical, falls back to legacy short id and snake_case, never throws", () => {
     const legacySeedShaped = { sedan: 1900, innova: 2850 } as Record<string, number>;
+    const legacySnakeShaped = { sedan: 10, innova_crysta: 18, tempo_traveller: 25 } as Record<string, number>;
     const canonicalShaped = { sedan: 1900, "innova-crysta": 3000 } as Record<string, number>;
 
     const legacyHit = resolveTierKey(legacySeedShaped, "innova-crysta");
     expect(legacyHit).toEqual({ value: 2850, via: "legacy" });
+
+    const snakeHit = resolveTierKey(legacySnakeShaped, "innova-crysta");
+    expect(snakeHit).toEqual({ value: 18, via: "legacy" });
+
+    const snakeTempoHit = resolveTierKey(legacySnakeShaped, "tempo-traveller");
+    expect(snakeTempoHit).toEqual({ value: 25, via: "legacy" });
 
     const canonicalHit = resolveTierKey(canonicalShaped, "innova-crysta");
     expect(canonicalHit).toEqual({ value: 3000, via: "canonical" });
