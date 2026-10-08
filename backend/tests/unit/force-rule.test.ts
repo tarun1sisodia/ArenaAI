@@ -59,7 +59,7 @@ describe("F2 — Force Vehicle Business Rule", () => {
     expect(fare.totalFare).toBe(10000 + 500); // ₹10,500
   });
 
-  it("300 km uses one-way per-km billing for both group vehicles and keeps ₹500 allowance", () => {
+  it("300 km uses one-way per-km billing for both group vehicles and keeps ₹500 allowance without forced round trip", () => {
     for (const [vehicleTier, rate] of [["tempo-traveller", 25], ["urbania", 34]] as const) {
       const fare = calculateFare({
         tripType: "one-way",
@@ -72,7 +72,42 @@ describe("F2 — Force Vehicle Business Rule", () => {
       expect(fare.billedKm).toBe(300);
       expect(fare.baseFare).toBe(300 * rate);
       expect(fare.driverAllowance).toBe(500);
+      expect(fare.alwaysRoundTrip).toBe(false);
+      expect(fare.tripType).toBe("one-way");
     }
+  });
+
+  it("350 km one-way in Tempo Traveller is billed per-km without forced round trip", () => {
+    const fare = calculateFare({
+      tripType: "one-way",
+      vehicleTier: "tempo-traveller",
+      originName: "Agra",
+      destinationName: "Lucknow",
+      pickupDatetime: pickupDay,
+      distanceKm: 350,
+    });
+    expect(fare.billedKm).toBe(350);
+    expect(fare.alwaysRoundTrip).toBe(false);
+    expect(fare.tripType).toBe("one-way");
+    expect(fare.baseFare).toBe(350 * 25); // ₹8,750
+    expect(fare.driverAllowance).toBe(500); // ₹500/day
+    expect(fare.totalFare).toBe(8750 + 500); // ₹9,250
+  });
+
+  it("honors custom route driver allowance override on group commercial vehicles", () => {
+    const fare = calculateFare({
+      tripType: "one-way",
+      vehicleTier: "tempo-traveller",
+      originName: "Agra",
+      destinationName: "Lucknow",
+      pickupDatetime: pickupDay,
+      distanceKm: 350,
+      ruleOverrides: {
+        driverAllowance: 750,
+      },
+    });
+    expect(fare.driverAllowance).toBe(750);
+    expect(fare.totalFare).toBe(350 * 25 + 750);
   });
 
   it("55 km one-way in Sedan bills 55 km (Sedan is not Force)", () => {

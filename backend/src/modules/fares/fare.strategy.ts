@@ -128,15 +128,22 @@ export class GroupCommercialVehicleStrategy implements PricingStrategy {
   }
 
   calculate(input: FareEngineInput, ctx: PricingStrategyContext): PricingCalculationResult {
-    // Rule 1: Trip Type Override — Always charge as Round Trip
-    const effectiveTripType: TripType = "round-trip";
-
     // Calendar Days (minimum 1 day)
     const days = Math.max(1, calendarDaysInclusiveIst(input.pickupDatetime, input.returnDatetime));
 
-    // Rule 2: Under 300 km is billed round trip; 300 km and above is billed
-    // once at the selected Tempo Traveller / Urbania per-km rate.
-    const billedKm = input.distanceKm < 300 ? input.distanceKm * 2 : input.distanceKm;
+    // Rule 1 & 2: Distance & Trip Type Rules
+    // - Under 300 km: forced round-trip, distance doubled, ₹500/day driver allowance
+    // - 300 km and above: per-kilometer logic without forced round trip
+    const isUnder300 = input.distanceKm < 300;
+    const isForcedRoundTrip = isUnder300;
+    const effectiveTripType: TripType = isForcedRoundTrip ? "round-trip" : input.tripType;
+    const alwaysRoundTrip = isForcedRoundTrip;
+
+    const billedKm = isForcedRoundTrip
+      ? input.distanceKm * 2
+      : input.tripType === "round-trip" && input.distanceKm < 500 && !input.returnDatetime
+      ? input.distanceKm * 2
+      : input.distanceKm;
 
     // Rule 3: Fixed-rate pricing structure (billed km * perKm rate)
     const baseFare = roundRupees(billedKm * ctx.spec.perKm);
@@ -146,9 +153,10 @@ export class GroupCommercialVehicleStrategy implements PricingStrategy {
 
     const rules: string[] = [
       "commercial-group-vehicle-exception",
-      "forced-round-trip",
-      "forced-round-trip-under-300km",
-      `distance-rule:${input.distanceKm < 300 ? "round-trip" : "per-km"}`,
+      ...(isForcedRoundTrip
+        ? ["forced-round-trip", "forced-round-trip-under-300km"]
+        : ["per-km-group-vehicle"]),
+      `distance-rule:${isForcedRoundTrip ? "round-trip" : "per-km"}`,
       `days:${days}`,
       `billable-km:${billedKm}`,
       `driver-allowance:${driverAllowance}`,
@@ -161,7 +169,7 @@ export class GroupCommercialVehicleStrategy implements PricingStrategy {
       driverAllowance,
       distanceKm: input.distanceKm,
       billedKm,
-      alwaysRoundTrip: true,
+      alwaysRoundTrip,
       roundMultiplierApplied: false,
       rules,
       allowPromo: Boolean(input.promoAllowGroupVehicles),

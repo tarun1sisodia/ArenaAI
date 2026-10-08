@@ -80,6 +80,8 @@ export function createFareService(fareVersion: string, db?: Repositories) {
       let dossierNights: number | undefined;
       let dossierUpgradeSurcharges: Record<string, number> | undefined;
       let dossierNightHaltInr: number | undefined;
+      let dossierDriverAllowance: number | undefined;
+      let dossierMinKmPerDay: number | undefined;
       let dossierPackageName: string | undefined;
       let dossierPackageDuration: string | undefined;
       let dossierCatalogItemType: "package" | "tour" | "ride" | undefined;
@@ -100,6 +102,7 @@ export function createFareService(fareVersion: string, db?: Repositories) {
             dossierPackageDuration = tourPkg.durationText;
             dossierPackageBasePrice = tourPkg.startingPriceInr;
             dossierCatalogItemType = "tour";
+            dossierUsePerKm = false;
             dossierDistanceKm = tourPkg.days ? tourPkg.days * 300 : undefined;
 
             const [globalUpgrades, pkgUpgrades] = await Promise.all([
@@ -182,13 +185,30 @@ export function createFareService(fareVersion: string, db?: Repositories) {
               (await db.routeCatalog.getBySlug(input.packageId));
           }
           if (!routeRow && input.originName && input.destinationName) {
-            const routeSlug = `${slugifyPlace(input.originName)}-to-${slugifyPlace(input.destinationName)}`;
-            routeRow = await db.routeCatalog.getBySlug(routeSlug);
+            const s = slugifyPlace(input.originName);
+            const d = slugifyPlace(input.destinationName);
+            const candidates = [
+              `${s}-to-${d}-taxi`,
+              `${s}-to-${d}`,
+              `${s}-to-${d}-round-trip-taxi`,
+              `${d}-to-${s}-taxi`,
+              `${d}-to-${s}`,
+              `${d}-to-${s}-round-trip-taxi`,
+            ];
+            for (const cand of candidates) {
+              const found = await db.routeCatalog.getBySlug(cand);
+              if (found) {
+                routeRow = found;
+                break;
+              }
+            }
           }
           if (routeRow && routeRow.status === "published" && !routeRow.needsReview) {
             dossierFleetPrices = routeRow.faresInr;
-            dossierUsePerKm = false;
+            dossierUsePerKm = routeRow.usePerKm;
             dossierNightHaltInr = routeRow.nightHaltInr;
+            dossierDriverAllowance = routeRow.driverChargeInr;
+            dossierMinKmPerDay = routeRow.minKmPerDay;
             dossierDistanceKm = routeRow.distanceKm ?? undefined;
             dossierPackageName = `${routeRow.sourceCity} to ${routeRow.destinationCity ?? ""}`;
             dossierPackageDuration = routeRow.durationText ?? undefined;
@@ -250,7 +270,12 @@ export function createFareService(fareVersion: string, db?: Repositories) {
 
       const ruleOverrides: FareRuleOverrides = {
         vehicles: Array.isArray(cfg.vehicles) ? (cfg.vehicles as FareVehicleOverride[]) : undefined,
-        minKmPerDay: typeof outstationCfg.minKmPerDay === "number" ? outstationCfg.minKmPerDay : undefined,
+        minKmPerDay:
+          dossierMinKmPerDay !== undefined && dossierMinKmPerDay > 0
+            ? dossierMinKmPerDay
+            : typeof outstationCfg.minKmPerDay === "number"
+            ? outstationCfg.minKmPerDay
+            : undefined,
         sameDayRoundMultiplier:
           typeof outstationCfg.sameDayRoundMultiplier === "number"
             ? outstationCfg.sameDayRoundMultiplier
@@ -260,7 +285,11 @@ export function createFareService(fareVersion: string, db?: Repositories) {
         nightAllowanceTempo:
           typeof outstationCfg.nightAllowanceTempo === "number" ? outstationCfg.nightAllowanceTempo : undefined,
         driverAllowance:
-          typeof outstationCfg.driverAllowance === "number" ? outstationCfg.driverAllowance : undefined,
+          dossierDriverAllowance !== undefined && dossierDriverAllowance > 0
+            ? dossierDriverAllowance
+            : typeof outstationCfg.driverAllowance === "number"
+            ? outstationCfg.driverAllowance
+            : undefined,
         packageBasePrice: dossierPackageBasePrice ?? packageBasePrice,
         packageName: dossierPackageName ?? packageName,
         packageDuration: dossierPackageDuration ?? packageDuration,

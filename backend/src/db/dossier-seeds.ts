@@ -460,6 +460,7 @@ export const SEED_MONUMENTS: MonumentRecord[] = [
   { id: "a0000000-0000-4000-a000-000000000008", name: "Moti Masjid (Pearl Mosque)", visitingHours: "06:00 – 18:00", closedNote: "Inside Agra Fort", historicalContext: "Lustrous white marble mosque commissioned by Shah Jahan.", sortOrder: 8, createdAt: BASE_TIME, updatedAt: BASE_TIME },
   { id: "a0000000-0000-4000-a000-000000000009", name: "Jodha Bai Ka Rauza", visitingHours: "10:00 – 19:00", closedNote: "Open all days", historicalContext: "Largest residential palace complex inside Fatehpur Sikri.", sortOrder: 9, createdAt: BASE_TIME, updatedAt: BASE_TIME },
   { id: "a0000000-0000-4000-a000-000000000010", name: "Mariam-Uz-Zamani Palace", visitingHours: "10:00 – 19:00", closedNote: "Open all days", historicalContext: "Palace dedicated to Akbar Portuguese-Christian / Rajput consort.", sortOrder: 10, createdAt: BASE_TIME, updatedAt: BASE_TIME },
+  { id: "a0000000-0000-4000-a000-000000000011", name: "Aram Bagh (Ram Bagh)", visitingHours: "06:00 – 18:00 (Sunrise to Sunset)", closedNote: "Open all days", historicalContext: "Oldest Mughal garden in India, commissioned by Emperor Babur in 1528 in Persian Charbagh style along the Yamuna River.", sortOrder: 11, createdAt: BASE_TIME, updatedAt: BASE_TIME },
 ];
 
 export const SEED_PET_POLICY: PetTaxiPolicyRecord = {

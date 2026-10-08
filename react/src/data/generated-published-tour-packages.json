@@ -33,12 +33,12 @@
     "gallery": [
       {
         "alt": "Same Day Agra Taj Mahal Tour New Package",
-        "url": "/api/v1/tour-packages/media/36dc5c9b-b76e-4665-af5a-087e27eee260.png",
+        "url": "https://skb-baghel-api-staging.onrender.com/api/v1/tour-packages/media/36dc5c9b-b76e-4665-af5a-087e27eee260.png",
         "caption": "Screenshot 2026-09-29 100206"
       },
       {
         "alt": "Same Day Agra Taj Mahal Tour New Package",
-        "url": "/api/v1/tour-packages/media/9d84f808-6616-4184-a678-1c30a5aab7c3.png",
+        "url": "https://skb-baghel-api-staging.onrender.com/api/v1/tour-packages/media/9d84f808-6616-4184-a678-1c30a5aab7c3.png",
         "caption": "Screenshot 2026-09-29 092252"
       },
       {
@@ -127,7 +127,13 @@
     "exclusions": [],
     "itinerary": [],
     "imageUrl": null,
-    "gallery": [],
+    "gallery": [
+      {
+        "url": "/assets/packages/taj-dawn.webp",
+        "alt": "Chandigarh Famous 5 Places Full Day Tour",
+        "caption": "Chandigarh Famous 5 Places Full Day Tour"
+      }
+    ],
     "status": "published",
     "isActive": true,
     "createdAt": "2026-10-04T07:19:16.000Z",
@@ -251,7 +257,13 @@
       }
     ],
     "imageUrl": null,
-    "gallery": [],
+    "gallery": [
+      {
+        "url": "/assets/packages/taj-dawn.webp",
+        "alt": "Same Day Prem mandir Tour",
+        "caption": "Same Day Prem mandir Tour"
+      }
+    ],
     "status": "published",
     "isActive": true,
     "createdAt": "2026-10-04T10:13:03.000Z",
@@ -336,7 +348,7 @@
     "gallery": [
       {
         "alt": "Poiya To Jewar One Day Tour",
-        "url": "/api/v1/tour-packages/media/aab4506a-28dc-4b03-a5bf-b9ee067ca50e.jpg",
+        "url": "https://skb-baghel-api-staging.onrender.com/api/v1/tour-packages/media/aab4506a-28dc-4b03-a5bf-b9ee067ca50e.jpg",
         "caption": "4576-2048x1365"
       }
     ],
@@ -641,7 +653,7 @@
     "gallery": [
       {
         "alt": "tarun in galgotias",
-        "url": "/api/v1/tour-packages/media/dce6dce4-89e7-48a1-9daf-b444379e8ffc.jpg",
+        "url": "https://skb-baghel-api-staging.onrender.com/api/v1/tour-packages/media/dce6dce4-89e7-48a1-9daf-b444379e8ffc.jpg",
         "caption": "SaveClip.App_685580020_18423682033125926_6371682318073663891_n"
       }
     ],

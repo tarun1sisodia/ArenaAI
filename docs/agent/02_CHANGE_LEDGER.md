@@ -1,6 +1,62 @@
 # ArenaAI Agent Change Ledger
 
+## 2026-10-08
+
+### 2026-10-08 — Step 3: Device Registration Unique Constraints & Group Commercial Fleet Pricing Rules
+
+- **Group Commercial Fleet Pricing Strategy (`backend/src/modules/fares/fare.strategy.ts`, `backend/src/modules/fares/fare.engine.ts`, `backend/src/modules/fares/fare.service.ts`)**:
+  - Refactored `GroupCommercialVehicleStrategy` for Tempo Traveller and Force Urbania:
+    - **Under 300 km (`distanceKm < 300`)**: Forces round-trip billing (`alwaysRoundTrip = true`, `effectiveTripType = "round-trip"`, `billedKm = distanceKm * 2`, `baseFare = billedKm * spec.perKm`), daily driver allowance ₹500/day (`driverAllowance = (ctx.driverAllowance ?? 500) * days`).
+    - **300 km and above (`distanceKm >= 300`)**: Billed per kilometer without forced round trip (`alwaysRoundTrip = false`, `effectiveTripType = input.tripType`, `billedKm = distanceKm`, `baseFare = billedKm * spec.perKm`), maintaining ₹500/day driver allowance (`driverAllowance = (ctx.driverAllowance ?? 500) * days`).
+  - Updated `fare.engine.ts` dossier fare evaluation and catalog ride/local transfers to enforce `alwaysRoundTrip: isForce && distance < 300`, so group commercial vehicles exceeding 300 km are no longer locked as round trips.
+  - Wired admin route overrides in `fare.service.ts`: extracted `routeRow.driverChargeInr` as `dossierDriverAllowance` and `routeRow.minKmPerDay` as `dossierMinKmPerDay`, propagating them directly into `ruleOverrides` to ensure desk custom driver charge and minimum mileage floors take precedence over outstation defaults.
+  - Added test coverage in `backend/tests/unit/force-rule.test.ts` for >= 300 km one-way per-km billing without forced round trip, 350 km outstation one-way trips, and custom route driver allowance overrides.
+- **Device Registrations PostgreSQL Constraint & Upsert (`backend/migrations/0036_fix_device_registrations_anonymous_unique.sql`, `backend/src/db/postgres.ts`, `backend/src/db/memory.ts`)**:
+  - Created migration `0036_fix_device_registrations_anonymous_unique.sql` dropping table constraint `device_registrations_user_id_device_id_key` (which treated SQL NULLs as distinct and prevented conflict arbitration on guest devices).
+  - Added partial unique indexes:
+    - `CREATE UNIQUE INDEX idx_device_registrations_user_device ON device_registrations(user_id, device_id) WHERE user_id IS NOT NULL;`
+    - `CREATE UNIQUE INDEX idx_device_registrations_anon_device ON device_registrations(device_id) WHERE user_id IS NULL;`
+  - Updated `db.devices.register` in `postgres.ts` to bifurcate conflict targets (`on conflict (user_id, device_id) where user_id is not null` vs `on conflict (device_id) where user_id is null`), and cleaned up orphan anonymous entries when an authenticated user claims a device.
+  - Implemented exact upsert deduplication and device claiming in `memory.ts`.
+  - Added unit test cases in `backend/tests/unit/device-registration-auth.test.ts` verifying anonymous device re-registration idempotency and seamless conversion to authenticated user registration.
+- **Verification**:
+  - `npm test` passed: 32 test files, 209 tests passed (100% pass rate).
+  - Typecheck passed: `backend:typecheck` (0 errors), `customer:typecheck` (0 errors), `admin:typecheck` (0 errors).
+
+### 2026-10-08 — Step 2: Tour Package Photos, Fixed Pricing & Aram Bagh Monument
+
+- **Tour Package Media Resolution (`react/src/services/catalog.ts`, `react/src/services/catalogManifest.ts`, `react/src/pages/PackagesPage.tsx`, `react/src/pages/PackageDetailPage.tsx`)**:
+  - Updated `resolveCatalogMediaUrl` to recognize `/api/` relative endpoints and prefix `getApiBaseUrl()`, resolving cover images and gallery arrays seamlessly across SSG and runtime.
+  - Updated `toDossierTourPackage` to map `fleetPrices` directly and provide fallback imagery.
+  - Enhanced `PackagesPage` and `PackageDetailPage` to render live card prices from `fleetPrices` and display gallery mosaics with graceful image fallback.
+  - Updated `react/scripts/build-manifest.ts` to snapshot live tour packages with absolute API URLs.
+- **Strict Tour Package Fixed-Price Enforcement (`backend/src/modules/fares/fare.service.ts`, `backend/src/modules/fares/fare.engine.ts`)**:
+  - Configured `dossierUsePerKm = false` for tour packages in `fare.service.ts`.
+  - Bypassed distance-based per-km calculation in `fare.engine.ts` for catalog items of type "tour" / "package", enforcing strict package pricing ("price rules applied everywhere, but not in the package").
+- **Aram Bagh (Ram Bagh) Monument Addition (`backend/src/db/dossier-seeds.ts`, `react/src/components/home/FamousPlacesSection.tsx`)**:
+  - Added `Aram Bagh (Ram Bagh)` as an official monument in `backend/src/db/dossier-seeds.ts`.
+  - Added Aram Bagh destination card to `FamousPlacesSection.tsx` on the customer home page.
+- **Verification**:
+  - Verified across tests, 3x typechecks, and package build.
+
 ## 2026-10-07
+
+### 2026-10-07 — Step 1: Route Catalog Bidirectional SEO Pages & Customer Search Resolver Upgrade
+
+- **Backend Route Catalog & Manifest (`backend/src/modules/catalog/catalog.service.ts`, `backend/src/modules/route-catalog/route-catalog.controller.ts`, `backend/src/modules/route-catalog/route-catalog.service.ts`, `backend/src/modules/fares/fare.service.ts`)**:
+  - Incorporated published routes from the PostgreSQL `route_catalog` table directly into `catalog.service.ts` `buildManifest()` so that all admin-created routes feed `/api/v1/catalog/manifest`.
+  - Added automatic bidirectional return route synthesis (`${dest}-to-${source}-taxi`) in both `catalog.service.ts` and `route-catalog.controller.ts`, guaranteeing that for any added route (e.g., Agra to Delhi), the reverse route (Delhi to Agra) is generated with identical fares, distance, and duration.
+  - Exported `bumpManifest` hook to invalidate catalog manifest cache when admin mutates (creates, updates, publishes, archives, removes) routes in `route-catalog.service.ts`.
+  - Upgraded `fare.service.ts` to match candidate route slugs with and without `-taxi` suffix, and to resolve reverse corridors for outstation bookings.
+- **Frontend Build Manifest & SSG Pre-Renderer (`react/scripts/build-manifest.ts`, `react/src/app/App.tsx`, `react/src/app/ServerApp.tsx`)**:
+  - Updated `build-manifest.ts` to fallback to `${apiBase}/api/v1/route-catalog/manifest` and emit bidirectional items into `routes-manifest.json` (2,067 routes), `generated-catalog.json` (971 routes), and `generated-published-routes.json`.
+  - Updated `ServerApp.tsx` and `App.tsx` to recognize both forward and reverse published route slugs during SSR and client hydration, rendering `RouteDetailPage` with full Schema.org markup and custom SEO metadata instead of 404s.
+  - Verified static pre-rendering generated both `/en/thora-to-jewar-taxi/index.html` and `/en/jewar-to-thora-taxi/index.html` with valid titles, fares, and without 404 content.
+- **Customer Booking Funnel Search Resolver (`react/src/features/booking/BookingPage.tsx`)**:
+  - Upgraded `findSupportedRoute` to search static routes, published admin routes, dynamic `routesManifest`, and backend catalog routes bidirectionally.
+  - Connected `loadRoutesManifest()` dynamically on component mount to re-verify any pending route query parameters against live backend manifests, eliminating false "currently not available" errors on customer search for all published corridors.
+- **Verification**:
+  - Verified with `npm run customer:typecheck` (clean), `npm run backend:typecheck` (clean), `npm run admin:typecheck` (clean), `npm test` (30 test files / 202 tests passed), `npm run customer:seo` (passed), and SSG pre-renderer (77 pages rendered, 0 errors).
 
 ### 2026-10-07 — Admin Route Catalog "+ New Route" Modal Dialog UX Upgrade
 
@@ -660,8 +716,45 @@ Implemented:
   - Verified backend `authGuard.ts` accepts Supabase access token for the seeded customer.
   - Verified `npm run verify` passed cleanly (193/193 tests, 3× typechecks, SEO checks, 3× builds).
 
+### 2026-10-07 — Step 1: Bidirectional Route Catalog, SSG Route Pre-Rendering & Search Resolution
+
+- **Corridor & Reverse Route Synthesis**:
+  - `backend/src/modules/catalog/catalog.service.ts`: Updated `buildManifest()` to query `route_catalog` and synthesize reverse routes (`${dest}-to-${source}-taxi`) for all published intercity corridors.
+  - `backend/src/modules/route-catalog/route-catalog.controller.ts`: Emitted both forward and reverse routes in `/api/v1/route-catalog/manifest`.
+  - `backend/src/modules/fares/fare.service.ts`: Enabled bidirectional corridor and slug matching (`-taxi`, base slug, reversed pairs).
+- **Frontend Manifest & SSG Integration**:
+  - `react/scripts/build-manifest.ts`: Emitted 2,067 routes into `public/routes-manifest.json`, 971 typed routes into `src/data/generated-catalog.json`, and bidirectional pairs into `generated-published-routes.json`.
+  - `react/src/app/App.tsx` & `react/src/app/ServerApp.tsx`: Registered published route items in SSR/SSG route matchers and client routes.
+  - `react/src/features/booking/BookingPage.tsx`: Overhauled `findSupportedRoute` to search static, published, manifest, and catalog routes bidirectionally, resolving routes like `Thora → Jewar` and `Jewar → Thora` without "currently not available" errors.
+- **Verification**:
+  - All typechecks passed cleanly (`customer:typecheck`, `backend:typecheck`, `admin:typecheck`).
+  - Pre-rendered 77 SSG HTML pages including bidirectional routes.
+
+### 2026-10-07 — Step 2: Tour Package Media Resolution, Fixed Package Pricing & Aram Bagh Monument
+
+- **Tour Package Media & Photo URL Resolution**:
+  - `react/src/services/catalog.ts`: Updated `resolveCatalogMediaUrl` to handle all `/api/` relative endpoints (e.g. `/api/v1/tour-packages/media/:file`, `/api/v1/media/:id`), prepending `getApiBaseUrl()` so that customer browser and SSG loads never 404 against frontend host.
+  - `react/src/services/catalogManifest.ts`: Updated `toDossierTourPackage` to resolve cover `image` and all `gallery` items through `resolveCatalogMediaUrl`, and map full `fleetPrices` (Sedan, Ertiga, Innova, Tempo, Urbania) from admin packages.
+  - `react/src/pages/PackagesPage.tsx`: Updated `PackagePhoto` with image fallback error handling, updated `enrichedPackages` to display live admin `fleetPrices` on package cards, and resolved all card cover/gallery photos.
+  - `react/src/pages/PackageDetailPage.tsx`: Resolved main hero photo and secondary gallery mosaic items with graceful fallbacks.
+  - `react/scripts/build-manifest.ts`: Ensured `/api/` package media URLs are resolved to absolute staging API URLs during build snapshotting.
+- **Fixed Package Pricing Enforcement**:
+  - `backend/src/modules/fares/fare.service.ts`: Set `dossierUsePerKm = false` for tour packages, ensuring tour packages never fall through to per-km distance recalculations.
+  - `backend/src/modules/fares/fare.engine.ts`: Enforced user directive ("price rules applied everywhere, but not in package") by keeping tour packages strictly fixed-price (`packageBasePrice + PACKAGE_UPGRADES[vehicleId]` or admin `fleetPrices[tier]`), preventing outstation distance/allowance overrides from distorting package fares.
+- **Monuments Addition**:
+  - `backend/src/db/dossier-seeds.ts`: Added `Aram Bagh (Ram Bagh)` to `SEED_MONUMENTS` (Babur 1528 Mughal Charbagh garden).
+  - `backend/tests/integration/dossier-manifest-modules.test.ts`: Updated monument count assertion from 10 to 11.
+  - `react/src/components/home/FamousPlacesSection.tsx`: Added `Aram Bagh (Ram Bagh)` to `FAMOUS_PLACES`.
+- **Verification**:
+  - `customer:typecheck`: 0 errors.
+  - `backend:typecheck`: 0 errors.
+  - `admin:typecheck`: 0 errors.
+  - `npm test`: 30 test files / 202 tests passed.
+  - `npm --prefix react run react:build`: SSG completed 77 pages pre-rendered with zero errors.
+
 ## Known next work (Phase 3 — secure integrations)
 
+- Step 3: Anonymous Device Registration Postgres Unique Constraint Fix & Fleet Rules Verification.
 - Step 3.2: High-entropy token or OTP recovery for booking status retrieval (`/api/v1/bookings/status`).
 - Step 3.3: Magic-byte and MIME validation for media file uploads.
 - Step 3.4: Compensating object-store cleanup.

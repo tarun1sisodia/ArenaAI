@@ -268,5 +268,78 @@ describe("Device Registration Ownership Lock-down (Step 1.6 / SEC-005)", () => {
 
       await app.close();
     });
+
+    it("idempotently updates anonymous device registration on repeated calls", async () => {
+      const { app, db } = await createTestApp();
+
+      const first = await app.inject({
+        method: "POST",
+        url: "/api/v1/devices/register",
+        payload: {
+          deviceId: "dev_anon_repeat_1",
+          platform: "web",
+          fcmToken: "initial_token",
+        },
+      });
+      expect(first.statusCode).toBe(200);
+
+      const second = await app.inject({
+        method: "POST",
+        url: "/api/v1/devices/register",
+        payload: {
+          deviceId: "dev_anon_repeat_1",
+          platform: "web",
+          fcmToken: "updated_token",
+        },
+      });
+      expect(second.statusCode).toBe(200);
+
+      const dev = await db.devices.getByDeviceId("dev_anon_repeat_1");
+      expect(dev?.fcmToken).toBe("updated_token");
+      expect(dev?.userId).toBeNull();
+
+      await app.close();
+    });
+
+    it("converts anonymous device to authenticated user registration cleanly", async () => {
+      const { app, db } = await createTestApp();
+      const customerId = "00000000-0000-4000-a000-000000000000";
+
+      // Register anonymously first
+      const anonRes = await app.inject({
+        method: "POST",
+        url: "/api/v1/devices/register",
+        payload: {
+          deviceId: "dev_convert_1",
+          platform: "android",
+          fcmToken: "anon_fcm_token",
+        },
+      });
+      expect(anonRes.statusCode).toBe(200);
+
+      // User logs in and registers the same device
+      const authRes = await app.inject({
+        method: "POST",
+        url: "/api/v1/devices/register",
+        headers: {
+          authorization: "Bearer test-customer",
+        },
+        payload: {
+          deviceId: "dev_convert_1",
+          platform: "android",
+          fcmToken: "auth_fcm_token",
+          userId: customerId,
+        },
+      });
+      expect(authRes.statusCode).toBe(200);
+
+      const userDevices = await db.devices.listByUserId(customerId);
+      const matching = userDevices.filter((d) => d.deviceId === "dev_convert_1");
+      expect(matching.length).toBe(1);
+      expect(matching[0]?.fcmToken).toBe("auth_fcm_token");
+
+      await app.close();
+    });
   });
 });
+

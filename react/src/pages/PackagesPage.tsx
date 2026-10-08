@@ -7,6 +7,7 @@ import { WhatsAppIcon } from "../components/icons";
 import { Pagination } from "../components/ui/Pagination";
 import { LiveCatalogSection } from "../components/catalog/LiveCatalogSection";
 import { loadPublishedPackages, toDossierTourPackage } from "../services/catalogManifest";
+import { resolveCatalogMediaUrl } from "../services/catalog";
 
 interface PackagesPageProps {
   language?: SupportedLanguage;
@@ -345,15 +346,27 @@ interface PackagePhotoProps {
 }
 
 function PackagePhoto({ url, alt, className, eager, onClick }: PackagePhotoProps) {
-  const base = galleryBase(url);
+  const resolved = resolveCatalogMediaUrl(url);
+  const base = galleryBase(resolved);
+  const [currentSrc, setCurrentSrc] = useState(base ? `${base}.jpg` : resolved || "/assets/packages/taj-dawn.webp");
+
+  useEffect(() => {
+    setCurrentSrc(base ? `${base}.jpg` : resolved || "/assets/packages/taj-dawn.webp");
+  }, [base, resolved]);
+
   const img = (
     <img
-      src={base ? `${base}.jpg` : url}
+      src={currentSrc}
       alt={alt}
       loading={eager ? "eager" : "lazy"}
       decoding="async"
       className={className}
       onClick={onClick}
+      onError={() => {
+        if (currentSrc !== "/assets/packages/taj-dawn.webp") {
+          setCurrentSrc("/assets/packages/taj-dawn.webp");
+        }
+      }}
     />
   );
   if (!base) return img;
@@ -473,6 +486,19 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
         suitedFor: "Travelers & Groups",
         recommendedFleet: "Sedan / Ertiga / Innova",
       };
+
+      const fp = pkg.fleetPrices;
+      const hasLivePrices = fp && Object.keys(fp).length > 0;
+      const vehiclePrices = hasLivePrices
+        ? [
+            ...(fp.sedan ? [{ label: "Sedan", price: `₹${Number(fp.sedan).toLocaleString("en-IN")}` }] : []),
+            ...(fp.ertiga ? [{ label: "Ertiga", price: `₹${Number(fp.ertiga).toLocaleString("en-IN")}` }] : []),
+            ...(fp.innova ? [{ label: "Innova", price: `₹${Number(fp.innova).toLocaleString("en-IN")}` }] : []),
+            ...(fp.tempo ? [{ label: "Tempo", price: `₹${Number(fp.tempo).toLocaleString("en-IN")}` }] : []),
+            ...(fp.urbania ? [{ label: "Urbania", price: `₹${Number(fp.urbania).toLocaleString("en-IN")}` }] : []),
+          ]
+        : meta.vehiclePrices;
+
       return {
         pkg,
         categories: meta.categories,
@@ -482,7 +508,7 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
         durationIcon: meta.durationIcon,
         stops: meta.stops,
         inclusions: meta.inclusions,
-        vehiclePrices: meta.vehiclePrices,
+        vehiclePrices,
       };
     });
   }, [packageList]);
@@ -791,13 +817,13 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
             const images: Array<{ url: string; caption: string; alt: string }> =
               pkg.gallery && pkg.gallery.length > 0
                 ? pkg.gallery.map((g, i) => ({
-                    url: g.url,
+                    url: resolveCatalogMediaUrl(g.url),
                     caption: g.caption || `${pkg.name} — Photo ${i + 1}`,
                     alt: g.alt || `${pkg.name} view ${i + 1}`,
                   }))
                 : [
                     {
-                      url: pkg.image,
+                      url: resolveCatalogMediaUrl(pkg.image),
                       caption: `${pkg.name} signature route`,
                       alt: pkg.name,
                     },

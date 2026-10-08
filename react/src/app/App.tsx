@@ -31,6 +31,8 @@ import { SeoHead } from "../components/seo/SeoHead";
 import { packages, routes, vehicles, type Route, type TourPackage } from "../data/catalogue";
 import { loadRoutesManifest, loadPublishedPackages, toDossierTourPackage } from "../services/catalogManifest";
 import generatedPublishedTourPackages from "../data/generated-published-tour-packages.json";
+import generatedPublishedRoutes from "../data/generated-published-routes.json";
+import generatedCatalog from "../data/generated-catalog.json";
 
 export function getMarketingPath(pathname: string) {
   const segments = pathname.split("/").filter(Boolean);
@@ -46,7 +48,13 @@ export interface SeoMetadata {
   keywords?: string[];
 }
 
-export function getSeo(pathname: string, section: string, language: "en" | "hi", isBooking: boolean): SeoMetadata {
+export function getSeo(
+  pathname: string,
+  section: string,
+  language: "en" | "hi",
+  isBooking: boolean,
+  activeRoute?: Route | null,
+): SeoMetadata {
   if (SEO_LANDING_SLUGS.includes(section as SeoLandingSlug)) {
     const title = `${section.replaceAll("-", " ")} | Agra SK Baghel Tour and Travels`;
     return { title, description: `${title}. Verified drivers, transparent fare confirmation and easy phone or WhatsApp booking.`, ogImage: "/assets/brand/og-banner.webp", keywords: [title, "Agra taxi", "Agra cab booking"] };
@@ -57,6 +65,16 @@ export function getSeo(pathname: string, section: string, language: "en" | "hi",
       description: "Compare vehicles and prepare a transparent mock booking from Agra.",
       ogImage: "/assets/brand/og-banner.webp",
       keywords: ["Agra taxi booking", "Agra cab reservation", "online taxi booking Agra"],
+    };
+  }
+  if (activeRoute) {
+    const from = activeRoute.origin || (activeRoute.from ? activeRoute.from[0].toUpperCase() + activeRoute.from.slice(1) : "Agra");
+    const to = activeRoute.destination || (activeRoute.to ? activeRoute.to[0].toUpperCase() + activeRoute.to.slice(1) : "Delhi");
+    return {
+      title: `${from} to ${to} taxi fare | Agra SK Baghel Tour and Travels`,
+      description: `${activeRoute.duration} private taxi from ${from} to ${to}, with transparent fares across our fleet.`,
+      ogImage: "/assets/brand/og-banner.webp",
+      keywords: [`${from} to ${to} taxi`, `${from} to ${to} cab fare`, "outstation taxi Agra", "expressway cab"],
     };
   }
   const path = pathname.replace(/\/$/, "");
@@ -269,16 +287,75 @@ export function App({ pathname: propPathname }: AppProps = {}) {
     return () => { isMounted = false; };
   }, [initialTourPackages]);
 
-  const matchedRoute = routes.find((item) => {
-    const from = item.from === "agra" && item.to === "agra" ? "agra-sightseeing" : `${item.from}-to-${item.to}`;
-    return (
-      pathname.includes(`${from}-taxi`) ||
-      pathname.includes(`/${item.id}/`) ||
-      pathname.endsWith(`/${item.id}`) ||
-      cleanPath.endsWith(`/${item.id}`) ||
-      section === item.id
-    );
-  });
+  const matchedRoute = useMemo<Route | null>(() => {
+    // 1. Static routes match
+    const staticMatch = routes.find((item) => {
+      const from = item.from === "agra" && item.to === "agra" ? "agra-sightseeing" : `${item.from}-to-${item.to}`;
+      return (
+        pathname.includes(`${from}-taxi`) ||
+        pathname.includes(`/${item.id}/`) ||
+        pathname.endsWith(`/${item.id}`) ||
+        cleanPath.endsWith(`/${item.id}`) ||
+        section === item.id
+      );
+    });
+    if (staticMatch) return staticMatch;
+
+    // 2. Published admin routes match (including synthesized reverse routes)
+    const cleanSection = section.replace(/\.html$/, "");
+    const published = (generatedPublishedRoutes as any[]).find((entry) => {
+      const slug = String(entry.slug);
+      return (
+        slug === cleanSection ||
+        pathname.includes(`/${slug}/`) ||
+        pathname.endsWith(`/${slug}`) ||
+        cleanPath.endsWith(`/${slug}`)
+      );
+    });
+    if (published) {
+      const fares = published.faresInr ?? published.fares_inr ?? {};
+      const distanceKm = Number(published.distanceKm ?? published.distance_km ?? 200);
+      const durationText = String(published.durationText ?? published.duration_text ?? "3h 30m");
+      const source = String(published.sourceCity ?? published.source_city ?? "Agra");
+      const dest = String(published.destinationCity ?? published.destination_city ?? "Delhi");
+      return {
+        id: String(published.slug),
+        from: source.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+        to: dest.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+        origin: source,
+        destination: dest,
+        km: distanceKm,
+        duration: durationText,
+        kind: published.tripType === "round-trip" ? "local" : "one-way",
+        fares: {
+          sedan: Number(fares.sedan ?? 2000),
+          ertiga: Number(fares.ertiga ?? 2800),
+          innova: Number(fares.innova ?? 3800),
+          tempo: Number(fares.tempo ?? 5500),
+          urbania: Number(fares.urbania ?? 7500),
+        },
+      } as Route;
+    }
+
+    // 3. Backend catalog routes match
+    const catalogRoutes = (generatedCatalog as any)?.routes || [];
+    const catMatch = catalogRoutes.find((item: any) => {
+      const taxiSlug = `${item.from}-to-${item.to}-taxi`;
+      return (
+        item.id === cleanSection ||
+        taxiSlug === cleanSection ||
+        pathname.includes(`/${taxiSlug}/`) ||
+        pathname.endsWith(`/${taxiSlug}`) ||
+        cleanPath.endsWith(`/${taxiSlug}`) ||
+        pathname.includes(`/${item.id}/`) ||
+        pathname.endsWith(`/${item.id}`) ||
+        cleanPath.endsWith(`/${item.id}`)
+      );
+    });
+    if (catMatch) return catMatch;
+
+    return null;
+  }, [pathname, cleanPath, section]);
 
   const activeRoute = manifestRoute || matchedRoute;
 
@@ -366,7 +443,7 @@ export function App({ pathname: propPathname }: AppProps = {}) {
     description: pageDescription,
     ogImage: pageOgImage,
     keywords: pageKeywords,
-  } = getSeo(pathname, effectiveSection, language, isBooking);
+  } = getSeo(pathname, effectiveSection, language, isBooking, activeRoute);
 
   return (
     <ErrorBoundary>

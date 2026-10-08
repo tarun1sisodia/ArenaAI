@@ -1,8 +1,9 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import type { SupportedLanguage } from "../config";
 import { contact } from "../data/contact";
 import { type TourPackage } from "../data";
 import { WhatsAppIcon } from "../components/icons";
+import { resolveCatalogMediaUrl } from "../services/catalog";
 
 interface PackageDetailPageProps {
   language?: SupportedLanguage;
@@ -105,6 +106,26 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
   const grossPrice = pkg.from;
   const advanceAmount = Math.round(grossPrice * 0.28);
   const balanceAmount = grossPrice - advanceAmount;
+
+  // Media URL resolution with gallery support
+  const mainImg = resolveCatalogMediaUrl(pkg.image || "/assets/packages/taj-dawn.webp");
+  const secImg1 = pkg.gallery && pkg.gallery[1]?.url
+    ? resolveCatalogMediaUrl(pkg.gallery[1].url)
+    : "https://lh3.googleusercontent.com/aida-public/AB6AXuA2yf-yBU3hlsj0yoDvKQuP0oe6WgHmL9Zp1It3UX4nt2DQnx758CLagwRSUfUyxP1x94bKKqwL8EeD-VILb9XhvYHbrj9ajEPX9oXgLEMY_ksbGoFyGii8FeQlpfiDsaJEaBiElqArswBsy-Szo9P1AiuEHzAqAHIBl2U5mryTmHPcxLdKPwyvoEk7Pc17rJDEn76H1pc-eP1-8L2SqkX8sVvPSIZZAjXjDDd2o__BhvpU5Aw0v4WFIw";
+  const secCap1 = pkg.gallery && pkg.gallery[1]?.caption
+    ? pkg.gallery[1].caption
+    : "Priority Entry & Prime Photography";
+
+  const secImg2 = pkg.gallery && pkg.gallery[2]?.url
+    ? resolveCatalogMediaUrl(pkg.gallery[2].url)
+    : (pkg.gallery && pkg.gallery[0]?.url && pkg.gallery[0].url !== pkg.image
+        ? resolveCatalogMediaUrl(pkg.gallery[0].url)
+        : "https://lh3.googleusercontent.com/aida-public/AB6AXuBI1YNHnPOUMAYZXIn-msx_lCMvf_qW2T2cwxbtIVgvOgnUSQ5Es3br-96fv0T8NuwFm4EFi6bGA_QPKTGF6yKCLYfa279a_zZA8U4Dud5Ex6k0QTPqUTiymsfL4UhCGp9nhedjTOV-2Dg9Q4Y4MHN9bs0U-F_FF0lT2CBiiB1gfW0n8kVIE_azmlZqxA6lKnKD5AJXt2lZTxubG2rf9Grv4GXrmpphWD5jUJHc04_9DLcyq3sYwDVQ7Q");
+  const secCap2 = pkg.gallery && pkg.gallery[2]?.caption
+    ? pkg.gallery[2].caption
+    : (pkg.gallery && pkg.gallery[0]?.caption
+        ? pkg.gallery[0].caption
+        : "5-Star Royal Palace Buffet");
 
   // Resolve timeline stops
   const timelineStops = useMemo<ItineraryItem[]>(() => {
@@ -287,7 +308,10 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
               <img
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 alt={`${pkg.name} luxury chauffeur expedition`}
-                src={pkg.image || "/assets/packages/taj-dawn.webp"}
+                src={mainImg}
+                onError={(e) => {
+                  (e.currentTarget as HTMLImageElement).src = "/assets/packages/taj-dawn.webp";
+                }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-ink-charcoal/85 via-ink-charcoal/25 to-transparent"></div>
 
@@ -312,29 +336,59 @@ export function PackageDetailPage({ language = "en", pkg }: PackageDetailPagePro
               <div className="relative rounded-xl overflow-hidden min-h-[170px] lg:min-h-[215px] shadow-sm group">
                 <img
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                  alt="Taj Mahal morning sunlight view"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2yf-yBU3hlsj0yoDvKQuP0oe6WgHmL9Zp1It3UX4nt2DQnx758CLagwRSUfUyxP1x94bKKqwL8EeD-VILb9XhvYHbrj9ajEPX9oXgLEMY_ksbGoFyGii8FeQlpfiDsaJEaBiElqArswBsy-Szo9P1AiuEHzAqAHIBl2U5mryTmHPcxLdKPwyvoEk7Pc17rJDEn76H1pc-eP1-8L2SqkX8sVvPSIZZAjXjDDd2o__BhvpU5Aw0v4WFIw"
+                  alt={`${pkg.name} sightseeing vantage`}
+                  src={secImg1}
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src = "/assets/places/gallery/taj-mahal-01.jpg";
+                  }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-ink-charcoal/70 via-transparent to-transparent"></div>
                 <div className="absolute bottom-3 left-3 text-ivory-surface">
                   <span className="text-label-caps uppercase text-terracotta-sunlit">Monument Vantage</span>
-                  <p className="font-headline-sm text-headline-card leading-snug">Priority Entry &amp; Prime Photography</p>
+                  <p className="font-headline-sm text-headline-card leading-snug">{secCap1}</p>
                 </div>
               </div>
               <div className="relative rounded-xl overflow-hidden min-h-[170px] lg:min-h-[215px] shadow-sm group">
                 <img
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                  alt="5-Star royal palace dining and refreshments"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBI1YNHnPOUMAYZXIn-msx_lCMvf_qW2T2cwxbtIVgvOgnUSQ5Es3br-96fv0T8NuwFm4EFi6bGA_QPKTGF6yKCLYfa279a_zZA8U4Dud5Ex6k0QTPqUTiymsfL4UhCGp9nhedjTOV-2Dg9Q4Y4MHN9bs0U-F_FF0lT2CBiiB1gfW0n8kVIE_azmlZqxA6lKnKD5AJXt2lZTxubG2rf9Grv4GXrmpphWD5jUJHc04_9DLcyq3sYwDVQ7Q"
+                  alt={`${pkg.name} heritage hospitality`}
+                  src={secImg2}
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src = "/assets/places/gallery/agra-fort-01.jpg";
+                  }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-ink-charcoal/70 via-transparent to-transparent"></div>
                 <div className="absolute bottom-3 left-3 text-ivory-surface">
-                  <span className="text-label-caps uppercase text-gold-accent">Gourmet Repast</span>
-                  <p className="font-headline-sm text-headline-card leading-snug">5-Star Royal Palace Buffet</p>
+                  <span className="text-label-caps uppercase text-gold-accent">Heritage Experience</span>
+                  <p className="font-headline-sm text-headline-card leading-snug">{secCap2}</p>
                 </div>
               </div>
             </div>
           </div>
+
+          {/* Additional Gallery Strip if Package Has Real Photos */}
+          {pkg.gallery && pkg.gallery.length > 3 && (
+            <div className="flex items-center gap-2 overflow-x-auto p-2 bg-surface-container-low rounded-xl border border-border-warm/60 no-scrollbar">
+              {pkg.gallery.map((g, idx) => {
+                const url = resolveCatalogMediaUrl(g.url);
+                return (
+                  <div key={idx} className="relative w-24 h-16 rounded-lg overflow-hidden shrink-0 border border-border-warm shadow-xs">
+                    <img
+                      src={url}
+                      alt={g.alt || `${pkg.name} photo ${idx + 1}`}
+                      className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).src = "/assets/packages/taj-dawn.webp";
+                      }}
+                    />
+                  </div>
+                );
+              })}
+              <span className="text-xs text-on-surface-variant font-semibold pl-2 shrink-0">
+                {pkg.gallery.length} Verified Photos
+              </span>
+            </div>
+          )}
         </div>
       </section>
 

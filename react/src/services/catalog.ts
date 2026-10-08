@@ -63,9 +63,14 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 /** Absolute, browser-loadable URL for a catalog media entry. */
 export function resolveCatalogMediaUrl(url: string | null | undefined): string {
   if (!url) return "";
-  if (/^https?:\/\//.test(url)) return url;
-  if (url.startsWith("/api/v1/media/")) return `${getApiBaseUrl()}${url}`;
-  return url;
+  const trimmed = url.trim();
+  if (!trimmed) return "";
+  if (/^https?:\/\//i.test(trimmed) || trimmed.startsWith("data:")) return trimmed;
+  const normalized = trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
+  if (normalized.startsWith("/api/")) {
+    return `${getApiBaseUrl()}${normalized}`;
+  }
+  return trimmed;
 }
 
 async function getJson<T>(path: string): Promise<T> {

@@ -346,12 +346,14 @@ export function calculateFare(input: FareEngineInput): FareEngineResult {
         baseFare: dossierFare.baseFare,
         nightAllowance: 0,
         driverAllowance:
-          isForce && (input.ruleOverrides?.catalogItemType === "tour" || input.ruleOverrides?.catalogItemType === "package")
-            ? (input.ruleOverrides?.driverAllowance ?? 500)
+          input.ruleOverrides?.driverAllowance !== undefined
+            ? input.ruleOverrides.driverAllowance
+            : isForce && (input.ruleOverrides?.catalogItemType === "tour" || input.ruleOverrides?.catalogItemType === "package")
+            ? 500
             : 0,
         distanceKm: input.ruleOverrides?.catalogDistanceKm ?? input.distanceKm,
         billedKm: input.ruleOverrides?.catalogDistanceKm ?? input.distanceKm,
-        alwaysRoundTrip: isForce,
+        alwaysRoundTrip: isForce && (input.ruleOverrides?.catalogDistanceKm ?? input.distanceKm) < 300,
         label,
         duration,
         roundMultiplierApplied: false,
@@ -431,20 +433,25 @@ export function calculateFare(input: FareEngineInput): FareEngineResult {
       promoCode: input.promoCode,
       allowPromo: !isForce || Boolean(input.promoAllowGroupVehicles),
       fareVersion,
-      baseFare: isForce
+      baseFare: isForce && isAirport
         ? roundRupees((input.ruleOverrides.catalogDistanceKm ?? input.distanceKm) < 300
             ? (input.ruleOverrides.catalogDistanceKm ?? input.distanceKm) * 2 * spec.perKm
             : (input.ruleOverrides.catalogDistanceKm ?? input.distanceKm) * spec.perKm)
         : input.ruleOverrides.packageBasePrice + PACKAGE_UPGRADES[vehicleId],
       nightAllowance: 0,
-      driverAllowance: isForce ? 500 : 0,
+      driverAllowance:
+        input.ruleOverrides?.driverAllowance !== undefined
+          ? input.ruleOverrides.driverAllowance
+          : isForce && isAirport
+          ? 500
+          : 0,
       distanceKm: input.ruleOverrides.catalogDistanceKm ?? input.distanceKm,
-      billedKm: isForce
+      billedKm: isForce && isAirport
         ? ((input.ruleOverrides.catalogDistanceKm ?? input.distanceKm) < 300
             ? (input.ruleOverrides.catalogDistanceKm ?? input.distanceKm) * 2
             : input.ruleOverrides.catalogDistanceKm ?? input.distanceKm)
         : input.ruleOverrides.catalogDistanceKm ?? input.distanceKm,
-      alwaysRoundTrip: isForce,
+      alwaysRoundTrip: isForce && (input.ruleOverrides.catalogDistanceKm ?? input.distanceKm) < 300,
       label: input.ruleOverrides.packageName ?? (isAirport ? "Airport / Station Transfer" : "Local Tour"),
       duration: input.ruleOverrides.packageDuration ?? (isAirport ? "Point to Point" : "Full Day"),
       roundMultiplierApplied: false,

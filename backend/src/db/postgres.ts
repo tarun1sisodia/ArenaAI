@@ -1473,16 +1473,44 @@ export async function createPostgresRepositories(databaseUrl: string): Promise<R
       },
       devices: {
         async register(record: DeviceRegistrationRecord) {
-          await query(
-            client,
-            `insert into device_registrations (id, user_id, booking_id, device_id, platform, fcm_token, is_active, last_seen_at, created_at)
-             values ($1,$2,$3,$4,$5,$6,$7,$8,$9)
-             on conflict (user_id, device_id) do update set fcm_token=excluded.fcm_token, is_active=excluded.is_active, last_seen_at=excluded.last_seen_at`,
-            [
-              record.id, record.userId || null, record.bookingId || null, record.deviceId,
-              record.platform, record.fcmToken, record.isActive, record.lastSeenAt, record.createdAt,
-            ],
-          );
+          if (record.userId) {
+            await query(
+              client,
+              `delete from device_registrations where device_id=$1 and user_id is null`,
+              [record.deviceId],
+            );
+            await query(
+              client,
+              `insert into device_registrations (id, user_id, booking_id, device_id, platform, fcm_token, is_active, last_seen_at, created_at)
+               values ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+               on conflict (user_id, device_id) where user_id is not null do update set
+                 booking_id=coalesce(excluded.booking_id, device_registrations.booking_id),
+                 platform=excluded.platform,
+                 fcm_token=excluded.fcm_token,
+                 is_active=excluded.is_active,
+                 last_seen_at=excluded.last_seen_at`,
+              [
+                record.id, record.userId, record.bookingId || null, record.deviceId,
+                record.platform, record.fcmToken, record.isActive, record.lastSeenAt, record.createdAt,
+              ],
+            );
+          } else {
+            await query(
+              client,
+              `insert into device_registrations (id, user_id, booking_id, device_id, platform, fcm_token, is_active, last_seen_at, created_at)
+               values ($1,null,$2,$3,$4,$5,$6,$7,$8)
+               on conflict (device_id) where user_id is null do update set
+                 booking_id=coalesce(excluded.booking_id, device_registrations.booking_id),
+                 platform=excluded.platform,
+                 fcm_token=excluded.fcm_token,
+                 is_active=excluded.is_active,
+                 last_seen_at=excluded.last_seen_at`,
+              [
+                record.id, record.bookingId || null, record.deviceId,
+                record.platform, record.fcmToken, record.isActive, record.lastSeenAt, record.createdAt,
+              ],
+            );
+          }
           return record;
         },
         async getByDeviceId(deviceId: string) {

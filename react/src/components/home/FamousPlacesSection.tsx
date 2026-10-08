@@ -275,6 +275,32 @@ export const FAMOUS_PLACES: FamousPlace[] = [
       },
     ],
   },
+  {
+    id: "aram-bagh",
+    name: "Aram Bagh (Ram Bagh)",
+    category: "heritage",
+    categoryBadge: "Oldest Mughal Garden",
+    subtitle: "India's earliest Mughal Charbagh garden built by Babur in 1528",
+    description:
+      "Commissioned in 1528 by the first Mughal Emperor Babur, Aram Bagh (Garden of Rest, later called Ram Bagh) is the oldest surviving Mughal garden in India. Located on the banks of the Yamuna River, its Persian Charbagh layout features cascading waterways, stepped terraces, and tranquil shaded pavilions.",
+    distance: "9 km from Agra Cantt",
+    driveTime: "22 mins",
+    bestTime: "Morning 07:00 AM – 10:30 AM",
+    recommendedVehicle: "Sedan or Ertiga",
+    highlights: ["Emperor Babur 1528", "Stepped Water Cascades", "Yamuna Riverside"],
+    images: [
+      {
+        url: "/assets/places/gallery/mehtab-bagh-02.jpg",
+        caption: "Historic riverside terraced pavilions of Aram Bagh",
+        alt: "Aram Bagh historic Charbagh garden terraces in Agra",
+      },
+      {
+        url: "/assets/places/gallery/agra-fort-02.jpg",
+        caption: "Lush Mughal garden pathways and water channels",
+        alt: "Aram Bagh traditional stone water channels and gardens",
+      },
+    ],
+  },
 ];
 
 /**

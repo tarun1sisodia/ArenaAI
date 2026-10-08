@@ -29,6 +29,7 @@ import { toDossierTourPackage } from "../services/catalogManifest";
 import LivePackageDetailPage from "../pages/LivePackageDetailPage";
 import generatedPublishedCatalog from "../data/generated-published-catalog.json";
 import generatedPublishedRoutes from "../data/generated-published-routes.json";
+import generatedCatalog from "../data/generated-catalog.json";
 import generatedPublishedTourPackages from "../data/generated-published-tour-packages.json";
 import generatedPublishedTransferRoutes from "../data/generated-published-transfer-routes.json";
 import generatedPublishedLocalPackages from "../data/generated-published-local-packages.json";
@@ -486,7 +487,16 @@ export function ServerApp({ pathname: propPathname }: AppProps = {}) {
     return pathname.includes(`${from}-taxi`) || pathname.includes(`${hindiFrom}-taxi`);
   });
   const dynamicRouteItem = publishedRoutes.find((item) => pathname.replace(/\/$/, "").endsWith(`/${item.slug}`));
-  const dynamicRoute = dynamicRouteItem ? toFrontendRoute(dynamicRouteItem) : undefined;
+  const catalogRouteMatch = !dynamicRouteItem
+    ? ((generatedCatalog as any)?.routes as Route[] || []).find((item) => {
+        const taxiSlug = `${item.from}-to-${item.to}-taxi`;
+        return (
+          pathname.replace(/\/$/, "").endsWith(`/${taxiSlug}`) ||
+          pathname.replace(/\/$/, "").endsWith(`/${item.id}`)
+        );
+      })
+    : undefined;
+  const dynamicRoute = dynamicRouteItem ? toFrontendRoute(dynamicRouteItem) : catalogRouteMatch;
 
   const matchedPackage = pathname.includes("/packages/") && packages.find((item) => {
     const p = pathname.replace(/\/$/, "");

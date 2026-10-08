@@ -1,6 +1,7 @@
 import type { TourPackage } from "../data";
 import { packages as staticPackages } from "../data";
 import { getApiBaseUrl } from "./api";
+import { resolveCatalogMediaUrl } from "./catalog";
 
 export interface CompressedRoute {
   o: string;              // Origin
@@ -223,7 +224,25 @@ export async function loadPublishedPackages(): Promise<TourPackage[]> {
 }
 
 export function toDossierTourPackage(item: any): TourPackage {
-  const startingPrice = Number(item.startingPriceInr || item.fleetPrices?.sedan || item.from || 3499);
+  let fleetPrices: Record<string, number> = {};
+  if (item.fleetPrices && typeof item.fleetPrices === "object") {
+    fleetPrices = { ...item.fleetPrices };
+  } else if (item.fleet_prices && typeof item.fleet_prices === "object") {
+    fleetPrices = { ...item.fleet_prices };
+  } else if (Array.isArray(item.upgrades)) {
+    for (const u of item.upgrades) {
+      if (u.vehId && typeof u.price === "number") {
+        fleetPrices[u.vehId] = u.price;
+      }
+    }
+  }
+
+  const startingPrice = Number(
+    item.startingPriceInr ||
+    fleetPrices.sedan ||
+    item.from ||
+    3499
+  );
   const slug = String(item.slug ?? item.packageCode ?? item.package_code ?? item.id);
   const inclusions = Array.isArray(item.inclusions) && item.inclusions.length > 0
     ? item.inclusions
@@ -241,6 +260,27 @@ export function toDossierTourPackage(item: any): TourPackage {
   const source = item.source || "Agra";
   const destination = item.destination || item.name;
 
+  const rawImage = item.imageUrl || item.image_url || item.image || "/assets/packages/taj-dawn.webp";
+  const image = resolveCatalogMediaUrl(rawImage);
+
+  const rawGallery = Array.isArray(item.gallery) ? item.gallery : [];
+  const gallery = rawGallery
+    .filter(Boolean)
+    .map((g: any, i: number) => {
+      if (typeof g === "string") {
+        return {
+          url: resolveCatalogMediaUrl(g),
+          alt: `${item.name || "Tour"} photo ${i + 1}`,
+          caption: `${item.name || "Tour"} view ${i + 1}`,
+        };
+      }
+      return {
+        url: resolveCatalogMediaUrl(g.url),
+        alt: g.alt || `${item.name || "Tour"} photo ${i + 1}`,
+        caption: g.caption || `${item.name || "Tour"} view ${i + 1}`,
+      };
+    });
+
   return {
     id: slug,
     slug,
@@ -248,11 +288,11 @@ export function toDossierTourPackage(item: any): TourPackage {
     kicker: `${item.days ?? 1} Day${(item.days ?? 1) > 1 ? "s" : ""} Private Tour`,
     duration: item.durationText || `${item.days ?? 1} Day`,
     from: startingPrice,
-    image: item.imageUrl || item.image_url || item.image || "/assets/packages/taj-dawn.webp",
-    gallery: Array.isArray(item.gallery) ? item.gallery : [],
+    image,
+    gallery: gallery.length > 0 ? gallery : [{ url: image, alt: item.name, caption: `${item.name} cover` }],
     source,
     destination,
-    fleetPrices: item.fleetPrices || item.fleet_prices || {},
+    fleetPrices,
     days: item.days,
     nights: item.nights,
     places: [source, destination, "Heritage Sites"],

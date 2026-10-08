@@ -21,7 +21,9 @@ import { BookingAssistant } from "./BookingAssistant";
 import { fetchLiveFleet, fetchPublishedCatalog, type PublicCatalogItem, type PublicFleetVehicle } from "../../services/catalog";
 import { LocationCombobox } from "../../components/search/LocationCombobox";
 import generatedPublishedTourPackages from "../../data/generated-published-tour-packages.json";
-import { loadPublishedPackages, toDossierTourPackage } from "../../services/catalogManifest";
+import generatedPublishedRoutes from "../../data/generated-published-routes.json";
+import generatedCatalog from "../../data/generated-catalog.json";
+import { loadPublishedPackages, loadRoutesManifest, toDossierTourPackage, type CompressedRoute } from "../../services/catalogManifest";
 
 interface UnsupportedRequest {
   kind: "route" | "tour";
@@ -63,29 +65,270 @@ function cityIdForSearch(value: string): string | null {
   return null;
 }
 
-function findSupportedRoute(origin: string, destination: string): Route | null {
+function findSupportedRoute(
+  origin: string,
+  destination: string,
+  manifest?: Record<string, CompressedRoute> | null,
+): Route | null {
   const normOrigin = normalizePlace(origin);
   const normDest = normalizePlace(destination);
   if (!normOrigin || !normDest) return null;
-  const direct = routes.find((route) => {
-    return (
-      (normalizePlace(route.origin) === normOrigin || route.from === normOrigin.replace(/\s+/g, "-")) &&
-      (normalizePlace(route.destination) === normDest || route.to === normDest.replace(/\s+/g, "-"))
-    );
-  });
-  if (direct) return direct;
+  const originSlug = normOrigin.replace(/\s+/g, "-");
+  const destSlug = normDest.replace(/\s+/g, "-");
+
+  // 1. Direct and bidirectional check in static catalogue routes
+  for (const route of routes) {
+    const rOrigin = normalizePlace(route.origin);
+    const rDest = normalizePlace(route.destination);
+    // Forward match
+    if (
+      (rOrigin === normOrigin || route.from === originSlug) &&
+      (rDest === normDest || route.to === destSlug)
+    ) {
+      return route;
+    }
+    // Reverse/return match
+    if (
+      (rOrigin === normDest || route.from === destSlug) &&
+      (rDest === normOrigin || route.to === originSlug)
+    ) {
+      return {
+        ...route,
+        id: `${originSlug}-to-${destSlug}-taxi`,
+        from: originSlug,
+        to: destSlug,
+        origin: origin,
+        destination: destination,
+      };
+    }
+  }
+
+  // 2. Direct and bidirectional check in generated published admin routes
+  const publishedList = (generatedPublishedRoutes as any[]) || [];
+  for (const item of publishedList) {
+    const sCity = normalizePlace(item.sourceCity ?? item.source_city);
+    const dCity = normalizePlace(item.destinationCity ?? item.destination_city);
+    const fares = item.faresInr ?? item.fares_inr ?? {};
+    if (sCity === normOrigin && dCity === normDest) {
+      return {
+        id: item.slug,
+        from: originSlug,
+        to: destSlug,
+        origin: origin,
+        destination: destination,
+        km: Number(item.distanceKm ?? item.distance_km ?? 200),
+        duration: item.durationText ?? item.duration_text ?? "3h 30m",
+        kind: item.tripType === "round-trip" ? "local" : "one-way",
+        fares: {
+          sedan: Number(fares.sedan ?? 2000),
+          ertiga: Number(fares.ertiga ?? 2800),
+          innova: Number(fares.innova ?? 3800),
+          tempo: Number(fares.tempo ?? 5500),
+          urbania: Number(fares.urbania ?? 7500),
+        },
+      };
+    }
+    // Reverse match
+    if (sCity === normDest && dCity === normOrigin) {
+      return {
+        id: `${originSlug}-to-${destSlug}-taxi`,
+        from: originSlug,
+        to: destSlug,
+        origin: origin,
+        destination: destination,
+        km: Number(item.distanceKm ?? item.distance_km ?? 200),
+        duration: item.durationText ?? item.duration_text ?? "3h 30m",
+        kind: item.tripType === "round-trip" ? "local" : "one-way",
+        fares: {
+          sedan: Number(fares.sedan ?? 2000),
+          ertiga: Number(fares.ertiga ?? 2800),
+          innova: Number(fares.innova ?? 3800),
+          tempo: Number(fares.tempo ?? 5500),
+          urbania: Number(fares.urbania ?? 7500),
+        },
+      };
+    }
+  }
+
+  // 3. Direct and bidirectional check in live/cached manifest
+  if (manifest) {
+    const forwardCandidates = [
+      `${originSlug}-to-${destSlug}-taxi`,
+      `${originSlug}-to-${destSlug}`,
+      `${originSlug}-${destSlug}`,
+    ];
+    for (const slug of forwardCandidates) {
+      const entry = manifest[slug];
+      if (entry) {
+        return {
+          id: slug,
+          from: originSlug,
+          to: destSlug,
+          origin: entry.o || origin,
+          destination: entry.d || destination,
+          km: entry.km || 200,
+          duration: `${Math.floor(entry.m / 60)}h${entry.m % 60 ? ` ${entry.m % 60}m` : ""}`,
+          kind: entry.pm === "day120" ? "local" : "one-way",
+          fares: {
+            sedan: entry.fs || 2000,
+            ertiga: entry.fe || 2800,
+            innova: entry.fi || 3800,
+            tempo: entry.ft || 5500,
+            urbania: entry.fu || 7500,
+          },
+        };
+      }
+    }
+    const reverseCandidates = [
+      `${destSlug}-to-${originSlug}-taxi`,
+      `${destSlug}-to-${originSlug}`,
+      `${destSlug}-${originSlug}`,
+    ];
+    for (const slug of reverseCandidates) {
+      const entry = manifest[slug];
+      if (entry) {
+        return {
+          id: `${originSlug}-to-${destSlug}-taxi`,
+          from: originSlug,
+          to: destSlug,
+          origin: origin,
+          destination: destination,
+          km: entry.km || 200,
+          duration: `${Math.floor(entry.m / 60)}h${entry.m % 60 ? ` ${entry.m % 60}m` : ""}`,
+          kind: entry.pm === "day120" ? "local" : "one-way",
+          fares: {
+            sedan: entry.fs || 2000,
+            ertiga: entry.fe || 2800,
+            innova: entry.fi || 3800,
+            tempo: entry.ft || 5500,
+            urbania: entry.fu || 7500,
+          },
+        };
+      }
+    }
+    for (const [key, entry] of Object.entries(manifest)) {
+      const eO = normalizePlace(entry.o);
+      const eD = normalizePlace(entry.d);
+      if (eO === normOrigin && eD === normDest) {
+        return {
+          id: key,
+          from: originSlug,
+          to: destSlug,
+          origin: entry.o,
+          destination: entry.d,
+          km: entry.km || 200,
+          duration: `${Math.floor(entry.m / 60)}h${entry.m % 60 ? ` ${entry.m % 60}m` : ""}`,
+          kind: entry.pm === "day120" ? "local" : "one-way",
+          fares: {
+            sedan: entry.fs || 2000,
+            ertiga: entry.fe || 2800,
+            innova: entry.fi || 3800,
+            tempo: entry.ft || 5500,
+            urbania: entry.fu || 7500,
+          },
+        };
+      }
+      if (eO === normDest && eD === normOrigin) {
+        return {
+          id: `${originSlug}-to-${destSlug}-taxi`,
+          from: originSlug,
+          to: destSlug,
+          origin: origin,
+          destination: destination,
+          km: entry.km || 200,
+          duration: `${Math.floor(entry.m / 60)}h${entry.m % 60 ? ` ${entry.m % 60}m` : ""}`,
+          kind: entry.pm === "day120" ? "local" : "one-way",
+          fares: {
+            sedan: entry.fs || 2000,
+            ertiga: entry.fe || 2800,
+            innova: entry.fi || 3800,
+            tempo: entry.ft || 5500,
+            urbania: entry.fu || 7500,
+          },
+        };
+      }
+    }
+  }
+
+  // 4. Check backend catalog routes
+  const catRoutes = (generatedCatalog as any)?.routes || [];
+  for (const route of catRoutes) {
+    const rOrigin = normalizePlace(route.origin);
+    const rDest = normalizePlace(route.destination);
+    if (
+      (rOrigin === normOrigin || route.from === originSlug) &&
+      (rDest === normDest || route.to === destSlug)
+    ) {
+      return route;
+    }
+    if (
+      (rOrigin === normDest || route.from === destSlug) &&
+      (rDest === normOrigin || route.to === originSlug)
+    ) {
+      return {
+        ...route,
+        id: `${originSlug}-to-${destSlug}-taxi`,
+        from: originSlug,
+        to: destSlug,
+        origin: origin,
+        destination: destination,
+      };
+    }
+  }
+
+  // 5. City ID fallback
   const from = cityIdForSearch(origin);
   const to = cityIdForSearch(destination);
-  if (!from || !to) return null;
-  return routes.find((route) => route.from === from && route.to === to) ?? null;
+  if (from && to) {
+    const match = routes.find((route) => route.from === from && route.to === to);
+    if (match) return match;
+    const revMatch = routes.find((route) => route.from === to && route.to === from);
+    if (revMatch) {
+      return {
+        ...revMatch,
+        id: `${originSlug}-to-${destSlug}-taxi`,
+        from: originSlug,
+        to: destSlug,
+        origin: origin,
+        destination: destination,
+      };
+    }
+  }
+  return null;
 }
 
-function supportedRouteSuggestions(origin: string, destination: string): Route[] {
+function supportedRouteSuggestions(
+  origin: string,
+  destination: string,
+  manifest?: Record<string, CompressedRoute> | null,
+): Route[] {
   const from = cityIdForSearch(origin);
   const to = cityIdForSearch(destination);
   const normOrigin = normalizePlace(origin);
   const normDest = normalizePlace(destination);
-  const nearby = routes.filter((route) => {
+  const combined = [...routes];
+  const publishedList = (generatedPublishedRoutes as any[]) || [];
+  for (const p of publishedList) {
+    const fares = p.faresInr ?? p.fares_inr ?? {};
+    combined.push({
+      id: p.slug,
+      from: normalizePlace(p.sourceCity).replace(/\s+/g, "-"),
+      to: normalizePlace(p.destinationCity).replace(/\s+/g, "-"),
+      origin: p.sourceCity,
+      destination: p.destinationCity,
+      km: Number(p.distanceKm ?? 200),
+      duration: p.durationText ?? "3h 30m",
+      kind: p.tripType === "round-trip" ? "local" : "one-way",
+      fares: {
+        sedan: Number(fares.sedan ?? 2000),
+        ertiga: Number(fares.ertiga ?? 2800),
+        innova: Number(fares.innova ?? 3800),
+        tempo: Number(fares.tempo ?? 5500),
+        urbania: Number(fares.urbania ?? 7500),
+      },
+    });
+  }
+  const nearby = combined.filter((route) => {
     const routeOriginNorm = normalizePlace(route.origin);
     const routeDestNorm = normalizePlace(route.destination);
     return (
@@ -95,7 +338,7 @@ function supportedRouteSuggestions(origin: string, destination: string): Route[]
       (normDest && (routeDestNorm.includes(normDest) || normDest.includes(routeDestNorm)))
     );
   });
-  return [...new Map([...nearby, ...routes].map((route) => [route.id, route])).values()].slice(0, 5);
+  return [...new Map([...nearby, ...combined].map((route) => [route.id, route])).values()].slice(0, 5);
 }
 
 function UnavailableBookingRequest({ request, selectedVehicleId, message }: { request: UnsupportedRequest | null; selectedVehicleId: VehicleId; message?: string | null }) {
@@ -278,19 +521,42 @@ export function BookingPage() {
   const [confirmedTicketId, setConfirmedTicketId] = useState<string>("");
   const [amountPaid, setAmountPaid] = useState<number>(0);
 
+  const [routesManifest, setRoutesManifest] = useState<Record<string, CompressedRoute> | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    loadRoutesManifest()
+      .then((data) => {
+        if (!isMounted || !data) return;
+        setRoutesManifest(data);
+        setUnsupportedRequest((prev) => {
+          if (!prev || prev.kind !== "route") return prev;
+          if (prev.origin && prev.destination) {
+            const match = findSupportedRoute(prev.origin, prev.destination, data);
+            if (match) return null;
+          }
+          return prev;
+        });
+      })
+      .catch(() => {});
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   function updateRouteLocation(field: "origin" | "destination", value: string) {
     const nextOrigin = field === "origin" ? value : originName;
     const nextDestination = field === "destination" ? value : destinationName;
     if (field === "origin") setOriginName(value);
     else setDestinationName(value);
-    if (findSupportedRoute(nextOrigin, nextDestination)) {
+    if (findSupportedRoute(nextOrigin, nextDestination, routesManifest)) {
       setUnsupportedRequest(null);
     } else {
       setUnsupportedRequest({
         kind: "route",
         origin: nextOrigin,
         destination: nextDestination,
-        suggestions: supportedRouteSuggestions(nextOrigin, nextDestination),
+        suggestions: supportedRouteSuggestions(nextOrigin, nextDestination, routesManifest),
       });
     }
   }
@@ -426,10 +692,10 @@ export function BookingPage() {
         ...(localPackageKey === "airport-transfer" ? { transferTarget: "Agra Cantt Airport / Station" } : {}),
       };
     }
-    const route = findSupportedRoute(originName, destinationName);
+    const route = findSupportedRoute(originName, destinationName, routesManifest);
     const routeId = route?.id ?? `${normalizePlace(originName).replace(/\s+/g, "-")}-to-${normalizePlace(destinationName).replace(/\s+/g, "-")}`;
     return { kind: "outstation", id: routeId, tripType, originName: originName.trim(), destinationName: destinationName.trim() };
-  }, [bookingMode, selectedPackageCatalog, selectedPackage, localPickupName, selectedLocalCatalog, localPackageKey, originName, destinationName, tripType]);
+  }, [bookingMode, selectedPackageCatalog, selectedPackage, localPickupName, selectedLocalCatalog, localPackageKey, originName, destinationName, tripType, routesManifest]);
 
   const selectedTripName = useMemo(() => {
     if (bookingMode === "package") return selectedPackageCatalog?.title ?? selectedPackage.name;
@@ -487,12 +753,12 @@ export function BookingPage() {
     if (!isPackageTrip && qFrom && qTo) {
       setHasPreselectedRoute(true);
       setBookingMode("outstation");
-      if (!findSupportedRoute(qFrom, qTo)) {
+      if (!findSupportedRoute(qFrom, qTo, routesManifest)) {
         setUnsupportedRequest({
           kind: "route",
           origin: qFrom,
           destination: qTo,
-          suggestions: supportedRouteSuggestions(qFrom, qTo),
+          suggestions: supportedRouteSuggestions(qFrom, qTo, routesManifest),
         });
       }
     }

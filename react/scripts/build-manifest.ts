@@ -46,6 +46,8 @@ export async function buildRouteCatalogAndManifest(): Promise<void> {
   const allRoutesList: any[] = [];
   const publishedRouteItems: any[] = [];
 
+  const apiBase = (process.env.VITE_API_BASE_URL || process.env.CATALOG_API_URL || "https://skb-baghel-api-staging.onrender.com").replace(/\/+$/, "");
+
   for (const [slug, item] of Object.entries(catalogRoutes)) {
     const fs = item.fares.sedan;
     const fe = item.fares.ertiga;
@@ -89,12 +91,41 @@ export async function buildRouteCatalogAndManifest(): Promise<void> {
         urbania: fu,
       },
     });
+
+    // Alias `-taxi` slug if not present (e.g. agra-delhi -> agra-to-delhi-taxi)
+    if (!slug.endsWith("-taxi") && item.from && item.to) {
+      const taxiAlias = `${item.from}-to-${item.to}-taxi`;
+      if (!manifest[taxiAlias]) {
+        manifest[taxiAlias] = manifest[slug];
+      }
+    }
+
+    // Bidirectional return route for catalogRoutes if reverse does not exist
+    if (item.origin && item.destination && item.from && item.to && item.from !== item.to && item.kind !== "local") {
+      const revSlug = `${item.to}-to-${item.from}-taxi`;
+      if (!manifest[revSlug]) {
+        manifest[revSlug] = {
+          o: item.destination,
+          d: item.origin,
+          km: item.km,
+          m: item.durationMins || Math.round((item.km / 55) * 60),
+          fs,
+          fe,
+          fi,
+          ft,
+          fu,
+          pm: item.pricingModel || "oneway",
+          c: `${item.destination} to ${item.origin} Corridor`,
+          toll: item.toll === 1 ? 1 : 0,
+        };
+      }
+    }
   }
 
   // Published admin routes become the customer site's source of truth on the
   // next frontend rebuild. Static JSON remains the safe fallback for local
   // builds and environments where the backend is not reachable.
-  const manifestUrl = process.env.ROUTE_CATALOG_MANIFEST_URL;
+  const manifestUrl = process.env.ROUTE_CATALOG_MANIFEST_URL || (apiBase ? `${apiBase}/api/v1/route-catalog/manifest` : undefined);
   if (manifestUrl) {
     try {
       const response = await fetch(manifestUrl);
@@ -108,9 +139,12 @@ export async function buildRouteCatalogAndManifest(): Promise<void> {
           const distanceKm = Number(item.distanceKm ?? item.distance_km ?? 0);
           const durationText = String(item.durationText ?? item.duration_text ?? "");
           const durationMins = Number(durationText.match(/(\d+(?:\.\d+)?)\s*h/i)?.[1] ?? 0) * 60 || Math.round((distanceKm / 55) * 60);
+          const sourceCity = String(item.sourceCity ?? item.source_city ?? "");
+          const destCity = String(item.destinationCity ?? item.destination_city ?? "Local sightseeing");
+
           manifest[routeSlug] = {
-            o: item.sourceCity ?? item.source_city,
-            d: item.destinationCity ?? item.destination_city ?? "Local sightseeing",
+            o: sourceCity,
+            d: destCity,
             km: distanceKm,
             m: durationMins,
             fs: Number(fares.sedan ?? 2000),
@@ -122,7 +156,78 @@ export async function buildRouteCatalogAndManifest(): Promise<void> {
             c: item.sourceDetail ?? "Direct Highway Corridor",
             toll: item.tollIncluded === false ? 0 : 1,
           };
-          allRoutesList.push({ id: routeSlug, from: item.sourceCity ?? item.source_city, to: item.destinationCity ?? item.destination_city ?? "Local sightseeing", origin: item.sourceCity ?? item.source_city, destination: item.destinationCity ?? item.destination_city ?? "Local sightseeing", km: distanceKm, duration: durationText, kind: item.tripType, pricingModel: item.tripType === "round-trip" ? "day120" : item.tripType === "local-tour" ? "tour" : "oneway", toll: item.tollIncluded === false ? 0 : 1, fares: { sedan: Number(fares.sedan ?? 2000), ertiga: Number(fares.ertiga ?? 2800), innova: Number(fares.innova ?? 3800), tempo: Number(fares.tempo ?? 5500), urbania: Number(fares.urbania ?? 7500) } });
+          allRoutesList.push({
+            id: routeSlug,
+            from: sourceCity,
+            to: destCity,
+            origin: sourceCity,
+            destination: destCity,
+            km: distanceKm,
+            duration: durationText,
+            kind: item.tripType,
+            pricingModel: item.tripType === "round-trip" ? "day120" : item.tripType === "local-tour" ? "tour" : "oneway",
+            toll: item.tollIncluded === false ? 0 : 1,
+            fares: {
+              sedan: Number(fares.sedan ?? 2000),
+              ertiga: Number(fares.ertiga ?? 2800),
+              innova: Number(fares.innova ?? 3800),
+              tempo: Number(fares.tempo ?? 5500),
+              urbania: Number(fares.urbania ?? 7500),
+            },
+          });
+
+          // Bidirectional reverse route generation for SEO ranking and reverse search
+          if (sourceCity && destCity && destCity !== "Local sightseeing" && item.tripType !== "local-tour") {
+            const sSlug = sourceCity.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+            const dSlug = destCity.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+            const revSlug = `${dSlug}-to-${sSlug}-${item.tripType === "round-trip" ? "round-trip-" : ""}taxi`.replace(/--+/g, "-");
+
+            if (!manifest[revSlug]) {
+              manifest[revSlug] = {
+                o: destCity,
+                d: sourceCity,
+                km: distanceKm,
+                m: durationMins,
+                fs: Number(fares.sedan ?? 2000),
+                fe: Number(fares.ertiga ?? 2800),
+                fi: Number(fares.innova ?? 3800),
+                ft: Number(fares.tempo ?? 5500),
+                fu: Number(fares.urbania ?? 7500),
+                pm: item.tripType === "round-trip" ? "day120" : "oneway",
+                c: `${destCity} to ${sourceCity} Highway Corridor`,
+                toll: item.tollIncluded === false ? 0 : 1,
+              };
+              allRoutesList.push({
+                id: revSlug,
+                from: destCity,
+                to: sourceCity,
+                origin: destCity,
+                destination: sourceCity,
+                km: distanceKm,
+                duration: durationText,
+                kind: item.tripType,
+                pricingModel: item.tripType === "round-trip" ? "day120" : "oneway",
+                toll: item.tollIncluded === false ? 0 : 1,
+                fares: {
+                  sedan: Number(fares.sedan ?? 2000),
+                  ertiga: Number(fares.ertiga ?? 2800),
+                  innova: Number(fares.innova ?? 3800),
+                  tempo: Number(fares.tempo ?? 5500),
+                  urbania: Number(fares.urbania ?? 7500),
+                },
+              });
+              publishedRouteItems.push({
+                ...item,
+                id: `${item.id ?? revSlug}-rev`,
+                slug: revSlug,
+                sourceCity: destCity,
+                source_city: destCity,
+                destinationCity: sourceCity,
+                destination_city: sourceCity,
+                title: `${destCity} to ${sourceCity} Taxi`,
+              });
+            }
+          }
         }
         console.log(`✅ [Manifest Builder] Merged published admin route catalog from ${manifestUrl}.`);
       }
@@ -234,7 +339,6 @@ export async function buildRouteCatalogAndManifest(): Promise<void> {
   // keep the customer UI fresh, while this snapshot gives crawlers complete
   // HTML for catalog pages instead of a client-only loading shell.
   const publishedCatalogPath = join(reactRoot, "src", "data", "generated-published-catalog.json");
-  const apiBase = (process.env.VITE_API_BASE_URL || process.env.CATALOG_API_URL || "https://skb-baghel-api-staging.onrender.com").replace(/\/+$/, "");
   const catalogUrl = process.env.CATALOG_API_URL || process.env.VITE_API_BASE_URL || apiBase;
   let publishedCatalog: unknown[] = [];
   if (catalogUrl) {
@@ -283,23 +387,70 @@ export async function buildRouteCatalogAndManifest(): Promise<void> {
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const payload = await response.json() as { data?: any[] };
       const rawItems = Array.isArray(payload.data) ? payload.data : [];
+      const resolveMediaUrl = (url?: string) => {
+        if (!url) return "/assets/packages/taj-dawn.webp";
+        const trimmed = url.trim();
+        if (trimmed.startsWith("/api/")) return `${apiBase}${trimmed}`;
+        return trimmed;
+      };
+
       publishedTourPackages = rawItems
         .filter((item) => item.status === "published")
-        .map((item) => ({
-          ...item,
-          slug: item.slug ?? item.packageCode ?? item.package_code,
-          image: item.imageUrl ?? item.image_url ?? item.image ?? "/assets/packages/taj-dawn.webp",
-          gallery: Array.isArray(item.gallery) ? item.gallery : [],
-          fleetPrices: sanitizeFleetPrices(item.fleetPrices ?? item.fleet_prices),
-        }));
+        .map((item) => {
+          const rawImg = item.imageUrl ?? item.image_url ?? item.image;
+          const image = resolveMediaUrl(rawImg);
+          const gallery = Array.isArray(item.gallery)
+            ? item.gallery.map((g: any) => {
+                if (typeof g === "string") return { url: resolveMediaUrl(g), alt: item.name, caption: item.name };
+                return {
+                  ...g,
+                  url: resolveMediaUrl(g.url),
+                };
+              })
+            : [];
+          return {
+            ...item,
+            slug: item.slug ?? item.packageCode ?? item.package_code,
+            image,
+            gallery: gallery.length > 0 ? gallery : [{ url: image, alt: item.name, caption: item.name }],
+            fleetPrices: sanitizeFleetPrices(item.fleetPrices ?? item.fleet_prices),
+          };
+        });
       console.log(`✅ [Manifest Builder] Snapshotted ${publishedTourPackages.length} published tour packages from ${tourPackagesManifestUrl}.`);
     } catch (error) {
-      console.warn(`⚠️ [Manifest Builder] Tour packages manifest unavailable; using empty snapshot (${error instanceof Error ? error.message : String(error)}).`);
+      console.warn(`⚠️ [Manifest Builder] Tour packages manifest unavailable; preserving existing snapshot (${error instanceof Error ? error.message : String(error)}).`);
     }
   } else {
-    console.warn("⚠️ [Manifest Builder] TOUR_PACKAGES_MANIFEST_URL not set; published tour packages SSG snapshot is empty.");
+    console.warn("⚠️ [Manifest Builder] TOUR_PACKAGES_MANIFEST_URL not set; skipping remote tour packages fetch.");
   }
-  writeFileSync(join(reactRoot, "src", "data", "generated-published-tour-packages.json"), JSON.stringify(publishedTourPackages, null, 2), "utf-8");
+  const publishedTourPackagesPath = join(reactRoot, "src", "data", "generated-published-tour-packages.json");
+  if (publishedTourPackages.length > 0) {
+    writeFileSync(publishedTourPackagesPath, JSON.stringify(publishedTourPackages, null, 2), "utf-8");
+  } else {
+    // If empty and existing file exists, update any relative /api/ media URLs in existing snapshot
+    try {
+      const existing = JSON.parse(readFileSync(publishedTourPackagesPath, "utf-8"));
+      if (Array.isArray(existing) && existing.length > 0) {
+        const resolveMediaUrl = (url?: string) => {
+          if (!url) return "/assets/packages/taj-dawn.webp";
+          const trimmed = url.trim();
+          if (trimmed.startsWith("/api/")) return `${apiBase}${trimmed}`;
+          return trimmed;
+        };
+        const updated = existing.map((item: any) => ({
+          ...item,
+          image: resolveMediaUrl(item.image ?? item.imageUrl),
+          gallery: Array.isArray(item.gallery)
+            ? item.gallery.map((g: any) => ({
+                ...g,
+                url: resolveMediaUrl(g.url),
+              }))
+            : [],
+        }));
+        writeFileSync(publishedTourPackagesPath, JSON.stringify(updated, null, 2), "utf-8");
+      }
+    } catch {}
+  }
 
   // 2. Transfer Routes manifest (GET /api/v1/transfer-routes/manifest)
   const transferRoutesManifestUrl = process.env.TRANSFER_ROUTES_MANIFEST_URL || (apiBase ? `${apiBase}/api/v1/transfer-routes/manifest` : undefined);

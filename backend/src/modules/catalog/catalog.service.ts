@@ -66,7 +66,7 @@ export function createCatalogService(deps: { db: Repositories; clock: Clock; med
     const routes = compileBaseRoutes();
     const allDbItems = await deps.db.catalog.list({});
 
-    // Incorporate database routes & exclusions
+    // Incorporate database routes & exclusions from catalog_items
     for (const item of allDbItems) {
       if ((item.type as string) === "ride" || (item.type as string) === "route") {
         if (item.status !== "published") {
@@ -91,6 +91,64 @@ export function createCatalogService(deps: { db: Repositories; clock: Clock; med
             c: item.routeSummary || existing?.c || "Direct Highway Corridor",
             toll: existing?.toll ?? 1,
           };
+        }
+      }
+    }
+
+    // Incorporate published routes from route_catalog table with automatic bidirectional generation
+    if (deps.db.routeCatalog) {
+      const dbRoutes = await deps.db.routeCatalog.list({ status: "published", limit: 1000 });
+      for (const item of dbRoutes.items || []) {
+        const fares = item.faresInr || {};
+        const fs = Number(fares.sedan || 2000);
+        const fe = Number(fares.ertiga || 2800);
+        const fi = Number(fares.innova || 3800);
+        const ft = Number(fares.tempo || 5500);
+        const fu = Number(fares.urbania || 7500);
+        const fh = Number(fares.hatchback || Math.round(fs * 0.85));
+        const distanceKm = Number(item.distanceKm || 200);
+        const durationMins =
+          Number(item.durationText?.match(/(\d+(?:\.\d+)?)\s*h/i)?.[1] ?? 0) * 60 ||
+          Math.round((distanceKm / 55) * 60);
+
+        routes[item.slug] = {
+          o: item.sourceCity,
+          d: item.destinationCity || "Local sightseeing",
+          km: distanceKm,
+          m: durationMins,
+          fh,
+          fs,
+          fe,
+          fi,
+          ft,
+          fu,
+          pm: item.tripType === "round-trip" ? "day120" : item.tripType === "local-tour" ? "tour" : "oneway",
+          c: item.sourceDetail || "Direct Highway Corridor",
+          toll: item.tollIncluded === false ? 0 : 1,
+        };
+
+        // Automatic return / reverse route generation for bidirectional coverage & SEO ranking
+        if (item.destinationCity && item.tripType !== "local-tour") {
+          const s = item.sourceCity.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+          const d = item.destinationCity.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+          const reverseSlug = `${d}-to-${s}-${item.tripType === "round-trip" ? "round-trip-" : ""}taxi`.replace(/--+/g, "-");
+          if (!routes[reverseSlug]) {
+            routes[reverseSlug] = {
+              o: item.destinationCity,
+              d: item.sourceCity,
+              km: distanceKm,
+              m: durationMins,
+              fh,
+              fs,
+              fe,
+              fi,
+              ft,
+              fu,
+              pm: item.tripType === "round-trip" ? "day120" : "oneway",
+              c: item.sourceDetail || "Direct Highway Corridor",
+              toll: item.tollIncluded === false ? 0 : 1,
+            };
+          }
         }
       }
     }
@@ -540,6 +598,7 @@ export function createCatalogService(deps: { db: Repositories; clock: Clock; med
       }
       return null;
     },
+    bumpManifest,
   };
 }
 

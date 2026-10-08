@@ -932,6 +932,54 @@ export function createMemoryRepositories(nowIso = new Date().toISOString()): Rep
     },
     devices: {
       async register(record) {
+        if (record.userId) {
+          for (const [id, d] of devices.entries()) {
+            if (d.deviceId === record.deviceId && !d.userId) {
+              devices.delete(id);
+            }
+          }
+          let existingId: string | null = null;
+          for (const [id, d] of devices.entries()) {
+            if (d.deviceId === record.deviceId && d.userId === record.userId) {
+              existingId = id;
+              break;
+            }
+          }
+          if (existingId) {
+            const existing = devices.get(existingId)!;
+            const updated: DeviceRegistrationRecord = {
+              ...existing,
+              bookingId: record.bookingId ?? existing.bookingId,
+              platform: record.platform,
+              fcmToken: record.fcmToken,
+              isActive: record.isActive,
+              lastSeenAt: record.lastSeenAt,
+            };
+            devices.set(existingId, updated);
+            return clone(updated);
+          }
+        } else {
+          let existingId: string | null = null;
+          for (const [id, d] of devices.entries()) {
+            if (d.deviceId === record.deviceId && !d.userId) {
+              existingId = id;
+              break;
+            }
+          }
+          if (existingId) {
+            const existing = devices.get(existingId)!;
+            const updated: DeviceRegistrationRecord = {
+              ...existing,
+              bookingId: record.bookingId ?? existing.bookingId,
+              platform: record.platform,
+              fcmToken: record.fcmToken,
+              isActive: record.isActive,
+              lastSeenAt: record.lastSeenAt,
+            };
+            devices.set(existingId, updated);
+            return clone(updated);
+          }
+        }
         devices.set(record.id, clone(record));
         return clone(record);
       },
