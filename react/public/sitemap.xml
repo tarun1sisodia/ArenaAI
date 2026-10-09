@@ -47,6 +47,15 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels-customer.coccoder999.workers.dev/en/packages/" />
   </url>
   <url>
+    <loc>https://skbagheltravels-customer.coccoder999.workers.dev/en/monuments/</loc>
+    
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://skbagheltravels-customer.coccoder999.workers.dev/en/monuments/" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://skbagheltravels-customer.coccoder999.workers.dev/hi/monuments/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://skbagheltravels-customer.coccoder999.workers.dev/en/monuments/" />
+  </url>
+  <url>
     <loc>https://skbagheltravels-customer.coccoder999.workers.dev/en/fleet/</loc>
     
     <changefreq>weekly</changefreq>

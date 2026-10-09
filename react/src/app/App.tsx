@@ -25,6 +25,7 @@ const AuthCallbackPage = lazy(() => import("../pages/AuthCallbackPage").then((m)
 const MyBookingsPage = lazy(() => import("../pages/MyBookingsPage").then((m) => ({ default: m.MyBookingsPage })));
 const PaymentResumePage = lazy(() => import("../pages/PaymentResumePage").then((m) => ({ default: m.PaymentResumePage })));
 const LoginPage = lazy(() => import("../pages/LoginPage").then((m) => ({ default: m.LoginPage })));
+const MonumentsPage = lazy(() => import("../pages/MonumentsPage").then((m) => ({ default: m.MonumentsPage })));
 import { SEO_LANDING_SLUGS, type SeoLandingSlug } from "../data/seoLandingSlugs";
 import { marketingHubs } from "./routes";
 import { SeoHead } from "../components/seo/SeoHead";
@@ -160,6 +161,15 @@ export function getSeo(
       description: "Curated private tour packages: Taj Mahal Sunrise tour, Mathura Vrindavan, Gatimaan train package & Golden Triangle. Multi-currency switcher, transparent all-inclusive fares.",
       ogImage: "/assets/packages/taj-dawn.webp",
       keywords: ["Agra tour packages", "Taj Mahal sunrise tour", "Mathura Vrindavan tour", "Golden Triangle package", "private tour guide"],
+    };
+  }
+
+  if (section === "monuments") {
+    return {
+      title: "Monuments of Agra — Visiting Guides & Transport | Agra SK Baghel Tour and Travels",
+      description: "Taj Mahal, Agra Fort, Fatehpur Sikri — visiting hours, guides, and transport priced through the published corridor engine.",
+      ogImage: "/assets/places/agra-taj-mahal.webp",
+      keywords: ["Monuments of Agra", "Taj Mahal guide", "Agra Fort", "Fatehpur Sikri", "Agra sightseeing monuments"],
     };
   }
 
@@ -425,6 +435,8 @@ export function App({ pathname: propPathname }: AppProps = {}) {
     isPrivateCustomerPage ||
     isMarketingHub ||
     section === "rent" ||
+    section === "monuments" ||
+    cleanPath === "/monuments" ||
     Boolean(activeRoute) ||
     Boolean(matchedPackage) ||
     Boolean(matchedVehicle) ||
@@ -492,6 +504,8 @@ export function App({ pathname: propPathname }: AppProps = {}) {
             <RoutesPage language={language} />
           ) : section === "packages" ? (
             <PackagesPage language={language} />
+          ) : section === "monuments" || cleanPath === "/monuments" ? (
+            <MonumentsPage language={language} />
           ) : section === "fleet" ? (
             <FleetPage language={language} />
           ) : section === "about" ? (

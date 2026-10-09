@@ -225,6 +225,7 @@ INSERT INTO route_catalog (
   '{"sedan":4200,"ertiga":5400,"innova":6800,"tempo":10500,"urbania":14200}'::jsonb,
   0, 0, true, 300, 'draft', true, false, 'NH-48 / NE-4 (Mumbai Exp)',
   '100% all-inclusive of tolls, state taxes, chauffeur — no return fare'
+)
 ON CONFLICT (slug) DO UPDATE SET
   trip_type = EXCLUDED.trip_type,
   source_city = EXCLUDED.source_city,

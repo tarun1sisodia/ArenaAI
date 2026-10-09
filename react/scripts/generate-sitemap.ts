@@ -240,6 +240,7 @@ const hubSlugs = [
   "services",
   "routes",
   "packages",
+  "monuments",
   "fleet",
   "about",
   "contact",

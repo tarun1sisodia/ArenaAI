@@ -6,7 +6,9 @@ export async function registerLocalPackagesRoutes(
   app: FastifyInstance,
   controller: ReturnType<typeof createLocalPackagesController>
 ): Promise<void> {
-  // Public manifest & detail
+  // Public manifest & detail (canonical /local-tours + compatibility /local-packages)
+  app.get("/api/v1/local-tours", { config: { rateLimit: { max: 120, timeWindow: "1 minute" } }, handler: controller.manifest });
+  app.get("/api/v1/local-tours/by-code/:code", { config: { rateLimit: { max: 120, timeWindow: "1 minute" } }, handler: controller.publicGetByCode });
   app.get("/api/v1/local-packages/manifest", {
     config: { rateLimit: { max: 120, timeWindow: "1 minute" } },
     handler: controller.manifest,
@@ -16,7 +18,8 @@ export async function registerLocalPackagesRoutes(
     handler: controller.publicGetByCode,
   });
 
-  // Admin CRUD
+  // Admin CRUD (canonical /local-tours + compatibility /local-packages)
+  app.get("/api/v1/ops/admin/local-tours", { config: { rateLimit: { max: 60, timeWindow: "1 minute" } }, handler: controller.list });
   app.get("/api/v1/ops/admin/local-packages", {
     config: { rateLimit: { max: 60, timeWindow: "1 minute" } },
     handler: controller.list,

@@ -8,6 +8,7 @@ export const marketingHubs = [
   "services",
   "routes",
   "packages",
+  "monuments",
   "fleet",
   "about",
   "contact",

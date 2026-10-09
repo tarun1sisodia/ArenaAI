@@ -47,13 +47,13 @@ interface ManifestRouteData {
   fi: number;
   ft: number;
   fu: number;
-  pm: "oneway" | "day120" | "tempo" | "tour" | "custom";
+  pm: "one-way" | "round-trip" | "local-tour" | "oneway" | "day120" | "tempo" | "tour" | "custom" | string;
   c: string;
   toll: 1 | 0;
 }
 
 function mapCatalogueRoute(item: CatalogueRoute): RouteItem {
-  const isLocal = item.kind === "local" || item.pricingModel === "day120";
+  const isLocal = (item as any).kind === "local" || (item as any).kind === "local-tour" || item.pricingModel === "day120" || item.pricingModel === "12hr-120km" || item.pricingModel === "8hr-80km";
   const isTempo = item.pricingModel === "tempo";
   let category: RouteCategory = "expressway";
   const cLower = (item.corridor || "").toLowerCase();

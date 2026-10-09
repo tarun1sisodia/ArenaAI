@@ -6,7 +6,9 @@ export async function registerTransferRoutesRoutes(
   app: FastifyInstance,
   controller: ReturnType<typeof createTransferRoutesController>
 ): Promise<void> {
-  // Public manifest & detail
+  // Public manifest & detail (canonical /transfers + compatibility /transfer-routes)
+  app.get("/api/v1/transfers", { config: { rateLimit: { max: 120, timeWindow: "1 minute" } }, handler: controller.manifest });
+  app.get("/api/v1/transfers/by-code/:code", { config: { rateLimit: { max: 120, timeWindow: "1 minute" } }, handler: controller.publicGetByCode });
   app.get("/api/v1/transfer-routes/manifest", {
     config: { rateLimit: { max: 120, timeWindow: "1 minute" } },
     handler: controller.manifest,
@@ -16,7 +18,8 @@ export async function registerTransferRoutesRoutes(
     handler: controller.publicGetByCode,
   });
 
-  // Admin CRUD
+  // Admin CRUD (canonical /transfers + compatibility /transfer-routes)
+  app.get("/api/v1/ops/admin/transfers", { config: { rateLimit: { max: 60, timeWindow: "1 minute" } }, handler: controller.list });
   app.get("/api/v1/ops/admin/transfer-routes", {
     config: { rateLimit: { max: 60, timeWindow: "1 minute" } },
     handler: controller.list,

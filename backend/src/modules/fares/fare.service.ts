@@ -1,414 +1,109 @@
-import { applyPromo, calculateFare, findRoute } from "./fare.engine.js";
-import { isGroupExceptionVehicle, PACKAGE_UPGRADES, slugifyPlace, VEHICLES } from "./fare.catalogue.js";
+/**
+ * @file fare.service.ts — Authoritative fare calculations and fleet pricing resolution.
+ * @usage Used by FareController, BookingService, and Admin Fare API.
+ */
+
+import type { Repositories } from "../../db/types.js";
+import { applyPromo, calculateFare } from "./fare.engine.js";
+import { isGroupExceptionVehicle } from "./fare.catalogue.js";
+import { calculateAdvanceAndBalance } from "./rules/advance.rules.js";
+import { resolveFleet } from "./fleet/fleet.service.js";
+import { resolveProductContext } from "./resolvers/product.resolver.js";
+import { resolveTripDistanceKm } from "./resolvers/distance.resolver.js";
+import { resolveDbPromo } from "./resolvers/promo.resolver.js";
 import type {
   CalculateFareInput,
   FareEngineInput,
   FareEngineResult,
-  FareRuleOverrides,
-  FareVehicleOverride,
 } from "./fare.types.js";
-import type { Repositories } from "../../db/types.js";
-import type { RouteCatalogRecord } from "../../db/route-catalog-types.js";
-import { Errors } from "../../shared/errors.js";
-import { resolveTierKey, toCanonicalTierKey } from "../../contracts/vehicle-tiers.js";
+import type { PublicFleetVehicle } from "./fleet/fleet.types.js";
 
-export type PublicFleetVehicle = {
-  id: string;
-  tier: string;
-  name: string;
-  seats: number;
-  bags: number;
-  perKm: number;
-  active: boolean;
-};
+export type { PublicFleetVehicle } from "./fleet/fleet.types.js";
 
+/**
+ * Service orchestrator for fare calculations and live fleet resolution.
+ * Coordinates database product resolvers, distance resolution, promo lookups,
+ * and delegates pure deterministic math to the FareEngine.
+ */
 export function createFareService(fareVersion: string, db?: Repositories) {
   return {
     /**
-     * PUBLIC — the live fleet read from the active fare rules. The customer
-     * site merges this over its static fleet so desk-side vehicle edits
-     * (name / seats / per-km rate / availability) appear without a deploy.
+     * PUBLIC — returns the live fleet read from active database fare rules (with desk-side edits)
+     * merged over static specifications.
      */
     async getFleet(): Promise<{ version: string; vehicles: PublicFleetVehicle[] }> {
-      const base: PublicFleetVehicle[] = VEHICLES.map((v) => ({
-        id: v.id,
-        tier: v.tier,
-        name: v.name,
-        seats: v.seats,
-        bags: v.bags,
-        perKm: v.perKm,
-        active: true,
-      }));
-      if (!db) return { version: fareVersion, vehicles: base };
-      const rule = await db.fareRules.getActive();
-      const cfgVehicles = rule && Array.isArray((rule.config as Record<string, unknown>).vehicles)
-        ? ((rule.config as Record<string, unknown>).vehicles as Array<Record<string, unknown>>)
-        : [];
-      const vehicles = base.map((v) => {
-        // C-ENUM-001: override keys are normalized to canonical tier keys, so
-        // desk-side entries keyed by legacy short ids (innova/tempo) still match.
-        const override = cfgVehicles.find((ov) => {
-          const key = toCanonicalTierKey(String(ov.tier ?? ov.id ?? ""));
-          return key !== undefined && key === v.tier;
-        });
-        if (!override) return v;
-        return {
-          ...v,
-          name: typeof override.name === "string" && override.name.trim() ? override.name.trim() : v.name,
-          seats: typeof override.seats === "number" && override.seats > 0 ? Math.floor(override.seats) : v.seats,
-          bags: typeof override.bags === "number" && override.bags >= 0 ? Math.floor(override.bags) : v.bags,
-          perKm: typeof override.perKm === "number" && override.perKm > 0 ? override.perKm : v.perKm,
-          active: typeof override.active === "boolean" ? override.active : v.active,
-        };
-      });
-      return { version: rule?.version ?? fareVersion, vehicles };
+      return resolveFleet(db, fareVersion);
     },
 
+    /**
+     * Server-authoritative fare calculation. Client-submitted prices and advances are completely ignored.
+     */
     async calculate(input: CalculateFareInput): Promise<FareEngineResult> {
-      // Resolve a published catalog item once. This keeps catalog-backed local
-      // tours/transfers on the server-authoritative path without trusting
-      // client-supplied distance or price values.
-      const catalogItem = db && input.packageId
-        ? (await db.catalog.getById(input.packageId)) ?? (await db.catalog.getBySlug(input.packageId))
-        : null;
+      // 1. Resolve product entities & active fare rules overrides
+      const productCtx = await resolveProductContext(input, db, fareVersion);
 
-      // Check for published dossier entities (tour_packages, transfer_routes, local_packages, route_catalog)
-      let dossierFleetPrices: Record<string, number> | undefined;
-      let dossierUsePerKm: boolean | undefined;
-      let dossierPerKmRateOverride: number | null | undefined;
-      let dossierNightChargeInr: number | undefined;
-      let dossierNights: number | undefined;
-      let dossierUpgradeSurcharges: Record<string, number> | undefined;
-      let dossierNightHaltInr: number | undefined;
-      let dossierDriverAllowance: number | undefined;
-      let dossierMinKmPerDay: number | undefined;
-      let dossierPackageName: string | undefined;
-      let dossierPackageDuration: string | undefined;
-      let dossierCatalogItemType: "package" | "tour" | "ride" | undefined;
-      let dossierDistanceKm: number | undefined;
-      let dossierPackageBasePrice: number | undefined;
-      let dossierTollAmountInr: number | undefined;
+      // 2. Resolve authoritative distance in km
+      const distanceKm = resolveTripDistanceKm(
+        input,
+        productCtx.productDistanceKm,
+        productCtx.catalogDistanceKm,
+      );
 
-      if (db) {
-        // 1. Tour packages
-        if (input.packageId) {
-          const tourPkg =
-            (await db.tourPackages.getById(input.packageId)) ??
-            (await db.tourPackages.getByCode(input.packageId));
-          if (tourPkg && tourPkg.status === "published" && tourPkg.isActive) {
-            dossierFleetPrices = tourPkg.fleetPrices;
-            dossierNightChargeInr = tourPkg.nightChargeInr;
-            dossierNights = tourPkg.nights;
-            dossierPackageName = tourPkg.name;
-            dossierPackageDuration = tourPkg.durationText;
-            dossierPackageBasePrice = tourPkg.startingPriceInr;
-            dossierCatalogItemType = "tour";
-            dossierUsePerKm = false;
-            dossierDistanceKm = tourPkg.days ? tourPkg.days * 300 : undefined;
-
-            const [globalUpgrades, pkgUpgrades] = await Promise.all([
-              db.tourPackages.listUpgrades(null),
-              db.tourPackages.listUpgrades(tourPkg.id),
-            ]);
-            const upgradesMap: Record<string, number> = { ...PACKAGE_UPGRADES };
-            for (const u of globalUpgrades) {
-              upgradesMap[u.tierCode] = u.surchargeInr;
-            }
-            for (const u of pkgUpgrades) {
-              upgradesMap[u.tierCode] = u.surchargeInr;
-            }
-            dossierUpgradeSurcharges = upgradesMap;
-          }
-        }
-
-        // 2. Transfer routes
-        if (
-          !dossierFleetPrices &&
-          (input.packageId ||
-            input.localPackageKey === "airport-transfer" ||
-            input.tripType === "airport-transfer")
-        ) {
-          const lookupCode =
-            input.packageId ??
-            (input.localPackageKey === "airport-transfer" ? "kheria-airport" : undefined);
-          const xfer = lookupCode
-            ? (await db.transferRoutes.getById(lookupCode)) ??
-              (await db.transferRoutes.getByCode(lookupCode))
-            : null;
-          if (xfer && xfer.status === "published" && xfer.isActive) {
-            dossierFleetPrices = xfer.fleetPrices;
-            dossierUsePerKm = xfer.usePerKm;
-            dossierNightChargeInr = xfer.nightChargeInr;
-            dossierPackageName = xfer.name;
-            dossierPackageDuration = xfer.distanceText ?? undefined;
-            dossierCatalogItemType = "ride";
-            dossierDistanceKm =
-              xfer.distanceText && /\d+/.test(xfer.distanceText)
-                ? parseInt(xfer.distanceText.match(/\d+/)![0], 10)
-                : undefined;
-          }
-        }
-
-        // 3. Local packages
-        if (!dossierFleetPrices) {
-          let localCode = input.packageId;
-          if (!localCode) {
-            if (input.localPackageKey === "8hr-80km") localCode = "agra-standard-sightseeing";
-            else if (input.localPackageKey === "12hr-120km") localCode = "agra-extended-city-tour";
-          }
-          if (localCode) {
-            const localPkg =
-              (await db.localPackages.getById(localCode)) ??
-              (await db.localPackages.getByCode(localCode));
-            if (localPkg && localPkg.status === "published" && localPkg.isActive) {
-              dossierFleetPrices = localPkg.fleetPrices;
-              dossierUsePerKm = localPkg.usePerKm;
-              // C-ENUM-001: extra_rates may still be keyed by legacy short ids in
-              // old rows — resolveTierKey tries canonical first, then legacy.
-              // TODO(G2): log when hit.via === "legacy" so unmigrated rows surface.
-              const extraRateHit = resolveTierKey(localPkg.extraRates, input.vehicleTier);
-              dossierPerKmRateOverride = extraRateHit.value?.per_km ?? undefined;
-              dossierNightChargeInr = localPkg.nightChargeInr;
-              dossierPackageName = localPkg.name;
-              dossierPackageDuration = `${localPkg.durationHours} hrs / ${localPkg.includedKm} km`;
-              dossierCatalogItemType = "package";
-              dossierDistanceKm = localPkg.includedKm;
-            }
-          }
-        }
-
-        // 4. Route catalog
-        if (!dossierFleetPrices) {
-          let routeRow: RouteCatalogRecord | null = null;
-          if (input.packageId) {
-            routeRow =
-              (await db.routeCatalog.getById(input.packageId)) ??
-              (await db.routeCatalog.getBySlug(input.packageId));
-          }
-          if (!routeRow && input.originName && input.destinationName) {
-            const s = slugifyPlace(input.originName);
-            const d = slugifyPlace(input.destinationName);
-            const candidates = [
-              `${s}-to-${d}-taxi`,
-              `${s}-to-${d}`,
-              `${s}-to-${d}-round-trip-taxi`,
-              `${d}-to-${s}-taxi`,
-              `${d}-to-${s}`,
-              `${d}-to-${s}-round-trip-taxi`,
-            ];
-            for (const cand of candidates) {
-              const found = await db.routeCatalog.getBySlug(cand);
-              if (found) {
-                routeRow = found;
-                break;
-              }
-            }
-          }
-          if (routeRow && routeRow.status === "published" && !routeRow.needsReview) {
-            dossierFleetPrices = routeRow.usePerKm ? undefined : routeRow.faresInr;
-            dossierUsePerKm = routeRow.usePerKm;
-            dossierNightHaltInr = routeRow.nightHaltInr;
-            dossierDriverAllowance = routeRow.driverChargeInr;
-            dossierMinKmPerDay = routeRow.minKmPerDay;
-            dossierTollAmountInr = routeRow.tollIncluded ? undefined : (routeRow.tollAmountInr ?? undefined);
-            dossierDistanceKm = routeRow.distanceKm ?? undefined;
-            dossierPackageName = `${routeRow.sourceCity} to ${routeRow.destinationCity ?? ""}`;
-            dossierPackageDuration = routeRow.durationText ?? undefined;
-          }
-        }
-      }
-
-      // Derive distanceKm from catalogue if omitted by client
-      let distanceKm = input.distanceKm;
-      if (!distanceKm || !Number.isFinite(distanceKm) || distanceKm <= 0) {
-        if (dossierDistanceKm && dossierDistanceKm > 0) {
-          distanceKm = dossierDistanceKm;
-        } else if (catalogItem?.distanceKm && catalogItem.distanceKm > 0) {
-          distanceKm = catalogItem.distanceKm;
-        } else if (input.packageId) {
-          distanceKm = 100;
-        } else if (input.localPackageKey === "8hr-80km") {
-          distanceKm = 80;
-        } else if (input.localPackageKey === "12hr-120km") {
-          distanceKm = 120;
-        } else if (input.localPackageKey === "airport-transfer" || input.tripType === "airport-transfer") {
-          distanceKm = 20;
-        } else {
-          const route = findRoute(input.originName, input.destinationName);
-          distanceKm = route.km;
-        }
-      }
-
-      // Load active fare rules if DB is available
-      const activeRule = db ? await db.fareRules.getActive() : null;
-      const effectiveVersion = activeRule?.version ?? fareVersion;
-      const cfg = (activeRule?.config as Record<string, unknown>) || {};
-      const outstationCfg =
-        typeof cfg.outstation === "object" && cfg.outstation !== null
-          ? (cfg.outstation as Record<string, unknown>)
-          : {};
-
-      const nightStartHour =
-        typeof outstationCfg.nightStartHour === "number" ? outstationCfg.nightStartHour : undefined;
-      const nightEndHour =
-        typeof outstationCfg.nightEndHour === "number" ? outstationCfg.nightEndHour : undefined;
-
-      // Check package in db.catalog if packageId provided
-      let packageBasePrice: number | undefined;
-      let packageName: string | undefined;
-      let packageDuration: string | undefined;
-      if (db && input.packageId) {
-        if (catalogItem) {
-          if (catalogItem.status !== "published") {
-            throw Errors.notFound("CATALOG_ITEM_NOT_FOUND", "Package is not available for booking.");
-          }
-          if (typeof catalogItem.startingPriceInr === "number" && catalogItem.startingPriceInr > 0) {
-            packageBasePrice = catalogItem.startingPriceInr;
-          }
-          packageName = catalogItem.title;
-          packageDuration = catalogItem.durationText;
-        }
-      }
-
-      const ruleOverrides: FareRuleOverrides = {
-        vehicles: Array.isArray(cfg.vehicles) ? (cfg.vehicles as FareVehicleOverride[]) : undefined,
-        minKmPerDay:
-          dossierMinKmPerDay !== undefined && dossierMinKmPerDay > 0
-            ? dossierMinKmPerDay
-            : typeof outstationCfg.minKmPerDay === "number"
-            ? outstationCfg.minKmPerDay
-            : undefined,
-        sameDayRoundMultiplier:
-          typeof outstationCfg.sameDayRoundMultiplier === "number"
-            ? outstationCfg.sameDayRoundMultiplier
-            : undefined,
-        nightAllowanceCab:
-          typeof outstationCfg.nightAllowanceCab === "number" ? outstationCfg.nightAllowanceCab : undefined,
-        nightAllowanceTempo:
-          typeof outstationCfg.nightAllowanceTempo === "number" ? outstationCfg.nightAllowanceTempo : undefined,
-        driverAllowance:
-          dossierDriverAllowance !== undefined && dossierDriverAllowance > 0
-            ? dossierDriverAllowance
-            : typeof outstationCfg.driverAllowance === "number"
-            ? outstationCfg.driverAllowance
-            : undefined,
-        packageBasePrice: dossierPackageBasePrice ?? packageBasePrice,
-        packageName: dossierPackageName ?? packageName,
-        packageDuration: dossierPackageDuration ?? packageDuration,
-        catalogItemType:
-          dossierCatalogItemType ??
-          (catalogItem?.type === "package" || catalogItem?.type === "tour" || catalogItem?.type === "ride"
-            ? catalogItem.type
-            : undefined),
-        catalogDistanceKm: dossierDistanceKm ?? catalogItem?.distanceKm ?? undefined,
-
-        fleetPrices: dossierFleetPrices,
-        usePerKm: dossierUsePerKm,
-        perKmRateOverride: dossierPerKmRateOverride,
-        nightChargeInr: dossierNightChargeInr,
-        nights: dossierNights,
-        upgradeSurcharges: dossierUpgradeSurcharges,
-        nightHaltInr: dossierNightHaltInr,
-        tollAmountInr: dossierTollAmountInr,
-
-        nightStartHour,
-        nightEndHour,
-
-        ...input.ruleOverrides,
-      };
+      // 3. Resolve database promo code if present
+      const promoContext = await resolveDbPromo(input.promoCode, db);
 
       const engineInput: FareEngineInput = {
         ...input,
         distanceKm,
-        fareVersion: effectiveVersion,
-        ruleOverrides,
+        fareVersion: productCtx.effectiveVersion,
+        ruleOverrides: productCtx.ruleOverrides,
+        promoAllowGroupVehicles: promoContext.allowGroupVehicles,
       };
 
-      // If DB available and promo code provided, validate against DB for expiry, active, redemption limits
-      let lookup:
-        | ((code: string) => {
-            discount: number;
-            minTotal: number;
-            desc: string;
-            isActive?: boolean;
-            validFrom?: string | null;
-            validTo?: string | null;
-            maxRedemptions?: number | null;
-            redemptionCount?: number;
-            allowGroupVehicles?: boolean;
-          } | null)
-        | undefined;
-      let lookupAllowGroupVehicles = false;
-      if (db && input.promoCode) {
-        const promo = await db.promos.getByCode(input.promoCode);
-        if (promo) {
-          lookupAllowGroupVehicles = promo.allowGroupVehicles;
-          lookup = () => ({
-            discount: promo.discountAmount,
-            minTotal: promo.minTotal,
-            desc: promo.description,
-            isActive: promo.isActive,
-            validFrom: promo.validFrom,
-            validTo: promo.validTo,
-            maxRedemptions: promo.maxRedemptions,
-            redemptionCount: promo.redemptionCount,
-            allowGroupVehicles: promo.allowGroupVehicles,
-          });
-        }
-      }
-
+      // 4. Calculate fare via pure engine
       const resultWithoutPromoLookup = calculateFare({
         ...engineInput,
         promoCode: undefined,
-        promoAllowGroupVehicles: lookupAllowGroupVehicles,
       });
-      if (!input.promoCode || (isGroupExceptionVehicle(input.vehicleTier) && !lookupAllowGroupVehicles)) return resultWithoutPromoLookup;
 
-      // Re-apply promo with DB validation
-      const promoEval = applyPromo(
-        input.promoCode,
-        resultWithoutPromoLookup.baseFare +
-          resultWithoutPromoLookup.nightAllowance +
-          resultWithoutPromoLookup.driverAllowance,
-        lookup,
-      );
+      if (
+        !input.promoCode ||
+        (isGroupExceptionVehicle(input.vehicleTier) && !promoContext.allowGroupVehicles)
+      ) {
+        return resultWithoutPromoLookup;
+      }
+
+      // 5. Re-apply validated database promo
       const subtotal =
         resultWithoutPromoLookup.baseFare +
         resultWithoutPromoLookup.nightAllowance +
         resultWithoutPromoLookup.driverAllowance;
+
+      const promoEval = applyPromo(input.promoCode, subtotal, promoContext.lookup);
       const totalFare = Math.max(1, subtotal - promoEval.discount);
-      const { advanceOf } = await import("../../shared/money.js");
-      const advanceAmount = advanceOf(totalFare);
-      const finalAdvance = Math.min(totalFare, Math.max(advanceAmount, totalFare < 500 ? totalFare : 500));
+      const { advanceAmount, balanceAmount } = calculateAdvanceAndBalance(totalFare);
+
       return {
         ...resultWithoutPromoLookup,
         discountAmount: promoEval.discount,
         totalFare,
-        advanceAmount: finalAdvance,
-        balanceAmount: totalFare - finalAdvance,
+        advanceAmount,
+        balanceAmount,
         promoCode: promoEval.valid ? promoEval.code : input.promoCode.trim().toUpperCase(),
         promoValid: promoEval.valid,
       };
     },
+
+    /**
+     * Synchronous calculation helper for isolated offline test flows.
+     */
     calculateSync(input: CalculateFareInput): FareEngineResult {
-      let distanceKm = input.distanceKm;
-      if (!distanceKm || !Number.isFinite(distanceKm) || distanceKm <= 0) {
-        if (input.ruleOverrides?.catalogDistanceKm && input.ruleOverrides.catalogDistanceKm > 0) {
-          distanceKm = input.ruleOverrides.catalogDistanceKm;
-        } else if (input.packageId) {
-          distanceKm = 100;
-        } else if (input.localPackageKey === "8hr-80km") {
-          distanceKm = 80;
-        } else if (input.localPackageKey === "12hr-120km") {
-          distanceKm = 120;
-        } else if (input.localPackageKey === "airport-transfer" || input.tripType === "airport-transfer") {
-          distanceKm = 20;
-        } else {
-          const route = findRoute(input.originName, input.destinationName);
-          distanceKm = route.km;
-        }
-      }
-      return calculateFare({ ...input, distanceKm, fareVersion: input.fareVersion ?? fareVersion });
+      const distanceKm = resolveTripDistanceKm(input);
+      return calculateFare({
+        ...input,
+        distanceKm,
+        fareVersion: input.fareVersion ?? fareVersion,
+      });
     },
   };
 }

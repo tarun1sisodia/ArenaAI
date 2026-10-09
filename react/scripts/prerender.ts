@@ -48,6 +48,7 @@ const hubRoutes = [
   "services",
   "routes",
   "packages",
+  "monuments",
   "fleet",
   "about",
   "contact",

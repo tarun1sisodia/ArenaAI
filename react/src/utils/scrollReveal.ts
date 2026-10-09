@@ -16,7 +16,9 @@ export function initScrollReveal(): () => void {
   }
 
   const isReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const elements = document.querySelectorAll<HTMLElement>(".reveal");
+  const elements = document.querySelectorAll<HTMLElement>(
+    ".reveal, .reveal-img, .reveal-pop, .sh-line",
+  );
 
   if (isReducedMotion) {
     elements.forEach((el) => el.classList.add("is-visible"));
@@ -42,8 +44,8 @@ export function initScrollReveal(): () => void {
     },
     {
       rootMargin: "0px 0px -40px 0px",
-      threshold: 0.08,
-    }
+      threshold: 0.12,
+    },
   );
 
   elements.forEach((el) => {

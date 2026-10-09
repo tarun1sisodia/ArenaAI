@@ -39,6 +39,7 @@ import DossierTourPackagePage, { type DossierTourPackageItem } from "../pages/Do
 import TransferDetailPage, { type DossierTransferRouteItem } from "../pages/TransferDetailPage";
 import LocalPackageDetailPage, { type DossierLocalPackageItem } from "../pages/LocalPackageDetailPage";
 import MonumentDetailPage, { type DossierMonumentItem } from "../pages/MonumentDetailPage";
+import { MonumentsPage } from "../pages/MonumentsPage";
 
 type GeneratedCatalogItem = {
   slug: string;
@@ -344,6 +345,15 @@ function getSeoBase(
     };
   }
 
+  if (section === "monuments") {
+    return {
+      title: "Monuments of Agra — Visiting Guides & Transport | Agra SK Baghel Tour and Travels",
+      description: "Taj Mahal, Agra Fort, Fatehpur Sikri — visiting hours, guides, and transport priced through the published corridor engine.",
+      ogImage: "/assets/places/agra-taj-mahal.webp",
+      keywords: ["Monuments of Agra", "Taj Mahal guide", "Agra Fort", "Fatehpur Sikri", "Agra sightseeing monuments"],
+    };
+  }
+
   if (section === "fleet") {
     return {
       title: "Our Fleet — Sedan, Ertiga, Innova Crysta & Tempo Traveller | Agra SK Baghel Tour and Travels",
@@ -539,6 +549,9 @@ export function ServerApp({ pathname: propPathname }: AppProps = {}) {
     isBooking ||
     isPrivateCustomerPage ||
     isMarketingHub ||
+    section === "monuments" ||
+    cleanPath === "/monuments" ||
+    cleanPath === "/en/monuments" ||
     Boolean(matchedRoute) ||
     Boolean(dynamicRoute) ||
     Boolean(matchedPackage) ||
@@ -629,6 +642,8 @@ export function ServerApp({ pathname: propPathname }: AppProps = {}) {
           <RoutesPage language={language} />
         ) : section === "packages" ? (
           <PackagesPage language={language} />
+        ) : section === "monuments" || cleanPath === "/monuments" || cleanPath === "/en/monuments" ? (
+          <MonumentsPage language={language} />
         ) : section === "fleet" ? (
           <FleetPage language={language} />
         ) : section === "about" ? (

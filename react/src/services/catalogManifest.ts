@@ -334,3 +334,58 @@ export async function fetchTourPackageBySlug(slug: string): Promise<TourPackage 
   return null;
 }
 
+/** Canonical alias: fetchPublishedTourPackages */
+export const fetchPublishedTourPackages = loadPublishedPackages;
+
+/** Canonical alias: fetchPublishedRoutes */
+export const fetchPublishedRoutes = loadRoutesManifest;
+
+/** Canonical alias: toTourPackage */
+export const toTourPackage = toDossierTourPackage;
+
+/** Fetch published airport and station transfer routes */
+export async function fetchPublishedTransferRoutes(): Promise<any[]> {
+  try {
+    const apiBase = getApiBaseUrl();
+    const res = await fetch(`${apiBase}/api/v1/transfers`, { headers: { Accept: "application/json" } });
+    if (res.ok) {
+      const json = await res.json();
+      return Array.isArray(json?.data) ? json.data : [];
+    }
+  } catch {
+    // Return empty on offline/static
+  }
+  return [];
+}
+
+/** Fetch published local tours */
+export async function fetchPublishedLocalTransfers(): Promise<any[]> {
+  try {
+    const apiBase = getApiBaseUrl();
+    const res = await fetch(`${apiBase}/api/v1/local-tours`, { headers: { Accept: "application/json" } });
+    if (res.ok) {
+      const json = await res.json();
+      return Array.isArray(json?.data) ? json.data : [];
+    }
+  } catch {
+    // Return empty on offline/static
+  }
+  return [];
+}
+
+/** Fetch vehicle fleet specifications */
+export async function fetchFleet(): Promise<any[]> {
+  try {
+    const apiBase = getApiBaseUrl();
+    const res = await fetch(`${apiBase}/api/v1/routes/fleets`, { headers: { Accept: "application/json" } });
+    if (res.ok) {
+      const json = await res.json();
+      return Array.isArray(json?.data) ? json.data : [];
+    }
+  } catch {
+    // Return empty on offline/static
+  }
+  return [];
+}
+
+

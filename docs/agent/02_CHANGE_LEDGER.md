@@ -2,7 +2,27 @@
 
 ## 2026-10-09
 
-### 2026-10-09 — Phase 3: Decoupled Booking Selection & Package Booking Resolution (Bug #18)
+### 2026-10-09 — Frontend Motion & Animation Suite & Monuments Page Implementation
+
+- **Complete Animation & Motion System (`react/src/styles/heritage-animations.css`, `react/src/utils/scrollReveal.ts`)**:
+  - Single easing `cubic-bezier(0.22, 1, 0.36, 1)` (`--ease-out`) wired across all motion primitives.
+  - Scroll-triggered reveals: `.reveal` (fade + translateY 26px, staggered via `--reveal-delay`), `.reveal-img` (scale 1.12→1 + clip-path mask open), `.reveal-pop` (scale 0.92→1), `.sh-line` (saffron rule scaleX 0→1 with 250ms delay).
+  - Progressive Enhancement: HTML pre-renders with `opacity: 1` (100% SEO/SSG safe). IntersectionObserver activates and arms transitions via `.js-ready` only after client DOM hydration.
+  - Page-load choreography: `@keyframes fade-up` (1s staged entrance), `@keyframes pop` (0.85s entrance).
+  - Ambient loops: `.hero-drift` (18s Ken Burns drift), `.marquee-track` (36s linear loop with pause-on-hover), `.spin-slow` (22s medallion rotation), `.cue-line` (2.2s scroll cue pulse).
+  - Hover micro-interactions: `.lift` (translateY(-6px) + soft shadow), `.sheen` (diagonal sweep), `.nudge` (+5px), `.nudge-diag` (3px, -3px), `.arrow-rotate` (-45deg + saffron fill), `.photo-develop` (saturate 0.88→1 + 1.06 scale), `.border-warm` (border-saffron/60), `.caption-unfurl` (max-h-0→1.5rem), `.icon-wiggle` (-6deg scale 1.1), `.sweep` (underline background-size 0%→100%), `.medallion-fill` (saffron fill).
+  - Interactive Chrome: `.header-frosted` (blur 16px with hairline border), `.faq-accordion-content` (grid-template-rows 0fr→1fr transition).
+  - Full WCAG AA accessibility: `@media (prefers-reduced-motion: reduce)` disables all animations and transitions.
+- **Reusable Component Primitives (`react/src/components/reveal.tsx`, `react/src/components/badges.tsx`, `react/src/components/cards.tsx`)**:
+  - `<Reveal>` component supporting `variant="up" | "img" | "pop"` and `delay={ms}` stagger.
+  - `<SectionHeading>` with roman/letter index, kicker, dynamic `as="h1" | "h2"`, and animated `.sh-line` saffron rule.
+  - `<MonumentCard>` featuring signature Mughal arch motif (`.arch`), `.lift` elevation, `.photo-develop`, and `.caption-unfurl`.
+- **Monuments Index Page & SSG Pre-Rendering (`react/src/pages/MonumentsPage.tsx`, `react/src/app/App.tsx`, `react/src/app/ServerApp.tsx`, `react/scripts/prerender.ts`, `react/scripts/generate-sitemap.ts`)**:
+  - Built `MonumentsPage` rendering the editorial 4-column grid of all Agra monuments with staggered scroll reveals (`delay={i * 80}`).
+  - Wired `/monuments` and `/en/monuments/` routes into client router (`App.tsx`), SSR router (`ServerApp.tsx`), static pre-renderer (`prerender.ts`), and sitemap generator (`generate-sitemap.ts`).
+- **Verification**:
+  - `npm --prefix react run typecheck`: Passed with 0 errors (`tsc --noEmit`).
+  - `npm --prefix react run build`: Passed cleanly, generating 58 SSG pre-rendered static pages + 14 redirects with 0 SEO errors.
 
 - **Backend Booking Selection Decoupling (`backend/src/modules/bookings/booking.service.ts`)**:
   - Refactored `resolveBookingSelection` to query dedicated domain repositories (`db.tourPackages`, `db.localPackages`, `db.transferRoutes`) by UUID ID, package code, or route slug before falling back to legacy `catalog_items` or curated in-memory presets.
