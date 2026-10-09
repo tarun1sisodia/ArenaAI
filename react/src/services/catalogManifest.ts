@@ -223,7 +223,7 @@ export async function loadPublishedPackages(): Promise<TourPackage[]> {
   return Array.from(bySlug.values());
 }
 
-export function toDossierTourPackage(item: any): TourPackage {
+export function toTourPackage(item: any): TourPackage {
   let fleetPrices: Record<string, number> = {};
   if (item.fleetPrices && typeof item.fleetPrices === "object") {
     fleetPrices = { ...item.fleetPrices };
@@ -340,8 +340,8 @@ export const fetchPublishedTourPackages = loadPublishedPackages;
 /** Canonical alias: fetchPublishedRoutes */
 export const fetchPublishedRoutes = loadRoutesManifest;
 
-/** Canonical alias: toTourPackage */
-export const toTourPackage = toDossierTourPackage;
+/** Legacy alias for backward compatibility */
+export const toDossierTourPackage = toTourPackage;
 
 /** Fetch published airport and station transfer routes */
 export async function fetchPublishedTransferRoutes(): Promise<any[]> {

@@ -1,4 +1,4 @@
-import { DEFAULT_PROMO, isGroupExceptionVehicle } from "../fare.catalogue.js";
+import { isGroupExceptionVehicle } from "../fare.catalogue.js";
 import type { PromoEvaluation } from "../fare.types.js";
 import { AppError } from "../../../shared/errors.js";
 
@@ -50,15 +50,6 @@ export function applyPromo(
     }
     const discount = Math.min(fromDb.discount, total);
     return { valid: true, discount, code: clean, description: fromDb.desc };
-  }
-
-  const rule =
-    clean === DEFAULT_PROMO.code
-      ? { discount: DEFAULT_PROMO.discount, minTotal: DEFAULT_PROMO.minTotal, desc: DEFAULT_PROMO.desc }
-      : null;
-  if (rule && total >= rule.minTotal) {
-    const discount = Math.min(rule.discount, total);
-    return { valid: true, discount, code: clean, description: rule.desc };
   }
 
   return { valid: false, discount: 0, code: clean };

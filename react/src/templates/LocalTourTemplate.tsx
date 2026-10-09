@@ -25,6 +25,8 @@ export interface DossierLocalPackageItem {
   updatedAt?: string;
 }
 
+export type LocalPackageItem = DossierLocalPackageItem;
+
 export interface LocalTourTemplateProps {
   language?: SupportedLanguage;
   item: DossierLocalPackageItem;

@@ -948,6 +948,33 @@ Implemented:
   - `npm test`: 30 test files / 202 tests passed.
   - `npm --prefix react run react:build`: SSG completed 77 pages pre-rendered with zero errors.
 
+### 2026-10-10 — Unified Cross-Workspace Contracts & Mock Data Purge
+
+- **Dedicated Shared Contracts (`contracts/`)**:
+  - Authored canonical models in `contracts/models/`: `tour-packages.ts`, `routes.ts`, `local-packages.ts`, `transfer-routes.ts`, `monuments.ts`, `promos.ts`, `fares.ts`, `bookings.ts`, `policies.ts`.
+  - Added `CatalogStatus` and `CATALOG_STATUSES` to `contracts/enums/product-verticals.ts`.
+  - Created `contracts/index.ts` re-exporting all canonical enums and models.
+  - Enhanced `contracts/scripts/sync-contracts.ts` to sync all 13 contract files and index into `backend/src/contracts/`, `admin/src/contracts/`, and `react/src/contracts/`.
+  - Verified with `npx tsx contracts/scripts/sync-contracts.ts --check` (exit code 0, zero drift).
+- **Default Promo Code Purge (`DEFAULT_PROMO` / `ASTTCAR500OFF`)**:
+  - `backend/src/modules/fares/fare.catalogue.ts`: Removed `DEFAULT_PROMO`.
+  - `backend/src/modules/fares/rules/promo.rules.ts`: Removed fallback discount logic; promo evaluation strictly checks database.
+  - `backend/src/modules/admin/admin.service.ts`: Removed `defaultPromo: DEFAULT_PROMO`.
+  - `react/src/data.ts` & `fares.ts`: Removed `ASTTCAR500OFF` fallback definitions; `promoCodes` initialized empty.
+  - `react/src/components/home/BenefitsSection.tsx`: Replaced static `ASTTCAR500OFF` card with dynamic seasonal offers copy.
+  - `react/src/components/layout/EditorialPageTemplate.tsx`: Removed static `ASTTCAR500OFF` default; returns `null` if no code provided.
+  - `react/src/features/booking/BookingPage.tsx`: Dynamic placeholder binding.
+  - `react/src/pages/HomePage.tsx`: Fetches broadcast promo from `fetchFeaturedPromo()`; renders coupon strip only when a real database promo is present.
+- **Operational Mock Data Purge**:
+  - `backend/src/db/seedData.ts`: Emptied mock collections (`SEED_BOOKINGS`, `SEED_PAYMENTS`, `SEED_PROMO_CODES`, `SEED_REVIEWS`, `SEED_INQUIRIES`, `SEED_AUDIT_LOGS`, `SEED_NOTIFICATION_JOBS`, `SEED_DEVICES`, `SEED_WEBHOOKS`, and fake customer profiles).
+  - In-memory data store in `backend/src/db/memory.ts` now initializes clean maps with zero mock rows.
+  - `admin/src/lib/types.ts` now re-exports domain interfaces directly from `@/contracts`.
+- **Verification**:
+  - `backend`: typecheck clean, production build clean (`tsc -p tsconfig.build.json`) with code 0.
+  - `admin`: typecheck clean, production build clean (`vite build`) with code 0.
+  - `react`: typecheck clean, production build clean (`prerender.ts` 58 SSG pages) with code 0.
+  - `contracts`: `sync-contracts.ts --check` passes with code 0.
+
 ## Known next work (Phase 3 — secure integrations)
 
 - Step 3: Anonymous Device Registration Postgres Unique Constraint Fix & Fleet Rules Verification.

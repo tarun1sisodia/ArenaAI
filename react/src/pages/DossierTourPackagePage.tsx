@@ -30,6 +30,8 @@ export interface DossierTourPackageItem {
   }>;
 }
 
+export type TourPackageItem = DossierTourPackageItem;
+
 export interface DossierTourPackagePageProps {
   language?: SupportedLanguage;
   item: DossierTourPackageItem;

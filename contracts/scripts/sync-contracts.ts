@@ -1,7 +1,7 @@
 /**
  * Sync contract sources into each app's tree.
  *
- * Source of truth: contracts/enums/*.ts
+ * Source of truth: contracts/*.ts
  * Destinations (checked in, never hand-edited):
  *   backend/src/contracts/, admin/src/contracts/, react/src/contracts/
  *
@@ -13,7 +13,8 @@ import { join, dirname, basename } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
-const srcDir = join(root, "contracts", "enums");
+const contractsDir = join(root, "contracts");
+
 const dests = [
   join(root, "backend", "src", "contracts"),
   join(root, "admin", "src", "contracts"),
@@ -23,9 +24,9 @@ const dests = [
 export const GENERATED_HEADER = (name: string) =>
   `/**\n` +
   ` * GENERATED — do not edit by hand.\n` +
-  ` * Source: contracts/enums/${name}\n` +
+  ` * Source: contracts/${name}\n` +
   ` * Regenerate: npx tsx contracts/scripts/sync-contracts.ts\n` +
-  ` * Contract: C-ENUM-001 · contracts/LOCKED.md\n` +
+  ` * Contract: C-CONTRACT-ALL · contracts/LOCKED.md\n` +
   ` */\n`;
 
 function buildOutput(name: string, source: string): string {
@@ -35,24 +36,41 @@ function buildOutput(name: string, source: string): string {
 const checkOnly = process.argv.includes("--check");
 let dirty = false;
 
-for (const file of readdirSync(srcDir).filter((f) => f.endsWith(".ts"))) {
-  const source = readFileSync(join(srcDir, file), "utf8");
-  const output = buildOutput(basename(file), source);
-  for (const dest of dests) {
-    mkdirSync(dest, { recursive: true });
-    const target = join(dest, basename(file));
-    const current = existsSync(target) ? readFileSync(target, "utf8") : null;
-    if (current !== output) {
-      if (checkOnly) {
-        console.error(`DRIFT: ${target} differs from contracts/enums/${basename(file)}`);
-        dirty = true;
-      } else {
-        writeFileSync(target, output);
-        console.log(`synced ${target}`);
-      }
+function syncFile(target: string, output: string, sourceDesc: string) {
+  const current = existsSync(target) ? readFileSync(target, "utf8") : null;
+  if (current !== output) {
+    if (checkOnly) {
+      console.error(`DRIFT: ${target} differs from contracts/${sourceDesc}`);
+      dirty = true;
+    } else {
+      mkdirSync(dirname(target), { recursive: true });
+      writeFileSync(target, output);
+      console.log(`synced ${target}`);
     }
   }
 }
 
+// Read all .ts contract files directly from contracts/
+const contractFiles = readdirSync(contractsDir).filter(
+  (f) => f.endsWith(".ts") && f !== "index.ts"
+);
+
+// Regenerate contracts/index.ts
+const indexContent =
+  "// Canonical contract exports across backend, admin, and react\n" +
+  contractFiles.map((f) => `export * from "./${basename(f, ".ts")}.js";`).join("\n") +
+  "\n";
+writeFileSync(join(contractsDir, "index.ts"), indexContent);
+
+// Sync all contract files + index.ts to destinations
+for (const file of [...contractFiles, "index.ts"]) {
+  const source = readFileSync(join(contractsDir, file), "utf8");
+  const output = buildOutput(file, source);
+
+  for (const dest of dests) {
+    syncFile(join(dest, file), output, file);
+  }
+}
+
 if (checkOnly && dirty) process.exit(1);
-if (!checkOnly) console.log("contracts in sync.");
+if (!checkOnly) console.log("all contracts in sync.");

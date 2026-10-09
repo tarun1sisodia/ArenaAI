@@ -1,8 +1,8 @@
 /**
  * GENERATED — do not edit by hand.
- * Source: contracts/enums/product-verticals.ts
+ * Source: contracts/product-verticals.ts
  * Regenerate: npx tsx contracts/scripts/sync-contracts.ts
- * Contract: C-ENUM-001 · contracts/LOCKED.md
+ * Contract: C-CONTRACT-ALL · contracts/LOCKED.md
  */
 /**
  * @file product-verticals.ts — Canonical 5 Product Verticals contract.
@@ -18,6 +18,9 @@ export const PRODUCT_VERTICALS = [
 ] as const;
 
 export type ProductVertical = (typeof PRODUCT_VERTICALS)[number];
+
+export const CATALOG_STATUSES = ["draft", "published", "archived"] as const;
+export type CatalogStatus = (typeof CATALOG_STATUSES)[number];
 
 export const PRODUCT_VERTICAL_META: Record<ProductVertical, { label: string; primaryPricing: string }> = {
   "tour-package": {

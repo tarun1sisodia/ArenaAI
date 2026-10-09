@@ -357,12 +357,14 @@ export interface PromoCouponStripProps {
 }
 
 export function PromoCouponStrip({
-  code = "ASTTCAR500OFF",
-  title = "Flat ₹500 off your first outstation trip",
-  subtitle = "Valid on Agra to Delhi and Agra to Jaipur one-way routes.",
+  code,
+  title = "Seasonal Promotional Discount",
+  subtitle = "Valid on select one-way and local tour routes.",
   className = "",
 }: PromoCouponStripProps) {
   const [copied, setCopied] = useState(false);
+
+  if (!code) return null;
 
   const handleCopy = () => {
     if (typeof navigator !== "undefined" && navigator.clipboard) {

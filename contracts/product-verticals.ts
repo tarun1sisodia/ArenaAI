@@ -13,6 +13,9 @@ export const PRODUCT_VERTICALS = [
 
 export type ProductVertical = (typeof PRODUCT_VERTICALS)[number];
 
+export const CATALOG_STATUSES = ["draft", "published", "archived"] as const;
+export type CatalogStatus = (typeof CATALOG_STATUSES)[number];
+
 export const PRODUCT_VERTICAL_META: Record<ProductVertical, { label: string; primaryPricing: string }> = {
   "tour-package": {
     label: "Tour Package",

@@ -9,7 +9,6 @@ import type { BookingRecord, InquiryStatus } from "../../types/domain.js";
 import { projectBooking } from "../bookings/booking.service.js";
 import {
   AIRPORT_TRANSFERS,
-  DEFAULT_PROMO,
   FARE_RULES_VERSION_DEFAULT,
   LOCAL_PACKAGES,
   OUTSTATION_RULES,
@@ -157,7 +156,6 @@ export function createAdminService(deps: { db: Repositories; clock?: Clock }) {
         airportTransfers: AIRPORT_TRANSFERS,
         routes: ROUTES,
         packages: PACKAGES,
-        defaultPromo: DEFAULT_PROMO,
         dynamicConfig: dbRule?.config ?? null,
       };
     },

@@ -1,8 +1,8 @@
 /**
  * GENERATED — do not edit by hand.
- * Source: contracts/enums/local-package-keys.ts
+ * Source: contracts/local-package-keys.ts
  * Regenerate: npx tsx contracts/scripts/sync-contracts.ts
- * Contract: C-ENUM-001 · contracts/LOCKED.md
+ * Contract: C-CONTRACT-ALL · contracts/LOCKED.md
  */
 /**
  * @file local-package-keys.ts — Canonical Local Tour Rental Slabs contract.

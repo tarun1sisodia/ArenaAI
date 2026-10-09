@@ -1,8 +1,8 @@
 /**
  * GENERATED — do not edit by hand.
- * Source: contracts/enums/vehicle-tiers.ts
+ * Source: contracts/vehicle-tiers.ts
  * Regenerate: npx tsx contracts/scripts/sync-contracts.ts
- * Contract: C-ENUM-001 · contracts/LOCKED.md
+ * Contract: C-CONTRACT-ALL · contracts/LOCKED.md
  */
 /**
  * CONTRACT C-ENUM-001 — Canonical vehicle tiers. LOCKED.

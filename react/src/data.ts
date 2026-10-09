@@ -943,12 +943,10 @@ export const petFriendlyService = {
     en: "Travel comfortably across Agra and outstation destinations with your dogs, cats, and pets. Dedicated sanitized vehicles with carrier space and scheduled relief stops.",
     hi: "Travel comfortably across Agra and outstation destinations with your dogs, cats, and pets. Dedicated sanitized vehicles with carrier space and scheduled relief stops.",
   },
-  couponCode: "ASTTCAR500OFF",
+  couponCode: "",
 } as const;
 
-export const promoCodes: Readonly<Record<string, PromoCode>> = {
-  ASTTCAR500OFF: { discount: 500, minTotal: 2000, desc: "Flat ₹500 OFF on car bookings" },
-};
+export const promoCodes: Readonly<Record<string, PromoCode>> = {};
 
 export const trustSignals = [
   "GOVT-REGISTERED FLEET",
@@ -1075,8 +1073,8 @@ export const coreBenefits: readonly BenefitItem[] = [
     id: "exciting-offers",
     title: { en: "Exciting Offers", hi: "Exciting Offers" },
     desc: {
-      en: "Unlock flat ₹500 OFF with promo code ASTTCAR500OFF on bookings above ₹2,000.",
-      hi: "Unlock flat ₹500 OFF with promo code ASTTCAR500OFF on bookings above ₹2,000.",
+      en: "Unlock seasonal tour deals and instant savings with verified promo coupons and transparent billing.",
+      hi: "सत्यापित प्रोमो कूपन और पारदर्शी बिलिंग के साथ मौसमी टूर सौदों और तत्काल बचत का लाभ उठाएं।",
     },
   },
   {

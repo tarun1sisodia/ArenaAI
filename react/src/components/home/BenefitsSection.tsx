@@ -5,7 +5,7 @@
  * 1. Easy Booking (Instant Confirm)
  * 2. Multiple Fleets (Sedan to 26-Seater)
  * 3. Lowest Fares (Zero Hidden Fees)
- * 4. Exciting Offers (Coupon ASTTCAR500OFF)
+ * 4. Exciting Offers (Seasonal Offers)
  * 5. On-Time Service (100% Punctual)
  * 6. 24×7 Dedicated Support (Live Support 24×7)
  *
@@ -13,7 +13,7 @@
  * - Card lifts -4px with ambient shadow and gold border
  * - Icon wrapper fills with solid gold and rotates + scales
  * - SVG icon transitions from gold to crisp white
- * - ASTTCAR500OFF promo code badge
+ * - Seasonal promo code badge
  */
 
 import React from "react";
@@ -103,11 +103,10 @@ const BENEFITS: BenefitCardData[] = [
   {
     id: "exciting-offers",
     title: "Exciting Offers",
-    pill: "Coupon ASTTCAR500OFF",
+    pill: "Seasonal Offers",
     desc: (
       <>
-        Unlock seasonal tour deals and instant savings. Use coupon{" "}
-        <code className="benefit-code">ASTTCAR500OFF</code> for flat ₹500 off on outstation trips.
+        Unlock seasonal tour deals and instant savings with verified promo coupons and transparent billing on all trips.
       </>
     ),
     icon: (

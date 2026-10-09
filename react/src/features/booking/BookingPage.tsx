@@ -2037,7 +2037,9 @@ export function BookingPage() {
                         placeholder={
                           selectedVehicle.alwaysRoundTrip && !featuredPromo?.allowGroupVehicles
                             ? "N/A for group vans"
-                            : "e.g. ASTTCAR500OFF"
+                            : featuredPromo?.code
+                              ? `e.g. ${featuredPromo.code}`
+                              : "e.g. PROMO2026"
                         }
                         className="flex-1 px-3 py-2 rounded-lg border border-border-warm bg-surface font-body-md text-on-surface uppercase disabled:bg-surface-container-low"
                       />

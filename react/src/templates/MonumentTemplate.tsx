@@ -20,6 +20,8 @@ export interface DossierMonumentItem {
   updatedAt?: string;
 }
 
+export type MonumentItem = DossierMonumentItem;
+
 export interface MonumentTemplateProps {
   language?: SupportedLanguage;
   item: DossierMonumentItem;

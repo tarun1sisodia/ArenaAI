@@ -278,185 +278,53 @@ export function can(role: AdminRole, permission: string): boolean {
   return (PERMISSIONS[permission] ?? []).includes(role);
 }
 
-export type RouteTripType = "one-way" | "round-trip" | "local-tour";
-export interface InterstateCharge { state: string; amount_inr: number; note?: string }
-export interface RouteStop { name: string; halt_mins?: number }
-export interface RouteFleet { id: string; name: string; seats: number; bags: number; perKm: number }
-export interface RouteCatalogItem {
-  id: string; tripType: RouteTripType; sourceCity: string; sourceDetail: string | null;
-  destinationCity: string | null; slug: string; distanceKm: number | null; durationText: string | null;
-  availableFleets: string[]; faresInr: Record<string, number>; driverChargeInr: number;
-  nightHaltInr: number; tollIncluded: boolean; tollAmountInr: number | null;
-  interstateCharges: InterstateCharge[]; minKmPerDay: number; stops: RouteStop[];
-  usePerKm?: boolean; perKmRateOverride?: number | null; highway?: string | null; allInclusiveNote?: string | null;
-  status: CatalogStatus; needsReview: boolean; createdAt: string; updatedAt: string;
-}
+export type {
+  RouteTripType,
+  InterstateCharge,
+  RouteStop,
+  RouteFleet,
+  RouteItem,
+  RouteItem as RouteCatalogItem,
+  CreateRouteInput,
+  UpdateRouteInput,
+} from "@/contracts/routes";
 
-export interface TourPackageUpgrade {
-  id: string;
-  packageId: string | null;
-  tierCode: string;
-  passengerNote: string | null;
-  surchargeInr: number;
-  createdAt: string;
-  updatedAt: string;
-}
+export type {
+  TourPackageUpgrade,
+  TourPackageGalleryImage,
+  TourPackageItem,
+  CreateTourPackageInput,
+  UpdateTourPackageInput,
+} from "@/contracts/tour-packages";
 
-export interface TourPackageGalleryImage {
-  url: string;
-  caption?: string;
-  alt?: string;
-}
+export type {
+  LocalPackageItem,
+  CreateLocalPackageInput,
+  UpdateLocalPackageInput,
+} from "@/contracts/local-packages";
 
-export interface TourPackageItem {
-  id: string;
-  packageCode: string;
-  name: string;
-  durationText: string;
-  days: number;
-  nights: number;
-  baseTierCode: string;
-  startingPriceInr: number;
-  fleetPrices: Record<string, number>;
-  nightChargeInr: number;
-  inclusionsHighlight: string | null;
-  inclusionsNote: string | null;
-  source?: string;
-  destination?: string;
-  inclusions?: string[];
-  exclusions?: string[];
-  itinerary?: Array<{ time?: string; title: string; desc: string }>;
-  imageUrl?: string | null;
-  gallery?: TourPackageGalleryImage[];
-  status: CatalogStatus;
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
-  upgrades?: TourPackageUpgrade[];
-}
+export type {
+  TransferRouteItem,
+  CreateTransferRouteInput,
+  UpdateTransferRouteInput,
+} from "@/contracts/transfer-routes";
 
-export interface LocalPackageItem {
-  id: string;
-  packageCode: string;
-  name: string;
-  durationHours: number;
-  includedKm: number;
-  covers: string;
-  parkingNote: string | null;
-  fleetPrices: Record<string, number>;
-  usePerKm: boolean;
-  extraRates: Record<string, { per_km: number; per_hr: number }> | null;
-  nightChargeInr: number;
-  status: CatalogStatus;
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
+export type {
+  CancellationPolicyItem,
+  PetPolicyItem,
+  CompanyProfileItem,
+  DossierSignoffItem,
+} from "@/contracts/policies";
 
-export interface TransferRouteItem {
-  id: string;
-  routeCode: string;
-  name: string;
-  distanceText: string | null;
-  directionNote: string | null;
-  fleetPrices: Record<string, number>;
-  usePerKm: boolean;
-  nightChargeInr: number;
-  status: CatalogStatus;
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
+export type {
+  MonumentItem,
+  CreateMonumentInput,
+  UpdateMonumentInput,
+} from "@/contracts/monuments";
 
-export interface CancellationPolicyItem {
-  id: string;
-  policyType: "cab" | "tour_package";
-  noticePeriodText: string;
-  sortOrder: number;
-  feeRetainedPercent: number;
-  refundPercent: number;
-  ruleText: string;
-  refundTimelineNote: string;
-  createdAt: string;
-  updatedAt: string;
-}
+export type {
+  PromoCodeItem,
+  CreatePromoCodeInput,
+  UpdatePromoCodeInput,
+} from "@/contracts/promos";
 
-export interface MonumentItem {
-  id: string;
-  name: string;
-  visitingHours: string;
-  closedNote: string;
-  historicalContext: string | null;
-  sortOrder: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface PetPolicyItem {
-  id: string;
-  isOffered: boolean;
-  seatProtectionNote: string;
-  breedRestrictionNote: string;
-  comfortStopNote: string;
-  bookingInstruction: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface CompanyProfileItem {
-  id: string;
-  brandName: string;
-  officeAddress: string;
-  primaryPhone: string;
-  whatsappNumber: string;
-  email: string;
-  gstin: string;
-  operatingHours: string;
-  mapsLocation: string;
-  dossierVersion: string;
-  dossierStatus: "pending_review" | "signed_off" | "modifications_needed";
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface DossierSignoffItem {
-  id: string;
-  sectionKey: string;
-  sectionTitle: string;
-  status: "pending" | "approved" | "modification_requested";
-  clientNotes: string | null;
-  approvedBy: string | null;
-  approvedAt: string | null;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface PromoCodeItem {
-  id: string;
-  code: string;
-  discountAmount: number;
-  minTotal: number;
-  description: string;
-  isActive: boolean;
-  maxRedemptions: number | null;
-  redemptionCount: number;
-  validFrom: string | null;
-  validTo: string | null;
-  allowGroupVehicles: boolean;
-  isBroadcast: boolean;
-}
-
-export interface CreatePromoCodeInput {
-  code: string;
-  discountAmount: number;
-  minTotal?: number;
-  description: string;
-  isActive?: boolean;
-  maxRedemptions?: number | null;
-  validFrom?: string | null;
-  validTo?: string | null;
-  allowGroupVehicles?: boolean;
-  isBroadcast?: boolean;
-}
-
-export type UpdatePromoCodeInput = Partial<CreatePromoCodeInput>;

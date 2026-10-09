@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { SupportedLanguage } from "../config";
 import { contact } from "../data/contact";
 import { ReviewsMarquee } from "../components/home/ReviewsMarquee";
@@ -6,6 +6,7 @@ import { FamousPlacesSection } from "../components/home/FamousPlacesSection";
 import { WhatsAppIcon } from "../components/icons";
 import { HomeBookingWidget } from "../components/home/HomeBookingWidget";
 import { useCustomerAuth } from "../auth/customerAuth";
+import { fetchFeaturedPromo, type FeaturedPromo } from "../services/api";
 
 export interface HomePageProps {
   language?: SupportedLanguage;
@@ -23,17 +24,28 @@ export function HomePage({ language = "en" }: HomePageProps) {
   const [destination, setDestination] = useState("Delhi");
   const [selectedVehicle, setSelectedVehicle] = useState<"sedan" | "ertiga" | "innova" | "tempo" | "urbania">("sedan");
   const [couponCopied, setCouponCopied] = useState(false);
+  const [featuredPromo, setFeaturedPromo] = useState<FeaturedPromo | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    fetchFeaturedPromo()
+      .then((p) => {
+        if (mounted) setFeaturedPromo(p);
+      })
+      .catch(() => undefined);
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const [inquiryName, setInquiryName] = useState("");
   const [inquiryPhone, setInquiryPhone] = useState("");
   const [inquiryDate, setInquiryDate] = useState("");
   const [inquiryNotes, setInquiryNotes] = useState("");
 
-
-
   const copyCoupon = () => {
-    if (typeof navigator !== "undefined" && navigator.clipboard) {
-      navigator.clipboard.writeText("ASTTCAR500OFF");
+    if (featuredPromo && typeof navigator !== "undefined" && navigator.clipboard) {
+      navigator.clipboard.writeText(featuredPromo.code);
       setCouponCopied(true);
       setTimeout(() => setCouponCopied(false), 2500);
     }
@@ -667,43 +679,47 @@ export function HomePage({ language = "en" }: HomePageProps) {
             ))}
           </div>
 
-          {/* Promo coupon — interactive 21st.dev strip */}
-          <div
-            className="bg-sandstone-wash rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-space-md border border-border-warm/60 shadow-xs hover:shadow-sm transition-all"
-          >
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center shrink-0 shadow-xs">
-                <span className="material-symbols-outlined text-icon-20 text-white">confirmation_number</span>
+          {/* Promo coupon — interactive 21st.dev strip (rendered only when active broadcast promo exists) */}
+          {featuredPromo && (
+            <div
+              className="bg-sandstone-wash rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-space-md border border-border-warm/60 shadow-xs hover:shadow-sm transition-all"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center shrink-0 shadow-xs">
+                  <span className="material-symbols-outlined text-icon-20 text-white">confirmation_number</span>
+                </div>
+                <div>
+                  <h3 className="font-title-md text-headline-sm text-on-surface font-bold">
+                    Flat ₹{featuredPromo.discountAmount} off with {featuredPromo.code}
+                  </h3>
+                  <p className="font-body-sm text-body-md text-on-surface-variant mt-0.5">
+                    {featuredPromo.description} (Min total: ₹{featuredPromo.minTotal.toLocaleString("en-IN")})
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 className="font-title-md text-headline-sm text-on-surface font-bold">Flat ₹500 off your first outstation trip</h3>
-                <p className="font-body-sm text-body-md text-on-surface-variant mt-0.5">
-                  Valid on Agra to Delhi and Agra to Jaipur one-way routes.
-                </p>
+              <div className="flex items-center gap-2 bg-surface-container-lowest px-3 py-2 rounded-lg border border-border-warm/40 shadow-sm shrink-0">
+                <span className="font-label-caps text-label-caps text-on-surface-variant font-semibold">Coupon:</span>
+                <code className="font-title-md font-bold text-primary tracking-wider text-xs">{featuredPromo.code}</code>
+                <button
+                  type="button"
+                  onClick={copyCoupon}
+                  className="text-label-lg px-3 py-1.5 rounded-lg bg-primary hover:bg-primary-container text-white font-label-caps transition-all font-bold shadow-xs active:scale-[0.98] inline-flex items-center gap-1 cursor-pointer"
+                >
+                  {couponCopied ? (
+                    <>
+                      <span className="material-symbols-outlined text-icon-13 text-white">check</span>
+                      <span className="text-white">Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="material-symbols-outlined text-icon-13 text-white">content_copy</span>
+                      <span className="text-white">Copy</span>
+                    </>
+                  )}
+                </button>
               </div>
             </div>
-            <div className="flex items-center gap-2 bg-surface-container-lowest px-3 py-2 rounded-lg border border-border-warm/40 shadow-sm shrink-0">
-              <span className="font-label-caps text-label-caps text-on-surface-variant font-semibold">Coupon:</span>
-              <code className="font-title-md font-bold text-primary tracking-wider text-xs">ASTTCAR500OFF</code>
-              <button
-                type="button"
-                onClick={copyCoupon}
-                className="text-label-lg px-3 py-1.5 rounded-lg bg-primary hover:bg-primary-container text-white font-label-caps transition-all font-bold shadow-xs active:scale-[0.98] inline-flex items-center gap-1 cursor-pointer"
-              >
-                {couponCopied ? (
-                  <>
-                    <span className="material-symbols-outlined text-icon-13 text-white">check</span>
-                    <span className="text-white">Copied!</span>
-                  </>
-                ) : (
-                  <>
-                    <span className="material-symbols-outlined text-icon-13 text-white">content_copy</span>
-                    <span className="text-white">Copy</span>
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
+          )}
         </section>
 
         {/* Quick Directory: Transfers, Local Packages & Monument Guides */}

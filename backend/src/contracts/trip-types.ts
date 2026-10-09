@@ -1,8 +1,8 @@
 /**
  * GENERATED — do not edit by hand.
- * Source: contracts/enums/trip-types.ts
+ * Source: contracts/trip-types.ts
  * Regenerate: npx tsx contracts/scripts/sync-contracts.ts
- * Contract: C-ENUM-001 · contracts/LOCKED.md
+ * Contract: C-CONTRACT-ALL · contracts/LOCKED.md
  */
 /**
  * @file trip-types.ts — Canonical Trip Types contract for SK Baghel Tour & Travels.

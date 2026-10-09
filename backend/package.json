@@ -13,15 +13,16 @@
     "start": "node dist/server.js",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint src tests scripts --max-warnings=0",
-    "test": "vitest run",
-    "test:ci": "vitest run --exclude tests/integration/db-connection.test.ts --exclude tests/integration/db-indexes.test.ts",
+    "test": "vitest run --passWithNoTests",
+    "test:ci": "vitest run --passWithNoTests --exclude tests/integration/db-connection.test.ts --exclude tests/integration/db-indexes.test.ts",
     "test:unit": "vitest run tests/unit",
     "test:integration": "vitest run tests/integration",
     "test:contract": "vitest run tests/contract",
     "test:watch": "vitest",
     "migrate": "tsx scripts/migrate.ts",
     "seed": "tsx scripts/seed.ts",
-    "test:db": "tsx scripts/test-db.ts"
+    "test:db": "tsx scripts/test-db.ts",
+    "sync-contracts": "tsx ../contracts/scripts/sync-contracts.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1141.0",
