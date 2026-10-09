@@ -277,7 +277,7 @@ describe("F3: Booking Flow & Server Authority Integration", () => {
     const codeBooking = await db.bookings.getById(codeDraft.bookingId);
     expect(codeBooking).not.toBeNull();
     expect(codeBooking!.bookingSelection?.kind).toBe("package");
-    expect(codeBooking!.bookingSelection?.).toBe("golden-triangle-3-day");
+    expect(codeBooking!.bookingSelection?.slug).toBe("golden-triangle-3-day");
     expect(codeBooking!.bookingSelection?.name).toBe("Golden Triangle 3-Day Heritage Circuit");
     // Verified decoupled: no catalog_items foreign key required
     expect(codeBooking!.selectedCatalogItemId).toBeNull();
