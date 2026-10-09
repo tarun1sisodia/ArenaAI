@@ -1,0 +1,149 @@
+/**
+ * Heritage Animations & Mughal Architectural Motifs Suite (LOCK-N08)
+ *
+ * Micro-interactions, signature motifs, and progressive scroll reveals
+ * for SK Baghel Tour & Travels showcase pages.
+ */
+
+/* Selection Highlight */
+::selection {
+  background: var(--color-saffron, #e87522);
+  color: #ffffff;
+}
+
+/* Mughal Arch — Signature Architectural Motif */
+.arch {
+  border-radius: 999px 999px 22px 22px;
+}
+
+.arch-full {
+  border-radius: 999px;
+}
+
+/* Fine Hairline Rules */
+.rule {
+  border-color: color-mix(in srgb, var(--color-ink, #171310) 14%, transparent);
+}
+
+/* Noise Texture Overlay */
+.texture {
+  position: relative;
+}
+
+.texture::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Scroll Reveal (Progressive Enhancement — 100% SSG & SEO safe)
+   Initial static/server HTML is fully visible (opacity: 1).
+   Once client hydration is active (.js-ready), elements animate smoothly on scroll. */
+.reveal {
+  opacity: 1;
+  transform: none;
+}
+
+.js-ready .reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition:
+    opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.js-ready .reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .js-ready .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+/* Infinite Marquee Track */
+@keyframes marquee-heritage {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  animation: marquee-heritage 36s linear infinite;
+}
+
+/* Slow Medallion Rotation */
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spin-slow {
+  animation: spin-slow 22s linear infinite;
+}
+
+/* Card Hover Elevation */
+.lift {
+  transition:
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.lift:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 26px 50px -24px rgb(23 19 16 / 0.35);
+}
+
+/* Underline Sweep for Interactive Links */
+.sweep {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-repeat: no-repeat;
+  background-position: left 100%;
+  transition: background-size 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  padding-bottom: 2px;
+}
+
+.sweep:hover {
+  background-size: 100% 1px;
+}
+
+/* Big Display Editorial Helpers */
+.hero-line {
+  letter-spacing: -0.02em;
+  line-height: 0.96;
+}
+
+/* Prose for Seeded Content */
+.prose-lite p {
+  margin-bottom: 1em;
+  line-height: 1.75;
+}
+
+/* Scrollbar Utility for Horizontal Rows */
+.row-scroll {
+  scrollbar-width: none;
+}
+
+.row-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Accessible Date Picker Styling */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.55;
+}

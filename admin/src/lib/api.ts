@@ -40,11 +40,21 @@ import type {
   PromoCodeItem, CreatePromoCodeInput, UpdatePromoCodeInput,
 } from "./types";
 
-async function apiFetch(path: string, init?: RequestInit): Promise<any> {
+export let lastAdminCorrelationId = "";
+
+function nextCorrelationId(): string {
+  lastAdminCorrelationId = crypto.randomUUID();
+  return lastAdminCorrelationId;
+}
+
+export async function apiFetch(path: string, init?: RequestInit): Promise<any> {
+  const correlationId = nextCorrelationId();
   const res = await fetch(`${env.API_BASE_URL}${path}`, {
     ...init,
     headers: {
       "Content-Type": "application/json",
+      "X-Correlation-Id": correlationId,
+      "X-Request-Id": correlationId,
       ...getAuthHeaders(),
       ...(init?.headers ?? {}),
     },

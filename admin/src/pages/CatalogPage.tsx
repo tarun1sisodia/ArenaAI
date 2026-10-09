@@ -183,7 +183,7 @@ export function CatalogPage({ user }: { user: AdminUser }) {
   const [formPlaces, setFormPlaces] = useState("Taj Mahal, Agra Fort");
   const [formStops, setFormStops] = useState("");
   const [formStatus, setFormStatus] = useState<CatalogStatus>("draft");
-  const [activeCatalogTab, setActiveCatalogTab] = useState<"catalog" | "routes">("catalog");
+  const [activeCatalogTab, setActiveCatalogTab] = useState<"catalog" | "routes">("routes");
 
   const canEdit = can(user.role, "catalog:edit");
   const canPublish = can(user.role, "catalog:publish");

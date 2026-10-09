@@ -1,81 +1,37 @@
 import { useEffect, useState } from "react";
-import { Archive, Car, Check, Pencil, Plane, Plus, Trash2 } from "lucide-react";
+import { Car, Plane, Plus } from "lucide-react";
 import { PageHeader } from "@/components/admin/PageHeader";
-import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
-import { Dialog } from "@/components/ui/Dialog";
-import { Input, Label, NumberInput, Select } from "@/components/ui/Input";
-import { LocationAutocompleteInput } from "@/components/admin/LocationAutocompleteInput";
+import { Input, Select } from "@/components/ui/Input";
 import {
-  archiveAdminLocalPackage,
-  archiveAdminTransferRoute,
-  checkLocalPackageCode,
-  checkTransferRouteCode,
-  createAdminLocalPackage,
-  createAdminTransferRoute,
-  deleteAdminLocalPackage,
-  deleteAdminTransferRoute,
+  LocalPackageList,
+  LocalPackageFormDialog,
+  EMPTY_LOCAL_PACKAGE,
   fetchAdminLocalPackages,
-  fetchAdminTransferRoutes,
-  publishAdminLocalPackage,
-  publishAdminTransferRoute,
+  createAdminLocalPackage,
   updateAdminLocalPackage,
+  publishAdminLocalPackage,
+  archiveAdminLocalPackage,
+  deleteAdminLocalPackage,
+  checkLocalPackageCode,
+  type LocalPackageFormState,
+  type LocalPackageItem,
+} from "@/modules/local-packages";
+import {
+  TransferRouteList,
+  TransferRouteFormDialog,
+  EMPTY_TRANSFER_ROUTE,
+  fetchAdminTransferRoutes,
+  createAdminTransferRoute,
   updateAdminTransferRoute,
-} from "@/lib/api";
-import { can, type AdminUser, type CatalogStatus, type LocalPackageItem, type TransferRouteItem } from "@/lib/types";
-import { formatINR } from "@/lib/utils";
-
-const FLEET_KEYS = ["sedan", "ertiga", "innova-crysta", "tempo-traveller", "urbania"] as const;
-const FLEET_LABELS: Record<string, string> = {
-  sedan: "Sedan (4s)",
-  ertiga: "Ertiga (6s)",
-  "innova-crysta": "Innova (6-7s)",
-  "tempo-traveller": "Tempo (12s)",
-  urbania: "Urbania (16s)",
-};
-
-function slugify(value: string): string {
-  return value
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 80);
-}
-
-const emptyLocal = {
-  name: "",
-  packageCode: "",
-  durationHours: 8,
-  includedKm: 80,
-  covers: "Taj Mahal, Agra Fort, Mehtab Bagh",
-  parkingNote: "Monument entry fees & parking billed at actuals",
-  fleetPrices: { sedan: 1900, ertiga: 2600, "innova-crysta": 2850, "tempo-traveller": 5500, urbania: 7500 } as Record<string, number>,
-  usePerKm: false,
-  extraRates: {
-    sedan: { per_km: 10, per_hr: 150 },
-    ertiga: { per_km: 14, per_hr: 200 },
-    "innova-crysta": { per_km: 18, per_hr: 250 },
-    "tempo-traveller": { per_km: 25, per_hr: 400 },
-    urbania: { per_km: 34, per_hr: 600 },
-  } as Record<string, { per_km: number; per_hr: number }>,
-  nightChargeInr: 0,
-  status: "draft" as CatalogStatus,
-  isActive: true,
-};
-
-const emptyTransfer = {
-  name: "",
-  routeCode: "",
-  distanceText: "~15–20 km",
-  directionNote: "Doorstep pickup or drop at station / airport",
-  fleetPrices: { sedan: 800, ertiga: 900, "innova-crysta": 1100, "tempo-traveller": 2200, urbania: 3500 } as Record<string, number>,
-  usePerKm: false,
-  nightChargeInr: 0,
-  status: "draft" as CatalogStatus,
-  isActive: true,
-};
+  publishAdminTransferRoute,
+  archiveAdminTransferRoute,
+  deleteAdminTransferRoute,
+  checkTransferRouteCode,
+  type TransferRouteFormState,
+  type TransferRouteItem,
+} from "@/modules/transfer-routes";
+import { can, type AdminUser, type CatalogStatus } from "@/lib/types";
 
 export function LocalTransfersPage({ user }: { user: AdminUser }) {
   const [activeTab, setActiveTab] = useState<"local" | "transfer">("local");
@@ -84,63 +40,44 @@ export function LocalTransfersPage({ user }: { user: AdminUser }) {
   const [status, setStatus] = useState<CatalogStatus | "all">("all");
   const [q, setQ] = useState("");
   const [loading, setLoading] = useState(false);
+  const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Local Modal
   const [localModalOpen, setLocalModalOpen] = useState(false);
   const [editingLocal, setEditingLocal] = useState<LocalPackageItem | null>(null);
-  const [localForm, setLocalForm] = useState(emptyLocal);
+  const [localForm, setLocalForm] = useState<LocalPackageFormState>(EMPTY_LOCAL_PACKAGE);
 
   // Transfer Modal
   const [transferModalOpen, setTransferModalOpen] = useState(false);
   const [editingTransfer, setEditingTransfer] = useState<TransferRouteItem | null>(null);
-  const [transferForm, setTransferForm] = useState(emptyTransfer);
+  const [transferForm, setTransferForm] = useState<TransferRouteFormState>(EMPTY_TRANSFER_ROUTE);
 
-  const [busy, setBusy] = useState(false);
-
-  const reload = async () => {
+  const loadData = () => {
     setLoading(true);
     setError(null);
-    try {
-      if (activeTab === "local") {
-        const data = await fetchAdminLocalPackages({ status, q });
-        setLocalItems(data);
-      } else {
-        const data = await fetchAdminTransferRoutes({ status, q });
-        setTransferItems(data);
-      }
-    } catch (e: any) {
-      setError(e.message || "Failed to load data.");
-    } finally {
-      setLoading(false);
+    if (activeTab === "local") {
+      fetchAdminLocalPackages({ status, q })
+        .then(setLocalItems)
+        .catch((e) => setError(e?.message || "Failed to load local packages."))
+        .finally(() => setLoading(false));
+    } else {
+      fetchAdminTransferRoutes({ status, q })
+        .then(setTransferItems)
+        .catch((e) => setError(e?.message || "Failed to load transfer routes."))
+        .finally(() => setLoading(false));
     }
   };
 
   useEffect(() => {
-    void reload();
+    void loadData();
   }, [activeTab, status, q]);
 
-  // Local package handlers
-  function openNewLocal() {
+  // Local Handlers
+  function openCreateLocal() {
     setEditingLocal(null);
-    setLocalForm(emptyLocal);
+    setLocalForm(EMPTY_LOCAL_PACKAGE);
     setLocalModalOpen(true);
-  }
-
-  function handleLocalNameChange(name: string) {
-    setLocalForm((prev) => ({ ...prev, name, packageCode: !editingLocal || !prev.packageCode ? slugify(name) : prev.packageCode }));
-  }
-
-  function syncLocalSlug() {
-    setLocalForm((prev) => ({ ...prev, packageCode: slugify(prev.name) }));
-  }
-
-  function handleTransferNameChange(name: string) {
-    setTransferForm((prev) => ({ ...prev, name, routeCode: !editingTransfer || !prev.routeCode ? slugify(name) : prev.routeCode }));
-  }
-
-  function syncTransferSlug() {
-    setTransferForm((prev) => ({ ...prev, routeCode: slugify(prev.name) }));
   }
 
   function openEditLocal(item: LocalPackageItem) {
@@ -152,75 +89,100 @@ export function LocalTransfersPage({ user }: { user: AdminUser }) {
       includedKm: item.includedKm,
       covers: item.covers,
       parkingNote: item.parkingNote ?? "",
-      fleetPrices: {
-        sedan: item.fleetPrices?.sedan ?? emptyLocal.fleetPrices.sedan,
-        ertiga: item.fleetPrices?.ertiga ?? emptyLocal.fleetPrices.ertiga,
-        "innova-crysta": item.fleetPrices?.["innova-crysta"] ?? item.fleetPrices?.innova ?? emptyLocal.fleetPrices["innova-crysta"],
-        "tempo-traveller": item.fleetPrices?.["tempo-traveller"] ?? item.fleetPrices?.tempo ?? emptyLocal.fleetPrices["tempo-traveller"],
-        urbania: item.fleetPrices?.urbania ?? emptyLocal.fleetPrices.urbania,
-      },
+      fleetPrices: item.fleetPrices,
       usePerKm: item.usePerKm,
-      extraRates: {
-        sedan: item.extraRates?.sedan ?? emptyLocal.extraRates.sedan,
-        ertiga: item.extraRates?.ertiga ?? emptyLocal.extraRates.ertiga,
-        "innova-crysta": item.extraRates?.["innova-crysta"] ?? item.extraRates?.innova ?? emptyLocal.extraRates["innova-crysta"],
-        "tempo-traveller": item.extraRates?.["tempo-traveller"] ?? item.extraRates?.tempo ?? emptyLocal.extraRates["tempo-traveller"],
-        urbania: item.extraRates?.urbania ?? emptyLocal.extraRates.urbania,
-      },
-      nightChargeInr: item.nightChargeInr,
+      extraRates: item.extraRates ?? EMPTY_LOCAL_PACKAGE.extraRates,
+      nightChargeInr: item.nightChargeInr ?? 0,
       status: item.status,
       isActive: item.isActive,
     });
     setLocalModalOpen(true);
   }
 
-  async function handleSaveLocal(publish = false) {
-    setBusy(true);
-    setError(null);
-    try {
-      if (!localForm.name.trim()) throw new Error("Package name is required.");
-      if (!localForm.packageCode.trim()) throw new Error("Package code is required.");
+  async function handleSaveLocal() {
+    if (!localForm.name.trim()) return alert("Name is required.");
+    const code = localForm.packageCode.trim();
+    if (!code) return alert("Code is required.");
 
-      if (!editingLocal) {
-        const check = await checkLocalPackageCode(localForm.packageCode);
-        if (!check.available) throw new Error(`Code '${localForm.packageCode}' already taken.`);
+    setBusy(true);
+    try {
+      if (!editingLocal || editingLocal.packageCode !== code) {
+        const { available } = await checkLocalPackageCode(code);
+        if (!available) {
+          alert(`Package code "${code}" is already taken.`);
+          setBusy(false);
+          return;
+        }
       }
 
       const payload = {
         name: localForm.name.trim(),
-        package_code: localForm.packageCode.trim(),
-        duration_hours: Number(localForm.durationHours),
-        included_km: Number(localForm.includedKm),
+        package_code: code,
+        duration_hours: localForm.durationHours,
+        included_km: localForm.includedKm,
         covers: localForm.covers.trim(),
         parking_note: localForm.parkingNote.trim() || undefined,
         fleet_prices: localForm.fleetPrices,
-        use_per_km: Boolean(localForm.usePerKm),
         extra_rates: localForm.extraRates,
-        night_charge_inr: Number(localForm.nightChargeInr) || 0,
-        is_active: localForm.isActive,
+        night_charge_inr: localForm.nightChargeInr ?? 0,
       };
 
-      const saved = editingLocal
-        ? await updateAdminLocalPackage(editingLocal.id, payload)
-        : await createAdminLocalPackage(payload);
-
-      if (publish && saved.status !== "published") {
-        await publishAdminLocalPackage(saved.id);
+      if (editingLocal) {
+        await updateAdminLocalPackage(editingLocal.id, payload);
+      } else {
+        await createAdminLocalPackage(payload);
       }
-
       setLocalModalOpen(false);
-      await reload();
+      loadData();
     } catch (e: any) {
-      setError(e.message || "Failed to save local package.");
+      alert(e?.message || "Failed to save local package.");
     } finally {
       setBusy(false);
     }
   }
 
-  // Transfer handlers
-  function openNewTransfer() {
+  async function handlePublishLocal(id: string) {
+    setBusy(true);
+    try {
+      await publishAdminLocalPackage(id);
+      loadData();
+    } catch (e: any) {
+      alert(e?.message || "Failed to publish.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function handleArchiveLocal(id: string) {
+    if (!confirm("Archive this local package?")) return;
+    setBusy(true);
+    try {
+      await archiveAdminLocalPackage(id);
+      loadData();
+    } catch (e: any) {
+      alert(e?.message || "Failed to archive.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function handleDeleteLocal(item: LocalPackageItem) {
+    if (!confirm(`Permanently delete draft "${item.name}"?`)) return;
+    setBusy(true);
+    try {
+      await deleteAdminLocalPackage(item.id);
+      loadData();
+    } catch (e: any) {
+      alert(e?.message || "Failed to delete.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  // Transfer Handlers
+  function openCreateTransfer() {
     setEditingTransfer(null);
-    setTransferForm(emptyTransfer);
+    setTransferForm(EMPTY_TRANSFER_ROUTE);
     setTransferModalOpen(true);
   }
 
@@ -231,454 +193,205 @@ export function LocalTransfersPage({ user }: { user: AdminUser }) {
       routeCode: item.routeCode,
       distanceText: item.distanceText ?? "",
       directionNote: item.directionNote ?? "",
-      fleetPrices: {
-        sedan: item.fleetPrices?.sedan ?? emptyTransfer.fleetPrices.sedan,
-        ertiga: item.fleetPrices?.ertiga ?? emptyTransfer.fleetPrices.ertiga,
-        "innova-crysta": item.fleetPrices?.["innova-crysta"] ?? item.fleetPrices?.innova ?? emptyTransfer.fleetPrices["innova-crysta"],
-        "tempo-traveller": item.fleetPrices?.["tempo-traveller"] ?? item.fleetPrices?.tempo ?? emptyTransfer.fleetPrices["tempo-traveller"],
-        urbania: item.fleetPrices?.urbania ?? emptyTransfer.fleetPrices.urbania,
-      },
+      fleetPrices: item.fleetPrices,
       usePerKm: item.usePerKm,
-      nightChargeInr: item.nightChargeInr,
+      nightChargeInr: item.nightChargeInr ?? 0,
       status: item.status,
       isActive: item.isActive,
     });
     setTransferModalOpen(true);
   }
 
-  async function handleSaveTransfer(publish = false) {
-    setBusy(true);
-    setError(null);
-    try {
-      if (!transferForm.name.trim()) throw new Error("Route name is required.");
-      if (!transferForm.routeCode.trim()) throw new Error("Route code is required.");
+  async function handleSaveTransfer() {
+    if (!transferForm.name.trim()) return alert("Name is required.");
+    const code = transferForm.routeCode.trim();
+    if (!code) return alert("Route code is required.");
 
-      if (!editingTransfer) {
-        const check = await checkTransferRouteCode(transferForm.routeCode);
-        if (!check.available) throw new Error(`Code '${transferForm.routeCode}' already taken.`);
+    setBusy(true);
+    try {
+      if (!editingTransfer || editingTransfer.routeCode !== code) {
+        const { available } = await checkTransferRouteCode(code);
+        if (!available) {
+          alert(`Route code "${code}" is already taken.`);
+          setBusy(false);
+          return;
+        }
       }
 
       const payload = {
         name: transferForm.name.trim(),
-        route_code: transferForm.routeCode.trim(),
-        distance_text: transferForm.distanceText.trim() || undefined,
-        direction_note: transferForm.directionNote.trim() || undefined,
+        route_code: code,
+        distance_text: transferForm.distanceText.trim(),
+        direction_note: transferForm.directionNote.trim(),
         fleet_prices: transferForm.fleetPrices,
-        use_per_km: Boolean(transferForm.usePerKm),
-        night_charge_inr: Number(transferForm.nightChargeInr) || 0,
-        is_active: transferForm.isActive,
+        night_charge_inr: transferForm.nightChargeInr ?? 0,
       };
 
-      const saved = editingTransfer
-        ? await updateAdminTransferRoute(editingTransfer.id, payload)
-        : await createAdminTransferRoute(payload);
-
-      if (publish && saved.status !== "published") {
-        await publishAdminTransferRoute(saved.id);
+      if (editingTransfer) {
+        await updateAdminTransferRoute(editingTransfer.id, payload);
+      } else {
+        await createAdminTransferRoute(payload);
       }
-
       setTransferModalOpen(false);
-      await reload();
+      loadData();
     } catch (e: any) {
-      setError(e.message || "Failed to save transfer route.");
+      alert(e?.message || "Failed to save transfer route.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function handlePublishTransfer(id: string) {
+    setBusy(true);
+    try {
+      await publishAdminTransferRoute(id);
+      loadData();
+    } catch (e: any) {
+      alert(e?.message || "Failed to publish.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function handleArchiveTransfer(id: string) {
+    if (!confirm("Archive this transfer route?")) return;
+    setBusy(true);
+    try {
+      await archiveAdminTransferRoute(id);
+      loadData();
+    } catch (e: any) {
+      alert(e?.message || "Failed to archive.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function handleDeleteTransfer(item: TransferRouteItem) {
+    if (!confirm(`Permanently delete draft "${item.name}"?`)) return;
+    setBusy(true);
+    try {
+      await deleteAdminTransferRoute(item.id);
+      loadData();
+    } catch (e: any) {
+      alert(e?.message || "Failed to delete.");
     } finally {
       setBusy(false);
     }
   }
 
   return (
-    <div className="space-y-6">
+    <div>
       <PageHeader
-        eyebrow="Local & Transfers"
+        eyebrow="Commercial Catalog"
         title="Local Sightseeing & Transfers"
-        description="Agra hourly sightseeing packages and station / airport transfer corridors with verified fleet pricing."
-        actions={
-          can(user.role, "catalog:edit") ? (
-            <Button variant="gold" onClick={activeTab === "local" ? openNewLocal : openNewTransfer}>
-              <Plus className="mr-1.5 h-4 w-4" /> {activeTab === "local" ? "New Local Package" : "New Transfer Route"}
-            </Button>
-          ) : undefined
-        }
+        description="Point-to-point transfers and local hourly sightseeing packages with fixed commercial rates across all 5 canonical fleet tiers."
       />
 
       {/* Tabs */}
-      <div className="flex border-b border-hairline gap-4">
+      <div className="mb-4 flex border-b border-hairline gap-2">
         <button
           onClick={() => setActiveTab("local")}
-          className={`pb-3 text-sm font-semibold border-b-2 transition-colors flex items-center gap-2 ${
-            activeTab === "local" ? "border-gold text-ink" : "border-transparent text-ink-soft hover:text-ink"
+          className={`flex items-center gap-2 pb-2.5 px-3 text-sm font-semibold border-b-2 transition-colors ${
+            activeTab === "local"
+              ? "border-gold text-gold"
+              : "border-transparent text-ink-soft hover:text-ink"
           }`}
         >
-          <Car className="h-4 w-4 text-gold" /> Local Sightseeing Packages
+          <Car className="h-4 w-4" /> Local Sightseeing Packages
         </button>
         <button
           onClick={() => setActiveTab("transfer")}
-          className={`pb-3 text-sm font-semibold border-b-2 transition-colors flex items-center gap-2 ${
-            activeTab === "transfer" ? "border-gold text-ink" : "border-transparent text-ink-soft hover:text-ink"
+          className={`flex items-center gap-2 pb-2.5 px-3 text-sm font-semibold border-b-2 transition-colors ${
+            activeTab === "transfer"
+              ? "border-gold text-gold"
+              : "border-transparent text-ink-soft hover:text-ink"
           }`}
         >
-          <Plane className="h-4 w-4 text-gold" /> Point-to-Point Transfers
+          <Plane className="h-4 w-4" /> Airport &amp; Station Transfers
         </button>
       </div>
 
-      <div className="flex flex-wrap items-center gap-3">
-        <Input
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder={`Search ${activeTab === "local" ? "packages" : "transfers"}...`}
-          className="max-w-xs"
-        />
-        <Select value={status} onChange={(e) => setStatus(e.target.value as any)} className="w-40">
-          <option value="all">All statuses</option>
-          <option value="draft">Draft</option>
-          <option value="published">Published</option>
-          <option value="archived">Archived</option>
-        </Select>
+      {/* Filter Toolbar */}
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <Select
+            value={status}
+            onChange={(e) => setStatus(e.target.value as any)}
+            className="w-auto text-xs"
+          >
+            <option value="all">All statuses</option>
+            <option value="published">Published</option>
+            <option value="draft">Draft</option>
+            <option value="archived">Archived</option>
+          </Select>
+          <Input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Search name or code..."
+            className="max-w-xs text-xs"
+          />
+        </div>
+
+        {can(user.role, "catalog:create") && (
+          <Button
+            variant="gold"
+            size="sm"
+            onClick={activeTab === "local" ? openCreateLocal : openCreateTransfer}
+          >
+            <Plus className="mr-1 h-3.5 w-3.5" />
+            {activeTab === "local" ? "New Local Package" : "New Transfer Route"}
+          </Button>
+        )}
       </div>
 
-      {error && (
-        <div className="rounded-lg border border-red-500/20 bg-red-500/10 p-3 text-sm text-red-400">
-          {error}
-        </div>
+      {error && <p className="mb-3 text-xs text-error">{error}</p>}
+
+      {activeTab === "local" ? (
+        <LocalPackageList
+          items={localItems}
+          user={user}
+          loading={loading}
+          busy={busy}
+          onOpenEdit={openEditLocal}
+          onPublish={handlePublishLocal}
+          onArchive={handleArchiveLocal}
+          onDelete={handleDeleteLocal}
+        />
+      ) : (
+        <TransferRouteList
+          items={transferItems}
+          user={user}
+          loading={loading}
+          busy={busy}
+          onOpenEdit={openEditTransfer}
+          onPublish={handlePublishTransfer}
+          onArchive={handleArchiveTransfer}
+          onDelete={handleDeleteTransfer}
+        />
       )}
 
-      {/* List */}
-      <Card className="overflow-hidden">
-        <div className="divide-y divide-hairline">
-          {activeTab === "local" &&
-            localItems.map((item) => (
-              <div key={item.id} className="flex flex-wrap items-center justify-between gap-4 p-4 hover:bg-surface-raised/40 transition-colors">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold text-ink">{item.name}</span>
-                    <Badge tone={item.status === "published" ? "success" : item.status === "draft" ? "gold" : "neutral"}>
-                      {item.status}
-                    </Badge>
-                    <span className="text-xs text-ink-soft">({item.durationHours}h / {item.includedKm} km)</span>
-                  </div>
-                  <p className="mt-1 font-mono text-xs text-ink-soft">
-                    /local-packages/{item.packageCode} · Sedan {formatINR(item.fleetPrices.sedan ?? 0)}
-                  </p>
-                  <p className="text-xs text-ink-soft mt-1">Covers: {item.covers}</p>
-                  <div className="mt-2 flex flex-wrap gap-2 text-[11px] text-ink-soft">
-                    {FLEET_KEYS.map((k) => {
-                      const val = item.fleetPrices[k] ?? (k === "innova-crysta" ? item.fleetPrices.innova : k === "tempo-traveller" ? item.fleetPrices.tempo : undefined);
-                      return (
-                        <span key={k} className="rounded bg-surface-raised px-1.5 py-0.5 border border-hairline font-mono">
-                          {k}: {val ? formatINR(val) : "—"}
-                        </span>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  {can(user.role, "catalog:edit") && (
-                    <Button size="sm" variant="outline" onClick={() => openEditLocal(item)}>
-                      <Pencil className="mr-1 h-3.5 w-3.5" /> Edit
-                    </Button>
-                  )}
-                  {can(user.role, "catalog:publish") && item.status === "draft" && (
-                    <Button size="sm" variant="gold" onClick={async () => { await publishAdminLocalPackage(item.id); reload(); }}>
-                      <Check className="mr-1 h-3.5 w-3.5" /> Publish
-                    </Button>
-                  )}
-                  {item.status !== "archived" && (
-                    <Button size="sm" variant="ghost" onClick={async () => { await archiveAdminLocalPackage(item.id); reload(); }}>
-                      <Archive className="h-3.5 w-3.5" />
-                    </Button>
-                  )}
-                  {item.status === "draft" && (
-                    <Button size="sm" variant="ghost" className="text-red-400 hover:text-red-300" onClick={async () => { if (confirm("Delete draft?")) { await deleteAdminLocalPackage(item.id); reload(); } }}>
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </Button>
-                  )}
-                </div>
-              </div>
-            ))}
-
-          {activeTab === "transfer" &&
-            transferItems.map((item) => (
-              <div key={item.id} className="flex flex-wrap items-center justify-between gap-4 p-4 hover:bg-surface-raised/40 transition-colors">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold text-ink">{item.name}</span>
-                    <Badge tone={item.status === "published" ? "success" : item.status === "draft" ? "gold" : "neutral"}>
-                      {item.status}
-                    </Badge>
-                    <span className="text-xs text-ink-soft">({item.distanceText})</span>
-                  </div>
-                  <p className="mt-1 font-mono text-xs text-ink-soft">
-                    /transfers/{item.routeCode} · Sedan {formatINR(item.fleetPrices.sedan ?? 0)}
-                  </p>
-                  <div className="mt-2 flex flex-wrap gap-2 text-[11px] text-ink-soft">
-                    {FLEET_KEYS.map((k) => {
-                      const val = item.fleetPrices[k] ?? (k === "innova-crysta" ? item.fleetPrices.innova : k === "tempo-traveller" ? item.fleetPrices.tempo : undefined);
-                      return (
-                        <span key={k} className="rounded bg-surface-raised px-1.5 py-0.5 border border-hairline font-mono">
-                          {k}: {val ? formatINR(val) : "—"}
-                        </span>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  {can(user.role, "catalog:edit") && (
-                    <Button size="sm" variant="outline" onClick={() => openEditTransfer(item)}>
-                      <Pencil className="mr-1 h-3.5 w-3.5" /> Edit
-                    </Button>
-                  )}
-                  {can(user.role, "catalog:publish") && item.status === "draft" && (
-                    <Button size="sm" variant="gold" onClick={async () => { await publishAdminTransferRoute(item.id); reload(); }}>
-                      <Check className="mr-1 h-3.5 w-3.5" /> Publish
-                    </Button>
-                  )}
-                  {item.status !== "archived" && (
-                    <Button size="sm" variant="ghost" onClick={async () => { await archiveAdminTransferRoute(item.id); reload(); }}>
-                      <Archive className="h-3.5 w-3.5" />
-                    </Button>
-                  )}
-                  {item.status === "draft" && (
-                    <Button size="sm" variant="ghost" className="text-red-400 hover:text-red-300" onClick={async () => { if (confirm("Delete draft?")) { await deleteAdminTransferRoute(item.id); reload(); } }}>
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </Button>
-                  )}
-                </div>
-              </div>
-            ))}
-
-          {((activeTab === "local" && localItems.length === 0) ||
-            (activeTab === "transfer" && transferItems.length === 0)) &&
-            !loading && (
-              <div className="p-8 text-center text-sm text-ink-soft">No items found for this view.</div>
-            )}
-        </div>
-      </Card>
-
-      {/* Local Package Modal */}
-      <Dialog
+      {/* Local Package Form Dialog */}
+      <LocalPackageFormDialog
         open={localModalOpen}
         onClose={() => setLocalModalOpen(false)}
-        title={editingLocal ? `Edit: ${editingLocal.name}` : "New Local Sightseeing Package"}
-        description="Configure duration, included km, covers, 5 fleet prices, and extra km/hr rates."
-      >
-        <div className="space-y-4 max-h-[75vh] overflow-y-auto pr-1">
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div>
-              <Label>Package Name</Label>
-              <Input
-                value={localForm.name}
-                onChange={(e) => handleLocalNameChange(e.target.value)}
-                placeholder="e.g. Agra Standard Sightseeing"
-              />
-            </div>
-            <div>
-              <div className="flex items-center justify-between mb-1">
-                <Label className="mb-0">Package Slug / Code</Label>
-                <button
-                  type="button"
-                  onClick={syncLocalSlug}
-                  className="text-[11px] text-gold hover:underline font-medium"
-                >
-                  ⚡ Auto-generate from name
-                </button>
-              </div>
-              <Input
-                value={localForm.packageCode}
-                onChange={(e) => setLocalForm((p) => ({ ...p, packageCode: e.target.value }))}
-                placeholder="e.g. agra-standard-sightseeing"
-              />
-            </div>
-          </div>
+        form={localForm}
+        setForm={setLocalForm}
+        onSave={handleSaveLocal}
+        editing={editingLocal}
+        busy={busy}
+      />
 
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div>
-              <Label>Duration (Hours)</Label>
-              <NumberInput
-                min={1}
-                value={localForm.durationHours}
-                onChange={(v) => setLocalForm((p) => ({ ...p, durationHours: v || 1 }))}
-              />
-            </div>
-            <div>
-              <Label>Included Distance (Km)</Label>
-              <NumberInput
-                min={1}
-                value={localForm.includedKm}
-                onChange={(v) => setLocalForm((p) => ({ ...p, includedKm: v || 1 }))}
-              />
-            </div>
-          </div>
-
-          <div>
-            <LocationAutocompleteInput
-              label="Places Covered (LocationIQ)"
-              value={localForm.covers}
-              onChange={(val) => setLocalForm((p) => ({ ...p, covers: val }))}
-              placeholder="e.g. Taj Mahal, Agra Fort, Mehtab Bagh"
-            />
-          </div>
-
-          <div>
-            <Label>Parking & Entry Note</Label>
-            <Input
-              value={localForm.parkingNote}
-              onChange={(e) => setLocalForm((p) => ({ ...p, parkingNote: e.target.value }))}
-              placeholder="Monument entry fees & parking billed at actuals"
-            />
-          </div>
-
-          {/* 5-tier fleet prices */}
-          <div className="rounded-lg border border-hairline p-4 bg-surface-raised/20">
-            <h4 className="font-semibold text-ink text-sm mb-3">5 Canonical Fleet Fares (₹)</h4>
-            <div className="grid gap-3 sm:grid-cols-5">
-              {FLEET_KEYS.map((k) => (
-                <div key={k}>
-                  <Label className="text-xs">{FLEET_LABELS[k]}</Label>
-                  <NumberInput
-                    value={localForm.fleetPrices[k] ?? 0}
-                    onChange={(v) => setLocalForm((p) => ({ ...p, fleetPrices: { ...p.fleetPrices, [k]: v } }))}
-                    placeholder="₹"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Extra rates editor */}
-          <div className="rounded-lg border border-hairline p-4 bg-surface-raised/20">
-            <h4 className="font-semibold text-ink text-sm mb-3">Extra Distance & Hour Rates</h4>
-            <div className="grid gap-3 sm:grid-cols-5">
-              {FLEET_KEYS.map((k) => (
-                <div key={k} className="space-y-1">
-                  <span className="text-xs font-medium text-ink">{FLEET_LABELS[k]}</span>
-                  <div>
-                    <Label className="text-[10px]">₹ / Extra Km</Label>
-                    <NumberInput
-                      value={localForm.extraRates[k]?.per_km ?? 10}
-                      onChange={(v) =>
-                        setLocalForm((p) => ({
-                          ...p,
-                          extraRates: {
-                            ...p.extraRates,
-                            [k]: { ...(p.extraRates[k] ?? { per_hr: 150 }), per_km: v },
-                          },
-                        }))
-                      }
-                    />
-                  </div>
-                  <div>
-                    <Label className="text-[10px]">₹ / Extra Hr</Label>
-                    <NumberInput
-                      value={localForm.extraRates[k]?.per_hr ?? 150}
-                      onChange={(v) =>
-                        setLocalForm((p) => ({
-                          ...p,
-                          extraRates: {
-                            ...p.extraRates,
-                            [k]: { ...(p.extraRates[k] ?? { per_km: 10 }), per_hr: v },
-                          },
-                        }))
-                      }
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex justify-end gap-2 pt-3 border-t border-hairline">
-            <Button variant="outline" onClick={() => setLocalModalOpen(false)} disabled={busy}>Cancel</Button>
-            <Button variant="outline" onClick={() => void handleSaveLocal(false)} disabled={busy}>Save Draft</Button>
-            <Button variant="gold" onClick={() => void handleSaveLocal(true)} disabled={busy}>
-              <Check className="mr-1 h-3.5 w-3.5" /> Save & Publish
-            </Button>
-          </div>
-        </div>
-      </Dialog>
-
-      {/* Transfer Route Modal */}
-      <Dialog
+      {/* Transfer Route Form Dialog */}
+      <TransferRouteFormDialog
         open={transferModalOpen}
         onClose={() => setTransferModalOpen(false)}
-        title={editingTransfer ? `Edit: ${editingTransfer.name}` : "New Transfer Route"}
-        description="Configure doorstep station or airport transfer corridor and 5 fleet prices."
-      >
-        <div className="space-y-4 max-h-[75vh] overflow-y-auto pr-1">
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div>
-              <Label>Route Name</Label>
-              <Input
-                value={transferForm.name}
-                onChange={(e) => handleTransferNameChange(e.target.value)}
-                placeholder="e.g. Agra Cantt Railway Station (AGC) Drop/Pickup"
-              />
-            </div>
-            <div>
-              <div className="flex items-center justify-between mb-1">
-                <Label className="mb-0">Route Slug / Code</Label>
-                <button
-                  type="button"
-                  onClick={syncTransferSlug}
-                  className="text-[11px] text-gold hover:underline font-medium"
-                >
-                  ⚡ Auto-generate from name
-                </button>
-              </div>
-              <Input
-                value={transferForm.routeCode}
-                onChange={(e) => setTransferForm((p) => ({ ...p, routeCode: e.target.value }))}
-                placeholder="e.g. agc-station-drop"
-              />
-            </div>
-          </div>
-
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div>
-              <Label>Distance Text</Label>
-              <Input
-                value={transferForm.distanceText}
-                onChange={(e) => setTransferForm((p) => ({ ...p, distanceText: e.target.value }))}
-                placeholder="~15–20 km"
-              />
-            </div>
-            <div>
-              <LocationAutocompleteInput
-                label="Station / Destination Location (LocationIQ)"
-                value={transferForm.directionNote}
-                onChange={(val) => setTransferForm((p) => ({ ...p, directionNote: val }))}
-                placeholder="e.g. Agra Cantt Railway Station, Idgah, Kheria"
-              />
-            </div>
-          </div>
-
-          {/* 5-tier fleet prices */}
-          <div className="rounded-lg border border-hairline p-4 bg-surface-raised/20">
-            <h4 className="font-semibold text-ink text-sm mb-3">5 Canonical Fleet Fares (₹)</h4>
-            <div className="grid gap-3 sm:grid-cols-5">
-              {FLEET_KEYS.map((k) => (
-                <div key={k}>
-                  <Label className="text-xs">{FLEET_LABELS[k]}</Label>
-                  <NumberInput
-                    value={transferForm.fleetPrices[k] ?? 0}
-                    onChange={(v) => setTransferForm((p) => ({ ...p, fleetPrices: { ...p.fleetPrices, [k]: v } }))}
-                    placeholder="₹"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex justify-end gap-2 pt-3 border-t border-hairline">
-            <Button variant="outline" onClick={() => setTransferModalOpen(false)} disabled={busy}>Cancel</Button>
-            <Button variant="outline" onClick={() => void handleSaveTransfer(false)} disabled={busy}>Save Draft</Button>
-            <Button variant="gold" onClick={() => void handleSaveTransfer(true)} disabled={busy}>
-              <Check className="mr-1 h-3.5 w-3.5" /> Save & Publish
-            </Button>
-          </div>
-        </div>
-      </Dialog>
+        form={transferForm}
+        setForm={setTransferForm}
+        onSave={handleSaveTransfer}
+        editing={editingTransfer}
+        busy={busy}
+      />
     </div>
   );
 }
+export default LocalTransfersPage;

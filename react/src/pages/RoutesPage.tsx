@@ -6,6 +6,7 @@ import { InstantRouteCalculator } from "../components/routes/InstantRouteCalcula
 import { Pagination } from "../components/ui/Pagination";
 import { loadRoutesManifest } from "../services/catalogManifest";
 import { routes as staticCatalogRoutes, type Route as CatalogueRoute } from "../data/catalogue";
+import { LatestRoutesSection } from "../templates/sections/LatestRoutesSection";
 
 export interface RoutesPageProps {
   language?: SupportedLanguage;
@@ -319,6 +320,13 @@ export function RoutesPage({ language = "en" }: RoutesPageProps) {
 
           {/* 0ms In-Memory Route Calculator across all 982 corridors */}
           <InstantRouteCalculator className="mb-space-xl" />
+
+          {/* Latest Published Routes Showcase */}
+          {selectedFilter === "all" && !searchQuery && currentPage === 1 && (
+            <div className="mb-space-xl -mx-margin-mobile lg:-mx-margin">
+              <LatestRoutesSection />
+            </div>
+          )}
 
           {/* Search & Filter Bar (Compact -20%) */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mb-space-md">

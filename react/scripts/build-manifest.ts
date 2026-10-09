@@ -1,6 +1,13 @@
-import { readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import {
+  assertFailClosedCatalogEnv,
+  isFailClosedCatalogBuild,
+  listCatalogSources,
+  redactCatalogUrl,
+  resolveCatalogApiBase,
+} from "./catalog-sources.ts";
 // NOTE: react/ must stay self-contained — never import from backend/ here.
 // Node's --experimental-strip-types cannot resolve cross-project `.js` -> `.ts`
 // imports (ERR_MODULE_NOT_FOUND), which crashed `npm run build`.
@@ -46,7 +53,51 @@ export async function buildRouteCatalogAndManifest(): Promise<void> {
   const allRoutesList: any[] = [];
   const publishedRouteItems: any[] = [];
 
-  const apiBase = (process.env.VITE_API_BASE_URL || process.env.CATALOG_API_URL || "https://skb-baghel-api-staging.onrender.com").replace(/\/+$/, "");
+  assertFailClosedCatalogEnv(process.env);
+  const failClosed = isFailClosedCatalogBuild(process.env);
+  const apiBase = resolveCatalogApiBase(process.env);
+  const catalogSources = Object.fromEntries(listCatalogSources(process.env).map((source) => [source.name, source]));
+  if (!apiBase) {
+    console.info("[Manifest Builder] No VITE_API_BASE_URL/CATALOG_API_URL; using the local static catalog only (not a live release).");
+  }
+
+  async function fetchCatalogJson(url: string): Promise<unknown> {
+    const response = await fetch(url, {
+      headers: { accept: "application/json" },
+      signal: AbortSignal.timeout(15_000),
+    });
+    if (!response.ok) {
+      throw new Error(`Catalog source ${redactCatalogUrl(url)} returned HTTP ${response.status}`);
+    }
+    return response.json();
+  }
+
+  async function loadCatalogSource(name: keyof typeof catalogSources): Promise<unknown | null> {
+    const source = catalogSources[name];
+    if (!source?.url) {
+      if (failClosed) {
+        throw new Error(`Fail-closed catalog build is missing ${source?.envVar ?? name}.`);
+      }
+      return null;
+    }
+    try {
+      return await fetchCatalogJson(source.url);
+    } catch (error) {
+      if (failClosed) throw error;
+      console.warn(`⚠️ [Manifest Builder] ${name} unavailable (${error instanceof Error ? error.message : String(error)}); leaving the existing snapshot untouched.`);
+      return null;
+    }
+  }
+
+  function writeSnapshot(path: string, value: unknown, fetched: boolean): void {
+    if (!fetched) {
+      if (existsSync(path)) {
+        console.info(`[Manifest Builder] Preserved existing snapshot at ${path} because the remote source was not fetched.`);
+        return;
+      }
+    }
+    writeFileSync(path, JSON.stringify(value, null, 2), "utf-8");
+  }
 
   for (const [slug, item] of Object.entries(catalogRoutes)) {
     const fs = item.fares.sedan;
@@ -125,12 +176,10 @@ export async function buildRouteCatalogAndManifest(): Promise<void> {
   // Published admin routes become the customer site's source of truth on the
   // next frontend rebuild. Static JSON remains the safe fallback for local
   // builds and environments where the backend is not reachable.
-  const manifestUrl = process.env.ROUTE_CATALOG_MANIFEST_URL || (apiBase ? `${apiBase}/api/v1/route-catalog/manifest` : undefined);
-  if (manifestUrl) {
-    try {
-      const response = await fetch(manifestUrl);
-      if (response.ok) {
-        const payload = await response.json() as { data?: Array<any> };
+  const manifestUrl = catalogSources["route-catalog"]?.url;
+  const routeCatalogPayload = await loadCatalogSource("route-catalog");
+  if (routeCatalogPayload) {
+        const payload = routeCatalogPayload as { data?: Array<any> };
         for (const item of payload.data ?? []) {
           if (item.status !== "published") continue;
           publishedRouteItems.push(item);
@@ -229,11 +278,7 @@ export async function buildRouteCatalogAndManifest(): Promise<void> {
             }
           }
         }
-        console.log(`✅ [Manifest Builder] Merged published admin route catalog from ${manifestUrl}.`);
-      }
-    } catch (error) {
-      console.warn("⚠️ [Manifest Builder] Admin route catalog unavailable; using static catalog.", error);
-    }
+        console.log(`✅ [Manifest Builder] Merged published admin route catalog from ${redactCatalogUrl(manifestUrl!)}.`);
   }
 
   // 1. Emit react/public/routes-manifest.json
@@ -339,26 +384,21 @@ export async function buildRouteCatalogAndManifest(): Promise<void> {
   // keep the customer UI fresh, while this snapshot gives crawlers complete
   // HTML for catalog pages instead of a client-only loading shell.
   const publishedCatalogPath = join(reactRoot, "src", "data", "generated-published-catalog.json");
-  const catalogUrl = process.env.CATALOG_API_URL || process.env.VITE_API_BASE_URL || apiBase;
   let publishedCatalog: unknown[] = [];
-  if (catalogUrl) {
+  let publishedCatalogFetched = false;
+  if (apiBase) {
     try {
-      const response = await fetch(`${catalogUrl.replace(/\/+$/, "")}/api/v1/catalog`, {
-        headers: { accept: "application/json" },
-        signal: AbortSignal.timeout(15_000),
-      });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      const payload = await response.json() as { data?: unknown };
+      const payload = await fetchCatalogJson(`${apiBase}/api/v1/catalog`) as { data?: unknown };
       publishedCatalog = Array.isArray(payload.data) ? payload.data : [];
+      publishedCatalogFetched = true;
       console.log(`✅ [Manifest Builder] Snapshotted ${publishedCatalog.length} published catalog items for SSG.`);
     } catch (error) {
-      console.warn(`⚠️ [Manifest Builder] Published catalog snapshot unavailable; rendering static baseline only (${error instanceof Error ? error.message : String(error)}).`);
+      if (failClosed) throw error;
+      console.warn(`⚠️ [Manifest Builder] Published catalog snapshot unavailable (${error instanceof Error ? error.message : String(error)}); leaving the existing snapshot untouched.`);
     }
-  } else {
-    console.warn("⚠️ [Manifest Builder] CATALOG_API_URL/VITE_API_BASE_URL not set; published catalog SSG snapshot is empty.");
   }
-  writeFileSync(publishedCatalogPath, JSON.stringify(publishedCatalog, null, 2), "utf-8");
-  writeFileSync(join(reactRoot, "src", "data", "generated-published-routes.json"), JSON.stringify(publishedRouteItems, null, 2), "utf-8");
+  writeSnapshot(publishedCatalogPath, publishedCatalog, publishedCatalogFetched);
+  writeSnapshot(join(reactRoot, "src", "data", "generated-published-routes.json"), publishedRouteItems, Boolean(routeCatalogPayload));
 
   // Fleet prices sanitizer: canonical 5-key tier mapping (sedan, ertiga, innova, tempo, urbania). No crysta.
   const CANONICAL_FLEET_TIERS = ["sedan", "ertiga", "innova", "tempo", "urbania"] as const;
@@ -376,21 +416,17 @@ export async function buildRouteCatalogAndManifest(): Promise<void> {
   };
 
   // 1. Tour Packages manifest (GET /api/v1/tour-packages/manifest)
-  const tourPackagesManifestUrl = process.env.TOUR_PACKAGES_MANIFEST_URL || (apiBase ? `${apiBase}/api/v1/tour-packages/manifest` : undefined);
+  const tourPackagesManifestUrl = catalogSources["tour-packages"]?.url;
   let publishedTourPackages: any[] = [];
-  if (tourPackagesManifestUrl) {
-    try {
-      const response = await fetch(tourPackagesManifestUrl, {
-        headers: { accept: "application/json" },
-        signal: AbortSignal.timeout(15_000),
-      });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      const payload = await response.json() as { data?: any[] };
+  let tourPackagesFetched = false;
+  const tourPackagesPayload = await loadCatalogSource("tour-packages");
+  if (tourPackagesPayload) {
+      const payload = tourPackagesPayload as { data?: any[] };
       const rawItems = Array.isArray(payload.data) ? payload.data : [];
       const resolveMediaUrl = (url?: string) => {
         if (!url) return "/assets/packages/taj-dawn.webp";
         const trimmed = url.trim();
-        if (trimmed.startsWith("/api/")) return `${apiBase}${trimmed}`;
+        if (trimmed.startsWith("/api/")) return `${apiBase ?? ""}${trimmed}`;
         return trimmed;
       };
 
@@ -416,53 +452,18 @@ export async function buildRouteCatalogAndManifest(): Promise<void> {
             fleetPrices: sanitizeFleetPrices(item.fleetPrices ?? item.fleet_prices),
           };
         });
-      console.log(`✅ [Manifest Builder] Snapshotted ${publishedTourPackages.length} published tour packages from ${tourPackagesManifestUrl}.`);
-    } catch (error) {
-      console.warn(`⚠️ [Manifest Builder] Tour packages manifest unavailable; preserving existing snapshot (${error instanceof Error ? error.message : String(error)}).`);
-    }
-  } else {
-    console.warn("⚠️ [Manifest Builder] TOUR_PACKAGES_MANIFEST_URL not set; skipping remote tour packages fetch.");
+      tourPackagesFetched = true;
+      console.log(`✅ [Manifest Builder] Snapshotted ${publishedTourPackages.length} published tour packages from ${redactCatalogUrl(tourPackagesManifestUrl!)}.`);
   }
   const publishedTourPackagesPath = join(reactRoot, "src", "data", "generated-published-tour-packages.json");
-  if (publishedTourPackages.length > 0) {
-    writeFileSync(publishedTourPackagesPath, JSON.stringify(publishedTourPackages, null, 2), "utf-8");
-  } else {
-    // If empty and existing file exists, update any relative /api/ media URLs in existing snapshot
-    try {
-      const existing = JSON.parse(readFileSync(publishedTourPackagesPath, "utf-8"));
-      if (Array.isArray(existing) && existing.length > 0) {
-        const resolveMediaUrl = (url?: string) => {
-          if (!url) return "/assets/packages/taj-dawn.webp";
-          const trimmed = url.trim();
-          if (trimmed.startsWith("/api/")) return `${apiBase}${trimmed}`;
-          return trimmed;
-        };
-        const updated = existing.map((item: any) => ({
-          ...item,
-          image: resolveMediaUrl(item.image ?? item.imageUrl),
-          gallery: Array.isArray(item.gallery)
-            ? item.gallery.map((g: any) => ({
-                ...g,
-                url: resolveMediaUrl(g.url),
-              }))
-            : [],
-        }));
-        writeFileSync(publishedTourPackagesPath, JSON.stringify(updated, null, 2), "utf-8");
-      }
-    } catch {}
-  }
+  writeSnapshot(publishedTourPackagesPath, publishedTourPackages, tourPackagesFetched);
 
   // 2. Transfer Routes manifest (GET /api/v1/transfer-routes/manifest)
-  const transferRoutesManifestUrl = process.env.TRANSFER_ROUTES_MANIFEST_URL || (apiBase ? `${apiBase}/api/v1/transfer-routes/manifest` : undefined);
+  const transferRoutesManifestUrl = catalogSources["transfer-routes"]?.url;
   let publishedTransferRoutes: any[] = [];
-  if (transferRoutesManifestUrl) {
-    try {
-      const response = await fetch(transferRoutesManifestUrl, {
-        headers: { accept: "application/json" },
-        signal: AbortSignal.timeout(15_000),
-      });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      const payload = await response.json() as { data?: any[] };
+  const transferPayload = await loadCatalogSource("transfer-routes");
+  if (transferPayload) {
+      const payload = transferPayload as { data?: any[] };
       const rawItems = Array.isArray(payload.data) ? payload.data : [];
       publishedTransferRoutes = rawItems
         .filter((item) => item.status === "published")
@@ -471,26 +472,16 @@ export async function buildRouteCatalogAndManifest(): Promise<void> {
           slug: item.slug ?? item.routeCode ?? item.route_code,
           fleetPrices: sanitizeFleetPrices(item.fleetPrices ?? item.fleet_prices),
         }));
-      console.log(`✅ [Manifest Builder] Snapshotted ${publishedTransferRoutes.length} published transfer routes from ${transferRoutesManifestUrl}.`);
-    } catch (error) {
-      console.warn(`⚠️ [Manifest Builder] Transfer routes manifest unavailable; using empty snapshot (${error instanceof Error ? error.message : String(error)}).`);
-    }
-  } else {
-    console.warn("⚠️ [Manifest Builder] TRANSFER_ROUTES_MANIFEST_URL not set; published transfer routes SSG snapshot is empty.");
+      console.log(`✅ [Manifest Builder] Snapshotted ${publishedTransferRoutes.length} published transfer routes from ${redactCatalogUrl(transferRoutesManifestUrl!)}.`);
   }
-  writeFileSync(join(reactRoot, "src", "data", "generated-published-transfer-routes.json"), JSON.stringify(publishedTransferRoutes, null, 2), "utf-8");
+  writeSnapshot(join(reactRoot, "src", "data", "generated-published-transfer-routes.json"), publishedTransferRoutes, Boolean(transferPayload));
 
   // 3. Local Packages manifest (GET /api/v1/local-packages/manifest)
-  const localPackagesManifestUrl = process.env.LOCAL_PACKAGES_MANIFEST_URL || (apiBase ? `${apiBase}/api/v1/local-packages/manifest` : undefined);
+  const localPackagesManifestUrl = catalogSources["local-packages"]?.url;
   let publishedLocalPackages: any[] = [];
-  if (localPackagesManifestUrl) {
-    try {
-      const response = await fetch(localPackagesManifestUrl, {
-        headers: { accept: "application/json" },
-        signal: AbortSignal.timeout(15_000),
-      });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      const payload = await response.json() as { data?: any[] };
+  const localPayload = await loadCatalogSource("local-packages");
+  if (localPayload) {
+      const payload = localPayload as { data?: any[] };
       const rawItems = Array.isArray(payload.data) ? payload.data : [];
       publishedLocalPackages = rawItems
         .filter((item) => item.status === "published")
@@ -499,17 +490,12 @@ export async function buildRouteCatalogAndManifest(): Promise<void> {
           slug: item.slug ?? item.packageCode ?? item.package_code,
           fleetPrices: sanitizeFleetPrices(item.fleetPrices ?? item.fleet_prices),
         }));
-      console.log(`✅ [Manifest Builder] Snapshotted ${publishedLocalPackages.length} published local packages from ${localPackagesManifestUrl}.`);
-    } catch (error) {
-      console.warn(`⚠️ [Manifest Builder] Local packages manifest unavailable; using empty snapshot (${error instanceof Error ? error.message : String(error)}).`);
-    }
-  } else {
-    console.warn("⚠️ [Manifest Builder] LOCAL_PACKAGES_MANIFEST_URL not set; published local packages SSG snapshot is empty.");
+      console.log(`✅ [Manifest Builder] Snapshotted ${publishedLocalPackages.length} published local packages from ${redactCatalogUrl(localPackagesManifestUrl!)}.`);
   }
-  writeFileSync(join(reactRoot, "src", "data", "generated-published-local-packages.json"), JSON.stringify(publishedLocalPackages, null, 2), "utf-8");
+  writeSnapshot(join(reactRoot, "src", "data", "generated-published-local-packages.json"), publishedLocalPackages, Boolean(localPayload));
 
   // 4. Combined Content manifest (GET /api/v1/content/manifest)
-  const contentManifestUrl = process.env.CONTENT_MANIFEST_URL || (apiBase ? `${apiBase}/api/v1/content/manifest` : undefined);
+  const contentManifestUrl = catalogSources["content-manifest"]?.url;
   let publishedContent: Record<string, any> = {
     cancellationPolicies: [],
     monuments: [],
@@ -517,25 +503,15 @@ export async function buildRouteCatalogAndManifest(): Promise<void> {
     companyProfile: null,
     dossierSignoffs: [],
   };
-  if (contentManifestUrl) {
-    try {
-      const response = await fetch(contentManifestUrl, {
-        headers: { accept: "application/json" },
-        signal: AbortSignal.timeout(15_000),
-      });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      const payload = await response.json() as { data?: Record<string, any> };
+  const contentPayload = await loadCatalogSource("content-manifest");
+  if (contentPayload) {
+      const payload = contentPayload as { data?: Record<string, any> };
       if (payload.data && typeof payload.data === "object") {
         publishedContent = payload.data;
       }
-      console.log(`✅ [Manifest Builder] Snapshotted content manifest (${Object.keys(publishedContent).length} sections) from ${contentManifestUrl}.`);
-    } catch (error) {
-      console.warn(`⚠️ [Manifest Builder] Content manifest unavailable; using fallback snapshot (${error instanceof Error ? error.message : String(error)}).`);
-    }
-  } else {
-    console.warn("⚠️ [Manifest Builder] CONTENT_MANIFEST_URL not set; content SSG snapshot is empty.");
+      console.log(`✅ [Manifest Builder] Snapshotted content manifest (${Object.keys(publishedContent).length} sections) from ${redactCatalogUrl(contentManifestUrl!)}.`);
   }
-  writeFileSync(join(reactRoot, "src", "data", "generated-published-content.json"), JSON.stringify(publishedContent, null, 2), "utf-8");
+  writeSnapshot(join(reactRoot, "src", "data", "generated-published-content.json"), publishedContent, Boolean(contentPayload));
 }
 
 await buildRouteCatalogAndManifest();

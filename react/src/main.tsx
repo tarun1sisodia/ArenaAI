@@ -9,6 +9,7 @@ import "@/styles/tokens.css";
 import "@/styles/theme.css";
 import "@/styles/global.css";
 import "@/styles/rental.css";
+import "@/styles/heritage-animations.css";
 
 const root = document.getElementById("root");
 

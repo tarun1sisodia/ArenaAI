@@ -153,7 +153,7 @@ export async function buildApp(options: AppOptions): Promise<BuiltApp> {
     },
     credentials: true,
     methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "X-Booking-Token", "X-Booking-Intent-Secret", "X-Request-Id", "X-Razorpay-Signature"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Booking-Token", "X-Booking-Intent-Secret", "X-Request-Id", "X-Correlation-Id", "X-Razorpay-Signature"],
   });
 
   await app.register(rateLimit, {

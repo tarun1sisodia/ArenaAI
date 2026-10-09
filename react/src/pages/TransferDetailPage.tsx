@@ -4,6 +4,7 @@ import { contact } from "../data/contact";
 import { JsonLd, buildBreadcrumbSchema, buildFaqSchema, buildTaxiServiceSchema, buildGraphSchema } from "../components/seo/JsonLd";
 import { CANONICAL_DOMAIN } from "../components/seo/SeoHead";
 import { WhatsAppIcon } from "../components/icons";
+import { VEHICLE_TIERS, type VehicleTier, resolveTierKey } from "../contracts/vehicle-tiers";
 
 export interface DossierTransferRouteItem {
   id: string;
@@ -26,11 +27,11 @@ interface TransferDetailPageProps {
   item: DossierTransferRouteItem;
 }
 
-const FLEET_SPECIFICATIONS = [
+const FLEET_SPECIFICATIONS: Array<{ id: VehicleTier; name: string; seats: string; bags: string; ac: string; desc: string }> = [
   { id: "sedan", name: "Sedan (Dzire / Etios)", seats: "4 Passengers", bags: "2 Bags", ac: "Dual Climate AC", desc: "Smooth, air-conditioned point-to-point transit." },
   { id: "ertiga", name: "Ertiga MPV", seats: "6 Passengers", bags: "3 Bags", ac: "Roof-Mounted AC", desc: "Extra luggage room for families and travelers with baggage." },
-  { id: "innova", name: "Innova Crysta", seats: "6 Passengers", bags: "4 Bags", ac: "VIP Climate Cabin", desc: "Executive luxury with generous legroom and luggage space." },
-  { id: "tempo", name: "Tempo Traveller", seats: "12–16 Passengers", bags: "Luggage Bay", ac: "Individual AC Vents", desc: "Dedicated group transfer with dedicated rear luggage bay." },
+  { id: "innova-crysta", name: "Innova Crysta", seats: "6 Passengers", bags: "4 Bags", ac: "VIP Climate Cabin", desc: "Executive luxury with generous legroom and luggage space." },
+  { id: "tempo-traveller", name: "Tempo Traveller", seats: "12–16 Passengers", bags: "Luggage Bay", ac: "Individual AC Vents", desc: "Dedicated group transfer with dedicated rear luggage bay." },
   { id: "urbania", name: "Force Urbania", seats: "10–17 Passengers", bags: "Full Luggage Bay", ac: "Monocoque Luxury AC", desc: "Chauffeur-grade luxury executive van transfer." },
 ];
 
@@ -266,7 +267,8 @@ export function TransferDetailPage({ item }: TransferDetailPageProps) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-space-md">
             {FLEET_SPECIFICATIONS.map((fleet) => {
-              const tierPrice = item.fleetPrices?.[fleet.id] ?? startingFare;
+              const resolved = resolveTierKey(item.fleetPrices, fleet.id);
+              const tierPrice = Number(resolved.value ?? (fleet.id === "sedan" ? startingFare : fleet.id === "ertiga" ? Math.round(startingFare * 1.3) : fleet.id === "innova-crysta" ? Math.round(startingFare * 1.6) : fleet.id === "tempo-traveller" ? Math.round(startingFare * 2.5) : Math.round(startingFare * 3.5)));
               const tierToken = Math.round(tierPrice * 0.28);
               const tierBookingUrl = `/book.html?from=Agra&to=${encodeURIComponent(item.name)}&vehicle=${fleet.id}`;
 

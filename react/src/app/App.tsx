@@ -33,6 +33,7 @@ import { loadRoutesManifest, loadPublishedPackages, toDossierTourPackage } from 
 import generatedPublishedTourPackages from "../data/generated-published-tour-packages.json";
 import generatedPublishedRoutes from "../data/generated-published-routes.json";
 import generatedCatalog from "../data/generated-catalog.json";
+import { useScrollReveal } from "../utils/scrollReveal";
 
 export function getMarketingPath(pathname: string) {
   const segments = pathname.split("/").filter(Boolean);
@@ -237,6 +238,7 @@ export interface AppProps {
 
 export function App({ pathname: propPathname }: AppProps = {}) {
   const pathname = propPathname || (typeof window !== "undefined" ? window.location.pathname : "/");
+  useScrollReveal([pathname]);
   const { language, section } = getMarketingPath(pathname);
   const isHome =
     pathname === "/" ||

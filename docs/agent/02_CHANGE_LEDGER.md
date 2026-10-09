@@ -1,5 +1,96 @@
 # ArenaAI Agent Change Ledger
 
+## 2026-10-09
+
+### 2026-10-09 — Mughal Heritage Animations & Motifs Suite Across Service Showcases (LOCK-N08)
+
+- **Authorized Design Lock Registry Update (`docs/project/DESIGN_LOCKS.md`)**:
+  - Registered `LOCK-N08` with explicit user approval to add Mughal architectural motifs and micro-animations onto existing fonts (`EB Garamond` display, `Plus Jakarta Sans` body/UI) without loading heavy external fonts.
+- **Theme Tokens & Heritage Animations (`react/src/styles/theme.css`, `react/src/styles/heritage-animations.css`, `react/src/main.tsx`)**:
+  - Added new `@theme` color variables to Tailwind CSS v4 in `theme.css`: `--color-ink`, `--color-ink-soft`, `--color-smoke`, `--color-ivory`, `--color-sand`, `--color-linen`, `--color-saffron`, `--color-flame`, `--color-gold`, and `--color-leaf`.
+  - Created `heritage-animations.css` with:
+    - Signature Mughal arch motifs: `.arch` (`border-radius: 999px 999px 22px 22px`), `.arch-full` (`border-radius: 999px`).
+    - Hairline rules (`.rule` with color-mix ink transparency).
+    - Ambient noise grain overlay (`.texture`).
+    - Micro-animations: `.lift` (cubic-bezier hover elevation), `.sweep` (animated underline hover), `.spin-slow` (22s medallion rotation), `.marquee-track` (36s linear infinite track).
+    - Editorial helpers: `.hero-line`, `.prose-lite p`, `.row-scroll` (hidden scrollbar horizontal swipe), accessible date picker calendar indicator, and saffron selection highlight (`::selection`).
+    - Progressive SSG/SEO-safe `.reveal`: default static/SSG rendering is fully visible (`opacity: 1`), progressively armed once browser runtime hydration confirms JS is active (`.js-ready .reveal`), with immediate fallback for `prefers-reduced-motion`.
+- **Progressive Scroll Observer (`react/src/utils/scrollReveal.ts`, `react/src/app/App.tsx`)**:
+  - Built zero-dependency viewport-bounded `IntersectionObserver` utility and React hook `useScrollReveal` unobserving elements upon entry.
+  - Wired into `App.tsx` on navigation changes.
+- **Services Showcase Integration (`react/src/pages/ServicesPage.tsx`, `react/src/pages/HomePage.tsx`)**:
+  - **`ServicesPage.tsx`**:
+    - Applied `.texture` backdrop and `.hero-line` to hero header.
+    - Added `.sweep` on breadcrumb link and `.row-scroll` on Quick Directory Jump pills.
+    - Staggered `.reveal` and hover `.lift` on all 6 detailed service modules (`serviceModules`) and Starting Tariff badges framed with `.arch`.
+    - Applied `.rule` to feature dividers and action rows.
+    - Staggered `.reveal` and hover `.lift` across the 4 Assurances ("Why Choose Us") cards.
+  - **`HomePage.tsx`**:
+    - Applied `.texture` and hairline `.rule` to the Cab & Tour Services showcase section.
+    - Added `.lift` and staggered `.reveal` to the 6 service cards.
+    - Added `.sweep` animated underline to service "Learn more" links.
+- **Monorepo Hygiene & Build Verification**:
+  - Fixed pre-existing unused imports and exported `apiFetch` in `admin/` to keep desk builds pristine.
+  - Verified full pipeline with `npm run verify`: 3× typechecks clean (0 errors), 32 backend test files / 213 tests passed, customer SEO lifecycle passed, and all 3 production builds succeeded (React SSG 57 pages pre-rendered, Admin SPA, Fastify backend).
+
+### 2026-10-09 — Phase 3: Customer Site Master Templates & Dynamic Catalog Sections
+
+- **Master Templates Suite (`react/src/templates/`)**:
+  - **`RouteTemplate.tsx`**: Standardized intercity corridor layout strictly complying with `LOCK-N04` (**zero image gallery**), displaying highway guidance, trip-type toggle (one-way vs round-trip), 5 canonical fleet comparison cards with `resolveTierKey` fallback, inclusions banner, route stopovers, FAQ accordion, and 28% advance deposit reservation dock.
+  - **`TourPackageTemplate.tsx`**: Signature tour package layout with exactly 3 hero bento images (1 large left card, 2 stacked right cards matching uploaded reference design), interactive thumbnail strip showing total verified photo count, 4 chapters (01. Experience Overview, 02. Clear Transparent Package Accounting, 03. Monument Protocols & Visitor Etiquette, 04. Curated Tour Timeline), sticky reservation dock with 28% advance deposit token, and 5-fleet fixed price matrix.
+  - **`LocalTourTemplate.tsx`**: Local sightseeing tour layout with duration (hours) and distance (km) custody indicators, monuments covered checklist, 5-fleet fixed pricing cards, transparent extra per-km and extra per-hour surcharge table, and 28% advance deposit tokens.
+  - **`MonumentTemplate.tsx`**: Heritage monument layout featuring visiting hours, weekly closure notes, multi-photo gallery with thumbnail strip, route-derived 5-fleet transport options, and direct taxi reservation CTA.
+  - **`sections/LatestRoutesSection.tsx`**: Dynamic section rendering published database routes with "NEW ROUTES" badges, distance/duration badges, and starting fares.
+  - **`sections/LatestPackagesSection.tsx`**: Dynamic section rendering published tour packages with "NEW PACKAGES" badges, photo banners, and 28% advance deposit tokens.
+  - **`sections/LatestToursSection.tsx`**: Dynamic section rendering published local sightseeing packages with "LOCAL TOURS" badges and hours/km custody specs.
+  - **`index.ts`**: Centralized re-export barrel.
+- **Detail Pages Refactored & Canonicalized**:
+  - `react/src/pages/RouteDetailPage.tsx`: Refactored to delegate to master `RouteTemplate`.
+  - `react/src/pages/PackageDetailPage.tsx`: Refactored to delegate to master `TourPackageTemplate`.
+  - `react/src/pages/LocalPackageDetailPage.tsx`: Refactored to delegate to master `LocalTourTemplate`.
+  - `react/src/pages/MonumentDetailPage.tsx`: Refactored to delegate to master `MonumentTemplate`.
+  - `react/src/pages/DossierTourPackagePage.tsx`: Refactored to delegate to master `TourPackageTemplate`.
+  - `react/src/pages/TransferDetailPage.tsx`: Purged legacy fleet keys (`innova`, `tempo`) in favor of canonical `innova-crysta` and `tempo-traveller` with `resolveTierKey`.
+  - `react/src/pages/RoutesPage.tsx`: Integrated `LatestRoutesSection` directly above catalog filters for instant discovery of published routes.
+  - `react/src/pages/PackagesPage.tsx`: Integrated `LatestPackagesSection` and `LatestToursSection` directly above catalog grid for instant discovery of newly published packages.
+- **Verification**:
+  - `npm --prefix react run typecheck`: Passed with 0 errors (`tsc --noEmit`).
+  - `npm --prefix admin run typecheck`: Passed with 0 errors (`tsc --noEmit`).
+  - `npm --prefix react run build`: Passed with 0 errors (57 SSG pre-rendered pages, sitemap.xml generated).
+  - `npm --prefix backend test`: 34 test files, 216 tests passed (100% green).
+
+### 2026-10-09 — Phase 2: Admin Domain Modularization & Canonical Fleet Enforcement
+
+- **Admin Domain Modular Architecture (`admin/src/modules/`)**:
+  - **`modules/fleets/`**:
+    - `fleets.constants.ts`: Authoritative 5 canonical fleet tiers (`sedan`, `ertiga`, `innova-crysta`, `tempo-traveller`, `urbania`), specs, and seating capacities.
+    - `FleetBadge.tsx`: Visual badge for canonical vehicle classes.
+    - `FleetPricingGrid.tsx`: Reusable 5-tier responsive pricing grid input component for all catalog editors.
+  - **`modules/tour-packages/`**:
+    - `tour-packages.types.ts`, `tour-packages.constants.ts`, `tour-packages.api.ts`.
+    - `TourPackageGalleryUploader.tsx`: Multi-image device upload direct to Supabase Storage bucket (`documents/packages/...`) with client-side canvas optimization, alt/caption editing, cover selection, and heritage presets.
+    - `TourPackageFormDialog.tsx`: Dialog featuring `FleetPricingGrid`, `LocationAutocompleteInput`, auto-slug generator, inclusion/exclusion tag managers, and default 0 night charge.
+    - `TourPackageList.tsx`: List and filtering table for tour packages with status transitions and role-based permissions.
+  - **`modules/routes/`**:
+    - `routes.types.ts`, `routes.api.ts`, `RouteCatalogPanel.tsx`: Full intercity route management incorporating `LocationAutocompleteInput`, `FleetPricingGrid`, and automated fare engine calculations.
+  - **`modules/local-packages/`**:
+    - `local-packages.types.ts`, `local-packages.api.ts`, `LocalPackageFormDialog.tsx`, `LocalPackageList.tsx`: Local city sightseeing package management with 5-tier base fares and extra km/hr rates.
+  - **`modules/transfer-routes/`**:
+    - `transfer-routes.types.ts`, `transfer-routes.api.ts`, `TransferRouteFormDialog.tsx`, `TransferRouteList.tsx`: Point-to-point airport and railway station transfer routes with 5-tier fixed rates.
+  - **`modules/fares/` & `modules/bookings/`**:
+    - Encapsulated fare ruleset editing and booking management types and API clients.
+- **Admin Page Orchestrators Refactored**:
+  - `admin/src/pages/TourPackagesPage.tsx`: Deconstructed 1004-line monolith into ~240-line clean orchestrator importing `modules/tour-packages`.
+  - `admin/src/pages/LocalTransfersPage.tsx`: Deconstructed 685-line monolith into clean orchestrator importing `modules/local-packages` and `modules/transfer-routes`.
+  - `admin/src/components/admin/RouteCatalogPanel.tsx`: Re-exports cleanly from `@/modules/routes`.
+- **Zero Legacy Fleet Key Enforcement**:
+  - Guaranteed only canonical long-form keys (`sedan`, `ertiga`, `innova-crysta`, `tempo-traveller`, `urbania`) are used across forms and written to PostgreSQL `fleet_prices` and `fares_inr`.
+- **Monorepo Build & Verification**:
+  - `npm --prefix admin run typecheck`: Passed with 0 errors (`tsc --noEmit`).
+  - `npm --prefix backend run build`: Passed with 0 errors (`tsc -p tsconfig.build.json`).
+  - `npm --prefix react run build`: Passed with 0 errors (57 SSG pre-rendered pages, sitemap.xml generated).
+  - `npm --prefix backend test`: 34 test files passed, 216 tests passed (100%).
+
 ## 2026-10-08
 
 ### 2026-10-08 — Step 5: Fleet Master Normalization (Contract C-ENUM-001 v0.1.1)

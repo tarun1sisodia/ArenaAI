@@ -321,20 +321,20 @@ export function HomePage({ language = "en" }: HomePageProps) {
 
         {/* ── SERVICES ── 2-col feature layout, NO numbered markers (content is not a sequence) */}
         <section
-          className="w-full py-space-3xl bg-ink-midnight text-ivory-surface"
+          className="w-full py-space-3xl bg-ink-midnight text-ivory-surface texture"
         >
           <div className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin">
             {/* Single eyebrow for this page (1 of 3 allowed) */}
-            <div className="mb-space-xl">
+            <div className="mb-space-xl reveal">
               <span className="font-label-caps text-label-caps text-terracotta-sunlit uppercase tracking-widest block mb-2">
                 Cab Services
               </span>
-              <h2 className="font-headline-lg text-headline-lg text-ivory-surface max-w-xl">
+              <h2 className="font-headline-lg text-headline-lg text-ivory-surface hero-line max-w-xl">
                 Cab &amp; Tour Services
               </h2>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-border-warm/15">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-border-warm/15 rule">
               {[
                 {
                   icon: "directions_car",
@@ -378,8 +378,12 @@ export function HomePage({ language = "en" }: HomePageProps) {
                   tags: ["Same Day ₹3,499", "Triangle ₹18,500"],
                   href: "/packages",
                 },
-              ].map((svc) => (
-                <div key={svc.title} className="bg-ink-midnight p-5 sm:p-6 flex flex-col gap-3 hover:bg-ink-charcoal transition-colors">
+              ].map((svc, idx) => (
+                <div
+                  key={svc.title}
+                  style={{ "--reveal-delay": `${(idx % 2) * 100}ms` } as React.CSSProperties}
+                  className="bg-ink-midnight p-5 sm:p-6 flex flex-col gap-3 hover:bg-ink-charcoal transition-colors lift reveal"
+                >
                   <span className="material-symbols-outlined text-terracotta-sunlit text-icon-24">{svc.icon}</span>
                   <div>
                     <h3 className="font-headline-sm text-headline-sm text-ivory-surface font-normal mb-1">{svc.title}</h3>
@@ -390,7 +394,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
                       <span key={t} className="px-2 py-0.5 rounded bg-border-warm/10 text-ivory-surface/70 font-label-caps text-label-caps">{t}</span>
                     ))}
                   </div>
-                  <a className="inline-flex items-center gap-1 font-label-lg text-label-md text-terracotta-sunlit hover:text-gold-accent transition-colors font-semibold self-start" href={svc.href}>
+                  <a className="inline-flex items-center gap-1 font-label-lg text-label-md text-terracotta-sunlit hover:text-gold-accent transition-colors font-semibold self-start sweep" href={svc.href}>
                     <span>Learn more</span>
                     <span className="material-symbols-outlined text-icon-13">arrow_forward</span>
                   </a>

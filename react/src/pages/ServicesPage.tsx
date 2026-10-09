@@ -6,6 +6,7 @@ import {
   EDITORIAL_TYPOGRAPHY,
 } from "../components/layout/EditorialPageTemplate";
 import { fetchLiveFleet, type PublicFleetVehicle } from "../services/catalog";
+import { useScrollReveal } from "../utils/scrollReveal";
 
 export interface ServicesPageProps {
   language?: SupportedLanguage;
@@ -190,22 +191,24 @@ export function ServicesPage({ language = "en" }: ServicesPageProps) {
     });
   }, [liveFleet]);
 
+  useScrollReveal([serviceModules]);
+
   return (
     <div className="bg-surface font-body-md text-body-md text-on-surface antialiased min-h-screen">
       {/* ── 1. HERO & BREADCRUMBS ── */}
-      <section className="relative w-full bg-surface-container-low overflow-hidden border-b border-border-warm/60">
+      <section className="relative w-full bg-surface-container-low texture overflow-hidden border-b border-border-warm/60">
         <div className="relative max-w-[1280px] mx-auto px-margin-mobile lg:px-margin pt-space-xl pb-space-2xl">
-          <nav aria-label="Breadcrumb" className="flex items-center gap-space-xs mb-space-lg text-on-surface-variant font-label-caps text-xs">
-            <a className="hover:text-primary transition-colors" href="/">
+          <nav aria-label="Breadcrumb" className="flex items-center gap-space-xs mb-space-lg text-on-surface-variant font-label-caps text-xs reveal">
+            <a className="hover:text-primary transition-colors sweep inline-block" href="/">
               Home
             </a>
             <span className="material-symbols-outlined text-icon-14">chevron_right</span>
             <span className="text-primary font-bold">Services</span>
           </nav>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-end">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-end reveal">
             <div className="lg:col-span-8 flex flex-col">
-              <h1 className={`${EDITORIAL_TYPOGRAPHY.heroH1} max-w-3xl`}>
+              <h1 className={`${EDITORIAL_TYPOGRAPHY.heroH1} hero-line max-w-3xl`}>
                 Every journey in North India,{" "}
                 <span className={EDITORIAL_TYPOGRAPHY.heroAccent}>thoughtfully chauffeured.</span>
               </h1>
@@ -228,15 +231,15 @@ export function ServicesPage({ language = "en" }: ServicesPageProps) {
           </div>
 
           {/* Quick Directory Jump Strip */}
-          <div className="mt-space-lg pt-space-md">
+          <div className="mt-space-lg pt-space-md reveal" style={{ "--reveal-delay": "150ms" } as React.CSSProperties}>
             <p className={EDITORIAL_TYPOGRAPHY.eyebrow}>
               Quick Directory Jump
             </p>
-            <div className="flex items-center gap-2 overflow-x-auto pb-space-xs mt-1.5 scrollbar-none">
+            <div className="flex items-center gap-2 overflow-x-auto pb-space-xs mt-1.5 row-scroll">
               {serviceModules.map((s) => (
                 <a
                   key={s.id}
-                  className="whitespace-nowrap px-3 py-1 rounded-full bg-surface-container hover:bg-surface-container-high text-ink-charcoal font-label-caps text-body-sm transition-all font-bold"
+                  className="whitespace-nowrap px-3 py-1 rounded-full bg-surface-container hover:bg-surface-container-high text-ink-charcoal font-label-caps text-body-sm transition-all font-bold lift"
                   href={`#${s.id}`}
                 >
                   {s.number} {s.name.split(":")[0]}
@@ -249,11 +252,11 @@ export function ServicesPage({ language = "en" }: ServicesPageProps) {
 
       {/* ── 2. THE 6 DETAILED SERVICE MODULES ── */}
       <section className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin py-8 sm:py-space-xl flex flex-col gap-6 sm:gap-space-xl">
-        <div className="flex flex-col items-center text-center max-w-2xl mx-auto">
+        <div className="flex flex-col items-center text-center max-w-2xl mx-auto reveal">
           <span className={EDITORIAL_TYPOGRAPHY.eyebrow}>
             Concierge Transit Portfolio
           </span>
-          <h2 className={`${EDITORIAL_TYPOGRAPHY.sectionH2} mt-1`}>
+          <h2 className={`${EDITORIAL_TYPOGRAPHY.sectionH2} hero-line mt-1`}>
             Handcrafted transportation designed for modern voyagers.
           </h2>
           <p className={`${EDITORIAL_TYPOGRAPHY.body} mt-1.5`}>
@@ -262,21 +265,22 @@ export function ServicesPage({ language = "en" }: ServicesPageProps) {
           </p>
         </div>
 
-        {serviceModules.map((s) => (
+        {serviceModules.map((s, idx) => (
           <div
             key={s.id}
             id={s.id}
-            className="scroll-mt-24 bg-surface-container-lowest rounded-xl shadow-xs overflow-hidden border border-border-warm/70"
+            style={{ "--reveal-delay": `${(idx % 2) * 120}ms` } as React.CSSProperties}
+            className="scroll-mt-24 bg-surface-container-lowest rounded-xl shadow-xs overflow-hidden border border-border-warm/70 lift reveal"
           >
             <div className="grid grid-cols-1 lg:grid-cols-12">
               <div className="lg:col-span-5 relative min-h-[190px] lg:min-h-[260px] bg-sandstone-wash overflow-hidden">
                 <img
-                  className="w-full h-full object-cover min-h-[190px] lg:min-h-[260px]"
+                  className="w-full h-full object-cover min-h-[190px] lg:min-h-[260px] transition-transform duration-700 hover:scale-105"
                   src={s.image}
                   alt={s.name}
                   loading="lazy"
                 />
-                <div className="absolute bottom-2.5 left-2.5 right-2.5 p-2 sm:p-2.5 bg-surface-container-lowest/95 backdrop-blur-md rounded-lg shadow-xs border border-border-warm/40">
+                <div className="absolute bottom-2.5 left-2.5 right-2.5 p-2 sm:p-2.5 bg-surface-container-lowest/95 backdrop-blur-md rounded-lg shadow-xs border border-border-warm/40 arch">
                   <div className="flex items-center justify-between text-on-surface">
                     <span className="font-label-caps text-label-caps text-primary uppercase font-bold">Starting Tariff</span>
                     <span className="font-price-display text-base sm:text-lg text-primary font-bold">{s.startingFare}</span>
@@ -298,7 +302,7 @@ export function ServicesPage({ language = "en" }: ServicesPageProps) {
                     {s.description}
                   </p>
 
-                  <div className="space-y-1.5 mb-3 border-y border-border-warm/50 py-2">
+                  <div className="space-y-1.5 mb-3 border-y border-border-warm/50 rule py-2">
                     {s.highlights.map((item) => (
                       <div key={item} className="flex items-start gap-1.5 text-on-surface font-body-sm text-body-md">
                         <span className="material-symbols-outlined text-success-jade text-icon-15 shrink-0 mt-0.5">
@@ -321,7 +325,7 @@ export function ServicesPage({ language = "en" }: ServicesPageProps) {
                   </div>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-2.5 pt-2.5 border-t border-border-warm/50">
+                <div className="flex flex-wrap items-center gap-2.5 pt-2.5 border-t border-border-warm/50 rule">
                   <PrimaryButton href={s.bookingUrl} size="md">
                     Reserve Service
                   </PrimaryButton>
@@ -338,13 +342,13 @@ export function ServicesPage({ language = "en" }: ServicesPageProps) {
       </section>
 
       {/* ── 3. WHY CHOOSE US (4 ASSURANCES) ── */}
-      <section className="w-full bg-surface-container-low py-8 sm:py-space-xl border-t border-border-warm/60">
+      <section className="w-full bg-surface-container-low texture py-8 sm:py-space-xl border-t border-border-warm/60 rule">
         <div className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin">
-          <div className="text-center max-w-2xl mx-auto mb-6 sm:mb-space-lg">
+          <div className="text-center max-w-2xl mx-auto mb-6 sm:mb-space-lg reveal">
             <span className={EDITORIAL_TYPOGRAPHY.eyebrow}>
               The 4 Uncompromising Standards
             </span>
-            <h2 className={`${EDITORIAL_TYPOGRAPHY.sectionH2} mt-1`}>
+            <h2 className={`${EDITORIAL_TYPOGRAPHY.sectionH2} hero-line mt-1`}>
               Why Discerning Travelers Choose Agra SK Baghel Tour and Travels
             </h2>
             <p className={`${EDITORIAL_TYPOGRAPHY.body} mt-1.5`}>
@@ -353,57 +357,44 @@ export function ServicesPage({ language = "en" }: ServicesPageProps) {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-            <div className="p-3.5 sm:p-4 rounded-xl bg-surface-container-lowest border border-border-warm/50 shadow-xs flex flex-col justify-between">
-              <div>
-                <div className="w-8 h-8 rounded-lg bg-sandstone-wash flex items-center justify-center text-primary mb-2.5">
-                  <span className="material-symbols-outlined text-icon-20">timer</span>
+            {[
+              {
+                icon: "timer",
+                title: "Punctuality Guarantee",
+                desc: "Chauffeurs arrive at your pickup location 15 minutes before the scheduled rendezvous. If any delay occurs, our standby backup fleet in Taj Ganj deploys immediately.",
+              },
+              {
+                icon: "payments",
+                title: "Upfront Inclusive Pricing",
+                desc: "Every quoted fare itemizes booking receipt, toll clearances, and fuel. What you agree upon is exactly what you pay—with zero hidden roadside extras or tourist surcharges.",
+              },
+              {
+                icon: "badge",
+                title: "Police-Verified Drivers",
+                desc: "Every chauffeur holds an active commercial badge, police background verification certificate, and follows our strict guest etiquette code for families and solo women travelers.",
+              },
+              {
+                icon: "sanitizer",
+                title: "Spotless Vehicles",
+                desc: "Each cab undergoes vacuum sanitization, high-performance AC checks, and is stocked with sealed mineral water bottles and device charging cables before dispatch.",
+              },
+            ].map((assurance, idx) => (
+              <div
+                key={assurance.title}
+                style={{ "--reveal-delay": `${idx * 80}ms` } as React.CSSProperties}
+                className="p-3.5 sm:p-4 rounded-xl bg-surface-container-lowest border border-border-warm/50 shadow-xs flex flex-col justify-between lift reveal"
+              >
+                <div>
+                  <div className="w-8 h-8 rounded-lg bg-sandstone-wash flex items-center justify-center text-primary mb-2.5 transition-transform duration-300 hover:scale-110">
+                    <span className="material-symbols-outlined text-icon-20">{assurance.icon}</span>
+                  </div>
+                  <h3 className={`${EDITORIAL_TYPOGRAPHY.subH4} text-xs sm:text-title-lg mb-1`}>{assurance.title}</h3>
+                  <p className={`${EDITORIAL_TYPOGRAPHY.compact} text-body-sm sm:text-label-lg`}>
+                    {assurance.desc}
+                  </p>
                 </div>
-                <h3 className={`${EDITORIAL_TYPOGRAPHY.subH4} text-xs sm:text-title-lg mb-1`}>Punctuality Guarantee</h3>
-                <p className={`${EDITORIAL_TYPOGRAPHY.compact} text-body-sm sm:text-label-lg`}>
-                  Chauffeurs arrive at your pickup location 15 minutes before the scheduled rendezvous. If any delay occurs, our
-                  standby backup fleet in Taj Ganj deploys immediately.
-                </p>
               </div>
-            </div>
-
-            <div className="p-3.5 sm:p-4 rounded-xl bg-surface-container-lowest border border-border-warm/50 shadow-xs flex flex-col justify-between">
-              <div>
-                <div className="w-8 h-8 rounded-lg bg-sandstone-wash flex items-center justify-center text-primary mb-2.5">
-                  <span className="material-symbols-outlined text-icon-20">payments</span>
-                </div>
-                <h3 className={`${EDITORIAL_TYPOGRAPHY.subH4} text-xs sm:text-title-lg mb-1`}>Upfront Inclusive Pricing</h3>
-                <p className={`${EDITORIAL_TYPOGRAPHY.compact} text-body-sm sm:text-label-lg`}>
-                  Every quoted fare itemizes booking receipt, toll clearances, and fuel. What you agree upon is exactly what you pay—with zero
-                  hidden roadside extras or tourist surcharges.
-                </p>
-              </div>
-            </div>
-
-            <div className="p-3.5 sm:p-4 rounded-xl bg-surface-container-lowest border border-border-warm/50 shadow-xs flex flex-col justify-between">
-              <div>
-                <div className="w-8 h-8 rounded-lg bg-sandstone-wash flex items-center justify-center text-primary mb-2.5">
-                  <span className="material-symbols-outlined text-icon-20">badge</span>
-                </div>
-                <h3 className={`${EDITORIAL_TYPOGRAPHY.subH4} text-xs sm:text-title-lg mb-1`}>Police-Verified Drivers</h3>
-                <p className={`${EDITORIAL_TYPOGRAPHY.compact} text-body-sm sm:text-label-lg`}>
-                  Every chauffeur holds an active commercial badge, police background verification certificate, and follows our
-                  strict guest etiquette code for families and solo women travelers.
-                </p>
-              </div>
-            </div>
-
-            <div className="p-3.5 sm:p-4 rounded-xl bg-surface-container-lowest border border-border-warm/50 shadow-xs flex flex-col justify-between">
-              <div>
-                <div className="w-8 h-8 rounded-lg bg-sandstone-wash flex items-center justify-center text-primary mb-2.5">
-                  <span className="material-symbols-outlined text-icon-20">sanitizer</span>
-                </div>
-                <h3 className={`${EDITORIAL_TYPOGRAPHY.subH4} text-xs sm:text-title-lg mb-1`}>Spotless Vehicles</h3>
-                <p className={`${EDITORIAL_TYPOGRAPHY.compact} text-body-sm sm:text-label-lg`}>
-                  Each cab undergoes vacuum sanitization, high-performance AC checks, and is stocked with sealed mineral water bottles
-                  and device charging cables before dispatch.
-                </p>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>

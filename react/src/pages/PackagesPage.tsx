@@ -8,6 +8,8 @@ import { Pagination } from "../components/ui/Pagination";
 import { LiveCatalogSection } from "../components/catalog/LiveCatalogSection";
 import { loadPublishedPackages, toDossierTourPackage } from "../services/catalogManifest";
 import { resolveCatalogMediaUrl } from "../services/catalog";
+import { LatestPackagesSection } from "../templates/sections/LatestPackagesSection";
+import { LatestToursSection } from "../templates/sections/LatestToursSection";
 
 interface PackagesPageProps {
   language?: SupportedLanguage;
@@ -777,6 +779,14 @@ export function PackagesPage({ language = "en" }: PackagesPageProps) {
           </div>
         </div>
       </section>
+
+      {/* LATEST PUBLISHED PACKAGES & LOCAL SIGHTSEEING SHOWCASE */}
+      {activeCategory === "all" && !searchQuery && currentPage === 1 && (
+        <div className="flex flex-col gap-space-lg w-full">
+          <LatestPackagesSection />
+          <LatestToursSection />
+        </div>
+      )}
 
       {/* CURATED PACKAGES CATALOG GRID (Compact -20%) */}
       <section id="packages-directory" className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin py-8 sm:py-10 w-full">

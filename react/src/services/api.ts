@@ -4,19 +4,16 @@
  */
 
 export function getApiBaseUrl(): string {
+  const envUrl = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.trim().replace(/\/+$/, "");
   if (
     typeof window !== "undefined" &&
     (window.location.hostname === "localhost" ||
       window.location.hostname === "127.0.0.1" ||
       window.location.hostname === "0.0.0.0")
   ) {
-    return "http://localhost:4000";
+    return envUrl || "http://localhost:4000";
   }
-  const envUrl = import.meta.env.VITE_API_BASE_URL as string | undefined;
-  if (envUrl?.trim() && !envUrl.includes("api.agraskbagheltourandtravels.com")) {
-    return envUrl.trim().replace(/\/+$/, "");
-  }
-  return "https://skb-baghel-api-staging.onrender.com";
+  return envUrl || "";
 }
 
 import { toCanonicalTierKey, type VehicleTier } from "../contracts/vehicle-tiers";
