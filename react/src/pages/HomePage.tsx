@@ -3,6 +3,7 @@ import type { SupportedLanguage } from "../config";
 import { contact } from "../data/contact";
 import { ReviewsMarquee } from "../components/home/ReviewsMarquee";
 import { FamousPlacesSection } from "../components/home/FamousPlacesSection";
+import { HomeHeroSlideshow } from "../components/home/HomeHeroSlideshow";
 import { WhatsAppIcon } from "../components/icons";
 import { HomeBookingWidget } from "../components/home/HomeBookingWidget";
 import { useCustomerAuth } from "../auth/customerAuth";
@@ -115,22 +116,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
       <div className="w-full relative z-20">
         {/* ── HERO ── Taj Mahal sunrise background, text left / booking dock right */}
         <section className="relative w-full min-h-[580px] lg:min-h-[640px] flex items-center pt-20 sm:pt-28 pb-16 bg-ink-midnight text-on-primary overflow-hidden">
-          {/* LCP hero image — real <img> (not CSS background) so the browser can
-              early-discover and prioritize it. Self-hosted AVIF/WebP, 1920w.
-              Decorative: headline carries the content (alt=""). */}
-          <picture className="absolute inset-0 z-0 pointer-events-none" aria-hidden="true">
-            <source srcSet="/images/hero-taj-sunrise.avif" type="image/avif" />
-            <img
-              src="/images/hero-taj-sunrise.webp"
-              alt=""
-              fetchPriority="high"
-              decoding="async"
-              width={1920}
-              height={1280}
-              className="h-full w-full object-cover opacity-80 contrast-105 brightness-100"
-              style={{ objectPosition: "center 35%" }}
-            />
-          </picture>
+          <HomeHeroSlideshow />
           {/* Subtle gradient overlay to ensure text and booking form legibility while leaving ~80% of the image vividly visible */}
           <div className="absolute inset-0 bg-gradient-to-r from-ink-midnight/65 via-ink-midnight/10 to-ink-midnight/10 z-0 pointer-events-none" />
           <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-ink-midnight to-transparent z-0 pointer-events-none" />
