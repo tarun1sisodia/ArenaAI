@@ -36,52 +36,150 @@ async function resolveBookingSelection(
     throw Errors.validation("Legacy selection markers are read-only and cannot be submitted as a new booking.");
   }
 
-  if (selection.source === "catalog") {
-    const item = await db.catalog.getById(selection.id);
-    const availability = item && (item as typeof item & { availability?: string }).availability;
-    if (!item || item.status !== "published" || availability === "unavailable") {
-      throw Errors.notFound("CATALOG_ITEM_NOT_FOUND", "This published trip is no longer available. Choose another item from the current catalogue.");
-    }
-    if (selection.kind === "package" && item.type !== "package" && item.type !== "tour") {
-      throw Errors.validation("The selected catalogue item is not a tour package.");
-    }
-    if (selection.kind === "local" && item.type !== "tour" && item.type !== "ride") {
-      throw Errors.validation("The selected catalogue item is not a local tour or transfer.");
-    }
-    if (selection.slug !== item.slug) {
-      throw Errors.conflict("BOOKING_SELECTION_CHANGED", "The selected catalogue item changed. Refresh the catalogue and review your trip again.");
-    }
-    return {
-      selection: { ...selection, id: item.id, slug: item.slug, name: item.title },
-      selectedCatalogItemId: item.id,
-    };
-  }
-
   if (selection.kind === "package") {
-    const item = PACKAGES.find((candidate) => candidate.id === selection.id || candidate.slug === selection.slug || candidate.slug === selection.id);
-    if (!item || item.slug !== selection.slug) {
-      throw Errors.notFound("PACKAGE_NOT_FOUND", "This curated package is no longer available. Choose another package and review again.");
+    // 1. Dedicated tourPackages repository (by ID or packageCode/slug)
+    if (db.tourPackages) {
+      const tourPkg =
+        (await db.tourPackages.getById(selection.id)) ??
+        (selection.slug ? await db.tourPackages.getByCode(selection.slug) : null) ??
+        (await db.tourPackages.getByCode(selection.id));
+      if (tourPkg && tourPkg.status === "published" && tourPkg.isActive) {
+        return {
+          selection: {
+            ...selection,
+            id: selection.id === tourPkg.packageCode ? tourPkg.packageCode : tourPkg.id,
+            slug: tourPkg.packageCode,
+            name: tourPkg.name,
+          },
+          selectedCatalogItemId: null,
+        };
+      }
     }
-    return {
-      selection: { ...selection, id: item.id, slug: item.slug, name: item.name },
-      selectedCatalogItemId: null,
-    };
+
+    // 2. Legacy catalog repository fallback
+    if (db.catalog) {
+      const item =
+        (await db.catalog.getById(selection.id)) ??
+        (selection.slug ? await db.catalog.getBySlug(selection.slug) : null) ??
+        (await db.catalog.getBySlug(selection.id));
+      if (item) {
+        const availability = (item as typeof item & { availability?: string }).availability;
+        if (item.status !== "published" || availability === "unavailable") {
+          throw Errors.notFound("CATALOG_ITEM_NOT_FOUND", "This published trip is no longer available. Choose another item from the current catalogue.");
+        }
+        if (item.type !== "package" && item.type !== "tour") {
+          throw Errors.validation("The selected catalogue item is not a tour package.");
+        }
+        if (selection.slug && selection.slug !== item.slug && selection.id !== item.id) {
+          throw Errors.conflict("BOOKING_SELECTION_CHANGED", "The selected catalogue item changed. Refresh the catalogue and review your trip again.");
+        }
+        return {
+          selection: { ...selection, id: item.id, slug: item.slug, name: item.title },
+          selectedCatalogItemId: item.id,
+        };
+      }
+    }
+
+    // 3. Static curated PACKAGES catalogue fallback
+    const staticItem = PACKAGES.find(
+      (candidate) =>
+        candidate.id === selection.id ||
+        candidate.slug === selection.slug ||
+        candidate.slug === selection.id ||
+        candidate.id === selection.slug,
+    );
+    if (staticItem) {
+      return {
+        selection: { ...selection, id: staticItem.id, slug: staticItem.slug, name: staticItem.name },
+        selectedCatalogItemId: null,
+      };
+    }
+
+    throw Errors.notFound("PACKAGE_NOT_FOUND", "This tour package is no longer available. Choose another package and review again.");
   }
 
-  const key = selection.localPackageKey;
-  if (selection.source !== "curated" || !key || !Object.prototype.hasOwnProperty.call(LOCAL_PACKAGES, key)) {
+  if (selection.kind === "local") {
+    // 1. Dedicated localPackages repository
+    if (db.localPackages) {
+      const localPkg =
+        (await db.localPackages.getById(selection.id)) ??
+        (selection.slug ? await db.localPackages.getByCode(selection.slug) : null) ??
+        (await db.localPackages.getByCode(selection.id));
+      if (localPkg && localPkg.status === "published" && localPkg.isActive) {
+        return {
+          selection: {
+            ...selection,
+            id: selection.id === localPkg.packageCode ? localPkg.packageCode : localPkg.id,
+            slug: localPkg.packageCode,
+            name: localPkg.name,
+            tripType: "local-tour",
+          },
+          selectedCatalogItemId: null,
+        };
+      }
+    }
+
+    // 2. Dedicated transferRoutes repository
+    if (db.transferRoutes) {
+      const xfer =
+        (await db.transferRoutes.getById(selection.id)) ??
+        (selection.slug ? await db.transferRoutes.getByCode(selection.slug) : null) ??
+        (await db.transferRoutes.getByCode(selection.id));
+      if (xfer && xfer.status === "published" && xfer.isActive) {
+        return {
+          selection: {
+            ...selection,
+            id: selection.id === xfer.routeCode ? xfer.routeCode : xfer.id,
+            slug: xfer.routeCode,
+            name: xfer.name,
+            tripType: "airport-transfer",
+          },
+          selectedCatalogItemId: null,
+        };
+      }
+    }
+
+    // 3. Legacy catalog repository fallback
+    if (db.catalog) {
+      const item =
+        (await db.catalog.getById(selection.id)) ??
+        (selection.slug ? await db.catalog.getBySlug(selection.slug) : null) ??
+        (await db.catalog.getBySlug(selection.id));
+      if (item) {
+        const availability = (item as typeof item & { availability?: string }).availability;
+        if (item.status !== "published" || availability === "unavailable") {
+          throw Errors.notFound("CATALOG_ITEM_NOT_FOUND", "This published trip is no longer available. Choose another item from the current catalogue.");
+        }
+        if (item.type !== "tour" && item.type !== "ride") {
+          throw Errors.validation("The selected catalogue item is not a local tour or transfer.");
+        }
+        return {
+          selection: { ...selection, id: item.id, slug: item.slug, name: item.title },
+          selectedCatalogItemId: item.id,
+        };
+      }
+    }
+
+    // 4. Static curated LOCAL_PACKAGES fallback
+    const key = selection.localPackageKey ?? (selection.id in LOCAL_PACKAGES ? (selection.id as keyof typeof LOCAL_PACKAGES) : undefined);
+    if (key && Object.prototype.hasOwnProperty.call(LOCAL_PACKAGES, key)) {
+      const local = LOCAL_PACKAGES[key as keyof typeof LOCAL_PACKAGES];
+      return {
+        selection: {
+          ...selection,
+          id: key,
+          tripType: key === "airport-transfer" ? "airport-transfer" : "local-tour",
+          localPackageKey: key as "8hr-80km" | "12hr-120km" | "airport-transfer",
+          name: local.label,
+        },
+        selectedCatalogItemId: null,
+      };
+    }
+
     throw Errors.notFound("LOCAL_PACKAGE_NOT_FOUND", "This local service is no longer available. Choose another service.");
   }
-  const local = LOCAL_PACKAGES[key];
-  return {
-    selection: {
-      ...selection,
-      id: key,
-      tripType: key === "airport-transfer" ? "airport-transfer" : "local-tour",
-      name: local.label,
-    },
-    selectedCatalogItemId: null,
-  };
+
+  return { selection: null, selectedCatalogItemId: null };
 }
 
 function selectionForProjection(booking: BookingRecord): BookingSelection | null {
@@ -137,6 +235,15 @@ export function createBookingService(deps: {
       const resolvedSelection = await resolveBookingSelection(input.bookingSelection, database);
       // Server-authoritative fare calculation - client totals are ignored
       let fare: import("../fares/fare.types.js").FareEngineResult;
+      const effectivePackageId =
+        resolvedSelection.selection?.kind === "package"
+          ? (resolvedSelection.selection.slug || resolvedSelection.selection.id || input.packageId)
+          : input.packageId;
+      const effectiveLocalKey =
+        resolvedSelection.selection?.kind === "local"
+          ? (resolvedSelection.selection.localPackageKey || input.localPackageKey)
+          : input.localPackageKey;
+
       if (deps.fareService) {
         fare = await deps.fareService.calculate({
           tripType: input.tripType,
@@ -146,8 +253,8 @@ export function createBookingService(deps: {
           pickupDatetime: input.pickupDatetime,
           returnDatetime: input.returnDatetime,
           promoCode: input.promoCode,
-          packageId: input.packageId,
-          localPackageKey: input.localPackageKey,
+          packageId: effectivePackageId,
+          localPackageKey: effectiveLocalKey,
         });
       } else {
         // Fallback for isolated test environments without fareService
@@ -183,13 +290,13 @@ export function createBookingService(deps: {
           }
         }
         // SEC-005: server derives distance from route catalogue/estimator, ignoring any client-supplied value
-        const serverDistanceKm = input.packageId
+        const serverDistanceKm = effectivePackageId
           ? 100
-          : input.localPackageKey === "12hr-120km"
+          : effectiveLocalKey === "12hr-120km"
             ? 120
-            : input.localPackageKey === "airport-transfer"
+            : effectiveLocalKey === "airport-transfer"
               ? 20
-              : input.localPackageKey === "8hr-80km"
+              : effectiveLocalKey === "8hr-80km"
                 ? 80
                 : findRoute(input.originName, input.destinationName).km;
 
@@ -203,8 +310,8 @@ export function createBookingService(deps: {
           distanceKm: serverDistanceKm,
           promoCode: input.promoCode,
           promoAllowGroupVehicles,
-          packageId: input.packageId,
-          localPackageKey: input.localPackageKey,
+          packageId: effectivePackageId,
+          localPackageKey: effectiveLocalKey,
           fareVersion: deps.fareVersion,
         });
 

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
+import { Link } from "react-router-dom";
 import {
   AlertTriangle,
   Archive,
@@ -52,7 +53,6 @@ import {
   type CatalogTripType,
 } from "@/lib/types";
 import { cn, formatDate, formatINR } from "@/lib/utils";
-import { RouteCatalogPanel } from "@/components/admin/RouteCatalogPanel";
 
 const CATEGORY_TONE: Record<CatalogCategory, "neutral" | "teal" | "gold"> = {
   ride: "neutral",
@@ -183,7 +183,6 @@ export function CatalogPage({ user }: { user: AdminUser }) {
   const [formPlaces, setFormPlaces] = useState("Taj Mahal, Agra Fort");
   const [formStops, setFormStops] = useState("");
   const [formStatus, setFormStatus] = useState<CatalogStatus>("draft");
-  const [activeCatalogTab, setActiveCatalogTab] = useState<"catalog" | "routes">("routes");
 
   const canEdit = can(user.role, "catalog:edit");
   const canPublish = can(user.role, "catalog:publish");
@@ -655,13 +654,28 @@ export function CatalogPage({ user }: { user: AdminUser }) {
         }
       />
 
-      <div className="mb-5 flex gap-2 border-b border-hairline pb-2">
-        <button type="button" className={cn("rounded px-3 py-1.5 text-sm", activeCatalogTab === "catalog" ? "bg-ink text-surface" : "text-ink-soft")} onClick={() => setActiveCatalogTab("catalog")}>General catalog</button>
-        <button type="button" className={cn("rounded px-3 py-1.5 text-sm", activeCatalogTab === "routes" ? "bg-ink text-surface" : "text-ink-soft")} onClick={() => setActiveCatalogTab("routes")}>Routes</button>
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-hairline pb-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="rounded px-3 py-1.5 text-sm font-medium bg-ink text-surface">
+            General catalog
+          </span>
+          <Link
+            to="/routes"
+            className="rounded px-3 py-1.5 text-sm font-medium text-gold hover:bg-gold/10 transition-colors inline-flex items-center gap-1.5"
+          >
+            <RouteIcon className="h-3.5 w-3.5" /> Intercity Routes →
+          </Link>
+          <Link
+            to="/tour-packages"
+            className="rounded px-3 py-1.5 text-sm font-medium text-ink-soft hover:bg-surface-2 transition-colors inline-flex items-center gap-1.5"
+          >
+            <MapPin className="h-3.5 w-3.5" /> Tour Packages →
+          </Link>
+        </div>
+        <span className="text-xs text-ink-soft">
+          Dedicated modules active for Routes & Tour Packages
+        </span>
       </div>
-      {activeCatalogTab === "routes" ? <RouteCatalogPanel user={user} /> : null}
-
-      {activeCatalogTab === "catalog" && <>
       {/* Manifest strip + republish feedback */}
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
         <span>
@@ -1286,7 +1300,6 @@ export function CatalogPage({ user }: { user: AdminUser }) {
           </div>
         </form>
       </Dialog>
-      </>}
     </div>
   );
 }

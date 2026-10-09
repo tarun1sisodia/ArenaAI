@@ -2,6 +2,50 @@
 
 ## 2026-10-09
 
+### 2026-10-09 — Phase 3: Decoupled Booking Selection & Package Booking Resolution (Bug #18)
+
+- **Backend Booking Selection Decoupling (`backend/src/modules/bookings/booking.service.ts`)**:
+  - Refactored `resolveBookingSelection` to query dedicated domain repositories (`db.tourPackages`, `db.localPackages`, `db.transferRoutes`) by UUID ID, package code, or route slug before falling back to legacy `catalog_items` or curated in-memory presets.
+  - Resolved Bug #18: Package bookings submitted by slug/code (e.g., `golden-triangle-3-day`) or UUID from `tour_packages` now resolve successfully without crashing or demanding an entry in legacy `catalog_items`.
+  - Decoupled foreign key assignment: Bookings created from dedicated domain entities store the immutable snapshot in `booking_selection` while setting `selectedCatalogItemId: null`, removing the foreign key constraint block on legacy `catalog_items`.
+  - Wired authoritative `effectivePackageId` and `effectiveLocalKey` into `fareService.calculate` and the fallback engine, ensuring published fleet prices are evaluated faithfully.
+- **Automated Integration Test Verification (`backend/tests/integration/booking-flow-f3.test.ts`)**:
+  - Added test case verifying package booking resolution by `packageCode` and UUID in `tour_packages` without requiring `catalog_items` rows, asserting accurate fare derivation and clean 404 handling on non-existent packages.
+- **Verification**:
+  - `npm --prefix backend test`: 34 test files, 217 tests passed (100% green).
+  - `npm --prefix backend run build`: Passed cleanly (`tsc -p tsconfig.build.json`).
+  - `npm --prefix admin run typecheck`: Passed with 0 errors (`tsc --noEmit`).
+  - `npm --prefix react run typecheck`: Passed with 0 errors (`tsc --noEmit`).
+
+### 2026-10-09 — Phase 2: Decoupled Manifest Compilation from Legacy Catalog Items
+
+- **Backend Multi-Source Manifest Compilation (`backend/src/modules/catalog/catalog.service.ts`)**:
+  - Refactored `buildManifest()` to aggregate packages directly from dedicated `tour_packages` and `local_sightseeing_packages` repositories with dedicated fleet pricing, inclusions/exclusions, and gallery schemas.
+  - Used key-preserving `packageMap` giving dedicated `tour_packages` and `local_packages` authoritative precedence while maintaining legacy `catalog_items` as a non-blocking fallback baseline for historical seeds.
+  - Enhanced `getPublished(slug)` to resolve published items from `deps.db.tourPackages` when not found in the legacy catalog table.
+  - Kept authoritative routes compiling from `route_catalog` table with automatic return routes and 5 canonical fleet tiers.
+- **Verification**:
+  - `npm --prefix backend run build`: Passed with 0 errors (`tsc -p tsconfig.build.json`).
+  - `npm --prefix backend test`: 34 test files, 216 tests passed (100% green).
+  - `npm --prefix admin run typecheck`: Passed with 0 errors (`tsc --noEmit`).
+  - `npm --prefix react run typecheck`: Passed with 0 errors (`tsc --noEmit`).
+
+### 2026-10-09 — Phase 1: Dedicated Intercity Routes Page & Admin Catalog Decoupling
+
+- **Admin Intercity Routes Promotion (`admin/src/pages/RoutesPage.tsx`, `admin/src/App.tsx`, `admin/src/components/admin/Sidebar.tsx`)**:
+  - Promoted `RouteCatalogPanel` to a dedicated top-level admin route (`/routes`) with its own navigation entry in `NAV_ITEMS` ("Intercity Routes" with `Route` icon).
+  - Wired manifest sync status indicator and "Republish site data" button into the `RoutesPage` header, keeping the site versioning and ETag regeneration accessible directly from the routes manager.
+  - Added lazy-loaded route in `admin/src/App.tsx`.
+- **Admin Catalog Page Simplification (`admin/src/pages/CatalogPage.tsx`)**:
+  - Removed duplicate embedded routes panel and conditional tab suppression.
+  - Added navigation banner directing administrators to the dedicated **Intercity Routes** (`/routes`) and **Tour Packages** (`/tour-packages`) management modules.
+  - Preserved `/catalog` route for backward compatibility and general catalog maintenance until Phase 4 retirement.
+- **Verification**:
+  - `npm --prefix admin run typecheck`: Passed with 0 errors (`tsc --noEmit`).
+  - `npm --prefix admin run build`: Passed with 0 errors (Vite production bundle generated with new `RoutesPage` chunk in 10.72s).
+  - `npm --prefix react run typecheck`: Passed with 0 errors (`tsc --noEmit`).
+  - `npm --prefix backend test`: 34 test files, 216 tests passed (100% green).
+
 ### 2026-10-09 — Mughal Heritage Animations & Motifs Suite Across Service Showcases (LOCK-N08)
 
 - **Authorized Design Lock Registry Update (`docs/project/DESIGN_LOCKS.md`)**:

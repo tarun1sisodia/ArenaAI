@@ -229,4 +229,106 @@ describe("F3: Booking Flow & Server Authority Integration", () => {
 
     await app.close();
   });
+
+  it("resolves published tour packages by code and UUID without legacy catalog_items (Bug #18 resolution)", async () => {
+    const { app, db } = await createTestApp();
+
+    const publishedPkg = await db.tourPackages.create({
+      id: "60000000-0000-4000-a000-000000000099",
+      packageCode: "golden-triangle-3-day",
+      name: "Golden Triangle 3-Day Heritage Circuit",
+      durationText: "3 Days / 2 Nights",
+      days: 3,
+      nights: 2,
+      baseTierCode: "sedan",
+      startingPriceInr: 15999,
+      fleetPrices: { sedan: 15999, ertiga: 18999, "innova-crysta": 21999, "tempo-traveller": 28999, urbania: 34999 },
+      nightChargeInr: 300,
+      inclusionsHighlight: "Delhi, Agra & Jaipur 3-day guided heritage tour",
+      inclusionsNote: null,
+      status: "published",
+      isActive: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
+
+    // 1. Booking selection by packageCode
+    const codeRes = await app.inject({
+      method: "POST",
+      url: "/api/v1/bookings/draft",
+      payload: {
+        vehicleTier: "sedan",
+        bookingSelection: {
+          kind: "package",
+          id: "golden-triangle-3-day",
+          source: "catalog",
+          slug: "golden-triangle-3-day",
+          name: "Golden Triangle 3-Day Heritage Circuit",
+        },
+        pickupAddress: "Taj East Gate, Agra",
+        pickupDatetime: sampleDraft.pickupDatetime,
+        customerName: "Aarav Gupta",
+        customerPhone: "+919876543218",
+      },
+    });
+    expect(codeRes.statusCode).toBe(201);
+    const codeDraft = codeRes.json().data;
+    expect(codeDraft.fare.totalFare).toBe(15999);
+    const codeBooking = await db.bookings.getById(codeDraft.bookingId);
+    expect(codeBooking).not.toBeNull();
+    expect(codeBooking!.bookingSelection?.kind).toBe("package");
+    expect(codeBooking!.bookingSelection?.).toBe("golden-triangle-3-day");
+    expect(codeBooking!.bookingSelection?.name).toBe("Golden Triangle 3-Day Heritage Circuit");
+    // Verified decoupled: no catalog_items foreign key required
+    expect(codeBooking!.selectedCatalogItemId).toBeNull();
+
+    // 2. Booking selection by UUID id
+    const uuidRes = await app.inject({
+      method: "POST",
+      url: "/api/v1/bookings/draft",
+      payload: {
+        vehicleTier: "ertiga",
+        bookingSelection: {
+          kind: "package",
+          id: publishedPkg.id,
+          source: "catalog",
+          slug: "golden-triangle-3-day",
+          name: "Golden Triangle 3-Day Heritage Circuit",
+        },
+        pickupAddress: "Taj East Gate, Agra",
+        pickupDatetime: sampleDraft.pickupDatetime,
+        customerName: "Aarav Gupta",
+        customerPhone: "+919876543219",
+      },
+    });
+    expect(uuidRes.statusCode).toBe(201);
+    const uuidDraft = uuidRes.json().data;
+    expect(uuidDraft.fare.totalFare).toBe(18999);
+    const uuidBooking = await db.bookings.getById(uuidDraft.bookingId);
+    expect(uuidBooking!.bookingSelection?.slug).toBe("golden-triangle-3-day");
+    expect(uuidBooking!.selectedCatalogItemId).toBeNull();
+
+    // 3. Non-existent package returns 404 cleanly
+    const missingRes = await app.inject({
+      method: "POST",
+      url: "/api/v1/bookings/draft",
+      payload: {
+        vehicleTier: "sedan",
+        bookingSelection: {
+          kind: "package",
+          id: "non-existent-tour-code",
+          source: "catalog",
+          slug: "non-existent-tour-code",
+        },
+        pickupAddress: "Hotel Amar, Agra",
+        pickupDatetime: sampleDraft.pickupDatetime,
+        customerName: "Aarav Gupta",
+        customerPhone: "+919876543220",
+      },
+    });
+    expect(missingRes.statusCode).toBe(404);
+
+    await app.close();
+  });
 });
+

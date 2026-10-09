@@ -153,9 +153,11 @@ export function createCatalogService(deps: { db: Repositories; clock: Clock; med
       }
     }
 
-    const allPublished = allDbItems.filter((i) => i.status === "published" && i.availability !== "unavailable");
+    const packageMap = new Map<string, any>();
 
-    const packages = await Promise.all(
+    // 1. Incorporate legacy catalog_items (packages and tours) as baseline
+    const allPublished = allDbItems.filter((i) => i.status === "published" && i.availability !== "unavailable");
+    const legacyPackages = await Promise.all(
       allPublished
         .filter((item) => item.type === "package" || item.type === "tour")
         .map(async (item) => {
@@ -198,6 +200,93 @@ export function createCatalogService(deps: { db: Repositories; clock: Clock; med
           };
         }),
     );
+    for (const p of legacyPackages) {
+      packageMap.set(p.slug, p);
+    }
+
+    // 2. Incorporate dedicated tour_packages table (authoritative for packages)
+    if (deps.db.tourPackages) {
+      const dbPackages = await deps.db.tourPackages.list({ status: "published", limit: 500 });
+      for (const item of dbPackages.items || []) {
+        if (item.status !== "published" || item.isActive === false) continue;
+        const startingPrice = Number(item.startingPriceInr || item.fleetPrices?.sedan || 2999);
+        const places = [item.source, item.destination].filter(Boolean) as string[];
+        const slug = item.packageCode;
+        packageMap.set(slug, {
+          id: item.id,
+          slug,
+          name: item.name,
+          title: item.name,
+          type: "package",
+          category: "package",
+          kicker: "Tour Package",
+          duration: item.durationText || `${item.days} Days / ${item.nights} Nights`,
+          from: startingPrice,
+          startingPriceInr: startingPrice,
+          image: item.imageUrl || item.gallery?.[0]?.url || "/assets/packages/taj-dawn.webp",
+          gallery: item.gallery || [],
+          places: places.length > 0 ? places : ["Agra"],
+          blurb: item.inclusionsHighlight || item.name,
+          description: item.inclusionsNote || item.name,
+          includes: Array.isArray(item.inclusions) && item.inclusions.length > 0 ? item.inclusions : [
+            "Private AC vehicle",
+            "Professional chauffeur",
+            "All tolls, parking & state tax",
+            "Guide assistance",
+            "Bottled water",
+          ],
+          excludes: Array.isArray(item.exclusions) && item.exclusions.length > 0 ? item.exclusions : [
+            "Monument tickets",
+            "Meals",
+          ],
+          source: item.source || "Agra",
+          destination: item.destination || "",
+          fleetPrices: item.fleetPrices || {},
+          days: item.days,
+          nights: item.nights,
+          status: item.status,
+          updatedAt: item.updatedAt,
+        });
+      }
+    }
+
+    // 3. Incorporate dedicated local_sightseeing_packages table (authoritative for local tours)
+    if (deps.db.localPackages) {
+      const dbLocal = await deps.db.localPackages.list({ status: "published", limit: 500 });
+      for (const item of dbLocal.items || []) {
+        if (item.status !== "published" || item.isActive === false) continue;
+        const startingPrice = Number(item.fleetPrices?.sedan || 1999);
+        const places = (item.covers || "").split(/[,·|]/).map((s) => s.trim()).filter(Boolean);
+        const slug = item.packageCode;
+        packageMap.set(slug, {
+          id: item.id,
+          slug,
+          name: item.name,
+          title: item.name,
+          type: "tour",
+          category: "tour",
+          kicker: "Day Tour",
+          duration: `${item.durationHours} hrs / ${item.includedKm} km`,
+          from: startingPrice,
+          startingPriceInr: startingPrice,
+          image: "/assets/packages/agra-heritage.webp",
+          places: places.length > 0 ? places : ["Agra"],
+          blurb: item.parkingNote || item.name,
+          description: item.covers || item.name,
+          includes: [
+            "Private AC vehicle",
+            "Fuel & chauffeur charges",
+            "Tolls & city parking",
+          ],
+          excludes: ["Monument entrance tickets", "Guide fee", "Personal expenses"],
+          fleetPrices: item.fleetPrices || {},
+          status: item.status,
+          updatedAt: item.updatedAt,
+        });
+      }
+    }
+
+    const packages = Array.from(packageMap.values());
 
     const vehicles = VEHICLES.map((v) => ({
       id: v.id,
@@ -282,7 +371,32 @@ export function createCatalogService(deps: { db: Repositories; clock: Clock; med
     },
 
     async getPublished(slug: string) {
-      const item = await deps.db.catalog.getBySlug(slug) ?? await deps.db.catalog.getById(slug);
+      let item = await deps.db.catalog.getBySlug(slug) ?? await deps.db.catalog.getById(slug);
+      if (!item && deps.db.tourPackages) {
+        const tp = await deps.db.tourPackages.getByCode(slug) ?? await deps.db.tourPackages.getById(slug);
+        if (tp && tp.status === "published" && tp.isActive !== false) {
+          const startingPrice = Number(tp.startingPriceInr || tp.fleetPrices?.sedan || 2999);
+          return {
+            id: tp.id,
+            slug: tp.packageCode,
+            type: "package",
+            title: tp.name,
+            shortDescription: tp.inclusionsHighlight || tp.name,
+            description: tp.inclusionsNote || tp.name,
+            durationText: tp.durationText,
+            routeSummary: [tp.source, tp.destination].filter(Boolean).join(" · ") || "Agra",
+            startingPriceInr: startingPrice,
+            distanceKm: null,
+            availability: "available",
+            status: tp.status,
+            createdAt: tp.createdAt,
+            updatedAt: tp.updatedAt,
+            coverImage: tp.imageUrl || tp.gallery?.[0]?.url || "/assets/packages/taj-dawn.webp",
+            mediaCount: tp.gallery?.length || 1,
+            reviews: [],
+          };
+        }
+      }
       if (!item || item.status !== "published" || item.availability === "unavailable") {
         throw Errors.notFound("CATALOG_NOT_FOUND", "Published catalog item not found.");
       }

@@ -7,6 +7,7 @@ import { DashboardPage } from "@/pages/DashboardPage";
 
 const BookingsPage = lazy(() => import("@/pages/BookingsPage").then((m) => ({ default: m.BookingsPage })));
 const FinancePage = lazy(() => import("@/pages/FinancePage").then((m) => ({ default: m.FinancePage })));
+const RoutesPage = lazy(() => import("@/pages/RoutesPage").then((m) => ({ default: m.RoutesPage })));
 const CatalogPage = lazy(() => import("@/pages/CatalogPage").then((m) => ({ default: m.CatalogPage })));
 const TourPackagesPage = lazy(() => import("@/pages/TourPackagesPage").then((m) => ({ default: m.TourPackagesPage })));
 const LocalTransfersPage = lazy(() => import("@/pages/LocalTransfersPage").then((m) => ({ default: m.LocalTransfersPage })));
@@ -92,6 +93,7 @@ function Root({ user, onLogin, onLogout }: { user: AdminUser | null; onLogin: (u
                       <Route index element={<DashboardPage />} />
                       <Route path="bookings" element={<BookingsPage user={user} />} />
                       <Route path="finance" element={<FinancePage user={user} />} />
+                      <Route path="routes" element={<RoutesPage user={user} />} />
                       <Route path="catalog" element={<CatalogPage user={user} />} />
                       <Route path="tour-packages" element={<TourPackagesPage user={user} />} />
                       <Route path="local-transfers" element={<LocalTransfersPage user={user} />} />

@@ -57,7 +57,7 @@
 - [ ] **Phase 5:** Package Fleet-Price Resolver (`tour_packages.fleet_prices`).
 - [ ] **Phase 6:** Normalized Customer Contract (`FleetPriceOption`).
 - [ ] **Phase 7–10:** Customer Surfaces Rewiring (Homepage, Routes, Monuments, Packages).
-- [ ] **Phase 11:** Fix Package Booking Flow (`booking.service.ts` lookup bug #18).
+- [x] **Phase 11:** Fix Package Booking Flow (`booking.service.ts` lookup bug #18 resolved across code & UUID lookups in dedicated `tour_packages`).
 - [ ] **Phase 12:** Dedicated Authoritative Quote Endpoints (`POST /quotes/route`, `POST /quotes/package`).
 - [ ] **Phase 13–15:** Revalidation, Full Verification (`npm run verify`), and Decommission of legacy client math.
 
