@@ -51,6 +51,12 @@ function elementText(el: Element): string {
   // Nearby visible caption (previous sibling heading-ish text).
   const prev = h.previousElementSibling;
   if (prev?.textContent && prev.textContent.length < 60) parts.push(prev.textContent);
+  // The element's own visible text (matters for buttons/tabs/links; inputs have none).
+  const tag = el.tagName.toLowerCase();
+  if (tag !== "input" && tag !== "select" && tag !== "textarea") {
+    const own = (h.textContent || "").trim().replace(/\s+/g, " ");
+    if (own.length > 0 && own.length < 80) parts.push(own);
+  }
   return parts.join(" ").toLowerCase();
 }
 
@@ -60,15 +66,30 @@ function norm(s: string): string {
 }
 
 function tipFor(el: Element): string {
-  const t = norm(elementText(el));
-  const has = (...words: string[]) => words.some((w) => t.includes(norm(w)));
-  if (has("oneway") && !has("round")) {
-    return "One-way, nice! You pay only for the distance you actually travel.";
+  const h = el as HTMLElement;
+  const tag = el.tagName.toLowerCase();
+  // The control's own label wins over surrounding text (e.g. sibling tabs).
+  let own = "";
+  if (tag !== "input" && tag !== "select" && tag !== "textarea") {
+    own = norm((h.textContent || "").trim().replace(/\s+/g, " "));
+  } else {
+    own = norm(
+      [h.id, el.getAttribute("name"), el.getAttribute("placeholder"), el.getAttribute("aria-label")]
+        .filter(Boolean)
+        .join(" ")
+    );
   }
-  if (has("roundtrip")) {
+  const t = norm(elementText(el));
+  const hasOwn = (...words: string[]) => words.some((w) => own.includes(norm(w)));
+  const has = (...words: string[]) => words.some((w) => t.includes(norm(w)));
+  // Trip-type tabs: own text decides.
+  if (hasOwn("roundtrip")) {
     return "Round trip — the car stays with you until you're back home.";
   }
-  if (has("localtour", "local tour", "local")) {
+  if (hasOwn("oneway")) {
+    return "One-way, nice! You pay only for the distance you actually travel.";
+  }
+  if (hasOwn("localtour") || hasOwn("local")) {
     return "Local tour — perfect for a day of sightseeing around the city!";
   }
   if (has("pickup", "fromcity", "source", "boarding", "origin")) {
@@ -101,7 +122,6 @@ function tipFor(el: Element): string {
   if (has("email")) {
     return "Your email — the voucher lands here right after booking.";
   }
-  const tag = el.tagName.toLowerCase();
   if (tag === "select") return "Pick one — I'll remember it for you.";
   if (tag === "textarea") return "Tell us everything — special requests welcome.";
   return "Looking good — keep going, I'm right here with you.";
