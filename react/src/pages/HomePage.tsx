@@ -15,10 +15,15 @@ export interface HomePageProps {
 
 export function HomePage({ language = "en" }: HomePageProps) {
   const { user, loading: authLoading, configured, signInWithGoogle } = useCustomerAuth();
-  const [accountPromptDismissed, setAccountPromptDismissed] = useState(() => {
-    if (typeof window === "undefined") return true;
-    try { return window.localStorage.getItem("arenaai:account-prompt-dismissed") === "1"; } catch { return false; }
-  });
+  const [accountPromptDismissed, setAccountPromptDismissed] = useState(true);
+
+  useEffect(() => {
+    try {
+      if (window.localStorage.getItem("arenaai:account-prompt-dismissed") !== "1") {
+        setAccountPromptDismissed(false);
+      }
+    } catch { /* optional preference */ }
+  }, []);
   const text = "Agra to Anywhere";
   const [tripType, setTripType] = useState<"oneway" | "round" | "local">("oneway");
   const [origin, setOrigin] = useState("Agra");
@@ -103,17 +108,30 @@ export function HomePage({ language = "en" }: HomePageProps) {
       />
 
       {!authLoading && configured && !user && !accountPromptDismissed && (
-        <aside className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 border-b border-border-warm bg-sandstone-wash px-4 py-3 sm:px-6" aria-label="Optional account sign-in">
-          <p className="text-sm text-ink-midnight"><strong>Save your trips.</strong> Sign in with Google to find pending and previous bookings later. You can also do this at checkout.</p>
-          <div className="flex items-center gap-2">
-            <button type="button" onClick={() => void signInWithGoogle().catch(() => { })} className="rounded-lg bg-primary px-3 py-2 text-sm font-semibold text-white">Continue with Google</button>
-            <button type="button" aria-label="Dismiss account reminder" onClick={() => { setAccountPromptDismissed(true); try { window.localStorage.setItem("arenaai:account-prompt-dismissed", "1"); } catch { /* optional preference */ } }} className="rounded-lg px-3 py-2 text-sm font-semibold text-on-surface-variant hover:bg-surface-container">Dismiss</button>
+        <aside className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:max-w-md z-40 rounded-xl shadow-2xl border border-border-warm bg-surface-container-lowest p-4 animate-in slide-in-from-bottom duration-300" aria-label="Optional account sign-in">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-sm font-bold text-ink-midnight">Save your trips</p>
+              <p className="text-xs text-on-surface-variant mt-0.5">Sign in with Google to find pending and previous bookings later. You can also do this at checkout.</p>
+            </div>
+            <button
+              type="button"
+              aria-label="Dismiss account reminder"
+              onClick={() => { setAccountPromptDismissed(true); try { window.localStorage.setItem("arenaai:account-prompt-dismissed", "1"); } catch { } }}
+              className="text-on-surface-variant hover:text-ink-midnight p-1 rounded-md"
+            >
+              <span className="material-symbols-outlined text-[18px]">close</span>
+            </button>
+          </div>
+          <div className="flex items-center gap-2 mt-3">
+            <button type="button" onClick={() => void signInWithGoogle().catch(() => { })} className="rounded-lg bg-primary px-3.5 py-2 text-xs font-semibold text-white shadow-xs hover:bg-primary-container transition-colors">Continue with Google</button>
+            <button type="button" onClick={() => { setAccountPromptDismissed(true); try { window.localStorage.setItem("arenaai:account-prompt-dismissed", "1"); } catch { } }} className="rounded-lg px-3 py-2 text-xs font-semibold text-on-surface-variant hover:bg-surface-container transition-colors">Dismiss</button>
           </div>
         </aside>
       )}
 
       {/* ── MAIN HOMEPAGE CONTENT ── */}
-      <div className="w-full relative z-20">
+      <main id="main-content" className="w-full relative z-20">
         {/* ── HERO ── Taj Mahal sunrise background, text left / booking dock right */}
         <section className="relative w-full min-h-[580px] lg:min-h-[640px] flex items-center pt-20 sm:pt-28 pb-16 bg-ink-midnight text-on-primary overflow-hidden">
           <HomeHeroSlideshow />
@@ -296,10 +314,11 @@ export function HomePage({ language = "en" }: HomePageProps) {
                     <span className="font-price-display text-lg font-bold text-primary">₹{route.price.toLocaleString("en-IN")}</span>
                   </div>
                   <a
-                    className="px-3.5 py-1.5 rounded-lg bg-sandstone-wash hover:bg-primary/10 text-primary border border-primary/25 hover:border-primary/50 text-label-md font-semibold transition-all duration-200 whitespace-nowrap active:scale-[0.98] shadow-xs"
+                    className="min-h-[44px] px-4 py-2.5 rounded-lg bg-primary hover:bg-primary-container text-white font-label-md font-bold transition-all duration-200 whitespace-nowrap active:scale-[0.98] shadow-xs inline-flex items-center justify-center"
                     href={`/book?from=Agra&to=${route.to}`}
+                    aria-label={`Book cab from ${route.from} to ${route.to}`}
                   >
-                    <span className="text-primary font-bold">Book ↗</span>
+                    <span className="text-white font-bold">Book ↗</span>
                   </a>
                 </div>
               </div>
@@ -447,6 +466,12 @@ export function HomePage({ language = "en" }: HomePageProps) {
                   <img
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     src={v.img}
+                    srcSet={`/assets/fleet/${v.id}-480.webp 480w, /assets/fleet/${v.id}-768.webp 768w, /assets/fleet/${v.id}.webp 1200w`}
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 384px"
+                    width={384}
+                    height={176}
+                    loading="lazy"
+                    decoding="async"
                     alt={v.label}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-ink-midnight/60 via-transparent to-transparent" />
@@ -462,8 +487,9 @@ export function HomePage({ language = "en" }: HomePageProps) {
                     <span className="text-primary font-semibold">{v.rate}</span>
                   </div>
                   <a
-                    className="w-full block py-2 text-center rounded-lg bg-primary hover:bg-primary-container text-white font-label-lg text-label-md transition-all font-semibold mt-auto shadow-xs active:scale-[0.98]"
+                    className="w-full min-h-[44px] flex items-center justify-center py-2.5 text-center rounded-lg bg-primary hover:bg-primary-container text-white font-label-lg text-label-md transition-all font-semibold mt-auto shadow-xs active:scale-[0.98]"
                     href={`/book?vehicle=${v.id}`}
+                    aria-label={`Select vehicle: ${v.label}`}
                   >
                     <span className="text-white">Select {v.label.split(" ")[0]}</span>
                   </a>
@@ -514,6 +540,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
                   badge: "Same Day", badgeColor: "bg-ink-midnight/80 text-tertiary-fixed",
                   price: "₹3,499", priceColor: "bg-terracotta-deep",
                   img: "/assets/packages/agra-fort.webp",
+                  srcSet: "/assets/packages/agra-fort-480.webp 480w, /assets/packages/agra-fort-768.webp 768w, /assets/packages/agra-fort.webp 1200w",
                   alt: "Taj Mahal Tour",
                   title: "Same Day Agra — Taj Mahal & Agra Fort",
                   body: "Full-day sightseeing covering Taj Mahal, Agra Fort, and Mehtab Bagh with hotel pickup.",
@@ -525,6 +552,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
                   badge: "Dawn Special", badgeColor: "bg-ink-midnight/80 text-gold-accent",
                   price: "₹5,200", priceColor: "bg-terracotta-deep",
                   img: "/assets/packages/taj-dawn.webp",
+                  srcSet: "/assets/packages/taj-dawn-480.webp 480w, /assets/packages/taj-dawn-768.webp 768w, /assets/packages/taj-dawn.webp 1200w",
                   alt: "Taj Sunrise Tour",
                   title: "Taj Mahal Sunrise Guided Tour",
                   body: "Early morning entry to the Taj Mahal at dawn to beat crowds and heat, with licensed monument guide.",
@@ -536,6 +564,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
                   badge: "Pilgrimage", badgeColor: "bg-ink-midnight/80 text-tertiary-fixed",
                   price: "₹4,200", priceColor: "bg-terracotta-deep",
                   img: "/assets/packages/mathura.webp",
+                  srcSet: "/assets/packages/mathura-480.webp 480w, /assets/packages/mathura-768.webp 768w, /assets/packages/mathura.webp 1200w",
                   alt: "Mathura Vrindavan",
                   title: "Mathura & Vrindavan Darshan",
                   body: "Same-day temple circuit covering Krishna Janmabhoomi, Banke Bihari, and Prem Mandir.",
@@ -549,6 +578,12 @@ export function HomePage({ language = "en" }: HomePageProps) {
                     <img
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       src={pkg.img}
+                      srcSet={pkg.srcSet}
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 384px"
+                      width={384}
+                      height={160}
+                      loading="lazy"
+                      decoding="async"
                       alt={pkg.alt}
                     />
                     <span className={`absolute top-2 left-2 px-1.5 py-0.5 rounded ${pkg.badgeColor} font-label-caps text-label-caps uppercase font-bold backdrop-blur-sm`}>
@@ -570,8 +605,9 @@ export function HomePage({ language = "en" }: HomePageProps) {
                       ))}
                     </ul>
                     <a
-                      className="mt-auto pt-2 border-t border-border-warm/40 inline-flex items-center gap-1 font-label-lg text-label-md text-primary hover:text-primary-container font-bold transition-colors"
+                      className="mt-auto pt-2 border-t border-border-warm/40 inline-flex items-center gap-1 font-label-lg text-label-md text-primary hover:text-primary-container font-bold transition-colors min-h-[44px] py-2"
                       href={pkg.href}
+                      aria-label={`View tour: ${pkg.title}`}
                     >
                       <span>{pkg.cta}</span>
                       <span className="material-symbols-outlined text-icon-13">east</span>
@@ -871,7 +907,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
             </div>
           </div>
         </section>
-      </div>
+      </main>
     </div>
   );
 }

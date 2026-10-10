@@ -402,8 +402,27 @@ export async function prerender(): Promise<void> {
       // 1. Set html lang attribute
       html = html.replace(/<html lang="[^"]*"/, `<html lang="${language === "hi" ? "hi-IN" : "en-IN"}" dir="ltr"`);
 
+      // Extract hoisted head elements (React 19 emits hoisted links/scripts at the start of appHtml)
+      let cleanAppHtml = appHtml;
+      const hoistedTags: string[] = [];
+
+      const hoistedLinkRegex = /<link rel="preload"[^>]*>/g;
+      let linkMatch: RegExpExecArray | null;
+      while ((linkMatch = hoistedLinkRegex.exec(cleanAppHtml)) !== null) {
+        hoistedTags.push(linkMatch[0]);
+      }
+      cleanAppHtml = cleanAppHtml.replace(hoistedLinkRegex, "");
+
+      const hoistedJsonLdRegex = /<script type="application\/ld\+json"[^>]*>[\s\S]*?<\/script>/g;
+      let jsonLdMatch: RegExpExecArray | null;
+      while ((jsonLdMatch = hoistedJsonLdRegex.exec(cleanAppHtml)) !== null) {
+        hoistedTags.push(jsonLdMatch[0]);
+      }
+      cleanAppHtml = cleanAppHtml.replace(hoistedJsonLdRegex, "");
+
       // 2. Replace title and generic meta description with full metadata block
-      html = html.replace(/<title>.*?<\/title>/, headTags);
+      const fullHeadTags = [headTags, ...hoistedTags].filter(Boolean).join("\n    ");
+      html = html.replace(/<title>.*?<\/title>/, fullHeadTags);
       html = html.replace(/<meta name="description" content="[^"]*" \/>\s*/, "");
 
       // 3. Inject pre-rendered React markup into #root
@@ -414,12 +433,12 @@ export async function prerender(): Promise<void> {
         `Prerender: dist/index.html is missing the empty <div id="root"></div> mount point. ` +
         `Run vite build before prerender.ts (do not run prerender twice on the same dist).`
       );
-      html = html.replace('<div id="root"></div>', `<div id="root">${appHtml}</div>`);
+      html = html.replace('<div id="root"></div>', `<div id="root">${cleanAppHtml}</div>`);
 
       // 4. Update only the accessibility fallback; preserve GTM's noscript iframe
       html = html.replace(
         /<noscript id="js-fallback">[\s\S]*?<\/noscript>/,
-        `<noscript id="js-fallback"><p class="skip-link" style="position:static;padding:12px;background:#fff3cd;color:#856404;margin:0;text-align:center;font-size:14px;">JavaScript is recommended for dynamic calculations and interactive booking. Call us 24×7 at <a href="tel:+919762817598" style="color:#b8941f;font-weight:700;">+91 97628 17598</a>.</p></noscript>`
+        `<noscript id="js-fallback"><p style="position:static;padding:12px;background:#fff3cd;color:#856404;margin:0;text-align:center;font-size:14px;">JavaScript is recommended for dynamic calculations and interactive booking. Call us 24×7 at <a href="tel:+919762817598" style="color:#b8941f;font-weight:700;">+91 97628 17598</a>.</p></noscript>`
       );
 
       // 5. Ensure relative assets work correctly across directory depths if requested

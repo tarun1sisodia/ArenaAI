@@ -57,6 +57,9 @@ export default defineConfig(({ mode }) => {
             if (id.includes("node_modules/lucide-react/")) {
               return "vendor-icons";
             }
+            if (id.includes("node_modules/@supabase/")) {
+              return "vendor-supabase";
+            }
             if (id.includes("/src/utils/distance.ts") || id.includes("/src/data.ts")) {
               return "data-catalogue";
             }

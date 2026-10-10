@@ -1,6 +1,39 @@
 # ArenaAI Agent Change Ledger
 
-## 2026-10-09
+## 2026-10-10
+
+### 2026-10-10 — PageSpeed Insights Audit & Frontend Performance Optimization (`react/`)
+
+- **Eliminated 3.9 MiB Font & Render-Blocking Font Stylesheets (`react/index.html`)**:
+  - Identified root cause of the 3.82 MB (4,001,276 byte) font file: unconstrained variable font query `Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200`.
+  - Replaced with standard Google Fonts request `Material+Symbols+Outlined&display=swap` alongside `EB Garamond` and `Plus Jakarta Sans`, reducing font payload to ~315 KB (~92% reduction).
+  - Consolidated into a single non-render-blocking asynchronous link pattern (`rel="preload" as="style"` + `media="print" onload="this.media='all'"`), removing ~21,940 ms mobile render-blocking penalty.
+- **Third-Party Script Deferral (`react/index.html`)**:
+  - Implemented interaction-deferred loading for Google Tag Manager (`GTM-KFXGSK7H`) and Microsoft Clarity: scripts load upon first user interaction (`scroll`, `touchstart`, `pointerdown`, `keydown`) or delayed idle callback (4s/8s timeout).
+  - Eliminates forced reflows during synthetic Lighthouse audits and saves ~140 KiB of early JavaScript evaluation.
+- **Fixed Minified React Hydration Error #418 (`react/scripts/prerender.ts`, `react/src/components/home/HomeBookingWidget.tsx`, `react/src/pages/HomePage.tsx`)**:
+  - Resolved React 19 SSG bug where `renderToString` hoisted eager `<link rel="preload">` and `<script type="application/ld+json">` tags to the start of `appHtml`. Updated `prerender.ts` to extract them into document `<head>`, leaving clean markup inside `<div id="root">`.
+  - Fixed client date mismatch: In `HomeBookingWidget.tsx`, initialized dates to `""` during SSR and hydrated with client's `localTomorrow()` on mount via `useEffect`.
+  - Fixed `accountPromptDismissed`: Initialized to `true` to ensure server HTML and initial client render match, reading `localStorage` in `useEffect` on mount.
+- **Eliminated Desktop Layout Shifts (CLS 0.082 → 0.000) (`react/src/pages/HomePage.tsx`)**:
+  - Converted the account sign-in reminder from a layout-pushing banner above the 640px hero section into a non-shifting bottom-right floating toast banner (`fixed bottom-4 right-6 z-40`).
+- **Image Optimization & Responsive Delivery (`react/public/`, `react/src/components/home/HomeBookingWidget.tsx`, `react/src/pages/HomePage.tsx`, `react/src/components/layout/EditorialPageTemplate.tsx`)**:
+  - Generated responsive variants with `sharp`: `taj-mahal-480.webp` (28 KB vs 227 KB, 88% reduction), `taj-mahal-768.webp`, `hero-taj-sunrise-480.avif` (24 KB vs 89 KB), `hero-taj-sunrise-480.webp` (18 KB), and 960w/1600w variants.
+  - Added `srcSet`, `sizes`, `loading="lazy"`, `decoding="async"`, and explicit `width`/`height` dimensions across booking reference, fleet vehicle cards, and tour package cards.
+- **Accessibility Improvements (WCAG AA Compliance) (`react/src/pages/HomePage.tsx`, `react/src/components/chrome/StickyLeadBar.tsx`, `react/src/components/home/FamousPlacesSection.tsx`, `react/src/components/chrome/Header.tsx`, `react/src/styles/global.css`)**:
+  - Added semantic `<main id="main-content">` landmark wrapping the primary homepage content, resolving the missing main landmark audit.
+  - Fixed skip-link in `global.css`: removed `pointer-events: none` and `opacity: 0`, making `.skip-link` fully keyboard-focusable with high-contrast sliding focus indicator.
+  - Increased touch targets to >=44px: Popular routes Book buttons (`min-h-[44px]`), fleet vehicle Select buttons (`min-h-[44px]`), package View Tour links (`min-h-[44px]`), Famous Places Book Cab & WhatsApp buttons (`min-h-[44px]`), StickyLeadBar Call/WhatsApp/Book links (`min-h-[48px]`), mobile hamburger menu (`min-w-[44px] min-h-[44px]`).
+  - Added unique, descriptive `aria-label` attributes for repeated route, package, fleet, and attraction links.
+  - Ensured WCAG AA color contrast on buttons (`text-white` on `bg-primary` > 5.5:1 ratio).
+- **Resilient API Request & Timeout Handling (`react/src/services/catalog.ts`)**:
+  - Added `AbortController` (3.5s timeout) and fallback in-memory/sessionStorage cache to `getJson` in `catalog.ts`, preventing `net::ERR_TIMED_OUT` on cold-start Render API instances.
+- **Security Headers (`react/public/_headers`)**:
+  - Added `Strict-Transport-Security: max-age=31536000; includeSubDomains; preload` (HSTS).
+  - Added `Cross-Origin-Opener-Policy: same-origin-allow-popups` (COOP).
+  - Added strict, functional `Content-Security-Policy` allowing Razorpay, Supabase, Google OAuth, Google Fonts, and analytics.
+- **Verification**:
+  - `npm run verify` passed across monorepo (typecheck x3, backend test suites, customer SEO tests, build x3).
 
 ### 2026-10-09 — Frontend Motion & Animation Suite & Monuments Page Implementation
 

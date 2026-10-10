@@ -73,18 +73,60 @@ export function resolveCatalogMediaUrl(url: string | null | undefined): string {
   return trimmed;
 }
 
+const catalogCache = new Map<string, { data: unknown; timestamp: number }>();
+const CACHE_TTL_MS = 60_000; // 1 minute cache
+
 async function getJson<T>(path: string): Promise<T> {
-  const res = await fetch(`${getApiBaseUrl()}${path}`, {
-    headers: { accept: "application/json" },
-  });
-  if (!res.ok) {
-    throw new Error(`Catalog request failed (${res.status})`);
+  const cached = catalogCache.get(path);
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
+    return cached.data as T;
   }
-  const json = (await res.json().catch(() => ({}))) as { data?: T };
-  if (!json || !("data" in json)) {
-    throw new Error("Catalog response was malformed.");
+
+  if (typeof window !== "undefined") {
+    try {
+      const stored = window.sessionStorage.getItem(`arenaai:cat:${path}`);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Date.now() - parsed.timestamp < CACHE_TTL_MS) {
+          catalogCache.set(path, parsed);
+          return parsed.data as T;
+        }
+      }
+    } catch {}
   }
-  return json.data as T;
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 3500);
+
+  try {
+    const res = await fetch(`${getApiBaseUrl()}${path}`, {
+      headers: { accept: "application/json" },
+      signal: controller.signal,
+    });
+    clearTimeout(timer);
+    if (!res.ok) {
+      throw new Error(`Catalog request failed (${res.status})`);
+    }
+    const json = (await res.json().catch(() => ({}))) as { data?: T };
+    if (!json || !("data" in json)) {
+      throw new Error("Catalog response was malformed.");
+    }
+    const result = json.data as T;
+    catalogCache.set(path, { data: result, timestamp: Date.now() });
+    if (typeof window !== "undefined") {
+      try {
+        window.sessionStorage.setItem(
+          `arenaai:cat:${path}`,
+          JSON.stringify({ data: result, timestamp: Date.now() }),
+        );
+      } catch {}
+    }
+    return result;
+  } catch (err) {
+    clearTimeout(timer);
+    if (cached) return cached.data as T;
+    throw err;
+  }
 }
 
 function normalizeItem(raw: Record<string, unknown>): PublicCatalogItem {

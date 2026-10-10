@@ -456,7 +456,20 @@ export function EditorialHero({
     <section className="relative w-full pt-16 sm:pt-24 pb-14 bg-ink-midnight text-on-primary overflow-hidden">
       {/* Real <img> (not CSS background) for early discovery. Decorative. */}
       <picture className="absolute inset-0 z-0 pointer-events-none" aria-hidden="true">
-        {!backgroundImage && <source srcSet={DEFAULT_HERO_AVIF} type="image/avif" />}
+        {!backgroundImage && (
+          <>
+            <source
+              type="image/avif"
+              srcSet="/images/hero-taj-sunrise-480.avif 480w, /images/hero-taj-sunrise-960.avif 960w, /images/hero-taj-sunrise.avif 1920w"
+              sizes="100vw"
+            />
+            <source
+              type="image/webp"
+              srcSet="/images/hero-taj-sunrise-480.webp 480w, /images/hero-taj-sunrise-960.webp 960w, /images/hero-taj-sunrise.webp 1920w"
+              sizes="100vw"
+            />
+          </>
+        )}
         <img
           src={backgroundImage || DEFAULT_HERO_WEBP}
           alt=""

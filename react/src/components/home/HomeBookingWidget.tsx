@@ -1,4 +1,4 @@
-import { useRef, useState, type ReactNode, type RefObject } from "react";
+import { useEffect, useRef, useState, type ReactNode, type RefObject } from "react";
 import { packages, vehicles, type VehicleId } from "../../data/catalogue";
 import { STATIC_DESTINATIONS } from "../search/LocationCombobox";
 import { localTomorrow } from "../../fares";
@@ -72,13 +72,21 @@ export function HomeBookingWidget() {
   const [mode, setMode] = useState<BookingMode>("oneway");
   const [origin, setOrigin] = useState("Agra");
   const [destination, setDestination] = useState("Delhi");
-  const [pickupDate, setPickupDate] = useState(localTomorrow());
-  const [returnDate, setReturnDate] = useState(localTomorrow());
+  const [pickupDate, setPickupDate] = useState("");
+  const [returnDate, setReturnDate] = useState("");
+  const [minDate, setMinDate] = useState("");
   const [selectedVehicle, setSelectedVehicle] = useState<VehicleId>("sedan");
   const [localTourId, setLocalTourId] = useState<string>("agra-sightseeing");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const pickupInputRef = useRef<HTMLInputElement>(null);
   const returnInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const tomorrow = localTomorrow();
+    setPickupDate(tomorrow);
+    setReturnDate(tomorrow);
+    setMinDate(tomorrow);
+  }, []);
 
   const selectedTour = localTours.find((tour) => tour.slug === localTourId || tour.id === localTourId || (localTourId === "jaipur-day-tour" && tour.id === "jaipur-excursion") || (localTourId === "fatehpur-sikri" && tour.id === "fatehpur-sikri")) ?? localTours[0];
   const activeCard = localTourCards.find((card) => card.slug === localTourId || card.slug === selectedTour?.slug);
@@ -89,28 +97,42 @@ export function HomeBookingWidget() {
   };
   function validate(): boolean {
     const next: Record<string, string> = {};
+    const activePickupDate = pickupDate || localTomorrow();
+    const activeReturnDate = returnDate || localTomorrow();
     if (mode !== "local") {
       if (!origin.trim()) next.origin = "Enter pickup location.";
       if (!destination.trim()) next.destination = "Enter destination.";
     } else {
       if (!selectedTour) next.localTour = "Select a local tour.";
     }
-    if (!pickupDate) next.pickupDate = mode === "local" ? "Select tour date." : "Select pickup date.";
-    if (mode === "round" && (!returnDate || returnDate < pickupDate)) next.returnDate = "Select a valid return date.";
+    if (!activePickupDate) next.pickupDate = mode === "local" ? "Select tour date." : "Select pickup date.";
+    if (mode === "round" && (!activeReturnDate || activeReturnDate < activePickupDate)) next.returnDate = "Select a valid return date.";
     setErrors(next);
     return Object.keys(next).length === 0;
   }
   function bookingHref(): string {
+    const activePickupDate = pickupDate || localTomorrow();
+    const activeReturnDate = returnDate || localTomorrow();
     if (mode === "local") {
       const tourSlug = selectedTour?.slug ?? localTourId;
-      return `/book?trip=local&pkg=${encodeURIComponent(tourSlug)}&vehicle=${selectedVehicle}&date=${encodeURIComponent(pickupDate)}`;
+      return `/book?trip=local&pkg=${encodeURIComponent(tourSlug)}&vehicle=${selectedVehicle}&date=${encodeURIComponent(activePickupDate)}`;
     }
-    return `/book?from=${encodeURIComponent(origin)}&to=${encodeURIComponent(destination)}&vehicle=${selectedVehicle}&trip=${mode === "round" ? "round-trip" : "one-way"}&date=${encodeURIComponent(pickupDate)}${mode === "round" ? `&returnDate=${encodeURIComponent(returnDate)}` : ""}`;
+    return `/book?from=${encodeURIComponent(origin)}&to=${encodeURIComponent(destination)}&vehicle=${selectedVehicle}&trip=${mode === "round" ? "round-trip" : "one-way"}&date=${encodeURIComponent(activePickupDate)}${mode === "round" ? `&returnDate=${encodeURIComponent(activeReturnDate)}` : ""}`;
   }
 
   return (
     <div id="home-booking-widget" className={`booking-reference booking-reference--${mode}`}>
-      <img className="booking-reference__hero" src="/assets/booking/taj-mahal.webp" alt="Taj Mahal in Agra" />
+      <img
+        className="booking-reference__hero"
+        src="/assets/booking/taj-mahal-480.webp"
+        srcSet="/assets/booking/taj-mahal-480.webp 480w, /assets/booking/taj-mahal-768.webp 768w, /assets/booking/taj-mahal.webp 1200w"
+        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 384px"
+        width={384}
+        height={256}
+        loading="lazy"
+        decoding="async"
+        alt="Taj Mahal in Agra"
+      />
       <div className="booking-reference__veil" aria-hidden="true" />
       <div className="booking-reference__content">
         <div className="booking-reference__tabs" role="tablist" aria-label="Booking type">
@@ -127,7 +149,7 @@ export function HomeBookingWidget() {
               <label htmlFor="home-local-tour">Select Local Tour</label>
               <div className="booking-reference__select booking-reference__select--with-icon">
                 <span className="booking-reference__thumb">
-                  <img src={thumbSrc} alt="" />
+                  <img src={thumbSrc} alt="" width={44} height={44} loading="lazy" decoding="async" />
                 </span>
                 <select
                   id="home-local-tour"
@@ -161,7 +183,7 @@ export function HomeBookingWidget() {
                 id="home-pickup-date"
                 type="date"
                 value={pickupDate}
-                min={localTomorrow()}
+                min={minDate || undefined}
                 onChange={(event) => {
                   setPickupDate(event.target.value);
                   if (returnDate < event.target.value) setReturnDate(event.target.value);
@@ -191,7 +213,7 @@ export function HomeBookingWidget() {
                     setErrors({});
                   }}
                 >
-                  <img src={card.image} alt="" />
+                  <img src={card.image} alt="" width={56} height={56} loading="lazy" decoding="async" />
                   <span>
                     <strong>{card.title}</strong>
                     <small>{card.meta}</small>

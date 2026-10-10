@@ -574,23 +574,24 @@ export function FamousPlacesSection() {
                 {/* Action CTAs */}
                 <div className="mt-auto pt-3 border-t border-border-warm/40 flex items-center justify-between gap-2">
                   <a
-                    className="flex-1 py-2 px-3 rounded-lg bg-primary hover:bg-primary-container text-white font-label-lg text-xs font-semibold transition-all shadow-xs text-center active:scale-[0.98] inline-flex items-center justify-center gap-1"
+                    className="flex-1 min-h-[44px] py-2.5 px-3 rounded-lg bg-primary hover:bg-primary-container text-white font-label-lg text-xs font-semibold transition-all shadow-xs text-center active:scale-[0.98] inline-flex items-center justify-center gap-1"
                     href={`/book?from=Agra&to=${encodeURIComponent(place.name)}`}
+                    aria-label={`Book cab from Agra to ${place.name}`}
                   >
-                    <span>Book Cab</span>
-                    <Icon name="arrow_forward" className="text-icon-14" />
+                    <span className="text-white">Book Cab</span>
+                    <Icon name="arrow_forward" className="text-icon-14 text-white" />
                   </a>
 
                   {/* WhatsApp CTA in Pure Black with Real WhatsApp Icon */}
                   <a
-                    className="px-3 py-2 rounded-lg bg-black hover:bg-neutral-900 border border-white/20 text-white font-label-lg text-xs font-semibold shadow-xs transition-all active:scale-[0.98] inline-flex items-center gap-1.5 shrink-0"
+                    className="min-h-[44px] px-3.5 py-2.5 rounded-lg bg-black hover:bg-neutral-900 border border-white/20 text-white font-label-lg text-xs font-semibold shadow-xs transition-all active:scale-[0.98] inline-flex items-center gap-1.5 shrink-0"
                     style={{ color: "#ffffff" }}
                     href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
                       `Hello Agra SK Baghel Tour and Travels Desk, I would like to inquire about a taxi trip to ${place.name} (${place.distance}).`
                     )}`}
                     target="_blank"
                     rel="noreferrer"
-                    aria-label={`WhatsApp inquiry for ${place.name}`}
+                    aria-label={`Inquire about cab to ${place.name} on WhatsApp`}
                   >
                     <WhatsAppIcon className="w-3.5 h-3.5 shrink-0 text-white" />
                     <span className="text-white font-semibold" style={{ color: "#ffffff" }}>WhatsApp</span>

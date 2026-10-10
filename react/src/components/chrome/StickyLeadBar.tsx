@@ -41,7 +41,7 @@ export function StickyLeadBar({ currentPath }: StickyLeadBarProps) {
       data-nosnippet
     >
       <a
-        className="flex-1 flex flex-col items-center justify-center py-1.5 rounded-lg bg-surface-container text-on-surface font-label-caps text-label-md font-semibold hover:bg-surface-container-high transition-colors"
+        className="flex-1 flex flex-col items-center justify-center min-h-[48px] py-2 rounded-lg bg-surface-container text-on-surface font-label-caps text-label-md font-semibold hover:bg-surface-container-high transition-colors"
         href={`tel:${contact.phone}`}
         aria-label={`Call ${contact.phoneDisplay}`}
       >
@@ -50,24 +50,24 @@ export function StickyLeadBar({ currentPath }: StickyLeadBarProps) {
       </a>
 
       <a
-        className="flex-1 flex flex-col items-center justify-center py-1.5 rounded-lg bg-black text-white font-label-caps text-label-md font-semibold hover:bg-neutral-900 transition-colors shadow-xs border border-white/10"
+        className="flex-1 flex flex-col items-center justify-center min-h-[48px] py-2 rounded-lg bg-black text-white font-label-caps text-label-md font-semibold hover:bg-neutral-900 transition-colors shadow-xs border border-white/10"
         style={{ color: "#ffffff" }}
         href={`https://wa.me/${contact.whatsapp}?text=Hello%20SK%20Baghel%20Travels`}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label="WhatsApp"
+        aria-label="Chat with Support on WhatsApp"
       >
         <WhatsAppIcon className="w-[18px] h-[18px] shrink-0 text-white" />
         <span className="mt-0.5 text-white" style={{ color: "#ffffff" }}>WhatsApp</span>
       </a>
 
       <a
-        className="flex-1 flex flex-col items-center justify-center py-1.5 rounded-lg bg-primary text-on-primary font-label-caps text-label-md font-semibold hover:bg-primary-container transition-colors shadow-xs"
+        className="flex-1 flex flex-col items-center justify-center min-h-[48px] py-2 rounded-lg bg-primary text-white font-label-caps text-label-md font-semibold hover:bg-primary-container transition-colors shadow-xs"
         href="/book.html"
-        aria-label="Book Cab or Tour"
+        aria-label="Book Cab or Tour Online"
       >
-        <span className="material-symbols-outlined text-on-primary text-icon-18">calendar_month</span>
-        <span className="mt-0.5">Book Now</span>
+        <span className="material-symbols-outlined text-white text-icon-18">calendar_month</span>
+        <span className="mt-0.5 text-white">Book Now</span>
       </a>
     </aside>
   );

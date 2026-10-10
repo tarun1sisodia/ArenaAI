@@ -11,18 +11,23 @@
          preconnect — PageSpeed flagged it as unused. -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..700;1,400..700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <!-- Material Symbols: full variable font from Google Fonts (2026-10-01).
-         Subsetting was attempted but fontTools breaks the rlig ligature rules
-         that this font uses for icon names — a broken subset ships no icons.
-         Future work: migrate to inline SVGs (see master prompt). -->
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..700;1,400..700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Material+Symbols+Outlined&display=swap" />
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..700;1,400..700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Material+Symbols+Outlined&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+    <noscript>
+      <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..700;1,400..700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Material+Symbols+Outlined&display=swap" rel="stylesheet" />
+    </noscript>
     <title>Agra SK Baghel Tour and Travels</title>
-    <!-- Google Tag Manager — deferred until browser idle so it never contends
+    <!-- Google Tag Manager — deferred until user interaction or browser idle so it never contends
          with LCP on the critical path (PageSpeed: ~90KB unused GTM JS). -->
     <script>
       (function () {
+        var gtmLoaded = false;
         function loadGTM() {
+          if (gtmLoaded) return;
+          gtmLoaded = true;
+          ['scroll', 'touchstart', 'pointerdown', 'keydown'].forEach(function (evt) {
+            window.removeEventListener(evt, loadGTM, { passive: true });
+          });
           (function (w, d, s, l, i) {
             w[l] = w[l] || [];
             w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
@@ -34,11 +39,16 @@
             f.parentNode.insertBefore(j, f);
           })(window, document, "script", "dataLayer", "GTM-KFXGSK7H");
         }
+        ['scroll', 'touchstart', 'pointerdown', 'keydown'].forEach(function (evt) {
+          window.addEventListener(evt, loadGTM, { passive: true, once: true });
+        });
         if ("requestIdleCallback" in window) {
-          window.requestIdleCallback(loadGTM, { timeout: 5000 });
+          window.requestIdleCallback(function () {
+            setTimeout(loadGTM, 4000);
+          }, { timeout: 8000 });
         } else {
           window.addEventListener("load", function () {
-            setTimeout(loadGTM, 2000);
+            setTimeout(loadGTM, 4000);
           });
         }
       })();
@@ -59,11 +69,7 @@
     <!-- End Google Tag Manager (noscript) -->
     <div id="root"></div>
     <noscript id="js-fallback">
-      <a class="skip-link" href="#main-content">Skip to content</a>
-      <main>
-        <h1>Agra SK Baghel Tour and Travels</h1>
-        <p>JavaScript is required for this React migration preview. Call us at <a href="tel:+919762817598">+91 97628 17598</a>.</p>
-      </main>
+      <p style="padding:12px;background:#fff3cd;color:#856404;margin:0;text-align:center;font-size:14px;">JavaScript is recommended for dynamic calculations and interactive booking. Call us 24×7 at <a href="tel:+919762817598" style="color:#b8941f;font-weight:700;">+91 97628 17598</a>.</p>
     </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>

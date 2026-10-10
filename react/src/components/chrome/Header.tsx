@@ -240,7 +240,7 @@ export function Header({
               onClick={toggleMobileNav}
               aria-label={isMobileNavOpen ? "Close menu" : "Open menu"}
               aria-expanded={isMobileNavOpen}
-              className="xl:hidden p-1.5 rounded-md text-on-surface hover:bg-sandstone-wash transition-colors flex items-center justify-center border border-border-warm/50"
+              className="xl:hidden min-w-[44px] min-h-[44px] p-2.5 rounded-md text-on-surface hover:bg-sandstone-wash transition-colors flex items-center justify-center border border-border-warm/50"
             >
               <span className="material-symbols-outlined text-icon-20">
                 {isMobileNavOpen ? "close" : "menu"}
