@@ -2,7 +2,7 @@ import { z } from "zod";
 
 const SelectionIdSchema = z.string().trim().min(1).max(120).regex(/^[A-Za-z0-9._-]+$/, "Invalid selection identifier");
 const SlugSchema = z.string().trim().min(1).max(120).regex(/^[A-Za-z0-9._-]+$/, "Invalid catalogue slug");
-const SelectionSourceSchema = z.enum(["catalog", "curated", "legacy"]);
+const SelectionSourceSchema = z.enum(["catalog", "curated", "historical"]);
 
 /**
  * The single semantic trip choice carried from the customer UI to the API.

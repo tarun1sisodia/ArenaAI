@@ -33,7 +33,7 @@ export async function resolveFleet(
 
   const vehicles = base.map((v) => {
     // C-ENUM-001: override keys are normalized to canonical tier keys, so
-    // desk-side entries keyed by legacy short ids (innova/tempo) still match.
+    // desk-side entries keyed by historical short ids (innova/tempo) still match.
     const override = cfgVehicles.find((ov) => {
       const key = toCanonicalTierKey(String(ov.tier ?? ov.id ?? ""));
       return key !== undefined && key === v.tier;

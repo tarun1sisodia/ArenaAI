@@ -21,7 +21,7 @@ export interface ResolvedProductContext {
   catalogDistanceKm?: number;
 }
 
-/** Legacy alias for backward compatibility during phased deployment */
+/** Compatibility alias for backward compatibility during phased deployment */
 export type ResolvedDossierContext = ResolvedProductContext;
 
 /**

@@ -340,7 +340,7 @@ export const fetchPublishedTourPackages = loadPublishedPackages;
 /** Canonical alias: fetchPublishedRoutes */
 export const fetchPublishedRoutes = loadRoutesManifest;
 
-/** Legacy alias for backward compatibility */
+/** Compatibility alias for tour packages */
 export const toDossierTourPackage = toTourPackage;
 
 /** Fetch published airport and station transfer routes */

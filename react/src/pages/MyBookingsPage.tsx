@@ -27,7 +27,7 @@ function bookingSubtitle(booking: CustomerBookingSummary): string {
   if (selection?.kind === "local") return `Pickup: ${selection.pickupLocation}`;
   if (selection?.kind === "package") return `Package itinerary · ${selection.slug.replaceAll("-", " ")}`;
   if (booking.originName && booking.destinationName) return `${booking.originName} → ${booking.destinationName}`;
-  return "Legacy booking record";
+  return "Confirmed booking";
 }
 
 export function MyBookingsPage() {

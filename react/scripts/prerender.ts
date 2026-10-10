@@ -243,8 +243,8 @@ const routesToRender: string[] = Array.from(new Set([
   ...SEO_LANDING_SLUGS.map((slug) => `/en/${slug}/`),
 ]));
 
-// Legacy HTML redirect stubs for backward compatibility
-const legacyRedirects = [
+// Compatibility HTML redirect stubs for backward compatibility
+const redirectStubs = [
   { from: "services.html", to: "/en/services/" },
   { from: "routes.html", to: "/en/routes/" },
   { from: "packages.html", to: "/en/packages/" },
@@ -487,9 +487,9 @@ export async function prerender(): Promise<void> {
       totalBytes += Buffer.byteLength(html, "utf8");
     }
 
-    // Generate legacy redirect stubs
+    // Generate compatibility redirect stubs
     let redirectCount = 0;
-    for (const item of legacyRedirects) {
+    for (const item of redirectStubs) {
       const redirectHtml = generateRedirectHtml(item.to, CANONICAL_DOMAIN);
       const targetFile = join(dist, item.from.endsWith("/") ? item.from.slice(0, -1) : item.from);
       const redirectOutput = targetFile.endsWith(".html") ? targetFile : join(targetFile, "index.html");

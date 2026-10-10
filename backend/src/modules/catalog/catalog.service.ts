@@ -155,9 +155,9 @@ export function createCatalogService(deps: { db: Repositories; clock: Clock; med
 
     const packageMap = new Map<string, any>();
 
-    // 1. Incorporate legacy catalog_items (packages and tours) as baseline
+    // 1. Incorporate baseline catalog_items (packages and tours)
     const allPublished = allDbItems.filter((i) => i.status === "published" && i.availability !== "unavailable");
-    const legacyPackages = await Promise.all(
+    const baselinePackages = await Promise.all(
       allPublished
         .filter((item) => item.type === "package" || item.type === "tour")
         .map(async (item) => {
@@ -200,7 +200,7 @@ export function createCatalogService(deps: { db: Repositories; clock: Clock; med
           };
         }),
     );
-    for (const p of legacyPackages) {
+    for (const p of baselinePackages) {
       packageMap.set(p.slug, p);
     }
 

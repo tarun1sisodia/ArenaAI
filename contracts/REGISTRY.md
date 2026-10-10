@@ -12,7 +12,7 @@ Status: `PILOT` = proven on 2 contracts · `FROZEN` = defined, not yet locked ·
 - **Values:** `sedan`, `ertiga`, `innova-crysta`, `tempo-traveller`, `urbania`
   (Tarun decision D1, 2026-10-07 — long form; matches DB `vehicle_tier_enum`).
 - **Rule:** long form is the ONLY valid key at API boundaries, in zod schemas,
-  and in newly written DB rows. Legacy short ids (`innova`, `tempo`) are readable
+  and in newly written DB rows. Historical short ids (`innova`, `tempo`) are readable
   via `resolveTierKey()` during the data migration, never writable.
 - **Consumers (backend):**
   - `backend/src/types/domain.ts` — `VEHICLE_TIERS` (must deep-equal contract)

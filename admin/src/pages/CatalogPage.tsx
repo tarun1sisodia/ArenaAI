@@ -940,7 +940,7 @@ export function CatalogPage({ user }: { user: AdminUser }) {
                 ))}
                 {editingItem && !GENERAL_CATALOG_CATEGORIES.includes(editingItem.category) && (
                   <option value={editingItem.category}>
-                    {CATEGORY_LABEL[editingItem.category]} (Archived legacy vertical)
+                    {CATEGORY_LABEL[editingItem.category]} (Archived vertical)
                   </option>
                 )}
               </Select>

@@ -7,7 +7,7 @@ Contract: **C-API-001** — `POST /api/v1/fares/calculate`
 | Test | Why it exists |
 |------|---------------|
 | canonical tier → 200 + `FareResponseSchema` parse | The strongest contract assertion in the suite: the actual HTTP response body must parse against `FareResponseSchema`. If anyone adds/removes/renames a response field (the exact drift the 2026-10-06 audit hunted), this test fails instead of admin/react silently reading a missing field. |
-| short tier id → 400 | Pins the API boundary rule: the wire speaks **canonical long form only** (`z.enum(VEHICLE_TIERS)`). Legacy short ids are normalized *inside* the backend for old DB rows — they are never valid on the wire. If someone loosens the schema to accept anything, this test fails. |
+| short tier id → 400 | Pins the API boundary rule: the wire speaks **canonical long form only** (`z.enum(VEHICLE_TIERS)`). Compatibility short ids are normalized *inside* the backend for old DB rows — they are never valid on the wire. If someone loosens the schema to accept anything, this test fails. |
 
 Background: `CalculateFareSchema` is `.strict()` and server-authoritative (client
 distance is ignored for pricing — BACKEND_RULES.md Law 2). The response contract

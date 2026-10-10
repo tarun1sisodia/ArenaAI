@@ -53,7 +53,7 @@ function bookingSubtitle(booking: Booking): string {
   if (selection?.kind === "local") return `Pickup: ${selection.pickupLocation} · ${selection.tripType.replaceAll("-", " ")} · ID ${selection.id}`;
   if (selection?.kind === "package") return `Tour package · ${selection.slug.replaceAll("-", " ")} · ID ${selection.id}`;
   if (booking.origin && booking.destination) return `${booking.origin} → ${booking.destination}`;
-  return "Legacy booking record";
+  return "Confirmed booking";
 }
 
 /** Valid staff transitions per TRD §4.1 state machine */

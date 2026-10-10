@@ -449,7 +449,7 @@ export async function generateSitemapAndRobots(): Promise<{
   // Target destinations — the build only ever writes inside this application.
   // `dist` is the deployable Cloudflare Pages output; `public` keeps the
   // tracked source copy in sync for Vite's publicDir copy step. Writing to the
-  // repository root or to a root `dist/` was legacy static-site behaviour and
+  // repository root or to a root `dist/` was historical static-site behaviour and
   // made every build dirty tracked files outside the app.
   const destinations = [
     join(reactRoot, "dist"),

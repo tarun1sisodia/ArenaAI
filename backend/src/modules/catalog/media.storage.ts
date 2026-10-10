@@ -24,7 +24,7 @@ import { createSupabaseAdmin } from "../../config/supabase.js";
  * a public URL or a presigned URL that could silently expire.
  *
  * When neither backend is configured (local dev, unit tests) this returns
- * `null` and the catalog service falls back to the legacy DB-inline storage
+ * `null` and the catalog service falls back to inline database storage
  * so nothing breaks without credentials.
  */
 export type MediaStorage = {

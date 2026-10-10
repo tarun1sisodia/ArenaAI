@@ -32,8 +32,8 @@ async function resolveBookingSelection(
     };
   }
 
-  if (selection.source === "legacy") {
-    throw Errors.validation("Legacy selection markers are read-only and cannot be submitted as a new booking.");
+  if (selection.source === "historical") {
+    throw Errors.validation("Historical selection markers are read-only and cannot be submitted as a new booking.");
   }
 
   if (selection.kind === "package") {
@@ -56,7 +56,7 @@ async function resolveBookingSelection(
       }
     }
 
-    // 2. Legacy catalog repository fallback
+    // 2. Primary catalog repository fallback
     if (db.catalog) {
       const item =
         (await db.catalog.getById(selection.id)) ??
@@ -139,7 +139,7 @@ async function resolveBookingSelection(
       }
     }
 
-    // 3. Legacy catalog repository fallback
+    // 3. Primary catalog repository fallback
     if (db.catalog) {
       const item =
         (await db.catalog.getById(selection.id)) ??
@@ -189,7 +189,7 @@ function selectionForProjection(booking: BookingRecord): BookingSelection | null
       kind: "package",
       id: booking.packageId,
       slug: booking.packageId,
-      source: "legacy",
+      source: "historical",
       name: booking.fareSnapshot.label || booking.packageId,
     };
   }
@@ -198,7 +198,7 @@ function selectionForProjection(booking: BookingRecord): BookingSelection | null
     return {
       kind: "local",
       id: key,
-      source: "legacy",
+      source: "historical",
       tripType: booking.tripType,
       localPackageKey: key,
       pickupLocation: booking.originName ?? "Agra",
@@ -206,8 +206,8 @@ function selectionForProjection(booking: BookingRecord): BookingSelection | null
     };
   }
   if (booking.originName && booking.destinationName) {
-    let id = "legacy-outstation";
-    try { id = findRoute(booking.originName, booking.destinationName).id; } catch { /* Keep the legacy marker. */ }
+    let id = "custom-outstation";
+    try { id = findRoute(booking.originName, booking.destinationName).id; } catch { /* Keep the custom fallback marker. */ }
     return {
       kind: "outstation",
       id,

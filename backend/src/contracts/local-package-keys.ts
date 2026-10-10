@@ -6,7 +6,7 @@
  */
 /**
  * @file local-package-keys.ts — Canonical Local Tour Rental Slabs contract.
- * @usage Contract C-ENUM-003: Replaces legacy 'day120' and '8h/80km' hacks.
+ * @usage Contract C-ENUM-003: Replaces historical 'day120' and '8h/80km' formats.
  */
 
 export const LOCAL_PACKAGE_KEYS = [
@@ -42,7 +42,7 @@ export const LOCAL_PACKAGE_META: Record<LocalPackageKey, LocalPackageMeta> = {
 };
 
 /**
- * Normalizes legacy package slugs ('day120', '8h80km', '8hr-80km') to canonical LocalPackageKey.
+ * Normalizes historical package slugs ('day120', '8h80km', '8hr-80km') to canonical LocalPackageKey.
  */
 export function toCanonicalLocalPackageKey(input: string): LocalPackageKey | undefined {
   const clean = (input || "").trim().toLowerCase();

@@ -10,7 +10,7 @@
 - **C-ENUM-001 (new, PILOT):** canonical vehicle tiers = long form
   (`sedan`, `ertiga`, `innova-crysta`, `tempo-traveller`, `urbania`).
   Decided by Tarun (D1). Matches DB `vehicle_tier_enum` (migration 0002).
-  Legacy short ids (`innova`, `tempo`) readable via `resolveTierKey()` during
+  Historical short ids (`innova`, `tempo`) readable via `resolveTierKey()` during
   data migration, never writable.
 - **C-API-001 (new, PILOT):** `POST /api/v1/fares/calculate` contract pinned —
   `.strict()` request, `vehicleTier ∈ C-ENUM-001`, `FareResponseSchema` response,

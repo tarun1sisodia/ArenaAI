@@ -59,20 +59,20 @@ const CreateDraftBookingBaseSchema = z.object({
   flightTrainNumber: z.string().trim().max(50).optional().refine((v) => !v || /^[A-Za-z0-9-_ ]+$/.test(v), "Invalid flight/train number"),
   specialNotes: SafeNotesSchema,
   promoCode: z.string().trim().max(30).regex(/^[A-Za-z0-9_-]+$/, "Promo code must be alphanumeric with dash/underscore").optional(),
-  // Legacy fields remain accepted for older clients; new clients send bookingSelection.
+  // Historical fields remain accepted for older clients; new clients send bookingSelection.
   packageId: z.string().trim().max(80).optional(),
   localPackageKey: z.enum(["8hr-80km", "12hr-120km", "airport-transfer"]).optional(),
 }).strip();
 
 export const CreateDraftBookingSchema = CreateDraftBookingBaseSchema
   .superRefine((data, ctx) => {
-    if (data.bookingSelection && "source" in data.bookingSelection && data.bookingSelection.source === "legacy") {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["bookingSelection", "source"], message: "Legacy booking selections are read-only." });
+    if (data.bookingSelection && "source" in data.bookingSelection && data.bookingSelection.source === "historical") {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["bookingSelection", "source"], message: "Historical booking selections are read-only." });
     }
     if (!data.bookingSelection) {
       if (!data.tripType) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["tripType"], message: "Trip type is required." });
-      if (!data.originName) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["originName"], message: "Origin is required for legacy bookings." });
-      if (!data.destinationName) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["destinationName"], message: "Destination is required for legacy bookings." });
+      if (!data.originName) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["originName"], message: "Origin is required for direct bookings without a selection." });
+      if (!data.destinationName) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["destinationName"], message: "Destination is required for direct bookings without a selection." });
       if (data.originName && data.destinationName && data.originName.toLowerCase() === data.destinationName.toLowerCase() && data.tripType !== "local-tour" && !data.localPackageKey) {
         ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["destinationName"], message: "Origin and destination must differ for non-local trips." });
       }

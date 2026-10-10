@@ -22,7 +22,7 @@ function bookingDetails(booking: CustomerBookingDetails): string {
   if (selection?.kind === "outstation") return `${selection.originName} → ${selection.destinationName}`;
   if (selection?.kind === "local") return `Pickup: ${selection.pickupLocation}${selection.transferTarget ? ` · To: ${selection.transferTarget}` : ""}`;
   if (selection?.kind === "package") return `Package ID: ${selection.id} · ${selection.slug}`;
-  return booking.originName && booking.destinationName ? `${booking.originName} → ${booking.destinationName}` : "Legacy booking record";
+  return booking.originName && booking.destinationName ? `${booking.originName} → ${booking.destinationName}` : "Confirmed booking";
 }
 function displayDate(value: string): string {
   const date = new Date(value);

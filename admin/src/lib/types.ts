@@ -27,8 +27,8 @@ export type TripType =
 
 export type CanonicalBookingSelection =
   | { kind: "outstation"; id: string; tripType: "one-way" | "round-trip"; originName: string; destinationName: string; name?: string }
-  | { kind: "local"; id: string; source: "catalog" | "curated" | "legacy"; slug?: string; tripType: "local-tour" | "airport-transfer"; localPackageKey?: "8hr-80km" | "12hr-120km" | "airport-transfer"; pickupLocation: string; transferTarget?: string; name?: string }
-  | { kind: "package"; id: string; source: "catalog" | "curated" | "legacy"; slug: string; name?: string };
+  | { kind: "local"; id: string; source: "catalog" | "curated" | "historical"; slug?: string; tripType: "local-tour" | "airport-transfer"; localPackageKey?: "8hr-80km" | "12hr-120km" | "airport-transfer"; pickupLocation: string; transferTarget?: string; name?: string }
+  | { kind: "package"; id: string; source: "catalog" | "curated" | "historical"; slug: string; name?: string };
 
 export type VehicleTier =
   | "sedan"

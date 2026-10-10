@@ -12,7 +12,7 @@ export const CalculateFareBaseSchema = z
     bookingSelection: BookingSelectionSchema.optional(),
     pickupDatetime: IsoDatetimeSchema,
     returnDatetime: IsoDatetimeSchema.optional(),
-    // Accepted only for legacy clients; the server never trusts a client distance.
+    // Accepted only for compatibility with older clients; the server never trusts a client distance.
     distanceKm: z.number().positive().max(5000).finite().optional(),
     promoCode: z
       .string()
@@ -30,12 +30,12 @@ export const CalculateFareSchema = CalculateFareBaseSchema
     if (
       data.bookingSelection &&
       "source" in data.bookingSelection &&
-      data.bookingSelection.source === "legacy"
+      data.bookingSelection.source === "historical"
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ["bookingSelection", "source"],
-        message: "Legacy booking selections are read-only.",
+        message: "Historical booking selections are read-only.",
       });
     }
     if (!data.bookingSelection) {
@@ -49,13 +49,13 @@ export const CalculateFareSchema = CalculateFareBaseSchema
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ["originName"],
-          message: "Origin is required for legacy fare requests.",
+          message: "Origin is required for direct fare requests.",
         });
       if (!data.destinationName)
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ["destinationName"],
-          message: "Destination is required for legacy fare requests.",
+          message: "Destination is required for direct fare requests.",
         });
       return;
     }

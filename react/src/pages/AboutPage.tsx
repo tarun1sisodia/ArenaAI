@@ -66,7 +66,7 @@ export function AboutPage({ language = "en" }: AboutPageProps) {
                 <div className="flex flex-col bg-surface-container-low p-2.5 sm:p-3 rounded-lg shadow-xs border border-border-warm/40">
                   <span className="font-headline-md text-base sm:text-lg text-terracotta-sandstone font-serif font-bold">15+</span>
                   <span className="font-body-sm text-label-md text-on-surface font-semibold">Years in Taj Ganj</span>
-                  <span className="text-body-sm text-secondary">Family-run local legacy</span>
+                  <span className="text-body-sm text-secondary">Family-run local heritage</span>
                 </div>
                 <div className="flex flex-col bg-surface-container-low p-2.5 sm:p-3 rounded-lg shadow-xs border border-border-warm/40">
                   <span className="font-headline-md text-base sm:text-lg text-terracotta-sandstone font-serif font-bold">3,800+</span>

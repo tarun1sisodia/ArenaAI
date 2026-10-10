@@ -37,8 +37,8 @@ export interface VehicleTierMeta {
   /** Seating capacity as the business states it, e.g. "6-7" */
   seats: string;
   /**
-   * Legacy short id found in old data (seeds, pre-0034 DB rows, PACKAGE_UPGRADES).
-   * NEVER use for new writes. Only for reading legacy data via resolveTierKey().
+   * Short id found in historical data (seeds, pre-0034 DB rows, PACKAGE_UPGRADES).
+   * NEVER use for new writes. Only for reading compatibility data via resolveTierKey().
    */
   shortId: string;
 }
@@ -64,7 +64,7 @@ const SHORT_TO_CANONICAL: Record<string, VehicleTier> = {
 };
 
 /**
- * Normalize any tier key (canonical long form, legacy short id, or snake_case alias)
+ * Normalize any tier key (canonical long form, short id, or snake_case alias)
  * to the canonical VehicleTier. Returns undefined for unknown keys — callers must
  * reject those loudly (400), never silently ignore.
  */
@@ -81,26 +81,25 @@ export function toCanonicalTierKey(input: string): VehicleTier | undefined {
 }
 
 /**
- * Normalizes any fleet code, alias, or legacy tier id to a canonical VehicleTier.
+ * Normalizes any fleet code, alias, or short tier id to a canonical VehicleTier.
  * If unrecognized, falls back to a safe canonical default ("sedan").
  */
 export function normalizeFleetCode(input: string, fallback: VehicleTier = "sedan"): VehicleTier {
   return toCanonicalTierKey(input) ?? fallback;
 }
 
-export type TierKeySource = "canonical" | "legacy" | "miss";
+export type TierKeySource = "canonical" | "compat" | "miss";
 
 export interface TierKeyResolution<T> {
   value: T | undefined;
-  /** "canonical" = long-form key hit · "legacy" = short-id or snake-case key hit (old data — migrate it) · "miss" = no key */
+  /** "canonical" = long-form key hit · "compat" = short-id or snake-case key hit · "miss" = no key */
   via: TierKeySource;
 }
 
 /**
  * Read a tier-keyed record (fleetPrices, extraRates, upgradeSurcharges, prices.fleet_per_km, ...).
- * Canonical long-form key wins; legacy short id or snake_case key is accepted for old rows
- * so reads don't break during the data migration — but every "legacy" hit is a
- * row that still needs migrating. Never silently fall through on "miss".
+ * Canonical long-form key wins; short id or snake_case key is accepted for compatibility rows
+ * so reads don't break during data migration. Never silently fall through on "miss".
  */
 export function resolveTierKey<T>(
   record: Record<string, T> | null | undefined,
@@ -110,11 +109,11 @@ export function resolveTierKey<T>(
   if (tier in record) return { value: record[tier], via: "canonical" };
   const shortId = VEHICLE_TIER_META[tier].shortId;
   if (shortId !== tier && shortId in record) {
-    return { value: record[shortId], via: "legacy" };
+    return { value: record[shortId], via: "compat" };
   }
   const snakeId = tier.replace(/-/g, "_");
   if (snakeId !== tier && snakeId in record) {
-    return { value: record[snakeId], via: "legacy" };
+    return { value: record[snakeId], via: "compat" };
   }
   return { value: undefined, via: "miss" };
 }

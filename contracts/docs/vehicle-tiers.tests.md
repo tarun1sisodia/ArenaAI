@@ -18,8 +18,8 @@ canonical, everywhere.**
 | domain.ts parity | `backend/src/types/domain.ts` defines its own `VEHICLE_TIERS`. If anyone adds/removes a tier there without going through the contract change process, this catches it. |
 | DB enum parity | The DB `vehicle_tier_enum` (migration 0002) is the other authority. If a future migration changes the enum without updating the contract (or vice versa), this fails. No live DB needed — it parses the migration SQL. |
 | `toCanonicalTierKey` cases | Pins the normalization behavior: short ids map to canonical, canonical passes through, garbage returns `undefined` (so callers reject loudly instead of guessing). |
-| tier meta | Pins the business facts Tarun gave: labels + seat counts (Sedan 4, Ertiga 6, Innova 6-7, Tempo 12, Urbania 16) and the short-id bridge for legacy reads. |
-| `resolveTierKey` cases | Pins the read rule: canonical key wins; legacy short id is accepted for old rows (so the data migration doesn't break reads); a miss returns `undefined` — never a silent fallback to a wrong price. |
+| tier meta | Pins the business facts Tarun gave: labels + seat counts (Sedan 4, Ertiga 6, Innova 6-7, Tempo 12, Urbania 16) and the short-id bridge for compatibility reads. |
+| `resolveTierKey` cases | Pins the read rule: canonical key wins; compatibility short id is accepted for old rows (so the data migration doesn't break reads); a miss returns `undefined` — never a silent fallback to a wrong price. |
 
 ## WHAT — exactly what is asserted
 1. `backend/src/contracts/vehicle-tiers.ts` ends with the exact bytes of
@@ -32,7 +32,7 @@ canonical, everywhere.**
    identity on canonical input, `undefined` on `"suv"` / `""`.
 5. Every tier has non-empty `label`, `seats`, `shortId` in `VEHICLE_TIER_META`.
 6. `resolveTierKey({sedan:1900, innova:2850}, "innova-crysta")` →
-   `{ value: 2850, via: "legacy" }`; canonical-first when both exist;
+   `{ value: 2850, via: "compat" }`; canonical-first when both exist;
    `{ value: undefined, via: "miss" }` on miss or null record.
 
 ## HOW — updating these tests when the contract intentionally changes
@@ -47,7 +47,7 @@ Scenario: Tarun adds a 6th fleet, e.g. `"kia-carnival"` (canonical long form).
    (the sync test then passes again by itself).
 3. **Update this test file:**
    - `toCanonicalTierKey` cases: add `expect(toCanonicalTierKey("carnival")).toBe("kia-carnival")`.
-   - `resolveTierKey` cases: add a legacy-shaped record case if old rows will carry the short id.
+   - `resolveTierKey` cases: add a compatibility record case if old rows will carry the short id.
    - The DB-enum parity test needs **no change** — it reads the migration, so it
      automatically expects the new value once the migration exists. If it fails,
      you forgot the migration.
