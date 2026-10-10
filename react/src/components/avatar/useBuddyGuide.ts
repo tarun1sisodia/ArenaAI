@@ -54,40 +54,48 @@ function elementText(el: Element): string {
   return parts.join(" ").toLowerCase();
 }
 
+/** Normalized text: lowercase alphanumeric only, so "Round Trip", "round-trip" and "roundtrip" all match. */
+function norm(s: string): string {
+  return s.toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
 function tipFor(el: Element): string {
-  const t = elementText(el);
-  const has = (...words: string[]) => words.some((w) => t.includes(w));
-  if (has("one-way", "oneway", "one way") && !has("round")) {
+  const t = norm(elementText(el));
+  const has = (...words: string[]) => words.some((w) => t.includes(norm(w)));
+  if (has("oneway") && !has("round")) {
     return "One-way, nice! You pay only for the distance you actually travel.";
   }
-  if (has("round-trip", "roundtrip", "round trip", "round_trip")) {
+  if (has("roundtrip")) {
     return "Round trip — the car stays with you until you're back home.";
   }
-  if (has("pickup", "pick-up", "pick up", "from city", "source", "boarding")) {
+  if (has("localtour", "local tour", "local")) {
+    return "Local tour — perfect for a day of sightseeing around the city!";
+  }
+  if (has("pickup", "fromcity", "source", "boarding", "origin")) {
     return "Type your pickup spot — I'll keep an eye on it for you.";
   }
-  if (has("drop", "destination", "to city", "where to")) {
+  if (has("drop", "destination", "tocity", "whereto")) {
     return "And where are we dropping you? Dream big.";
   }
-  if (has("date", "journey date", "travel date", "departure")) {
+  if (has("date", "journeydate", "traveldate", "departure")) {
     return "Pick your travel date — mornings mean emptier roads.";
   }
-  if (has("time", "pickup time", "slot")) {
+  if (has("time", "pickuptime", "slot")) {
     return "Choose a time. For the Taj, sunrise slots are pure magic.";
   }
-  if (has("phone", "mobile", "contact number")) {
+  if (has("phone", "mobile", "contactnumber")) {
     return "Your number — our driver calls you 30 minutes before pickup.";
   }
-  if (has("name") && has("full")) {
+  if (has("fullname", "yourname")) {
     return "Your good name, traveller?";
   }
-  if (has("sedan", "hatchback", "suv", "innova", "ertiga", "tempo", "urbania", "vehicle", "car type", "cab type")) {
+  if (has("sedan", "hatchback", "suv", "innova", "ertiga", "tempo", "urbania", "vehicle", "cartype", "cabtype")) {
     return "Good choice of wheels! All our cars are sanitised and GPS-tracked.";
   }
   if (has("package", "tour")) {
     return "This package is a traveller favourite — great pick!";
   }
-  if (has("coupon", "promo", "offer code")) {
+  if (has("coupon", "promo", "offercode")) {
     return "Psst — try ASTTCAR500OFF if you have it.";
   }
   if (has("email")) {
@@ -111,10 +119,10 @@ function isField(el: Element | null): el is HTMLElement {
 
 function isTripControl(el: Element | null): el is HTMLElement {
   if (!el || !(el instanceof HTMLElement)) return false;
-  if (el.closest('[data-trip-type], [role="radiogroup"]')) return true;
-  const t = elementText(el);
+  if (el.closest('[data-trip-type], [role="radiogroup"], [role="tablist"]')) return true;
+  const t = norm(elementText(el));
   return (
-    (t.includes("one-way") || t.includes("oneway") || t.includes("round-trip") || t.includes("roundtrip")) &&
+    (t.includes("oneway") || t.includes("roundtrip") || t.includes("localtour")) &&
     (el.tagName.toLowerCase() === "button" || el.getAttribute("role") === "radio" || el.getAttribute("role") === "tab")
   );
 }
