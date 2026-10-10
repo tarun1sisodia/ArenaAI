@@ -82,11 +82,21 @@ export function Footer({ className = "" }: FooterProps) {
                 {contact.address}
               </p>
             <div className="flex flex-col gap-1 pt-1 text-body-sm">
-                <a href={`tel:${contact.phone}`} className="inline-flex items-center gap-2 text-on-surface hover:text-primary transition-colors">
+                <a
+                  href={`tel:${contact.phone}`}
+                  aria-label={`Call us at ${contact.phoneDisplay}`}
+                  className="inline-flex items-center gap-2 text-on-surface hover:text-primary transition-colors py-2 min-h-[44px]"
+                >
                   <span className="material-symbols-outlined text-primary text-icon-18">call</span>
                   <span>{contact.phoneDisplay}</span>
                 </a>
-                <a href={`https://wa.me/${contact.whatsapp}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-on-surface hover:text-primary transition-colors">
+                <a
+                  href={`https://wa.me/${contact.whatsapp}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Contact WhatsApp customer support desk (opens in new window)"
+                  className="inline-flex items-center gap-2 text-on-surface hover:text-primary transition-colors py-2 min-h-[44px]"
+                >
                   <WhatsAppIcon className="w-[18px] h-[18px] shrink-0" />
                   <span>WhatsApp Support</span>
                 </a>
@@ -94,7 +104,8 @@ export function Footer({ className = "" }: FooterProps) {
                   href={contact.mapsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-space-xs text-primary hover:underline font-label-lg text-label-lg mt-1"
+                  aria-label="View Taj Ganj office on Google Maps (opens in new window)"
+                  className="inline-flex items-center gap-space-xs text-primary hover:underline font-label-lg text-label-lg py-2 min-h-[44px]"
                 >
                   <span className="material-symbols-outlined text-icon-16">map</span>
                   <span>View on Google Maps</span>
@@ -145,13 +156,13 @@ export function Footer({ className = "" }: FooterProps) {
             <h3 className="font-title-md text-title-md text-on-surface font-semibold">
               Our Fleet
             </h3>
-            <ul className="flex flex-col gap-space-sm font-body-sm text-body-sm">
+            <ul className="flex flex-col gap-1 font-body-sm text-body-sm">
               {fleetLinks.map((item) => (
                 <li key={item.name}>
                   <a
                     href={item.href}
                     onMouseEnter={() => prefetchDocument(item.href)}
-                    className="flex items-center justify-between hover:text-primary transition-colors py-0.5"
+                    className="flex items-center justify-between hover:text-primary transition-colors py-2 min-h-[44px]"
                   >
                     <span>{item.name}</span>
                     <span className="font-label-caps text-label-caps text-primary font-semibold">{item.rate}</span>
@@ -166,13 +177,13 @@ export function Footer({ className = "" }: FooterProps) {
             <h3 className="font-title-md text-title-md text-on-surface font-semibold">
               Popular Routes
             </h3>
-            <ul className="flex flex-col gap-space-sm font-body-sm text-body-sm">
+            <ul className="flex flex-col gap-1 font-body-sm text-body-sm">
               {routeLinks.map((item) => (
                 <li key={item.name}>
                   <a
                     href={item.href}
                     onMouseEnter={() => prefetchDocument(item.href)}
-                    className="flex items-center justify-between hover:text-primary transition-colors py-0.5"
+                    className="flex items-center justify-between hover:text-primary transition-colors py-2 min-h-[44px]"
                   >
                     <span>{item.name}</span>
                     <span className="font-label-caps text-label-caps text-primary font-semibold">{item.fare}</span>
@@ -187,13 +198,13 @@ export function Footer({ className = "" }: FooterProps) {
             <h3 className="font-title-md text-title-md text-on-surface font-semibold">
               Sightseeing Tours
             </h3>
-            <nav className="flex flex-col gap-space-sm font-body-sm text-body-sm">
+            <nav className="flex flex-col gap-1 font-body-sm text-body-sm">
               {tourLinks.map((item) => (
                 <a
                   key={item.name}
                   href={item.href}
                   onMouseEnter={() => prefetchDocument(item.href)}
-                  className="hover:text-primary transition-colors py-0.5"
+                  className="flex items-center hover:text-primary transition-colors py-2 min-h-[44px]"
                 >
                   {item.name}
                 </a>
@@ -210,11 +221,11 @@ export function Footer({ className = "" }: FooterProps) {
             © {new Date().getFullYear()} Agra SK Baghel Tour and Travels. All rights reserved.
           </p>
           <div className="flex flex-wrap items-center gap-space-md font-body-sm text-body-sm text-title-lg">
-            <a href="/privacy" className="hover:text-primary transition-colors">Privacy Policy</a>
+            <a href="/privacy" className="hover:text-primary transition-colors py-2 min-h-[44px] inline-flex items-center">Privacy Policy</a>
             <span className="text-border-warm">•</span>
-            <a href="/terms" className="hover:text-primary transition-colors">Terms of Service</a>
+            <a href="/terms" className="hover:text-primary transition-colors py-2 min-h-[44px] inline-flex items-center">Terms of Service</a>
             <span className="text-border-warm">•</span>
-            <a href="/faq" className="hover:text-primary transition-colors">FAQ & Cancellation</a>
+            <a href="/faq" className="hover:text-primary transition-colors py-2 min-h-[44px] inline-flex items-center">FAQ & Cancellation</a>
           </div>
         </div>
       </div>

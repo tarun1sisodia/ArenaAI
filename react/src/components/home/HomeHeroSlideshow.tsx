@@ -129,8 +129,8 @@ export function HomeHeroSlideshow() {
         />
         <source
           type="image/avif"
-          srcSet={`${slide.avif.medium} 960w, ${slide.avif.large} 1600w`}
-          sizes="100vw"
+          srcSet={`${slide.avif.medium} 960w, ${slide.avif.desktop ? `${slide.avif.desktop} 1280w, ` : ""}${slide.avif.large} 1600w`}
+          sizes="(max-width: 1024px) 100vw, 1280px"
         />
         <source
           type="image/webp"
@@ -140,8 +140,8 @@ export function HomeHeroSlideshow() {
         />
         <source
           type="image/webp"
-          srcSet={`${slide.webp.medium} 960w, ${slide.webp.large} 1600w`}
-          sizes="100vw"
+          srcSet={`${slide.webp.medium} 960w, ${slide.webp.desktop ? `${slide.webp.desktop} 1280w, ` : ""}${slide.webp.large} 1600w`}
+          sizes="(max-width: 1024px) 100vw, 1280px"
         />
         <img
           src={slide.webp.large}

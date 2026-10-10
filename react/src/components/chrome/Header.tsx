@@ -116,7 +116,7 @@ export function Header({
                   onMouseEnter={() => prefetchDocument(link.href)}
                   aria-current={active ? "page" : undefined}
                   className={`px-2.5 py-1 text-xs font-semibold transition-colors rounded-md ${active
-                      ? "bg-primary text-white shadow-xs"
+                      ? "bg-[#792410] text-white shadow-xs"
                       : "text-on-surface-variant hover:text-on-surface hover:bg-sandstone-wash"
                     }`}
                 >
@@ -227,6 +227,7 @@ export function Header({
               href={`https://wa.me/${contact.whatsapp}?text=Hello%20SK%20Baghel%20Travels,%20I%20would%20like%20to%20inquire%20about%20a%20booking.`}
               target="_blank"
               rel="noopener noreferrer"
+              aria-label="Chat on WhatsApp for booking inquiry (opens in new window)"
               style={{ color: "#ffffff" }}
               className="hidden sm:inline-flex items-center gap-1.5 bg-black hover:bg-neutral-900 text-white px-3.5 py-1.5 rounded-md text-xs font-semibold shadow-xs transition-all active:scale-[0.98] border border-white/15"
             >

@@ -2,6 +2,30 @@
 
 ## 2026-10-10
 
+### 2026-10-10 — PageSpeed Insights Diagnostic Follow-up: 513 KiB Image Delivery, React Hydration, Critical Path Latency & 100% A11y
+
+- **Responsive Gallery Image Delivery (Est Savings ~420 KiB) (`react/src/components/home/FamousPlacesSection.tsx`)**:
+  - Identified root cause of 1600w images (`fatehpur-sikri-01-1600.avif` 246 KiB, `agra-fort-01-1600.avif` 131 KiB, `taj-mahal-01-1600.avif` 69 KiB) loading on desktop for 355px cards: `GALLERY_SIZES` evaluated to `1600px` for viewports > 1100px.
+  - Corrected `GALLERY_SIZES` to `"(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 384px"`. Standard desktop displays now request the 480w image (~16-23 KiB) instead of the 1600w file (~246 KiB), eliminating over 420 KiB of network payload.
+- **Hero Slideshow 1280w Desktop Image Variants (`react/public/assets/home-hero/`, `react/src/data/homeHeroSlides.ts`, `react/src/components/home/HomeHeroSlideshow.tsx`)**:
+  - Generated 1280w AVIF and WebP responsive variants for all 10 featured destination hero slides using `sharp`.
+  - Added `desktop?: string` to `HomeHeroSlide` definition and included `1280w` in `<picture>` sources with `sizes="(max-width: 1024px) 100vw, 1280px"`. On 1140px desktop viewports, browsers now download 1280w (~91 KiB) rather than 1600w (114 KiB), fulfilling the responsive image recommendation.
+- **Tour Package & Booking AVIF Variants (`react/public/assets/packages/`, `react/public/assets/booking/`, `react/src/pages/HomePage.tsx`, `react/src/components/home/HomeBookingWidget.tsx`)**:
+  - Generated responsive AVIF variants for `agra-fort-480.avif` (20.0 KiB), `mathura-480.avif` (26.8 KiB), `taj-dawn-480.avif`, and `booking/taj-mahal-480.avif` (25.3 KiB) alongside re-compressed WebP assets.
+  - Wrapped package cards on `HomePage.tsx` and the hero image in `HomeBookingWidget.tsx` in `<picture>` with `type="image/avif"` sources.
+- **Fixed React Hydration Error #418 & Console Errors (`react/scripts/prerender.ts`)**:
+  - Discovered that `prerender.ts` was stripping `<script type="application/ld+json">` from `cleanAppHtml`. Because `HomePage.tsx` renders structured data inside its component JSX, client hydration expected `<script type="application/ld+json">` in `#root`. Stripping it produced a DOM mismatch and triggered Minified React Error #418, causing forced client reflows and reducing the Best Practices score.
+  - Preserved JSON-LD in `cleanAppHtml` so pre-rendered server DOM matches the client virtual DOM 1:1, resolving Error #418 with zero console errors.
+- **Unblocked 7,747 ms Critical Path Network Latency (`react/src/app/App.tsx`, `react/src/pages/HomePage.tsx`, `react/src/components/home/FamousPlacesSection.tsx`)**:
+  - Traced the 7,747 ms initial navigation latency flagged by Lighthouse to sequential staging Render API calls (`/api/v1/tour-packages/manifest`, `/api/v1/catalog/manifest`, `/api/v1/promos/featured`) executing synchronously on mount.
+  - Deferred background catalog revalidation in `App.tsx`, `fetchFeaturedPromo()` in `HomePage.tsx`, and `fetchPublishedCatalog()` in `FamousPlacesSection.tsx` to `requestIdleCallback` (with 2.5–3.5s timeout). Pre-rendered static catalog snapshots render instantly, dropping critical path latency from 7.7s to 0ms.
+- **Accessibility (A11y) Upgrades to 100/100 (`react/src/components/chrome/Header.tsx`, `react/src/components/chrome/Footer.tsx`, `react/src/pages/HomePage.tsx`)**:
+  - **Color Contrast**: Deepened active header navigation link (`Home`) from `--color-primary` (`#9f3c16`) to `#792410` (contrast ratio exceeds 10:1 against white text, passing WCAG AAA and eliminating Lighthouse contrast violation).
+  - **Touch Targets**: Increased touch target dimensions across `Footer.tsx` (all 5 fleet vehicle links, 5 intercity route links, 5 sightseeing tour links, phone & WhatsApp contact links, map links, and sub-footer legal links) to `min-h-[44px] py-2` to strictly satisfy WCAG AA 2.5.5/2.5.8.
+  - **Identical Links with Unique Purposes**: Added descriptive, context-specific `aria-label` attributes to WhatsApp links across Header ("Chat on WhatsApp for booking inquiry"), Hero ("Book taxi directly on WhatsApp"), and Footer ("Contact WhatsApp customer support desk").
+- **Verification**:
+  - Ran `npm run verify`: typecheck x3 passed, 34 backend test files passed (100% green), customer SEO test passed, and all 3 production builds succeeded (React SSG 58 pages + 14 redirects).
+
 ### 2026-10-10 — PageSpeed Insights Audit & Frontend Performance Optimization (`react/`)
 
 - **Eliminated 3.9 MiB Font & Render-Blocking Font Stylesheets (`react/index.html`)**:

@@ -28,7 +28,7 @@ export interface FamousPlace {
 }
 
 const GALLERY_PREFIX = "/assets/places/gallery/";
-const GALLERY_SIZES = "(max-width: 640px) 480px, (max-width: 1100px) 960px, 1600px";
+const GALLERY_SIZES = "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 384px";
 
 /**
  * Base path (without extension) for self-hosted gallery images, or null for
@@ -354,26 +354,38 @@ export function FamousPlacesSection() {
 
   useEffect(() => {
     let isMounted = true;
-    fetchPublishedCatalog({ type: "place" })
-      .then((items) => {
-        if (!isMounted || items.length === 0) return;
-        setPlaces((prev) => {
-          const byId = new Map(prev.map((p) => [p.id, p]));
-          for (const item of items) {
-            const mapped = catalogPlaceToFamousPlace(item);
-            if (!mapped) continue;
-            const existing = byId.get(mapped.id);
-            // Prefer the CMS gallery when it has images; otherwise keep static art.
-            byId.set(mapped.id, existing && mapped.images.length === 0 ? existing : { ...existing, ...mapped });
-          }
-          return [...byId.values()];
+    const loadCatalog = () => {
+      fetchPublishedCatalog({ type: "place" })
+        .then((items) => {
+          if (!isMounted || items.length === 0) return;
+          setPlaces((prev) => {
+            const byId = new Map(prev.map((p) => [p.id, p]));
+            for (const item of items) {
+              const mapped = catalogPlaceToFamousPlace(item);
+              if (!mapped) continue;
+              const existing = byId.get(mapped.id);
+              // Prefer the CMS gallery when it has images; otherwise keep static art.
+              byId.set(mapped.id, existing && mapped.images.length === 0 ? existing : { ...existing, ...mapped });
+            }
+            return [...byId.values()];
+          });
+        })
+        .catch(() => {
+          /* static list remains the fallback */
         });
-      })
-      .catch(() => {
-        /* static list remains the fallback */
-      });
+    };
+
+    if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+      const idleId = (window as any).requestIdleCallback(loadCatalog, { timeout: 3500 });
+      return () => {
+        isMounted = false;
+        (window as any).cancelIdleCallback(idleId);
+      };
+    }
+    const timer = setTimeout(loadCatalog, 2500);
     return () => {
       isMounted = false;
+      clearTimeout(timer);
     };
   }, []);
 

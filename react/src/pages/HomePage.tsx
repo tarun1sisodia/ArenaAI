@@ -34,13 +34,24 @@ export function HomePage({ language = "en" }: HomePageProps) {
 
   useEffect(() => {
     let mounted = true;
-    fetchFeaturedPromo()
-      .then((p) => {
-        if (mounted) setFeaturedPromo(p);
-      })
-      .catch(() => undefined);
+    const loadPromo = () => {
+      fetchFeaturedPromo()
+        .then((p) => {
+          if (mounted) setFeaturedPromo(p);
+        })
+        .catch(() => undefined);
+    };
+    if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+      const idleId = (window as any).requestIdleCallback(loadPromo, { timeout: 3500 });
+      return () => {
+        mounted = false;
+        (window as any).cancelIdleCallback(idleId);
+      };
+    }
+    const timer = setTimeout(loadPromo, 2500);
     return () => {
       mounted = false;
+      clearTimeout(timer);
     };
   }, []);
 
@@ -222,6 +233,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
                   href={`https://wa.me/${contact.whatsapp}`}
                   target="_blank"
                   rel="noreferrer"
+                  aria-label="Book taxi directly on WhatsApp (opens in new window)"
                 >
                   <WhatsAppIcon className="w-[18px] h-[18px] shrink-0 text-white" />
                   <span className="text-white font-semibold" style={{ color: "#ffffff" }}>WhatsApp</span>
@@ -540,6 +552,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
                   badge: "Same Day", badgeColor: "bg-ink-midnight/80 text-tertiary-fixed",
                   price: "₹3,499", priceColor: "bg-terracotta-deep",
                   img: "/assets/packages/agra-fort.webp",
+                  avifSrcSet: "/assets/packages/agra-fort-480.avif 480w, /assets/packages/agra-fort-768.avif 768w, /assets/packages/agra-fort.avif 1200w",
                   srcSet: "/assets/packages/agra-fort-480.webp 480w, /assets/packages/agra-fort-768.webp 768w, /assets/packages/agra-fort.webp 1200w",
                   alt: "Taj Mahal Tour",
                   title: "Same Day Agra — Taj Mahal & Agra Fort",
@@ -552,6 +565,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
                   badge: "Dawn Special", badgeColor: "bg-ink-midnight/80 text-gold-accent",
                   price: "₹5,200", priceColor: "bg-terracotta-deep",
                   img: "/assets/packages/taj-dawn.webp",
+                  avifSrcSet: "/assets/packages/taj-dawn-480.avif 480w, /assets/packages/taj-dawn-768.avif 768w, /assets/packages/taj-dawn.avif 1200w",
                   srcSet: "/assets/packages/taj-dawn-480.webp 480w, /assets/packages/taj-dawn-768.webp 768w, /assets/packages/taj-dawn.webp 1200w",
                   alt: "Taj Sunrise Tour",
                   title: "Taj Mahal Sunrise Guided Tour",
@@ -564,6 +578,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
                   badge: "Pilgrimage", badgeColor: "bg-ink-midnight/80 text-tertiary-fixed",
                   price: "₹4,200", priceColor: "bg-terracotta-deep",
                   img: "/assets/packages/mathura.webp",
+                  avifSrcSet: "/assets/packages/mathura-480.avif 480w, /assets/packages/mathura-768.avif 768w, /assets/packages/mathura.avif 1200w",
                   srcSet: "/assets/packages/mathura-480.webp 480w, /assets/packages/mathura-768.webp 768w, /assets/packages/mathura.webp 1200w",
                   alt: "Mathura Vrindavan",
                   title: "Mathura & Vrindavan Darshan",
@@ -575,17 +590,24 @@ export function HomePage({ language = "en" }: HomePageProps) {
               ].map((pkg) => (
                 <div key={pkg.title} className="bg-surface-container-lowest rounded-xl overflow-hidden flex flex-col group shadow-sm hover:shadow-md transition-all border border-border-warm/40">
                   <div className="relative h-40 w-full overflow-hidden">
-                    <img
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      src={pkg.img}
-                      srcSet={pkg.srcSet}
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 384px"
-                      width={384}
-                      height={160}
-                      loading="lazy"
-                      decoding="async"
-                      alt={pkg.alt}
-                    />
+                    <picture>
+                      <source
+                        type="image/avif"
+                        srcSet={pkg.avifSrcSet}
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 384px"
+                      />
+                      <img
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        src={pkg.img}
+                        srcSet={pkg.srcSet}
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 384px"
+                        width={384}
+                        height={160}
+                        loading="lazy"
+                        decoding="async"
+                        alt={pkg.alt}
+                      />
+                    </picture>
                     <span className={`absolute top-2 left-2 px-1.5 py-0.5 rounded ${pkg.badgeColor} font-label-caps text-label-caps uppercase font-bold backdrop-blur-sm`}>
                       {pkg.badge}
                     </span>

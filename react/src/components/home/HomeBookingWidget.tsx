@@ -122,17 +122,24 @@ export function HomeBookingWidget() {
 
   return (
     <div id="home-booking-widget" className={`booking-reference booking-reference--${mode}`}>
-      <img
-        className="booking-reference__hero"
-        src="/assets/booking/taj-mahal-480.webp"
-        srcSet="/assets/booking/taj-mahal-480.webp 480w, /assets/booking/taj-mahal-768.webp 768w, /assets/booking/taj-mahal.webp 1200w"
-        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 384px"
-        width={384}
-        height={256}
-        loading="lazy"
-        decoding="async"
-        alt="Taj Mahal in Agra"
-      />
+      <picture>
+        <source
+          type="image/avif"
+          srcSet="/assets/booking/taj-mahal-480.avif 480w, /assets/booking/taj-mahal-768.avif 768w"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 384px"
+        />
+        <img
+          className="booking-reference__hero"
+          src="/assets/booking/taj-mahal-480.webp"
+          srcSet="/assets/booking/taj-mahal-480.webp 480w, /assets/booking/taj-mahal-768.webp 768w, /assets/booking/taj-mahal.webp 1200w"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 384px"
+          width={384}
+          height={256}
+          loading="lazy"
+          decoding="async"
+          alt="Taj Mahal in Agra"
+        />
+      </picture>
       <div className="booking-reference__veil" aria-hidden="true" />
       <div className="booking-reference__content">
         <div className="booking-reference__tabs" role="tablist" aria-label="Booking type">

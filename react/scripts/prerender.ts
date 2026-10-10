@@ -402,7 +402,7 @@ export async function prerender(): Promise<void> {
       // 1. Set html lang attribute
       html = html.replace(/<html lang="[^"]*"/, `<html lang="${language === "hi" ? "hi-IN" : "en-IN"}" dir="ltr"`);
 
-      // Extract hoisted head elements (React 19 emits hoisted links/scripts at the start of appHtml)
+      // Extract hoisted head elements (React 19 emits hoisted links at the start of appHtml)
       let cleanAppHtml = appHtml;
       const hoistedTags: string[] = [];
 
@@ -412,13 +412,6 @@ export async function prerender(): Promise<void> {
         hoistedTags.push(linkMatch[0]);
       }
       cleanAppHtml = cleanAppHtml.replace(hoistedLinkRegex, "");
-
-      const hoistedJsonLdRegex = /<script type="application\/ld\+json"[^>]*>[\s\S]*?<\/script>/g;
-      let jsonLdMatch: RegExpExecArray | null;
-      while ((jsonLdMatch = hoistedJsonLdRegex.exec(cleanAppHtml)) !== null) {
-        hoistedTags.push(jsonLdMatch[0]);
-      }
-      cleanAppHtml = cleanAppHtml.replace(hoistedJsonLdRegex, "");
 
       // 2. Replace title and generic meta description with full metadata block
       const fullHeadTags = [headTags, ...hoistedTags].filter(Boolean).join("\n    ");

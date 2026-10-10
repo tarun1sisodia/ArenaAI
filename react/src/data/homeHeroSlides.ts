@@ -3,8 +3,8 @@ export interface HomeHeroSlide {
   caption: string;
   alt: string;
   objectPosition?: string;
-  avif: { small: string; medium: string; large: string };
-  webp: { small: string; medium: string; large: string };
+  avif: { small: string; medium: string; desktop?: string; large: string };
+  webp: { small: string; medium: string; desktop?: string; large: string };
   sourceUrl: string;
   photographer: string;
   license: string;
@@ -14,11 +14,13 @@ const image = (name: string) => ({
   avif: {
     small: `/assets/home-hero/${name}-480.avif`,
     medium: `/assets/home-hero/${name}-960.avif`,
+    desktop: `/assets/home-hero/${name}-1280.avif`,
     large: `/assets/home-hero/${name}-1600.avif`,
   },
   webp: {
     small: `/assets/home-hero/${name}-480.webp`,
     medium: `/assets/home-hero/${name}-960.webp`,
+    desktop: `/assets/home-hero/${name}-1280.webp`,
     large: `/assets/home-hero/${name}-1600.webp`,
   },
 });

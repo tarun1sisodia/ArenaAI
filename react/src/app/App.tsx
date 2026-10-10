@@ -288,15 +288,29 @@ export function App({ pathname: propPathname }: AppProps = {}) {
 
   useEffect(() => {
     let isMounted = true;
-    loadPublishedPackages().then((items) => {
-      if (isMounted && items && items.length > 0) {
-        const map = new Map<string, TourPackage>();
-        for (const p of initialTourPackages) map.set(p.slug, p);
-        for (const p of items) map.set(p.slug, p);
-        setPublishedPackages(Array.from(map.values()));
-      }
-    }).catch(() => {});
-    return () => { isMounted = false; };
+    const loadPackages = () => {
+      loadPublishedPackages().then((items) => {
+        if (isMounted && items && items.length > 0) {
+          const map = new Map<string, TourPackage>();
+          for (const p of initialTourPackages) map.set(p.slug, p);
+          for (const p of items) map.set(p.slug, p);
+          setPublishedPackages(Array.from(map.values()));
+        }
+      }).catch(() => {});
+    };
+
+    if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+      const idleId = (window as any).requestIdleCallback(loadPackages, { timeout: 3500 });
+      return () => {
+        isMounted = false;
+        (window as any).cancelIdleCallback(idleId);
+      };
+    }
+    const timer = setTimeout(loadPackages, 2500);
+    return () => {
+      isMounted = false;
+      clearTimeout(timer);
+    };
   }, [initialTourPackages]);
 
   const matchedRoute = useMemo<Route | null>(() => {
