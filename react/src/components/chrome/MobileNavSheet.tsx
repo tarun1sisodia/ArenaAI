@@ -50,6 +50,36 @@ export function MobileNavSheet({
   ];
 
 
+  const normalizeNavPath = (path: string): string => {
+    if (!path) return "/";
+    const cleaned = path.split("?")[0].split("#")[0];
+    const unlocalized = cleaned.replace(/^\/(?:en|hi)(?=\/|$)/, "");
+    const trimmed = unlocalized.replace(/\.html$/, "").replace(/\/+$/, "");
+    return trimmed === "" ? "/" : trimmed;
+  };
+
+  const isLinkActive = (href: string) => {
+    const current = normalizeNavPath(currentPath);
+    const target = normalizeNavPath(href);
+
+    if (target === "/") {
+      return current === "/";
+    }
+    if (target === "/taxis/rent") {
+      return current === "/taxis/rent" || current === "/rent";
+    }
+    if (target === "/routes") {
+      return current === "/routes" || current.startsWith("/routes/") || current.endsWith("-taxi");
+    }
+    if (target === "/packages") {
+      return current === "/packages" || current.startsWith("/packages/");
+    }
+    if (target === "/fleet") {
+      return current === "/fleet" || current === "/vehicles" || current.startsWith("/fleet/") || current.startsWith("/vehicles/");
+    }
+    return current === target || current.startsWith(target + "/");
+  };
+
   return (
     <div
       className="fixed inset-0 z-50 flex justify-end"
@@ -83,7 +113,7 @@ export function MobileNavSheet({
           {/* Navigation Links */}
           <nav className="p-space-md flex flex-col gap-1" aria-label="Mobile Primary">
             {links.map((link) => {
-              const active = currentPath === link.href || (link.href !== "/" && currentPath.startsWith(link.href.replace(/\/$/, "")));
+              const active = isLinkActive(link.href);
               return (
                 <a
                   key={link.href}
@@ -91,16 +121,29 @@ export function MobileNavSheet({
                   onClick={onClose}
                   onMouseEnter={() => prefetchDocument(link.href)}
                   aria-current={active ? "page" : undefined}
+                  style={
+                    active
+                      ? { backgroundColor: "#792410", color: "#ffffff" }
+                      : undefined
+                  }
                   className={`flex items-center gap-space-sm px-3.5 py-3 rounded-lg text-title-md transition-colors ${
                     active
-                      ? "bg-primary-container text-on-primary-container font-semibold"
+                      ? "bg-[#792410] !text-white font-semibold shadow-xs"
                       : "text-on-surface hover:bg-sandstone-wash"
                   }`}
                 >
-                  <span className={`material-symbols-outlined text-icon-20 ${active ? "text-on-primary-container" : "text-terracotta-sandstone"}`}>
+                  <span
+                    style={active ? { color: "#ffffff" } : undefined}
+                    className={`material-symbols-outlined text-icon-20 ${active ? "!text-white" : "text-terracotta-sandstone"}`}
+                  >
                     {link.icon}
                   </span>
-                  <span>{link.label}</span>
+                  <span
+                    style={active ? { color: "#ffffff" } : undefined}
+                    className={active ? "!text-white font-semibold" : undefined}
+                  >
+                    {link.label}
+                  </span>
                 </a>
               );
             })}

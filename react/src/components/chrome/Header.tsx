@@ -26,8 +26,24 @@ export function Header({
 
   const isMobileNavOpen = controlledMobileNav !== undefined ? controlledMobileNav : internalMobileNav;
 
-  const activePath =
-    currentPath || (typeof window !== "undefined" ? window.location.pathname : "/");
+  const [activePath, setActivePath] = useState<string>(
+    currentPath || (typeof window !== "undefined" ? window.location.pathname : "/")
+  );
+
+  useEffect(() => {
+    if (currentPath) {
+      setActivePath(currentPath);
+    }
+  }, [currentPath]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const handleLocationChange = () => {
+      setActivePath(window.location.pathname);
+    };
+    window.addEventListener("popstate", handleLocationChange);
+    return () => window.removeEventListener("popstate", handleLocationChange);
+  }, []);
 
   useEffect(() => {
     if (!userMenuOpen) return;
@@ -81,14 +97,38 @@ export function Header({
     { label: "Contact", href: "/en/contact/" },
   ];
 
-  const isLinkActive = (href: string) => {
-    if (href === "/") {
-      return activePath === "/" || activePath === "/en/" || activePath === "/index.html";
-    }
-    const cleanHref = href.replace(/\/$/, "");
-    const cleanPath = activePath.replace(/\/$/, "");
-    return cleanPath.startsWith(cleanHref);
+  const normalizeNavPath = (path: string): string => {
+    if (!path) return "/";
+    const cleaned = path.split("?")[0].split("#")[0];
+    const unlocalized = cleaned.replace(/^\/(?:en|hi)(?=\/|$)/, "");
+    const trimmed = unlocalized.replace(/\.html$/, "").replace(/\/+$/, "");
+    return trimmed === "" ? "/" : trimmed;
   };
+
+  const isLinkActive = useCallback(
+    (href: string) => {
+      const current = normalizeNavPath(activePath);
+      const target = normalizeNavPath(href);
+
+      if (target === "/") {
+        return current === "/";
+      }
+      if (target === "/taxis/rent") {
+        return current === "/taxis/rent" || current === "/rent";
+      }
+      if (target === "/routes") {
+        return current === "/routes" || current.startsWith("/routes/") || current.endsWith("-taxi");
+      }
+      if (target === "/packages") {
+        return current === "/packages" || current.startsWith("/packages/");
+      }
+      if (target === "/fleet") {
+        return current === "/fleet" || current === "/vehicles" || current.startsWith("/fleet/") || current.startsWith("/vehicles/");
+      }
+      return current === target || current.startsWith(target + "/");
+    },
+    [activePath]
+  );
 
   return (
     <>
@@ -115,12 +155,22 @@ export function Header({
                   href={link.href}
                   onMouseEnter={() => prefetchDocument(link.href)}
                   aria-current={active ? "page" : undefined}
+                  style={
+                    active
+                      ? { backgroundColor: "#792410", color: "#ffffff" }
+                      : undefined
+                  }
                   className={`px-2.5 py-1 text-xs font-semibold transition-colors rounded-md ${active
-                      ? "bg-[#792410] text-white shadow-xs"
+                      ? "bg-[#792410] !text-white shadow-xs"
                       : "text-on-surface-variant hover:text-on-surface hover:bg-sandstone-wash"
                     }`}
                 >
-                  {link.label}
+                  <span
+                    style={active ? { color: "#ffffff" } : undefined}
+                    className={active ? "!text-white" : undefined}
+                  >
+                    {link.label}
+                  </span>
                 </a>
               );
             })}

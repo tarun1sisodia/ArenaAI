@@ -23,8 +23,15 @@ body {
   color: var(--text);
 }
 
-a {
+a:not([class*="text-"]):not([style*="color"]) {
   color: inherit;
+}
+
+/* Guard utility text colors on links against unlayered inherit resets */
+a.text-white,
+a[class*="text-white"],
+a.\!text-white {
+  color: #ffffff;
 }
 
 /* Accessible Skip to Content Link (Phase R4.9) */

@@ -1,6 +1,7 @@
 import { ErrorBoundary } from "../components/ErrorBoundary";
 import { SiteLayout } from "../layouts/SiteLayout";
 import { HomePage } from "../pages/HomePage";
+import { RentalPage } from "../pages/RentalPage";
 import { ServicesPage } from "../pages/ServicesPage";
 import { RoutesPage } from "../pages/RoutesPage";
 import { PackagesPage } from "../pages/PackagesPage";
@@ -549,6 +550,10 @@ export function ServerApp({ pathname: propPathname }: AppProps = {}) {
     isBooking ||
     isPrivateCustomerPage ||
     isMarketingHub ||
+    section === "rent" ||
+    cleanPath === "/rent" ||
+    cleanPath === "/taxis/rent" ||
+    cleanPath === "/en/taxis/rent" ||
     section === "monuments" ||
     cleanPath === "/monuments" ||
     cleanPath === "/en/monuments" ||
@@ -601,7 +606,7 @@ export function ServerApp({ pathname: propPathname }: AppProps = {}) {
         keywords={pageKeywords}
         noindex={isBooking || isPrivateCustomerPage || is404}
       />
-      <SiteLayout>
+      <SiteLayout currentPath={pathname}>
         {is404 ? (
           <NotFoundPage language={language} />
         ) : isAuthCallback ? (
@@ -636,6 +641,8 @@ export function ServerApp({ pathname: propPathname }: AppProps = {}) {
           <VehicleDetailPage language={language} vehicle={matchedVehicle} />
         ) : isSeoLanding ? (
           <SeoLandingPage slug={section as SeoLandingSlug} />
+        ) : section === "rent" || cleanPath === "/rent" || cleanPath === "/taxis/rent" || cleanPath === "/en/taxis/rent" ? (
+          <RentalPage />
         ) : section === "services" ? (
           <ServicesPage language={language} />
         ) : section === "routes" ? (

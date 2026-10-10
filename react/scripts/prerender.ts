@@ -224,6 +224,7 @@ const routesToRender: string[] = Array.from(new Set([
 
   // English Hubs (9)
   ...hubRoutes.map((hub) => `/en/${hub}/`),
+  "/en/taxis/rent/",
 
   // Fleet / Vehicles (5)
   ...vehicleRoutes.map((v) => `/en/vehicles/${v}/`),

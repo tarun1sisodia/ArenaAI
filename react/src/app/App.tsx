@@ -484,7 +484,7 @@ export function App({ pathname: propPathname }: AppProps = {}) {
         keywords={pageKeywords}
         noindex={isBooking || isPrivateCustomerPage || is404}
       />
-      <SiteLayout>
+      <SiteLayout currentPath={pathname}>
         <Suspense fallback={null}>
           {is404 ? (
             <NotFoundPage language={language} />
