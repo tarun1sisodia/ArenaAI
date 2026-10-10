@@ -1,40 +1,40 @@
 # ArenaAI live Supabase schema inventory
 
-Generated from the live Supabase PostgreSQL inspection on 2026-10-06 07:49:38 (IST).
-Total applied migrations: **34**.
+Generated from the live Supabase PostgreSQL inspection on 2026-10-10 06:51:31 (IST).
+Total applied migrations: **37**.
 
 ## Table summary
 
 | Table | Rows | RLS | Primary key |
 |---|---:|:---:|---|
 | `public.admin_audit_logs` | 8 | enabled | `id` |
-| `public.bookings` | 9 | enabled | `id` |
-| `public.cancellation_policies` | 9 | enabled | `id` |
-| `public.catalog_item_media` | 0 | enabled | `id` |
-| `public.catalog_items` | 0 | enabled | `id` |
-| `public.company_profile` | 1 | enabled | `id` |
-| `public.customer_booking_intents` | 13 | enabled | `id` |
-| `public.device_registrations` | 0 | enabled | `id` |
-| `public.dossier_signoffs` | 10 | enabled | `id` |
-| `public.fare_rules` | 14 | enabled | `id` |
-| `public.inquiries` | 0 | enabled | `id` |
-| `public.local_sightseeing_packages` | 6 | enabled | `id` |
-| `public.location_cache` | 40 | enabled | `cache_key` |
-| `public.monuments` | 10 | enabled | `id` |
-| `public.notification_jobs` | 12 | enabled | `id` |
+| `public.bookings` | 5 | enabled | `id` |
+| `public.cancellation_policies` | 0 | enabled | `id` |
+| `public.catalog_item_media` | 5 | enabled | `id` |
+| `public.catalog_items` | 11 | enabled | `id` |
+| `public.company_profile` | 0 | enabled | `id` |
+| `public.customer_booking_intents` | 0 | enabled | `id` |
+| `public.device_registrations` | 1 | enabled | `id` |
+| `public.dossier_signoffs` | 0 | enabled | `id` |
+| `public.fare_rules` | 1 | enabled | `id` |
+| `public.inquiries` | 2 | enabled | `id` |
+| `public.local_sightseeing_packages` | 1 | enabled | `id` |
+| `public.location_cache` | 3 | enabled | `cache_key` |
+| `public.monuments` | 0 | enabled | `id` |
+| `public.notification_jobs` | 1 | enabled | `id` |
 | `public.package_vehicle_upgrades` | 4 | enabled | `id` |
-| `public.payments` | 12 | enabled | `id` |
-| `public.pet_taxi_policy` | 1 | enabled | `id` |
-| `public.profiles` | 2 | enabled | `id` |
-| `public.promo_codes` | 2 | enabled | `id` |
+| `public.payments` | 5 | enabled | `id` |
+| `public.pet_taxi_policy` | 0 | enabled | `id` |
+| `public.profiles` | 5 | enabled | `id` |
+| `public.promo_codes` | 4 | enabled | `id` |
 | `public.raw_webhooks` | 3 | enabled | `id` |
 | `public.refunds` | 0 | enabled | `id` |
-| `public.rental_enquiries` | 1 | enabled | `id` |
-| `public.reviews` | 0 | enabled | `id` |
-| `public.route_catalog` | 13 | enabled | `id` |
-| `public.schema_migrations` | 34 | enabled | `id` |
-| `public.tour_packages` | 13 | enabled | `id` |
-| `public.transfer_routes` | 8 | enabled | `id` |
+| `public.rental_enquiries` | 0 | enabled | `id` |
+| `public.reviews` | 2 | enabled | `id` |
+| `public.route_catalog` | 2 | enabled | `id` |
+| `public.schema_migrations` | 37 | enabled | `id` |
+| `public.tour_packages` | 3 | enabled | `id` |
+| `public.transfer_routes` | 4 | enabled | `id` |
 
 ## Columns and types
 
@@ -556,7 +556,7 @@ Total applied migrations: **34**.
 | `slug` | `text` | no | `—` | (slug ~ '^[a-z0-9-]{2,80}$'::text) |
 | `distance_km` | `numeric` | yes | `—` | — |
 | `duration_text` | `text` | yes | `—` | — |
-| `available_fleets` | `_text` | no | `'{sedan,ertiga,innova,tempo,urbania}'::text[]` | — |
+| `available_fleets` | `_text` | no | `'{sedan,ertiga,innova-crysta,tempo-traveller,urbania}'::text[]` | — |
 | `fares_inr` | `jsonb` | no | `—` | — |
 | `driver_charge_inr` | `numeric` | no | `0` | — |
 | `night_halt_inr` | `numeric` | no | `0` | — |

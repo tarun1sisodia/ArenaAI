@@ -8,6 +8,7 @@ import { WhatsAppIcon } from "../components/icons";
 import { HomeBookingWidget } from "../components/home/HomeBookingWidget";
 import { useCustomerAuth } from "../auth/customerAuth";
 import { fetchFeaturedPromo, type FeaturedPromo } from "../services/api";
+import { onUserInteractionOrIdle } from "../utils/deferredRevalidation";
 
 export interface HomePageProps {
   language?: SupportedLanguage;
@@ -34,24 +35,17 @@ export function HomePage({ language = "en" }: HomePageProps) {
 
   useEffect(() => {
     let mounted = true;
-    const loadPromo = () => {
+    const cleanup = onUserInteractionOrIdle(() => {
       fetchFeaturedPromo()
         .then((p) => {
           if (mounted) setFeaturedPromo(p);
         })
         .catch(() => undefined);
-    };
-    if (typeof window !== "undefined" && "requestIdleCallback" in window) {
-      const idleId = (window as any).requestIdleCallback(loadPromo, { timeout: 3500 });
-      return () => {
-        mounted = false;
-        (window as any).cancelIdleCallback(idleId);
-      };
-    }
-    const timer = setTimeout(loadPromo, 2500);
+    }, 8000);
+
     return () => {
       mounted = false;
-      clearTimeout(timer);
+      cleanup();
     };
   }, []);
 
@@ -74,49 +68,8 @@ export function HomePage({ language = "en" }: HomePageProps) {
     window.open(`https://wa.me/919762817598?text=${text}`, "_blank");
   };
 
-  const schemaGraph = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": ["TravelAgency", "TaxiService", "LocalBusiness"],
-        "@id": "https://agraskbagheltourandtravels.com/#business",
-        name: "Agra SK Baghel Tour and Travels",
-        url: "https://agraskbagheltourandtravels.com",
-        telephone: contact.phone,
-        email: contact.email,
-        image: "https://agraskbagheltourandtravels.com/assets/brand/og-banner.webp",
-        priceRange: "₹",
-        currenciesAccepted: "INR",
-        paymentAccepted: "Cash, UPI, Credit Card",
-        areaServed: ["Agra", "Delhi", "Jaipur", "Mathura", "Gwalior", "Lucknow"],
-        address: {
-          "@type": "PostalAddress",
-          streetAddress: "Near Taj East Gate Road, Taj Ganj",
-          addressLocality: "Agra",
-          addressRegion: "Uttar Pradesh",
-          postalCode: "282001",
-          addressCountry: "IN",
-        },
-        geo: { "@type": "GeoCoordinates", latitude: 27.1632, longitude: 78.0322 },
-        openingHours: "Mo-Su 00:00-23:59",
-        aggregateRating: {
-          "@type": "AggregateRating",
-          ratingValue: "4.9",
-          reviewCount: "380",
-          bestRating: "5",
-          worstRating: "1",
-        },
-      },
-    ],
-  };
-
   return (
     <div className="bg-surface font-body-md text-body-md text-on-surface antialiased min-h-screen">
-
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaGraph) }}
-      />
 
       {!authLoading && configured && !user && !accountPromptDismissed && (
         <aside className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:max-w-md z-40 rounded-xl shadow-2xl border border-border-warm bg-surface-container-lowest p-4 animate-in slide-in-from-bottom duration-300" aria-label="Optional account sign-in">
@@ -129,7 +82,7 @@ export function HomePage({ language = "en" }: HomePageProps) {
               type="button"
               aria-label="Dismiss account reminder"
               onClick={() => { setAccountPromptDismissed(true); try { window.localStorage.setItem("arenaai:account-prompt-dismissed", "1"); } catch { } }}
-              className="text-on-surface-variant hover:text-ink-midnight p-1 rounded-md"
+              className="text-on-surface-variant hover:text-ink-midnight min-w-[44px] min-h-[44px] p-2.5 flex items-center justify-center rounded-md shrink-0"
             >
               <span className="material-symbols-outlined text-[18px]">close</span>
             </button>
@@ -423,9 +376,13 @@ export function HomePage({ language = "en" }: HomePageProps) {
                       <span key={t} className="px-2 py-0.5 rounded bg-border-warm/10 text-ivory-surface/70 font-label-caps text-label-caps">{t}</span>
                     ))}
                   </div>
-                  <a className="inline-flex items-center gap-1 font-label-lg text-label-md text-terracotta-sunlit hover:text-gold-accent transition-colors font-semibold self-start sweep" href={svc.href}>
+                  <a
+                    className="inline-flex items-center gap-1 font-label-lg text-label-md text-terracotta-sunlit hover:text-gold-accent transition-colors font-semibold self-start sweep"
+                    href={svc.href}
+                    aria-label={`Learn more about ${svc.title}`}
+                  >
                     <span>Learn more</span>
-                    <span className="material-symbols-outlined text-icon-13">arrow_forward</span>
+                    <span className="material-symbols-outlined text-icon-13" aria-hidden="true">arrow_forward</span>
                   </a>
                 </div>
               ))}

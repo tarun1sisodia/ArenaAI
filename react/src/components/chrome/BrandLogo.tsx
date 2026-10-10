@@ -1,5 +1,4 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import { motion } from "framer-motion";
 
 const ORIGINAL_TITLE = "AGRA SK BAGHEL";
 const CHARSET = "SKBAGHEL0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -77,7 +76,7 @@ export function BrandLogo({
       onBlur={stopScramble}
       onClick={onClick}
     >
-      {/* Brand Emblem — Animated Motion Compass Rose & Route (from admin panel) */}
+      {/* Brand Emblem — Compass Rose & Route */}
       <div className="w-8 h-8 rounded-lg bg-sandstone-wash/80 border border-primary/20 flex items-center justify-center text-primary group-hover:bg-primary/10 transition-all duration-300 shadow-xs shrink-0 overflow-hidden">
         <svg
           viewBox="0 0 48 48"
@@ -86,22 +85,20 @@ export function BrandLogo({
           className="w-5 h-5 shrink-0"
           aria-hidden="true"
         >
-          {/* Compass ring with pathLength animation */}
-          <motion.circle
+          {/* Compass ring */}
+          <circle
             cx="24"
             cy="24"
             r="20"
             stroke="#D99A3E"
             strokeWidth="1.5"
-            initial={{ pathLength: 0 }}
-            animate={{ pathLength: 1 }}
-            transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
+            className="transition-all duration-500"
           />
           <circle cx="24" cy="24" r="15.5" stroke="#9F3C16" strokeWidth="1" opacity="0.4" />
           
           {/* Cardinal direction ticks */}
           {[0, 90, 180, 270].map((deg) => (
-            <motion.line
+            <line
               key={deg}
               x1="24"
               y1="4.5"
@@ -111,34 +108,25 @@ export function BrandLogo({
               strokeWidth="2"
               strokeLinecap="round"
               transform={`rotate(${deg} 24 24)`}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4 + deg * 0.001, duration: 0.3 }}
             />
           ))}
 
           {/* Sinuous dashed route line: Agra → Destination */}
-          <motion.path
+          <path
             d="M13 33 C 18 33, 16 20, 24 20 C 30 20, 29 14, 34 13"
             stroke="#9F3C16"
             strokeWidth="1.6"
             strokeLinecap="round"
             strokeDasharray="3 3"
-            initial={{ pathLength: 0 }}
-            animate={{ pathLength: 1 }}
-            transition={{ duration: 1.0, ease: "easeInOut", delay: 0.3 }}
           />
 
-          {/* Spring-loaded rotating compass needle with hover spin */}
-          <motion.g
-            initial={{ rotate: -60, opacity: 0 }}
-            animate={{ rotate: 0, opacity: 1 }}
-            transition={{ type: "spring", stiffness: 120, damping: 14, delay: 0.4 }}
-            style={{ originX: "24px", originY: "24px" }}
-            className="transform group-hover:rotate-[360deg] transition-transform duration-700 ease-out"
+          {/* Rotating compass needle with hover spin */}
+          <g
+            className="transform group-hover:rotate-[360deg] transition-transform duration-700 ease-out origin-[24px_24px]"
+            style={{ transformOrigin: "24px 24px" }}
           >
             <path d="M24 14 L27 24 L24 22 L21 24 Z" fill="#D99A3E" />
-          </motion.g>
+          </g>
           
           <circle cx="24" cy="24" r="2" fill="#9F3C16" />
           {/* Origin / destination pins */}

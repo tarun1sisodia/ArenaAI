@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import {
   useCustomerAuth,
-  getCustomerSupabaseClient,
+  getCustomerSupabaseClientAsync,
   getStoredAuthReturnTo,
   isStaleOAuthStateError,
   clearStaleCustomerAuthState,
@@ -74,7 +74,7 @@ export function AuthCallbackPage() {
         }
 
         if (!configured) throw new Error("Google sign-in is not configured for this site.");
-        const client = getCustomerSupabaseClient();
+        const client = await getCustomerSupabaseClientAsync();
         const code = query.get("code");
         let session = (await client.auth.getSession()).data.session;
         if (code && !session) {
@@ -131,7 +131,8 @@ export function AuthCallbackPage() {
       return;
     }
     try {
-      const session = accessToken ? { access_token: accessToken } : (await getCustomerSupabaseClient().auth.getSession()).data.session;
+      const client = await getCustomerSupabaseClientAsync();
+      const session = accessToken ? { access_token: accessToken } : (await client.auth.getSession()).data.session;
       if (!session?.access_token) {
         await signInWithGoogle("/auth/callback/");
         return;

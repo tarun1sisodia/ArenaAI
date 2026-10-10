@@ -1,8 +1,10 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { createClient, type Session, type SupabaseClient, type User } from "@supabase/supabase-js";
+import type { Session, SupabaseClient, User } from "@supabase/supabase-js";
+import { onUserInteractionOrIdle } from "../utils/deferredRevalidation";
 
 const AUTH_RETURN_TO_KEY = "arenaai:auth-return-to";
 let customerClient: SupabaseClient | null = null;
+let clientPromise: Promise<SupabaseClient> | null = null;
 
 export function getCustomerSupabaseConfig(): { url: string; key: string } {
   const url = (import.meta.env.VITE_SUPABASE_URL || "")?.trim();
@@ -15,25 +17,54 @@ export function hasCustomerSupabaseConfig(): boolean {
   return Boolean(url && key);
 }
 
+export function hasPersistedCustomerAuthSession(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    if (window.location.search.includes("code=") || window.location.search.includes("error=")) {
+      return true;
+    }
+    for (let i = 0; i < window.localStorage.length; i++) {
+      const key = window.localStorage.key(i);
+      if (key && key.startsWith("sb-") && key.endsWith("-auth-token")) {
+        return true;
+      }
+    }
+  } catch {
+    return false;
+  }
+  return false;
+}
+
+export async function getCustomerSupabaseClientAsync(): Promise<SupabaseClient> {
+  if (customerClient) return customerClient;
+  if (!clientPromise) {
+    clientPromise = (async () => {
+      const { url, key } = getCustomerSupabaseConfig();
+      if (!url || !key) {
+        throw new Error("Google sign-in is not configured on this site yet.");
+      }
+      const { createClient } = await import("@supabase/supabase-js");
+      customerClient = createClient(url, key, {
+        auth: {
+          flowType: "pkce",
+          detectSessionInUrl: true,
+          persistSession: true,
+          autoRefreshToken: true,
+        },
+      });
+      return customerClient;
+    })();
+  }
+  return clientPromise;
+}
+
 export function getCustomerSupabaseClient(): SupabaseClient {
   if (customerClient) return customerClient;
   const { url, key } = getCustomerSupabaseConfig();
   if (!url || !key) {
     throw new Error("Google sign-in is not configured on this site yet.");
   }
-  customerClient = createClient(url, key, {
-    auth: {
-      flowType: "pkce",
-      // Auto-detect the PKCE `code` in the callback URL and exchange it for a
-      // session on page load (standard PKCE flow). The manual exchange in
-      // AuthCallbackPage remains as a fallback for edge cases where the
-      // automatic exchange has not completed yet.
-      detectSessionInUrl: true,
-      persistSession: true,
-      autoRefreshToken: true,
-    },
-  });
-  return customerClient;
+  throw new Error("Supabase client is initializing asynchronously. Please use getCustomerSupabaseClientAsync().");
 }
 
 export function safeInternalReturnTo(value: string | null | undefined): string {
@@ -118,7 +149,7 @@ export function isStaleOAuthStateError(error: unknown): boolean {
  */
 export async function clearStaleCustomerAuthState(): Promise<void> {
   try {
-    const client = getCustomerSupabaseClient();
+    const client = await getCustomerSupabaseClientAsync();
     await client.auth.signOut({ scope: "local" });
   } catch { /* not configured or already cleared — nothing to do */ }
 }
@@ -160,7 +191,10 @@ const CustomerAuthContext = createContext<CustomerAuthValue>(defaultContext);
 
 export function CustomerAuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(() => {
+    if (typeof window === "undefined" || !hasCustomerSupabaseConfig()) return false;
+    return hasPersistedCustomerAuthSession();
+  });
   const [error, setError] = useState<string | null>(null);
   const configured = hasCustomerSupabaseConfig();
 
@@ -171,42 +205,59 @@ export function CustomerAuthProvider({ children }: { children: ReactNode }) {
       setError("Google sign-in is not configured on this build.");
       return () => { active = false; };
     }
-    let client: SupabaseClient;
-    try {
-      client = getCustomerSupabaseClient();
-    } catch {
-      setLoading(false);
-      setError("Google sign-in is temporarily unavailable.");
-      return () => { active = false; };
+
+    let unsubscribe: (() => void) | undefined;
+
+    const setupAuth = async () => {
+      try {
+        const client = await getCustomerSupabaseClientAsync();
+        if (!active) return;
+
+        const { data: { subscription } } = client.auth.onAuthStateChange((_event, nextSession) => {
+          if (!active) return;
+          setSession(nextSession);
+          setLoading(false);
+          setError(null);
+        });
+        unsubscribe = () => subscription.unsubscribe();
+
+        const { data, error: sessionError } = await client.auth.getSession();
+        if (!active) return;
+        setSession(data.session);
+        setLoading(false);
+        if (sessionError) setError("Could not restore your sign-in session. Please sign in again.");
+      } catch {
+        if (!active) return;
+        setSession(null);
+        setLoading(false);
+        setError("Could not restore your sign-in session. Please sign in again.");
+      }
+    };
+
+    if (hasPersistedCustomerAuthSession()) {
+      void setupAuth();
+      return () => {
+        active = false;
+        unsubscribe?.();
+      };
     }
 
-    const { data: { subscription } } = client.auth.onAuthStateChange((_event, nextSession) => {
-      if (!active) return;
-      setSession(nextSession);
-      setLoading(false);
-      setError(null);
-    });
-    void client.auth.getSession().then(({ data, error: sessionError }) => {
-      if (!active) return;
-      setSession(data.session);
-      setLoading(false);
-      if (sessionError) setError("Could not restore your sign-in session. Please sign in again.");
-    }).catch(() => {
-      if (!active) return;
-      setSession(null);
-      setLoading(false);
-      setError("Could not restore your sign-in session. Please sign in again.");
-    });
+    const cancelIdle = onUserInteractionOrIdle(() => {
+      if (active) {
+        void setupAuth();
+      }
+    }, 8000);
 
     return () => {
       active = false;
-      subscription.unsubscribe();
+      cancelIdle();
+      unsubscribe?.();
     };
   }, [configured]);
 
   const signInWithGoogle = useCallback(async (returnTo = typeof window === "undefined" ? "/" : `${window.location.pathname}${window.location.search}`) => {
     if (typeof window === "undefined") throw new Error("Sign-in can only start in a browser.");
-    const client = getCustomerSupabaseClient();
+    const client = await getCustomerSupabaseClientAsync();
     const safeReturn = safeInternalReturnTo(returnTo);
     try { window.sessionStorage.setItem(AUTH_RETURN_TO_KEY, safeReturn); } catch { /* callback falls back to home */ }
     const redirectTo = new URL("/auth/callback/", window.location.origin).toString();
@@ -222,7 +273,7 @@ export function CustomerAuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signInWithPassword = useCallback(async (email: string, password: string) => {
-    const client = getCustomerSupabaseClient();
+    const client = await getCustomerSupabaseClientAsync();
     const { data, error: signInError } = await client.auth.signInWithPassword({
       email: email.trim(),
       password,
@@ -236,7 +287,7 @@ export function CustomerAuthProvider({ children }: { children: ReactNode }) {
   }, [signInWithPassword]);
 
   const signOut = useCallback(async () => {
-    const client = getCustomerSupabaseClient();
+    const client = await getCustomerSupabaseClientAsync();
     const { error: signOutError } = await client.auth.signOut();
     if (signOutError) throw signOutError;
     setSession(null);

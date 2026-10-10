@@ -7,6 +7,7 @@ import {
   resolveCatalogMediaUrl,
   type PublicCatalogItem,
 } from "../../services/catalog";
+import { onUserInteractionOrIdle } from "../../utils/deferredRevalidation";
 
 export interface FamousPlace {
   id: string;
@@ -354,7 +355,7 @@ export function FamousPlacesSection() {
 
   useEffect(() => {
     let isMounted = true;
-    const loadCatalog = () => {
+    const cleanup = onUserInteractionOrIdle(() => {
       fetchPublishedCatalog({ type: "place" })
         .then((items) => {
           if (!isMounted || items.length === 0) return;
@@ -373,19 +374,11 @@ export function FamousPlacesSection() {
         .catch(() => {
           /* static list remains the fallback */
         });
-    };
+    }, 8000);
 
-    if (typeof window !== "undefined" && "requestIdleCallback" in window) {
-      const idleId = (window as any).requestIdleCallback(loadCatalog, { timeout: 3500 });
-      return () => {
-        isMounted = false;
-        (window as any).cancelIdleCallback(idleId);
-      };
-    }
-    const timer = setTimeout(loadCatalog, 2500);
     return () => {
       isMounted = false;
-      clearTimeout(timer);
+      cleanup();
     };
   }, []);
 

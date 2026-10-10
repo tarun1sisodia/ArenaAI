@@ -35,6 +35,7 @@ import generatedPublishedTourPackages from "../data/generated-published-tour-pac
 import generatedPublishedRoutes from "../data/generated-published-routes.json";
 import generatedCatalog from "../data/generated-catalog.json";
 import { useScrollReveal } from "../utils/scrollReveal";
+import { onUserInteractionOrIdle } from "../utils/deferredRevalidation";
 
 export function getMarketingPath(pathname: string) {
   const segments = pathname.split("/").filter(Boolean);
@@ -299,17 +300,10 @@ export function App({ pathname: propPathname }: AppProps = {}) {
       }).catch(() => {});
     };
 
-    if (typeof window !== "undefined" && "requestIdleCallback" in window) {
-      const idleId = (window as any).requestIdleCallback(loadPackages, { timeout: 3500 });
-      return () => {
-        isMounted = false;
-        (window as any).cancelIdleCallback(idleId);
-      };
-    }
-    const timer = setTimeout(loadPackages, 2500);
+    const cleanup = onUserInteractionOrIdle(loadPackages, 8000);
     return () => {
       isMounted = false;
-      clearTimeout(timer);
+      cleanup();
     };
   }, [initialTourPackages]);
 

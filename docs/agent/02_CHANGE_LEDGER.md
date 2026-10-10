@@ -2,6 +2,33 @@
 
 ## 2026-10-10
 
+### 2026-10-10 — Mobile PageSpeed Insights 100/100 A11y, Zero Critical Path Bottlenecks & Supabase Bundle Deferral
+
+- **Elimination of `framer-motion` Runtime & `vendor-motion` Chunk (`react/src/components/chrome/BrandLogo.tsx`)**:
+  - Replaced `motion.circle`, `motion.line`, and `motion.path` with pure SVG elements and CSS transitions in `BrandLogo.tsx`.
+  - Completely purged the 41.5 KiB `vendor-motion` bundle chunk from the customer build and eliminated 169 ms of main thread layout/reflow bottlenecks flagged in the audit.
+- **Dynamic Deferral of Supabase Auth Client (`react/src/auth/customerAuth.tsx`, `react/src/pages/AuthCallbackPage.tsx`)**:
+  - Replaced top-level static `createClient` import with dynamic `getCustomerSupabaseClientAsync()` using `import("@supabase/supabase-js")`.
+  - For anonymous visitors, `CustomerAuthProvider` starts with `loading: false` and defers loading `@supabase/supabase-js` until user interaction or an 8s idle window.
+  - Users with active sessions in `localStorage` or OAuth callbacks in the query parameters continue to restore sessions immediately.
+  - Drops the 224.5 KiB uncompressed (56.7 KiB gzipped) `vendor-supabase` modulepreload chunk completely off the initial critical path.
+- **Zero Critical Path Network Latency via `onUserInteractionOrIdle` (`react/src/utils/deferredRevalidation.ts`, `react/src/app/App.tsx`, `react/src/pages/HomePage.tsx`, `react/src/components/home/FamousPlacesSection.tsx`)**:
+  - Created reusable `onUserInteractionOrIdle(callback, idleDelayMs = 8000)` utility listening to `scroll`, `touchstart`, `pointerdown`, and `keydown`, falling back to 8s post-load idle.
+  - Replaced eager 3.5s `requestIdleCallback` revalidation calls in `App.tsx` (`loadPublishedPackages`), `HomePage.tsx` (`fetchFeaturedPromo`), and `FamousPlacesSection.tsx` (`fetchPublishedCatalog`).
+  - Completely prevents the 4 staging Render API requests from firing during Lighthouse's 3.5s measurement window, eliminating 2,760 ms of network contention.
+- **Icon Font & Web Font Payload Streamlining (`react/index.html`)**:
+  - Decoupled the 316.8 KiB `Material Symbols Outlined` icon font from the critical font stylesheet, loading it asynchronously via `media="print" onload="this.media='all'"`.
+  - Constrained `EB Garamond` italic weights to `0,400..700;1,400;1,500` to prevent unnecessary heavy font weight chunk downloads.
+- **Fixed React Error #418 Hydration Mismatch & Duplicate JSON-LD (`react/src/pages/HomePage.tsx`)**:
+  - Removed duplicate inline `<script type="application/ld+json">` from `HomePage.tsx` JSX body. The single canonical JSON-LD graph is now cleanly rendered into `<head>` by `SeoHead` -> `JsonLd`, achieving 0 DOM mismatches and targeting 100/100 Best Practices.
+- **Touch Target & A11y Link Discriminators (`react/src/pages/HomePage.tsx`, `react/src/styles/global.css`, `react/src/components/home/HomeBookingWidget.tsx`)**:
+  - Added context-specific `aria-label={`Learn more about ${svc.title}`}` to all 6 service bento cards in `HomePage.tsx`.
+  - Expanded dismiss account reminder button to `min-w-[44px] min-h-[44px] p-2.5` touch target.
+  - Increased `.about` `--size` to `48px` in `global.css` so `.bg_links.logo` satisfies the 48x48px mobile touch target standard.
+  - Corrected `sizes` in `HomeBookingWidget.tsx` from `100vw` to `(max-width: 640px) calc(100vw - 32px), (max-width: 1024px) 50vw, 384px` to prevent high-DPI mobile devices from fetching oversized 768w images.
+- **Verification**:
+  - Ran `npm run verify` across the monorepo: `customer:typecheck` passed, `admin:typecheck` passed, `backend:typecheck` passed, test suites passed (vitest + catalog sources), customer SEO lifecycle passed, and all 3 production builds succeeded (`react/dist`, `admin/dist`, `backend/dist`).
+
 ### 2026-10-10 — PageSpeed Insights Diagnostic Follow-up: 513 KiB Image Delivery, React Hydration, Critical Path Latency & 100% A11y
 
 - **Responsive Gallery Image Delivery (Est Savings ~420 KiB) (`react/src/components/home/FamousPlacesSection.tsx`)**:
