@@ -10,6 +10,13 @@
   align-items: flex-start;
   gap: 8px;
   pointer-events: none;
+  /* Spotlight glide: transform-only so it never triggers layout. */
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.buddy-widget.buddy-spotlight {
+  z-index: 960;
 }
 
 .buddy-widget > * {
@@ -121,6 +128,9 @@
   }
   .buddy-avatar-btn:hover {
     transform: none;
+  }
+  .buddy-widget {
+    transition: none;
   }
 }
 

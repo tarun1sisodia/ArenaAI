@@ -99,19 +99,26 @@ export interface BuddyAvatarProps {
   size?: number;
   className?: string;
   label?: string;
+  /** Mutable viewport-pixel point the pupils track; {-1,-1} = look forward. */
+  lookAtRef?: React.RefObject<{ x: number; y: number }>;
 }
+
+const SCLERA = "#fffaf3";
 
 export function BuddyAvatar({
   animation = "idle",
   size = 120,
   className = "",
   label = "Baghel Buddy, your travel mascot",
+  lookAtRef,
 }: BuddyAvatarProps) {
   const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
   const svgRef = useRef<SVGSVGElement>(null);
   const faceRef = useRef<SVGGElement>(null);
   const eyeLRef = useRef<SVGEllipseElement>(null);
   const eyeRRef = useRef<SVGEllipseElement>(null);
+  const pupilLRef = useRef<SVGEllipseElement>(null);
+  const pupilRRef = useRef<SVGEllipseElement>(null);
   const animRef = useRef(animation);
   animRef.current = animation;
 
@@ -134,24 +141,38 @@ export function BuddyAvatar({
     if (!svg || typeof window === "undefined") return;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+    const gaze = { x: 0, y: 0 }; // smoothed, -1..1
+
     const applyPose = (p: EyeParams, blinkScale = 1) => {
-      const face = faceRef.current, el = eyeLRef.current, er = eyeRRef.current;
-      if (!face || !el || !er) return;
+      const face = faceRef.current;
+      const el = eyeLRef.current, er = eyeRRef.current;
+      const pl = pupilLRef.current, pr = pupilRRef.current;
+      if (!face || !el || !er || !pl || !pr) return;
       face.setAttribute(
         "transform",
         `translate(${(p.headY * 0.5).toFixed(2)} ${(p.headX * 0.5).toFixed(2)}) rotate(${(p.headZ * 0.25).toFixed(2)})`
       );
       const lx = eyeCx("L", p), rx = eyeCx("R", p);
-      el.setAttribute("cx", lx.toFixed(2));
-      el.setAttribute("cy", eyeCy("L", p).toFixed(2));
-      el.setAttribute("rx", (p.widthLeft / 2).toFixed(2));
-      el.setAttribute("ry", ((p.heightLeft / 2) * blinkScale).toFixed(2));
-      el.setAttribute("transform", `rotate(${p.leftAngle.toFixed(2)} ${lx.toFixed(2)} ${eyeCy("L", p).toFixed(2)})`);
-      er.setAttribute("cx", rx.toFixed(2));
-      er.setAttribute("cy", eyeCy("R", p).toFixed(2));
-      er.setAttribute("rx", (p.widthRight / 2).toFixed(2));
-      er.setAttribute("ry", ((p.heightRight / 2) * blinkScale).toFixed(2));
-      er.setAttribute("transform", `rotate(${p.rightAngle.toFixed(2)} ${rx.toFixed(2)} ${eyeCy("R", p).toFixed(2)})`);
+      const ly = eyeCy("L", p), ry = eyeCy("R", p);
+      const placeEye = (
+        e: SVGEllipseElement, pu: SVGEllipseElement,
+        cx: number, cy: number, w: number, h: number, angle: number
+      ) => {
+        e.setAttribute("cx", cx.toFixed(2));
+        e.setAttribute("cy", cy.toFixed(2));
+        e.setAttribute("rx", (w / 2).toFixed(2));
+        e.setAttribute("ry", ((h / 2) * blinkScale).toFixed(2));
+        e.setAttribute("transform", `rotate(${angle.toFixed(2)} ${cx.toFixed(2)} ${cy.toFixed(2)})`);
+        // Pupil drifts toward the gaze point, clamped inside the sclera.
+        const px = cx + gaze.x * w * 0.2;
+        const py = cy + gaze.y * h * 0.18;
+        pu.setAttribute("cx", px.toFixed(2));
+        pu.setAttribute("cy", py.toFixed(2));
+        pu.setAttribute("rx", (w * 0.3).toFixed(2));
+        pu.setAttribute("ry", ((h * 0.34) * blinkScale).toFixed(2));
+      };
+      placeEye(el, pl, lx, ly, p.widthLeft, p.heightLeft, p.leftAngle);
+      placeEye(er, pr, rx, ry, p.widthRight, p.heightRight, p.rightAngle);
     };
 
     if (reduced) {
@@ -171,6 +192,22 @@ export function BuddyAvatar({
     };
 
     const frame = (now: number) => {
+      // Gaze: steer pupils toward the tracked viewport point.
+      const target = lookAtRef?.current;
+      if (target && target.x >= 0 && svg) {
+        const r = svg.getBoundingClientRect();
+        const cx = r.left + r.width / 2;
+        const cy = r.top + r.height / 2;
+        const clamp1 = (v: number) => Math.min(1, Math.max(-1, v));
+        const tx = clamp1((target.x - cx) / 140);
+        const ty = clamp1((target.y - cy) / 140);
+        gaze.x += (tx - gaze.x) * 0.16;
+        gaze.y += (ty - gaze.y) * 0.16;
+      } else {
+        gaze.x *= 0.94;
+        gaze.y *= 0.94;
+      }
+
       const anim = DEF.animations[animRef.current] ?? DEF.animations["idle"];
       const steps = anim.steps;
       const total = steps.reduce((s, st) => s + st.transitionMs + st.holdMs, 0) || 1;
@@ -257,6 +294,14 @@ export function BuddyAvatar({
           cy={eyeCy("L", neutral)}
           rx={neutral.widthLeft / 2}
           ry={neutral.heightLeft / 2}
+          fill={SCLERA}
+        />
+        <ellipse
+          ref={pupilLRef}
+          cx={eyeCx("L", neutral)}
+          cy={eyeCy("L", neutral)}
+          rx={(neutral.widthLeft * 0.3)}
+          ry={(neutral.heightLeft * 0.34)}
           fill={colors.eyes}
         />
         <ellipse
@@ -265,6 +310,14 @@ export function BuddyAvatar({
           cy={eyeCy("R", neutral)}
           rx={neutral.widthRight / 2}
           ry={neutral.heightRight / 2}
+          fill={SCLERA}
+        />
+        <ellipse
+          ref={pupilRRef}
+          cx={eyeCx("R", neutral)}
+          cy={eyeCy("R", neutral)}
+          rx={(neutral.widthRight * 0.3)}
+          ry={(neutral.heightRight * 0.34)}
           fill={colors.eyes}
         />
       </g>

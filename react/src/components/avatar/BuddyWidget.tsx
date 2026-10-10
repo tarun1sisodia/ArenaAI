@@ -1,28 +1,26 @@
 import { useEffect, useState } from "react";
 import { BuddyAvatar } from "./BuddyAvatar";
+import { useBuddyGuide } from "./useBuddyGuide";
 import "./buddy.css";
-
-const TIPS = [
-  "Namaste! I'm Baghel Buddy — your travel sidekick. Tap me for a wave!",
-  "Taj Mahal at sunrise: fewer crowds, softer light, better photos.",
-  "A 28% advance locks your cab — the rest is paid after drop-off.",
-  "Varanasi's evening Ganga aarti begins at sunset. Reach early!",
-  "Carry a light shawl — desert nights around Jaisalmer turn chilly.",
-];
 
 const DISMISS_KEY = "baghel-buddy-dismissed";
 
 /**
  * Floating Baghel Buddy mascot for the customer site.
+ *
+ * Buddy is alive: his pupils track your cursor and clicks, and when you focus
+ * or tap a form field (or the one-way / round-trip selector), he glides next
+ * to it, looks at it, and offers a contextual tip.
+ *
  * Purely additive chrome: it never touches locked layouts or the booking flow.
  */
 export function BuddyWidget() {
   const [dismissed, setDismissed] = useState(false);
-  const [tipIndex, setTipIndex] = useState(0);
   const [animation, setAnimation] = useState("idle");
   const [mounted, setMounted] = useState(false);
+  const { lookAtRef, spotlight, homeTipText } = useBuddyGuide();
 
-  // Client-only: restore dismissal + rotate tips.
+  // Client-only: restore dismissal.
   useEffect(() => {
     setMounted(true);
     try {
@@ -30,18 +28,12 @@ export function BuddyWidget() {
     } catch {
       /* storage unavailable — keep visible */
     }
-    const id = window.setInterval(
-      () => setTipIndex((i) => (i + 1) % TIPS.length),
-      9000
-    );
-    return () => window.clearInterval(id);
   }, []);
 
   if (!mounted || dismissed) return null;
 
   const cheer = () => {
     setAnimation("excited");
-    setTipIndex((i) => (i + 1) % TIPS.length);
     window.setTimeout(() => setAnimation("idle"), 2600);
   };
 
@@ -54,14 +46,20 @@ export function BuddyWidget() {
     }
   };
 
+  const bubbleText = spotlight ? spotlight.tip : homeTipText;
+  const transform = spotlight
+    ? `translate(${spotlight.dx.toFixed(1)}px, ${spotlight.dy.toFixed(1)}px)`
+    : undefined;
+
   return (
     <div
-      className="buddy-widget"
+      className={`buddy-widget${spotlight ? " buddy-spotlight" : ""}`}
       role="region"
       aria-label="Baghel Buddy travel mascot"
+      style={transform ? { transform } : undefined}
     >
       <div className="buddy-bubble" aria-live="polite">
-        <p>{TIPS[tipIndex]}</p>
+        <p>{bubbleText}</p>
         <button
           type="button"
           className="buddy-close"
@@ -80,7 +78,7 @@ export function BuddyWidget() {
         aria-label="Baghel Buddy — tap for a cheerful wave"
         title="Say hi to Baghel Buddy"
       >
-        <BuddyAvatar animation={animation} size={76} />
+        <BuddyAvatar animation={animation} size={76} lookAtRef={lookAtRef} />
       </button>
     </div>
   );
