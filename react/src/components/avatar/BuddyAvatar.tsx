@@ -164,12 +164,14 @@ export function BuddyAvatar({
         e.setAttribute("ry", ((h / 2) * blinkScale).toFixed(2));
         e.setAttribute("transform", `rotate(${angle.toFixed(2)} ${cx.toFixed(2)} ${cy.toFixed(2)})`);
         // Pupil drifts toward the gaze point, clamped inside the sclera.
+        // Pupils stay circular: one radius for both axes.
+        const pr = Math.min(w, h) * 0.32;
         const px = cx + gaze.x * w * 0.2;
         const py = cy + gaze.y * h * 0.18;
         pu.setAttribute("cx", px.toFixed(2));
         pu.setAttribute("cy", py.toFixed(2));
-        pu.setAttribute("rx", (w * 0.3).toFixed(2));
-        pu.setAttribute("ry", ((h * 0.34) * blinkScale).toFixed(2));
+        pu.setAttribute("rx", pr.toFixed(2));
+        pu.setAttribute("ry", (pr * blinkScale).toFixed(2));
       };
       placeEye(el, pl, lx, ly, p.widthLeft, p.heightLeft, p.leftAngle);
       placeEye(er, pr, rx, ry, p.widthRight, p.heightRight, p.rightAngle);
@@ -300,8 +302,8 @@ export function BuddyAvatar({
           ref={pupilLRef}
           cx={eyeCx("L", neutral)}
           cy={eyeCy("L", neutral)}
-          rx={(neutral.widthLeft * 0.3)}
-          ry={(neutral.heightLeft * 0.34)}
+          rx={(Math.min(neutral.widthLeft, neutral.heightLeft) * 0.32)}
+          ry={(Math.min(neutral.widthLeft, neutral.heightLeft) * 0.32)}
           fill={colors.eyes}
         />
         <ellipse
@@ -316,8 +318,8 @@ export function BuddyAvatar({
           ref={pupilRRef}
           cx={eyeCx("R", neutral)}
           cy={eyeCy("R", neutral)}
-          rx={(neutral.widthRight * 0.3)}
-          ry={(neutral.heightRight * 0.34)}
+          rx={(Math.min(neutral.widthRight, neutral.heightRight) * 0.32)}
+          ry={(Math.min(neutral.widthRight, neutral.heightRight) * 0.32)}
           fill={colors.eyes}
         />
       </g>
