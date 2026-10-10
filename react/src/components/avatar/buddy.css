@@ -1,0 +1,135 @@
+/* Baghel Buddy floating mascot — additive chrome, token-driven. */
+
+.buddy-widget {
+  position: fixed;
+  left: 16px;
+  bottom: 16px;
+  z-index: 940;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.buddy-widget > * {
+  pointer-events: auto;
+}
+
+.buddy-bubble {
+  position: relative;
+  max-width: 230px;
+  background: var(--color-surface, #fdf8f5);
+  border: 1px solid var(--color-border-warm, #e8ddd3);
+  border-radius: 14px;
+  border-bottom-left-radius: 4px;
+  padding: 10px 34px 10px 12px;
+  box-shadow: 0 8px 24px rgba(23, 19, 16, 0.14);
+}
+
+.buddy-bubble::after {
+  content: "";
+  position: absolute;
+  left: 26px;
+  bottom: -7px;
+  width: 12px;
+  height: 12px;
+  background: inherit;
+  border-right: 1px solid var(--color-border-warm, #e8ddd3);
+  border-bottom: 1px solid var(--color-border-warm, #e8ddd3);
+  transform: rotate(45deg);
+}
+
+.buddy-bubble p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--color-ink, #171310);
+}
+
+.buddy-close {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-ink-soft, #2b241d);
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+.buddy-close:hover {
+  opacity: 1;
+}
+
+.buddy-close .material-symbols-outlined {
+  font-size: 16px;
+}
+
+.buddy-avatar-btn {
+  width: 76px;
+  height: 76px;
+  padding: 0;
+  border: 2px solid var(--color-gold-accent, #d99a3e);
+  border-radius: 999px;
+  background: radial-gradient(circle at 35% 30%, #fff7ed 0%, var(--color-surface, #fdf8f5) 70%);
+  box-shadow: 0 10px 28px rgba(159, 60, 22, 0.28);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.buddy-avatar-btn:hover {
+  transform: translateY(-3px) scale(1.04);
+  box-shadow: 0 14px 32px rgba(159, 60, 22, 0.36);
+}
+
+.buddy-avatar-btn:focus-visible {
+  outline: 2px solid var(--color-gold-accent, #d99a3e);
+  outline-offset: 3px;
+}
+
+/* Idle float — transform only (GPU), disabled under reduced motion. */
+@keyframes buddy-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-7px); }
+}
+
+.buddy-float {
+  animation: buddy-bob 3.4s ease-in-out infinite;
+}
+
+.buddy-float:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .buddy-float {
+    animation: none;
+  }
+  .buddy-avatar-btn {
+    transition: none;
+  }
+  .buddy-avatar-btn:hover {
+    transform: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .buddy-widget {
+    left: 12px;
+    bottom: 12px;
+  }
+  .buddy-bubble {
+    max-width: 200px;
+  }
+}

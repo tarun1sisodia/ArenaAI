@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Header, LeadBar, RadialDock, Footer, SkipLink } from "../components/Chrome";
+import { BuddyWidget } from "../components/avatar/BuddyWidget";
 
 interface SiteLayoutProps {
   children: ReactNode;
@@ -15,6 +16,7 @@ export function SiteLayout({ children }: SiteLayoutProps) {
       </div>
       <LeadBar />
       <RadialDock />
+      <BuddyWidget />
       <Footer />
     </div>
   );

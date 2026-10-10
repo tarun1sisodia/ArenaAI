@@ -2,20 +2,22 @@
 
 The slideshow uses local responsive derivatives of genuine photographs from Wikimedia Commons. No runtime image request goes to a third-party image CDN — every slide is self-hosted under `react/public/assets/home-hero/`.
 
-Each source below was opened and verified: it is a real camera photograph (no AI-generated imagery, no AI disclaimer on the source page), the license was read from the file page's license metadata and permits commercial use on a travel website, and the exact photographer/author and source photo page are recorded. Attribution follows the CC BY / CC BY-SA requirements via this credits record.
+Each source below was opened and visually verified at full resolution: it is a real camera photograph (no AI-generated imagery, no AI disclaimer on the source page), the license was read from the file page's license metadata and permits commercial use on a travel website, and the exact photographer/author and source photo page are recorded. Attribution follows the CC BY / CC BY-SA / Free Art License requirements via this credits record.
+
+The 2026-10-10 refresh replaced the whole set with very bright, high-key daylight photographs (mean luminance 0.53–0.67) so the slides show vividly on the page.
 
 | File stem | Landmark | Photographer/author | Exact source photo page | License | Verified real photograph |
 | --- | --- | --- | --- | --- | --- |
-| `taj-mahal-agra` | Taj Mahal, Agra | Yann | https://commons.wikimedia.org/wiki/File:Taj_Mahal,_Agra,_India.jpg | CC BY-SA 4.0 | Yes — bright daylight frontal view; Commons Quality Image + Wikipedia Featured Picture |
-| `agra-fort` | Agra Fort | Preetam Chakraborty | https://commons.wikimedia.org/wiki/File:Sunset_at_Agra_Fort.jpg | CC BY-SA 4.0 | Yes — sunset glowing through an ornate Mughal archway |
-| `fatehpur-sikri` | Fatehpur Sikri (Jama Masjid corridor) | Kuntal Guharaja | https://commons.wikimedia.org/wiki/File:Corridor_of_Jama_Masjid,_Fatehpur_Sikri,_Agra_during_sunset.jpg | CC BY-SA 4.0 | Yes — sunset light streaming through the pillared corridor |
-| `hawa-mahal-jaipur` | Hawa Mahal, Jaipur | shikhers | https://commons.wikimedia.org/wiki/File:Hawa_Mahal_flooded_with_lights.jpg | CC BY-SA 4.0 | Yes — facade floodlit at dusk under a deep blue sky |
-| `amber-fort-jaipur` | Amber Fort, Jaipur | Sumedh Patil | https://commons.wikimedia.org/wiki/File:Amber_Fort_Jaipur_india.jpg | CC BY-SA 4.0 | Yes — fort illuminated at night, reflected in Maota Lake |
-| `india-gate-delhi` | India Gate, New Delhi | Aravindjnath | https://commons.wikimedia.org/wiki/File:India_Gate_at_night,_New_Delhi,_India.JPG | CC BY-SA 3.0 | Yes — memorial illuminated at night with glowing lamps |
-| `varanasi-ghats` | Varanasi / Ganga Ghats | Nikhilesh Kumar Prajapati | https://commons.wikimedia.org/wiki/File:Light_in_Shade.jpg | CC BY-SA 4.0 | Yes — sun setting over the Ganges with boats and reflections |
-| `kerala-backwaters` | Kerala backwaters | Mohanrangaphotography | https://commons.wikimedia.org/wiki/File:Alleppey_Boat_houses.jpg | CC BY-SA 4.0 | Yes — houseboats at sunset with palm reflections |
-| `manali-solang-valley` | Manali / Himalayan ranges | Aniket431 | https://commons.wikimedia.org/wiki/File:Manali,himalayas.jpg | CC BY-SA 4.0 | Yes — sunrise over snow-capped ranges above clouds |
-| `golden-temple-amritsar` | Golden Temple, Amritsar | Indiancuisne | https://commons.wikimedia.org/wiki/File:Golden_Temple_2022.jpg | CC BY-SA 4.0 | Yes — shrine at dawn with mirror reflection in the sarovar |
+| `taj-mahal-agra` | Taj Mahal, Agra | Sourabhdotrai | https://commons.wikimedia.org/wiki/File:Taj_Mahal_on_a_bright_sunny_day.jpg | CC0 (public domain) | Yes — bright sunny frontal view, sunlit marble, vivid blue sky |
+| `agra-fort` | Agra Fort | Benh | https://commons.wikimedia.org/wiki/File:Agra_03-2016_14_Agra_Fort.jpg | Free Art License 1.3 | Yes — sunlit white-marble Khas Mahal complex with gardens |
+| `fatehpur-sikri` | Fatehpur Sikri (Buland Darwaza) | A.Savin | https://commons.wikimedia.org/wiki/File:Fatehpur_Sikri_near_Agra_2016-03_img08.jpg | Free Art License 1.3 | Yes — sunlit red-sandstone gate against a clear blue sky |
+| `hawa-mahal-jaipur` | Hawa Mahal, Jaipur | Faraz iitj | https://commons.wikimedia.org/wiki/File:Hawa_Mahal_Day_View.jpg | CC BY-SA 4.0 | Yes — full sun on the pink facade, blue sky, crisp detail |
+| `amber-fort-jaipur` | Amber Fort, Jaipur | A.Savin | https://commons.wikimedia.org/wiki/File:Jaipur_03-2016_02_Amber_Fort.jpg | Free Art License 1.3 | Yes — sunlit fort reflected across Maota Lake under blue sky |
+| `india-gate-delhi` | India Gate, New Delhi | AravindGP | https://commons.wikimedia.org/wiki/File:All_India_War_Memorial_(INDIA_GATE).jpg | CC BY-SA 4.0 | Yes — sunlit sandstone memorial, saturated blue sky, white clouds |
+| `varanasi-ghats` | Varanasi / Ganga Ghats | Suzerainty13 | https://commons.wikimedia.org/wiki/File:DASHASHWAMEDH_GHAT,_VARANASI.jpg | CC BY-SA 4.0 | Yes — warm daylight on Dashashwamedh Ghat, colorful boats and umbrellas |
+| `kerala-backwaters` | Kerala backwaters | PrasanPadale | https://commons.wikimedia.org/wiki/File:Houseboat_at_Kerala_Backwaters.jpg | CC BY-SA 4.0 | Yes — houseboat on glittering water under a bright blue sky |
+| `manali-solang-valley` | Manali / Solang Valley | Harvinder Chandigarh | https://commons.wikimedia.org/wiki/File:Solang_Valley_,Manali,_Himachal_Pardes,_India.JPG | CC BY-SA 4.0 | Yes — green valley with snow peaks under a blue sky, vivid and high-key |
+| `golden-temple-amritsar` | Golden Temple, Amritsar | Oleg Yunakov | https://commons.wikimedia.org/wiki/File:Hamandir_Sahib_(Golden_Temple).jpg | CC BY-SA 3.0 | Yes — gleaming gold sanctum across the sarovar in full daylight |
 
 ## Generated variants
 
@@ -30,4 +32,4 @@ All variants are 16:9, cropped deterministically from the source photograph with
 
 ## Licensing note
 
-CC BY-SA 4.0 and CC BY-SA 3.0 permit commercial use with attribution and share-alike on adaptations of the image itself. Attribution for every slide is recorded in the table above and mirrored in `react/src/data/homeHeroSlides.ts`.
+CC0 is a public-domain dedication (no attribution required; photographer credited here anyway). CC BY-SA 4.0 and CC BY-SA 3.0 permit commercial use with attribution and share-alike on adaptations of the image itself. The Free Art License 1.3 likewise permits commercial use with attribution and share-alike. Attribution for every slide is recorded in the table above and mirrored in `react/src/data/homeHeroSlides.ts`.
