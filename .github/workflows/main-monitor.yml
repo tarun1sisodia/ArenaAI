@@ -27,7 +27,7 @@ jobs:
       RELEASE_BUILD: "1"
     steps:
       - name: Checkout main with history
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
